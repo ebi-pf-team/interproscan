@@ -1,0 +1,68 @@
+Sn; tr|B1ATN5|B1ATN5_MOUSE 5-hydroxytryptamine (Serotonin) receptor 2C OS=Mus musculus GN=Htr2c PE=3 SV=1
+Si; Fasta sequence
+1TBS
+1TBH 5HT2CRECEPTR    4.392622e-77
+1TBH GPCRRHODOPSN    1.969745e-49
+1TBH 5HTRECEPTOR     6.389171e-06
+1TBF
+2TBS
+2TBT FingerPrint     No.Motifs SumId    AveId    ProfScore  Ppvalue     Evalue      GraphScan               
+2TBH 5HT2CRECEPTR    8  of  8  7.6e+02  95       6212       1.9e-82     4.4e-77     IIIIIIII        
+2TBH GPCRRHODOPSN    7  of  7  224.25   32.04    2487       1.1e-54     2e-49       iIIiiIi         
+2TBH 5HTRECEPTOR     4  of  4  183.10   45.78    827        7.8e-12     6.4e-06     IIII            
+2TBN DOPAMINER       3  of  5  102.21   34.07    682        9.3e-08     0.077       ..iiI           
+2TBN 5HT6RECEPTR     3  of  13 85.56    28.52    790        3.7e-07     0.23        .ii........I.   
+2TBN SOMATOSTTN5R    2  of  5  77.78    38.89    551        1.7e-06     1.7         .I..I           
+2TBN GPR40FAMILY     2  of  5  60.39    30.19    508        1.1e-05     12          Ii...           
+2TBN KVCHANNEL       2  of  4  65.06    32.53    382        2.8e-05     31          ..II            
+2TBN OCTOPAMINER     2  of  7  62.38    31.19    542        3.8e-05     35          .Ii....         
+2TBN NRPEPTIDEYR     2  of  5  50.12    25.06    394        5.3e-05     58          i...i           
+2TBF
+3TBS
+3TBT MotifName       No.Mots   IdScore PfScore Pvalue    Sequence                                                Len  low  pos   high 
+3TBH 5HT2CRECEPTR    1  of  8  93.33   922     5.62e-13  AVRSLLVHLIGLLVWQFDIS                                    20   7    7     7    
+3TBH 5HT2CRECEPTR    2  of  8  96.30   870     1.84e-13  SPVAAIVTDTFNSSDGGR                                      18   28   28    28   
+3TBH 5HT2CRECEPTR    3  of  8  89.74   659     1.20e-07  EEENAPNPNPDQK                                           13   273  275   276  
+3TBH 5HT2CRECEPTR    4  of  8  97.22   620     9.71e-09  RRKKKEKRPRGT                                            12   288  289   290  
+3TBH 5HT2CRECEPTR    5  of  8  100.00  840     1.69e-13  PPVRQIPRVAATALSGR                                       17   393  394   395  
+3TBH 5HT2CRECEPTR    6  of  8  92.16   822     6.55e-11  ELNVNIYRHTNERVVRK                                       17   410  411   412  
+3TBH 5HT2CRECEPTR    7  of  8  93.75   766     4.16e-10  ANDTEPGIEMQVENLE                                        16   427  428   429  
+3TBH 5HT2CRECEPTR    8  of  8  97.78   713     3.41e-10  ELPVNPSNVVSERIS                                         15   442  443   444  
+3TBB
+3TBH GPCRRHODOPSN    1  of  7  25.21   230     7.25e-07  WPALSIVVIIIMTIGGNILVIMAVS                               25   5    56    490  
+3TBH GPCRRHODOPSN    2  of  7  41.32   430     3.06e-12  TNYFLMSLAIADMLVGLLVMPL                                  22   38   89    524  
+3TBH GPCRRHODOPSN    3  of  7  43.65   449     9.05e-12  DVLFSTASIMHLCAISLDRYVAI                                 23   81   135   576  
+3TBH GPCRRHODOPSN    4  of  7  26.18   246     6.17e-04  KAIMKIAIVWAISIGVSVPIPV                                  22   117  171   612  
+3TBH GPCRRHODOPSN    5  of  7  27.24   290     4.40e-07  VLIGSFVAFFIPLTIMVITYFLTI                                24   167  216   657  
+3TBH GPCRRHODOPSN    6  of  7  31.08   431     1.02e-07  ASKVLGIVFFVFLIMWCPFFITNIL                               25   219  310   908  
+3TBH GPCRRHODOPSN    7  of  7  29.56   411     2.02e-09  LNVFVWIGYVCSGINPLVYTLFNKIYR                             27   263  351   951  
+3TBB
+3TBH 5HTRECEPTOR     1  of  4  42.82   188     2.95e-04  VIMAVSMEK                                               9    43   75    105  
+3TBH 5HTRECEPTOR     2  of  4  42.36   173     7.84e-03  VLIGSFVAF                                               9    182  216   243  
+3TBH 5HTRECEPTOR     3  of  4  42.01   301     7.06e-05  FFITNILSVLCG                                            12   301  328   362  
+3TBH 5HTRECEPTOR     4  of  4  55.90   165     4.76e-02  TLFNKI                                                  6    339  370   402  
+3TBB
+3TBN DOPAMINER       3  of  5  28.83   154     8.97e-02  AIRNPIEHS                                               9    115  156   144  
+3TBN DOPAMINER       4  of  5  28.15   224     1.42e-02  LMEKLLNVFVWI                                            12   281  346   425  
+3TBN DOPAMINER       5  of  5  45.23   304     7.32e-05  LFNKIYRRAFSKYLR                                         15   305  371   450  
+3TBB
+3TBN 5HT6RECEPTR     2  of  13 27.78   217     3.56e-02  QFPDGVQNWPALSIVVII                                      18   20   48    20   
+3TBN 5HT6RECEPTR     3  of  13 24.44   250     1.21e-02  AVSMEKKLHNATNYF                                         15   50   78    50   
+3TBN 5HT6RECEPTR     12 of  13 33.33   323     8.62e-04  YRRAFSKYLRCDYKP                                         15   327  376   327  
+3TBB
+3TBN SOMATOSTTN5R    2  of  5  40.00   244     2.05e-03  TAVRSLLVHLIGLLV                                         15   33   6     36   
+3TBN SOMATOSTTN5R    5  of  5  37.78   307     8.25e-04  GDEEENAPNPNPDQK                                         15   325  273   326  
+3TBB
+3TBN GPR40FAMILY     1  of  5  35.71   308     8.20e-04  LAILYDYVWPLPRYLC                                        16   64   113   73   
+3TBN GPR40FAMILY     2  of  5  24.68   200     1.39e-02  RYVAIRNPIEH                                             11   104  153   113  
+3TBB
+3TBN KVCHANNEL       3  of  4  32.56   167     7.80e-03  LVGLLVMPLSLLAIL                                         15   315  102   600  
+3TBN KVCHANNEL       4  of  4  32.50   215     3.62e-03  ISIGVSVPIPVI                                            12   386  182   659  
+3TBB
+3TBN OCTOPAMINER     2  of  7  36.67   286     1.68e-03  VIMAVSMEKKLHNATNYF                                      18   72   75    130  
+3TBN OCTOPAMINER     3  of  7  25.71   256     2.25e-02  PLPRYLCPVWISLD                                          14   118  122   176  
+3TBB
+3TBN NRPEPTIDEYR     1  of  5  24.48   206     2.26e-03  MEKKLHNATNYFL                                           13   52   81    89   
+3TBN NRPEPTIDEYR     5  of  5  25.65   188     2.32e-02  LVYTLFNKIYRRAF                                          14   306  367   443  
+3TBB
+3TBF

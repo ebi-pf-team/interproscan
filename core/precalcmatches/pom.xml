@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>interproscan</artifactId>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <version>5.10-50.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>precalcmatches</artifactId>
+    <version>5.10-50.0</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>berkeley</module>
+        <module>server</module>
+        <module>precalc-match-client</module>
+    </modules>
+
+    <name>InterProScan Precalculated Matches</name>
+    <description>Makes use of BerkeleyDB to allow storage and retrieval
+        of precalculated matches. Also includes code for retrieving
+        match data from other sources, e.g. the legacy Onion system.
+    </description>
+
+    <url>http://www.ebi.ac.uk/interpro/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>kos</id>
+            <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-persistence</artifactId>
+            <version>5.10-50.0</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>je</artifactId>
+            <groupId>com.sleepycat</groupId>
+            <version>5.0.55</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>com.springsource.oracle.jdbc</artifactId>
+            <version>10.2.0.2</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

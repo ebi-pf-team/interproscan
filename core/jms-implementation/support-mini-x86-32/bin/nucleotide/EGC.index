@@ -1,0 +1,24 @@
+ 0 Standard with AUG start only
+ 1 Standard
+ 2 Vertebrate mitochondrial
+ 3 Yeast mitochondrial
+ 4 Mold, Protozoan, and Coelenterate Mitochondrial and Mycoplasma/Spiroplasma
+ 5 Invertebrate Mitochondrial
+ 6 Ciliate, Dasycladacean and Hexamita Nuclear
+# 7 *Kinetoplast code now merged in code id 4
+# 8 *Plant chloroplast all differences due to RNA edit use code id 1
+ 9 Echinoderm and Flatworm Mitochondrial
+10 Euplotid Nuclear
+11 Bacterial and Plant Plastid
+12 Alternative Yeast Nuclear
+13 Ascidian Mitochondrial
+14 Alternative Flatworm Mitochondrial
+15 Blepharisma Nuclear
+16 Chlorophycean Mitochondrial
+#17 Never defined
+#18 Never defined
+#19 Never defined
+#20 Never defined
+21 Trematode Mitochondrial
+22 Scenedesmus obliquus Mitochondrial
+23 Thraustochytrium Mitochondrial

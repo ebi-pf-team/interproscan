@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- Import common beans -->
+    <import resource="classpath:/spring/spring-properties-context.xml"/>
+    <import resource="classpath:/spring/persistence/datasource-context.xml"/>
+    <import resource="installer-entitymanager-context.xml"/>
+    <import resource="interpro-db-access-context.xml"/>
+    <import resource="classpath:/spring/directoryManager/InstallerDirectoryManager-context.xml"/>
+
+    <bean id="installer" class="uk.ac.ebi.interpro.scan.jms.installer.Installer">
+        <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
+        <property name="parsers">
+            <list>
+            </list>
+        </property>
+        <property name="jdbcEntryDAO" ref="jdbcEntryDAO" />
+        <property name="releaseDAO" ref="releaseDAO" />
+    </bean>
+
+
+
+</beans>
+

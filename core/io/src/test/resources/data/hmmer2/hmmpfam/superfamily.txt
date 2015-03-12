@@ -1,0 +1,2364 @@
+Logical Depth LDhmmpfam v1.5.4
+Copyright (C) Logical Depth, Inc. All rights reserved.
+EMBL-EBI 15 CPU-socket License
+
+hmmpfam
+HMMER 2.3-compatible (LDhmmpfam)
+
+HMM file:      /ebi/production/interpro/Onion/calcs/SSF/superfamily.hmm.bin
+Sequence file: P0A855.seq
+
+Query sequence: P0A855
+Accession:      [none]
+Description:    [none]
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value #D
+-------- -----------                                    -----    ------- --
+0045354  YVTN repeat-like/Quinoprotein amine dehydrog   207.3    8.9e-63  1
+0042001  Dipeptidyl peptidase IV/CD26, N-terminal dom   193.1    1.6e-58  1
+0039879  Tricorn protease N-terminal domain             192.6      1e-57  1
+0036130  TolB, C-terminal domain                        192.8    6.7e-55  1
+0041192  Dipeptidyl peptidase IV/CD26, N-terminal dom   175.1    3.4e-52  1
+0039880  Tricorn protease domain 2                      143.6    2.7e-46  1
+0036131  TolB, N-terminal domain                        147.0    1.4e-43  1
+0045181  YVTN repeat-like/Quinoprotein amine dehydrog   120.9      9e-39  1
+0040347  YVTN repeat-like/Quinoprotein amine dehydrog   113.4    9.6e-36  1
+0042746  Prolyl oligopeptidase, N-terminal domain        92.9    3.6e-32  1
+0039586  YVTN repeat-like/Quinoprotein amine dehydrog   100.1    3.2e-29  1
+0042835  C-terminal (heme d1) domain of cytochrome cd    76.2    2.7e-23  1
+0039648  YVTN repeat-like/Quinoprotein amine dehydrog    71.5    5.5e-23  2
+0043395  NHL repeat                                      69.0    3.6e-21  1
+0039675  3-carboxy-cis,cis-mucoante lactonizing enzym    52.7      8e-16  1
+0041521  WD40 repeat-like                                42.9    2.1e-13  1
+0041506  YWTD domain                                     43.3      3e-13  1
+0042406  Thermostable phytase (3-phytase)                37.4    5.2e-13  1
+0041417  C-terminal (heme d1) domain of cytochrome cd    40.1    1.2e-12  1
+0044582  Calcium-dependent phosphotriesterase            36.0    1.6e-11  1
+0040893  YVTN repeat-like/Quinoprotein amine dehydrog    35.6    3.9e-11  1
+0036709  Calcium-dependent phosphotriesterase            36.0      1e-10  1
+0039054  YWTD domain                                     33.9    1.7e-10  1
+0042881  Nitrous oxide reductase, N-terminal domain      32.8    4.2e-10  1
+0042643  NHL repeat                                      21.5    2.6e-07  1
+0043253  Putative isomerase YbhE                         22.1    4.1e-07  1
+0041522  WD40 repeat-like                                21.1    7.1e-07  1
+0042310  WD40 repeat-like                                22.2    7.2e-07  1
+0036129  Soluble quinoprotein glucose dehydrogenase      19.7    3.9e-06  1
+0037143  WD40 repeat-like                                16.2    1.1e-05  1
+0042311  WD40 repeat-like                                16.7    1.8e-05  1
+0038319  WD40 repeat-like                                15.2    3.8e-05  1
+0043708  WD40 repeat-like                                15.3    3.9e-05  1
+0037647  Quinoprotein alcohol dehydrogenase-like         14.3    4.1e-05  1
+0038192  WD40 repeat-like                                14.5    7.9e-05  1
+0039965  WD40 repeat-like                                14.9    0.00011  1
+0037815  Nitrous oxide reductase, N-terminal domain      15.1    0.00015  1
+0044204  WD40 repeat-like                                10.8     0.0021  1
+0040005  Quinoprotein alcohol dehydrogenase-like          9.3     0.0022  1
+0041353  WD40 repeat-like                                 8.4      0.005  1
+0037966  Quinoprotein alcohol dehydrogenase-like          8.3     0.0052  1
+0042121  WD40 repeat-like                                 6.7      0.011  1
+0035252  omega toxin-like                                 3.9          2  1
+0036421  RmlC-like cupins                                 2.6        2.1  1
+0036051  PurM C-terminal domain-like                      1.2        3.8  1
+0040325  Siroheme synthase middle domains-like            0.7          4  1
+0037425  FMN-linked oxidoreductases                      -1.2          4  1
+0044111  E set domains                                    1.0          4  1
+0038360  Formate dehydrogenase/DMSO reductase, domain    -2.5        4.6  1
+0038187  Galactose oxidase, central domain               -1.1        5.6  1
+0036328  Type I dockerin domain                           0.8          8  1
+0045407  RmlC-like cupins                                -0.3        8.7  1
+0044444  Cytochrome c                                    -1.1        9.6  1
+0036321  Pectin lyase-like                               -1.9        9.7  1
+0039250  Lipoprotein localization factors LolAB          -1.0         11  1
+0038583  Triosephosphate isomerase (TIM)                 -1.9         13  1
+0038232  NAD(P)-binding Rossmann-fold domains            -1.8         14  1
+0041527  beta-lactamase/transpeptidase-like              -1.7         14  1
+0036788  Tryptophan synthase beta subunit-like PLP-de    -4.2         16  1
+0041235  SRF-like                                        -0.5         16  1
+0041622  Antibiotic binding domain of TipA-like multi    -0.6         16  1
+0040087  Nucleic acid-binding proteins                    0.1         17  1
+0037544  Ribosomal proteins L23 and L15e                 -0.1         17  1
+0040712  Nucleotide-diphospho-sugar transferases         -2.2         17  1
+0037719  S-adenosyl-L-methionine-dependent methyltran    -2.4         17  1
+0035563  Thiolase-like                                   -1.9         18  1
+0036426  RmlC-like cupins                                -1.2         18  1
+0036258  FMN-linked oxidoreductases                      -3.6         19  1
+0039703  Phosphoenolpyruvate/pyruvate domain             -3.1         19  1
+0035444  Class II aaRS and biotin synthetases            -2.5         20  1
+0036712  Class II aaRS and biotin synthetases            -2.0         21  1
+0042344  Siroheme synthase middle domains-like           -1.2         22  1
+0044379  RmlC-like cupins                                -1.9         22  1
+0037231  DNA repair protein MutS, domain II              -1.1         23  1
+0043316  Prim-pol domain                                 -2.5         23  1
+0037608  Phosphoenolpyruvate/pyruvate domain             -3.3         23  1
+0045315  Glutathione synthetase ATP-binding domain-li    -2.6         24  1
+0036755  beta-lactamase/transpeptidase-like              -2.4         25  1
+0044606  NAD(P)-binding Rossmann-fold domains            -3.2         25  1
+0044248  Family A G protein-coupled receptor-like        -2.0         26  1
+0042695  E set domains                                   -1.6         26  1
+0036419  Ribokinase-like                                 -3.8         26  1
+0039120  RmlC-like cupins                                -2.7         27  1
+0039073  Thioredoxin-like                                -1.6         27  1
+0040822  beta-lactamase/transpeptidase-like              -4.5         28  1
+0041015  SRF-like                                        -2.0         29  1
+0036550  Hedgehog/intein (Hint) domain                   -1.8         30  1
+0043992  Ricin B-like lectins                            -1.9         32  1
+0038003  Nucleotide-diphospho-sugar transferases         -3.0         32  1
+0036996  SRF-like                                        -1.6         33  1
+0037918  Cyclin-like                                     -1.6         34  1
+0038231  Galactose-binding domain-like                   -2.7         35  1
+0035078  Actin depolymerizing proteins                   -3.5         39  1
+0037000  E set domains                                   -3.2         40  1
+0041283  Class II aaRS and biotin synthetases            -3.4         40  1
+0042920  Quinolinic acid phosphoribosyltransferase (N    -2.5         41  1
+0035246  PLP-dependent transferases                      -5.0         41  1
+0039546  Galactose-binding domain-like                   -2.6         41  1
+0042292  Zinc beta-ribbon                                -1.4         43  1
+0043734  SRF-like                                        -2.3         44  1
+0044791  FMN-linked oxidoreductases                      -3.7         44  1
+0039598  NTF2-like                                       -2.7         45  1
+0037138  Cu,Zn superoxide dismutase-like                 -2.2         45  1
+0037415  Fibronectin type III                            -3.2         45  1
+0038072  Ribulose-phoshate binding barrel                -3.5         46  1
+0043916  EF-G C-terminal domain-like                     -1.5         46  1
+0037113  Class II aaRS and biotin synthetases            -3.4         46  1
+0044464  Colicin E immunity proteins                     -1.9         47  1
+0040380  PapD-like                                       -2.1         49  1
+0043530  Pentein                                         -4.6         51  1
+0036582  C2 domain (Calcium/lipid-binding domain, CaL    -4.5         53  1
+0043729  Cu,Zn superoxide dismutase-like                 -3.2         54  1
+0045020  beta-lactamase/transpeptidase-like              -3.7         55  1
+0039781  Ribulose-phoshate binding barrel                -4.9         57  1
+0036760  Ribonuclease domain of colicin E3               -2.6         58  1
+0038054  Nucleic acid-binding proteins                   -2.6         58  1
+0036482  Zinc beta-ribbon                                -2.0         59  1
+0044692  Ribulose-phoshate binding barrel                -4.8         59  1
+0044006  Ribulose-phoshate binding barrel                -4.9         60  1
+0042291  Nucleic acid-binding proteins                   -2.0         62  1
+0036722  Prismane protein-like                           -5.0         62  1
+0043472  Type III secretory system chaperone             -2.9         63  1
+0035223  (Trans)glycosidases                             -4.8         63  1
+0044928  Triosephosphate isomerase (TIM)                 -4.0         64  1
+0034888  Ubiquitin-like                                  -3.1         66  1
+0034879  Ribulose-phoshate binding barrel                -4.6         68  1
+0041836  Fucose-specific lectin                          -4.3         69  1
+0040203  Sm-like ribonucleoproteins                      -1.8         72  1
+0038315  Colicin E immunity proteins                     -2.1         72  1
+0038136  Composite domain of metallo-dependent hydrol    -4.2         73  1
+0035049  Porphobilinogen deaminase (hydroxymethylbila    -3.1         73  1
+0037711  FAD-linked reductases, C-terminal domain        -2.1         74  1
+0043716  Oligoxyloglucan reducing end-specific cellob    -5.5         75  1
+0035937  Ricin B-like lectins                            -3.2         76  1
+0041469  Class II aaRS and biotin synthetases            -4.3         76  1
+0045231  PLP-dependent transferases                      -4.9         76  1
+0038608  (Trans)glycosidases                             -4.8         77  1
+0043667  beta-Barrel protease inhibitors                 -3.2         78  1
+0038166  C2 domain (Calcium/lipid-binding domain, CaL    -3.8         80  1
+0037091  Colicin E immunity proteins                     -2.2         80  1
+0035012  Domain of early E2A DNA-binding protein, ADD    -2.7         80  1
+0043605  PUA domain-like                                 -2.1         80  1
+0044890  Ribokinase-like                                 -5.4         81  1
+0044187  NAD(P)-binding Rossmann-fold domains            -4.8         85  1
+0039381  Ribokinase-like                                 -5.0         86  1
+0045352  Periplasmic binding protein-like I              -4.6         86  1
+0043587  alpha/beta-Hydrolases                           -5.4         87  1
+0037152  EV matrix protein                               -3.6         87  1
+0044654  Galactose mutarotase-like                       -3.8         88  1
+0035866  DNA-binding domain of retroviral integrase      -2.3         89  1
+0043346  Aldolase                                        -5.2         89  1
+0039030  Positive stranded ssRNA viruses                 -4.7         93  1
+0043927  TAF(II)230 TBP-binding fragment                 -2.3         93  1
+0041976  Ricin B-like lectins                            -3.7         94  1
+0039883  beta-lactamase/transpeptidase-like              -4.7         94  1
+0041135  (Trans)glycosidases                             -6.5         95  1
+0042740  E set domains                                   -4.2         97  1
+0040914  DAK1/DegV-like                                  -4.4         99  1
+0042213  EF-G C-terminal domain-like                     -2.6      1e+02  1
+
+Parsed for domains:
+Model    Domain Seq-f Seq-t    HMM-f HMM-t      Score  E-value
+-------- ------ ----- -----    ----- -----      -----  -------
+0044444   1/1       1    37 [.     1    37 [.    -1.1      9.6
+0038136   1/1      11    60 ..     1    51 [.    -4.2       73
+0040914   1/1      20    32 ..     1    13 [.    -4.4       99
+0038231   1/1      23    48 ..   169   194 .]    -2.7       35
+0039546   1/1      23    48 ..   136   161 .]    -2.6       41
+0036131   1/1      28   161 ..     1   134 []   147.0  1.4e-43
+0035049   1/1      39    81 ..    52    94 .]    -3.1       73
+0035866   1/1      43    79 ..    19    55 .]    -2.3       89
+0043927   1/1      45   109 ..     1    67 []    -2.3       93
+0036328   1/1      56    92 ..    35    71 .]     0.8        8
+0039703   1/1      58    66 ..   928   936 .]    -3.1       19
+0037608   1/1      58    66 ..   872   880 .]    -3.3       23
+0041135   1/1      74   120 ..     1    66 [.    -6.5       95
+0036788   1/1      80   146 ..   206   262 ..    -4.2       16
+0036755   1/1      81   143 ..   186   243 .]    -2.4       25
+0036419   1/1      83   249 ..     1   183 [.    -3.8       26
+0038054   1/1      85   131 ..     1    48 [.    -2.6       58
+0035223   1/1      85   120 ..     1    55 [.    -4.8       63
+0036258   1/1      85   137 ..     1   157 [.    -3.6       19
+0044890   1/1      86   207 ..     1   120 [.    -5.4       81
+0038072   1/1      87   120 ..   205   248 .]    -3.5       46
+0037918   1/1      88   147 ..    47   106 .]    -1.6       34
+0042920   1/1      89   114 ..   141   169 .]    -2.5       41
+0039781   1/1      89   131 ..   281   323 .]    -4.9       57
+0036051   1/1      89   116 ..   148   175 .]     1.2      3.8
+0044928   1/1      89   119 ..   189   226 .]    -4.0       64
+0039598   1/1      89   148 ..    83   139 .]    -2.7       45
+0037425   1/1      90   145 ..   233   287 ..    -1.2        4
+0039381   1/1      91   207 ..     1   120 [.    -5.0       86
+0034879   1/1      93   117 ..   223   247 .]    -4.6       68
+0036722   1/1      93   141 ..   506   553 .]    -5.0       62
+0044791   1/1      93   120 ..   200   229 .]    -3.7       44
+0044692   1/1      93   120 ..   227   254 .]    -4.8       59
+0038583   1/1      93   120 ..   195   224 .]    -1.9       13
+0035563   1/1      96   132 ..   124   158 ..    -1.9       18
+0042740   1/1      97   122 ..    55    80 ..    -4.2       97
+0045315   1/1      99   172 ..     1    79 [.    -2.6       24
+0041622   1/1     101   176 ..     1    94 []    -0.6       16
+0039648   1/2     104   366 ..     1   346 []    64.9  6.6e-21
+0039883   1/1     106   145 ..   201   241 .]    -4.7       94
+0042291   1/1     108   137 ..    49    78 .]    -2.0       62
+0042001   1/1     112   429 ..     1   470 []   193.1  1.6e-58
+0041192   1/1     112   429 ..     1   470 []   175.1  3.4e-52
+0043716   1/1     112   235 ..     1   149 [.    -5.5       75
+0040893   1/1     114   429 ..     1   368 []    35.6  3.9e-11
+0044187   1/1     114   145 ..     1    32 [.    -4.8       85
+0044248   1/1     121   171 ..     1    51 [.    -2.0       26
+0038232   1/1     123   158 ..   209   244 .]    -1.8       14
+0043530   1/1     124   173 ..   356   409 .]    -4.6       51
+0043316   1/1     124   192 ..   142   210 .]    -2.5       23
+0036482   1/1     126   147 ..    37    58 .]    -2.0       59
+0042292   1/1     126   145 ..    31    50 .]    -1.4       43
+0035078   1/1     133   160 ..     1    28 [.    -3.5       39
+0045354   1/1     134   430 .]     1   373 []   207.3  8.9e-63
+0037719   1/1     137   193 ..     1    57 [.    -2.4       17
+0040347   1/1     137   428 ..     1   301 []   113.4  9.6e-36
+0042695   1/1     138   170 ..    70   105 .]    -1.6       26
+0043346   1/1     141   177 ..   267   303 .]    -5.2       89
+0035246   1/1     143   176 ..     1    99 [.    -5.0       41
+0043587   1/1     145   179 ..     1    35 [.    -5.4       87
+0036426   1/1     150   218 ..     1    64 [.    -1.2       18
+0043472   1/1     151   168 ..   113   130 .]    -2.9       63
+0039879   1/1     153   428 ..     1   281 []   192.6    1e-57
+0045181   1/1     153   428 ..     1   355 []   120.9    9e-39
+0044582   1/1     160   426 ..     1   340 []    36.0  1.6e-11
+0036130   1/1     162   428 ..     1   269 []   192.8  6.7e-55
+0038608   1/1     163   199 ..   246   295 .]    -4.8       77
+0041506   1/1     165   403 ..     1   263 []    43.3    3e-13
+0039054   1/1     165   417 ..     1   266 []    33.9  1.7e-10
+0042746   1/1     166   428 ..     1   430 []    92.9  3.6e-32
+0036550   1/1     166   199 ..   133   169 .]    -1.8       30
+0039880   1/1     166   421 ..     1   360 []   143.6  2.7e-46
+0045407   1/1     169   218 ..     1    48 [.    -0.3      8.7
+0043916   1/1     170   242 ..     1    73 []    -1.5       46
+0038360   1/1     171   240 ..   743   812 .]    -2.5      4.6
+0042213   1/1     176   231 ..     1    56 [.    -2.6    1e+02
+0037815   1/1     176   399 ..   131   459 .]    15.1  0.00015
+0043395   1/1     178   411 ..     1   260 []    69.0  3.6e-21
+0042643   1/1     178   428 ..     1   279 []    21.5  2.6e-07
+0039675   1/1     178   428 ..     1   365 []    52.7    8e-16
+0042121   1/1     178   428 ..     1   228 [.     6.7    0.011
+0044379   1/1     179   218 ..    31    70 ..    -1.9       22
+0037711   1/1     179   198 ..    82   101 .]    -2.1       74
+0039030   1/1     179   207 ..   402   492 .]    -4.7       93
+0038187   1/1     180   372 ..     1   273 [.    -1.1      5.6
+0042835   1/1     180   428 ..     1   314 [.    76.2  2.7e-23
+0044111   1/1     180   218 ..     1    39 [.     1.0        4
+0041417   1/1     181   428 ..     1   313 [.    40.1  1.2e-12
+0042310   1/1     181   428 ..     1   261 [.    22.2  7.2e-07
+0039965   1/1     181   353 ..     1   223 [.    14.9  0.00011
+0041522   1/1     182   428 ..     1   299 []    21.1  7.1e-07
+0041521   1/1     182   428 ..    40   311 .]    42.9  2.1e-13
+0036129   1/1     182   333 ..   286   450 .]    19.7  3.9e-06
+0038319   1/1     182   353 ..   165   337 .]    15.2  3.8e-05
+0042311   1/1     182   353 ..   104   287 .]    16.7  1.8e-05
+0038192   1/1     182   353 ..   165   339 .]    14.5  7.9e-05
+0039586   1/1     182   428 ..     1   337 []   100.1  3.2e-29
+0036709   1/1     185   430 .]     1   312 []    36.0    1e-10
+0043708   1/1     186   428 ..     1   299 [.    15.3  3.9e-05
+0044204   1/1     187   353 ..     1   170 [.    10.8   0.0021
+0041353   1/1     188   428 ..     1   253 [.     8.4    0.005
+0043253   1/1     188   428 ..     1   333 []    22.1  4.1e-07
+0036421   1/1     189   230 ..   128   169 .]     2.6      2.1
+0039120   1/1     189   218 ..    67    96 ..    -2.7       27
+0037966   1/1     190   402 ..   225   571 .]     8.3   0.0052
+0037152   1/1     190   210 ..   131   151 .]    -3.6       87
+0040712   1/1     191   229 ..   245   283 .]    -2.2       17
+0037143   1/1     191   428 ..     1   318 [.    16.2  1.1e-05
+0040005   1/1     191   426 ..   234   573 .]     9.3   0.0022
+0038003   1/1     191   228 ..   240   277 .]    -3.0       32
+0043729   1/1     193   224 ..   117   154 .]    -3.2       54
+0037138   1/1     193   220 ..   126   155 .]    -2.2       45
+0042881   1/1     203   428 ..   119   441 .]    32.8  4.2e-10
+0037647   1/1     204   428 ..     1   376 [.    14.3  4.1e-05
+0043605   1/1     206   232 ..    31    57 .]    -2.1       80
+0041976   1/1     207   330 ..     1   137 []    -3.7       94
+0040822   1/1     208   246 ..     1    39 [.    -4.5       28
+0037544   1/1     209   229 ..    58    78 .]    -0.1       17
+0045352   1/1     210   247 ..     1    38 [.    -4.6       86
+0035937   1/1     213   331 ..     1   122 []    -3.2       76
+0041015   1/1     220   247 ..     1    28 [.    -2.0       29
+0043734   1/1     220   247 ..     1    28 [.    -2.3       44
+0036996   1/1     222   247 ..     1    26 [.    -1.6       33
+0041235   1/1     222   247 ..     1    26 [.    -0.5       16
+0036712   1/1     226   247 ..   321   342 .]    -2.0       21
+0037113   1/1     226   251 ..   328   353 .]    -3.4       46
+0035444   1/1     226   247 ..   321   342 .]    -2.5       20
+0041469   1/1     226   251 ..   267   293 .]    -4.3       76
+0041283   1/1     226   243 ..   287   304 .]    -3.4       40
+0045020   1/1     227   247 ..     1    21 [.    -3.7       55
+0037091   1/1     233   253 ..    63    83 .]    -2.2       80
+0044464   1/1     233   254 ..    66    87 .]    -1.9       47
+0038315   1/1     233   254 ..    64    85 .]    -2.1       72
+0043667   1/1     239   286 ..    56   100 .]    -3.2       78
+0042406   1/1     252   359 ..     1   353 []    37.4  5.2e-13
+0041527   1/1     257   290 ..     1    34 [.    -1.7       14
+0038166   1/1     260   295 ..    30    65 ..    -3.8       80
+0036582   1/1     266   295 ..     1    68 [.    -4.5       53
+0044006   1/1     272   321 ..     1    54 [.    -4.9       60
+0045231   1/1     284   320 ..     1    37 [.    -4.9       76
+0036760   1/1     287   335 ..     1    49 [.    -2.6       58
+0041836   1/1     290   358 ..     1    78 [.    -4.3       69
+0035252   1/1     292   328 ..     1    37 []     3.9        2
+0043992   1/1     301   352 ..     1    51 [.    -1.9       32
+0039250   1/1     305   362 ..    25    82 ..    -1.0       11
+0037415   1/1     310   340 ..     1    31 [.    -3.2       45
+0040087   1/1     311   366 ..     1    71 []     0.1       17
+0036321   1/1     313   394 ..     1    98 [.    -1.9      9.7
+0044654   1/1     313   354 ..     1    42 [.    -3.8       88
+0034888   1/1     322   357 ..     1    36 [.    -3.1       66
+0037231   1/1     333   370 ..     1    37 [.    -1.1       23
+0040325   1/1     336   353 ..     1    18 [.     0.7        4
+0042344   1/1     337   353 ..     1    17 [.    -1.2       22
+0040203   1/1     339   368 ..    31    60 .]    -1.8       72
+0044606   1/1     357   401 ..     1    46 [.    -3.2       25
+0039073   1/1     379   405 ..    51    77 .]    -1.6       27
+0039648   2/2     380   428 ..     1    49 [.     6.6    0.015
+0040380   1/1     381   400 ..     1    20 [.    -2.1       49
+0035012   1/1     408   428 ..    70    90 .]    -2.7       80
+0037000   1/1     411   429 ..     1    19 [.    -3.2       40
+
+Alignments of top-scoring domains:
+0044444: domain 1 of 1, from 1 to 37: score -1.1, E = 9.6
+                   *->MkrllllllllllllllaaaaaaaaadaadvarGkal<-*
+                      Mk  l +++ +l+l++ +++a++  + +  v+ G+ +   
+      P0A855     1    MKQALRVAFGFLILWASVLHAEVRIVIDSGVDSGRPI    37   
+
+0038136: domain 1 of 1, from 11 to 60: score -4.2, E = 73
+                   *->dllikngtvvdgdglekadvliedgrIaaigkllpapagaevidakG
+                        li  + v+  +  ++ d ++++gr + + +   a++ga   d +G
+      P0A855    11    -FLILWASVLHAEVRIVIDSGVDSGRPIGVVPFQWAGPGAAPEDIGG 56   
+
+                   kivl<-*
+                    +++   
+      P0A855    57 IVAA    60   
+
+0040914: domain 1 of 1, from 20 to 32: score -4.4, E = 99
+                   *->mmkiaivtDStad<-*
+                      + ++ iv+DS +d   
+      P0A855    20    HAEVRIVIDSGVD    32   
+
+0038231: domain 1 of 1, from 23 to 48: score -2.7, E = 35
+                   *->vrivilenhgngkdthirglkvyGpk<-*
+                      vrivi ++++ g+ + +  ++  Gp    
+      P0A855    23    VRIVIDSGVDSGRPIGVVPFQWAGPG    48   
+
+0039546: domain 1 of 1, from 23 to 48: score -2.6, E = 41
+                   *->irivilsnhgngadthirelkvlGpk<-*
+                      +rivi s+ + g+ + +  ++  Gp    
+      P0A855    23    VRIVIDSGVDSGRPIGVVPFQWAGPG    48   
+
+0036131: domain 1 of 1, from 28 to 161: score 147.0, E = 1.4e-43
+                   *->tggvlealpiavvpfalegegglgediasvvaadLersGlFspldps
+                      ++gv++ +pi+vvpf+++g+g+++edi+++vaadL++sG+F+pld++
+      P0A855    28    DSGVDSGRPIGVVPFQWAGPGAAPEDIGGIVAADLRNSGKFNPLDRA 74   
+
+                   allqspsslsevdfaaWkslgadalvvGsvtllgdgrlevefrlydvlkg
+                    l+q+p s++ev+ aaW++lg+da+vvG+vt+++dg+++v+++l+d+ ++
+      P0A855    75 RLPQQPGSAQEVQPAAWSALGIDAVVVGQVTPNPDGSYNVAYQLVDTGGA 124  
+
+                   qlllllgksytvsasdlRrlaHkiadliyekLtGekG<-*
+                     ++l+++sy v++++lR+++H+ +d+++ekLtG+kG   
+      P0A855   125 PGTVLAQNSYKVNKQWLRYAGHTASDEVFEKLTGIKG    161  
+
+0035049: domain 1 of 1, from 39 to 81: score -3.1, E = 73
+                   *->llraellgsladaeelGlelAeeLlekgakeildelllellel<-*
+                      ++ +++ g+ a +e++G  +A++L++ g+ + ld+++l  ++    
+      P0A855    39    VVPFQWAGPGAAPEDIGGIVAADLRNSGKFNPLDRARLPQQPG    81   
+
+0035866: domain 1 of 1, from 43 to 79: score -2.3, E = 89
+                   *->eWkGPakllwkGeGavvvkdqeklllvPrrlvrlvkd<-*
+                      +W GP     +  G v+   +++  + P  ++rl ++   
+      P0A855    43    QWAGPGAAPEDIGGIVAADLRNSGKFNPLDRARLPQQ    79   
+
+0043927: domain 1 of 1, from 45 to 109: score -2.3, E = 93
+                   *->dgdgdggldltGflfGnidedGrleaddegegrdgsvldeeakehla
+                       g g  + d+ G++  ++ ++G++   d+++  ++ +  +e++   a
+      P0A855    45    AGPGAAPEDIGGIVAADLRNSGKFNPLDRARLPQQPGSAQEVQP--A 89   
+
+                   glgklGlgslltevidseda<-*
+                   + ++lG++ ++   +  + +   
+      P0A855    90 AWSALGIDAVVVGQVTPNPD    109  
+
+0036328: domain 1 of 1, from 56 to 92: score 0.8, E = 8
+                   *->nllaaDvngdgkvnalDllllkryllglidslpveee<-*
+                      +++aaD+ + gk n lD + l ++  ++ ++ p+      
+      P0A855    56    GIVAADLRNSGKFNPLDRARLPQQPGSAQEVQPAAWS    92   
+
+0039703: domain 1 of 1, from 58 to 66: score -3.1, E = 19
+                   *->iAaGlrnTG<-*
+                      +Aa lrn+G   
+      P0A855    58    VAADLRNSG    66   
+
+0037608: domain 1 of 1, from 58 to 66: score -3.3, E = 23
+                   *->iaaGlrnTG<-*
+                      +aa lrn+G   
+      P0A855    58    VAADLRNSG    66   
+
+0041135: domain 1 of 1, from 74 to 120: score -6.5, E = 95
+                   *->akdpewwknaviyqiffwdsngdggdlqgiiekldyLadlGvtaiwl
+                      a+ p+   +a  +q   w+                    lG++a+ +
+      P0A855    74    ARLPQQPGSAQEVQPAAWS-------------------ALGIDAVVV 101  
+
+                   sPifknispqadhgYdiyd<-*
+                     ++ n+++ +++ Y+ +d   
+      P0A855   102 GQVTPNPDGSYNVAYQLVD    120  
+
+0036788: domain 1 of 1, from 80 to 146: score -4.2, E = 16
+                   *->PegkvspekvaqmralGaevvlvg...gtfddaqalakelaaeng..
+                      P + + +++ a+  alG + v+vg+++ + d+ +++a +l+ + g+ 
+      P0A855    80    PGS-AQEVQPAAWSALGIDAVVVGqvtPNPDGSYNVAYQLVDTGGap 125  
+
+                   ..lvlvnpf..n..pnriagq<-*
+                    ++ + n++++n++++r ag+   
+      P0A855   126 gtVLAQNSYkvNkqWLRYAGH    146  
+
+0036755: domain 1 of 1, from 81 to 143: score -2.4, E = 25
+                   *->Gtaqvgtnngrd....vawfvgfa.paddpklvvavlvengkgsggs
+                      G+aq +++  +++  ++a +vg ++p +d+ + va  + +++g  g+
+      P0A855    81    GSAQEVQPAAWSalgiDAVVVGQVtPNPDGSYNVAYQLVDTGGAPGT 127  
+
+                   vaapiakkileallll<-*
+                   v a+  +k+ +++l +   
+      P0A855   128 VLAQNSYKVNKQWLRY    143  
+
+0036419: domain 1 of 1, from 83 to 249: score -3.8, E = 26
+                   *->lkmmkvlviGnallDliltvddefleklglkkgsailisdelpvpge
+                        +   +    + +D ++++                      p p++
+      P0A855    83    AQEVQPAAWSALGIDAVVVGQ-------------------VTPNPDG 110  
+
+                   lvrassfrlvpGGkgaNvavalarllpeGakvaligavGdDefgdfllel
+                   + ++    +  GG+++ v    ++ +++    ++ g   +De  + l   
+      P0A855   111 SYNVAYQLVDTGGAPGTVLAQNSYKVNK-QWLRYAGHTASDEVFEKLTGI 159  
+
+                   lesegvdtsfv.rvpgrpTglalilvd.dgertivvylgaaaelspedld
+                     ++   + +v++++g+  +  l++ d+dg + +vv++ + + +sp++ +
+      P0A855   160 KGAFRTRIAYVvQTNGGQFPYELRVSDyDGYNQFVVHRSPQPLMSPAWSP 209  
+
+                   .......lallagadlvhlsgillaelsleallellelareagvp<-*
+                   +  + ++    +g ++++++      l+  a+++++   r +g+p   
+      P0A855   210 dgsklayVTFESGRSALVIQ-----TLANGAVRQVASFPRHNGAP    249  
+
+0038054: domain 1 of 1, from 85 to 131: score -2.6, E = 58
+                   *->lisiddflkldlrvGkileaekvpdadkpllvltvdlGelevrqvva
+                      +++   ++ l++ +  + ++ + pd    + +  vd G+  + +v+a
+      P0A855    85    EVQPAAWSALGIDAVVVGQVTPNPDGSYNVAYQLVDTGG-APGTVLA 130  
+
+                   g<-*
+                   +   
+      P0A855   131 Q    131  
+
+0035223: domain 1 of 1, from 85 to 120: score -4.8, E = 63
+                   *->eihvrsFtwdsngdggGdlagiaekldyLkdlGvtaiwlsPvfesps
+                      e+ + +++                      +lG++a+ +  v+++p 
+      P0A855    85    EVQPAAWS----------------------ALGIDAVVVGQVTPNPD 109  
+
+                   ...dhGYdpvd<-*
+                     ++  Y+ vd   
+      P0A855   110 gsyNVAYQLVD    120  
+
+0036258: domain 1 of 1, from 85 to 137: score -3.6, E = 19
+                   *->merlaelmlpkrlipyllvgldrevthrlnlkaldrvalipevtagd
+                                                                     
+      P0A855     -    ----------------------------------------------- -    
+
+                   pdlsttilglelknPlvlapmaggnaelaaalaagGagaievgtvtpdpq
+                                            +   aa+ a+G++a++vg vtp   
+      P0A855    85 -------------------------EVQPAAWSALGIDAVVVGQVTP--- 106  
+
+                   agnpvprlarlralagginrmglnnlgldalleelravrlavvkraapdv
+                                          n++g+  ++ +l ++        ap++
+      P0A855   107 -----------------------NPDGSYNVAYQLVDT------GGAPGT 127  
+
+                   pvgvnlggnk<-*
+                   ++  n ++++   
+      P0A855   128 VLAQNSYKVN    137  
+
+0044890: domain 1 of 1, from 86 to 207: score -5.4, E = 81
+                   *->lkmkvlviGnallDliltvdglpeagelvralsfrkvpGGkaaNvav
+                           +    + +D ++++   p +++  ++    +  GG++  v  
+      P0A855    86    --VQPAAWSALGIDAVVVGQVTPNPDGSYNVAYQLVDTGGAPGTVLA 130  
+
+                   alarl.gadlvaligavGdDefgefllelleeegvdt...vvdpdgptgl
+                     ++ ++ ++ ++ g   +De  e l     ++   ++++v++ +g    
+      P0A855   131 QNSYKvNKQWLRYAGHTASDEVFEKLTGIKGAFRTRIayvVQTNGGQFPY 180  
+
+                   alilvdedgertilvylgaaleltped<-*
+                    l++ d dg + ++v++++  +++p++   
+      P0A855   181 ELRVSDYDGYNQFVVHRSPQPLMSPAW    207  
+
+0038072: domain 1 of 1, from 87 to 120: score -3.5, E = 46
+                   *->dvaelleaGAdgvvvGsaivkllaedpeeaikellelikgvldl<-*
+                      + a++ ++G d+vvvG +  +   ++ ++++++l++           
+      P0A855    87    QPAAWSALGIDAVVVGQVTPN--PDGSYNVAYQLVD--------    120  
+
+0037918: domain 1 of 1, from 88 to 147: score -1.6, E = 34
+                   *->pslvaaagCallvpgavipppahsggvvprlaeilGvdvavlaaave
+                      p+  +a g   +v+g+v p+p  s +v+ +l +  G+  +vla    
+      P0A855    88    PAAWSALGIDAVVVGQVTPNPDGSYNVAYQLVDTGGAPGTVLAQNSY 134  
+
+                   svlttlsefdedi<-*
+                   +v      +  +    
+      P0A855   135 KVNKQWLRYAGHT    147  
+
+0042920: domain 1 of 1, from 89 to 114: score -2.5, E = 41
+                   *->aalaeaGvdvvvvGsaifgapdpdlalki<-*
+                      aa+ ++G+d+vvvG  +   p+pd + ++   
+      P0A855    89    AAWSALGIDAVVVGQVT---PNPDGSYNV    114  
+
+0039781: domain 1 of 1, from 89 to 131: score -4.9, E = 57
+                   *->aaleelGadgvlvgsallggpeileeakalleeggllvrpllv<-*
+                      aa + lG+d+v+vg      + + + a +l+ +gg + ++l +   
+      P0A855    89    AAWSALGIDAVVVGQVTPNPDGSYNVAYQLVDTGGAPGTVLAQ    131  
+
+0036051: domain 1 of 1, from 89 to 116: score 1.2, E = 3.8
+                   *->allkklgeeawiiGevvegeggvvvlvv<-*
+                      a++++lg++a+++G+v+++++g + + +   
+      P0A855    89    AAWSALGIDAVVVGQVTPNPDGSYNVAY    116  
+
+0044928: domain 1 of 1, from 89 to 119: score -4.0, E = 64
+                   *->aaalalGadgVlvGsallkaedpaaaaralkqavkaar<-*
+                      aa  alG+d+V+vG      +   ++a +l+          
+      P0A855    89    AAWSALGIDAVVVGQVTPNPDGSYNVAYQLV-------    119  
+
+0039598: domain 1 of 1, from 89 to 148: score -2.7, E = 45
+                   *->atgsqlgilvlVlGelkldedpprkFsqtFlLapqgsaegg.....k
+                      a  s lgi  +V+G+++   +p  +++  ++L+  g a+g + ++++
+      P0A855    89    AAWSALGIDAVVVGQVTP--NPDGSYNVAYQLVDTGGAPGTvlaqnS 133  
+
+                   yfvlndiFRlvdlne<-*
+                   y+v  +++R++++     
+      P0A855   134 YKVNKQWLRYAGHTA    148  
+
+0037425: domain 1 of 1, from 90 to 145: score -1.2, E = 4
+                   *->aaeeaGadaivlsnttgtrdgtleg.llgveagglsgaplkplalel
+                      a+ ++G+da+v++ +t+++dg  +++++ v +gg  g+ l + ++++
+      P0A855    90    AWSALGIDAVVVGQVTPNPDGSYNVaYQLVDTGGAPGTVLAQNSYKV 136  
+
+                   iralreavg<-*
+                    +++ ++ g   
+      P0A855   137 NKQWLRYAG    145  
+
+0039381: domain 1 of 1, from 91 to 207: score -5.0, E = 86
+                   *->mkkmkvlviGeallDlippapgellralsfrkvpGGkaaNvavalar
+                         ++ l i  +++  + p p+   ++    +  GG++  v +  ++
+      P0A855    91    ---WSALGIDAVVVGQVTPNPDGSYNVAYQLVDTGGAPGTVLAQNSY 134  
+
+                   l..GakvafigavGdDefgdfllellraegvdtslvvvdgg.ptglalil
+                    ++    +++g  ++De+ + l     a+   + +vv+++g   +  l++
+      P0A855   135 KvnKQWLRYAGHTASDEVFEKLTGIKGAFRTRIAYVVQTNGgQFPYELRV 184  
+
+                   vdadgertivfydrglgaaaelsped<-*
+                    d dg + +v++    ++ +++sp++   
+      P0A855   185 SDYDGYNQFVVH---RSPQPLMSPAW    207  
+
+0034879: domain 1 of 1, from 93 to 117: score -4.6, E = 68
+                   *->alGadgvlvGsallkgpdplkeake<-*
+                      alG+d+v+vG     ++ + + a +   
+      P0A855    93    ALGIDAVVVGQVTPNPDGSYNVAYQ    117  
+
+0036722: domain 1 of 1, from 93 to 141: score -5.0, E = 62
+                   *->alGiknihlgP.tppaflspnvlklLvedfglggiltveedlkklld
+                      alGi  +++g +tp+  +s nv+  Lv++ g  g++ +++ +k   +
+      P0A855    93    ALGIDAVVVGQvTPNPDGSYNVAYQLVDTGGAPGTVLAQNSYKVNKQ 139  
+
+                   ll<-*
+                   +l   
+      P0A855   140 WL    141  
+
+0044791: domain 1 of 1, from 93 to 120: score -3.7, E = 44
+                   *->aagadgvvvGsaiyknpdllaealailege<-*
+                      a+g+d+vvvG    + +  +  a ++++     
+      P0A855    93    ALGIDAVVVGQVTPNPDGSYNVAYQLVD--    120  
+
+0044692: domain 1 of 1, from 93 to 120: score -4.8, E = 59
+                   *->algadavlvGesllraddleealreLlg<-*
+                      alg+dav+vG      d+  + + +L+    
+      P0A855    93    ALGIDAVVVGQVTPNPDGSYNVAYQLVD    120  
+
+0038583: domain 1 of 1, from 93 to 120: score -1.9, E = 13
+                   *->elGadgvlvGsailkaedpvkiaralveav<-*
+                      +lG+d+v+vG    +++     a +lv+     
+      P0A855    93    ALGIDAVVVGQVTPNPDGSYNVAYQLVD--    120  
+
+0035563: domain 1 of 1, from 96 to 132: score -1.9, E = 18
+                   *->idlvivatstgdd..tpslaalvanllglrgdvrafd<-*
+                      id+v+v+ +t++++ + ++a+++++  g++g+v a +   
+      P0A855    96    IDAVVVGQVTPNPdgSYNVAYQLVDTGGAPGTVLAQN    132  
+
+0042740: domain 1 of 1, from 97 to 122: score -4.2, E = 97
+                   *->gavvevevvdngdgtysvsYtPteaG<-*
+                      +avv  +v++n+dg+y+v Y  +  G   
+      P0A855    97    DAVVVGQVTPNPDGSYNVAYQLVDTG    122  
+
+0045315: domain 1 of 1, from 99 to 172: score -2.6, E = 24
+                   *->llllllllseelleelveealdwallhGlalrskdlelsglsavlaP
+                      +++ +++ +++   +++++++d   + G +l ++++++++ ++++a 
+      P0A855    99    VVVGQVTPNPDGSYNVAYQLVDTGGAPGTVLAQNSYKVNKQWLRYAG 145  
+
+                   ftllPsplprklfeeavelqelfneliarvsl<-*
+                    t      ++++fe++ +++  f   ia+v +   
+      P0A855   146 HTA-----SDEVFEKLTGIKGAFRTRIAYVVQ    172  
+
+0041622: domain 1 of 1, from 101 to 176: score -0.6, E = 16
+                   *->feeikaeldelfeklaallergldpdseeaqelveehrdwlsaswpd
+                        +++   d  ++   +l+++g +p+   aq   +  ++wl++  ++
+      P0A855   101    VGQVTPNPDGSYNVAYQLVDTGGAPGTVLAQNSYKVNKQWLRYAGHT 147  
+
+                   cslealagLaemYvsDerFtknydklgeglaeflsdailayaqrngv<-*
+                   +s e+++ L                  +g+   ++  i++ +q+ng    
+      P0A855   148 ASDEVFEKL------------------TGIKGAFRTRIAYVVQTNGG    176  
+
+0039648: domain 1 of 2, from 104 to 366: score 64.9, E = 6.6e-21
+                   *->vafspdgk.....llyvtgsadgtvsvydl.ktgkvlatlsg.....
+                      v+ +pdg++++++ l+ tg+a+gtv   + +k +k + ++ g+++ +
+      P0A855   104    VTPNPDGSynvayQLVDTGGAPGTVLAQNSyKVNKQWLRYAGhtasd 150  
+
+                   dhggsisslafspdgrylyvvgssdg....tiyvwdlatgkvlrtlelgg
+                   +  +  +++     +r  yvv +++g+  + ++v d ++ +   + + + 
+      P0A855   151 EVFEKLTGIKGAFRTRIAYVVQTNGGqfpyELRVSDYDGYNQFVVHRSPQ 200  
+
+                   fpeghsgsvtglafspdgkllyvgssgggllfleyepsdgt..vyvwdle
+                          ++ ++a+spdg++l++++ +           +g+ ++++  l+
+      P0A855   201 -------PLMSPAWSPDGSKLAYVTFE-----------SGRsaLVIQTLA 232  
+
+                   tgklvrtipggggpgvtslafspdgkllavg.g.dg...vyvydlktgkl
+                   +g ++++ + + ++   ++afspdg++la++ +++g  ++yv+dl++g++
+      P0A855   233 NGAVRQVASFPRHN--GAPAFSPDGSKLAFAlSkTGslnLYVMDLASGQI 280  
+
+                   latlkghgsvtglafspdgkylyvtgssdgtvrvwdl..rtgkplatitv
+                   +++++g+++ t  ++ pd++ l++t+ + g+ +v+ ++++ g p ++   
+      P0A855   281 RQVTDGRSNNTEPTWFPDSQNLAFTSDQAGRPQVYKVniNGGAPQRITWE 330  
+
+                   glaggdgglfvvdlsggelvklellghdgsvtslafspdgkllyvgggdg
+                   g                           +   + ++s dgk+++ ++ +g
+      P0A855   331 G---------------------------SQNQDADVSSDGKFMVMVSSNG 353  
+
+                   ....vyvwdlktgklvktlpgpsgvtslafspdgkllvvgssdgtvyvwd
+                    ++++ + dl+tg                                     
+      P0A855   354 gqqhIAKQDLATG------------------------------------- 366  
+
+                   letgkvlktvpvgggptgiafspdgkl<-*
+                                                 
+      P0A855     - ---------------------------    -    
+
+0039883: domain 1 of 1, from 106 to 145: score -4.7, E = 94
+                   *->eaddpkyvfavlvenggglsgglvaapiarkilkallllld<-*
+                      + +d+ y +a+ + + gg   g+v a+  +k+ k++l + +   
+      P0A855   106    PNPDGSYNVAYQLVDTGG-APGTVLAQNSYKVNKQWLRYAG    145  
+
+0042291: domain 1 of 1, from 108 to 137: score -2.0, E = 62
+                   *->pagsyqvpyrinvnngrpelafdfkamkra<-*
+                      p gsy v y++   +g p  ++    +k     
+      P0A855   108    PDGSYNVAYQLVDTGGAPGTVLAQNSYKVN    137  
+
+0042001: domain 1 of 1, from 112 to 429: score 193.1, E = 1.6e-58
+                   *->sdkkltledilkgpfggavtslkwspdgeylat.hdgsiyiydldtg
+                      +++ ++l+d+ + p + +  + + ++ +++ ++ h  s+ +++++tg
+      P0A855   112    YNVAYQLVDTGGAPGTVLAQNSYKVNKQWLRYAgHTASDEVFEKLTG 158  
+
+                   eetvllsrntlrlhnggissyawspdgkyllfgsnkkkiwrhsgdgtlyi
+                       + +                     +++++ ++++   + + + l++
+      P0A855   159 IKGAFRT---------------------RIAYVVQTNG---GQFPYELRV 184  
+
+                   ydldtgnlvkltphespitspawspdgnylayv...rdnn.iyiydlstg
+                    d+d+ n   +  +++p++spawspdg++layv+ +++++++ i+ l++g
+      P0A855   185 SDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVtfeSGRSaLVIQTLANG 234  
+
+                   klirltsggseniifnGlpdwvyeEEvfgsvsalwwSPdgkrlafassdd
+                    ++++ s++++n                    a+++SPdg++lafa s+ 
+      P0A855   235 AVRQVASFPRHN-------------------GAPAFSPDGSKLAFALSKT 265  
+
+                   snvplitipyygkegelypevvslrYPkagtpnptvtlyvydldtgklir
+                   ++                                  +lyv+dl++g++++
+      P0A855   266 GSL---------------------------------NLYVMDLASGQIRQ 282  
+
+                   itnlpsvvppesllghdyyitrvaWspdgkllvswlnrdqndltlllvdl
+                   +t++ s+                                           
+      P0A855   283 VTDGRSN------------------------------------------- 289  
+
+                   etgkltellevngvlykelsdgwvnlqdinepafspdgkrfilfsserdg
+                                               ++ep+++pd+++ ++f+s++ g
+      P0A855   290 ----------------------------NTEPTWFPDSQN-LAFTSDQAG 310  
+
+                   yphlylydldggkprqlts.gdwevtgilspdgkliyftstedgerpler
+                    p++y ++++gg p ++t++g+ ++++ +s dgk+++++s+++g    ++
+      P0A855   311 RPQVYKVNINGGAPQRITWeGSQNQDADVSSDGKFMVMVSSNGG----QQ 356  
+
+                   hlyvvdldggketqlltvellteeggiysasfspdgryllltysgpgvpv
+                   h+ + dl++g+      v++l+ +  ++ +s++p+g ++++++s +  +v
+      P0A855   357 HIAKQDLATGG------VQVLSSTFLDETPSLAPNGTMVIYSSSQGMGSV 400  
+
+                   lyllsldggkklrlledndelreplwgpr<-*
+                   l l+s+dg  k+rl+ + +++++p+w+p+   
+      P0A855   401 LNLVSTDGRFKARLPATDGQVKFPAWSPY    429  
+
+0041192: domain 1 of 1, from 112 to 429: score 175.1, E = 3.4e-52
+                   *->gkklltledilsgphsgavtsvawspdgeylat.sdgsiylwdvdtg
+                      +++ ++l d+   p +    + +  +  ++ +  +  s  +++ +tg
+      P0A855   112    YNVAYQLVDTGGAPGTVLAQNSYKVNKQWLRYAgHTASDEVFEKLTG 158  
+
+                   elivllerktlighgggissvawspdgkyllfasnvvklwrhsydgtlyi
+                    ++ + +r++++  + g                          + ++l++
+      P0A855   159 IKGAFRTRIAYVVQTNG------------------------GQFPYELRV 184  
+
+                   wdldtgklvrltphdspvqspawsPdgkklafvs..dn..niyvydldtg
+                    d+d+ +   + +++ p++spawsPdg+kla+v  +++   + ++ l++g
+      P0A855   185 SDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVTfeSGrsALVIQTLANG 234  
+
+                   kllqltsdgsenvifnGvpdWvyeEEilgsvsalwwsPdgkylafasfdd
+                    ++q+ s++++n                    a+++sPdg++lafa +++
+      P0A855   235 AVRQVASFPRHN-------------------GAPAFSPDGSKLAFALSKT 265  
+
+                   gevplitipyygddgdlypevvtlrYPkagtknptvtlyvydlstgkiir
+                   g+                                  +lyv+dl++g+i++
+      P0A855   266 GSL---------------------------------NLYVMDLASGQIRQ 282  
+
+                   ltnglsvsppaslfghdsyitrvawspdgkllvvvlnrgsndstlylvdl
+                   +t+g s                                            
+      P0A855   283 VTDGRS-------------------------------------------- 288  
+
+                   dtgkliklldgpveileekddgwvnlgsvtspafspdgkslllfsserdg
+                                              ++t+p+++pd++  l+f+s++ g
+      P0A855   289 ---------------------------NNTEPTWFPDSQN-LAFTSDQAG 310  
+
+                   yvhlylidldggkirqlts.gdwevtsilspdgrliyftateledgpger
+                   ++++y+++++gg ++++t++g+++ ++ +s dg++++++++     +g++
+      P0A855   311 RPQVYKVNINGGAPQRITWeGSQNQDADVSSDGKFMVMVSSN----GGQQ 356  
+
+                   hlyivdldggkvtqltslplighgggvtsvsfspdgrylvlaysgpgvpv
+                   h+   dl++g v+ l s      ++ ++ +s++p+g ++++++s +  +v
+      P0A855   357 HIAKQDLATGGVQVLSS------TFLDETPSLAPNGTMVIYSSSQGMGSV 400  
+
+                   eylvsldgg.klllvledndalepalrpyp<-*
+                     lvs+dg+ k++l+ +d++++ pa++py    
+      P0A855   401 LNLVSTDGRfKARLPATDGQVKFPAWSPY-    429  
+
+0043716: domain 1 of 1, from 112 to 235: score -5.5, E = 75
+                   *->qgltwkllaigleegavlgllfaptgkgllla............rtd
+                       ++ ++l+  g+  g vl+  +++++k +l ++ +++ +++ +++t 
+      P0A855   112    YNVAYQLVDTGGAPGTVLAQNSYKVNKQWLRYaghtasdevfekLTG 158  
+
+                   iggfyrldadlakklplgpnllgatsiafdgndpnrvvraglgtllavgd
+                   i g++r +++   ++ +g + + +   ++dg++  +v+r++         
+      P0A855   159 IKGAFRTRIAYVVQTNGGQFPYELRVSDYDGYNQFVVHRSP--------- 199  
+
+                   dggilrStDgGktWtaavtlpfglglnsegggtlavdpdgstilvlgiav
+                                         +l +        a++pdgs+  +++ + 
+      P0A855   200 ---------------------QPLMS-------PAWSPDGSKLAYVTFES 221  
+
+                   gsnggllrStDgGa<-*
+                   g ++ ++ +  +Ga   
+      P0A855   222 GRSALVIQTLANGA    235  
+
+0040893: domain 1 of 1, from 114 to 429: score 35.6, E = 3.9e-11
+                   *->vlvvlalsgaaalallghdgl.....vlslafspdgdlvavtlvlsa
+                      v++ l   g+a +++l+ ++++++++ l+ a +  +d v+ +l +  
+      P0A855   114    VAYQLVDTGGAPGTVLAQNSYkvnkqWLRYAGHTASDEVFEKLTGIK 160  
+
+                   ga..dgtvyvwdaatgkllgtldghg...............vsslafspd
+                   ga  +  +yv+ ++ g+   +l++++++ +++ +++   + ++s+a+spd
+      P0A855   161 GAfrTRIAYVVQTNGGQFPYELRVSDydgynqfvvhrspqpLMSPAWSPD 210  
+
+                   gkylavastvfsriargdrdgtvkvwdl...atgkpiatleghsapifsl
+                   g++la+++            +++ v+++ ++   +++a+++ h+      
+      P0A855   211 GSKLAYVT--------FESGRSALVIQTlanGAVRQVASFPRHN------ 246  
+
+                   gwspngvafspdgktllvsgstdgt..vkvwdlatgklvqtldg...ptc
+                        ++afspdg +l ++ s +g+ + +v dla+g+ +q +dg  + t 
+      P0A855   247 ----GAPAFSPDGSKLAFALSKTGSlnLYVMDLASGQIRQVTDGrsnNTE 292  
+
+                   lafspdgsrlfatgsrdgtvriwdldtgg.vtktlpdaklghespvtsva
+                   + ++pd+++l +t+   g+ +++ ++ +g   +++       +s   +  
+      P0A855   293 PTWFPDSQNLAFTSDQAGRPQVYKVNINGgAPQRIT----WEGSQNQDAD 338  
+
+                   fspdggllasgsldg...tiriwdlstgklvatlpvhlltegelaptwrp
+                   +s dg++++  s++g +++i   dl+tg++  +                 
+      P0A855   339 VSSDGKFMVMVSSNGgqqHIAKQDLATGGVQVLS---------------- 372  
+
+                   ggvvqvafspdgdylyvlnderllatgsddgtvrvwdlstgellavinlg
+                         +f+++++ l                                   
+      P0A855   373 -----STFLDETPSL----------------------------------- 382  
+
+                   gsvtslavspdgklllvgssagdgtvrvwdaatgelvvsvelgkgpisll
+                           +p+g+ ++++ss g g+v+ +   +g+ ++++++  g + + 
+      P0A855   383 --------APNGTMVIYSSSQGMGSVLNLVSTDGRFKARLPATDGQVKFP 424  
+
+                   vfdgd<-*
+                   ++++    
+      P0A855   425 AWSPY    429  
+
+0044187: domain 1 of 1, from 114 to 145: score -4.8, E = 85
+                   *->lgvllvGlgGavattlvaGvealrrglanplG<-*
+                      +   lv  gGa +t+l+   +++ ++++++ G   
+      P0A855   114    VAYQLVDTGGAPGTVLAQNSYKVNKQWLRYAG    145  
+
+0044248: domain 1 of 1, from 121 to 171: score -2.0, E = 26
+                   *->vlpptlldlaltdlgsvwlwvvfalmllstlvfllllfrvpdakwrl
+                      +  +++++la++++  + +w+  a+ ++s  vf  l+  ++  + r+
+      P0A855   121    TGGAPGTVLAQNSYKVNKQWLRYAGHTASDEVFEKLTGIKGAFRTRI 167  
+
+                   fllv<-*
+                   +++v   
+      P0A855   168 AYVV    171  
+
+0038232: domain 1 of 1, from 123 to 158: score -1.8, E = 14
+                   *->gigGpllevsayyfKsPpvqlsddearllleefieg<-*
+                      g  G++l  ++y + +   +++ + a   ++e++ g   
+      P0A855   123    GAPGTVLAQNSYKVNKQWLRYAGHTASDEVFEKLTG    158  
+
+0043530: domain 1 of 1, from 124 to 173: score -4.6, E = 51
+                   *->gpgvviaydrntvtnelLekaGieVieidlsellkggGglrCmtlpl
+                      +pg+v+a +++ v ++ L+ aG++     + +l+ + G++r     +
+      P0A855   124    APGTVLAQNSYKVNKQWLRYAGHTASDEVFEKLTGIKGAFRTRIAYV 170  
+
+                   vRedlky<-*
+                   v +       
+      P0A855   171 VQT----    173  
+
+0043316: domain 1 of 1, from 124 to 192: score -2.5, E = 23
+                   *->appsvinhglyevdkgplkgqdyttcytlvndlgeipevllelllkl
+                      ap++v+  + y+v k  l+   +t    ++++l  i  +   ++  +
+      P0A855   124    APGTVLAQNSYKVNKQWLRYAGHTASDEVFEKLTGIKGAFRTRIAYV 170  
+
+                   laekgkklgielssdalellsg<-*
+                   +  +g  + +el+ + ++ ++    
+      P0A855   171 VQTNGGQFPYELRVSDYDGYNQ    192  
+
+0036482: domain 1 of 1, from 126 to 147: score -2.0, E = 59
+                   *->GlVleenlidsgpewrefsndd<-*
+                      G+Vl +n + ++ +w +++++    
+      P0A855   126    GTVLAQNSYKVNKQWLRYAGHT    147  
+
+0042292: domain 1 of 1, from 126 to 145: score -1.4, E = 43
+                   *->Glvleenlidsglewrefsn<-*
+                      G+vl +n + ++ +w ++++   
+      P0A855   126    GTVLAQNSYKVNKQWLRYAG    145  
+
+0035078: domain 1 of 1, from 133 to 160: score -3.5, E = 39
+                   *->llglsssmsmlsgvavsdevieafnklk<-*
+                       + +++++    g ++sdev e+++ +k   
+      P0A855   133    SYKVNKQWLRYAGHTASDEVFEKLTGIK    160  
+
+0045354: domain 1 of 1, from 134 to 430: score 207.3, E = 8.9e-63
+                   *->fvvdaaglrlaahliadavsekltglagapdgrllyvtlpssassdg
+                      + v++ +lr+a h + d v+ekltg+ ga+ +r++yv++++++  ++
+      P0A855   134    YKVNKQWLRYAGHTASDEVFEKLTGIKGAFRTRIAYVVQTNGGQFPY 180  
+
+                   tlyvvDadtgnvlgtvdg.gfilgvafspdgkrlavastyisrgarggrd
+                   +l+v+D+d++n++ ++++ ++++++a+spdg++la++++       ++++
+      P0A855   181 ELRVSDYDGYNQFVVHRSpQPLMSPAWSPDGSKLAYVTF-------ESGR 223  
+
+                   gvvyvwdlatgkliatielpdgklvghggavtavafspdgkllyv.asgs
+                   + ++++ la+g +++        + +++ +++a+afspdg++l++++s +
+      P0A855   224 SALVIQTLANGAVRQ--------VASFPRHNGAPAFSPDGSKLAFaLSKT 265  
+
+                   gdgtvkvwdlatgkvlrtisvpacvlighggivtsvafspdgsllyvgsd
+                   g+ +++v+dla+g++++++++         ++ t++++ pd + l+++sd
+      P0A855   266 GSLNLYVMDLASGQIRQVTDG--------RSNNTEPTWFPDSQNLAFTSD 307  
+
+                   dggvgiwdvgaalgghtdlvt.......dlawspdggllvtgsrdg...t
+                    +g ++++ ++++gg+++++t +  +++d+++s+dg+++v++s +g +++
+      P0A855   308 QAGRPQVYKVNINGGAPQRITwegsqnqDADVSSDGKFMVMVSSNGgqqH 357  
+
+                   vrvwDlstgkvlvttpghldeaggksdgwrpggiqgvafspdgrrlyvlt
+                   +   Dl+tg+v+v+  ++lde               ++++p+g+++++++
+      P0A855   358 IAKQDLATGGVQVLSSTFLDE--------------TPSLAPNGTMVIYSS 393  
+
+                   hqgsagasgsadgtvrvwdlstgevlatlghggsvtglafspdgkplvla
+                    qg                                            vl 
+      P0A855   394 SQGMGS-----------------------------------------VLN 402  
+
+                   sgsgdgtvrvwdlrtgrvlrkvpgtgggprgvafspll<-*
+                   ++s+          +gr+ +++p+t+g + ++a+sp+l   
+      P0A855   403 LVST----------DGRFKARLPATDGQVKFPAWSPYL    430  
+
+0037719: domain 1 of 1, from 137 to 193: score -2.4, E = 17
+                   *->pgsllplvlllldpvlleawsrlaealreggptpfekaygkdffeyl
+                      ++ +l++  +  +++++e ++ ++ a+r++  ++ +  +g+  +e  
+      P0A855   137    NKQWLRYAGHTASDEVFEKLTGIKGAFRTRIAYVVQTNGGQFPYELR 183  
+
+                   akdydlarlf<-*
+                    +dyd ++ f   
+      P0A855   184 VSDYDGYNQF    193  
+
+0040347: domain 1 of 1, from 137 to 428: score 113.4, E = 9.6e-36
+                   *->dgrllvvgsldgtvrvwdldtgkllktlphggsvtglafspdgkrly
+                      ++++l  ++++ +  v++                tg+    +++  y
+      P0A855   137    NKQWLRYAGHTASDEVFE--------------KLTGIKGAFRTRIAY 169  
+
+                   vtgsgdg....tvrvwdldtgkvlrtlpghgrvtglafspdgkllyvtgs
+                   v+ +++g+  + +rv d+d+ ++  + +++++ +++a+spdg++l+++ +
+      P0A855   170 VVQTNGGqfpyELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVTF 219  
+
+                   edgt..irvwdlatgkllrtlpgggsptglafspdgrylyvtgsgdg..t
+                   e+g+ ++++  la+g ++++ +++++  + afspdg++l+++ s +g   
+      P0A855   220 ESGRsaLVIQTLANGAVRQVASFPRHNGAPAFSPDGSKLAFALSKTGslN 269  
+
+                   vyvwdlrtgklvatlphgggprgiafspdgktlyvtgsgdg..tirvwdl
+                   +yv+dl++g++++++++ ++ + +++ pd++ l +t+++ g  +++++++
+      P0A855   270 LYVMDLASGQIRQVTDGRSNNTEPTWFPDSQNLAFTSDQAGrpQVYKVNI 319  
+
+                   dtgkvlrtlpggggptglafspdgkylyvasagsgdgtirvfdldtgkll
+                   ++g ++r++  g++  +  +s+dgk+++ +s+ +g ++i+  dl+    +
+      P0A855   320 NGGAPQRITWEGSQNQDADVSSDGKFMVMVSSNGGQQHIAKQDLA-TGGV 368  
+
+                   rtlghggrptglafspdgkylyvsgsgdgtvrvwdla..tgkllavlpgg
+                   ++l  +     ++++p+g+++ + +s+ g+  v +l  ++g+++a+lp  
+      P0A855   369 QVLSSTFLDETPSLAPNGTMV-IYSSSQGMGSVLNLVstDGRFKARLPAT 417  
+
+                   .gsptgvafspdgrlla<-*
+                   +g++  +a+sp         
+      P0A855   418 dGQVKFPAWSP------    428  
+
+0042695: domain 1 of 1, from 138 to 170: score -1.6, E = 26
+                   *->knWqtYddpakvkvsgevliravsadgkrtsRvtsv<-*
+                      k+W++Y ++   ++s+ev+ + +  +g  + R++ v   
+      P0A855   138    KQWLRYAGH---TASDEVFEKLTGIKGAFRTRIAYV    170  
+
+0043346: domain 1 of 1, from 141 to 177: score -5.2, E = 89
+                   *->idlekllelselveellglyvppnkpivglnafaggs<-*
+                      ++++  ++  e++e+l+g+   +++ i+++ +  gg+   
+      P0A855   141    LRYAGHTASDEVFEKLTGIKGAFRTRIAYVVQTNGGQ    177  
+
+0035246: domain 1 of 1, from 143 to 176: score -5.0, E = 41
+                   *->rkfiaeplriksaegvyltdvdgreyldalsgynvlllghgdpeiDl
+                                                                     
+      P0A855     -    ----------------------------------------------- -    
+
+                   ltDsgtsaasdaqlaallvgddayggdplafeleealaelfg.....lda
+                                          y+g+   +e+ e+l+ + g+  +   +
+      P0A855   143 -----------------------YAGHTASDEVFEKLTGIKGafrtrIAY 169  
+
+                   vlftnsG<-*
+                   v++tn+G   
+      P0A855   170 VVQTNGG    176  
+
+0043587: domain 1 of 1, from 145 to 179: score -5.4, E = 87
+                   *->sfdpfggrvervsvpspvlgrerrvavylppgplP<-*
+                       +++ + ++e+++    +  +++ + v++ +g++P   
+      P0A855   145    GHTASDEVFEKLTGIKGAFRTRIAYVVQTNGGQFP    179  
+
+0036426: domain 1 of 1, from 150 to 218: score -1.2, E = 18
+                   *->pfvfn.llspadvysneaGrvtelnsfd....lpilntlglsvarvt
+                      + vf +l   ++ ++++  +v+++n  +  ++l++ ++ g+  ++v+
+      P0A855   150    DEVFEkLTGIKGAFRTRIAYVVQTNGGQfpyeLRVSDYDGYNQFVVH 196  
+
+                   lepgglllphyhpnadeilyvl<-*
+                     p+ l++p + p+ ++++yv+   
+      P0A855   197 RSPQPLMSPAWSPDGSKLAYVT    218  
+
+0043472: domain 1 of 1, from 151 to 168: score -2.9, E = 63
+                   *->rvfeelldvaGeirktlk<-*
+                      +vfe+l ++ G +r  +    
+      P0A855   151    EVFEKLTGIKGAFRTRIA    168  
+
+0039879: domain 1 of 1, from 153 to 428: score 192.6, E = 1e-57
+                   *->veslafspdifgnrlvfvs..dg.....dlyvydldggklrrltghg
+                       e l+  +++f +r+++v +++g +  ++l+v d+dg ++ ++  ++
+      P0A855   153    FEKLTGIKGAFRTRIAYVVqtNGgqfpyELRVSDYDGYNQFVVHRSP 199  
+
+                   gsvlspafspdGkrlafgsargggdgtvrlyvldldtgelrrltghgggv
+                    + +spa+spdG++la+++++   +g++ l++  l++g +r++++++ ++
+      P0A855   200 QPLMSPAWSPDGSKLAYVTFE---SGRSALVIQTLANGAVRQVASFPRHN 246  
+
+                   sspalrlndlvfspdGkllaftssdgggsrngdiylydldggklvrltdg
+                    +pa       fspdG++laf+ s  g   + ++y++dl++g+++++tdg
+      P0A855   247 GAPA-------FSPDGSKLAFALSKTG---SLNLYVMDLASGQIRQVTDG 286  
+
+                   g..vtspafspdgkllyvasddgtvrlwdvgsgdgriyvydldggelrrl
+                     + t+p++ pd++ l+++sd           g++++y+++++gg ++r+
+      P0A855   287 RsnNTEPTWFPDSQNLAFTSDQ---------AGRPQVYKVNINGGAPQRI 327  
+
+                   tag...vsslafspdGkllyfgsddggkstlylydldggklrqltsggdv
+                   t +  +  ++ +s dGk+++++s++gg+++++  dl++g ++ l s++ +
+      P0A855   328 TWEgsqNQDADVSSDGKFMVMVSSNGGQQHIAKQDLATGGVQVLSSTFLD 377  
+
+                   tspafspdGkllafts.dg...dlyvvdldggklrrlt.hsglvsdpaws
+                   + p+++p+G +++++s +g+   l +v++dg+ + rl++++g+v +paws
+      P0A855   378 ETPSLAPNGTMVIYSSsQGmgsVLNLVSTDGRFKARLPaTDGQVKFPAWS 427  
+
+                   P<-*
+                   P   
+      P0A855   428 P    428  
+
+0045181: domain 1 of 1, from 153 to 428: score 120.9, E = 9e-39
+                   *->eepvtslafspdgplvavgvlysgsrdgtvyvwdldtgkvlrtldgg
+                       e++t++++++ +++++v  +  g +++ ++v d+d++++  +++++
+      P0A855   153    FEKLTGIKGAFRTRIAYVVQTNGGQFPYELRVSDYDGYNQFVVHRSP 199  
+
+                   g.vssvafspdgrllavastengriflgkadgtvvvwDlatgkvlatlel
+                   +  +s+a+spdg++la++ +e        +   +v+  la+g v ++ + 
+      P0A855   200 QpLMSPAWSPDGSKLAYVTFES-------GRSALVIQTLANGAVRQVAS- 241  
+
+                   pdakrlghggsvrsvafspdgklllfvsgsedgt..vrvwDlktgklvrt
+                          ++ ++ ++afspdg++l+ ++ s  g+ +++v+Dl++g+++++
+      P0A855   242 -------FPRHNGAPAFSPDGSKLA-FALSKTGSlnLYVMDLASGQIRQV 283  
+
+                   ldvgdiplighgaavtslafspdgkllasgslgdgtirvwdletgklghg
+                   +d        + ++ t +++ pd + la++s+  g+++v+          
+      P0A855   284 TD--------GRSNNTEPTWFPDSQNLAFTSDQAGRPQVY---------- 315  
+
+                   ggvnsvafspdgkllltasgdgtvyvlDldtgkvvktikldllpggikal
+                                                         k++ ++g+ ++ 
+      P0A855   316 --------------------------------------KVNINGGAPQRI 327  
+
+                   gghgggvssvafspdgkllavgsalggllylqppdgtvyvwDletgkvva
+                   ++ g++++++ +s+dgk+++  s++gg        + ++  Dl+tg v +
+      P0A855   328 TWEGSQNQDADVSSDGKFMVMVSSNGG-------QQHIAKQDLATGGV-Q 369  
+
+                   tlkgggpvtsvafspdgklllyvsgsedgtlrvwdlatgkvlatlkgpgg
+                   +l+  +  + ++++p+g +++y s+ + g++  +  ++g+++a+l++++g
+      P0A855   370 VLSSTFLDETPSLAPNGTMVIYSSSQGMGSVLNLVSTDGRFKARLPATDG 419  
+
+                   gpsgvafspdg<-*
+                    +  +a+sp     
+      P0A855   420 QVKFPAWSP--    428  
+
+0044582: domain 1 of 1, from 160 to 426: score 36.0, E = 1.6e-11
+                   *->llspdglelyvtlsgggtvyvidlatlkllktivvgnepelvltsgl
+                                                                     
+      P0A855     -    ----------------------------------------------- -    
+
+                   agpeglafdpgrlyvvdsadgr....iyvidldtgkliaittiplggrpn
+                        +af  +  yvv +++g+  ++++v d d+ +  +  +   ++++ 
+      P0A855   160 ----KGAFRTRIAYVVQTNGGQfpyeLRVSDYDGYNQFV--VHRSPQPLM 203  
+
+                   glafspdG.kllavaslgtvrlfvvnhppdggtvrifdldsggllltlag
+                   + a+spdG kl +v+ +             g +  ++ + ++g ++++ +
+      P0A855   204 SPAWSPDGsKLAYVTFES------------GRSALVIQTLANGAVRQV-A 240  
+
+                   sidgppgngpndvafdpdGr.lyvtddsygidgrvrlldmlsgdgtgrvy
+                   s++ ++g      af+pdG++l ++                s +g+ ++y
+      P0A855   241 SFPRHNGA----PAFSPDGSkLAFAL---------------SKTGSLNLY 271  
+
+                   rydp..gevtvlldglsfpngiafspDgkflyvadsgdg..tisvydldg
+                   + d++ g+++ ++dg s+ +  ++ pD+  l++++  +g  +++  +++g
+      P0A855   272 VMDLasGQIRQVTDGRSNNTEPTWFPDSQNLAFTSDQAGrpQVYKVNING 321  
+
+                   dgsltlvrvfalgglpdgiavdpdggnlwvagggggrkllll........
+                      +++ r++ +g++  +  v++dg+++  ++++gg++  ++++ ++  +
+      P0A855   322 ---GAPQRITWEGSQNQDADVSSDGKFMVMVSSNGGQQHIAKqdlatggv 368  
+
+                   ......lankpspsevlrirkllded...gkvvvvfdptGkllgtisvpv
+                   ++   ++ + ++   ++ +++++++ + +g+v+ +++++G++ ++++   
+      P0A855   369 qvlsstFLDETPSLAPNGTMVIYSSSqgmGSVLNLVSTDGRFKARLPATD 418  
+
+                   .gptgvafggpdggtlyvtsa<-*
+                     +   a+                
+      P0A855   419 gQVKFPAW-------------    426  
+
+0036130: domain 1 of 1, from 162 to 428: score 192.8, E = 6.7e-55
+                   *->PdGnrlayvssrpglendgtlylwdldggelrqltghggsvtspaws
+                         +r+ayv++++g +  + l++ d+dg ++ ++  ++ +++spaws
+      P0A855   162    AFRTRIAYVVQTNGGQFPYELRVSDYDGYNQFVVHRSPQPLMSPAWS 208  
+
+                   pdgkylafassrsgdgtvylwdlatgelrrltghpggvsslawspdgkkl
+                   pdg++la+++++sg+  +++  la+g +r+++++p++ +++a+spdg+kl
+      P0A855   209 PDGSKLAYVTFESGRSALVIQTLANGAVRQVASFPRHNGAPAFSPDGSKL 258  
+
+                   avvssrdgdgtlyvwdlatgkltrltghgggvtslawspdGkrlafgsed
+                   a++ s++g+ +lyv+dla+g+++++t+ +++ t++ w pd++ laf+s+ 
+      P0A855   259 AFALSKTGSLNLYVMDLASGQIRQVTDGRSNNTEPTWFPDSQNLAFTSDQ 308  
+
+                   ggtptlyvwdldtgklrrltghggyvtsvawspdgkllavgsrdggkltl
+                    g+p++y +++++g+++r+t  g+   + ++s+dgk+++++s++gg+ ++
+      P0A855   309 AGRPQVYKVNINGGAPQRITWEGSQNQDADVSSDGKFMVMVSSNGGQQHI 358  
+
+                   ylwdldtgklvrlldggsisslafspdGrllavassdggrptlyvwdldg
+                   +  dl+tg ++ l +++  + ++++p+G++++++ss g  + l ++++dg
+      P0A855   359 AKQDLATGGVQVLSSTFLDETPSLAPNGTMVIYSSSQGMGSVLNLVSTDG 408  
+
+                   gklrrltlpggpvsslawspdG<-*
+                   +   rl+  +g+v  +awsp     
+      P0A855   409 RFKARLPATDGQVKFPAWSP--    428  
+
+0038608: domain 1 of 1, from 163 to 199: score -4.8, E = 77
+                   *->ikaKadyvkelgLgGvmiWsldlDdfngtllnavgsfpllsalksll
+                      ++++++yv + + gG + ++l   d++g+   +v++ p         
+      P0A855   163    FRTRIAYVVQTN-GGQFPYELRVSDYDGYNQFVVHRSP--------- 199  
+
+                   glt<-*
+                         
+      P0A855     - ---    -    
+
+0041506: domain 1 of 1, from 165 to 403: score 43.3, E = 3e-13
+                   *->dpfllvan......ggsirvidldggnvtalvpvvlllsglgnpegl
+                          +v +++  + + ++rv d+dg n   +          +   ++
+      P0A855   165    TRIAYVVQtnggqfPYELRVSDYDGYNQFVVHRS------PQPLMSP 205  
+
+                   afdpdgnrlyvtdigdgr..ilrldldggevttvlltglgspeglavdpi
+                   a++pdg++l ++   +gr ++++ +l++g v++v + +  +  + a++p+
+      P0A855   206 AWSPDGSKLAYVTFESGRsaLVIQTLANGAVRQVASFP-RHNGAPAFSPD 254  
+
+                   ggnlyvtdsgng..rilvidldggkvtvllsgdlnrprgiavdpddgrly
+                   g +l ++ s +g   ++v+dl++g+++++++g  ++ +  ++ pd+ +l 
+      P0A855   255 GSKLAFALSKTGslNLYVMDLASGQIRQVTDG-RSNNTEPTWFPDSQNLA 303  
+
+                   vtdsgdgngriyradldggnrrvlvsdglrwpnglaldpdgkrLYvadsg
+                   +t+   g++++y+++ +gg  ++++   +++ ++  +++dgk++  + s 
+      P0A855   304 FTSDQAGRPQVYKVNINGGAPQRIT-WEGSQNQDADVSSDGKFMVMVSSN 352  
+
+                   lg..rievvdldgsnrrvllsg.lgrpdglavd.dgrlyvtdwgggrvyr
+                   +g+++i   dl++++++vl s  l +  +la      +y +  g g+v+ 
+      P0A855   353 GGqqHIAKQDLATGGVQVLSSTfLDETPSLAPNgTMVIYSSSQGMGSVLN 402  
+
+                   idkaggkllrvvhvpkqpvtnpcggcshlC<-*
+                                                    
+      P0A855   403 L-----------------------------    403  
+
+0039054: domain 1 of 1, from 165 to 417: score 33.9, E = 1.7e-10
+                   *->epfllvan......rgsirridldggevtllvpglslpeglafdpdg
+                          +v++++  +   ++r+ d dg +  ++  + +  +++a++pdg
+      P0A855   165    TRIAYVVQtnggqfPYELRVSDYDGYNQFVVHRSPQPLMSPAWSPDG 211  
+
+                   nrlywsdisgg..riyridldggtvttivssgilgglgspeglavdwlgg
+                    +l ++ + +g   +    l++g v++++s +      +  + a++++g 
+      P0A855   212 SKLAYVTFESGrsALVIQTLANGAVRQVASFP-----RHNGAPAFSPDGS 256  
+
+                   nlYwtdsgng..riyvidldggkvtvllsegldrprgiavdpdggrlywt
+                   +l ++ s +g   +yv+dl++g++++++ +g ++ +  +  pd+ +l +t
+      P0A855   257 KLAFALSKTGslNLYVMDLASGQIRQVT-DGRSNNTEPTWFPDSQNLAFT 305  
+
+                   dwgsn.grieradldgsnrtvlvsdglgwpnglaldpdgnrlYwa..dsg
+                   +  ++ + +++++++g+  ++++  ++++  +  +++dg+++  +  + g
+      P0A855   306 SDQAGrPQVYKVNINGGAPQRIT-WEGSQNQDADVSSDGKFMVMVssNGG 354  
+
+                   lgrievidldgsnrrtvlsgvgvlghpdglavd.egrlyvtdwgngsvsr
+                    ++i + dl +++++++ s+   l +  +la +    +y + +g gsv  
+      P0A855   355 QQHIAKQDLATGGVQVLSSTF--LDETPSLAPNgTMVIYSSSQGMGSVLN 402  
+
+                   idkatgkvvatllvglpgptgiavggpllqply<-*
+                   +  ++g+  a+l+                       
+      P0A855   403 LVSTDGRFKARLPAT------------------    417  
+
+0042746: domain 1 of 1, from 166 to 428: score 92.9, E = 3.6e-32
+                   *->nlpllapPvarkvpvvetlhgvtvaDpYrWLedlddpevlawveaen
+                                                                     
+      P0A855     -    ----------------------------------------------- -    
+
+                   ayteaalaslplreklfeellglldevrisapspdgdylyyssndggder
+                                                       +++y + ++gg+  
+      P0A855   166 ------------------------------------RIAYVVQTNGGQFP 179  
+
+                   gvlyrwdldggeeevlldpnalaeghtvsvgslafSpDgkylayslddsg
+                   + l++ d+dg +  v+          + +++s+a+SpDg+ lay+  +sg
+      P0A855   180 YELRVSDYDGYNQFVV-------HRSPQPLMSPAWSPDGSKLAYVTFESG 222  
+
+                   sddgtirvwdldtgkvlp.lvghnakvssvawspdgkylaygsydklegp
+                     +  + +  l++g v+++  +++++ +++a+spdg+ la++        
+      P0A855   223 RSA--LVIQTLANGAVRQvASFPRHN-GAPAFSPDGSKLAFALSK----- 264  
+
+                   ggglltdanrpgtvylwdlgtglsedklvyelpdhpsfvvglafspdgky
+                            +  ++y++dl +g    ++ ++ ++  s  + +++ pd+++
+      P0A855   265 --------TGSLNLYVMDLASG----QIRQVTDGR-SNNTEPTWFPDSQN 301  
+
+                   lalsvsggsdgtvrvwdldlggpvaeltllgplklllghedgvtslafsp
+                   la+  +++  g+ +v+ ++ +g+         +++++   +   + ++s 
+      P0A855   302 LAF--TSDQAGRPQVYKVNINGG--------APQRITWEGSQNQDADVSS 341  
+
+                   dgkllattsddgtnfrlvlwdldtgelikltelipeghdvslesvafspd
+                   dgk+++ +s++g++ ++   dl+tg         + +  +  e  ++ p+
+      P0A855   342 DGKFMVMVSSNGGQQHIAKQDLATGGV------QVLSSTFLDETPSLAPN 385  
+
+                   gklllsgskdglgtlrvwdlktgkllalllphpgsvtgvsfspdgdllls
+                   g+++++ s  g g++     ++g+ +a+l+   g v   ++sp       
+      P0A855   386 GTMVIYSSSQGMGSVLNLVSTDGRFKARLPATDGQVKFPAWSP------- 428  
+
+                   gysdfttPgtiyvwdlktgelellkeqpvpggad<-*
+                                                        
+      P0A855     - ----------------------------------    -    
+
+0036550: domain 1 of 1, from 166 to 199: score -1.8, E = 30
+                   *->evvsieevdgdgyvYDltvedyhnfiagnGivvhNtg<-*
+                      ++  +  ++g ++ Y l v dy+ +   n +vvh ++   
+      P0A855   166    RIAYVVQTNGGQFPYELRVSDYDGY---NQFVVHRSP    199  
+
+0039880: domain 1 of 1, from 166 to 421: score 143.6, E = 2.7e-46
+                   *->ghpdgvtsvafspdgkllavgsdgtirlwdletgkllrlghggsvss
+                                                                     
+      P0A855     -    ----------------------------------------------- -    
+
+                   lafspdgkylafvtgsedg....tvyvwdletgkvlrllghggpvlslaf
+                           ++a+v+ +++g+  + ++v d+++ +   + +++ p +s+a+
+      P0A855   166 --------RIAYVVQTNGGqfpyELRVSDYDGYNQFVVHRSPQPLMSPAW 207  
+
+                   spdgkylavgs.ddg..tiyvwdletgkvlkileghggpvtdvafspdgk
+                   spdg++la+++ ++g   +++  l++g v+++ ++ + ++ ++afspdg+
+      P0A855   208 SPDGSKLAYVTfESGrsALVIQTLANGAVRQVASF-PRHNGAPAFSPDGS 256  
+
+                   liafslskkgfllsgssdgtiylydldtgkilkltghggsvtsvafspdg
+                   ++af+lsk g+l        +y++dl++g+i+++t+  ++ t +++ pd+
+      P0A855   257 KLAFALSKTGSLN-------LYVMDLASGQIRQVTDGRSNNTEPTWFPDS 299  
+
+                   kylvvasdrggnpqiyrynldggadgtvklwdlktgkllrppfglntviy
+                   ++l+++sd  g pq+y++n++gg                           
+      P0A855   300 QNLAFTSDQAGRPQVYKVNINGG--------------------------- 322  
+
+                   esdgvlfalaggdntitvidldtgkvrrltghgggvlslafspdgkylvy
+                                             +r+t+ g+++ ++++s dgk++v+
+      P0A855   323 ------------------------APQRITWEGSQNQDADVSSDGKFMVM 348  
+
+                   issgsedgtlyvwdlstgklvgltgpvts..vafspdgkylvvassdgki
+                   +ss++++ ++ + dl+tg + +l+++  ++++++ p+g++++++ss g  
+      P0A855   349 VSSNGGQQHIAKQDLATGGVQVLSSTFLDetPSLAPNGTMVIYSSSQGMG 398  
+
+                   yiwdl..etgkliarlkvdkgpvv<-*
+                    + +l+  +g+++arl+   g+v    
+      P0A855   399 SVLNLvsTDGRFKARLPATDGQV-    421  
+
+0045407: domain 1 of 1, from 169 to 218: score -0.3, E = 8.7
+                   *->dvysneaGrlrvln..lntlgvsvarvtlepgglllphyhsnaheil
+                       v+++++G++ +   + ++ g+  ++v+  p  l+ p + +++++++
+      P0A855   169    YVVQTNGGQFPYELrvSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLA 215  
+
+                   yvl<-*
+                   yv+   
+      P0A855   216 YVT    218  
+
+0043916: domain 1 of 1, from 170 to 242: score -1.5, E = 46
+                   *->viPikleeaevavkipgeyagkaygelaklgevkkeewqsdGswvav
+                      v+     ++  ++++++   ++ +   ++  ++    w++dGs +a+
+      P0A855   170    VVQTNGGQFPYELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAY 216  
+
+                   leiPaGlqdeliellnkltkGeaevk<-*
+                   +++ +G    +i+ l + +  ++      
+      P0A855   217 VTFESGRSALVIQTLANGAVRQVASF    242  
+
+0038360: domain 1 of 1, from 171 to 240: score -2.5, E = 4.6
+                   *->adleGkPwdpkrklieWdgeekkwvgdvpdltlppdadpeegklpfi
+                      ++ +G  +  + ++  +dg ++  v+  p+  + p + p+ +kl+++
+      P0A855   171    VQTNGGQFPYELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYV 217  
+
+                   mkpeGvgrlfapgladGplpehy<-*
+                     ++G + l   +la+G + +     
+      P0A855   218 TFESGRSALVIQTLANGAVRQVA    240  
+
+0042213: domain 1 of 1, from 176 to 231: score -2.6, E = 1e+02
+                   *->ekvevavkippeyagraysellklgeikkeewqsdGsllavlelPaG
+                       ++ +++++ +   ++     ++ + +    w++dGs la++++ +G
+      P0A855   176    GQFPYELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVTFESG 222  
+
+                   lqdeliell<-*
+                       +i+ l   
+      P0A855   223 RSALVIQTL    231  
+
+0037815: domain 1 of 1, from 176 to 399: score 15.1, E = 0.00015
+                   *->ggsphglafsp.dgrllyvanedegliplpnigsrlelegiyrgtvt
+                      g++p+ l++s +dg   +v+ +                         
+      P0A855   176    GQFPYELRVSDyDGYNQFVVHRS------------------------ 198  
+
+                   viDlktgkviatvpvggsptglafspdgkylfstsynsnkivvlidltts
+                                  ++++ + a+spdg++l+   + s+ ++        
+      P0A855   199 ---------------PQPLMSPAWSPDGSKLAYVTFESGRSA-------- 225  
+
+                   eadvvvvfglkpielavsagkflllsgdgtvsviDlrtgkvvrtipvgdg
+                                                 + +  l++g v ++ + + +
+      P0A855   226 ------------------------------LVIQTLANGAVRQVASFPRH 245  
+
+                   phgvafspdgkhllvagsldgtv..sviDlatlgllatltahpdgvlvae
+                     + afspdg++l  a s +g+++ +v Dla+++++              
+      P0A855   246 NGAPAFSPDGSKLAFALSKTGSLnlYVMDLASGQIR------------QV 283  
+
+                   vevglgplhiafspdg..nayvagsldn.qvvvwdlddgilavidektne
+                    +  +  +  ++ pd+++ a+++    + qv++ ++++g           
+      P0A855   284 TDGRSNNTEPTWFPDSqnLAFTSDQAGRpQVYKVNINGGAP--------- 324  
+
+                   vldtl.pvgylpghtggvlgialspdgkfly..vansdskdrflpvgPlk
+                     +++++ g      +   + ++s+dgkf +++++n +            
+      P0A855   325 --QRItWEG------SQNQDADVSSDGKFMVmvSSNGGQ----------- 355  
+
+                   pntvslidiatgkltvvadv...pv.gaePrgvaivprgklliva<-*
+                    + ++  d+atg+++v+++   + + +  P g ++++++    ++   
+      P0A855   356 -QHIAKQDLATGGVQVLSSTfldETpSLAPNGTMVIYSSSQGMGS    399  
+
+0043395: domain 1 of 1, from 178 to 411: score 69.0, E = 3.6e-21
+                   *->splclelvlagglggpeglavdpdgrllvadsggdgrilvidldggk
+                                                           ++v d dg +
+      P0A855   178    ---------------------------------FPYELRVSDYDGYN 191  
+
+                   vttlllgglgrptglafdpdgr..lyvsdsgdg.tiyrfdldggkvltll
+                   + ++  ++ ++ +++a++pdg++  yv+ ++++ ++++ +l++g+v++++
+      P0A855   192 QFVVHRSP-QPLMSPAWSPDGSklAYVTFESGRsALVIQTLANGAVRQVA 240  
+
+                   dhlgspnglavdpdG.nlyvtdsgdgt..iyvldldgglltvllsggldn
+                   ++  +  + a++pdG +l ++ s +g+ ++yv+dl++g++++++ +g +n
+      P0A855   241 SFPRHNGAPAFSPDGsKLAFALSKTGSlnLYVMDLASGQIRQVT-DGRSN 289  
+
+                   pngiavsp.dGr.lyvtdsgd.griyvidldggnrvvllpgglgspdgla
+                    + +++ p++ +  + +d  + +++y+++++gg +++++ +g ++  +  
+      P0A855   290 NTEPTWFPdSQNlAFTSDQAGrPQVYKVNINGGAPQRITWEG-SQNQDAD 338  
+
+                   vdpdGnlyvadsgdg...rirvvdldGkllrtltgpglgrptglafspdg
+                   v++dG++ v  s++g +++i++ dl    +++l+       + ++++p+g
+      P0A855   339 VSSDGKFMVMVSSNGgqqHIAKQDLATGGVQVLSST--FLDETPSLAPNG 386  
+
+                   ..tlyvtdsgdgtvyvidletgkvvei<-*
+                   ++ +y +++g g+v+ +  ++g+++     
+      P0A855   387 tmVIYSSSQGMGSVLNLVSTDGRFK--    411  
+
+0042643: domain 1 of 1, from 178 to 428: score 21.5, E = 2.6e-07
+                   *->pdgtislldldgkelltleghlgnpegvafdpdgn..llvt.dsgdg
+                         ++++ d dg++++++      + ++a++pdg++  +vt  sg +
+      P0A855   178    FPYELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSklAYVTfESGRS 224  
+
+                   rvlvfdl.dgkllrtlgghgsgpgelnsptglavdppdgnlyvtdnsgdg
+                    +++  l++g ++ +  ++        +  + a++ pdg  ++ + s++g
+      P0A855   225 ALVIQTLaNGAVRQVASFPR-------HNGAPAFS-PDGSKLAFALSKTG 266  
+
+                   ..rirvfdl.dgkllttlglghlnspngvavdpdGnlyvtdsg..dgriy
+                     +++v+dl++g+++++ + g++n+    ++ + +nl +t+  +  +++y
+      P0A855   267 slNLYVMDLaSGQIRQVTD-GRSNNTEPTWFPDSQNLAFTSDQagRPQVY 315  
+
+                   lwdldgkllktlgvsghldgpnglafspdgnlyvadsgdg...tirvfdl
+                   +++++g   +++  +  +++  +  +s+dg++ v  s++g +++i   dl
+      P0A855   316 KVNINGGAPQRI--TWEGSQNQDADVSSDGKFMVMVSSNGgqqHIAKQDL 363  
+
+                   .dg...kllrtlgghgdlggpdgiavdpdGnlyvadsgdgttirvfdl..
+                   ++g ++ l  t+ ++         ++ p+G++++ +s  g    v++l+ 
+      P0A855   364 aTGgvqVLSSTFLDET-------PSLAPNGTMVIYSSSQG-MGSVLNLvs 405  
+
+                   .tgkllttlglpghlgrptgvafspdgklyvadgdgtirvwdldtgkltt
+                   ++g++ ++l+  ++ g++   a+sp                         
+      P0A855   406 tDGRFKARLP--ATDGQVKFPAWSP------------------------- 428  
+
+                   t<-*
+                       
+      P0A855     - -    -    
+
+0039675: domain 1 of 1, from 178 to 428: score 52.7, E = 8e-16
+                   *->plellyvgtytppggiyvldldtetgtlkplkttlvghdgspsglaf
+                        ++l v++y + ++  v                 +    + +++a+
+      P0A855   178    FPYELRVSDYDGYNQFVV-----------------HRSPQPLMSPAW 207  
+
+                   spdgrkl.yvasedgvrvvriwd..tgtlelvntv.ghggspndlafdpd
+                   spdg kl+yv+ e+g++++ i+  ++g  ++v+++ +h+g   + af+pd
+      P0A855   208 SPDGSKLaYVTFESGRSALVIQTlaNGAVRQVASFpRHNG---APAFSPD 254  
+
+                   grylyvaayadgt..iavwdlktgkvvalvdgfplpadgrlaefvlnper
+                   g++l++a ++ g+ +++v+dl++g++ +++dg                  
+      P0A855   255 GSKLAFALSKTGSlnLYVMDLASGQIRQVTDG------------------ 286  
+
+                   qhgsgvhsvafsPdgkylyatdlgddtvrvydld.tggvldtlvkvvqvg
+                      s  +  ++ Pd + l++t++++++  vy+++++gg+++++     + 
+      P0A855   287 --RSNNTEPTWFPDSQNLAFTSDQAGRPQVYKVNiNGGAPQRI-----TW 329  
+
+                   hgdgprhvafhpdgkylYvaaeldg...tvavwdldtgtllltlrvhtvs
+                    g++ +++ ++ dgk++ v+ + +g ++++a  dl+tg++          
+      P0A855   330 EGSQNQDADVSSDGKFM-VMVSSNGgqqHIAKQDLATGGVQVLS------ 372  
+
+                   vlplqtlsalpegftgnngpagiafspdGkylyvsnrggnssldgtiavf
+                                           + p+G+++  s      s++g+ +v+
+      P0A855   373 ---------------STFLDETPSLAPNGTMVIYS------SSQGMGSVL 401  
+
+                   dldtdgglvrlvlvgtlpthggpprdlaffspdgkylyvagsesgtvvvf
+                   +l  + g  r+    +lp ++g++  +a +sp                  
+      P0A855   402 NLVSTDG--RF--KARLPATDGQVKFPA-WSP------------------ 428  
+
+                   dvdtktgkllkrvkvprpvcvlfaiipd<-*
+                                                  
+      P0A855     - ----------------------------    -    
+
+0042121: domain 1 of 1, from 178 to 428: score 6.7, E = 0.011
+                   *->mp.P......plklikvlrghsdpvts..fspdgnllatgssdgtvr
+                      +p++  + +++   ++v +  ++p  s ++spdg+ la+++      
+      P0A855   178    FPyElrvsdyDGYNQFVVHRSPQPLMSpaWSPDGSKLAYVTF----- 219  
+
+                   vwdletgkllktlk.ghsgsvtslaf.p..........dg.llasgs...
+                       e+g+   ++++  +g+v+ +a  p ++ + +   dg +la +  ++
+      P0A855   220 ----ESGRSALVIQtLANGAVRQVASfPrhngapafspDGsKLAFALskt 265  
+
+                   sdgtirlwdletgkllrtlkghtgpvtslafsp...gllasgsedgtvrv
+                    + ++++ dl +g++ ++  g ++  t   + p+ ++l ++++  g+  v
+      P0A855   266 GSLNLYVMDLASGQIRQVTDG-RSNNTEPTWFPdsqNLAFTSDQAGRPQV 314  
+
+                   wdlrtgsdlkllrtlkghsssvtslafsp.g.llasgssdgtvrvwdlrt
+                   + ++ ++     +++++ +s+  + ++s +g++++ +ss+g         
+      P0A855   315 YKVNING--GAPQRITWEGSQNQDADVSSdGkFMVMVSSNG--------G 354  
+
+                   gkllrtlkghkgpvtslaf.........sp.g.llatgssdgtirlwdlr
+                   ++ +++ +  +g+v  l+ +  +++    p+g++++ +ss g   + +l 
+      P0A855   355 QQHIAKQDLATGGVQVLSStfldetpslAPnGtMVIYSSSQGMGSVLNLV 404  
+
+                   t..gkplktlkghsspvtslafsp<-*
+                   +++g+  ++l++++++v   a+sp   
+      P0A855   405 StdGRFKARLPATDGQVKFPAWSP    428  
+
+0044379: domain 1 of 1, from 179 to 218: score -1.9, E = 22
+                   *->sfnlpqlrtlgvsvarvtlepgglllPhyhsnaheilyVl<-*
+                      +++l++ ++ g+  ++v+  p+ l+ P + ++  +++yV+   
+      P0A855   179    PYELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVT    218  
+
+0037711: domain 1 of 1, from 179 to 198: score -2.1, E = 74
+                   *->PytldvkeveWwsvyevgqr<-*
+                      Py+l+v++++ + ++ v++    
+      P0A855   179    PYELRVSDYDGYNQFVVHRS    198  
+
+0039030: domain 1 of 1, from 179 to 207: score -4.7, E = 93
+                   *->pasayalfYdGfvtfflsgaapvrgdvallryvnpdtgrvygeakln
+                      p++++   YdG+ +f ++ +                           
+      P0A855   179    PYELRVSDYDGYNQFVVHRS--------------------------- 198  
+
+                   nlGtltvrvvgsgdpplvlptvrvyvkpkhvrafyPrpprltpy<-*
+                                                      P p++  ++   
+      P0A855   199 -----------------------------------PQPLMSPAW    207  
+
+0038187: domain 1 of 1, from 180 to 372: score -1.1, E = 5.6
+                   *->ypklslvskrwrsl..lespelralrsllghegkvyvvggspdgnll
+                      y + ++    + ++++ +sp ++ +++  + ++k+  v ++++    
+      P0A855   180    YELRVSDYDGYNQFvvHRSPQPLMSPAWSPDGSKLAYVTFESG---- 222  
+
+                   asgssdgtvfvydpntgkwltlpslpsprvghcasaavsldgklyvtGGs
+                         +++ v  +  +  ++     ++++g+    a+s+dg  ++++ s
+      P0A855   223 ------RSALVIQTLANGAVRQVASFPRHNGA---PAFSPDGSKLAFALS 263  
+
+                   ..dsndvwvydprtntWrelppmpvaRsyhsaavlgdgkiyviGGsdggg
+                   +++s +++v+d+ +++ r++++ +++ + ++                   
+      P0A855   264 ktGSLNLYVMDLASGQIRQVTDGRSNNTEPT------------------- 294  
+
+                   rslntvevyDpktgtWtpvaplpeprsghsaltltghtgavlslafspdg
+                                                                + pd 
+      P0A855   295 ---------------------------------------------WFPDS 299  
+
+                   kllvsgsdd.....vklwdlrtgkwir.tltghsggvtsvaypasggsvl
+                   + l+++sd +   +v+  ++++g ++r+t++g ++   +           
+      P0A855   300 QNLAFTSDQagrpqVYKVNINGGAPQRiTWEGSQNQDAD----------- 338  
+
+                   lpvspdgklyvtGGydgesdglalnsaadgtvevyd<-*
+                     vs dgk+ v  +++g+++ +a +  a+g v+v++   
+      P0A855   339 --VSSDGKFMVMVSSNGGQQHIAKQDLATGGVQVLS    372  
+
+0042835: domain 1 of 1, from 180 to 428: score 76.2, E = 2.7e-23
+                   *->mkllllllaslllllaaghlpavlalalspdgrf..lvtggddgtvs
+                      + l++ + ++   ++      + +++a+spdg + ++vt ++ ++  
+      P0A855   180    YELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKlaYVTFESGRSAL 226  
+
+                   vwdl.dtgkllatlkghggvtgvafspdgrylysg.srdgt..vyvwdld
+                   v+++ ++g + ++ + +++  ++afspdg++l+++ s  g+ ++yv+dl 
+      P0A855   227 VIQTlANGAVRQVASFPRHNGAPAFSPDGSKLAFAlSKTGSlnLYVMDL- 275  
+
+                   getgkvlreiehggsvrgvavspfklldgkllavasy..gdgtvrvwDle
+                    ++g++ ++++  ++ +  ++ p    d++ la++s+++g+++v+ ++++
+      P0A855   276 -ASGQIRQVTDGRSNNTEPTWFP----DSQNLAFTSDqaGRPQVYKVNIN 320  
+
+                   tgevikvipvgggtgdtdvyspesgvaaivaspggpefivsvketgeill
+                   +g++ ++   g                                       
+      P0A855   321 GGAPQRITWEGSQ------------------------------------- 333  
+
+                   vdysdlknlkvteighakfphdvafspdgryllvasngdg..tvrviDlk
+                                       +d+++s+dg++++ +s ++g+++++  Dl+
+      P0A855   334 -------------------NQDADVSSDGKFMVMVSSNGGqqHIAKQDLA 364  
+
+                   tgklvaliptgsdiphpgpraiafhpdggpvyatselgdgtvsvidtdtg
+                   tg +  l  t++         ++  p+g+ v+ +s++g g+v  +  ++ 
+      P0A855   365 TGGVQVLSSTFL------DETPSLAPNGTMVIYSSSQGMGSVLNLVSTD- 407  
+
+                   ghplnagkvvrtlpghgggvlgiafsp<-*
+                         g+  ++lp+  g+v ++a+sp   
+      P0A855   408 ------GRFKARLPATDGQVKFPAWSP    428  
+
+0044111: domain 1 of 1, from 180 to 218: score 1.0, E = 4
+                   *->dkaeyvfleqlglvappvtpvPvisslipagggavggvt<-*
+                       +++ + ++++++ +  ++p+P+ s    ++g++ + vt   
+      P0A855   180    YELRVSDYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVT    218  
+
+0041417: domain 1 of 1, from 181 to 428: score 40.1, E = 1.2e-12
+                   *->lilleemralllllvltghtgpvlsvafspdglllvtgsadgtvsvi
+                                                                +++v 
+      P0A855   181    ------------------------------------------ELRVS 185  
+
+                   dldtgkviatlpgggavhgvafspdgrylyva...grdgtvsviDlatgk
+                   d d ++   ++  + ++++ a+spdg +l+ ++ +++ + +++  la+g 
+      P0A855   186 DYDGYNQFVVHRSPQPLMSPAWSPDGSKLAYVtfeSGRSALVIQTLANGA 235  
+
+                   ptvlatip.hggsprglafspllgedgkylavanygdgt..vvvwDaetl
+                   ++ +a++p h+g+p   afsp    dg++la+a    g+ +++v+D++++
+      P0A855   236 VRQVASFPrHNGAP---AFSP----DGSKLAFALSKTGSlnLYVMDLASG 278  
+
+                   evlktipvpgesgdtieyhhesrvasivfspdgpylvvsvkedge..ill
+                   +++++ +              s  +   + pd++ l ++   +g+ +++ 
+      P0A855   279 QIRQVTDG------------RSNNTEPTWFPDSQNLAFTSDQAGRpqVYK 316  
+
+                   vdlsdgkvlkvleiehgsgphdlafspdgryllvtgsgdgt..vavwDlk
+                   v++++g + +++    gs   d+ +s+dg++++  +s++g++++a  Dl+
+      P0A855   317 VNINGGAPQRITWE--GSQNQDADVSSDGKFMVMVSSNGGQqhIAKQDLA 364  
+
+                   tgklvatidvg..ggphpgrgaiavspdgkpvfvtsalgdgvvsvidtds
+                   tg +  + ++  +++p        + p+g  v+ +s  g g+v+     +
+      P0A855   365 TGGVQVLSSTFldETPS-------LAPNGTMVIYSSSQGMGSVLNLVSTD 407  
+
+                   ekhkdnagkvvatieghgggvlgvafsp<-*
+                          g+  a++++  g+v + a+sp   
+      P0A855   408 -------GRFKARLPATDGQVKFPAWSP    428  
+
+0042310: domain 1 of 1, from 181 to 428: score 22.2, E = 7.2e-07
+                   *->medvlppkllrvlkgh..sdpvtslafspdgnllatgss..gdgtvr
+                      + +v +++ + ++  h  + p  s a+spdg+ la+ +++ g + ++
+      P0A855   181    ELRVSDYDGYNQFVVHrsPQPLMSPAWSPDGSKLAYVTFesGRSALV 227  
+
+                   iwdldtgkelkllktlkghsgpvtslafsplsdgnllasgss...Dgtvr
+                   i  l +g  ++++++++ h+g+    afsp  dg+ la + s++ + +++
+      P0A855   228 IQTLANGA-VRQVASFPRHNGAP---AFSP--DGSKLAFALSktgSLNLY 271  
+
+                   vwdletgkllesipltplrtlkghtgpvtslafspdgnllavlsgsdDgt
+                   v dl +g++         ++ +g ++  t   + pd++ la+ ++++ g 
+      P0A855   272 VMDLASGQIR--------QVTDG-RSNNTEPTWFPDSQNLAF-TSDQAGR 311  
+
+                   vrlwdlr.tgkllrtlkghsgavtsvafspdgknllasgssdgtvrlwdl
+                     ++ ++++g   ++++  ++   ++++s dgk++++++s  g+ ++   
+      P0A855   312 PQVYKVNiNGGAPQRITWEGSQNQDADVSSDGKFMVMVSSNGGQQHIAKQ 361  
+
+                   rglrtgkpvatleghsgpvtslafspddgnllasgssdgtirlwdlr..t
+                   +    g  v + +   +   sla +   g++++++ss g   + +l  ++
+      P0A855   362 DLATGGVQVLSSTF-LDETPSLAPN---GTMVIYSSSQGMGSVLNLVstD 407  
+
+                   gkllktlkghreghsspvtslaf.p<-*
+                   g+    l++    ++++v   a+ p   
+      P0A855   408 GRFKARLPA----TDGQVKFPAWsP    428  
+
+0039965: domain 1 of 1, from 181 to 353: score 14.9, E = 0.00011
+                   *->atlkgHtdpvtsvafspdgsllatgssdgtvriwdlstssgkllatl
+                                                   ++r+ d+++       ++
+      P0A855   181    -----------------------------ELRVSDYDG---YNQFVV 195  
+
+                   kgHsgpvtsvawspdgnllasgsd...DgtvkvWdletgewkplrtlkgh
+                   +    p +s awspdg++la + ++   + + +  l++g ++ ++++ +h
+      P0A855   196 HRSPQPLMSPAWSPDGSKLAYVTFesgRSALVIQTLANGAVRQVASFPRH 245  
+
+                   tsavtsvafspdgnllasg...ssDgtvriwdlrtgkdlwvllrtlkghs
+                   ++a    afspdg++la +  ++++  +++ dl +g+     +r++++ +
+      P0A855   246 NGAP---AFSPDGSKLAFAlskTGSLNLYVMDLASGQ-----IRQVTDGR 287  
+
+                   gpvtsvawspdgnllasgsaD.gtvrvwdlrtlkllktlelllsgsgrrs
+                   +  t  +w pd++ la  s+ +g+  v+ +                 + +
+      P0A855   288 SNNTEPTWFPDSQNLAFTSDQaGRPQVYKV-----------------NIN 320  
+
+                   gkpvatlkghtgpvtslafspdgsllasgsdDg<-*
+                   g   ++++  +++    ++s+dg++++ +s++g   
+      P0A855   321 GGAPQRITWEGSQNQDADVSSDGKFMVMVSSNG    353  
+
+0041522: domain 1 of 1, from 182 to 428: score 21.1, E = 7.1e-07
+                   *->ppkpvkvlkghsdpvtslafspdgrllavgssdgtvriwdletgkll
+                                                         +r+ d++  ++ 
+      P0A855   182    -----------------------------------LRVSDYDGYNQF 193  
+
+                   ktlpkghsgsvtslafspdgn.lasgs...sdgtvkvwdletgkllrlll
+                    ++    + + +s a+spdg++la ++ +   + + +  l +g + +   
+      P0A855   194 VVH--RSPQPLMSPAWSPDGSkLAYVTfesGRSALVIQTLANGAVRQ--- 238  
+
+                   tlkghtgpvtslafspdgnllasgsdgt....vrlwdlrtg..kll.ghs
+                   + + +++   + afspdg++la + ++t   ++++ dl +g+++++++ +
+      P0A855   239 VAS-FPRHNGAPAFSPDGSKLAFALSKTgslnLYVMDLASGqiRQVtDGR 287  
+
+                   gsvtsvafsp.dgnllasgssdgtvrvwdlr.sgkllaltlkghsgpvts
+                   +  t  ++ p++ nl +++++ g+ +v+ ++++g   + +++  ++   +
+      P0A855   288 SNNTEPTWFPdSQNLAFTSDQAGRPQVYKVNiNGGAPQ-RITWEGSQNQD 336  
+
+                   lafspdgkllatgssdgt...iklwdlrtgselkplktlkghsspvtsla
+                    ++s+dgk+++  ss+g +++i   dl tg            + +v+s +
+      P0A855   337 ADVSSDGKFMVMVSSNGGqqhIAKQDLATG------------GVQVLSST 374  
+
+                   f.......spdgkllasgsedgtvrvwdl..stgeplellatlpghsgpv
+                   f +++    p+g++++ +s+ g+  v +l+  +g   +  a+lp+ +g v
+      P0A855   375 FldetpslAPNGTMVIYSSSQGMGSVLNLvsTDG---RFKARLPATDGQV 421  
+
+                   tslaf.pdgnllasgssdgtvriwdlpe<-*
+                      a+ p                        
+      P0A855   422 KFPAWsP---------------------    428  
+
+0041521: domain 1 of 1, from 182 to 428: score 42.9, E = 2.1e-13
+                   *->vriwdldtgkllktlkghsgpvtslafspdgnllasgss...dgtvr
+                      +r+ d+d+ +   +++   +p +s a+spdg++la ++++   + + 
+      P0A855   182    LRVSDYDGYNQFVVHR-SPQPLMSPAWSPDGSKLAYVTFesgRSALV 227  
+
+                   vwdletgkllpvrtlkghtgpvtslafspdgnllasgslgdDgt....vr
+                   +  l++g +  v++++ h+g++   afspdg++la++     +t   +++
+      P0A855   228 IQTLANGAVRQVASFPRHNGAP---AFSPDGSKLAFA---LSKTgslnLY 271  
+
+                   vwdlrtgkllatlkghtgsvtsvafspdgklllasgssdgtvrvwdlr.t
+                   v dl +g+  ++ +  ++  t  ++ pd+++l +++++ g  +v+ ++++
+      P0A855   272 VMDLASGQIRQVTD-GRSNNTEPTWFPDSQNLAFTSDQAGRPQVYKVNiN 320  
+
+                   gkplktlkghggpvtslafspdgkllatgssdgt...irlwdlrtgkplk
+                   g   ++++  g+   + ++s dgk+++  ss+g +++i   dl tg +  
+      P0A855   321 GGAPQRITWEGSQNQDADVSSDGKFMVMVSSNGGqqhIAKQDLATGGVQV 370  
+
+                   tlrlglllelghtspvtslafspdgrllasgssdgtvrvwdl..dtgkll
+                     +         t      ++ p+g++++ +ss g   v +l+  +g+  
+      P0A855   371 LSS---------TFLDETPSLAPNGTMVIYSSSQGMGSVLNLvsTDGRFK 411  
+
+                   atlkghsggpvtsvawspdgnllasgssdgtvrlWdld<-*
+                   a+l++ +g  v   awsp                       
+      P0A855   412 ARLPATDG-QVKFPAWSP--------------------    428  
+
+0036129: domain 1 of 1, from 182 to 333: score 19.7, E = 3.9e-06
+                   *->vklldrtgkllltltghgssvtslafspdg.....llsgssdgtlrl
+                      + ++d++g    +++  +++  s+a+spdg + +++ + s+++ l++
+      P0A855   182    LRVSDYDGYNQFVVHRSPQPLMSPAWSPDGsklayVTFESGRSALVI 228  
+
+                   wdlatgkvsgatppvatleghggplglafspdGkllppelrgnllvagsg
+                     la+g v      +++++  ++  + afspdG++        l +a s+
+      P0A855   229 QTLANGAV------RQVASFPRHNGAPAFSPDGSK--------LAFALSK 264  
+
+                   dg..rvrvidpdggkvvtiirllllggvggrptgvafdpdGk.lyvttds
+                   +g   ++v d+++g ++++       ++    t  ++ pd+++l +t ++
+      P0A855   265 TGslNLYVMDLASGQIRQVT------DGRSNNTEPTWFPDSQnLAFT-SD 307  
+
+                   sdg..tiyridlatgklttiplelkpvl<-*
+                     g   +y++++++g  ++i++e+ +     
+      P0A855   308 QAGrpQVYKVNINGGAPQRITWEGSQ--    333  
+
+0038319: domain 1 of 1, from 182 to 353: score 15.2, E = 3.8e-05
+                   *->vrvwdlrtgkllrtlkghsgsvtsvafspdgnllasgssd..gtvrl
+                      +rv d +  ++  + +  +++ +s a+spdg++la ++    ++  +
+      P0A855   182    LRVSDYDGYNQFVVHR-SPQPLMSPAWSPDGSKLAYVTFEsgRSALV 227  
+
+                   wdlrtgkplatl.ghsgpvtslafspdgnllatgss.dgt..irlwdlrt
+                   + +  +  +++++ ++ +  + afspdg+ la + s+ g+ ++++ dl +
+      P0A855   228 IQTLANGAVRQVaSFPRHNGAPAFSPDGSKLAFALSkTGSlnLYVMDLAS 277  
+
+                   gkpl.tlkghtspvtslafspdgrllasgss.dgtvrvwdl.stgellat
+                   g++ ++ +g +s  t   + pd++ la  s++ g+  v++++ +g   ++
+      P0A855   278 GQIRqVTDG-RSNNTEPTWFPDSQNLAFTSDqAGRPQVYKVnINGGAPQR 326  
+
+                   l.ghsgpvtslafspdgnllasgssdgtirvWdlpe<-*
+                   ++  ++   + ++s+dg++++ +ss+g            
+      P0A855   327 ItWEGSQNQDADVSSDGKFMVMVSSNG---------    353  
+
+0042311: domain 1 of 1, from 182 to 353: score 16.7, E = 1.8e-05
+                   *->vklwdlr...lktlkghsgsvtsvafspdgnllasg...ssdgntir
+                      +++ d++ ++  + +  +++ +s a+spdg+ la ++ +s     + 
+      P0A855   182    LRVSDYDgynQFVVHRSPQPLMSPAWSPDGSKLAYVtfeSGRS-ALV 227  
+
+                   iwdlrtgkllktlklghgspvtslafspdgnllasgss...dgtiklwdl
+                   i  l +g + ++ ++  ++   + afspdg+ la + s++ + ++++ dl
+      P0A855   228 IQTLANGAVRQVASF--PRHNGAPAFSPDGSKLAFALSktgSLNLYVMDL 275  
+
+                   rtgklplktlkghtspvtslafspdgklllllsldgnllasgsedgtiri
+                    +g++  ++ +g +s  t   + pd++         nl ++++  g+  +
+      P0A855   276 ASGQI-RQVTDG-RSNNTEPTWFPDSQ---------NLAFTSDQAGRPQV 314  
+
+                   wdlstpgkllatlkghggpvtslafspdgk.lasgssdgtvriwdle<-*
+                   ++++ +g   ++++  g+   + ++s dgk ++ +ss+g           
+      P0A855   315 YKVNINGGAPQRITWEGSQNQDADVSSDGKfMVMVSSNG--------    353  
+
+0038192: domain 1 of 1, from 182 to 353: score 14.5, E = 7.9e-05
+                   *->vrlwdlrtgkllrtlkghtgpvtslafspdgnllasgss..dgtvrl
+                      +r+ d +  ++  + +  ++p++s a+spdg+ la ++ +  ++  +
+      P0A855   182    LRVSDYDGYNQFVVHR-SPQPLMSPAWSPDGSKLAYVTFesGRSALV 227  
+
+                   wdlrsgkplktleghsgpvtslafspdgnllatgss...dgtiklwdlrt
+                   + +  +  ++++        + afspdg+ la + s++ + ++++ dl +
+      P0A855   228 IQTLANGAVRQVASFPRHNGAPAFSPDGSKLAFALSktgSLNLYVMDLAS 277  
+
+                   gkplktlkghtnsspvtslafspdgnllasgs.edgtvrvwdl.etgell
+                   g++ ++ +g    s  t  ++ pd++ la +s+  g+  v++++ +g   
+      P0A855   278 GQIRQVTDGR---SNNTEPTWFPDSQNLAFTSdQAGRPQVYKVnINGGAP 324  
+
+                   atlkghsgpvtsvafspdgnllasgsddgtvrvWk<-*
+                   ++++  ++   + ++s dg++++ +s++g         
+      P0A855   325 QRITWEGSQNQDADVSSDGKFMVMVSSNG------    353  
+
+0039586: domain 1 of 1, from 182 to 428: score 100.1, E = 3.2e-29
+                   *->GrllatnsgdgtvsvidlatgkvvatltlvghggrprgvafspDGkl
+                                  ++v d ++ ++  +      +++ +++a+spDG++
+      P0A855   182    ------------LRVSDYDGYNQFVVH---RSPQPLMSPAWSPDGSK 213  
+
+                   lyvtgsadgt..vrvwdlatgkvlaridlgspderggspyslafspDGkt
+                   l+++ + +g+ ++++  la+g v+++ ++++         + afspDG++
+      P0A855   214 LAYVTFESGRsaLVIQTLANGAVRQVASFPR------HNGAPAFSPDGSK 257  
+
+                   lavasgplgllltvykvddgtvavwdlatgkvvatlpvgseptgvawspD
+                   la+a +         k+++  ++v+dla+g+ ++++++ s  t   w pD
+      P0A855   258 LAFALS---------KTGSLNLYVMDLASGQIRQVTDGRSNNTEPTWFPD 298  
+
+                   Gkllavtg.....gtvyvidvatgkvlrlipvggrprgvafspdgkrlyv
+                   ++ la+t++++  ++vy +++++g++ r+++ g++ +++ +s dgk+++ 
+      P0A855   299 SQNLAFTSdqagrPQVYKVNINGGAPQRITWEGSQNQDADVSSDGKFMVM 348  
+
+                   agsgdg..tvsvidlatgtviatldlaaelagvllidlasgkvllvelvp
+                   + s++g+++++  dlatg v+++                           
+      P0A855   349 VSSNGGqqHIAKQDLATGGVQVL--------------------------S 372  
+
+                   tgaapvsvafspdgrllyvan.....gtlsvidlatgkvlatiplgggvw
+                    ++     ++ p+g+++++++ + +  +l +++++++   ++ +++g+v 
+      P0A855   373 STFLDETPSLAPNGTMVIYSSsqgmgSVLNLVSTDGRFKARLPATDGQVK 422  
+
+                   svafspDGkrlyvasadgtvsvidvatgkvlatiplgggpvgvaaflrlv
+                    +a+sp                                            
+      P0A855   423 FPAWSP-------------------------------------------- 428  
+
+                   eede<-*
+                          
+      P0A855     - ----    -    
+
+0036709: domain 1 of 1, from 185 to 430: score 36.0, E = 1e-10
+                   *->qtkpgkaervlagglslpegpawdpdgnplpvkptllvvdipdgr..
+                       + +g  + v+    +   +paw+pdg+       l +v+ ++gr +
+      P0A855   185    SDYDGYNQFVVHRSPQPLMSPAWSPDGS------KLAYVTFESGRsa 225  
+
+                   ilrwdldggkvlalglptfeghggrpnglafdpdGr.llvadsgdgg..i
+                   +++  l++g v++     +++ + +  + af+pdG +l +a s +g+ ++
+      P0A855   226 LVIQTLANGAVRQ-----VASFPRHNGAPAFSPDGSkLAFALSKTGSlnL 270  
+
+                   yvfdldggkltvlvdgaegkpfnrpndlavdp.dGrlyvtdmgydiedde
+                   yv+dl++g+++++ dg ++      +  ++ p+  +l +t+         
+      P0A855   271 YVMDLASGQIRQVTDGRSN-----NTEPTWFPdSQNLAFTS--------- 306  
+
+                   gtilegsgdgr..vyrydpd.gklvkvlgglggpnglafspdgkllentl
+                         ++ gr +vy+++++ g   ++   +++ +  ++s dgk    ++
+      P0A855   307 ------DQAGRpqVYKVNINgGAPQRITWEGSQNQDADVSSDGK----FM 346  
+
+                   yvadtgdg..rirvfdldgdgalgnvrvfadlgpglpggpdgiavdpdGn
+                   + + +++g+++i + dl +    g v+v+ +   + ++   ++a +  G 
+      P0A855   347 VMVSSNGGqqHIAKQDLAT----GGVQVLSS---TFLDETPSLAPN--GT 387  
+
+                   lwvadsggg...rvvvfdpdggkllaviegpggrptglafggdgktlyvt
+                   +++  s+ g+   + ++++dg+ + a++++  g++  +a+++ +      
+      P0A855   388 MVIYSSSQGmgsVLNLVSTDGR-FKARLPATDGQVKFPAWSPYL------ 430  
+
+                   saldgaiyvldlgvkglptlpfnlpdgiy<-*
+                                                   
+      P0A855     - -----------------------------    -    
+
+0043708: domain 1 of 1, from 186 to 428: score 15.3, E = 3.9e-05
+                   *->epplklvrtlrghsdpvtslafsp.g.llatg...sgdgtvrlwdld
+                      ++ +  +++ +  ++p  s a+sp+g  la ++ +sg + + +  l 
+      P0A855   186    DYDGYNQFVVHRSPQPLMSPAWSPdGsKLAYVtfeSGRSALVIQTLA 232  
+
+                   tgkndsslkllktlkghsgpvtslaflplisglspdgnllasgss...dg
+                   +g     ++++++++ h+g+    af       spdg+ la + s++ + 
+      P0A855   233 NGA----VRQVASFPRHNGAP---AF-------SPDGSKLAFALSktgSL 268  
+
+                   tvklwdletgkllrsvilelkplatlkgHtgpvtslafspdgaellpnll
+                   ++++ dl++g++ +          + +g +++ t   + pd+    +nl 
+      P0A855   269 NLYVMDLASGQIRQ----------VTDG-RSNNTEPTWFPDS----QNLA 303  
+
+                   asgsdDgtvrlwdlr.tgkllstlklaedplglellslvavlsghsgsvt
+                   ++++  g   ++ ++++g   ++++                  + ++   
+      P0A855   304 FTSDQAGRPQVYKVNiNGGAPQRIT------------------WEGSQNQ 335  
+
+                   svafspdg.llasgssDgt...vrlwdlrtgkplktlklshslsghsgpv
+                   ++++s+dg++ + +ss+g ++++   dl tg +    +       + +  
+      P0A855   336 DADVSSDGkFMVMVSSNGGqqhIAKQDLATGGVQVLSS------TFLDET 379  
+
+                   tslafspdgkllasgssddnlgtirlwdlr..tgkplktlkladllqksl
+                    sla   +g++++ +ss    g   + +l  ++g+  + l+         
+      P0A855   380 PSLAP--NGTMVIYSSSQ---GMGSVLNLVstDGRFKARLP--------- 415  
+
+                   lalrghsspvtslafsp<-*
+                       +++++v   a+sp   
+      P0A855   416 ----ATDGQVKFPAWSP    428  
+
+0044204: domain 1 of 1, from 187 to 353: score 10.8, E = 0.0021
+                   *->lkllrtlkgh..sdgvtslafspdgdllatg...ssdgtvriwdlet
+                       + +  +  h   ++  s a+spdg+ la  + +s+ + + i  l +
+      P0A855   187    YDGYNQFVVHrsPQPLMSPAWSPDGSKLAYVtfeSGRSALVIQTLAN 233  
+
+                   gkklellktlkghsgpvtslafspdgkgllasgssdgtvklw..dletgk
+                   g  ++++++++ h+g+    afspdg+ l ++ s  g++ l+++dl +g+
+      P0A855   234 GA-VRQVASFPRHNGAP---AFSPDGSKLAFALSKTGSLNLYvmDLASGQ 279  
+
+                   llrtlkghtgpvtslafspdngnllasgsdDgtvkiw..dlrtgklvrtl
+                   + ++    +++ t   + pd+ nl ++++  g   +++++++ g ++r+ 
+      P0A855   280 IRQVTD-GRSNNTEPTWFPDSQNLAFTSDQAGRPQVYkvNINGGAPQRIT 328  
+
+                   kghsdsvtlggpvtsvafspdgnllasgssdg<-*
+                            g++  + ++s dg++++  ss+g   
+      P0A855   329 W-------EGSQNQDADVSSDGKFMVMVSSNG    353  
+
+0041353: domain 1 of 1, from 188 to 428: score 8.4, E = 0.005
+                   *->plklpkvlkghtdpvtsl.fspdgnllatg...ssdgtvrlwdletg
+                      +   ++v +  ++p+ s ++spdg+ la ++ +s+   + +  l +g
+      P0A855   188    DGYNQFVVHRSPQPLMSPaWSPDGSKLAYVtfeSGRSALVIQTLANG 234  
+
+                   k..llktlkghsgpvtslafspdg.llasgss...dgtvklwdletgkll
+                    + ++++++ h+g+    afspdg  la + s++ + ++++ dl +g++ 
+      P0A855   235 AvrQVASFPRHNGAP---AFSPDGsKLAFALSktgSLNLYVMDLASGQIR 281  
+
+                   rtlkghtgpvtslafsptedgnllasgseDgtirlwdlr.tgkllktlsl
+                   ++ +  ++  t   + p  + nl +++++ g+  ++ ++++g        
+      P0A855   282 QVTD-GRSNNTEPTWFPD-SQNLAFTSDQAGRPQVYKVNiNGGA------ 323  
+
+                   lkndgevillnkeslkplatlkghtgsvtsvafsp.g.llasgssdgt..
+                                     + +++  +   + ++s++g++++ +ss+g ++
+      P0A855   324 -----------------PQRITWEGSQNQDADVSSdGkFMVMVSSNGGqq 356  
+
+                   .vrlwdlrtgkplktlkghkgpvtslafspdgnllatgssDgtiklwdlr
+                   ++   dl tg +    + + ++  sla   +g++++ +ss g   + +l 
+      P0A855   357 hIAKQDLATGGVQVLSSTFLDETPSLAP--NGTMVIYSSSQGMGSVLNLV 404  
+
+                   tg..kplrtlkghtspvtslafsp<-*
+                   + + +  ++l++ +++v   a+sp   
+      P0A855   405 STdgRFKARLPATDGQVKFPAWSP    428  
+
+0043253: domain 1 of 1, from 188 to 428: score 22.1, E = 4.1e-07
+                   *->ydglyvyvtdsadgtiyvidldetgtltlvqtipvggapsglafspd
+                                               ++  + +   +++ ++ a+spd
+      P0A855   188    ------------------------DGYNQFVVHRSPQPLMSPAWSPD 210  
+
+                   gkylyvade..gdgtvsvfdldtgggelevlrtvpvggsptglafspdgk
+                   g++l+ +  + g  ++++  l+ g    +v +    + +    afspdg+
+      P0A855   211 GSKLAYVTFesGRSALVIQTLANG----AVRQVASFPRHNGAPAFSPDGS 256  
+
+                   llfvany..gdgtvsvwdladgsllgpipvrqhgahphgvafspdgkyly
+                    l+ a +++g+ +++v+dla+g++ ++ ++    +  +   + pd++ l 
+      P0A855   257 KLAFALSktGSLNLYVMDLASGQIRQVTDG---RSNNTEPTWFPDSQNLA 303  
+
+                   vtdlgddtvrvydldsggllllavvavltlepgsgprhvafspdgkylyv
+                   +t+ ++++  vy+++ +g+       +  +  gs   +  +s dgk++ +
+      P0A855   304 FTSDQAGRPQVYKVNINGGA-----PQRITWEGSQNQDADVSSDGKFMVM 348  
+
+                   tleldgtvavwdldgatgaltllqtiptlppgfpggagpngialspdgkf
+                   +++ +g+ ++ + d atg +++l +          +      +l p+g+ 
+      P0A855   349 VSSNGGQQHIAKQDLATGGVQVLSS----------TFLDETPSLAPNGTM 388  
+
+                   Lyvsnrgd..dtiavfdldtdggllslvatiptgglprglafspdgkyll
+                   ++ s++ ++   + ++++d+      + ++  t g++   a+sp      
+      P0A855   389 VIYSSSQGmgSVLNLVSTDGRF----KARLPATDGQVKFPAWSP------ 428  
+
+                   vanqksgtvsvydldgdtgllevlarvpvgpePvgvaflPqe<-*
+                                                                
+      P0A855     - ------------------------------------------    -    
+
+0036421: domain 1 of 1, from 189 to 230: score 2.6, E = 2.1
+                   *->gvsvarvtlepgalllPhynsnAteilyvleGegrvgvvfpg<-*
+                      g+  ++v+  p+ l+ P ++++  +++yv+  +gr  +v+     
+      P0A855   189    GYNQFVVHRSPQPLMSPAWSPDGSKLAYVTFESGRSALVIQT    230  
+
+0039120: domain 1 of 1, from 189 to 218: score -2.7, E = 27
+                   *->gvsvaritlepgalllPhynsnAteilyVl<-*
+                      g+  ++++  p+ l++P ++++  +++yV+   
+      P0A855   189    GYNQFVVHRSPQPLMSPAWSPDGSKLAYVT    218  
+
+0037966: domain 1 of 1, from 190 to 402: score 8.3, E = 0.0052
+                   *->ggdswklgggsiwsspaydpdgglvyv...gsgnpspwngerrpgdn
+                      +++ +++  + + +spa +pdg  +++++  sg              
+      P0A855   190    YNQFVVHRSPQPLMSPAWSPDGSKLAYvtfESG-------------- 222  
+
+                   lydgsvvaldlktGkvlWsyql.tphdlwdfdgvgdivlsplvdggkivp
+                      + +v+  l++G+v+ + ++  + ++ +f+          +dg+k   
+      P0A855   223 --RSALVIQTLANGAVRQVASFpRHNGAPAFS----------PDGSK--- 257  
+
+                   llyaggrnGn..vyaldrrtGkllwalslsgnvnwlkgidlktgrpivqp
+                   l +a ++ G  ++y++d+++G+++++++  +                   
+      P0A855   258 LAFALSKTGSlnLYVMDLASGQIRQVTDGRS------------------- 288  
+
+                   icrtppslkgtlvfpgalGgknwgslaydpdggllyvglndlpvvlelvp
+                                                                     
+      P0A855     - -------------------------------------------------- -    
+
+                   rgyiagpfavgassfavdggllyvgsa...dgklyalDlstgkvlwkfdl
+                           +++  ++ +d ++l+++s+++   ++y +++  g   + ++ 
+      P0A855   289 --------NNTEPTWFPDSQNLAFTSDqagRPQVYKVNINGGAPQRITWE 330  
+
+                   ggpilggslvtaggllfvgsldgy...lyaldartGkllwsfklgggvvs
+                   g   + + ++ +g+ ++++s++g ++++   d +tG +    ++  + + 
+      P0A855   331 GSQNQDADVSSDGKFMVMVSSNGGqqhIAKQDLATGGVQVLSSTFLDETP 380  
+
+                   spvtyvadgklyvgtadGtvyafdlgeegplanfldgllsspaisdlall
+                   s++  + + +++ ++  G + +++                          
+      P0A855   381 SLA--PNGTMVIYSSSQGMGSVLN-------------------------- 402  
+
+                   vrsggsltvfdL<-*
+                                  
+      P0A855     - ------------    -    
+
+0037152: domain 1 of 1, from 190 to 210: score -3.6, E = 87
+                   *->ydltalklivqplpddawrpd<-*
+                      y+   +  + qpl   aw pd   
+      P0A855   190    YNQFVVHRSPQPLMSPAWSPD    210  
+
+0040712: domain 1 of 1, from 191 to 229: score -2.2, E = 17
+                   *->NkyfllnkPtklLsPeYlwdeslllppeiklvllllalk<-*
+                      N++++++ P  l+sP ++ d s+l +  +   + +l+++   
+      P0A855   191    NQFVVHRSPQPLMSPAWSPDGSKLAYVTFESGRSALVIQ    229  
+
+0037143: domain 1 of 1, from 191 to 428: score 16.2, E = 1.1e-05
+                   *->deedeeeeedepeerlppvtalafspdgkllavgsadgsvrlwdlpt
+                                                                     
+      P0A855     -    ----------------------------------------------- -    
+
+                   gerplklvrtlkghsgpvtslafspdgrllatg...s.dgtvrlwdletg
+                          +++ +  ++p  s a+spdg+ la ++ +s  + + +  l +g
+      P0A855   191 ------NQFVVHRSPQPLMSPAWSPDGSKLAYVtfeSgRSALVIQTLANG 234  
+
+                   ..kllktlklsgkllpklslkplltlsghsgpvtslafspdgnllasgss
+                   +++++++++                   h+g+    afspdg++la + s
+      P0A855   235 avRQVASFP------------------RHNGAP---AFSPDGSKLAFALS 263  
+
+                   ...dgtvrvwdletgkllrtlkgHtgpvtslafspdgnllasgss...Dg
+                   ++ + +++v dl +g++ ++    ++  t   + pd++ la  s+++   
+      P0A855   264 ktgSLNLYVMDLASGQIRQVTD-GRSNNTEPTWFPDSQNLAFTSDqagRP 312  
+
+                   tvrvwdlrtgkllrtlghsgpvtsvafspldgnllasgssdgt...vrlw
+                   +v+  +++ g + r+   ++   ++++s+ dg++++ +ss+g ++++   
+      P0A855   313 QVYKVNINGGAPQRITWEGSQNQDADVSS-DGKFMVMVSSNGGqqhIAKQ 361  
+
+                   dlrtgkplatlklpglvldghsgpvtslafspdgnllatgssDgtirlwd
+                   dl tg +    +          +   sla +            gt+ +++
+      P0A855   362 DLATGGVQVLSS-------TFLDETPSLAPN------------GTMVIYS 392  
+
+                   lrtlgleleedlpetgkllktlkghsspvtslafsp<-*
+                    + + +++ +  +++g+  ++l++++++v   a+sp   
+      P0A855   393 SSQGMGSVLNLVSTDGRFKARLPATDGQVKFPAWSP    428  
+
+0040005: domain 1 of 1, from 191 to 426: score 9.3, E = 0.0022
+                   *->gdtlvvgggnvwsslsydpelg.lvyvgtgngspdnygvrsrrpgdn
+                      ++ +v+ ++++ +s++++p++ +l yv++ +g               
+      P0A855   191    NQFVVHRSPQPLMSPAWSPDGSkLAYVTFESG--------------- 222  
+
+                   lytaslvaldaatGkllWsyqvtphdlwdydllgdptlsplvdggktvkl
+                      + lv   +a+G ++   +              +++  +  +g +   
+      P0A855   223 --RSALVIQTLANGAVRQVASF----------PRHNGAPAFSPDGSKLAF 260  
+
+                   vyvgskngflyaldrttGkllwalevgsvnwskgidetgrptqppstlpt
+                    +  +++ +ly++d+++G++   ++++s                      
+      P0A855   261 ALSKTGSLNLYVMDLASGQIRQVTDGRS---------------------- 288  
+
+                   ldgtlvcpgalggknwgsvayspdtgllyvpandlpvtlwlvd...ggel
+                                 n   + + pd+++l++ +   +   + +++++gg +
+      P0A855   289 --------------NNTEPTWFPDSQNLAFTSDQAGRPQVYKVninGGAP 324  
+
+                   vlllaggvylgavlstpvvpdgrvyvasddg...tlyaldaatGkvlWsl
+                   ++ ++ g + +   + + +++  ++ +s++g ++++   d+atG v+   
+      P0A855   325 QRITWEGSQNQ--DADVSSDGKFMVMVSSNGgqqHIAKQDLATGGVQVLS 372  
+
+                   plggpvlggspvtagglvfvgsldGylralda..dtGkllwrfklgggvi
+                   ++  +  + s+++ g +v++ s++G+  +l+++ ++G++++r++  +g +
+      P0A855   373 STFLDE-TPSLAPNGTMVIYSSSQGMGSVLNLvsTDGRFKARLPATDGQV 421  
+
+                   asPvvyeadgklyvavaaggggsaglavllvdtrtggylyafklpgkael
+                     P+                                              
+      P0A855   422 KFPAW--------------------------------------------- 426  
+
+                   pe<-*
+                        
+      P0A855     - --    -    
+
+0038003: domain 1 of 1, from 191 to 228: score -3.0, E = 32
+                   *->NkyfllnkPtklLsPeYlwdeslglppeiklvrlllll<-*
+                      N+++++  P  l+sP ++ d s+  +  +   r +l++   
+      P0A855   191    NQFVVHRSPQPLMSPAWSPDGSKLAYVTFESGRSALVI    228  
+
+0043729: domain 1 of 1, from 193 to 224: score -3.2, E = 54
+                   *->lvihageddlgrggaelslptgnagarlaCgvigllee<-*
+                      +v+h  +  l      +s  +  +g+ la+ + +  +    
+      P0A855   193    FVVHRSPQPL------MSPAWSPDGSKLAYVTFESGRS    224  
+
+0037138: domain 1 of 1, from 193 to 220: score -2.2, E = 45
+                   *->lvihageddlgkgslptgnaGarlAcgvIg<-*
+                      +v+h  +  l  +s  +  +G++lA+ + +   
+      P0A855   193    FVVHRSPQPL--MSPAWSPDGSKLAYVTFE    220  
+
+0042881: domain 1 of 1, from 203 to 428: score 32.8, E = 4.2e-10
+                   *->hglafspdgrylyvanlgsgrirlynlgtdlllasydgtvsviDlet
+                      ++ a+spdg+ l+ +  +sgr                + + +  l++
+      P0A855   203    MSPAWSPDGSKLAYVTFESGR----------------SALVIQTLAN 233  
+
+                   gkvvatvpvgggprglafspdGkylyvtsegdgtvvsvi..dtatgkvta
+                   g v      + +  ++afspdG+ l ++++ +g  ++++++d+a+g++ +
+      P0A855   234 GAVRQVASFPRHNGAPAFSPDGSKLAFALSKTGS-LNLYvmDLASGQIRQ 282  
+
+                   tltvgagpagiavspdgkflyva......gtvsvidvrtgggvvrtiptg
+                   + ++ ++  + +++pd   l+++ +++   +v+ +++++g  + r+  +g
+      P0A855   283 VTDGRSNNTEPTWFPDSQNLAFTsdqagrPQVYKVNINGGA-PQRITWEG 331  
+
+                   ksprgvafspdGkylyvagslsg..tvsvidldtltglledlieprdvvv
+                    +  + ++s dGk+++ + s++g++++   dl+t++  + ++  ++ +  
+      P0A855   332 SQNQDADVSSDGKFMVMVSSNGGqqHIAKQDLATGGVQVLSSTFLDET-- 379  
+
+                   atlpvglgplsiafdpdgkllvvaggdsqiviwdletgkkayegdkvdvv
+                               +  p+g++++  ++ ++  + +l + + ++++++++ +
+      P0A855   380 -----------PSLAPNGTMVIYSSSQGMGSVLNLVSTDGRFKARLPATD 418  
+
+                   ldkldvhylpghlgsvlglsfspdgkllvslskfskdrflpvgpllpenv
+                   ++++  ++ p                                        
+      P0A855   419 GQVKFPAWSP---------------------------------------- 428  
+
+                   qvidiatdkmkliadvpvgpePhgvailprdklitl<-*
+                                                          
+      P0A855     - ------------------------------------    -    
+
+0037647: domain 1 of 1, from 204 to 428: score 14.3, E = 4.1e-05
+                   *->clllllvllalaaaasdwpqyggdyantryspldqintdnvkklkla
+                                                                   +a
+      P0A855   204    --------------------------------------------SPA 206  
+
+                   WsystgggkergiestPvvagglvyvtsadgtvyaldaatGkllWtydlh
+                   Ws + ++               +v + s+ + ++   +a+G + +  +++
+      P0A855   207 WSPDGSKL-------------AYVTFESGRSALVIQTLANGAVRQVASFP 243  
+
+                   ggaddvaccavlsrgvaydgglvyvg...sgdgtlyaldaktGkllwtfk
+                    +            ++++dg++++++  ++g+ +ly+ d+++G+++  ++
+      P0A855   244 RH--------NGAPAFSPDGSKLAFAlskTGSLNLYVMDLASGQIRQVTD 285  
+
+                   lggvvdlltpsggygvtsaplvadgkvivggsggefgvdgvvyaldaetG
+                   + +             t + + +d   ++ +s +   ++ +vy ++++ G
+      P0A855   286 GRS-----------NNTEPTWFPDSQNLAFTSDQA--GRPQVYKVNINGG 322  
+
+                   kllWrfdtgggpssvvvdslvfsddgrrlasasgdtgartwdgdtwksgg
+                   +++  +  g +                                       
+      P0A855   323 APQRITWEGSQN-------------------------------------- 334  
+
+                   gnvwssasydpdgglvyvgtgngapwiwslvqlgggdlrpgdnlytaslv
+                         a ++ dg+ ++++++ng           g++     +l t+ + 
+      P0A855   335 ----QDADVSSDGKFMVMVSSNG-----------GQQHIAKQDLATGGVQ 369  
+
+                   AldadtGkllWhyqvsphdlwdydgtseprladitaapgvdggllyagsk
+                    l                           ++ d t + ++ g +++  s+
+      P0A855   370 VL-------------------------SSTFLDETPSLAPNGTMVIYSSS 394  
+
+                   dGtvyvldlt..tGellwslkehsgvnwapgvdl<-*
+                   +G   vl+l  ++G++   l++ +g + +p++++   
+      P0A855   395 QGMGSVLNLVstDGRFKARLPATDGQVKFPAWSP    428  
+
+0043605: domain 1 of 1, from 206 to 232: score -2.1, E = 80
+                   *->alaPdGrlialleeeggrakpvvvlrp<-*
+                      a+ PdG+ +a +  e+gr + v+       
+      P0A855   206    AWSPDGSKLAYVTFESGRSALVIQTLA    232  
+
+0041976: domain 1 of 1, from 207 to 330: score -3.7, E = 94
+                   *->fkwylenvaptliivgrsglcLdvaggstadgapvqlwpcngndgvn
+                      ++   ++ a++++ +grs l+++++ +   +  +v  +p +++++  
+      P0A855   207    WSPDGSKLAYVTFESGRSALVIQTLAN--GAVRQVASFPRHNGAP-- 249  
+
+                   QlWtltgdgtirsl.........glcLdvsgtadgskvilydcngsvgen
+                      ++++dg+    +  ++   + +++d++     +++ ++++  s+++ 
+      P0A855   250 ---AFSPDGSKLAFalsktgslnLYVMDLA----SGQIRQVTDGRSNNTE 292  
+
+                   qrWtltsdgtivnlnsglcLdvkgg.asgaqlilwpcdgnanQqWlltpl
+                    +W+ +s++          L  ++ +a+  q++  + +g+a Q+ +++  
+      P0A855   293 PTWFPDSQN----------LAFTSDqAGRPQVYKVNINGGAPQRITWE-- 330  
+
+                   <-*
+                      
+      P0A855     -     -    
+
+0040822: domain 1 of 1, from 208 to 246: score -4.5, E = 28
+                   *->ssdlqeaaeellggksgavvvidpktgeilamvssprad<-*
+                      s d +++a+  +++ + a+v+  + +g +  ++s pr +   
+      P0A855   208    SPDGSKLAYVTFESGRSALVIQTLANGAVRQVASFPRHN    246  
+
+0037544: domain 1 of 1, from 209 to 229: score -0.1, E = 17
+                   *->kgdlkkayvtLaegldidlva<-*
+                      +++ k ayvt+++g ++ +++   
+      P0A855   209    PDGSKLAYVTFESGRSALVIQ    229  
+
+0045352: domain 1 of 1, from 210 to 247: score -4.6, E = 86
+                   *->dtikiGvllplsGpaaalgksilrgaelaveeiNaagg<-*
+                      d  k+++++  sG  a + +++++ga   v+ + + +g   
+      P0A855   210    DGSKLAYVTFESGRSALVIQTLANGAVRQVASFPRHNG    247  
+
+0035937: domain 1 of 1, from 213 to 331: score -3.2, E = 76
+                   *->ksfvgylinvasglcldv..dgapvvlapcng.ganqlWtltsdg.t
+                      k +++++ +++s l++++ ++ga  ++a+  +++++  ++ ++ +  
+      P0A855   213    KLAYVTFESGRSALVIQTlaNGAVRQVASFPRhNGAPAFSPDGSKlA 259  
+
+                   irslvnsglCLdvsgg.ngskvilyscnggdgnqrWvftddgtilnlnsg
+                   + ++  ++l L v + ++g+  ++ +  ++++  +W+ +++        +
+      P0A855   260 FALSKTGSLNLYVMDLaSGQIRQVTDGRSNNTEPTWFPDSQ--------N 301  
+
+                   lcLdvsggsgaklilwpcdgspnQqWlltp<-*
+                   l+++  +++  +++  + +g++ Q+ +++    
+      P0A855   302 LAFTSDQAGRPQVYKVNINGGAPQRITWEG    331  
+
+0041015: domain 1 of 1, from 220 to 247: score -2.0, E = 29
+                   *->lmgrgkielkrienetnrqvtfskRrnG<-*
+                      + gr  + ++ ++n   rqv    R nG   
+      P0A855   220    ESGRSALVIQTLANGAVRQVASFPRHNG    247  
+
+0043734: domain 1 of 1, from 220 to 247: score -2.3, E = 44
+                   *->tmgrgkielkrienetnrqvtfskRrnG<-*
+                      + gr  + ++ ++n   rqv    R nG   
+      P0A855   220    ESGRSALVIQTLANGAVRQVASFPRHNG    247  
+
+0036996: domain 1 of 1, from 222 to 247: score -1.6, E = 33
+                   *->grgkieiklienetnrqvtfskrrng<-*
+                      gr  + i+ + n   rqv    r ng   
+      P0A855   222    GRSALVIQTLANGAVRQVASFPRHNG    247  
+
+0041235: domain 1 of 1, from 222 to 247: score -0.5, E = 16
+                   *->grgkielkrienktnrqvtfskRrng<-*
+                      gr  + ++ + n   rqv    R ng   
+      P0A855   222    GRSALVIQTLANGAVRQVASFPRHNG    247  
+
+0036712: domain 1 of 1, from 226 to 247: score -2.0, E = 21
+                   *->lvmlllgldnIrdvilFPrtrg<-*
+                      lv   l  + +r+v  FPr  g   
+      P0A855   226    LVIQTLANGAVRQVASFPRHNG    247  
+
+0037113: domain 1 of 1, from 226 to 251: score -3.4, E = 46
+                   *->lvmlllgldnIrdvilFPrlrgrlll<-*
+                      lv   l  + +r+v  FPr  g+  +   
+      P0A855   226    LVIQTLANGAVRQVASFPRHNGAPAF    251  
+
+0035444: domain 1 of 1, from 226 to 247: score -2.5, E = 20
+                   *->lvmlltgldnIrdvilfPrtrg<-*
+                      lv   +  + +r+v  fPr  g   
+      P0A855   226    LVIQTLANGAVRQVASFPRHNG    247  
+
+0041469: domain 1 of 1, from 226 to 251: score -4.3, E = 76
+                   *->lvmlllgldnIrdvilfPrlkgrldll<-*
+                      lv   l  + +r+v  fPr+ g+  +    
+      P0A855   226    LVIQTLANGAVRQVASFPRHNGAPAF-    251  
+
+0041283: domain 1 of 1, from 226 to 243: score -3.4, E = 40
+                   *->LvmlltgldnIrdvilFP<-*
+                      Lv   +  + +r+v  FP   
+      P0A855   226    LVIQTLANGAVRQVASFP    243  
+
+0045020: domain 1 of 1, from 227 to 247: score -3.7, E = 55
+                   *->vvldpktGeilalvslpsfdp<-*
+                      v+    +G+++ ++s+p +++   
+      P0A855   227    VIQTLANGAVRQVASFPRHNG    247  
+
+0037091: domain 1 of 1, from 233 to 253: score -2.2, E = 80
+                   *->egvlklvkeWraenGkpgfkk<-*
+                      +g +++v  + ++nG p+f     
+      P0A855   233    NGAVRQVASFPRHNGAPAFSP    253  
+
+0044464: domain 1 of 1, from 233 to 254: score -1.9, E = 47
+                   *->egvlklvkeWraenGkpgfkkg<-*
+                      +g +++v  + ++nG p+f  +   
+      P0A855   233    NGAVRQVASFPRHNGAPAFSPD    254  
+
+0038315: domain 1 of 1, from 233 to 254: score -2.1, E = 72
+                   *->egvlklvkeWraenGkpgfkkg<-*
+                      +g +++v  + ++nG p+f  +   
+      P0A855   233    NGAVRQVASFPRHNGAPAFSPD    254  
+
+0043667: domain 1 of 1, from 239 to 286: score -3.2, E = 78
+                   *->vgwfPtPdGialtdeeGsrlaflsrqgeg...yearlkdGlvlvlkr
+                      v+ fP  +G   ++ +Gs+laf   +    + y + l +G+++ +  
+      P0A855   239    VASFPRHNGAPAFSPDGSKLAFALSKTGSlnlYVMDLASGQIRQVTD 285  
+
+                   v<-*
+                       
+      P0A855   286 G    286  
+
+0042406: domain 1 of 1, from 252 to 359: score 37.4, E = 5.2e-13
+                   *->tlsdpylflveaaaetepvdtagddaddPaiWvspeapdgslvlatd
+                                                       sp++ ++++ l+++
+      P0A855   252    ---------------------------------SPDGSKLAFALSKT 265  
+
+                   kkggLyvyDldGkllqtvtagrlnnvdladgfklggksvdlAvasdRdgg
+                   +  +Lyv+Dl+++++++vt+gr+nn                         
+      P0A855   266 GSLNLYVMDLASGQIRQVTDGRSNN------------------------- 290  
+
+                   rdlldlftidpdkgtltaitngdgpiaaallevyGlalykspsdgklyvf
+                                      t+++++                 +d + ++f
+      P0A855   291 -------------------TEPTWF-----------------PDSQNLAF 304  
+
+                   vsdkdgrlvqyllidsgngtvtlelvrrfglgsqpeglaaddeggrlyvg
+                   +sd++gr+++y+++ +g++ ++++                          
+      P0A855   305 TSDQAGRPQVYKVNINGGAPQRIT-------------------------- 328  
+
+                   eedvgiwrydadpdggssgllialaggdhltadveGltllygsdgsgyll
+                         w+ +++ d++ s                        sdg+ +++
+      P0A855   329 ------WEGSQNQDADVS------------------------SDGKFMVM 348  
+
+                   vssqgdgsyavydregptayvgafaigangsidgvsetdGiavlsaglga
+                   vss+g++ + +                                       
+      P0A855   349 VSSNGGQQHIA--------------------------------------- 359  
+
+                   gfpdGlfvaqdgdnvldgdaalanfklvpwedilralglldqvtesvdpr
+                                                                     
+      P0A855     - -------------------------------------------------- -    
+
+                   tladrs<-*
+                            
+      P0A855     - ------    -    
+
+0041527: domain 1 of 1, from 257 to 290: score -1.7, E = 14
+                   *->klalellegkqgaavvidpktgevlalvggpsyd<-*
+                      kla++l +  ++ ++v+d  +g+++ + +g+s +   
+      P0A855   257    KLAFALSKTGSLNLYVMDLASGQIRQVTDGRSNN    290  
+
+0038166: domain 1 of 1, from 260 to 295: score -3.8, E = 80
+                   *->lllllgglsdpyvkvklggkkvgkTkvikktlnPvW<-*
+                      + l+ +g+++ yv     g++++ T  + ++ +P+W   
+      P0A855   260    FALSKTGSLNLYVMDLASGQIRQVTDGRSNNTEPTW    295  
+
+0036582: domain 1 of 1, from 266 to 295: score -4.5, E = 53
+                   *->llGelllslsylpplgvLrvtvieArnLpakdlnglsdpyVkvyllp
+                                                        g+ + yV      
+      P0A855   266    ----------------------------------GSLNLYVMDLA-- 276  
+
+                   dgdgkqkkkTkvikntlnPvW<-*
+                     +g+ ++ T+   n+ +P+W   
+      P0A855   277 --SGQIRQVTDGRSNNTEPTW    295  
+
+0044006: domain 1 of 1, from 272 to 321: score -4.9, E = 60
+                   *->mlakriiPaldlkdgrvvklvqgd....nlvylgdpvelaklyaeag
+                              ++dl +g++ + ++g+ ++++ +++ d  +la    +ag
+      P0A855   272    --------VMDLASGQIRQVTDGRsnntEPTWFPDSQNLAFTSDQAG 310  
+
+                   adelhvvdlda<-*
+                      ++ v++++   
+      P0A855   311 RPQVYKVNING    321  
+
+0045231: domain 1 of 1, from 284 to 320: score -4.9, E = 76
+                   *->lnsllsslppyppdpilglaaalkadgrpdvinlgig<-*
+                         + ++ +p  + +  +la +  ++grp+v++ +i+   
+      P0A855   284    TDGRSNNTEPTWFPDSQNLAFTSDQAGRPQVYKVNIN    320  
+
+0036760: domain 1 of 1, from 287 to 335: score -2.6, E = 58
+                   *->glkdgdheylpaPdteeitglpglkrvkrktsvqgGggkrkrwldek
+                        ++ +  ++p+ +   +t  +  ++   k+++ gG  +r  w +++
+      P0A855   287    RSNNTEPTWFPDSQNLAFTSDQAGRPQVYKVNINGGAPQRITWEGSQ 333  
+
+                   gr<-*
+                   ++   
+      P0A855   334 NQ    335  
+
+0041836: domain 1 of 1, from 290 to 358: score -4.3, E = 69
+                   *->plevllttgiaavsvaanldgrlevfavgtdgsvwnalwdgdnpwag
+                       +e +++ ++    +  + +gr++v+ v+++g    +    ++ +  
+      P0A855   290    NTEPTWFPDSQNLAFTSDQAGRPQVYKVNINGGAPQRITWEGSQN-- 334  
+
+                   lsslnvigegglgspggavtivsrvdgrlev<-*
+                          + +++ s g +  +vs  +g++++   
+      P0A855   335 -------QDADVSSDGKFMVMVSSNGGQQHI    358  
+
+0035252: domain 1 of 1, from 292 to 328: score 3.9, E = 2
+                   *->spvcipsgqpcpysenccsgsctfkenengntvkrcd<-*
+                       p+ +p+ q   ++ +   +   +k n ng++ +r     
+      P0A855   292    EPTWFPDSQNLAFTSDQAGRPQVYKVNINGGAPQRIT    328  
+
+0043992: domain 1 of 1, from 301 to 352: score -1.9, E = 32
+                   *->vvpvgliingasg.lcldvdganvvlypchgggnQlWtltsdgtirs
+                      + +++  + g+ +++ ++++g++ +  ++ g++nQ   ++sdg +++
+      P0A855   301    NLAFTSDQAGRPQvYKVNINGGAPQRITWEGSQNQDADVSSDGKFMV 347  
+
+                   nvnsg<-*
+                   +v s+   
+      P0A855   348 MVSSN    352  
+
+0039250: domain 1 of 1, from 305 to 362: score -1.0, E = 11
+                   *->tsgsgkeiqessgklllkrPgllrwdytkPleqlivsdgktlwiydp
+                      ts +++++q+++  +    P+++ w+  + ++  + sdgk++++  +
+      P0A855   305    TSDQAGRPQVYKVNINGGAPQRITWEGSQNQDADVSSDGKFMVMVSS 351  
+
+                   dlnqvtvlpls<-*
+                   +  q  + +++   
+      P0A855   352 NGGQQHIAKQD    362  
+
+0037415: domain 1 of 1, from 310 to 340: score -3.2, E = 45
+                   *->gkPqnlsCvsynletltCtWepgsdtglpts<-*
+                      g+Pq+ ++ +++    ++tWe + ++ +++s   
+      P0A855   310    GRPQVYKVNINGGAPQRITWEGSQNQDADVS    340  
+
+0040087: domain 1 of 1, from 311 to 366: score 0.1, E = 17
+                   *->rkeyqlldiedgflslltedgdvkedlklpedgelgkeikeafesgk
+                      r +   ++i+ g    +t +g+  +d ++  dg+             
+      P0A855   311    RPQVYKVNINGGAPQRITWEGSQNQDADVSSDGK------------- 344  
+
+                   dsvlvlvlsalgeelvvdlkelsg<-*
+                     ++v+v s+ g++++ +   ++g   
+      P0A855   345 --FMVMVSSNGGQQHIAKQDLATG    366  
+
+0036321: domain 1 of 1, from 313 to 394: score -1.9, E = 9.7
+                   *->tllgagltvdgggtvtiggnisgaggltkigdgtltlsgantygggt
+                       +  ++++ + +  +t+ g+   + ++   g+  +++s +       
+      P0A855   313    QVYKVNINGGAPQRITWEGSQNQDADVSSDGKFMVMVSSN------- 352  
+
+                   tvgggtlilnggaalgggvlafggsgivsgtvtvgagallvdgggvlvls
+                            +g++ +++ +la gg+ + s+t +  ++ l+ +g++v+ +s
+      P0A855   353 ---------GGQQHIAKQDLATGGVQVLSSTFLDETPSLAPNGTMVIYSS 393  
+
+                   g<-*
+                   +   
+      P0A855   394 S    394  
+
+0044654: domain 1 of 1, from 313 to 354: score -3.8, E = 88
+                   *->nglggfdddgreyvitlpttpapwinvlsngrfgvmvtaeGa<-*
+                        +    ++g   +it++    + ++v s+g+f+vmv+++G+   
+      P0A855   313    QVYKVNINGGAPQRITWEGSQNQDADVSSDGKFMVMVSSNGG    354  
+
+0034888: domain 1 of 1, from 322 to 357: score -3.1, E = 66
+                   *->snqsnvdlslsdedepeveeselitikVktldgkei<-*
+                      +   ++  + s++ +++v+ ++++ ++V +++g+ +   
+      P0A855   322    GAPQRITWEGSQNQDADVSSDGKFMVMVSSNGGQQH    357  
+
+0037231: domain 1 of 1, from 333 to 370: score -1.1, E = 23
+                   *->ldeslldekennyLaAva.egdryGlAylDvsTGeflv<-*
+                       +++   +++  +++ v  +g++  +A  D+ TG ++v   
+      P0A855   333    QNQDADVSSDGKFMVMVSsNGGQQHIAKQDLATGGVQV    370  
+
+0040325: domain 1 of 1, from 336 to 353: score 0.7, E = 4
+                   *->lcdfyfPgdLqiavSTnG<-*
+                       +d+   g++ ++vS+nG   
+      P0A855   336    DADVSSDGKFMVMVSSNG    353  
+
+0042344: domain 1 of 1, from 337 to 353: score -1.2, E = 22
+                   *->PsivdrgplqiaisTgG<-*
+                        + ++g++++++s++G   
+      P0A855   337    ADVSSDGKFMVMVSSNG    353  
+
+0040203: domain 1 of 1, from 339 to 368: score -1.8, E = 72
+                   *->ilsfdnylvllevdgkqqlvykhaistitp<-*
+                      + s  +++v++  +g qq + k+ + t  +   
+      P0A855   339    VSSDGKFMVMVSSNGGQQHIAKQDLATGGV    368  
+
+0044606: domain 1 of 1, from 357 to 401: score -3.2, E = 25
+                   *->glsleeaaalglagltAylallelaglkagetvlvtgAaggvGsla<
+                      ++   ++a+ g++ l+  ++  e+  l++++t++++  + g Gs++ 
+      P0A855   357    HIAKQDLATGGVQVLSSTFLD-ETPSLAPNGTMVIYSSSQGMGSVL  401  
+
+                   -*
+                     
+      P0A855     -    -    
+
+0039073: domain 1 of 1, from 379 to 405: score -1.6, E = 27
+                   *->tPtlvvdgkvvryggvrsldelveflk<-*
+                      tP l+ +g +v+y++ +++++++++++   
+      P0A855   379    TPSLAPNGTMVIYSSSQGMGSVLNLVS    405  
+
+0039648: domain 2 of 2, from 380 to 428: score 6.6, E = 0.015
+                   *->vafspdgkllyvtgsadgtvsvydl..ktgkvlatlsgdhggsissl
+                      +++ p+g+++ + +s  g  sv++l+ ++g+ +a+l++ ++g++  +
+      P0A855   380    PSLAPNGTMV-IYSSSQGMGSVLNLvsTDGRFKARLPA-TDGQVKFP 424  
+
+                   afsp<-*
+                   a+sp   
+      P0A855   425 AWSP    428  
+
+0040380: domain 1 of 1, from 381 to 400: score -2.1, E = 49
+                   *->glvlggtrviynadekavsl<-*
+                      +l+++gt viy++++++ s+   
+      P0A855   381    SLAPNGTMVIYSSSQGMGSV    400  
+
+0035012: domain 1 of 1, from 408 to 428: score -2.7, E = 80
+                   *->GRfllafvlsaagisphnWep<-*
+                      GRf + + ++ ++++   W+p   
+      P0A855   408    GRFKARLPATDGQVKFPAWSP    428  
+
+0037000: domain 1 of 1, from 411 to 429: score -3.2, E = 40
+                   *->algallgkggvrFrlWAPt<-*
+                      +  +  ++g+v F  W+P+   
+      P0A855   411    KARLPATDGQVKFPAWSPY    429  
+
+//
+

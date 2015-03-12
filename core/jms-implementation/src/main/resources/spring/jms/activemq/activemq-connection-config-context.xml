@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd">
+
+
+    <!-- Local (e.g. vm) JMS ConnectionFactory -->
+    <amq:connectionFactory
+            id="localJmsFactory"
+            useCompression="true"
+            optimizeAcknowledge="true"
+            alwaysSessionAsync="false"
+            brokerURL="vm://localhost" >
+        <amq:prefetchPolicy>
+            <amq:prefetchPolicy queuePrefetch="1"/>
+        </amq:prefetchPolicy>
+    </amq:connectionFactory>
+
+    <!--<amq:connectionFactory-->
+    <!--id="inVmJmsFactory"-->
+    <!--useCompression="false"-->
+    <!--optimizeAcknowledge="true"-->
+    <!--brokerURL="vm://localhost?create=false"-->
+    <!--alwaysSessionAsync="false">-->
+    <!--<amq:prefetchPolicy>-->
+        <!--<amq:prefetchPolicy queuePrefetch="1"/>-->
+    <!--</amq:prefetchPolicy>-->
+<!--</amq:connectionFactory>-->
+
+    <!-- Local Spring JMSTemplate -->
+    <bean id="localJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="localJmsFactory"/>
+                <property name="sessionCacheSize" value="100"/>
+            </bean>
+        </property>
+        <property name="explicitQosEnabled" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+    <!-- Remote (e.g. TCP) JMS ConnectionFactory -->
+    <amq:connectionFactory
+            id="remoteJmsFactory"
+            useCompression="true"
+            optimizeAcknowledge="true"
+            alwaysSessionAsync="false"
+            brokerURL="tcp://${jms.broker.host.name}:${jms.broker.port.number}">
+        <amq:prefetchPolicy>
+            <amq:prefetchPolicy queuePrefetch="1"/>
+        </amq:prefetchPolicy>
+    </amq:connectionFactory>
+
+
+    <!-- Remote Spring JMSTemplate -->
+    <bean id="remoteJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="remoteJmsFactory"/>
+                <property name="sessionCacheSize" value="100"/>
+            </bean>
+        </property>
+        <property name="explicitQosEnabled" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+</beans>

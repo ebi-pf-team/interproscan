@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <bean id="pfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
+        <property name="parserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+                <property name="gaValuesRetriever">
+                    <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
+                        <constructor-arg value="data/hmmer3/3.1b1/hmmsearch/Pfam-A.hmm"/>
+                        <!--<constructor-arg>-->
+                        <!--<bean class="org.springframework.core.io.ClassPathResource">-->
+                        <!--<constructor-arg value="data/hmmer3/3.1b1/hmmsearch/Pfam-A.hmm" />-->
+                        <!--</bean>-->
+                        <!--</constructor-arg>-->
+                    </bean>
+                </property>
+                <property name="signatureLibraryRelease" value="24.0"/>
+                <property name="signatureLibrary" value="PFAM"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--TODO: Get up-to-date HMMER3 sample file for testing    -->
+    <bean id="pfamFile" class="org.springframework.core.io.ClassPathResource">
+        <!--TODO: Add hmmer3b2-large to Subversion -->
+        <!--<constructor-arg value="data/hmmer3/hmmsearch/hmmer3b2-large"/>-->
+        <constructor-arg value="data/hmmer3/hmmsearch/CELR2-PF12003.txt"/>
+    </bean>
+
+    <bean id="gene3dParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
+        <property name="parserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">
+                <property name="signatureLibraryRelease" value="3.3.0"/>
+                <property name="alignmentEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>
+                <property name="hmmKey" value="NAME"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="gene3dFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/2hxsA00.out"/>
+    </bean>
+
+    <!--Email from Sead Eddy: "HMMER3 should only keep highest scoring domain"-->
+    <bean id="highestScoringDomainFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/Q5HDF6-1aopA02.txt"/>
+    </bean>
+
+    <bean id="emptyAlignmentLineFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="data/hmmer3/hmmsearch/empty-alignment-line.txt"/>
+    </bean>
+
+</beans>

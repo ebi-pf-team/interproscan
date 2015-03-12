@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--Bean definition for the SVG writer-->
+    <bean id="svgWriter"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter">
+        <property name="freeMarkerConfig" ref="freeMarkerConfigSvgWriter"/>
+        <property name="applicationContextConfigLocation" value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>
+        <!--<property name="file" value=""/>-->
+        <property name="freeMarkerTemplate" value="svg-protein-view.ftl"/>
+        <property name="entryHierarchyBeanId" value="entryHierarchy"/>
+        <property name="tempDirectory" value="temp/"/>
+    </bean>
+
+    <bean id="defaultWrapperSvgWriter" class="freemarker.template.DefaultObjectWrapper"/>
+
+    <bean id="templateLoaderSvgWriter" class="freemarker.cache.FileTemplateLoader">
+        <constructor-arg ref="templateLoadingDirSvgWriter"/>
+    </bean>
+
+    <bean id="templateLoadingDirSvgWriter" class="java.io.File">
+        <constructor-arg value="data/freemarker/resources/freeMarker/svg"/>
+    </bean>
+
+    <!--FreeMarker configuration-->
+    <bean id="freeMarkerConfigSvgWriter" class="freemarker.template.Configuration">
+        <!--<property name="directoryForTemplateLoading" ref="templateLoadingDir"/>-->
+        <property name="allSharedVariables">
+            <bean class="freemarker.template.SimpleHash">
+                <constructor-arg>
+                    <map>
+                    </map>
+                </constructor-arg>
+                <constructor-arg ref="defaultWrapperSvgWriter"/>
+            </bean>
+        </property>
+        <property name="templateLoader" ref="templateLoaderSvgWriter"/>
+    </bean>
+
+</beans>

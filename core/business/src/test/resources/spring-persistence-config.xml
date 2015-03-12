@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+    <!-- Using AspectJ for AOP -->
+    <!--<aop:aspectj-autoproxy/>-->
+
+    <!-- JPA Configuration -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <!-- JPA Transaction Setup -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <tx:annotation-driven/>
+    <!--<tx:annotation-driven mode="aspectj"/>-->
+
+    <!-- DAO Beans -->
+    <bean id="proteinDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+
+    <bean id="signatureDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
+    </bean>
+
+    <bean id="modelDAO"
+          class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Model"/>
+    </bean>
+
+    <bean id="pfamDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl">
+    </bean>
+
+    <bean id="signatureLibraryReleaseDAO" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="pfamFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
+
+    <bean id="openReadingFrameDAO" class="uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAOImpl"/>
+
+
+</beans>

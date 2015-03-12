@@ -1,0 +1,59 @@
+# hmmsearch :: search profile HMM(s) against a sequence database
+# HMMER 3.0b2 (June 2009); http://hmmer.org/
+# Copyright (C) 2009 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query HMM file:                  /ebi/production/interpro/data/members/pfam/24.0/Pfam-A.hmm
+# target sequence database:        UPI00000015B6.seq
+# sequence search space set to:    9421015
+# set reporting thresholds to:     GA cutoffs
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       DUF3497  [M=221]
+Accession:   PF12003.1
+Description: Domain of unknown function (DUF3497)
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence      Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------      -----------
+    1.3e-52  187.5   0.0      2e-52  186.9   0.0    1.2  1  UPI00000015B6
+
+
+Domain and alignment annotation for each sequence:
+>> UPI00000015B6
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  186.9   0.0   2.1e-59     2e-52       4     220 ..    2047    2289 ..    2044    2290 .. 0.97
+
+  Alignments for each domain:
+  == domain 1    score: 186.9 bits;  conditional E-value: 2.1e-59
+        DUF3497    4 lqdgesaselareLaelt..krtlyggDvlttvklleqlldllsvqlrallpatkdsaarenlvktvsnLLdpeakeaWeqlqtteqlrgatkL 95
+                     l++g s+ +la  L+++t  +  ++g+Dv+++++l ++ll+++s+q+++ l+at+d++++enl++++s+LLd ++k +We +q+te+  g+++L
+  UPI00000015B6 2047 LDSGRSQ-QLALLLRNATqhTAGYFGSDVKVAYQLATRLLAHESTQRGFGLSATQDVHFTENLLRVGSALLDTANKRHWELIQQTEG--GTAWL 2137
+                     6677766.8*********85559****************************************************************..***** PP
+
+        DUF3497   96 LdtvEegalllAdnl..tktqpvqivtdNivlevarldtegqlsdlkfPqked.....akesedsislpasalkqssr................ 166
+                     L+++E +a++lA+n+  t+++p++ivt+Niv++v rld+ +++++ k P++e      +++ e+++ lp+s+++++ +
+  UPI00000015B6 2138 LQHYEAYASALAQNMrhTYLSPFTIVTPNIVISVVRLDKGNFAGA-KLPRYEAlrgeqPPDLETTVILPESVFRETPPvvrpagpgeaqepeel 2230
+                     *******************************************98.*****99***************************************** PP
+
+        DUF3497  167 ...........ngevvivfvlYknLGqlLstenasvklgsealvslrpparvivnspvvtaaink 220
+                                +ge+v+ +++Y++L +lL+++++++k+      slr+p+r+i+n+pvv+++++
+  UPI00000015B6 2231 arrqrrhpelsQGEAVASVIIYRTLAGLLPHNYDPDKR------SLRVPKRPIINTPVVSISVHD 2289
+                     **************************************......9*****************996 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                            1  (221 nodes)
+Target sequences:                          1  (2923 residues)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):            9421015  [as set by --Z on cmdline]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.01u 0.00s 00:00:00.01 Elapsed: 00:00:00
+# Mc/sec: 64.60
+//

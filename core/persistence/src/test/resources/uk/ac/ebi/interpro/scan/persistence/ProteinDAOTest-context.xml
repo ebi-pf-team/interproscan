@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- All the common Spring config, found in src/main/resources/ -->
+    <import resource="classpath:/spring-persistence-config.xml"/>
+    <!-- Test stuff - move to a different spring-config.xml file. -->
+    <bean id="proteinGenericDAOtest" class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOTest"/>
+
+</beans>

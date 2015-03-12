@@ -1,0 +1,44 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:
+/ebi/sp/pro1/interpro/data/members/smart/6.1/smart.HMMs.bin
+Sequence file:            Q1KVT5.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: sp|Q1KVT5|RR4_SCEOB
+Accession:      [none]
+Description:    30S ribosomal protein S4, chloroplastic OS=Scenedesmus
+obliquus GN=rps4 PE=3 SV=1
+
+Scores for sequence family classification (score includes all domains):
+Model         Description                               Score    E-value  N
+--------      -----------                               -----    ------- ---
+SM00363                                                 101.7    2.2e-28   2
+SM00344                                                 -64.9        1.6   1
+SM00583                                                 -61.1        1.8   1
+SM00389                                                 -28.7        4.7   1
+SM00195                                                 -68.9        4.9   1
+SM00385                                                 -23.3        5.3   1
+SM00742                                                 -27.5        6.5   1
+SM00399                                                 -65.0        6.5   1
+SM00879                                                 -61.7        7.6   1
+SM00125                                                 -55.4        8.6   1
+
+Parsed for domains:
+Model         Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+--------      ------- ----- -----    ----- -----      -----  -------
+SM00389         1/1      30   105 ..     1    63 []   -28.7      4.7
+SM00385         1/1      84   165 ..     1    90 []   -23.3      5.3
+SM00879         1/1      86   240 ..     1   301 []   -61.7      7.6
+SM00195         1/1      95   213 ..     1   172 []   -68.9      4.9
+SM00344         1/1     102   192 ..     1   112 []   -64.9      1.6
+SM00363         1/2     110   174 ..     1    63 []    69.4  1.1e-18
+SM00742         1/1     110   190 ..     1    71 []   -27.5      6.5
+SM00399         1/1     123   164 ..     1    72 []   -65.0      6.5
+SM00125         1/1     146   250 ..     1   149 []   -55.4      8.6
+SM00583         1/1     157   251 .]     1   118 []   -61.1      1.8
+SM00363         2/2     189   249 ..     1    63 []    32.2  1.7e-07
+//

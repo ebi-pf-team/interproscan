@@ -1,0 +1,25 @@
+# This file describes the size of the analyses used in Onion and InterProScan 5.
+# Note that by default, InterProScan 4 sets these values globally to 300.
+# TODO - Make these values configurable in the interproscan.properties file.
+Analysis    Onion   I5
+SIGNALP 600 ?
+TMHMM   1000    ?
+PANTHER 500 500
+SMART   50  50
+TIGRFAM_9 50  50
+TIGRFAM_10  ?   5000
+GENE3D  50  50
+PRINTS  1000    250
+PROSITE_PF  1000    500
+PROSITE_PT  1000    500
+PIRSF   50  ?
+PRODOM  1000    ?
+PANTHER_NEW 3000    ?
+SSF 50  ?
+PIRSFBLAST  1000    ?
+HAMAP   200 200
+PFAM_HMMER3 5000    5000
+PFAM_B_HMMER3   5000    5000
+COILS   1000000 5000
+COMPARA 1000    ?
+PHOBIUS N/A 1000

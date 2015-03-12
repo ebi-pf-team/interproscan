@@ -1,0 +1,21 @@
+#---------------------------------------------------------------------
+# FILE NAME:    CathDomainList.v3.3.0
+# FILE DATE:    24.06.2009
+#
+# CATH VERSION: v3.3.0
+# VERSION DATE: 24.06.2009
+#
+# FILE FORMAT:  Cath List File (CLF) Format 2.0
+#
+# FILE DESCRIPTION:
+# Contains all classified protein domains in CATH
+# for class 1 (mainly alpha), class 2 (mainly beta),
+# class 3 (alpha and beta) and class 4 (few secondary structures).
+#
+# See 'README.file_formats' for file format information
+#---------------------------------------------------------------------
+1oaiA00     1    10     8    10     1     1     1     1     1    59 1.000
+1go5A00     1    10     8    10     1     1     1     1     2    69 999.000
+1oksA00     1    10     8    10     2     1     1     1     1    51 1.800
+1ws8C00     2    60    40   420    28     1     1     1     3   103 1.600
+1ws8D00     2    60    40   420    28     1     1     1     4   103 1.600

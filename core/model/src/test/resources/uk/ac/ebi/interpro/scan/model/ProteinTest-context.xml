@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/lang
+                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+
+    <import resource="jpa-context.xml"/>
+    <import resource="oxm-context.xml"/>
+
+    <bean id="dao" class="uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.Protein"/>
+    </bean>
+
+    <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+        <entry key="PIRSF">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="pirsfObject"/>
+                <constructor-arg ref="pirsfXml"/>
+            </bean>
+        </entry>
+    </util:map>
+
+    <lang:groovy id="pirsfObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                Protein p = new Protein(
+                    "MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKA" +
+                    "RYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLN" +
+                    "YMTDLWKSQGRM");
+                p.addCrossReference(new ProteinXref("UniParc", "UPI0001C4B400", "UPI0001C4B400"));
+                Signature signature = new Signature("PIRSF000743", "RPO19");
+                Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+                locations.add(new Hmmer2Match.Hmmer2Location(7, 172, 294.5, 6.3E-86, 1, 186, 186));
+                p.addMatch(new Hmmer2Match(signature, 294.5, 6.3E-86, locations));
+                return p;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="pirsfXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+            <protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                <sequence md5="58F1C327155B01E0EE4C95CE0067973C">MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
+                <xref db="UniParc" id="UPI0001C4B400" name="UPI0001C4B400"/>
+                <matches>
+                    <hmmer2-match score="294.5" evalue="6.3E-86">
+                        <signature ac="PIRSF000743" name="RPO19"/>
+                        <locations>
+                            <hmmer2-location start="7" end="172"
+                                             score="294.5" evalue="6.3E-86"
+                                             hmm-start="1" hmm-end="186" hmm-length="186"/>
+                        </locations>
+                    </hmmer2-match>
+                </matches>
+            </protein>
+            ]]>
+            </value>
+        </constructor-arg>
+        <!--
+            Data from Onion:
+
+            select upi, method_ac, seq_start, seq_end, hmm_start, hmm_end, hmm_bounds, score, seqscore,
+                   to_char(power(10, evalue)), timestamp
+            from iprscan
+            where analysis_type_id = 17 and relno_minor = 71 and upi = 'UPI0001C4B400' and method_ac = 'PIRSF000743';
+
+            UPI0001C4B400	PIRSF000743	7	172	1	186	[]	294.5	294.5	6.3E-86	26-FEB-10 03.01.18
+        -->
+    </bean>
+
+</beans>

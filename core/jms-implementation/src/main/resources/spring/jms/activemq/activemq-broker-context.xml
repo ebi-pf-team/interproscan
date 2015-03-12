@@ -1,0 +1,82 @@
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- TODO - this import ensures that there is ONE embedded worker
+         TODO - and also imports other dependencies of the standalone master.
+         TODO - need to rethink this to allow multiple standalone workers.
+    -->
+
+    <import resource="classpath:/spring/spring-properties-context.xml"/>
+
+    <!--  Embedded ActiveMQ Broker - in vm connections only· -->
+    <amq:broker
+            id="jmsBroker"
+            brokerName="uniqueName"
+            useJmx="false"
+            persistent="false"
+            useShutdownHook="false"
+            start="false"
+            dedicatedTaskRunner="false"
+            tmpDataDirectory="${jms.broker.temp.directory}">
+        <amq:plugins>
+            <amq:statisticsBrokerPlugin id="stats"/>
+        </amq:plugins>
+        <amq:systemUsage>
+            <amq:systemUsage>
+                <amq:memoryUsage>
+                    <amq:memoryUsage limit="1024 mb"/>
+                </amq:memoryUsage>
+                <!--<amq:storeUsage>-->
+                <!--<amq:storeUsage limit="1 gb"/>-->
+                <!--</amq:storeUsage>-->
+                <amq:tempUsage>
+                <amq:tempUsage limit="100 mb"/>
+                </amq:tempUsage>
+            </amq:systemUsage>
+        </amq:systemUsage>
+        <amq:transportConnectors>
+            <!--<amq:transportConnector uri="vm://localhost?create=false"/>-->
+            <!--<amq:transportConnector name="local" uri="tcp://localhost:0?create=false"/>-->
+        </amq:transportConnectors>
+    </amq:broker>
+
+
+    <bean id="portExclusionList" class="java.lang.String">
+        <constructor-arg value="${tcp.port.exclusion.list}"/>
+    </bean>
+
+
+    <!--  Embedded ActiveMQ Broker - in vm connections only· -->
+    <amq:broker
+            id="jmsBroker2"
+            useJmx="false"
+            persistent="false"
+            useShutdownHook="false"
+            start="false"
+            dedicatedTaskRunner="false"
+            tmpDataDirectory="${jms.broker.temp.directory}">
+        <amq:plugins>
+            <amq:statisticsBrokerPlugin id="stats2"/>
+        </amq:plugins>
+        <amq:systemUsage>
+            <amq:systemUsage>
+                <amq:memoryUsage>
+                    <amq:memoryUsage limit="1024 mb"/>
+                </amq:memoryUsage>
+                <!--<amq:storeUsage>-->
+                <!--<amq:storeUsage limit="1 gb"/>-->
+                <!--</amq:storeUsage>-->
+                <!--<amq:tempUsage>-->
+                <!--<amq:tempUsage limit="100 mb"/>-->
+                <!--</amq:tempUsage>-->
+            </amq:systemUsage>
+        </amq:systemUsage>
+        <amq:transportConnectors>
+            <amq:transportConnector uri="vm://localhost"/>
+        </amq:transportConnectors>
+    </amq:broker>
+</beans>

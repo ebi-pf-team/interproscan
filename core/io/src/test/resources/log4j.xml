@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//LOGGER" "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!-- Appenders -->
+    <!-- Console appender -->
+    <appender name="consoleappender" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%C:%L] %p - %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- File appender -->
+    <appender name="fileappender" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${logging.interpro.scan.io.file}"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="${logging.interpro.scan.io.max.file.size}"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%C:%L] %p - %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser">
+        <level value="debug"/>
+    </logger>
+
+    <!-- Root Logger -->
+    <root>
+        <priority value="warn"/>
+        <appender-ref ref="consoleappender"/>
+    </root>
+
+</log4j:configuration>

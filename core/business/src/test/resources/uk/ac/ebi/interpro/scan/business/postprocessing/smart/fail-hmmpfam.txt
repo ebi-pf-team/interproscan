@@ -1,0 +1,52 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                 data/smart/6.1/smart.HMMs.bin
+Sequence file:            src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/fail.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: UPI0001C18061
+Accession:      UPI0001C18061
+Description:    tr|D3BQA8|D3BQA8_POLPA Putative uncharacterized protein OS=Polysphondylium pallidum GN=PPL_10093 PE=4 SV=1
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N 
+-------- -----------                                    -----    ------- ---
+SM00025                                                 210.9    3.3e-64   8
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00025    1/8     327   363 ..     1    39 []    20.5  6.7e-07
+SM00025    2/8     364   399 ..     1    39 []    22.4  1.8e-07
+SM00025    3/8     400   435 ..     1    39 []    25.4  2.3e-08
+SM00025    4/8     436   471 ..     1    39 []    26.1  1.3e-08
+SM00025    5/8     472   507 ..     1    39 []    24.4  4.6e-08
+SM00025    6/8     508   542 ..     1    39 []    33.1  1.1e-10
+SM00025    7/8     543   578 ..     1    39 []    30.3  7.8e-10
+SM00025    8/8     580   615 ..     1    39 []    28.7  2.3e-09
+//
+
+Query sequence: UPI00005ACD51
+Accession:      UPI00005ACD51
+Description:    tr|Q3U4T5|Q3U4T5_MOUSE Putative uncharacterized protein (Fragment) OS=Mus musculus GN=Pum1 PE=2 SV=1
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N
+-------- -----------                                    -----    ------- ---
+SM00025                                                 321.1    2.2e-97   8
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00025    1/8     754   789 ..     1    39 []    37.1  6.9e-12
+SM00025    2/8     790   825 ..     1    39 []    35.9  1.6e-11
+SM00025    3/8     826   861 ..     1    39 []    42.1  2.1e-13
+SM00025    4/8     862   897 ..     1    39 []    42.8  1.3e-13
+SM00025    5/8     898   933 ..     1    39 []    41.9  2.4e-13
+SM00025    6/8     934   969 ..     1    39 []    44.5    4e-14
+SM00025    7/8     970  1005 ..     1    39 []    38.6  2.5e-12
+SM00025    8/8    1013  1048 ..     1    39 []    38.1  3.3e-12
+//

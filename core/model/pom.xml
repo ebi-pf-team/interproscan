@@ -1,0 +1,230 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.interpro.scan</groupId>
+        <artifactId>interproscan</artifactId>
+        <version>5.10-50.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.interpro.scan</groupId>
+    <artifactId>interproscan-model</artifactId>
+    <version>5.10-50.0</version>
+
+    <packaging>jar</packaging>
+
+    <name>InterProScan Domain Model</name>
+    <description>InterProScan Domain Model</description>
+    <url>http://www.ebi.ac.uk/interpro/</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>EMBL - European Bioinformatics Institute</name>
+        <url>http://www.ebi.ac.uk/</url>
+    </organization>
+
+    <properties>
+        <mvn.i5.database.driver>org.hsqldb.jdbcDriver</mvn.i5.database.driver>
+        <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
+        <!--<mvn.i5.database.connection.url>jdbc:hsqldb:hsql://localhost/i5</mvn.i5.database.connection.url>-->
+        <mvn.i5.database.username>sa</mvn.i5.database.username>
+        <mvn.i5.database.password></mvn.i5.database.password>
+        <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
+        <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
+        <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
+        <mvn.hibernate.hbm2ddl.auto>update</mvn.hibernate.hbm2ddl.auto>
+    </properties>
+
+    <dependencies>
+
+        <!-- JAXB API -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+
+        <!-- Apache Commons -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.entity.manager.version}</version>
+        </dependency>
+
+        <!--
+        === All dependencies below here are TEST scope only. ===
+        -->
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JAXB tests -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JPA tests -->
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>generic-jpa-dao</artifactId>
+            <version>5.10-50.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>persistence.xml</include>
+                </includes>
+                <filtering>true</filtering>
+                <targetPath>META-INF</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <excludes>
+                    <exclude>persistence.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+        <plugins>
+            <!--
+                schemagen: generate XML schema from source code using Ant task
+                Notes:
+                * Maven schemagen plugin is a year out of date (as of October 2008) so cannot use
+                  http://www.nabble.com/maven-jaxb-schemagen-plugin-additional-hand-written-schema-import-td18921720.html
+                * Considered exec:java on com.sun.tools.jxc.SchemaGenerator but did not offer enough control:
+                  java com.sun.tools.jxc.SchemaGenerator -cp target/classes/
+                                                         src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-xml-schema</id>
+                        <phase>compile</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
+                                <property name="latest.interpro.schema.version" value="1.1"/>
+                                <mkdir dir="${project.build.schema.dir}"/>
+                                <taskdef name="schemagen"
+                                         classname="com.sun.tools.jxc.SchemaGenTask"
+                                         classpathref="maven.plugin.classpath"/>
+                                <schemagen srcdir="${project.build.sourceDirectory}"
+                                           destdir="${project.build.schema.dir}"
+                                           classpathref="maven.compile.classpath">
+                                    <!-- Following does not work: -->
+                                    <!--schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.artifactId}.xsd" /-->
+                                </schemagen>
+                                <!-- 'schema' child element does not work, so have to rename file by hand -->
+                                <move file="${project.build.schema.dir}/schema1.xsd"
+                                      tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>2.1.8</version>
+                    </dependency>
+                    <!-- com.sun.mirror.apt.AnnotationProcessorFactory required by schemagen task -->
+                    <dependency>
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                        <version>1.5.0</version>
+                        <scope>system</scope>
+                        <systemPath>${sun.tools.systemPath}</systemPath>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!--plugin>
+                <groupId>com.sun.tools.jxc.maven2</groupId>
+                <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-xml-schema</id>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin-->
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>macOS</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <sun.tools.systemPath>${java.home}/../Classes/classes.jar</sun.tools.systemPath>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>linuxOS</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <sun.tools.systemPath>${java.home}/../lib/tools.jar</sun.tools.systemPath>
+            </properties>
+        </profile>
+
+    </profiles>
+
+</project>

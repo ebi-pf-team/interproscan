@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="classpath:/spring/persistence/datasource-context.xml"/>
+
+    <bean id="jdbcEntryDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.installer.JdbcEntryDaoImpl">
+        <property name="jdbcTemplate" ref="sourceJdbcTemplate"/>
+        <property name="entryRowCallbackHandler" ref="entryRowCallbackHandler"/>
+    </bean>
+
+    <!-- JDBC Template -->
+
+    <bean id="sourceJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="jdbcOracleDataSource"/>
+    </bean>
+
+    <bean id="jdbcOracleDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${ip.jdbc.driverClassName}"/>
+        <property name="url" value="${ip.jdbc.connection.url}"/>
+        <property name="username" value="${ip.jdbc.username}"/>
+        <property name="password" value="${ip.jdbc.password}"/>
+    </bean>
+
+    <!-- Entry row callback handler -->
+
+    <bean id="entryRowCallbackHandler" class="uk.ac.ebi.interpro.scan.persistence.installer.EntryRowCallbackHandler">
+        <!--Hibernate DAOs-->
+        <property name="entryDAO" ref="entryDAO"/>
+        <property name="signatureDAO" ref="signatureDAO"/>
+        <property name="releaseDAO" ref="releaseDAO"/>
+        <!--JDBC DAOs-->
+        <property name="entry2SignaturesDAO" ref="entry2SignaturesDAO"/>
+        <property name="entry2GoDAO" ref="entry2GoDAO"/>
+        <property name="entry2PathwayDAO" ref="entry2PathwayDAO"/>
+    </bean>
+
+    <bean id="entry2SignaturesDAO" class="uk.ac.ebi.interpro.scan.persistence.installer.Entry2SignaturesDAOImpl">
+        <property name="dataSource" ref="jdbcOracleDataSource"/>
+    </bean>
+
+    <bean id="entry2GoDAO" class="uk.ac.ebi.interpro.scan.persistence.installer.Entry2GoDAOImpl">
+        <property name="dataSource" ref="jdbcOracleDataSource"/>
+    </bean>
+
+    <bean id="entry2PathwayDAO" class="uk.ac.ebi.interpro.scan.persistence.installer.Entry2PathwayDAOImpl">
+        <property name="dataSource" ref="jdbcOracleDataSource"/>
+    </bean>
+
+</beans>

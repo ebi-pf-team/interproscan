@@ -1,0 +1,12 @@
+EMBOSS License
+
+The AJAX and NUCLEUS libraries are released under the GNU Library General Public Licence.
+
+EMBOSS applications are released under the GNU General Public Licence.
+
+Parsing of ACD files does not constitute a "derived work" and developers are encouraged to do this, for example to write their own GUIs.
+
+For developers who have their own licensing conditions already in effect, there will be an additional way to contribute. The EMBASSY collection can include packages that use the EMBOSS core libraries and interfaces but under their own licensing conditions. They will be bound by the Library GPL of the AJAX and NUCLEUS libraries, but not necessarily by the full GPL.
+
+For more information on how to develop your own EMBOSS applications, contact emboss-bug@emboss.open-bio.org
+

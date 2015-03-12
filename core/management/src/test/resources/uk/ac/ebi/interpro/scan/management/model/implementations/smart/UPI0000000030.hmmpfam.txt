@@ -1,0 +1,24 @@
+hmmpfam - search one or more sequences against HMM database
+HMMER 2.3.2 (Oct 2003)
+Copyright (C) 1992-2003 HHMI/Washington University School of Medicine
+Freely distributed under the GNU General Public License (GPL)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+HMM file:                 data/smart/6.1/smart.HMMs.bin
+Sequence file:            ../../business/src/test/resources/uk/ac/ebi/interpro/scan/business/postprocessing/smart/UPI0000000030.fasta
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query sequence: 1
+Accession:      [none]
+Description:    status=active
+
+Scores for sequence family classification (score includes all domains):
+Model    Description                                    Score    E-value  N
+-------- -----------                                    -----    ------- ---
+SM00327                                                 170.0    1.3e-51   2
+
+Parsed for domains:
+Model    Domain  seq-f seq-t    hmm-f hmm-t      score  E-value
+-------- ------- ----- -----    ----- -----      -----  -------
+SM00327    1/2       1   155 [.     1   193 []    54.4  8.3e-17
+SM00327    2/2     537   718 ..     1   193 []   115.6  3.2e-35
+//

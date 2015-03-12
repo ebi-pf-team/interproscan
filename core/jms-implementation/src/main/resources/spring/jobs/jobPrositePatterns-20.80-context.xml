@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: Prosite Patterns ############################  -->
+    <bean id="jobPrositePatterns-20.80" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them"/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePrositePatterns-20.80"/>
+    </bean>
+
+    <bean id="abstractPrositePatternStep-20.80" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPrositePatterns-20.80"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PROSITE_PATTERNS}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepPrositePatternWriteFastaFile-20.80"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractPrositePatternStep-20.80">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepPrositePatternRunBinary-20.80"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
+          parent="abstractPrositePatternStep-20.80">
+        <!-- In example command line below, replace _ with -
+          Prosite Profiles:
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.80/prosite.dat _-pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
+          Prosite Patterns:
+          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.80/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.80/evaluator.dat -s -o ipro -->
+        <property name="dependsUpon" ref="stepPrositePatternWriteFastaFile-20.80"/>
+        <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
+        <property name="binarySwitches" value="-r -s -o ipro"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
+        <property name="modelFile" value="${prosite.models.path.20.80}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
+        <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path.20.80}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepPrositePatternDeleteFastaFile-20.80"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPrositePatternStep-20.80">
+        <property name="dependsUpon" ref="stepPrositePatternRunBinary-20.80"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of Prosite Profiles."/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <bean id="stepPrositePatternParseRawOutput-20.80"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParsePrositeGffOutputStep"
+          parent="abstractPrositePatternStep-20.80">
+        <property name="dependsUpon" ref="stepPrositePatternRunBinary-20.80"/>
+        <property name="stepDescription" value="Parse the output from the Prosite binary"/>
+        <property name="serialGroup" value="PARSE_PROSITE_PATTERNS"/>
+        <property name="retries" value="3"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="prositePatternRawMatchDAO-20.80"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositePatternMatchParser">
+                <constructor-arg value="20.80"/>
+                <property name="cigarEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="stepPrositePatternDeleteRawOutput-20.80"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPrositePatternStep-20.80">
+        <property name="dependsUpon" ref="stepPrositePatternParseRawOutput-20.80"/>
+        <property name="stepDescription" value="Delete the raw output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <bean id="stepPrositePatternPostProcessing-20.80"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.PrositePatternsPostProcessingStep"
+          parent="abstractPrositePatternStep-20.80">
+
+        <property name="dependsUpon" ref="stepPrositePatternParseRawOutput-20.80"/>
+        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
+        <property name="stepDescription" value="Filter Prosite Patterns matches and persist filtered results"/>
+        <property name="signatureLibraryRelease" value="20.80"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.PatternPostProcessing">
+                <property name="passLevels">
+                    <list>
+                        <value>STRONG</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositePatternFilteredMatchDAO"/>
+        </property>
+        <property name="rawMatchDAO" ref="prositePatternRawMatchDAO-20.80"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PrositeProfiles !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="prositePatternRawMatchDAO-20.80" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>
+    </bean>
+
+    <bean id="signatureLibraryReleasePrositePatterns-20.80"
+          class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PROSITE_PATTERNS"/>
+        <constructor-arg type="java.lang.String" value="20.80"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- All the common Spring config, found in src/main/resources/ -->
+    <import resource="classpath:spring-persistence-config.xml"/>
+    <!-- Test stuff - move to a different spring-config.xml file. -->
+
+    <bean id="loader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
+        <property name="sequenceLoader" ref="proteinLoader"/>
+    </bean>
+
+    <bean id="fastaFile" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="testdata/5k.fasta"/>
+    </bean>
+
+    <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
+        <property name="proteinInsertBatchSize" value="50"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="proteinPrecalcLookupBatchSize" value="50"/>
+        <property name="getOrfOutput" value="false"/>
+        <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
+    </bean>
+
+    <bean id="sequenceLoadListener" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.NoopSequenceLoadListener"/>
+
+</beans>
