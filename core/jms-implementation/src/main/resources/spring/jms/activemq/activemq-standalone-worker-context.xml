@@ -31,6 +31,7 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="verboseLog" value="${verbose.log}"/>
+        <property name="verboseLogLevel" value="${verbose.log.level}"/>
         <property name="statsUtil" ref="statsUtil"/>
     </bean>
 
@@ -41,7 +42,6 @@
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="directoryManager" ref="tempDirectoryManager"/>
     </bean>
-
 
 
     <bean id="statsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">

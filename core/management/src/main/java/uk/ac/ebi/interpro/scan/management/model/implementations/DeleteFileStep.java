@@ -42,6 +42,7 @@ public class DeleteFileStep extends Step {
         if (fileNameTemplate != null && fileNameTemplate.length > 0) {
             for (String fileName : fileNameTemplate) {
                 final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileName);
+                LOGGER.debug("Deleting file: " + fileName);
                 File file = new File(filePathName);
                 if (!file.delete()) {
                     LOGGER.error("Unable to delete the file located at " + filePathName);

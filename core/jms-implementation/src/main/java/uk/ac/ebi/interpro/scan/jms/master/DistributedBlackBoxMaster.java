@@ -380,6 +380,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         } catch (Exception e){
             e.printStackTrace();
         }finally{
+            cleanUpWorkingDirectory();
             // Always exit
             if(status != 0){
                 System.err.println("InterProScan analysis failed. Exception thrown by DistributedBlackBoxMaster. Check the log file for details");

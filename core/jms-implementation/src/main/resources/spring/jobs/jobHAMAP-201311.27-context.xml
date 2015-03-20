@@ -10,6 +10,7 @@
     <bean id="jobHAMAP-201311.27" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes"/>
         <property name="analysis" value="true"/>
+        <property name="active" value="false" />
         <property name="libraryRelease" ref="signatureLibraryReleaseHAMAP-201311.27"/>
     </bean>
 

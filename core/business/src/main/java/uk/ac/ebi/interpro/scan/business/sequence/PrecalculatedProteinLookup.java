@@ -1,8 +1,12 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,9 +18,9 @@ import java.util.Set;
  */
 public interface PrecalculatedProteinLookup {
 
-    Protein getPrecalculated(Protein protein, String analysisJobNames);
+    Protein getPrecalculated(Protein protein, Map<String, SignatureLibraryRelease> analysisJobMap);
 
-    Set<Protein> getPrecalculated(Set<Protein> proteins, String analysisJobNames);
+    Set<Protein> getPrecalculated(Set<Protein> proteins,Map<String, SignatureLibraryRelease> analysisJobMap);
 
     boolean isConfigured();
 
@@ -27,5 +31,5 @@ public interface PrecalculatedProteinLookup {
     boolean isSynchronised() throws IOException;
 
 
-
+    boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap);
 }
