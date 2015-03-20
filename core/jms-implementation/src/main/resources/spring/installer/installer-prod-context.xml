@@ -135,19 +135,19 @@
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
                     <property name="signatureLibrary" value="SIGNALP_EUK"/>
                     <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP-EUK-4.0"/>
+                    <property name="analysisJobId" value="jobSignalP_EUK-4.0"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
                     <property name="signatureLibrary" value="SIGNALP_GRAM_POSITIVE"/>
                     <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP-GRAM_POSITIVE-4.0"/>
+                    <property name="analysisJobId" value="jobSignalP_GRAM_POSITIVE-4.0"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
                     <property name="signatureLibrary" value="SIGNALP_GRAM_NEGATIVE"/>
                     <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP-GRAM_NEGATIVE-4.0"/>
+                    <property name="analysisJobId" value="jobSignalP_GRAM_NEGATIVE-4.0"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 

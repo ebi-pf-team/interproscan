@@ -61,6 +61,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
         }
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
+        LOGGER.debug("Output fileName: " + fileName);
         try {
             is = new FileInputStream(fileName);
             final Set<RawProtein<T>> results = getParser().parse(is);

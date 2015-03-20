@@ -41,12 +41,22 @@ abstract public class RunBinaryStep extends Step {
 
     private boolean usesFileOutputSwitch = false;
 
+    private boolean singleSeqMode = false;
+
     public void setUsesFileOutputSwitch(boolean usesFileOutputSwitch) {
         this.usesFileOutputSwitch = usesFileOutputSwitch;
     }
 
     public boolean isUsesFileOutputSwitch() {
         return usesFileOutputSwitch;
+    }
+
+    public boolean isSingleSeqMode() {
+        return singleSeqMode;
+    }
+
+    public void setSingleSeqMode(boolean singleSeqMode) {
+        this.singleSeqMode = singleSeqMode;
     }
 
     public String getOutputFileNameTemplate() {

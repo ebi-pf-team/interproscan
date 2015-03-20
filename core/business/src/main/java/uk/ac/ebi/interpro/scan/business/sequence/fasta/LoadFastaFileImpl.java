@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +48,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     @Override
     @Transactional
-    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener, String analysisJobNames, boolean useMatchLookupService) {
+    public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener,Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
@@ -134,8 +136,8 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
             if(LOGGER.isInfoEnabled()){
                 LOGGER.info( "Store and persist the sequences");
             }
-            sequenceLoader.storeAll(parsedMolecules, analysisJobNames);
-            sequenceLoader.persist(sequenceLoaderListener, analysisJobNames);
+            sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
+            sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             if(LOGGER.isInfoEnabled()){
                 LOGGER.info( "Store and persist the sequences ...  completed");
             }

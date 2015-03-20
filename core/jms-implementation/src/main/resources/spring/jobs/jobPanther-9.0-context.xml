@@ -53,7 +53,7 @@
     </bean>
     <!--Add path to (B)last binary-->
     <bean id="blastPath" class="java.lang.String">
-        <constructor-arg value="${binary.blastall.2.2.6.path}"/>
+        <constructor-arg value="${binary.panther.blast.path}"/>
     </bean>
     <!--Add path to (H)mmsearch binary-->
     <bean id="hmmerPath" class="java.lang.String">

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: HAMAP ############################  -->
+    <bean id="jobHAMAP" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes"/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseHAMAP"/>
+    </bean>
+
+    <bean id="abstractHamapHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobHAMAP"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.HAMAP}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepHamapHMMWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractHamapHMMStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+
+    <bean id="stepHamapHMMRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractHamapHMMStep">
+        <property name="dependsUpon" ref="stepHamapHMMWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER3"/>
+        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="singleSeqMode" value="false"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.hmmfilter} ${hmmer3.hmmsearch.cpu.switch.hmmfilter}"/>
+        <property name="fullPathToHmmFile" value="${hamap.hmm.lib.path}"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="useTbloutFormat" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTbloutTemplate" ref="rawAnalaysisOutputTbloutFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <bean id="stepHamapHMMRunPFSearch"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunHmmPfsearchStep"
+          parent="abstractHamapHMMStep">
+        <property name="dependsUpon" ref="stepHamapHMMRunHmmer3"/>
+        <property name="stepDescription" value="Run pfsearch for selected proteins"/>
+        <property name="binarySwitches" value="${pfsearch.hamap.binary.switches}"/>
+        <!--<property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>-->
+        <!--<property name="fastaFileNameTemplate" ref="filteredFastaInputFileNameTemplate"/>-->
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="outputFileNameTbloutTemplate" ref="rawAnalaysisOutputTbloutFileTemplate"/>
+        <property name="statsFileNameTemplate" ref="statsFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToPFsearch" value="${binary.prosite.pfsearch.path}"/>
+        <property name="fullPathToPfsearchWrapper" value="${binary.prosite.pfsearch.wrapperpath}"/>
+        <property name="fullPathToPython" value="${binary.prosite.python.path}"/>
+        <property name="modelDir" value="${hamap.profile.models.dir}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 4 -->
+
+    <bean id="stepHamapHMMParsePfSearchRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParseHamapPfsearchOutputStep"
+          parent="abstractHamapHMMStep">
+        <property name="dependsUpon" ref="stepHamapHMMRunPFSearch"/>
+        <property name="stepDescription" value="Parse the output from the ProSite binary"/>
+        <property name="serialGroup" value="PARSE_HAMAP"/>
+        <property name="retries" value="3"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapPfsearchMatchParser">
+                <constructor-arg ref="latestHamapSignatureLibraryRelease"/>
+                <property name="cigarEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- STEP 5 -->
+
+    <bean id="stepHamapHMMDeleteJobFiles"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractHamapHMMStep">
+        <property name="dependsUpon" ref="stepHamapHMMParsePfSearchRawOutput"/>
+        <property name="stepDescription" value="Delete the filtered fasta file following successful run of PFSearch and ParseHamapPfsearchOutputStep"/>
+        <property name="fileNameTemplate">
+                  <list>
+                    <ref bean="fastaFileNameTemplate"/>
+                    <ref bean="rawAnalaysisOutputTbloutFileTemplate"/>
+                    <ref bean="rawAnalaysisOutputFileTemplate"/>
+                    <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+                    <ref bean="statsFileNameTemplate"/>
+                  </list>
+        </property>
+    </bean>
+
+
+    <!-- STEP 6 -->
+
+    <bean id="stepHamapHMMPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hamap.HamapHmmPostProcessingStep"
+          parent="abstractHamapHMMStep">
+
+        <property name="dependsUpon" ref="stepHamapHMMParsePfSearchRawOutput"/>
+        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
+        <property name="stepDescription" value="Filter HAMAP matches and persist filtered results"/>
+        <property name="signatureLibraryRelease" ref="latestHamapSignatureLibraryRelease"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
+                <property name="passLevels">
+                    <list>
+                        <value>ONE</value>
+                        <value>ZERO</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl"/>
+        </property>
+        <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
+    </bean>
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: HAMAP !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="hamapRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch"/>
+    </bean>
+    <bean id="signatureLibraryReleaseHAMAP" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="HAMAP"/>
+        <constructor-arg ref="latestHamapSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="filteredFastaInputFileNameTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].filteredInput.fasta"/>
+    </bean>
+
+    <bean id="statsFileNameTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].fasta.stats"/>
+    </bean>
+
+    <bean id="latestHamapSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="${hamap.signature.library.release}"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

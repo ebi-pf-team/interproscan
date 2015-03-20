@@ -4,7 +4,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyToI5ModelDAO;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 
@@ -76,7 +80,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * @return
      */
     @Override
-    public Protein getPrecalculated(Protein protein, String analysisJobNames) {
+    public Protein getPrecalculated(Protein protein, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Check if the precalc service is configure and available.
         if (!preCalcMatchClient.isConfigured()) {
             return null;
@@ -103,12 +107,13 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 startTime = System.nanoTime();
             }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
+
             if (LOGGER.isDebugEnabled()) {
                 long time = System.nanoTime() - startTime;
                 LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + time + "ns");
             }
             if (berkeleyMatchXML != null) {
-                berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobNames);
+                berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobMap);
             }
             return protein;
         } catch (Exception e) {
@@ -119,7 +124,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     }
 
     @Override
-    public Set<Protein> getPrecalculated(Set<Protein> proteins, String analysisJobNames) {
+    public Set<Protein> getPrecalculated(Set<Protein> proteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Check if the precalc service is configure and available.
         if (!preCalcMatchClient.isConfigured()) {
             return null;
@@ -167,8 +172,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 long time = System.nanoTime() - startTime;
                 LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + time + "ns");
             }
-            if (berkeleyMatchXML != null) {
-                berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobNames);
+            // Check if the analysis versions are consistent and then proceed
+            if(isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
+                if (berkeleyMatchXML != null) {
+                    berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap);
+                }
+            }else{
+                // If the member database version at lookupmatch service is different  from the analysis version in
+                // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
+                return null;
             }
 
             return precalculatedProteins;
@@ -207,6 +219,37 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         return true;
 
+    }
+
+    /**
+     * If the member database version at lookupmatch service is different  from the analysis version in
+     * interproscan, then disable the lookup match service for this batch
+     *
+     * @param preCalculatedProteins
+     * @param berkeleyMatches
+     * @param analysisJobMap
+     * @return
+     */
+    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap){
+        // Collection of BerkeleyMatches of different kinds.
+        Map<String, String> lookupAnalysesMap = new HashMap<String, String>();
+        for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
+            String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
+            final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
+            lookupAnalysesMap.put(sigLib.getName().toUpperCase(), signatureLibraryReleaseVersion);
+        }
+        for (String analysisJobName : analysisJobMap.keySet()) {
+            if(lookupAnalysesMap.containsKey(analysisJobName.toUpperCase())){
+                String lookUpMatchAnalaysVersion = lookupAnalysesMap.get(analysisJobName.toUpperCase());
+                LOGGER.debug("analysis: " + analysisJobName + " lookUpMatchAnalaysiVersion: "
+                        + lookUpMatchAnalaysVersion + " analysisJobName: " + analysisJobName + " analysisJobVersion: " + analysisJobMap.get(analysisJobName).getVersion());
+                if (! lookUpMatchAnalaysVersion.equals(analysisJobMap.get(analysisJobName).getVersion())){
+                    LOGGER.debug("Different versions of  " + analysisJobName + " running ");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void displayLookupError(Exception e) {

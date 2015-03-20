@@ -1,0 +1,808 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for Linux/x86 (vers 1st October 2002), see www.w3.org" />
+
+    <title></title>
+  </head>
+
+  <body>
+<pre>
+Release History
+---------------
+
+Notes for the 2.2.10 release
+----------------------------
+
+1. BlastPGP:
+        - added code to spread out gap costs when extracting
+                data from the sequence alignment to build PSSM
+        - changed handling of all-zero columns of residue frequencies
+                to use the underlying scoring matrix frequency ratios
+                rather than scoring matrix's scores
+        - disallowed an ungapped search if more than one iteration
+                is specified
+        - added input/output of residue frequencies as scoremat objects
+
+2. Score-mat objects:
+        - changed ASN.1 specification for Score-Matrix to use floating
+                point instead of fixed point for residue frequencies
+                and weights
+        - added a new 'formatrpsdb' application; given a collection of
+                Score-mat ASN.1 files, this application creates a database
+                suitable for use with RPSBLAST
+
+3. General changes:
+        - megablast now performs ungapped extensions in order to prevent suboptimal alignments
+        - consolidated formatting code
+        - removed fmerge.c
+        - small fixes to sum statistics code
+        - better error handling
+        - fixed masking of translated queries
+        - fixed several readdb threading bugs
+        - improved protein neighbor generation
+        - hsp sorting/inclusion fixes from Mike Gertz
+        - many changes in HSP linking by Mike Gertz
+        - several fixes for translated RPS blast
+
+4. New engine:
+        - We have been rewriting and refactoring the BLAST engine in order to make it more modular and extensible. C and C++ APIs will be available. bl2seq and megablast are currently compiled with support for the new engine; it can be enabled with the -V F option.
+
+5. General interest
+
+NCBI now provides <a href="http://www.ncbi.nlm.nih.gov/books/bv.fcgi?call=bv.View..ShowSection&rid=toolkit.section.cvs_external">anoncvs access</a> to toolkit sources.
+
+A <a href="http://www.ncbi.nlm.nih.gov/cvsweb/index.cgi/internal/c++/src/algo/blast/core/">cvsweb source browser</a> and <a href="http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/doxyhtml/group__AlgoBlast.html">doxygen documentation</a> are also available.
+
+Notes for the 2.2.9 release (5 May 2004)
+----------------------------------------
+Bugs fixed:
+ * A serious error in copymat which caused incorrect databases to be
+   produced has been fixed.
+ * A number of problems with query concatenation in blastall have been fixed.
+ * XML output was brought in sync with text output by adding masking of the
+   filtered locations in query sequences.
+
+Changes:
+ * formatdb can no longer produce old-style BLAST databases.
+
+Performance improvements:
+ * For translating searches of large sequences, only the needed pieces of
+   the sequence are translated during the traceback.
+ * The performance of reading binary gilists has been improved.
+ * formatdb now produces 1 gigabyte volumes by default on 32-bit platforms
+   in order to prevent mmap() failures.
+ * When possible, use approximate sequence lengths for search space calculation.
+ * DUST filtering was made more aggressive.
+
+Statistical improvements:
+ * Unified handling of gapped Karlin blocks between protein and nucleotide
+   cases.
+ * Adjustments to the lengths of query and database sequences have been
+   improved.
+ * Composition-based statistics routines were refactored.
+
+Ongoing software engineering improvements:
+ * Fixed memory leaks.
+ * Fixed uninitialized variables.
+ * Fixed null pointer handling.
+ * Dead code and variables were eliminated.
+ * Many compiler/type warnings fixed.
+
+Notes for the 2.2.8 release: 
+
+* Correction to tblastx alignment computation
+
+Notes for 2.2.7 release (2/2/04):
+
+* Standalone BLAST is now available for amd64-linux. 
+
+* formatdb now restricts volume sizes to 1G on 32-bit platforms
+  for performance reasons. 
+
+* The -A option has been removed from formatdb, that is, all databases
+  will be created with ASN.1 deflines. 
+
+* tblastn query concatenation now works correctly on 64-bit platforms. 
+
+* The wwwblast source code has been merged into the C toolkit tree and
+  is no longer distributed with the binaries. 
+
+Notes for 2.2.6 release (4/9/03):
+
+Enhancements:
+
+1.) A -B option now exists for blastall that specifies the concatenation of queries
+for blastn and tblastn.  This option is still experimental and subject to change.
+It is not supported with XML, ASN.1, or tabular output.
+
+2.) Text and binary SeqAligns can now be produced in place of the standard BLAST report by
+using (respectively) "-m 10" or "-m 11".
+
+Bug fixes:
+
+1.) A problem with an integer "rollover" in formatdb has been fixed.  This happened when the 
+volume size was selected with the -v option and the specified number of bases became negative and
+the option was ignored.  
+
+2.) A problem in the statistics of the BLAST output footer was fixed.  This was a double-counting of 
+the number of extensions performed.
+
+3.) A problem that caused the target and query sequences to be reversed in tblastx XML output has been fixed.
+
+4.) A memory corruption problem in the formatting of the tabular output has been fixed.
+
+5.) An unstable sorting problem in the results for tblastx searches has been fixed.
+
+6.) A spurious error message about a file called "taxdb.bti" has been suppressed.
+
+7.) A problem with the number of hits returned in XML mode being double what they should be has been fixed.
+
+8.) The fastacmd return values have been corrected, it is 0 on success and 1 for an error.
+
+
+Notes for 2.2.5 release (11/15/02):
+
+Enhancements:
+
+1.) Fastacmd now prints the length of the longest sequence
+when used with the -I option.
+
+2.) It is now possible to specify a range restriction on the query for
+an rpsblast search, use the -L option.
+
+
+Bug fixes:
+
+1.) A problem that caused bl2seq to not show the ID of the query has
+been fixed.
+
+2.) A problem that caused formatdb to not properly work on the nr protein FASTA file
+has been fixed.
+
+3.) A problem that caused blastall or blastpgp to print too many alignments when
+used with XML mode has been fixed.
+
+4.) The -P option was accidentally deleted from the blast binaries in the 2.2.4 release
+and has been restored.  The -P option can be used to specify whether one or
+two hits should be found before an extension, the default is two hits.
+
+
+Notes for 2.2.4 release (08/26/02):
+
+Enhancements:
+
+1.) Discontiguous word matching is now available for megablast.
+See http://www.ncbi.nlm.nih.gov/blast/discontiguous.html for details.
+
+2.) An out-of-frame gapping option (meaning that one or two bases can be
+inserted or deleted from an alignment) is now available in blastall for
+blastx and tblastn.  NOTE that the expect values have been calculated
+assuming in-frame gapping (three bases inserted/deleted) and should only
+be used for guidance.
+
+3.) Fastacmd can now dump out partial sequences (using the -L option) 
+and print taxonomic information for a sequence.
+
+Bug fixes:
+
+1.) A problem that caused blastall to core-dump when the -U option
+(mask the sequence that is lower-case in input file) has been fixed.
+
+2.) A problem that caused bl2seq to not work properly for protein-protein
+searches with BLOSUM62 (on some platforms) has been fixed.
+
+3.) A problem that caused seedtop to core dump if there were a lot
+of hits has been fixed.
+
+4.) Using -n with blastall (megablast mode) now returns the same results
+as default megablast.
+
+5.) XML output for megablast has been fixed.
+
+6.) A problem with translating rpsblast that caused it to crash on OSF/1
+and report incorrect values on other platforms has been fixed.
+
+7.) A memory leak in formatdb was fixed.
+
+8.) A problem that caused blastpgp to core-dump when running in PHI-BLAST mode
+(if many hits were found) was fixed.  Memory leaks were also fixed.
+
+9.) the double closing of a file that caused phi-blast to crash occassionally
+under LINUX has been fixed.
+
+
+Notes for 2.2.3 release (04/24/02):
+
+Enhancements:
+
+1.) Version 4 of the BLAST databases is now the default for formatdb.  
+This can be overridden for older binaries by use of "-A F" on the
+command-line.
+
+
+Bug fixes:
+
+1.) A problem has been fixed that caused tblastn searches to miss some protein matches,
+if the database sequence was longer than 15 million bases.
+
+2.) Selenocysteine residues (U) in the query are now replaced by X's as these
+are not supported in the currently available matrices (e.g., BLOSUM62), so that
+their presence occasionally caused data corruption.
+
+3.) A problem with combining the "-m 7" and "-n T" options in blastall has 
+been fixed.
+
+4.) XML output had a &lt;Hit_def&gt; field that could (incorrectly) have an empty value,
+this has been fixed.
+
+5.) A problem with reading databases with more than one volume and an oidlist has
+been fixed.
+
+6.) A problem with ungapped XML output that caused all HSP's to be number zero
+has been resolved, they are now numbered with one-offset.
+
+7.) A bug that prevented use of some matrices for ungapped searches has
+been fixed.
+
+8.) Effective query and database lengths were calculated incorrectly for 
+rpsblast, leading to a minor change in expect values in some cases.  This
+has been corrected.
+
+9.) A for loop that could overrun the end of a buffer during formatting was
+fixed.  Many thanks to Haruna Cofer of SGI for pointing this.
+
+10.) The effective database length command-line argument (-z) has been fixed
+for blastall and megablast.  The parser was reading digits only until
+there were no non-digits (e.g., 1.6e8 was interpreted as "1"), leading
+to wildly incorrect effective database lengths.  This has been fixed so 
+that 160000000 and 1.6e8 are interpeted the same way. 
+
+
+Notes for 2.2.2 release:
+
+Enhancements:
+
+1.) Version 4 of the BLAST databases is now fully supported.  This version
+has some enhancements described in README.formatdb and fixes some problems
+described below.  Use the "-A" option on formatdb to produce the new database
+version.  The BLAST binaries for release 2.2.2 are entirely compatiable with
+both the current and the new version of the BLAST databases.  Old BLAST binaries
+are not necessarily compatiable with the new database format.
+
+2.) Fastacmd will dump out an entire BLAST database in FASTA format if the
+new -D option is used.
+
+3.) Fastacmd will separate definition lines from different GI's that have
+been merged together in nr (as they all have the same sequence) by control-A's.
+if the new -c option is used.
+
+
+Bug fixes:
+
+1.) A problem has been fixed that caused tblastn searches to miss some protein matches,
+if the database sequence was longer than 15 million bases.
+
+2.) The old (current) version of the BLAST databases has a "rollover" problem if
+the total number of bases in a single volume is greater than 4294967295.  The new
+database verison (#4) allows eight bytes for this.
+
+3.) The old (current) version of the BLAST database format does not handle ambiguity
+characters in a nucleotide database sequence if it is over 16 million characters long.
+The new version of the the BLAST database does.
+
+4.) A performance problem that caused a mutexes to be acquired too often for 
+multi-threaded runs with four or more CPU's has been fixed.  Thanks to Haruna
+Cofer of SGI for help in finding the cause.
+
+5.) A problem that caused ungapped blastp/blastx/tblastn/tblastx to crash on
+certain matrices (e.g., pam10) has been fixed.
+
+6.) Some blastpgp problems with using the -B (for reading a master-slave alignment) and
+reading checkpoint files (-C) have been resolved.
+
+
+Notes for 2.2.1 release:
+
+Enhancements:
+
+1.) BLAST and PSI-BLAST improvements as described in 
+Schaffer et al., Nucleic Acids Research 2001 Jul 15;29(14):2994-3005.
+These include improvements the use of composition-based statistics
+and improvements to the edge-correction effects.  Composition-based 
+statistics were initially implemented in release 2.1.1, but the 
+implementation is improved in release 2.2.1.
+
+2.) Formatdb automatically produces database volumes for input
+consisting of more than 4 billion letters.
+
+3.) Formatdb can produce an alias file for a given database and GI list
+as well as convert a GI list to the more efficient binary format.  See
+details in README.formatdb.
+
+4.) RPSBLAST now works properly with 'scaled' databases.  The scaling factor must
+be set when executing the program 'makemat' (which takes PSI-BLAST checkpoints
+as input).  Scaling-up the matrix improves the precision of the (integer) calculations.
+
+5.) Tabular output has now been added to blastpgp and rpsblast, use the "-m 8" option.
+
+6.) Blastpgp will now process multiple queries.
+
+Bug fixes:
+
+1.) A problem with the -K option (for culling) that caused BLAST to crash has been fixed.
+
+2.) A problem with the "gnl" identifier and multi-volume databases has been fixed.
+
+3.) A problem that caused BLASTN to very rarely find suboptimal alignments has been fixed.
+
+4.) A problem that could cause makemat to crash has been fixed.
+
+4.) Some multi-threading problem pointed out by Henry Gabb of KAI were fixed.
+
+5.) Some PC-lint errors and warnings pointed out by Russ Williams of United Devices
+were fixed.
+
+
+Notes for 2.1.3 release:
+
+Enhancements:
+
+1.) Addition of PSI-TBLASTN ability to blastall, see description in 
+README.bls.
+
+2.) Database sequences over 5 million bases in length are now broken
+into chunks to keep memory usage reasonable.
+
+3.) Blastall now allows one to enter a location if it is desired
+to search a subsequence of the query.
+
+4.) Formatdb can produce a new BLAST database format using the -A option.
+The BLAST programs can read this format as well as the current format (the
+program automatically identifies which version it should work with).  This 
+new format stores the sequence definition lines in a structured manner
+(as ASN.1), this will allow future versions of BLAST to better present
+taxonomic information as well as information about other resources (e.g., 
+UniGene, LocusLink) for a database sequence.  
+
+5.) Blastall can now produce tab-delimited, use "-m 8" to specify this.
+
+6.) Improved Karlin-Altschul parameters are now being used, they were 
+calculated using the "island" method
+
+7.) A "gapped" check was added to BLASTN to ensure that if a hit is low-scoring
+after an ungapped extension, but high-scoring after a gapped extension, it will 
+not be missed.
+
+8.) The formatdb error messages have been improved for the case of illegal
+characters in the sequence.
+
+9.) The number of HSP's saved in an ungapped search has been increased to 400 from 200.
+
+Bug fixes:
+
+1.) A problem with XML output was fixed.
+
+2.) A problem with the seg filtering under LINUX was
+fixed (many thanks to Eric Cabot at GCG for pointing this out).
+
+3.) A problem with format of BLAST reports if the "-o" flag
+was not used when the database was produced was fixed 
+(thanks again to Eric Cabot).
+
+4.) A problem with reading the BLAST database caused by a 4-byte signed integer 
+than should have been unsigned was fixed (thanks to Haruna Cofer at SGI
+for pointing this out).
+
+5.) A problem with copymat under NT and IRIX was fixed.
+
+
+Notes for 2.1.2 release:
+
+Enhancements:
+
+1.) Release of rpsblast.  Rpsblast performs a search against a database
+of profiles.  See README.rps for full details.
+
+2.) Release of blastclust.  BLASTCLUST automatically and systematically clusters protein sequences
+based on pairwise matches found using the BLAST algorithm.   See README.bcl for
+full details.
+
+3.) Release of megablast.  Megablast uses the greeedy algorithm of Webb Miller et al. 
+for nucleotide sequence alignment search and concatenates many queries to save
+time spent scanning the database.   See README.mbl for full details.
+
+4.) XML output can now be produced.  Use the '-m 7' option for this.
+The XML output is still experimental.  
+
+5.) the default behavior the culling (-K) option has been changed.  Previously
+this option was set to 100, meaning that if more than 100 HSP's had a
+hit to a region lower scoring ones would be dropped.  The option is now
+zero, which turns off this behavior.  In a few cases this change will
+result in more database sequences being reported.  The previous behavior can
+be recovered by using '-K 100' on the command-line.
+
+Bug fixes:
+
+1.) A bug that caused only the last SeqAnnot to be written (if the -O option
+was used) when multiple sequences were searched has been fixed.  All
+SeqAnnots are printed out.
+
+2.) A bug that caused the search space (set on the command line with the -Y option)
+to be ignored for some blastx and tblastn calculations has been fixed.
+
+3.) A failure to close a file if a gilst was used (using the -l option) was
+fixed.  Many thanks to David Mathog at CalTech for spotting this problem
+and suggesting a fix.
+
+4.) A bug that caused all the database names listed in an alias file to be
+printed, rather than the "TITLE" field has been fixed.
+
+
+
+Notes for 2.1.1:
+
+Enhancements:
+
+1.) Addition of compostion-based statistics:
+
+BLAST and PSI-BLAST now permit calculated E-values to take into account the amino acid composition of the individual database sequences involved in reported
+alignments. This improves E-value accuracy, thereby reducing the number of false positive results. 
+
+The improved statistics are achieved with a scaling procedure [1,2] which in effect employs a slightly different scoring system for each database sequence. As a result,
+raw BLAST alignment scores in general will not correspond precisely to those implied by any standard substitution matrix. Furthermore, identical alignments can receive
+different scores, based upon the compositions of the sequences they involve. The improved statistics are now used by default for all rounds of searching on the
+PSI-BLAST page, but not on the BLAST page. Therefore, if one uses default settings, the results of the first round of searching will be different on the BLAST and
+PSI-BLAST pages. 
+
+In addition adjustments have been made to two PSI-BLAST parameters: the pseudocount constant default has been changed from 10 to 7, and the E-value threshold for
+including matches in the PSI-BLAST model has been changed from 0.001 to 0.002. 
+
+1. Altschul, S.F. et al. (1997) Nucl. Acids Res. 25:3389-3402.
+2. Sch&auml;ffer, A.A. et al. (1999) Bioinformatics 15:1000-1011. 
+
+
+Notes for 2.0.14 release:
+
+
+Bug fixes:
+
+1.) extra line returns between sequences in the a FASTA file 
+causes formatdb to produce corrupted databases.
+
+2.) ";" at the beginning of a line was not being treated as a comment.
+
+3.) a problem with the formatter causes blast to core-dump if
+the FASTA definition line only contains an identifier and
+no description.
+
+4.) a problem in the ungapped extension for protein sequences
+causes a rare problem.
+
+5.) the '-U' option that causes lower-case sequence to be masked
+does not work correctly for blastx.
+
+
+Notes for 2.0.13 release:
+
+Enhancements:
+
+1.) The output format for pairwise alignments was changed to
+put each new gi (if the sequence has redundant gi's) on a
+new line.  If HTML output is specified then each gi is hyperlinked.
+
+Bug fixes:
+
+1.) An NCBI toolkit problem parsing the new RefSeq format in FASTA files
+(two bars instead of three) was fixed.  This fix applies to all
+BLAST binaries (formatdb, blastall, blastpgp, etc.).
+
+2.) A problem that caused BLAST version 2.0.12 under NT to freeze in
+multithreaded mode has been fixed.
+
+Notes for 2.0.12 release:
+
+Enhancements:
+
+1.) Bl2seq can now perform nucleotide-protein (blastx style) comparisons.
+This necessitated changing the '-p' option from a Boolean to a
+string.  Valid arguments are "blastn", "blastp", or "blastx".
+
+Bug fixes:
+
+1.) A problem in the NCBI threads library that caused BLAST to sometimes
+stick was corrected.  Many thanks to Haruna Cofer and colleauges at SGI
+for providing a fix.
+
+2.) A problem that caused BLAST to core-dump (especially on long queries)
+has been fixed.  Many thanks to Gary Williams for providing examples.
+
+3.) A problem that prevented the search of multiple multivolume databases
+has been fixed.  
+
+
+
+Notes for 2.0.11 release:
+
+Enhancements:
+
+1.) Optimizations were contributed by Chris Joerg of COMPAQ.  These changes
+reduce the number of cache misses, unroll loops, and make some instructions
+unnecessary.  These improvements can speed up BLAST for long sequences
+several-fold.
+
+2.) A database is now only memory-mapped while being searched.  If multiple databases
+are searched and the total exceeds the allowed memory-map limit this allows 
+all databases to be searched as memory-mapped files.  If a database cannot
+be memory-mapped it is read as an ordinary file, rather than causing an error.
+
+Bug fixes:
+
+1.) Formatdb was fixed to correct a problem with FASTA string identifiers under NT.
+
+2.) Blastpgp was fixed to prevent a core-dump under LINUX
+
+3.) BLASTN was found to miss some hits near the expect value cutoff.  This has been
+corrected.
+
+
+
+Notes for 2.0.10 release:
+
+Enhancements:
+
+1.) Bl2seq, a utility to compare two sequences using the blastn or blastp approach,
+is included in the archive.  See the full description in the README.bls for details.
+
+2.) A 'sparse' option ('-s') has been added to formatdb.  This option limits the indices
+for the string identifiers (used by formatdb) to accessions (i.e., no locus names).
+This is especially useful for sequences sets like the EST's where the accession and locus
+names are identical.  Formatdb runs faster and produces smaller temporary files if this
+option is used.  It is strongly recommended for EST's, STS's, GSS's, and HTGS's.
+
+3.) A volume option ('-v') has been added to formatdb.  This option breaks up large
+FASTA files into 'volumes' (each with a maximum size of 2 billion letters).
+As part of the creation of a volume formatdb writes a new type of BLAST database file,
+called an alias file, with the extension 'nal' or 'pal', is written.  This option
+should be used if one wishes to formatdb large databases (e.g., over 2 billion 
+base pairs).
+
+4.) It is is now possible to jump start the command line version of PSI-BLAST (blastpgp) 
+from a multiple alignment that includes the query sequence using the -B option. Details 
+are in README.bls.
+
+5.) The maximum wordsize limit for BLASTN has been removed.
+
+Bug fixes:
+
+1.) A problem if the database length, set by the '-z' option was greater than
+2 billion, was fixed.
+
+2.) A core-dump that resulted from the use of the coil-coil masking
+('-F C') was fixed by including a file needed for the data directory.
+
+3.) A bug was fixed that caused some very short alignments to be assigned incorrect 
+expect values. 
+
+4.) A bug was fixed that caused formatdb to produce incorrect BLAST databases if
+the input was ASN.1.
+
+5.) A serious performance problem with BLASTN and longer words (greater than 16)
+was fixed.
+
+Notes for 2.0.9 release:
+
+Enhancements:
+
+1.) two new options have been added to blastall: to produce output in HTML and 
+to search a subset of the database based upon a list of GI's.  Please see 
+the options section for full information.  
+
+2.) two new options have been added to blastpgp: to produce HTML output and to
+produce an ASCII version of the PSI-BLAST Matrix.  Please see the options section
+for more information.
+
+3.) formatdb has a new option to allow specification of a 'base' name.  see the options
+section for full details.
+
+4.) it is possible to mask only during the phase when the lookup table is being built, 
+but not during the extensions.  See the options section for full details.
+
+Bug fixes:
+
+1.) a problem that occurred when too many HSP's aligned to the same part
+of the query from one database sequence has been fixed.
+
+2.) a problem that caused seedtop to not perform pattern-matching for DNA
+sequences has been fixed.
+
+3.) the number of HSP's saved for ungapped BLAST and tblastx is now limited to
+200 to prevent problems with memory and speed.
+
+4.) a missing thread join that caused problems under DEC Alpha has been added.
+
+5.) a formatting problem with the database summary at the beginning of the
+BLAST output (if multiple databases totaling over 2 Gig) has been fixed.
+
+6.) a bug in formatdb that caused a core-dump if the total number of sequences was an
+exact multiple of 100000 was fixed.
+
+
+Notes for 2.0.8 release:
+
+Enhancements:
+
+1.) Frame and strand information was added to the output.  Examples of the
+new output format may be found at http://www.ncbi.nlm.nih.gov/BLAST/example.html.
+
+2.) An option that specifes the query strand to be searched (for blastn, blastx, and tblastx)
+has been added.  The option is '-S'.
+
+Bug fixes:
+
+1.) The problem with the 'too-wide' parameter input screen under NT was fixed.
+
+2.) BLAST no longer core-dump's when the query is NULL.
+
+3.) BLAST no longer core-dump's when the query contains an '@' and blastx or tblastx is selected.
+
+Notes for 2.0.7 release:
+
+Bug fixes:
+
+1.) BLAST now multi-threads properly under LINUX.
+
+2.) A problem with very redundant databases and psi-blast was fixed.
+
+3.) A problem with the formatting of the number of identities and positives
+was fixed.  This affected results on the minus strand only and did not
+affect the expect value or scores.
+
+4.) A problem that caused tblastn to core-dump very occassionally was corrected.
+
+5.) A problem with multiple patterns in PHI-BLAST was fixed.
+
+6.) A limit on the number of HSP's that were saved (100) was removed.
+
+Notes for 2.0.6 release:
+
+Enhancements:
+
+1.) PHI-BLAST is included in this release.  Please see notes on PHI-BLAST for
+details.
+
+2.) SEG has become an integral part of the NCBI toolkit and it is no longer necessary
+to install it separately.  It is also now supported under non-UNIX platforms.
+
+3.) Access to filtering options.
+
+If one uses "-F T" then normal filtering by seg or dust (for blastn)
+occurs (likewise "-F F" means no filtering whatsoever).  The seg options
+can be changed by using:
+
+-F "S 10 1.0 1.5"
+
+which specifies a window of 10, locut of 1.0 and hicut of 1.5.  One may
+also specify coiled-coiled filtering by specifying:
+
+-F "C"
+
+There are three parameters for this: window, cutoff (prob of a coil-coil), and
+linker (distance between two coiled-coiled regions that should be linked
+together).  These are now set to
+
+window: 22
+cutoff: 40.0
+linker: 32
+
+One may also change the coiled-coiled parameters in a manner analogous to
+that of seg:
+
+-F "C 28 40.0 32" will change the window to 28.
+
+One may also run both seg and coiled-coiled together by using a ";":
+
+-F "C;S"
+
+4.) BLAST has been changed to reduce the number of redundant hits that a user
+may see.  This is acheived by keeping track of the number of hits completely
+contained in a certain region and eliminating those lower scoring hits that
+are redundant with others.  This behavior may be controlled with the -K and -L
+options:
+
+  -K  Number of best hits from a region to keep [Integer]
+    default = 50
+  -L  Length of region used to judge hits [Integer]
+    default = 20
+
+Setting -K to zero turns off this feature.  This is the default only on blastall.
+
+Bug fixes:
+
+1.) There was a problem with the procedure that called the external utility seg.
+The need to fix this was obviated by the integration of seg into the toolkit.
+This showed up under LINUX.
+
+2.) There was a memory problem with formatdb that has been fixed.  This showed up
+mostly under NT and LINUX.
+
+3.) A problem with running in multi-processing mode under IRIX6.5 (as a non-root user)
+was fixed.
+
+Notes for 2.0.5 release:
+
+Enhancements:
+
+1.) The BLAST version is printed by formatdb in it's log file.
+
+2.) Multi-database searches no longer require that the -o option be used when
+preparing the databases (i.e., with formatdb).
+
+Bugs fixed:
+
+1.) A serious bug with multi-database iterative searches was fixed (thanks to
+Steve Brenner for providing an example).
+
+2.) 'lcl' is not formatted in the BLAST report when the sequence identifier
+is a local identifier or does not contain a bar ("|").
+
+3.) A large memory leak in formatdb was fixed.
+
+4.) An unnecessary cast that caused formatdb to fail on Solaris 2.5 machines
+if the binary was made under 2.6 was fixed.
+
+5.) Better error checking was added to protect against core-dumps.
+
+6.) Some problems with the sum statistics treatment of the blastx and tblastn
+programs reported by D. Rozenbaum were fixed.  The number of alignments
+involved in a sum group was misrepresented.  Also the incorrect length for
+the database sequence was used, sometimes casuing a slight change in the
+value reported.
+
+7.) A problem with blastpgp was fixed that reported incorrect values for
+matrices other than BLOSUM62 during iterative searches.
+
+Notes for 2.0.4 release:
+
+Enhancements:
+
+1.) multiple database searches:
+
+Version 2.0.4 will accept multiple database names (bracketed by quotations).
+An example would be
+
+              -d "nr est"
+
+which will search both the nr and est databases, presenting the results as if one
+'virtual' database consisting of all the entries from both were searched.   The
+statistics are based on the 'virtual' database.
+
+2.) new options:
+
+  -W  Word size, default if zero [Integer]
+    default = 0
+  -z  Effective length of the database (use zero for the real size) [Integer]
+    default = 0
+
+3.) The number of identities, positives, and gaps are now printed out before the
+alignments for gapped blastx, tblastn, and tblastx.  Additionally this feature is
+now also enabled for ungapped BLAST.
+
+4.) Formatdb now accepts ASN.1, as well as FASTA, as input.
+
+Bugs fixed:
+
+1.) In blastx, tblastn, and tblastx a codon was incorrectly formatted as a start codon in
+some cases.
+
+2.) The last alignment of the last sequence being presented was incorrectly dropped
+in some cases.  This change could affect the statistical significance of the last database
+sequence if the dropped alignment had a lower e-value than any other alignments from the
+same database sequence.
+</pre>
+  </body>
+</html>
+

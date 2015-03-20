@@ -45,11 +45,15 @@
         <property name="messageSender" ref="masterMessageSender"/>
         <property name="unrecoverableErrorStrategy" ref="errorStrategy"/>
         <property name="hasInVmWorker" value="true"/>
-        <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="statsUtil" ref="statsUtil"/>
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+        <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
+        <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="temporaryDirectory" value="${temporary.file.directory}"/>
+        <property name="verboseLog" value="${verbose.log}"/>
+        <property name="verboseLogLevel" value="${verbose.log.level}"/>
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>
