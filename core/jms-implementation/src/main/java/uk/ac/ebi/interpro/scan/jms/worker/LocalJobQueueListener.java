@@ -171,12 +171,11 @@ public class LocalJobQueueListener implements MessageListener {
                 statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                if (verboseLog){
-                    if (verboseLogLevel > 2){
-                        Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount
-                                + " - stepInstanceId = " + stepId
-                                + "\n stepInstance: " + stepExecution.getStepInstance().toString()  );
-                    }
+                Utilities.verboseLog("verboseLogLevel :" + verboseLogLevel);
+                if (verboseLogLevel > 2) {
+                    Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount
+                            + " - stepInstanceId = " + stepId
+                            + "\n stepInstance: " + stepExecution.getStepInstance().toString());
                 }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;

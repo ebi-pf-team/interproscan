@@ -1,0 +1,797 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for Linux/x86 (vers 1st October 2002), see www.w3.org" />
+
+    <title></title>
+  </head>
+
+  <body>
+<pre>
+Formatdb README
+------------------
+
+Table of Contents
+
+    Introduction
+ 
+    Command Line Options
+
+    Configuration File
+ 
+    Formatdb Notes/Troubleshooting
+      
+            A The -o option and identifiers
+            B "SORTFiles failed" message
+            C Formatting large FASTA files
+            D Piping a database to formatdb without uncompressing
+            E Creating custom databases.
+            F General troubleshooting tips.
+            G "SeqIdParse Failure" error
+            H "FileOpen" error
+
+    Appendix 1: The Files Produced by Formatdb      
+
+
+
+Introduction
+------------
+Formatdb must be used in order to format protein or nucleotide source
+databases before these databases can be searched by blastall, blastpgp
+or MegaBLAST. The source database may be in either FASTA or ASN.1
+format.  Although the FASTA format is most often used as input to
+formatdb, the use of ASN.1 is  advantageous for those who are using
+ASN.1 as the common source for other formats such as the GenBank
+report. Once a source database file has been formatted by formatdb it
+is not needed by BLAST. Please note that formatdb does not create
+non-redundant blast databases.
+
+If you are having problems formatting a BLAST databases please scroll
+down to the "Formatdb Notes/Troubleshooting" section below. Or contact
+the BLAST Desk at blast-help@ncbi.nlm.nih.gov
+
+
+Command Line Options
+--------------------
+A list of the command line options and the current version for formatdb may 
+be obtained by executing formatdb without options, as in:
+
+    formatdb -
+
+The formatdb options are summarized below:
+
+formatdb 2.2.11   arguments:
+
+  -t  Title for database file [String]  Optional
+
+  -i  Input file(s) for formatting (this parameter must be set) [File In]
+
+  -l  Logfile name: [File Out]  Optional default = formatdb.log
+
+  -p  Type of file
+         T - protein   
+         F - nucleotide [T/F]  Optional
+    default = T
+
+  -o  Parse options
+         T - True: Parse SeqId and create indexes.
+         F - False: Do not parse SeqId. Do not create indexes.
+ [T/F]  Optional default = F
+
+    If the "-o" option is TRUE (and the source database is in FASTA
+    format), then the database identifiers in the FASTA definition
+    line must follow the convention of the FASTA Defline Format.
+    Please see section "F Note on creating custom databases"
+    below.
+
+  -a  Input file is database in ASN.1 format (otherwise FASTA is expected)
+         T - True, 
+         F - False.
+ [T/F]  Optional default = F
+
+  -b  ASN.1 database in binary mode
+         T - binary, 
+         F - text mode.
+ [T/F]  Optional default = F
+
+    A source ASN.1 database may be represented in two formats -
+    ascii text and binary. The "-b" option, if TRUE, specifies that
+    input ASN.1 database is in binary format. The option is ignored
+    in case of FASTA input database.
+
+  -e  Input is a Seq-entry [T/F]  Optional default = F
+
+    A source ASN.1 database (either text ascii or binary) may
+    contain a Bioseq-set or just one Bioseq. In the latter case the
+    "-e" switch should be set to TRUE.
+
+  -n  Base name for BLAST files [String]  Optional
+
+    This options allows one to produce BLAST databases with a
+    different name than that of the original FASTA file.  For
+    instance, one could have a file named 'ecoli.nuc.txt' and and
+    format it as 'ecoli':
+
+        formatdb -i ecoli.nuc.txt -p F -o T -n ecoli
+
+        uncompress -c nr.z | formatdb -i stdin -o T -n nr
+
+    This can be used in situations where the original FASTA file is
+    not required other than by formatdb.  This can help in a
+    situation where disk-space is tight.
+
+  -v  Database volume size in millions of letters [Integer]  Optional
+    default = 0
+    range from 0 to &lt;NULL&gt;
+
+    This option breaks up large FASTA files into 'volumes' (each
+    with a maximum  size of 2 billion letters).  As part of the
+    creation of a volume formatdb  writes a new type of BLAST
+    database file, called an  alias file, with the  extension 'nal'
+    or 'pal'.
+
+  -s  Create indexes limited only to accessions - sparse [T/F]  Optional
+    default = F
+
+    This option limits the indices for the string identifiers (used
+    by formatdb)  to accessions (i.e., no locus names).  This is
+    especially useful for sequences sets  like the EST's where the
+    accession and locus names are identical.  Formatdb runs  faster
+    and produces smaller temporary files if this option is used.
+    It is strongly  recommended for EST's, STS's, GSS's, and
+    HTGS's.
+
+  -V  Verbose: check for non-unique string ids in the database [T/F]  Optional
+    default = F
+
+  -L  Create an alias file with this name
+        use the gifile arg (below) if set to calculate db size
+        use the BLAST db specified with -i (above) [File Out]  Optional
+
+    This option produces a BLAST database alias file using a specified
+    database, but limiting the sequences searched to those in the GI list
+    given by the -F argument.  See the section "Note on creating an alias file 
+    for a GI list" for more information.
+
+  -F  Gifile (file containing list of gi's) [File In]  Optional
+
+    This option can be used to specify the GI list for the alias file
+    construction (-L option above) or to produce a binary GI list if
+    the -B option (below) is set.
+
+  -B  Binary Gifile produced from the Gifile specified above [File Out]  Optional
+    This option specifies the name of a binary GI list file.  This option should
+    be used with the -F option.  A text GI list may be specified with the -F
+    option and the -B option will produce that GI list in binary format.  The
+    binary file is smaller and BLAST does not need to convert it, so it can
+    be read faster.  
+
+  -T  Taxid file to set the taxonomy ids in ASN.1 deflines [File In]  Optional
+
+    This file specifies a text file containing Seq-id string/numeric taxonomy
+    id pairs, separated by a single white space character (or tab), one per 
+    line. Gi numbers can also be used in place of Seq-id strings. Examples:
+
+    % cat seqid-taxid.txt
+    lcl|hmm271 4                                                               
+    lcl|hmm273 6                                                               
+    lcl|hmm276 9                                                               
+    % cat gi-taxid.txt
+    129295 9031                                                         
+    129296 9031
+    68738 9031 
+
+Configuration File
+------------------
+Starting from formatdb version 4, we have added a configuration file to allow
+flexibility in specifying the membership and link bits to set in the ASN.1
+defline structures. This feature is available by recompiling the formatdb
+binary with the following compile time flag: -DSET_ASN1_DEFLINE_BITS.
+The membership bit arrays are used to help distinguish sequences that belong 
+to a subset database (e.g.: pdb, swissprot) in a non-redundant database 
+(e.g.: nr). The link bit arrays are used to indentify which sequences should 
+have a user specified "link out" in the blast (html) report. These features 
+are still under development and useful within NCBI only. A sample 
+configuration file follows:
+
+; .formatdbrc: formatdb configuration file
+;
+; This information is needed for the new database format, to set
+; the links and membership information of the structured deflines.
+
+;;;;;;;;;;;;;;;;;;; Memberships section ;;;;;;;;;;;;;;;;;;;;;;
+; This section determines what the bits mean in the membership bit array.
+; These must be unique positive integers starting with 1.
+; When adding a new entry, remember to update the value of TotalNum  
+; This information is used to distinguish database subsets (e.g.: pdb,
+; swissprot) in non-redundant databases (e.g.: nr).
+[MembershipBitNumbers]
+TotalNum = 3
+1  = swissprot
+2  = pdb
+3  = refseq_protein
+
+;;;;;;;;;;;;;;;;;;;;;;;; Links section ;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This section determines what the bits mean in the links bit array.
+; These must be unique positive integers starting with 1.
+; When adding a new entry, remember to update the value of TotalNum and 
+; adding the appropriate file paths for each database in the LinkFiles 
+; section.
+; This is used for the link out feature of the blast result formatter.
+[LinkBitNumbers]
+TotalNum = 4   ; total number of bits used so far
+1 = LocusLink
+2 = UniGene
+3 = Structure
+4 = Geo
+
+; These are the paths to the files containing the
+; gi's whose links will be modified. The format is
+; &lt;link_type&gt; = &lt;file_path&gt;
+; where link_type is one of the types of links defined in the LinkBitNumbers
+; section.
+[LinkFiles]
+LocusLink = /home/joe/locus_gis.txt
+UniGene   = /dev/null
+Structure = /dev/null
+Geo       = /home/john/geo.txt
+; EOF
+
+Formatdb Notes/Troubleshooting:
+-------------------------------
+
+A.) Note on -o option:
+
+It is always advantageous to use the '-o' option if the database
+identifiers are in the format specified at
+ftp://ftp.ncbi.nih.gov/blast/db/README.  If the database identifiers
+are in this parseable format,  formatdb produces additional indices
+allowing retrieval from the databases by identifier. The databases on
+the NCBI FTP site contain parseable identifiers. It is sufficient if
+the  first word on the FASTA definition line is a unique identifier
+(e.g.,  "&gt;3091 Alcoho de..."). It is necessary to use parseable
+identifiers for the following  cases:
+
+1.) ASN.1 is to be produced from blastall or blastpgp, then "-o" must
+be TRUE.
+
+2.) query-anchored alignments are desired (i.e., the '-m' option with a
+non-zero value is used).
+
+3.) The gi's are desired as part of the output (i.e., '-I' is used).
+
+4.) fastacmd will be used to fetch sequences from the database by
+accession or gi.
+
+See Appendix 1: The Files Produced by Formatdb for more information 
+in the -o T option.
+
+
+B.) Note on "SORTFiles failed" message:
+
+Formatdb will use the 'standard' temporary directory to sort the string
+indices on disk. Under UNIX this directory is often /var/tmp and if
+there is not enough space there, then the error message: "ERROR:
+[000.000] SORTFiles failed" will be issued.  This can be avoided by
+setting the TMPDIR environment variable to a partition with more free
+space.  This message may also often be avoided by using the sparse
+option (-s) for formatdb described above.
+
+
+C.) Note on formatting large (4 Gig and larger) FASTA files:
+
+A single BLAST database can contain up to 4 billion letters.  If one
+wishes to formatdb a FASTA file containing more letters than this, several
+databases, each of a maximum size of 4 billion bases, will be produced.
+This will be done automatically if the -v argument is not set.  One may 
+also specify a smaller size for the volume databases by using the -v option:
+
+formatdb -i hugefasta -p F -v 2000000000
+
+This command line will format the "hugefasta" FASTA file as a number of
+database "volumes," each containing a maximum of two billion base
+pairs, as specified by the "-v" option. Two billion is the current
+limitation on the NCBI toolkit command-line parser. The volumes will
+have names consisting of the root database name, "hugefasta" followed
+by a two-digit volume extension, followed by the usual BLAST database
+extensions. These smaller databases can be searched as if they were a
+single entity using:
+
+blastall -i infile -d hugefasta -p blastn -o out
+
+In this case, BLAST recognizes that the database "hugefasta" has been
+partitioned into several volumes because it detects a file with the
+name of the root database followed by an extension of "nal" (for
+protein databases, the extension is "pal"). This file specifies a
+database list to be searched when the root database name is specified
+to BLAST. BLAST sequentially searches each database listed in this
+"nal" file and generates output that is indistinguishable from that of
+a single database search. A sample "nal" file, resulting from
+formatting the datafile "hugefasta" into three volumes, is given below.
+The "DBLIST" line can also be edited to specify additional databases to
+be searched.
+
+#
+# Alias file created Tue Jan 18 13:12:24 2000
+#
+#
+TITLE hugefasta
+#
+DBLIST hugefasta.00 hugefasta.01 hugefasta.02
+#
+#GILIST
+#
+#OIDLIST
+#
+
+The "nal" and "pal" files can also be used to simplify searches of
+multiple databases created separately. For instance, a file called
+"multi.nal" containing the following lines could be created from
+scratch using a text editor.
+
+#
+# Alias file created Tue Jan 18 13:12:24 2000
+#
+#
+TITLE multi
+#
+DBLIST part1 part2 part3
+#
+#GILIST
+#
+#OIDLIST
+#
+
+The "multi.nal" file would allow the three databases, "part1", "part2",
+and "part3", to be searched by specifying a single database name,
+"multi", on the blastall command line as follows:
+
+blastall -i infile -d multi -p blastn -o out
+
+The reason for using database volumes, as opposed to simply making the
+indices in the BLAST databases large enough to handle all conceivable
+databases  with an eight-byte 'integer', is that this would have
+doubled the size of the indices  for all searches no matter how small
+the database.  Hence very large FASTA files  are broken down into a
+couple of databases.
+
+Formatdb must be able to open files larger than 2 Gig in order to work
+on very large files.  This is not a problem on a 64-bit OS and on
+certain 32-bit OS that allows binaries to be made large-file aware.
+The 32-bit Solaris formatdb binary on the NCBI FTP site is now compiled
+large file aware.
+
+
+D.) Note on running formatdb on a database without uncompressing it:
+
+Under UNIX it is possible to uncompress a database on the fly and pipe
+it to formatdb. This can reduce the disk-space needed for running
+formatdb on a large database.  In addition, some operating systems
+cannot write files larger than 2 Gig to disk.  To circumvent this on
+Unix or Linux systems, use a "pipe" system such as:
+
+uncompress -c nt.Z|formatdb -i stdin -o T -p T -n "nt" -v 100000000
+
+In this case, no file is written which is larger than 1 Gig and an
+arbitrarily large database is formatted as a set of 1 Gig volumes.
+Note the use of the '-n' option that specifies the name of the
+resulting BLAST database.  Note also that 'stdin' specifies that input
+will be coming from 'standard input'.  The nt FASTA file is not needed
+for running BLAST searches and nt.Z may be deleted after formatdb has
+been run.
+
+
+E) Note on creating custom databases
+
+With Standalone BLAST it is possible to take any custom file of FASTA
+sequences and use these as a database source file for searching. All
+BLAST database source files must be in FASTA format. In order to use
+the formatdb option -o T, especially for use with NCBI tool kit retrieval
+tools the FASTA defline must follow a specific format.
+
+F) Note on creating an alias file for a GI list.
+
+Formatdb can now produce a BLAST database alias file that specifies a (real)
+BLAST database to search as well as a GI list to limit the search.  This
+is useful if one often searches a subset of a database (e.g., based
+on organism or a curated list).  The alias file makes the search appear as
+if one were searching a real database rather than the subset of one.
+The procedure to produce an alias file for searching (protein) nr limiting it to a
+list of zebrafish GI's would be:
+
+1.) obtain the list of zebrafish GI's from Entrez or some other source and
+keep it in a file called "zebrafish.gi.in".
+
+2.) invoke formatdb to convert the text GI list to the more efficient binary format:
+
+formatdb -F zebrafish.gi.in -B zebrafish.gi
+
+3.) invoke formatdb with the following options:
+
+formatdb -i nr -p T -L zebrafish -F zebrafish.gi -t "My zebrafish database"
+
+This will produce the alias file zebrafish.pal listing the database title, the
+real database to be searched, the GI file, and some statistics:
+
+#
+# Alias file created Thu Jul  5 15:04:29 2001
+#
+#
+TITLE My zebrafish database
+#
+DBLIST nr
+#
+GILIST zebrafish.gi
+#
+#OIDLIST
+#
+NSEQ 1836
+LENGTH 640724
+
+
+One can search this by invoking (for example):
+
+blastall -p blastp -d zebrafish -i MYQUERY -o MYOUTPUT
+
+NOTE: One may wish to prepare the alias file in one directory, but move it
+to a different production directory that does not contain the real database.
+In that case you may use the '-n' option to specify a path to the real
+database in the production environment.  In the example below the -n option is 
+used to specify that the nr database can really be found at a relative path
+of ../../newest_blast/blast
+
+formatdb -i nr -n ../../newest_blast/blast/nr -p T -L zebrafish -F zebrafish.gi -t "My zebrafish database"
+
+and the alias file will be:
+
+#
+# Alias file created Wed Nov 28 13:55:41 2001
+#
+#
+TITLE My zebrafish database
+#
+DBLIST ../../newest_blast/blast/nr
+#
+GILIST zebrafish.gi
+#
+#OIDLIST
+#
+NSEQ 1836
+LENGTH 640724
+
+
+Notes on Version 4 of the BLAST databases
+-----------------------------------------
+
+Version 4 of the BLAST databases address some important
+shortcomings of the current (version 4) databases:
+
+1.) Version 3 does not handle ambiguity characters correctly if a 
+database sequence is longer than about 16 million bases which may 
+lead to incorrect results.  The new version does.
+
+2.) Version 3 only allows one volume of a BLAST database to
+contain at most about 4 billion bases.  The new databases allows that to
+be much larger.
+
+
+PLEASE NOTE THAT VERSION 3 OF THE BLAST DATABASES WILL NO LONGER BE SUPPORTED.
+
+
+The new databases keep the sequence descriptors in a structured format
+(ASN.1) and some new information has been put into those fields.  The new
+information is:
+
+1.) taxid.  This integer specifies the taxonomy of the sequence and will
+allow greater flexibility in how taxonomic information is presented in a
+future version of BLAST.
+
+2.) link bits.  These specify whether LinkOut information about the database
+sequence is available and permits the additon of a gif with a link to the relevant page.
+in a future version of BLAST.
+
+3.) membership bits.  These specify that a given gi in a database also belongs to
+a subset database.  An example of this relationship is the EST's database.  Est
+contains all EST's, but also comprises est_human, est_mouse and est_others; with
+the new membership bit it will be possible to search any of the subset est databases
+with only the main est database and two other small files (an alias file and an "oidlist").
+This can reduce the amount of disk-space and memory needed by half in this case.
+It is expected that the proper alias file and oidlist for searching such subsets will
+be made available on the NCBI FTP site in mid January.
+
+
+
+FASTA Defline Format
+--------------------
+The syntax of FASTA Deflines used by the NCBI BLAST server depends on
+the database from which each sequence was obtained.  The table below lists
+the identifiers for the databases from which the sequences were derived.
+ 
+
+  Database Name                         Identifier Syntax
+
+  GenBank                               gb|accession|locus
+  EMBL Data Library                     emb|accession|locus
+  DDBJ, DNA Database of Japan           dbj|accession|locus
+  NBRF PIR                              pir||entry
+  Protein Research Foundation           prf||name
+  SWISS-PROT                            sp|accession|entry name
+  Brookhaven Protein Data Bank          pdb|entry|chain
+  Patents                               pat|country|number 
+  GenInfo Backbone Id                   bbs|number 
+  General database identifier           gnl|database|identifier
+  NCBI Reference Sequence               ref|accession|locus
+  Local Sequence identifier             lcl|identifier
+ 
+
+For example, an identifier might be "gb|M73307|AGMA13GT", where the "gb" tag
+indicates that the identifier refers to a GenBank sequence, "M73307" is its
+GenBank ACCESSION, and "AGMA13GT" is the GenBank LOCUS.  
+
+"gi" identifiers are being assigned by NCBI for all sequences contained
+within NCBI's sequence databases.  The 'gi' identifier provides a uniform
+and stable naming convention whereby a specific sequence is assigned
+its unique gi identifier.  If a nucleotide or protein sequence changes,
+however, a new gi identifier is assigned, even if the accession number
+of the record remains unchanged. Thus gi identifiers provide a mechanism
+for identifying the exact sequence that was used or retrieved in a
+given search.
+
+For searches of the nr protein database where the sequences are derived
+from conceptual translations of sequences from the nucleotide databases
+the following syntax is used:
+
+                     gi|gi_identifier
+
+An example would be:
+
+        gi|451623           (U04987) env [Simian immunodeficiency..."
+
+where '451623' is the gi identifier and the 'U04987' is the accession
+number of the nucleotide sequence from which it was derived.
+
+Users are encouraged to use the '-I' option for Blast output which will
+produce a header line with the gi identifier concatenated with the database
+identifier of the database from which it was derived, for example, from a
+nucleotide database:
+
+        gi|176485|gb|M73307|AGMA13GT
+
+And similarly for protein databases: 
+
+        gi|129295|sp|P01013|OVAX_CHICK
+
+The gnl ('general') identifier allows databases not on the above list to
+be identified with the same syntax.  An example here is the PID identifier:
+
+        gnl|PID|e1632
+
+PID stands for Protein-ID; the "e" (in e1632) indicates that this ID
+was issued by EMBL.  As mentioned above, use of the "-I" option
+produces the NCBI gi (in addition to the PID) which users can also
+retrieve on.
+
+The bar ("|") separates different fields as listed in the above table.
+In some cases a field is left empty, even though the original
+specification called for including this field.  To make
+these identifiers backwards-compatiable for older parsers
+the empty field is denoted by an additional bar ("||").
+
+BLAST Databases without GI's or GenBank accessions
+--------------------------------------------------
+Some BLAST users wish to format a FASTA file of sequences that do not
+contain NCBI ID's such as accessions or GI numbers.  This may be the
+case if the sequences have not yet been submitted to GenBank or are
+proprietary.  If the only goal is to perform BLAST searches and format
+a standard BLAST report then the simplest solution is to not set the
+"-o" option when running formatdb and indices for the identifiers will
+not be constructed.  If one wishes to produce XML or ASN.1 output or
+wants to fetch sequences by ID with fastacmd, it is necessary to
+observe a few simple rules when constructing the ID's.  These rules are
+necessary to ensure that the ID's can be reliably parsed to make the ID
+indices.
+
+1.) ID's of type "local" or "general" should be used.  This means that
+the ID's will have the syntax "lcl|IDENTIFIER" (for "local") or
+"gnl|DATABASE|IDENTIFIER" (for "general").  The tokens DATABASE and
+IDENTIFIER should be assigned by the user here.  The local ID has only
+one user provided token, the general ID requires two.  The fields are
+separated by vertical bars ("|")..
+
+2.) Letters, numbers, underscores ("_"), dashes, and periods may be
+used.  Uppercase and lowercase letters are treated as being distinct.
+No spaces are allowed in the ID, this indicates the end of the ID.
+
+3.) All ID's should be unique, if the entire ID is examined.  As an
+example consider the following four ID's:
+
+gnl|H.sapiens|seq1
+gnl|H.sapiens|seq2
+gnl|M.Mus|seq1
+lcl|seq1
+
+All of these ID's are considered unique.  The first two might be
+sequences one and two of a collection of Human sequences; the fourth
+might be the first sequence in a collection of mouse sequences; the
+fourth is simply identified as the first sequence.
+
+ID's must fit into the framework described above to ensure that they
+can be reliably parsed and indices built for them.  This means that it
+is not possible for users to invent new ID formats on the fly.
+Examples of illegal ID's would be:
+
+H.sapiens|seq1
+gnl|H.sapiens|seq1|A
+
+The first identifier is missing a database tag (e.g., no "lcl"), the second
+identifier has an extra field since vertical bars separate fields.  Illegal
+ID's will not be processed by formatdb if the "-o" option is used.
+
+
+F. General troubleshooting tips. 
+
+The Latest Version: Make sure you are using the latest version of the
+formatdb executable. Earlier versions of formatdb may not recognize
+changes in the ASN.1 or FASTA definition line format of current BLAST
+databases or other sources of NCBI sequences.
+
+
+G. Troubleshooting "SeqIdParse Failure" errors
+
+The most frequent cause of SeqIdParse Failure errors come from the
+syntax of the FASTA definition lines in the source database file. Many
+third parties do not follow the syntax in section F. If you are
+getting a SeqIdParse error this can often be eliminated by formatting
+the database with the -o option set to FALSE (e.g. -o F). The -o option
+is really not important for BLAST searching unless you are going to use
+the results to parse out the identifiers for searching Entrez and
+downloading the sequences. If you need to use the -o T option then your
+best option is to examine the definition lines of the database sequences
+and attempt to make them conform the FASTA syntax.
+
+
+H. Troubleshooting "FileOpen" errors.
+
+This is caused when the formatdb program can not find the /data
+subdirectory. When you download and extract the Standalone BLAST
+executables, the formatdb program is located in the same directory as
+the /data subdirectory. If either if these move, formatdb will not
+function without a .ncbirc file telling it where the /data subdirectory
+resides. Create a text file in the same directory as formatdb that
+contains the following lines:
+
+[NCBI] 
+Data="path/data/"
+
+Where "path/data/" is the path to the location of the Standalone BLAST
+"data" subdirectory. For Example:
+
+Data=/root/blast/data
+
+For PC's this would be 
+
+[NCBI] 
+Data="C:\path\data\"
+
+Where "C:path\data\" is the path to the location of the Standalone
+BLAST "data" subdirectory. For example:
+
+Data=C:\blast\data
+
+For Macintosh this would be a simpletext file called "ncbi.cnf", placed in 
+System folder, that contains:
+
+[BLAST]
+BLASTDB=root:blast:data
+
+Where "root:blast:data" is the path to the location of the Standalone
+BLAST "data" subdirectory. For example on the machine names "LabMac": 
+
+BLASTDB=LabMac:blast:data
+
+
+Appendix 1: The Files Produced by Formatdb
+------------------------------------------
+Using formatdb without the "-o T" indexing option results in three
+BLAST database files (.nhr, .nin, ,nsq).  Using the "-o T" option will result 
+in additional files. 
+If gi's are present in the FASTA definition lines of the source file, there 
+will be four additional files created (.nsd, nsi, nni, nnd). These are 
+ISAM indices for mapping a sequence identifier to a particular sequence in 
+the BLAST database. If gi's are not use there will be only two additional 
+files created (.nsd, .nsi).  
+These files are listed below for both an example nucleotide and a protein 
+sequence database. The actual sequence data is stored in the files with 
+extension "nsq" or "psq".  The compression ratio for these files is 
+about 4:1 for nucleotides and 1:1 for protein sequence source files.
+
+Extension    Content        Format        
+---------------------------------------------
+Nucleotide database formatted without "-o T"
+                        
+nhr          deflines       binary    
+                    
+nin          indices        binary       
+
+nsq        sequence data    binary        
+
+
+Nucleotide database formatted with "-o T" add these ISAM files:
+
+nnd          GI data        binary        
+
+nni          GI indices     binary        
+
+nsd          non-GI data    binary        
+        
+nsi         non-GI indices  binary        
+
+The formatdb index files involving deflines are small relative to the
+source database due to entries such as the one below in which the
+defline is much shorter than the sequence.
+
+&gt;gi|5819095|ref|NC_001321.1| Balaenoptera physalus mitochondrion, complete genome
+GTTAATTACTAATCAGCCCATGATCATAACATAACTGAGGTTTCATACATTTGGTATTTTTTTATTTTTTTTGGGGGGCT
+TGCACGGACTCCCCTATGACCCTAAAGGGTCTCGTCGCAGTCAGATAAATTGTAGCTGGGCCTGGATGTATTTGTTATTT
+GACTAGCACAACCAACATGTGCAGTTAAATTAATGGTTACAGGACATAGTACTCCACTATTCCCCCCGGGCTCAAAAAAC
+TGTATGTCTTAGAGGACCAAACCCCCCTCCTTCCATACAATACTAACCCTCTGCTTAGATATTCACCACCCCCCTAGACA
+GGCTCGTCCCTAGATTTAAAAGCCATTTTATTTATAAATCAATACTAAATCTGACACAAGCCCAATAATGAAAATACATG
+AACGCCATCCCTATCCAATACGTTGATGTAGCTTAAACACTTACAAAGCAAGACACTGAAAATGTCTAGATGGGTCTAGC
+CAACCCCATTGACATTAAAGGTTTGGTCCCAGCCTTTCTATTAGTTCTTAACAGACTTACACATGCAAGTATCCACATCC
+CAGTGAGAACGCCCTCTAAATCATAAAGATTAAAAGGAGCGGGTATCAAGCACGCTAGCACTAGCAGCTCACAACGCCTC
+GCTTAGCCACGCCCCCACGGGACACAGCAGTGATAAAAATTAAGCTATAAACGAAAGTTCGACTAAGTCATGTTAATTTA
+....16398 bp total
+
+
+Extension    Content        Format            
+------------------------------------------
+Protein database formatted without "-o T"
+
+phr        deflines         binary    
+                    
+pin        indices          binary       
+
+psq        sequence data    binary        
+
+Protein database formatted with "-o T" add these ISAM files:
+
+pnd        GI data          binary        
+
+pni        GI indices       binary        
+
+psd        non-GI data      binary        
+        
+psi        non-GI indices   binary        
+
+N.B.: The pre-formatted protein BLAST databases distributed by NCBI
+(nr.*tar.gz and pataa.*tar.gz) contain a couple of extra files with the
+extensions .ppi and ppd. These are ISAM index and data files for looking
+up entries in the database using PIG as they key (see fastacmd -P option).
+These files cannot be generated by the stand alone formatdb binary included in
+this distribution.
+
+The formatdb index files involving deflines are large relative to the
+source database due to entries such as the one below in which the
+defline is much longer than the sequence.
+
+&gt;gi|229659|pdb|1AAP|A Chain A, Protease Inhibitor Domain Of Alzheimer's
+Amyloid Beta-Protein Precursor (APPI)gi|229660|pdb|1AAP|B Chain B,
+Protease Inhibitor Domain Of Alzheimer's Amyloid Beta-Protein Precursor
+(APPI)
+VREVCSEQAETGPCRAMISRWYFDVTEGKCAPFFYGGCGGNRNNFDTEEYCMAVCGSA
+
+
+DISCLAIMER: The internal structure of the BLAST databases is subject
+to change with little or no notice.  The readdb API should be
+used to extract data from the BLAST databases.  Readdb is part
+of the NCBI toolkit (ftp://ftp.ncbi.nih.gov/toolbox/ncbi_tools/),
+readdb.h contains a list of supported function calls.  
+
+Last updated August 10 2006
+</pre>
+  </body>
+</html>
+

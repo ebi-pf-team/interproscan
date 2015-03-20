@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="http://www.ncbi.nlm.nih.gov/corehtml/ncbi2.css" type="text/css" />
+  <style type="text/css">
+  .blast a { text-decoration: none; }
+  .blast li {  font-size: 12px; }
+  .fix-width { font-family: courier; font-size: 80%; }
+  .pink { font-weight: bold; font-size: 100%; color: #ff8888; font-family: arial, helvetica, sans-serif; }
+  .text2 {font-size: 10pt;font-family: arial,helvetica,sans-serif;}
+  .tbl_title{font-weight: bold; font-size: 10pt; color: #0000FF; font-family: arial, helvetica, sans-serif;}
+  </style>
+<title>blast ftp</title>
+</head>
+
+<body>
+<table bgcolor="#eeeeff" width="600" class="text2">
+<tbody>
+<tr><td align="center" class="tbl_title">NCBI BLAST FTP Site</td></tr>
+<tr><td align="center">Tao Tao, Ph.D.<br />User Service<br />NCBI, NLM, NIH</td></tr>
+
+<tr><td class="tbl_title">TOC</td></tr>
+<tr><td>
+<ul>
+	<li><a href="#1">1. Introduction content</a></li>
+	<li><a href="#2">2. File list and content content</a>
+	<ul>
+		<li><a href="#2.1">2.1 <b>ftp.ncbi.nlm.nih.gov/blast/</b> general directory content content</a></li>
+		<li><a href="#2.2">2.2 <b>/blast/db/</b> directory content</a>
+		<ul>
+			<li><a href="#2.2.1">2.2.1 <b>/blast/db/FASTA/</b> subdirectory content</a></li>
+		</ul></li>
+		<li><a href="#2.3">2.3 <b>/blast/demo/</b> directory content</a></li>
+		<li><a href="#2.4">2.4 <b>/blast/documents/</b> directory content</a></li>
+		<li><a href="#2.5">2.5 <b>/blast/executables/</b> directory content</a>
+		<ul>
+			<li><a href="#2.5.1">2.5.1 <b>/blast/executables/LATEST/</b> subdirectory content</a></li>
+			<li><a href="#2.5.2">2.5.2 <b>/blast/executables/release/</b> subdirectory content</a></li>
+			<li><a href="#2.5.3">2.5.3 <b>/blast/executables/snapshot/</b> subdirectory content</a></li>
+		</ul></li>
+		<li><a href="#2.6">2.6 <b>/blast/matrices/</b> directory content</a></li>
+		<li><a href="#2.7">2.7 <b>/blast/temp/</b> directory content</a></li>
+	</ul>
+	<li><a href="#3">3. Techinical Support</a></li>
+</ul>
+</td></tr>
+<tr><td>&nbsp;</td></tr>	
+
+
+<tr><td class="tbl_title"><a name="1">1. Introduction</a></td></tr>
+<tr><td>
+NCBI BLAST ftp site (<a href="ftp://ftp.ncbi.nlm.nih.gov/blast/">ftp.ncbi.nlm.nih.gov</a>) provides 
+software packages for standalone blast, client server blast, and wwwblast packages for various platforms.
+It also provides commonly used blast databases in preformatted as well as FASTA format. 
+Documents on the blast executables and other related subjects are also available from this site.
+<p/>
+This file describes the the subdirectories and files found on this ftp site. It also prvoides the basic 
+information on file content and on how the files should be used. 
+</td></tr>
+
+<tr><td>&nbsp;</td></tr>
+<tr><td class="tbl_title"><a name="2">2. File list and content</a></td></tr>
+<tr><td>
+This section list and describes the files found on the BLAST FTP site. File content for each directory/subdirectory
+is described in a separate table.
+</td></tr>
+
+<tr><td>&nbsp;</td></tr>
+<tr><td class="tbl_title"><a name="2.1">&nbsp;&nbsp;&nbsp;&nbsp;2.1 ftp.ncbi.nlm.nih.gov/blast/ general directory content</a></td></tr>
+<tr><td>
+The blast ftp directory contains several subdirectories each for a specific set of files.
+<p/>
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	Table 2.1 ftp.ncbi.nlm.nih.gov/blast/ general directory content</td></tr>
+<tr><td><b>File/Dir Name</td><td><b>Content</td></tr>
+<tr><td>blastftp.html</td><td>README on FTP site (this file)</td></tr>
+<tr><td>db</td><td>databases in preformatted or FASTA form</td></tr>
+<tr><td>demo</td><td>demonstration programs and documents from blast developers</td></tr>
+<tr><td>documents</td><td>documents for programs in standalone blast, netblast, and wwwblast programs</td></tr>
+<tr><td>executables</td><td>archives for binary distribution of blast programs</td></tr>
+<tr><td>matrices</td><td>protein and nucleotide score matrices, only a subset are supported by blast</td></tr>
+<tr><td>temp</td><td>temporary directory for miscellaneous files</td></tr>
+</table>
+</td></tr>
+<tr><td>&nbsp;</td></tr>
+
+<tr><td>&nbsp;</td></tr>
+<tr><td class="tbl_title"><a name="2.2">
+	&nbsp;&nbsp;&nbsp;&nbsp;2.2 /blast/db/ directory content</a></td></tr>
+<tr><td>
+Databases larger than two gigabytes (2 GB) are formatted in multiple 
+volumes, which are named using the "database.##.tar.gz" convention. 
+All relevant volumes are required. An alias file is provided so that 
+the database can be called using the alias name without the extension 
+(.nal or .pal). For example, to call est database, simply use "–d est" 
+option in the commandline (without the quotes). 
+<P/>
+Certain databases are subsets of a larger parental database. For those 
+databases, mask files, rather than actual databases, are provided. The
+mask file needs the parent database to function properly. The parent 
+databases should be generated on the same day as the mask file. For 
+example, to use swissprot preformatted database, swissprot.tar.gz, one 
+will need to get the nr.tar.gz with the same date stamp.
+<P/>
+To use the preformatted blast database file, first inflate the file 
+using gzip (unix, linux), WinZip (window), or StuffIt Expander (Mac), 
+then extract the component files out from the resulting tar file using 
+tar (unix, linux), WinZip (Window), or StuffIt Expander (Mac). The 
+resulting files are ready for BLAST. 
+</P>
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	Table 2.2 /blast/db/ directory content</td></tr>
+<tr><td><b>File/Dir Name</td><td><b>Content</td></tr>
+<tr><td>FASTA</td><td>subdirectory with databases in FASTA format</td></tr>
+<tr><td>blastdb.html</td><td>content list of the blast databases</td></tr>
+<tr><td>est.*.tar.gz</td><td>volumes of the est database, all are needed to reconstitute complete est database </td></tr>
+<tr><td>est_human.tar.gz</td><td>human est database, a mask file requires all volumes of est to work</td></tr>
+<tr><td>est_mouse.tar.gz</td><td>mouse est database, a mask file requires all volumes of est to work</td></tr>
+<tr><td>est_others.tar.gz</td><td>non-human, non-mouse est database, a mask file reqires both volumes of est</td></tr>
+<tr><td>gss.*.tar.gz</td><td>genomic survery sequence database, all are needed to reconstitute complete gss database</td></tr>
+<tr><td>htgs.*.tar.gz</td><td>volumes of the htgs database, all are needed to reconstitute complete htgs database</td></tr>
+<tr><td>human_genomic.tar.gz</td><td>human chromosome database containing concatenated contigs with adjusted gaps represented by N's</td></tr>
+<tr><td>nr.*.tar.gz</td><td>volumes of non-redundant protein database, all are needed to reconstitute complete nr </td></tr>
+<tr><td>nt.*.tar.gz</td><td>volumes of the nucleotide "nr" database, all are needed to reconstitute complete nt database </td></tr>
+<tr><td>other_genomic.*.tar.gz</td><td>volumes of chromosome database for organisms other than human,  all are needed to reconstitute 
+	complete other_genomic database</td></tr>
+<tr><td>pataa.tar.gz</td><td>patent protein database</td></tr>
+<tr><td>patnt.tar.gz</td><td>patent nucleotide database</td></tr>
+<tr><td>pdbaa.tar.gz</td><td>protein sequence database from pdb entries, a mask file requires all nr.*.tar.gz to function</td></tr>
+<tr><td>pdbnt.tar.gz</td><td>nucleotide sequence database from pdb entries. They are not the coding sequences for the 
+	corresponding protein structure entries!</td></tr>
+<tr><td>sts.tar.gz</td><td>sequence tag site database</td></tr>
+<tr><td>swissprot.tar.gz</td><td>swissprot sequence database, last major release. It requires all nr.*.tar.gz to work properly</td></tr>
+<tr><td>taxdb.tar.gz</td><td>taxonomy id database for use with the above file to retrieve taxonomic information for specific entries</td></tr>
+<tr><td>wgs.*.tar.gz</td><td>volumes of wgs assembly database, all volumes are needed to reconsititute wgs database</td></tr>
+</table>
+<p/>
+</td></tr>
+
+
+<tr><td class="tbl_title"><a name="2.2.1">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.2.1 /blast/db/FASTA/ subdirectory content</a></td></tr>
+<tr><td>
+The FASTA database files are now stored in this subdirectory, it does 
+contain some additional databases that are not available via the NCBI 
+BLAST pages. Due to file size issues, the full est database is not 
+provided. One needs to get the three subsets and concatenate them 
+together to get the complete est database.
+<p/>
+These databases will need to be formatted using formatdb program found 
+in the standalone blast executable package.  The recommended 
+commandlines to use are:
+<blockquote>
+        formatdb –i input_db –p F –o T&nbsp;&nbsp;&nbsp;&nbsp;for nucleotide  
+<br />                
+        formatdb –i input_db –p T –o T&nbsp;&nbsp;&nbsp;&nbsp;for protein
+</blockquote>
+For additional information on formatdb, please see the formatdb.html at:
+<blockquote>
+<a href="ftt://ftp.ncbi.nlm.nih.gov/blast/documents/formatdb.html">/blast/documents/formatdb.html</a></blockquote>
+
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	2.2.1 blast/db/FASTA/ subdirectory content </td></tr>
+<tr><td><b>File/Dir Name</b></td><td><b><b>Content</b></td></tr>
+<tr><td>alu.a.gz</td><td>proteins translated from alu.n</td></tr>
+<tr><td>alu.n.gz</td><td>alu repeat sequences</td></tr>
+<tr><td>drosoph.aa.gz</td><td>Drosophila protein from genome annotation</td></tr>
+<tr><td>drosoph.nt.gz</td><td>Drosophila genome</td></tr>
+<tr><td>ecoli.aa.gz</td><td>E.coli K-12 proteins from genome annotation </td></tr>
+<tr><td>ecoli.nt.gz</td><td>E.coli K-12 genomic contigs</td></tr>
+<tr><td>est_human.gz</td><td>human subset of the est database</td></tr>
+<tr><td>est_mouse.gz</td><td>mouse subset of the est database</td></tr>
+<tr><td>est_others.gz</td><td>subset of est other than human or mouse entries</td></tr>
+<tr><td>gss.gz</td><td>Genomic Survey Sequences (mostly BAC ends) </td></tr>
+<tr><td>htgs.gz</td><td>High Throughput Genomic Sequences</td></tr>
+<tr><td>human_genomic.gz</td><td>Human chromosomes formed by concatenating genomic contig assemblies (NT_######) and adjusting the gaps with N’s</td></tr>
+<tr><td>igSeqNt.gz </td><td>Immunoglobulin nucleotide sequences</td></tr>
+<tr><td>igSeqProt.gz</td><td>Immunoglobulin protein sequences</td></tr>
+<tr><td>mito.aa.gz</td><td>protein from the annotated mitochondrial genomes</td></tr>
+<tr><td>mito.nt.gz</td><td>mitochondrial genomes</td></tr>
+<tr><td>month.aa.gz</td><td>protein sequences released or updated in the past 30 days</td></tr>
+<tr><td>month.est_human.gz</td><td>human subset of EST released/updated in the past 30 days</td></tr>
+<tr><td>month.est_mouse.gz</td><td>mosue subset of EST released/updated in the past 30 days</td></tr>
+<tr><td>month.est_others.gz</td><td>non-human non-mouse EST, released or updated in the past 30 days</td></tr>
+<tr><td>month.gss.gz</td><td>gss entries released/updated in the past 30 days</td></tr>
+<tr><td>month.htgs.gz </td><td>htgs entries released/updated in the past 30 days</td></tr>
+<tr><td>month.nt.gz</td><td>subset of nt released/updated in the past 30 days</td></tr>
+<tr><td>nr.gz</td><td>non-redundant protein sequence database</td></tr>
+<tr><td>nt.gz</td><td>nucleotide database from GenBank excluding the batch division htgs, est, gss,sts, pat divisions, and wgs entries.  Not non-redundant</td></tr>
+<tr><td>other_genomic.gz</td><td>Chromosome entries other than human</td></tr>
+<tr><td>pataa.gz</td><td>Patent protein sequence database </td></tr>
+<tr><td>patnt.gz</td><td>Patent nucleotide sequence database </td></tr>
+<tr><td>pdbaa.gz</td><td>protein sequences for pdb entries</td></tr>
+<tr><td>pdbnt.gz</td><td>nucleotide entries for pdb entries.  They are NOT the coding sequence forthe corresponding protein entries</td></tr>
+<tr><td>sts.gz </td><td>Sequence Tag Sites database</td></tr>
+<tr><td>swissprot.gz</td><td>swissprot database, last major release</td></tr>
+<tr><td>vector.gz</td><td>vector sequences from synthetic (syn) division of GenBank</td></tr>
+<tr><td>wgs.gz</td><td>Whole Genome Shotgun sequence assembly</td></tr>
+<tr><td>yeast.aa.gz</td><td>protein translations from yeast genome annotation</td></tr>
+<tr><td>yeast.nt.gz</td><td>yeast genomic sequence</td></tr>
+</table><p/>
+</td></tr>
+
+<tr><td class="tbl_title"><a name="2.3">
+	&nbsp;&nbsp;&nbsp;&nbsp;2.3 File content for <b>/blast/demo/</b> directory</a></td></tr>
+<tr><td>
+This directory contains some technical presentations from the BLAST 
+developers along with some demo tools or documentation relevant to BLAST.
+<p/>
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	Table 2.3 File content for /blast/demo/ directory</td></tr>
+<tr><td><b>File/Dir Name</b></td><td><b>Content</b></td></tr>
+<tr><td>README.blast_demo</td><td>readme for blast_demo package</td></tr>
+<tr><td>README.first </td><td>readme for this directory</td></tr>
+<tr><td>README.parse_blast_xml</td><td>readme for parse_blast_xml package</td></tr>
+
+<tr><td>benchmark</td><td>Package with sample database and query for gauging the performance of BLAST on different platforms</td></tr>
+<tr><td>blast_demo.tar.gz</td><td>blast_demo package on blast db, blast object, and reformating blast alignment from blastobj file</td></tr>
+<tr><td>blast_programming.ppt</td><td>PowerPoint presentation on BLAST programing</td></tr>
+<tr><td>ieee_blast.final.ppt</td><td>PowerPoint presentation (IEEE conference)</td></tr>
+<tr><td>ieee_talk.pdf</td><td>PDF file for presentation (IEEE conference)</td></tr>
+<tr><td>ieee_talk.pdf</td><td>Above IEEE presentation in PDF format</td></tr>
+<tr><td>old</td><td>Containing an older version of blast_demo.tar.gz</td></tr>
+<tr><td>parse_blast_xml.tar.gz</td><td>demo package on parsing xml styled blast output</td></tr>
+<tr><td>splitd.ppt</td><td>PowerPoint presentation on NCBI BLAST server’s splitd implementation</td></tr>
+<tr><td>test_suite.tar.gz</td><td>test package</td></tr>
+</table>
+<p/>
+</td></tr>
+
+<tr><td class="tbl_title"><a name="2.4">
+	&nbsp;&nbsp;&nbsp;&nbsp;2.4 File content for /blast/documents/ directory</a></td></tr>
+<tr><td>
+This directory contains copies of the documentation on different BLAST 
+programs distributed from this ftp site under the /blast/executables/ 
+directory. blast.txt also contains detailed release history.
+<p/>
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	2.4 File content for /blast/documents/ directory</td></tr>
+<tr><td><b>File/Dir Name</b></td><td><b>Content</b></td></tr>
+<tr><td>bl2seq.html</td><td>readme for bl2seq (standalone "Align Two Sequences")</td></tr>
+<tr><td>blast-sc2004.pdf</td><td>POSTER describing NCBI splitd system</td></tr>
+<tr><td>blast.html</td><td>General readme for blast setup</td></tr>
+<tr><td>blastall.html</td><td>readme for blastall and blastpgp</td></tr>
+<tr><td>blastclust.html</td><td>readme for blastclust</td></tr>
+<tr><td>blastdb.html</td><td>readme for blast databases</td></tr>
+<tr><td>blastftp.html</td><td>readme for blast ftp site (this document)</td></tr>
+<tr><td>blastpgp.html</td><td>readme for blastpgp, standalone PSI-BLAST</td></tr>
+<tr><td>developer</td><td>subdirectory with additional documentation:<blockquote>
+	blast_seqalign.txt: describing seqalign function<br />
+	readdb.txt: describing readdb function<br />
+	scoring.pdf: describing scoring systems used by BLAST<br />
+	urlapi.txt: a short introduction on BLAST URL API</blockquote></td></tr>
+<tr><td>fastacmd.html</td><td>readme for fastacmd, a sequence retrieval tool</td></tr>
+<tr><td>filter.html</td><td>readme on filter strings and their functions</td></tr>
+<tr><td>formatdb.html</td><td>readme for formatdb, which converts fasta sequences into blast database</td></tr>
+<tr><td>formatrpsdb.html</td><td>readme for formatrpsdb, which converts scoremat into rpsblast database</td></tr>
+<tr><td>history.html</td><td>history of changes/bug fixes introduced to blast package</td></tr>
+<tr><td>impala.html</td><td>readme for impala</td></tr>
+<tr><td>index.html</td><td>list of this group of files/subdirs</td></tr>
+<tr><td>megablast.html</td><td>readme for megablast</td></tr>
+<tr><td>netblast.html</td><td>readme for netblast (blastcl3)</td></tr>
+<tr><td>rpsblast.html</td><td>readme for rpsblast</td></tr>
+<tr><td>seedtop.html</td><td>readme for seedtop, a standalone pattern match tool</td></tr>
+<tr><td>web_blast.pl</td><td>Example perl script for doing URLAPI blast</td></tr>
+<tr><td>xml</td><td>subdirectory with .dtd and .mod field description files for blast xml output<blockquote>
+	 NCBI_BlastOutput.dtd: dtd file for blast xml output<br />
+	 NCBI_BlastOutput.mod: mod file for blast xml output<br />
+	 NCBI_Entity.mod: mod file for NCBI xml file<br />
+	 README.blxml: readme on blast xml output</blockquote></td></tr>
+</table>
+<p/></td></tr>
+
+<tr><td class="tbl_title"><a name="2.5">
+	&nbsp;&nbsp;&nbsp;&nbsp;2.5 File content for /blast/executables/ directory</a></td></tr>
+<tr><td>
+This directory contains several subdirectories each for a specific 
+subsets of executable BLAST programs.
+<p/>
+</td></tr>
+
+<tr><td class="tbl_title"><a name="2.5.1">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5.1 File content for /blast/executables/LATEST/ subdirectory</a></td></tr>
+<tr><td>
+This directory contains the latest official release of precompiled BLAST executable programs.
+<p/>
+The binaries can be divided into three groups. blast initialed files are equivalent. They contain
+the standalone command line blast binary programs for different platforms. Users need this package
+to set up BLAST locally. It also provides the tools necessary to prepare custom databases 
+and retrieve sequences from these prepared databases.  
+<p/>
+The netblast initialed archives the blastcl3 program which functions by 
+formulating BLAST search locally first before forwarding the search to NCBI 
+blast server for process. The search results returned by NCBI BLAST server 
+is saved to an user-specified file on local computer disk. Users do not need to maintain local databases, nor can
+they search custom databases locally.
+<p/> 
+The wwwblast initialed archive contains the web pages with embedded blast search 
+forms similar to that of NCBI. They can process the BLAST request submitted through web and search against 
+local set of databases and return the result to a browser window. wwwblast 
+is now in sync with the NCBI toolkit and the two above two packages. Installation requires existing web server (apache) setup.
+<p/>
+
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	Table 2.5.1 File content for /blast/db/executables/LATEST/ directory</td></tr>
+<tr><td><b>File/Dir Name</b></td><td><b>Content</b></td></tr>
+<tr><td>blast-x.y.z-axp64-tru64.tar.gz</td><td>command line blast for COMPAQ/HP alpha machine (OSF 5.1 and above)</td></tr>
+<tr><td>blast-x.y.z-ia32-freebsd.tar.gz</td><td>command line blast for PC running freeBSD</td></tr>
+<tr><td>blast-x.y.z-ia32-linux.tar.gz</td><td>command line blast for PC running Linux</td></tr>
+<tr><td>blast-x.y.z-ia32-solaris.tar.gz</td><td>command line blast for PC runnig solaris</td></tr>
+<tr><td>blast-x.y.z-ia32-win32.exe</td><td>command line blast for PC running windows</td></tr>
+<tr><td>blast-x.y.z-mips64-irix.tar.gz</td><td>command line blast for 64-bits SGI machine</td></tr>
+<tr><td>blast-x.y.z-ppc32-macosx.tar.gz</td><td>command line blast for MacOSX</td></tr>
+<tr><td>blast-x.y.z-sparc64-solaris.tar.gz</td><td>command line blast for Sparc running Solaris</td></tr>
+<tr><td>blast-x.y.z-x64-linux.tar.gz</td><td>command line blast for 64-bits Linux</td></tr>
+<tr><td>ncbi.tar.gz</td><td>NCBI toolkit</td></tr>
+<tr><td>ncbiz.exe</td><td>NCBI toolkit for PC</td></tr>
+<tr><td>netblast-x.y.z-axp64-tru64.tar.gz</td><td>netblast for COMPAQ/HP alpha machine (OSF 5.1 and above)</td></tr>
+<tr><td>netblast-x.y.z-ia32-freebsd.tar.gz</td><td>netblast for PC running freeBSD</td></tr>
+<tr><td>netblast-x.y.z-ia32-linux.tar.gz</td><td>netblast for PC running Linux</td></tr>
+<tr><td>netblast-x.y.z-ia32-solaris.tar.gz</td><td>netblast for PC runnig solaris</td></tr>
+<tr><td>netblast-x.y.z-ia32-win32.exe</td><td>netblast for PC running windows</td></tr>
+<tr><td>netblast-x.y.z-mips64-irix.tar.gz</td><td>netblast for 64-bits SGI machine</td></tr>
+<tr><td>netblast-x.y.z-ppc32-macosx.tar.gz</td><td>netblast for MacOSX</td></tr>
+<tr><td>netblast-x.y.z-sparc64-solaris.tar.gz</td><td>netblast for Sparc running Solaris</td></tr>
+<tr><td>netblast-x.y.z-x64-linux.tar.gz</td><td>netblast for 64-bits Linux</td></tr>
+<tr><td>wwwblast-x.y.z-axp64-tru64.tar.gz</td><td>web server blast for COMPAQ/HP alpha machine (OSF 5.1 and above)</td></tr>
+<tr><td>wwwblast-x.y.z-ia32-freebsd.tar.gz</td><td>web server blast for PC running freeBSD</td></tr>
+<tr><td>wwwblast-x.y.z-ia32-linux.tar.gz</td><td>web server blast for PC running Linux</td></tr>
+<tr><td>wwwblast-x.y.z-ia32-solaris.tar.gz</td><td>web server blast for PC runnig solaris</td></tr>
+<tr><td>wwwblast-x.y.z-mips64-irix.tar.gz</td><td>web server blast for 64-bits SGI machine</td></tr>
+<tr><td>wwwblast-x.y.z-ppc32-macosx.tar.gz</td><td>web server blast for MacOSX</td></tr>
+<tr><td>wwwblast-x.y.z-sparc64-solaris.tar.gz</td><td>web server blast for Sparc running Solaris</td></tr>
+<tr><td>wwwblast-x.y.z-x64-linux.tar.gz</td><td>web server blast for 64-bits Linux</td></tr>
+<tr><td colspan="2" class="medium2">NOTE:<br />
+Currently, we do not have access to IBM AIX server to make the binary for that platform. Also, we do 
+not make wwwblast package of window.</td></tr>
+</table>
+<p/>
+</td></tr>
+
+<tr><td class="tbl_title"><a name="2.5.2">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5.2 /blast/executables/release/ subdirectory content</a></td></tr>
+<tr><td>
+This directory contains past major releases of BLAST, as far back as version 2.0.10. Each release is in its own subdirectory.
+<p/> 
+<table class="text2" border="1" width="600">
+<tr><td colspan="2" class="tbl_title" align="center">
+	2.5.2 File content for /blast/executables/release/ subdirectory</td></tr>
+<tr><td><b>File/Dir Name</b></td><td><b>Content</b></td></tr>
+<tr><td>2.0.10</td><td>Release version 2.0.10</td></tr>
+<tr><td>2.0.11</td><td>Release version 2.0.11</td></tr>
+<tr><td>2.0.12</td><td>Release version 2.0.12</td></tr>
+<tr><td>2.0.13</td><td>Release version 2.0.13</td></tr>
+<tr><td>2.0.14</td><td>Release version 2.0.14</td></tr>
+<tr><td>2.0.7</td><td>Release version 2.0.7</td></tr>
+<tr><td>2.0.8 </td><td>Release version 2.0.8</td></tr>
+<tr><td>2.0.9</td><td>Release version 2.0.9</td></tr>
+<tr><td>2.1.2</td><td>Release version 2.1.2</td></tr>
+<tr><td>2.1.3</td><td>Release version 2.1.3</td></tr>
+<tr><td>2.2.10</td><td>Release version 2.2.10</td></tr>
+<tr><td>2.2.11 </td><td>Release version 2.2.11</td></tr>
+<tr><td>2.2.12</td><td>Release version 2.2.12</td></tr>
+<tr><td>2.2.13</td><td>Release version 2.2.13</td></tr>
+<tr><td>2.2.3</td><td>Release version 2.2.3</td></tr>
+<tr><td>2.2.4</td><td>Release version 2.2.4</td></tr>
+<tr><td>2.2.5</td><td>Release version 2.2.5</td></tr>
+<tr><td>2.2.6</td><td>Release version 2.2.6</td></tr>
+<tr><td>2.2.7</td><td>Release version 2.2.7</td></tr>
+<tr><td>2.2.8</td><td>Release version 2.2.8</td></tr>
+<tr><td>2.2.9</td><td>Release version 2.2.9</td></tr>
+</table>
+<p/>
+</td></tr>
+<tr><td class="tbl_title"><a name="2.5.3">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5.3 /blast/executables/snapshot/ subdirectory content</a></td></tr>
+<tr><td>
+This directory contains compilation of blast packages with bug fixes in between major versioned releases.
+The subdirectories are named with date. There was not snapshot or patch since the end of 2004, which as for release 2.2.10. 
+Available old patches will not be listed here.
+<p/> 
+</td></tr>
+
+<tr><td class="tbl_title"><a name="2.6">
+	&nbsp;&nbsp;&nbsp;&nbsp;2.6 /blast/matrices directory content</a></td></tr>
+<tr><td>
+This directory contains the scoring matrices, which are files that can 
+be used by BLAST alignment assessment.  The file are text files with 
+special format that can be viewed directly by a browser.
+<p/>
+For valid statistical analysis, blastn uses only identity matrix and 
+blastp only supports a limited subset of the BLOSUM and PAM matrices: 
+BLOSUM45, BLOSUM62, BLOSUM80, plus PAM30 and PAM70.
+<p/>
+</td></tr>
+
+<tr><td class="tbl_title"><a name="2.7">
+	&nbsp;&nbsp;&nbsp;&nbsp;2.7 /blast/temp/ directory content</a></td></tr>
+<tr><td>
+For temporary file storage and miscellaneous files or tools. Current empty. 
+<p/>
+</td></tr>
+
+<tr><td class="tbl_title"><a name="3">3. Techinical Support</a></td></tr>
+<tr><td>
+Additional questions/comments on this ftp site should be directed to 
+NCBI blast-help group at:
+<blockquote><a href="mailto:blast-help@ncbi.nlm.nih.gov">blast-help@ncbi.nlm.nih.gov</a></blockquote>
+
+Other questions on general NCBI resources should be directed to:
+<blockquote><a href="mailto:info@ncbi.nlm.nih.gov">info@ncbi.nlm.nih.gov</a></blockquote>
+<p/>
+</td></tr>
+
+<tr><td>&nbsp;</td></tr>
+
+<tr><td align="right" class="medium2"><script type="text/javascript">
+//<![CDATA[
+document.write("Updated on "); document.write(document.lastModified);
+//]]>
+</script></td></tr></tbody></table></body></html>
+
+
+
+
+
+
+
+

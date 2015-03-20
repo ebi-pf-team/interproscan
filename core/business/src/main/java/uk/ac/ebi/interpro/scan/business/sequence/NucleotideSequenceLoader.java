@@ -5,18 +5,20 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAO;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
  *         Date: 22/06/11
- *         Time: 18:08
- *         <p/>
+ *
  *         Manages loading of nucleotide sequences.
  */
 public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequence> {
@@ -51,7 +53,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
         this.nucleotideSequenceXrefDAO = nucleotideSequenceXrefDAO;
     }
 
-    public void store(String sequence, String analysisJobNames, String... crossReferences) {
+    public void store(String sequence, Map<String, SignatureLibraryRelease> analysisJobMap, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
             NucleotideSequence nucleotideSequence = new NucleotideSequence(sequence);
             if (crossReferences != null) {
@@ -95,7 +97,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
      *                             <p/>
      *                             (This implementation certainly does not need one.)
      */
-    public void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames) {
+    public void persist(SequenceLoadListener sequenceLoadListener, Map<String, SignatureLibraryRelease> analysisJobMap) {
         persistBatch();
         Collection<String> nonUniqueIdentifiers = nucleotideSequenceXrefDAO.getNonUniqueXrefs();
         if (nonUniqueIdentifiers != null && nonUniqueIdentifiers.size() > 0) {
@@ -119,9 +121,9 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
      * by a separate process, e.g. the fasta file loader.
      *
      * @param parsedNucleotideSequences being a Collection of non-redundant Nucleotide Sequences and Xrefs.
-     * @param analysisJobNames          to be included in analysis.
+     * @param analysisJobMa for analysisJobNames          to be included in analysis.
      */
-    public void storeAll(Set<NucleotideSequence> parsedNucleotideSequences, String analysisJobNames) {
+    public void storeAll(Set<NucleotideSequence> parsedNucleotideSequences, Map<String, SignatureLibraryRelease> analysisJobMa) {
         for (NucleotideSequence nucleotideSequence : parsedNucleotideSequences) {
             sequencesAwaitingInsertion.add(nucleotideSequence);
             if (sequencesAwaitingInsertion.size() > sequenceInsertBatchSize) {

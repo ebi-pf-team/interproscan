@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,6 +70,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 boolean completed = true;
                 if (stepInstanceSubmitCount == 1 && firstPass && (! isUseMatchLookupService())){
                     if(verboseLog){
+                        LOGGER.debug("First steps: " + firstPass);
                         LOGGER.debug("Steps left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     }
                     if(! runningFirstStep){
@@ -156,6 +158,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         } catch (Exception e){
             e.printStackTrace();
         } finally {
+            cleanUpWorkingDirectory();
             // Always exit
             if(status != 0){
                 System.err.println("InterProScan analysis failed. Exception thrown by SingleSeqOptimisedBlackBoxMaster. Check the log file for details");
@@ -235,14 +238,12 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             LOGGER.debug(" Step Id : " + step.getId());
         }
         if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
-                || step.getId().toLowerCase().contains("pirsf".toLowerCase())
-                || step.getId().toLowerCase().contains("hamap".toLowerCase())
-                || step.getId().toLowerCase().contains("pfama".toLowerCase())
-                || step.getId().toLowerCase().contains("gene3d".toLowerCase())
-                || step.getId().toLowerCase().contains("tigrfam".toLowerCase())
+                || step.getId().toLowerCase().contains("panther".toLowerCase())
+                || step.getId().toLowerCase().contains("prositeprofiles".toLowerCase())
+                || step.getId().toLowerCase().contains("smart".toLowerCase())
                 ){
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" pirsf/hamap/pfam/gene3d/tigrfam job: " + step.getId()+ " Should have high priority");
+                LOGGER.debug(" panther/prositeprofiles/smart job: " + step.getId()+ " Should have high priority");
             }
             return true;
         }

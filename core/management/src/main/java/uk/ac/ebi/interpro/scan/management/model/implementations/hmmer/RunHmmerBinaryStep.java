@@ -22,9 +22,15 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
     private String fullPathToBinary;
 
+    private String fullPathToHmmScanBinary;
+
     private String fullPathToHmmFile;
 
     private String fastaFileNameTemplate;
+
+    private boolean useTbloutFormat = false;
+
+    private String outputFileNameTbloutTemplate;
 
     public String getFullPathToBinary() {
         return fullPathToBinary;
@@ -33,6 +39,14 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
+    }
+
+    public String getFullPathToHmmScanBinary() {
+        return fullPathToHmmScanBinary;
+    }
+
+    public void setFullPathToHmmScanBinary(String fullPathToHmmScanBinary) {
+        this.fullPathToHmmScanBinary = fullPathToHmmScanBinary;
     }
 
     public String getFullPathToHmmFile() {
@@ -53,6 +67,26 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         this.fastaFileNameTemplate = fastaFilePathNameTemplate;
     }
 
+    public boolean isUseTbloutFormat() {
+        return useTbloutFormat;
+    }
+
+    /**
+     * We don't need to use TbloutFormat for every hmmer3 run
+     *
+     */
+    public void setUseTbloutFormat(boolean useTbloutFormat) {
+        this.useTbloutFormat = useTbloutFormat;
+    }
+
+    public String getOutputFileNameTbloutTemplate() {
+        return outputFileNameTbloutTemplate;
+    }
+
+    public void setOutputFileNameTbloutTemplate(String outputFileNameTbloutTemplate) {
+        this.outputFileNameTbloutTemplate = outputFileNameTbloutTemplate;
+    }
+
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
 
@@ -60,12 +94,23 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
         List<String> command = new ArrayList<String>();
-        command.add(this.getFullPathToBinary());
+
+        if (isSingleSeqMode()){
+            command.add(this.getFullPathToHmmScanBinary());
+        }else{
+            command.add(this.getFullPathToBinary());
+        }
         command.addAll(this.getBinarySwitchesAsList());
         // output file option
         if(this.isUsesFileOutputSwitch()){
             command.add("-o");
             command.add(outputFilePathName);
+        }
+
+        if(useTbloutFormat) {
+            final String tblOutputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTbloutTemplate());
+            command.add("--tblout");
+            command.add(tblOutputFilePathName);
         }
 
         command.add(this.getFullPathToHmmFile());

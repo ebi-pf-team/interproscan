@@ -24,6 +24,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
+        System.out.println(Utilities.getTimeNow() + "verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
+
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
@@ -130,13 +132,15 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         } catch (Exception e){
             e.printStackTrace();
         } finally {
+            cleanUpWorkingDirectory();
             // Always exit
             if(status != 0){
-                System.err.println("InterProScan analysis failed. Exception thrown by StandaloneBlackBoxMaster. Check the log file for details");
+                System.err.println("InterProScan analysis failed. Exception thrown by StandaloneBlackBoxMaster. Check the log file for details");           
+                System.exit(status);
             }
-            System.exit(status);
         }
-        System.exit(status);
+	//let Run do the cleanup
+        //System.exit(status);
     }
 
 

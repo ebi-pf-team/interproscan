@@ -92,10 +92,11 @@
                 <property name="lsfMonitor" ref="lsfMonitor"/>
             </bean>
         </property>
-        <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="hasInVmWorker" value="true"/>
+        <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="temporaryDirectory" value="${temporary.file.directory}"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="statsUtil" ref="masterStatsUtil"/>
         <property name="maxConsumers" value="${master.maxconsumers}"/>
         <property name="maxMessagesOnQueuePerConsumer" value="${worker.maxunfinished.jobs}"/>

@@ -100,7 +100,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      * @param sequence        being the protein sequence to store
      * @param crossReferences being a set of Cross references.
      */
-    public void store(String sequence, String analysisJobNames, String... crossReferences) {
+    public void store(String sequence, Map<String, SignatureLibraryRelease> analysisJobMap, String... crossReferences) {
         if (sequence != null && sequence.length() > 0) {
             Protein protein = new Protein(sequence);
             if (crossReferences != null) {
@@ -111,17 +111,26 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             }
             proteinsAwaitingPrecalcLookup.add(protein);
             if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
-                lookupProteins(analysisJobNames);
+                lookupProteins(analysisJobMap);
             }
         }
     }
 
-    private void lookupProteins(String analysisJobNames) {
+    /**
+     *
+     * @param analysisJobMap
+     */
+    private void lookupProteins(Map<String, SignatureLibraryRelease> analysisJobMap) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             final boolean usingLookupService = proteinLookup != null;
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
-                    ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobNames)
+                    ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
                     : null;
+
+//            if(proteinLookup.isAnalysisVersionConsistent(analysisJobMap)){
+//
+//            }
+
             // Put precalculated proteins into a Map of MD5 to Protein;
             if (localPrecalculatedProteins != null) {
                 final Map<String, Protein> md5ToPrecalcProtein = new HashMap<String, Protein>(localPrecalculatedProteins.size());
@@ -187,9 +196,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      *
      * @param sequenceLoadListener which handles the creation of StepInstances for the new proteins added.
      */
-    public void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames) {
+    public void persist(SequenceLoadListener sequenceLoadListener, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Check any remaining proteins awaiting lookup
-        lookupProteins(analysisJobNames);
+        lookupProteins(analysisJobMap);
 
         // Persist any remaining proteins (that last batch)
         persistBatch();
@@ -241,9 +250,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      * by a separate process, e.g. the fasta file loader.
      *
      * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
-     * @param analysisJobNames to be included in analysis.
+     * @param analysisJobMap for analysisJobNames to be included in analysis.
      */
-    public void storeAll(Set<Protein> parsedProteins, String analysisJobNames) {
+    public void storeAll(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
         LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
         //TODO: do notify() run this step when lookupProteins() is disabled
         //complicated logic here
@@ -253,7 +262,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             count++;
             proteinsAwaitingPrecalcLookup.add(protein);
             if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
-                lookupProteins(analysisJobNames);
+                lookupProteins(analysisJobMap);
             }
             if(count % 5000 == 0){
                 if (count % 10000 == 0) {

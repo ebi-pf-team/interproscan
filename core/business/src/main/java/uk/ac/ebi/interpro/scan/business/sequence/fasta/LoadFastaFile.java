@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This interface defines the methods required to load a fasta file...
@@ -37,5 +39,5 @@ public interface LoadFastaFile extends Serializable {
      * @param useMatchLookupService if it is available.
      */
     @Transactional
-    void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoadListener, String analysisJobNames, boolean useMatchLookupService);
+    void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoadListener, Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService);
 }
