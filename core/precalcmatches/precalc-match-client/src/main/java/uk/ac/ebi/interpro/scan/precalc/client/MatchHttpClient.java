@@ -4,14 +4,24 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
@@ -69,13 +79,19 @@ public class MatchHttpClient {
         this.url = url;
     }
 
+    public String getUrl() { return url;    }
+
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
+    public String getProxyHost() { return proxyHost;   }
+
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
+
+    public String getProxyPort() { return proxyPort;  }
 
     public BerkeleyMatchXML getMatches(String... md5s) throws IOException {
         if (LOG.isDebugEnabled()) {
@@ -90,7 +106,8 @@ public class MatchHttpClient {
         }
 
 
-        HttpClient httpclient = new DefaultHttpClient();
+//        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
             qparams.add(new BasicNameValuePair(MD5_PARAMETER, md5));
@@ -126,12 +143,31 @@ public class MatchHttpClient {
         //set the proxy if needed
         if (isProxyEnabled()) {
             LOG.debug("Using a Proxy server in getMatches: " + proxyHost + ":" + proxyPort);
+
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            httpclient = getClient(proxy);
+
+            //httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            //httpclient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet("http://localhost/");
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try {
+                //do something
+            } finally {
+                response.close();
+            }
+
+            //try use newer API as ConnRoutePNames is deprecated
+//            CloseableHttpClient client = HttpClients.custom()
+//                .setRoutePlanner(
+//                     new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+//                .build();
+
         }
 
         BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
-        httpclient.getConnectionManager().shutdown();
+//        httpclient.getConnectionManager().shutdown();
+        httpclient.close();
         return matchXML;
     }
 
@@ -148,7 +184,7 @@ public class MatchHttpClient {
         if (url == null || url.isEmpty()) {
             throw new IllegalStateException("The url must be set for the MatchHttpClient.getMD5sOfProteinsAlreadyAnalysed method to function");
         }
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = getClient(); //new DefaultHttpClient();
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
             qparams.add(new BasicNameValuePair(MD5_PARAMETER, md5));
@@ -192,12 +228,14 @@ public class MatchHttpClient {
         if (isProxyEnabled()) {
             LOG.debug("Using a Proxy server in getMD5sOfProteinsAlreadyAnalysed : " + proxyHost + ":" + proxyPort);
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            httpclient = getClient(proxy);
+            //httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
         }
 
         List<String> response = httpclient.execute(post, handler);
-        httpclient.getConnectionManager().shutdown();
+        httpclient.close();
+//        httpclient.getConnectionManager().shutdown();
         return response;
     }
 
@@ -208,7 +246,8 @@ public class MatchHttpClient {
             if (url == null || url.isEmpty()) {
                 throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
             }
-            HttpClient httpclient = new DefaultHttpClient();
+
+            CloseableHttpClient httpclient = getClient();
 
             // Use HttpGet as the URL will be very short
             HttpGet get = new HttpGet(url + VERSION_PATH);
@@ -251,11 +290,12 @@ public class MatchHttpClient {
         if(isProxyEnabled()){
             LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost+":"+proxyPort);
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            httpclient = getClient(proxy);
         }
 
         String serverVersion = httpclient.execute(get, handler);
-        httpclient.getConnectionManager().shutdown();
+        httpclient.close();
+        //httpclient.getConnectionManager().shutdown();
         return serverVersion;
 
     }
@@ -266,6 +306,7 @@ public class MatchHttpClient {
      * @return
      */
     public boolean isConfigured() {
+        LOG.debug("lookup url: " + url );
         return url != null && !url.isEmpty();
     }
 
@@ -274,6 +315,7 @@ public class MatchHttpClient {
      * if enabled configure the system properties
      */
     public boolean isProxyEnabled() {
+        LOG.debug("proxy Host: " + proxyHost + " proxyPort: " + proxyPort );
         //set the proxy if needed
         if (proxyHost == null || proxyHost.isEmpty() || proxyPort == null || proxyPort.isEmpty()) {
 //            System.setProperty("proxySet", "true");
@@ -284,4 +326,57 @@ public class MatchHttpClient {
         return true;
     }
 
+
+    public CloseableHttpClient getClient() {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        return httpclient;
+    }
+
+    public CloseableHttpClient getClient(HttpHost proxy){
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        CloseableHttpClient httpclient = HttpClients.custom()
+//                .setConnectionManager(connManager)
+//                .setDefaultCookieStore(cookieStore)
+//                .setDefaultCredentialsProvider(credentialsProvider)
+                .setProxy(proxy)
+//                .setDefaultRequestConfig(defaultRequestConfig)
+                .build();
+
+        return httpclient;
+
+    }
+
+    public CloseableHttpClient getClient(HttpHost proxy, CredentialsProvider credsProvider ) throws  Exception {
+        CredentialsProvider credsProvider2 = new BasicCredentialsProvider();
+        credsProvider2.setCredentials(
+                new AuthScope("localhost", 8080),
+                new UsernamePasswordCredentials("username", "password"));
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setDefaultCredentialsProvider(credsProvider).build();
+        try {
+            HttpHost target = new HttpHost("www.verisign.com", 443, "https");
+
+            RequestConfig config = RequestConfig.custom()
+                    .setProxy(proxy)
+                    .build();
+            HttpGet httpget = new HttpGet("/");
+            httpget.setConfig(config);
+
+            System.out.println("Executing request " + httpget.getRequestLine() + " to " + target + " via " + proxy);
+
+            CloseableHttpResponse response = httpclient.execute(target, httpget);
+            try {
+                System.out.println("----------------------------------------");
+                System.out.println(response.getStatusLine());
+                EntityUtils.consume(response.getEntity());
+            } finally {
+                response.close();
+            }
+        } finally {
+            httpclient.close();
+        }
+
+        return httpclient;
+
+    }
 }

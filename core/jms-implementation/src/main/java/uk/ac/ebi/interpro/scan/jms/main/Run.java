@@ -3,6 +3,8 @@ package uk.ac.ebi.interpro.scan.jms.main;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -11,6 +13,7 @@ import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.converter.Converter;
+import uk.ac.ebi.interpro.scan.jms.exception.InvalidInputException;
 import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
@@ -28,6 +31,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The main entry point for the the master and workers in a
@@ -59,6 +64,10 @@ public class Run extends AbstractI5Runner {
     private static final Options COMMAND_LINE_OPTIONS_FOR_HELP = new Options();
 
     private static final int MEGA = 1024 * 1024;
+
+    String temporaryDirectory = null;
+
+    private boolean deleteWorkingDirectoryOnCompletion = true;
 
     static {
         //Usual I5 options
@@ -95,7 +104,14 @@ public class Run extends AbstractI5Runner {
         CommandLineParser parser = new PosixParser();
         String modeArgument = null;
         Mode mode = null;
+
+        String temporaryDirectory = null;
+        boolean deleteWorkingDirectoryOnCompletion = true;
+
         try {
+            //change Loglevel
+//            changeLogLevel("DEBUG");
+
             // parse the command line arguments
             CommandLine parsedCommandLine = parser.parse(COMMAND_LINE_OPTIONS, args);
 
@@ -117,8 +133,10 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-            //can we get this from the properties file
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.11-51.0");
+
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.11-50.0-HMMFilter-SNAPSHOT");
+
+
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
@@ -130,18 +148,13 @@ public class Run extends AbstractI5Runner {
             // The command-line distributed mode selects a random port number for communications.
             // This block selects the random port number and sets it on the broker.
 
-            // Def. parsedAnalyses: List of analyses jobs parsed from command line
-            String[] parsedAnalyses = null;
             // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
             String[] analysesToRun = null;
-            if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
-                parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
-                parsedAnalyses = tidyOptionsArray(parsedAnalyses);
-            }
 
 
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
+                temporaryDirectory = jobs.getBaseDirectoryTemporaryFiles();
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
@@ -150,7 +163,8 @@ public class Run extends AbstractI5Runner {
                     System.out.println("Available analyses:");    // LEAVE as System.out
                     for (Job job : jobs.getActiveAnalysisJobs().getJobList()) {
                         // Print out available jobs
-                        System.out.printf("    %25s : %s\n", job.getId().replace("job", ""), job.getDescription());       // LEAVE as System.out
+                        SignatureLibraryRelease slr = job.getLibraryRelease();
+                        System.out.printf("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription()); // LEAVE as System.out
                     }
                     if (deactivatedJobs.size() > 0) {
                         System.out.println("\nDeactivated analyses:");
@@ -158,61 +172,19 @@ public class Run extends AbstractI5Runner {
                     for (Job deactivatedJob : deactivatedJobs.keySet()) {
                         JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                         // Print out deactivated jobs
-                        System.out.printf("    %25s : %s\n", deactivatedJob.getId().replace("job", ""), jobStatusWrapper.getWarning());
+                        SignatureLibraryRelease slr = deactivatedJob.getLibraryRelease();
+                        System.out.printf("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), jobStatusWrapper.getWarning());
                     }
                     System.exit(1);
                 }
 
-                //Before running analyses we need to do some checks
-                //The algorithm works as following:
-                //1. If analyses are specified via appl parameter:
-                //1. a) Existence check - Check if specified analysis name does exist -> print warning if NOT
-                //1. b) Job status check (deactivation check) - Check if one of the specified analyses is deactivated or not -> print warning if so
-                //2. If analyses are specified via appl parameter or not
-                //2. a) Version check - Check if multiple versions of the same analysis occur
-                final Map<String, Set<Job>> parsedAnalysesToRealAnalysesMap = getRealAnalysesNames(parsedAnalyses, jobs.getAllJobs().getJobList());
-
-                StringBuilder nonexistentAnalysis = new StringBuilder();
-                if (parsedAnalyses != null && parsedAnalyses.length > 0) {
-                    //Check job existence and job status (activated or deactivated/not configured properly)
-                    boolean doExit = false;
-                    for (String parsedAnalysisName : parsedAnalyses) {
-                        if (parsedAnalysesToRealAnalysesMap.containsKey(parsedAnalysisName)) {
-                            //Check if they are deactivated
-                            Set<Job> realAnalyses = parsedAnalysesToRealAnalysesMap.get(parsedAnalysisName);
-                            for (Job deactivatedJob : deactivatedJobs.keySet()) {
-                                for (Job realAnalysis : realAnalyses) {
-                                    if (deactivatedJob.getId().equalsIgnoreCase(realAnalysis.getId())) {
-                                        JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
-                                        System.out.println("\n\n" + jobStatusWrapper.getWarning() + "\n\n");
-                                        doExit = true;
-                                    }
-                                }
-                            }
-                        } else {
-                            if (nonexistentAnalysis.length() > 0) {
-                                nonexistentAnalysis.append(",");
-                            }
-                            nonexistentAnalysis.append(parsedAnalysisName);
-                        }
-                    }
-                    if (nonexistentAnalysis.length() > 0) {
-                        System.out.println("\n\nYou have requested the following analyses / applications that are not available in this distribution of InterProScan: " + nonexistentAnalysis.toString() + ".  Please run interproscan.sh with no arguments for a list of available analyses.\n\n");
-                        doExit = true;
-                    }
-                    if (doExit) {
-                        System.exit(1);
-                    }
-
-                    //Do multiple version check (e.g. if -appl pirsf-2.84,pirsf-3.01 I5 will exit)
-                    Set<Job> jobsToCheckMultipleVersionsSet = new HashSet<Job>();
-                    for (Set<Job> jobsToCheck : parsedAnalysesToRealAnalysesMap.values()) {
-                        jobsToCheckMultipleVersionsSet.addAll(jobsToCheck);
-                    }
-                    List<Job> jobsToCheckMultipleVersionsList = new ArrayList<Job>(jobsToCheckMultipleVersionsSet);
-                    checkAnalysisJobsVersions(jobsToCheckMultipleVersionsList);
+                try {
+                    analysesToRun = getApplications(parsedCommandLine, jobs);
+                } catch (InvalidInputException e) {
+                    System.out.println("Invalid input specified for -appl/--applications parameter:\n" + e.getMessage());
+                    System.exit(1);
                 }
-                analysesToRun = getAnalysesToRun(parsedAnalysesToRealAnalysesMap);
+
             }
             //Print help for the convert mode
             else if (mode.equals(Mode.CONVERT)) {
@@ -226,6 +198,8 @@ public class Run extends AbstractI5Runner {
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
                 parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
                 parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
+                //until we change the analysis  manager
+                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
                 validateOutputFormatList(parsedOutputFormats, mode);
             }
 
@@ -265,17 +239,35 @@ public class Run extends AbstractI5Runner {
                 }
                 //checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
 
+                //get temp directory for cleanup
+                final AbstractMaster master = (AbstractMaster) runnable;
+                temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+                deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
+
+                LOGGER.debug(Utilities.getTimeNow() + " workingTemporaryDirectory is  " + temporaryDirectory);
+
                 System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode...");
 
                 runnable.run();
             }
-            System.exit(0);
+
+            //System.exit(0);
 
         } catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
             System.exit(1);
-        }
+        } finally {
+            //clean up the temp files
+            //System.out.println(Utilities.getTimeNow() + " Please clean up the TEMP files in ... " + temporaryDirectory);
+            if (temporaryDirectory != null ){
+                //deleteWorkingDirectory(true, temporaryDirectory);
+//                System.out.println(Utilities.getTimeNow() + " Please clean up the TEMP files in ... " + temporaryDirectory);
+                cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
+
+            }
+	    }
+        System.exit(0);
     }
 
     private static void runMasterControllerApplicationMode(Runnable runnable, CommandLine parsedCommandLine, AbstractApplicationContext ctx, Mode mode) {
@@ -737,6 +729,17 @@ public class Run extends AbstractI5Runner {
         return parsedOptions.toArray(new String[parsedOptions.size()]);
     }
 
+    private static String[]  xmlToXmlSlimOutputChange(String[] options){
+        Set<String> parsedOptions = new HashSet<String>();
+	for (String optionsItem : options) {
+	  if (optionsItem.equals("xml")) {
+	    parsedOptions.add("xml-slim");
+          }else{
+           parsedOptions.add(optionsItem);
+	  }
+        }
+        return parsedOptions.toArray(new String[parsedOptions.size()]);
+    }
     /**
      * Validate and tidy up the comma separated list of output formats specified by the user:
      * - Do the formats exist?
@@ -756,29 +759,6 @@ public class Run extends AbstractI5Runner {
                     System.out.println("\n\n" + "The specified output file format " + outputFormat + " is only supported in " + Mode.CONVERT.name() + " mode." + "\n\n");
                     System.exit(1);
                 }
-            }
-        }
-    }
-
-    /**
-     * Checks if different versions of the same analyses occur.
-     *
-     * @param jobsToCheckMultipleVersion
-     */
-    protected static void checkAnalysisJobsVersions(List<Job> jobsToCheckMultipleVersion) {
-        final Map<SignatureLibrary, Set<Job>> libraryToJobsMap = clusterJobsBySignatureLibrary(jobsToCheckMultipleVersion);
-        //Iterate over all signature libraries Pfam, Gene3D, PIRSF etc.
-        for (SignatureLibrary library : libraryToJobsMap.keySet()) {
-            //Get all jobs for a certain signature library e.g. job to run PIRSF v2.84 and another job to run PIRSF v3.01
-            final Set<Job> libraryJobs = libraryToJobsMap.get(library);
-            if (libraryJobs.size() > 1) {
-                String versions = "";
-                for (Job jobToCheck : libraryJobs) {
-                    versions = versions + jobToCheck.getLibraryRelease().getVersion() + ",";
-                }
-                System.out.println("\n\n" + "Found different versions (" + versions + ") of the same analysis - " + library +
-                        " which is not allowed in this version of InterProScan 5." + "\n\n");
-                System.exit(1);
             }
         }
     }
@@ -804,22 +784,6 @@ public class Run extends AbstractI5Runner {
             }
         }
         return result;
-    }
-
-    /**
-     * Assembles all analyses jobs for that run.
-     *
-     * @param parsedAnalysesRealAnalysesMap
-     * @return Array of analyses jobs.
-     */
-    private static String[] getAnalysesToRun(final Map<String, Set<Job>> parsedAnalysesRealAnalysesMap) {
-        Set<String> result = new HashSet<String>();
-        for (Set<Job> realJobs : parsedAnalysesRealAnalysesMap.values()) {
-            for (Job realJob : realJobs) {
-                result.add(realJob.getId());
-            }
-        }
-        return StringUtils.toStringArray(result);
     }
 
     /**
@@ -866,6 +830,116 @@ public class Run extends AbstractI5Runner {
         }
         return result;
     }
+
+    public static String[] getApplications(CommandLine parsedCommandLine, Jobs allJobs) throws InvalidInputException {
+
+        // To build a list of each analysis and the version specified (valid inputs only)
+        List<String> analysesToRun = new ArrayList<String>();
+
+        // List of analyses parsed from command line, exactly as the user entered them
+        String[] parsedAnalyses = null;
+        if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
+            parsedAnalyses = parsedCommandLine.getOptionValues(I5Option.ANALYSES.getLongOpt());
+            parsedAnalyses = tidyOptionsArray(parsedAnalyses);
+        }
+        if (parsedAnalyses != null && parsedAnalyses.length > 0) {
+
+            // To build a set of error messages relating to the inputs (invalid inputs only)
+            Set<String> inputErrorMessages = new HashSet<String>();
+
+            // Check the input matches the expected regex and build a user entered member database -> version number map
+            Map<String, String> userAnalysesMap = new HashMap<String, String>();
+            final Pattern applNameRegex = Pattern.compile("^[a-zA-Z_-]+"); // E.g. "PIRSF", "SignalP-GRAM_NEGATIVE"
+            final Pattern applVersionRegex = Pattern.compile("[0-9a-zA-Z.]+$"); // E.g. "3.01", "2.0c"
+
+            for (int i = 0; i < parsedAnalyses.length; i++) {
+                final String parsedAnalysis = parsedAnalyses[i]; // E.g. "PIRSF", "PIRSF-3.01"
+                String applName;
+                String applVersion = null; // Could remain NULL if no specific version number specified by the user
+                if (parsedAnalysis.endsWith("-")) {
+                    inputErrorMessages.add(parsedAnalysis + " not a valid input.");
+                    continue;
+                }
+                int lastHyphen = parsedAnalysis.lastIndexOf('-');
+                if (lastHyphen == -1) {
+                    // No specific version number specified by the user
+                    applName = parsedAnalysis;
+                }
+                else {
+                    applName = parsedAnalysis.substring(0, lastHyphen);
+                    applVersion = parsedAnalysis.substring(lastHyphen + 1);
+                }
+                Matcher m1 = applNameRegex.matcher(parsedAnalysis);
+                Matcher m2 = applVersionRegex.matcher(parsedAnalysis);
+                if (m1.find() && m2.find()) {
+                    if (applName.equalsIgnoreCase("SignalP")) {
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), applVersion);
+                    }
+                    else {
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
+                    }
+                }
+                else {
+                    inputErrorMessages.add(parsedAnalysis + " not a valid input.");
+                }
+            }
+            if (inputErrorMessages.size() > 0) {
+                throw new InvalidInputException(inputErrorMessages);
+            }
+
+            // Now check the user entered analysis versions actually exists
+            for (Map.Entry<String, String> mapEntry : userAnalysesMap.entrySet()) {
+                String userApplName = mapEntry.getKey();
+                String userApplVersion = mapEntry.getValue();
+                boolean found = false;
+                for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
+                    SignatureLibraryRelease slr = job.getLibraryRelease();
+                    String applName = slr.getLibrary().getName();
+                    String applVersion = slr.getVersion();
+                    if (applName.equalsIgnoreCase(userApplName)) {
+                        // This analysis name exists, what about the version?
+                        if (userApplVersion == null) {
+                            // User didn't specify a version, just use the latest (active) version for this analysis
+                            // Exactly one version of each member database analysis should be active at a time (TODO write unit test for that)
+                            if (job.isActive()) {
+                                analysesToRun.add(job.getId());
+                                found = true;
+                                break; // Found it!
+                            }
+                        }
+                        else if (applVersion.equalsIgnoreCase(userApplVersion)) {
+                            analysesToRun.add(job.getId());
+                            found = true;
+                            break; // Found it!
+                        }
+
+                    }
+                }
+                if (!found) {
+                    // Didn't find the user specified analysis version
+                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-"+userApplVersion) + " does not exist or is deactivated.");
+                }
+            }
+            if (inputErrorMessages.size() > 0) {
+                throw new InvalidInputException(inputErrorMessages);
+            }
+        }
+
+        return StringUtils.toStringArray(analysesToRun);
+    }
+
+    private static void addApplVersionToUserMap(Map<String, String> userAnalysesMap, Set<String> inputErrorMessages, String applName, String applVersion) {
+        if (userAnalysesMap.containsKey(applName)) {
+            // Multiple versions/entries of the same application are not allowed in the same InterProScan run
+            inputErrorMessages.add(applName + " was specified more than once in the same InterProScan run.");
+        }
+        else {
+            userAnalysesMap.put(applName, applVersion);
+        }
+    }
+
 
     private static final String PORT_EXCLUSION_LIST_BEAN_ID = "portExclusionList";
 
@@ -998,4 +1072,63 @@ public class Run extends AbstractI5Runner {
         return false;
     }
 
+    public static void changeLogLevel(String logLevel){
+        Logger root = Logger.getLogger("uk.ac.ebi.interpro.scan");
+        //setting the logging level according to input
+        if ("FATAL".equalsIgnoreCase(logLevel)) {
+            root.setLevel(Level.FATAL);
+        }else if ("ERROR".equalsIgnoreCase(logLevel)) {
+            root.setLevel(Level.ERROR);
+        }else if ("WARN".equalsIgnoreCase(logLevel)) {
+            root.setLevel(Level.WARN);
+        }else if ("DEBUG".equalsIgnoreCase(logLevel)) {
+            root.setLevel(Level.DEBUG);
+        }
+    }
+
+    /**
+     * delete the temporaryWorkingFileDirectory
+     *
+     * @param dirPath
+     * @throws IOException
+     */
+    public static void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
+        File dir = new File(dirPath);
+        FileUtils.deleteDirectory(dir);
+    }
+
+    /**
+     * if deleteWorkingDirectoryOnCompletion then clean up the temporaryFileDirectory
+     *
+     * @param deleteWorkingDirectoryOnCompletion
+     * @param temporaryFileDirectory
+     */
+   private static void cleanUpWorkingDirectory(boolean deleteWorkingDirectoryOnCompletion, String temporaryFileDirectory){
+       if(deleteWorkingDirectoryOnCompletion){
+            try {
+                if(new File(temporaryFileDirectory).exists()) {
+                    LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
+                    deleteWorkingTemporaryDirectory(temporaryFileDirectory);
+                }
+            } catch (IOException e) {
+                LOGGER.warn("At run completion, unable to delete temporary working directory " + temporaryFileDirectory);
+                e.printStackTrace();
+            }
+        }else {
+            LOGGER.warn("deleteWorkingDirectoryOnCompletion : " + deleteWorkingDirectoryOnCompletion);
+        }
+   }
+
+
+   @Override
+   public void finalize()  throws Throwable{
+	try {
+        if (temporaryDirectory != null) {
+            //do some cleanup
+            cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
+        }
+    }finally {
+        super.finalize();
+    }
+   }
 }

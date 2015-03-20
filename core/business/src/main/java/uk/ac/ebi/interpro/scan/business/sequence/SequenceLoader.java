@@ -1,6 +1,9 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,9 +18,9 @@ import java.util.Set;
  */
 public interface SequenceLoader<T> extends Serializable {
 
-    void store(String sequence, String analysisJobNames, String... crossReferences);
+    void store(String sequence, Map<String, SignatureLibraryRelease> analysisJobMap, String... crossReferences);
 
-    void persist(SequenceLoadListener sequenceLoadListener, String analysisJobNames);
+    void persist(SequenceLoadListener sequenceLoadListener, Map<String, SignatureLibraryRelease> analysisJobMap);
 
     /**
      * If a match lookup service is available, set flag to determine if it is used.
@@ -32,7 +35,7 @@ public interface SequenceLoader<T> extends Serializable {
      * by a separate process, e.g. the fasta file loader.
      *
      * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
-     * @param analysisJobNames to be included in analysis.
+     * @param analysisJobMap for analysisJobNames to be included in analysis.
      */
-    void storeAll(Set<T> parsedProteins, String analysisJobNames);
+    void storeAll(Set<T> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap);
 }

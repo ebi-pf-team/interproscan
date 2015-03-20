@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for Linux/x86 (vers 1st October 2002), see www.w3.org" />
+
+    <title></title>
+  </head>
+
+  <body>
+<pre>
+Bl2seq
+------
+
+Bl2seq performs a comparison between two sequences using either the blastn or
+blastp algorithm.  Both sequences must be either nucleotides or proteins.
+The options may be obtained by executing 'bl2seq -'.
+
+  -i  First sequence [File In]
+  -j  Second sequence [File In]
+  -p  Program name: blastp, blastn, blastx. For blastx 1st argument should be nucleotide [String]
+    default = blastp
+  -g  Gapped [T/F]
+    default = T
+  -o  alignment output file [File Out]
+    default = stdout
+  -d  theor. db size (zero is real size) [Integer]
+    default = 0
+  -a  SeqAnnot output file [File Out]  Optional
+  -G  Cost to open a gap (zero invokes default behavior) [Integer]
+    default = 0
+  -E  Cost to extend a gap (zero invokes default behavior) [Integer]
+    default = 0
+  -X  X dropoff value for gapped alignment (in bits) (zero invokes default behavior) [Integer]
+    default = 0
+  -W  Wordsize (zero invokes default behavior) [Integer]
+    default = 0
+  -M  Matrix [String]
+    default = BLOSUM62
+  -q  Penalty for a nucleotide mismatch (blastn only) [Integer]
+    default = -3
+  -r  Reward for a nucleotide match (blastn only) [Integer]
+    default = 1
+  -F  Filter query sequence (DUST with blastn, SEG with others) [String]
+    default = T
+  -e  Expectation value (E) [Real]
+    default = 10.0
+  -S  Query strands to search against database (blastn only).  3 is both, 1 is top, 2 is bottom [Integer]
+    default = 3
+  -T  Produce HTML output [T/F]
+    default = F
+</pre>
+  </body>
+</html>
+

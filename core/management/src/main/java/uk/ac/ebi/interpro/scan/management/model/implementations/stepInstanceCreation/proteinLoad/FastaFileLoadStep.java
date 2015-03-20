@@ -10,12 +10,11 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * Loads a Fasta file into the database, creating new protein instance
@@ -153,7 +152,9 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("FastaFileLoaderStep.jobs is null? " + jobs == null);
+                    LOGGER.debug("Number of jobs in i5: " + jobs.getJobList().size());
                 }
+                Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<String, SignatureLibraryRelease>();
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
                     analysisJobs = jobs.getActiveAnalysisJobs();
@@ -167,15 +168,34 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 } else {
                     analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
                 }
+                LOGGER.debug("analysisJobs: " + analysisJobs);
+                LOGGER.debug("analysisJobNames: " + analysisJobNames);
+                for (Job analysisJob : analysisJobs.getJobList()){
+                    SignatureLibraryRelease signatureLibraryRelease = analysisJob.getLibraryRelease();
+                    if(signatureLibraryRelease != null) {
+                        //TODO - should the name always be in upppercase
+                        analysisJobMap.put(signatureLibraryRelease.getLibrary().getName().toUpperCase(), signatureLibraryRelease);
+                        LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
+                    }
+                }
+                LOGGER.debug("analysisJobMap:" + analysisJobMap);
+
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                StringBuilder analysesToRun = new StringBuilder();
+                for (String key: analysisJobMap.keySet()){
+                    analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
+                }
+                LOGGER.debug(analysesPrintOutStr + analysesToRun.toString());
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 StepCreationSequenceLoadListener sequenceLoadListener =
                         new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
-                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames, useMatchLookupService);
+//                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames, useMatchLookupService);
+                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Finished loading sequences and creating step instances.");
                 }

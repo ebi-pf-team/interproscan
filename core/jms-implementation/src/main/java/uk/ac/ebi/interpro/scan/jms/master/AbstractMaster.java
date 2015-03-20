@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
@@ -12,6 +13,8 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +40,8 @@ public abstract class AbstractMaster implements Master {
     protected String baseDirectoryTemporaryFiles;
     protected String temporaryFileDirSuffix;
 
+    //Misc
+    protected boolean deleteWorkingDirectoryOnCompletion;
 
     public void setWorkerRunner(WorkerRunner workerRunner) {
         this.workerRunner = workerRunner;
@@ -56,6 +61,18 @@ public abstract class AbstractMaster implements Master {
 
     public void setTemporaryDirectoryManager(TemporaryDirectoryManager temporaryDirectoryManager) {
         this.temporaryDirectoryManager = temporaryDirectoryManager;
+    }
+
+    public TemporaryDirectoryManager getTemporaryDirectoryManager() {
+        return temporaryDirectoryManager;
+    }
+
+    public boolean isDeleteWorkingDirectoryOnCompletion() {
+        return deleteWorkingDirectoryOnCompletion;
+    }
+
+    public void setDeleteWorkingDirectoryOnCompletion(boolean deleteWorkingDirectoryOnCompletion) {
+        this.deleteWorkingDirectoryOnCompletion = deleteWorkingDirectoryOnCompletion;
     }
 
     @Required
@@ -199,6 +216,33 @@ public abstract class AbstractMaster implements Master {
     @Required
     public void setTemporaryDirectory(String temporaryDirectory) {
         this.baseDirectoryTemporaryFiles = temporaryDirectory;
+    }
+
+    /**
+     * get the absolute path the temporary working directory
+     *
+     * @return
+     */
+    public String getWorkingTemporaryDirectoryPath(){
+        return temporaryDirectoryManager.replacePath(baseDirectoryTemporaryFiles);
+    }
+
+    public void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
+        File dir = new File(dirPath);
+        FileUtils.deleteDirectory(dir);
+    }
+
+    public void cleanUpWorkingDirectory(){
+        if(isDeleteWorkingDirectoryOnCompletion()) {
+            final String temporaryDirectoryName  = getWorkingTemporaryDirectoryPath();
+            LOGGER.debug("temporaryDirectoryName : " + temporaryDirectoryName);
+            try {
+                deleteWorkingTemporaryDirectory(temporaryDirectoryName);
+            } catch (IOException e) {
+                LOGGER.warn("At run completion, unable to delete temporary working directory " + temporaryDirectoryName);
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
