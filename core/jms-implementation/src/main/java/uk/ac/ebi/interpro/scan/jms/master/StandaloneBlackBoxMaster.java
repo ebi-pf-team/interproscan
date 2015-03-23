@@ -24,9 +24,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     public void run() {
         final long now = System.currentTimeMillis();
         super.run();
-        System.out.println(Utilities.getTimeNow() + "verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
 
         if(verboseLog){
+            System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
         try {
