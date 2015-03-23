@@ -134,7 +134,7 @@ public class Run extends AbstractI5Runner {
             }
 
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.11-50.0-HMMFilter-SNAPSHOT");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.11-51.0");
 
 
             //String config = System.getProperty("config");
