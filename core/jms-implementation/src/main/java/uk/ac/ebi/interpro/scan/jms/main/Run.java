@@ -240,12 +240,13 @@ public class Run extends AbstractI5Runner {
                 //checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
 
                 //get temp directory for cleanup
-                final AbstractMaster master = (AbstractMaster) runnable;
-                temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
-                deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
+                if (!mode.equals(Mode.INSTALLER)) {
+                    final AbstractMaster master = (AbstractMaster) runnable;
+                    temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+                    deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
 
-                LOGGER.debug(Utilities.getTimeNow() + " workingTemporaryDirectory is  " + temporaryDirectory);
-
+                    LOGGER.debug(Utilities.getTimeNow() + " workingTemporaryDirectory is  " + temporaryDirectory);
+                }
                 System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode...");
 
                 runnable.run();
