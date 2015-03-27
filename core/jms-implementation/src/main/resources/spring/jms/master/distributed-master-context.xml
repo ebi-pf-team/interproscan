@@ -70,10 +70,14 @@
                 <property name="gridJobsLimit" value="${grid.jobs.limit}"/>
                 <property name="lsfMonitor" ref="lsfMonitor"/>
                 <property name="gridName" value="${grid.name}"/>
+                <property name="submissionCommandHeredocOpen" value="${grid.command.heredoc.open}"/>
+                <property name="submissionCommandHeredocClose" value="${grid.command.heredoc.close}"/>
                 <property name="highMemory" value="false"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
                 </property>
+
+
 
             </bean>
         </property>
@@ -85,6 +89,8 @@
                 <property name="i5Command" value="${worker.high.memory.command}"/>
                 <property name="highMemory" value="true"/>
                 <property name="gridName" value="${grid.name}"/>
+                <property name="submissionCommandHeredocOpen" value="${grid.command.heredoc.open}"/>
+                <property name="submissionCommandHeredocClose" value="${grid.command.heredoc.close}"/>
                 <property name="workerStartupStrategy">
                     <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.UnrestrictedWorkerStartupStrategy"/>
                 </property>
@@ -121,7 +127,6 @@
     <bean id="portExclusionList" class="java.lang.String">
         <constructor-arg value="${tcp.port.exclusion.list}"/>
     </bean>
-
 
 
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />

@@ -100,7 +100,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
         Utilities.verboseLog = verboseLog;
 
-        if(verboseLog){
+        if(Utilities.verboseLog){
             Utilities.verboseLog("DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog("DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
             Utilities.verboseLog("DEBUG " + "Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
