@@ -140,7 +140,12 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
         final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileTemplate);
 
         List<String> command = new ArrayList<String>();
-        command.add(this.getFullPathToPython());
+        if(this.getFullPathToPython().trim().isEmpty()){
+            command.add("python");
+        }else{
+            command.add(this.getFullPathToPython());
+        }
+
 
         command.add(this.fullPathToPfsearchWrapper);
         command.add(fileNameTblout);
