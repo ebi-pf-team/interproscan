@@ -26,6 +26,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private String submissionCommand;
 
+    private String submissionCommandHeredocOpen;
+
+    private String submissionCommandHeredocClose;
+
     private String gridCommand;
 
     private String projectId;
@@ -81,6 +85,22 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     @Required
     public void setSubmissionCommand(String submissionCommand) {
         this.submissionCommand = submissionCommand;
+    }
+
+    public String getSubmissionCommandHeredocOpen() {
+        return submissionCommandHeredocOpen;
+    }
+
+    public void setSubmissionCommandHeredocOpen(String submissionCommandHeredocOpen) {
+        this.submissionCommandHeredocOpen = submissionCommandHeredocOpen;
+    }
+
+    public String getSubmissionCommandHeredocClose() {
+        return submissionCommandHeredocClose;
+    }
+
+    public void setSubmissionCommandHeredocClose(String submissionCommandHeredocClose) {
+        this.submissionCommandHeredocClose = submissionCommandHeredocClose;
     }
 
     @Required
@@ -283,10 +303,29 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 int failedSubmissions = 0;
                 for(int workerIndex = 0;workerIndex < maxWorkerIndex;workerIndex++){
                     final CommandLineConversation clc = new CommandLineConversationImpl();
-                    commandToSubmit = new StringBuilder(gridCommand)
-                            .append(getClusterCommandArguments(workerIndex)
-                                    .append(" " + i5Command)
-                                    .append(getInterproscanCommandArguments(priority,tcpUri,temporaryDirectory)));
+                    if(gridName.equals("lsf")) {
+                        commandToSubmit = new StringBuilder(gridCommand)
+                                .append(getClusterCommandArguments(workerIndex)
+                                        .append(" " + i5Command)
+                                        .append(getInterproscanCommandArguments(priority, tcpUri, temporaryDirectory)));
+                    }else if(gridName.equals("other")){
+                        commandToSubmit = new StringBuilder()
+                                .append(submissionCommandHeredocOpen)
+                                .append(gridCommand)
+                                .append(getClusterCommandArguments(workerIndex)
+                                        .append("  ")
+                                        .append("\n")
+                                        .append(i5Command)
+                                        .append(getInterproscanCommandArguments(priority, tcpUri, temporaryDirectory)))
+                                .append("\n")
+                                .append(submissionCommandHeredocClose);
+                    }else{
+                        commandToSubmit = new StringBuilder(gridCommand)
+                                .append(getClusterCommandArguments(workerIndex)
+                                        .append(" " + i5Command)
+                                        .append(getInterproscanCommandArguments(priority, tcpUri, temporaryDirectory)));
+                    }
+
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("command to submit to cluster: " + commandToSubmit);
                     }
@@ -371,10 +410,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         }
 
         //other grid submission commands
-        if(gridName.equals("other")){
-            clusterCommandAguments = new StringBuilder();
-            clusterCommandAguments.append("/bin/bash -c 'echo \"");
-        }
+//        if(gridName.equals("other")){
+//            clusterCommandAguments = new StringBuilder();
+//            clusterCommandAguments.append("/bin/bash -c 'echo \"");
+//        }
         return clusterCommandAguments;
     }
 
