@@ -198,8 +198,8 @@ public class Run extends AbstractI5Runner {
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
                 parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
                 parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
-                //until we change the analysis  manager
-                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
+//                until we change the analysis  manager
+//                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
                 validateOutputFormatList(parsedOutputFormats, mode);
             }
 
@@ -240,7 +240,8 @@ public class Run extends AbstractI5Runner {
                 //checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
 
                 //get temp directory for cleanup
-                if (!mode.equals(Mode.INSTALLER)) {
+                if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
+                        || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
                     final AbstractMaster master = (AbstractMaster) runnable;
                     temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
                     deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
