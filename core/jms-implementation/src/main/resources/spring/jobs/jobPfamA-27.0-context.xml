@@ -41,7 +41,7 @@
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pfama} ${hmmer3.hmmsearch.cpu.switch.pfama}"/>
-        <property name="fullPathToHmmFile" value="${Pfam-A.hmm.path.27.0}"/>
+        <property name="fullPathToHmmFile" value="${pfam-a.hmm.path.27.0}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="usesFileOutputSwitch" value="true"/>
@@ -73,10 +73,10 @@
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
                         <property name="gaValuesRetriever">
                             <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
-                                <constructor-arg value="${Pfam-A.hmm.path.27.0}"/>
+                                <constructor-arg value="${pfam-a.hmm.path.27.0}"/>
                             </bean>
                         </property>
-                        <property name="signatureLibraryRelease" value="27.0"/>
+                        <property name="signatureLibraryRelease" ref="pfamASignatureLibraryReleaseVersion"/>
                         <property name="signatureLibrary" value="PFAM"/>
                     </bean>
                 </property>
@@ -107,14 +107,14 @@
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
                 <property name="clanFileParser">
                     <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
-                        <property name="pfamASeedFile" value="${Pfam-A.seed.path.27.0}"/>
-                        <property name="pfamCFile" value="${Pfam-C.path.27.0}"/>
+                        <property name="pfamASeedFile" value="${pfam-a.seed.path.27.0}"/>
+                        <property name="pfamCFile" value="${pfam-clans.path.27.0}"/>
                     </bean>
                 </property>
             </bean>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="signatureLibraryRelease" value="27.0"/>
+        <property name="signatureLibraryRelease" ref="pfamASignatureLibraryReleaseVersion"/>
         <property name="signatureLibrary" value="PFAM"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO-27.0"/>
         <property name="filteredMatchDAO">
@@ -129,6 +129,10 @@
     <bean id="signatureLibraryReleasePfamA-27.0" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PFAM"/>
         <constructor-arg type="java.lang.String" value="27.0"/>
+    </bean>
+
+    <bean id="pfamASignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="27.0"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
