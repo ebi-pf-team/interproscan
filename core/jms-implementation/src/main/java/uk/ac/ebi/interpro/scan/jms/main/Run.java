@@ -158,6 +158,7 @@ public class Run extends AbstractI5Runner {
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
+
                 if (isInvalid(mode, parsedCommandLine)) {
                     printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
                     System.out.println("Available analyses:");    // LEAVE as System.out
@@ -180,6 +181,13 @@ public class Run extends AbstractI5Runner {
 
                 try {
                     analysesToRun = getApplications(parsedCommandLine, jobs);
+                    if (LOGGER.isDebugEnabled()){
+                        StringBuilder analysisItems = new StringBuilder();
+                        for (String analysisItem : analysesToRun){
+                            analysisItems.append(analysisItem).append(" ");
+                        }
+                        LOGGER.debug("analysesToRun :- " + analysisItems.toString());
+                    }
                 } catch (InvalidInputException e) {
                     System.out.println("Invalid input specified for -appl/--applications parameter:\n" + e.getMessage());
                     System.exit(1);
@@ -900,6 +908,7 @@ public class Run extends AbstractI5Runner {
                     SignatureLibraryRelease slr = job.getLibraryRelease();
                     String applName = slr.getLibrary().getName();
                     String applVersion = slr.getVersion();
+                    LOGGER.debug("SignatureLibraryRelease: " + applName + ", " + applVersion);
                     if (applName.equalsIgnoreCase(userApplName)) {
                         // This analysis name exists, what about the version?
                         if (userApplVersion == null) {

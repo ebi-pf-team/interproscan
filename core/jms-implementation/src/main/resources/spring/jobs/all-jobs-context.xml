@@ -9,7 +9,9 @@
 
     <import resource="jobPhobius-1.01-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
+    <import resource="jobGene3dTest-context.xml"/>
     <import resource="jobGene3d-3.5.0-context.xml"/>
+    <import resource="jobGene3d-4.1.0-context.xml"/>
     <import resource="jobPanther-9.0-context.xml"/>
     <import resource="jobPrints-42.0-context.xml"/>
     <import resource="jobCoils-2.2-context.xml"/>
@@ -18,6 +20,8 @@
     <import resource="jobPfamA-27.0-context.xml"/>
     <import resource="jobPrositeProfiles-20.105-context.xml"/>
     <import resource="jobPrositePatterns-20.105-context.xml"/>
+    <import resource="jobPrositeProfiles-context.xml"/>
+    <import resource="jobPrositePatterns-context.xml"/>
     <import resource="jobSignalP_EUK-4.0-context.xml"/>
     <import resource="jobSignalP_GRAM_POSITIVE-4.0-context.xml"/>
     <import resource="jobSignalP_GRAM_NEGATIVE-4.0-context.xml"/>
@@ -50,7 +54,9 @@
                 <ref bean="jobPfamA-27.0"/>
                 <ref bean="jobPhobius-1.01"/>
                 <ref bean="jobGene3d"/>
+                <ref bean="jobGene3dTest"/>
                 <ref bean="jobGene3d-3.5.0"/>
+                <ref bean="jobGene3d-4.1.0"/>
                 <ref bean="jobPanther-9.0"/>
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobCoils-2.2"/>
@@ -58,6 +64,8 @@
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles-20.105"/>
                 <ref bean="jobPrositePatterns-20.105"/>
+                <ref bean="jobPrositeProfiles"/>
+                <ref bean="jobPrositePatterns"/>
                 <ref bean="jobSignalP_EUK-4.0"/>
                 <ref bean="jobSignalP_GRAM_POSITIVE-4.0"/>
                 <ref bean="jobSignalP_GRAM_NEGATIVE-4.0"/>
