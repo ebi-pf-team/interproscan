@@ -11,6 +11,7 @@
         <property name="description"
                   value="Structural assignment for whole genes and genomes using the CATH domain structure database"/>
         <property name="analysis" value="true"/>
+        <property name="active" value="false" />
         <property name="libraryRelease" ref="signatureLibraryReleaseGene3d-3.5.0"/>
     </bean>
 
