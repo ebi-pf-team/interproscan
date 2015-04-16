@@ -899,11 +899,27 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
 
+            //All jobs
+            for (Job job : allJobs.getAnalysisJobs().getJobList()){
+                LOGGER.debug("SignatureLibraryRelease: " +
+                        job.getId() + ": " +
+                        job.getLibraryRelease().getLibrary().getName() + ", " +
+                        job.getLibraryRelease().getVersion() + ", " +
+                        "active: " + job.isActive());
+                if(job.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("gene3d")){
+                    LOGGER.debug("Gene3d: " +
+                            job.getSteps());
+                }
+
+            }
+            //User specified jobs
+
             // Now check the user entered analysis versions actually exists
             for (Map.Entry<String, String> mapEntry : userAnalysesMap.entrySet()) {
                 String userApplName = mapEntry.getKey();
                 String userApplVersion = mapEntry.getValue();
                 boolean found = false;
+
                 for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
                     SignatureLibraryRelease slr = job.getLibraryRelease();
                     String applName = slr.getLibrary().getName();
