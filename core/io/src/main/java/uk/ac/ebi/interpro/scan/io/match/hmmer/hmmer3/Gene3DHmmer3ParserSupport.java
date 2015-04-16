@@ -7,6 +7,8 @@ import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
 
+import java.util.regex.Pattern;
+
 /**
  * Support class to parse HMMER3 output into {@link Gene3dHmmer3RawMatch}es.
  *
@@ -15,7 +17,27 @@ import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
  */
 public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3dHmmer3RawMatch> {
 
+//    default reg pattern
+//    private static final Pattern MODEL_ACCESSION_LINE_PATTERN_DEFAULT
+//            = Pattern.compile("^[^:]*:\\s+(\\w+)\\s+\\[M=(\\d+)\\].*$");
+
+    //Uses Query
+    private static final Pattern MODEL_ACCESSION_LINE_PATTERN
+            = Pattern.compile("^Query:\\s+(\\S+)+\\s+\\[M=(\\d+)\\]|^Query:\\s+cath\\|\\w+\\|([^\\/]+)\\S+\\s+\\[M=(\\d+)\\].*$");
+
     private AlignmentEncoder alignmentEncoder;
+
+    /**
+     * Returns Pattern object to parse the accession line.
+     * As the regular expressions required to parse the 'ID' or 'Accession' lines appear
+     * to differ from one member database to another, factored out here.
+     *
+     * @return Pattern object to parse the accession line.
+     */
+    @Override
+    public Pattern getModelIdentLinePattern() {
+        return MODEL_ACCESSION_LINE_PATTERN;
+    }
 
     @Required
     public void setAlignmentEncoder(AlignmentEncoder alignmentEncoder) {
