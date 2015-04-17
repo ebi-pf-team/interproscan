@@ -134,7 +134,7 @@ public class Run extends AbstractI5Runner {
             }
 
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.11-51.0");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.12-51.0-prod");
 
 
             //String config = System.getProperty("config");
@@ -207,7 +207,7 @@ public class Run extends AbstractI5Runner {
                 parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
                 parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
 //                until we change the analysis  manager
-//                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
+                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
                 validateOutputFormatList(parsedOutputFormats, mode);
             }
 
@@ -741,12 +741,12 @@ public class Run extends AbstractI5Runner {
 
     private static String[]  xmlToXmlSlimOutputChange(String[] options){
         Set<String> parsedOptions = new HashSet<String>();
-	for (String optionsItem : options) {
-	  if (optionsItem.equals("xml")) {
-	    parsedOptions.add("xml-slim");
-          }else{
-           parsedOptions.add(optionsItem);
-	  }
+        for (String optionsItem : options) {
+            if (optionsItem.equals("xml")) {
+                parsedOptions.add("xml-slim");
+            } else {
+                parsedOptions.add(optionsItem);
+            }
         }
         return parsedOptions.toArray(new String[parsedOptions.size()]);
     }
@@ -846,6 +846,14 @@ public class Run extends AbstractI5Runner {
         // To build a list of each analysis and the version specified (valid inputs only)
         List<String> analysesToRun = new ArrayList<String>();
 
+        //Hack to allow old names
+        Map<String, String> deprecatedNames = new HashMap<String, String>();
+        deprecatedNames.put("PFAMA", SignatureLibrary.PFAM.getName());
+        deprecatedNames.put("SIGNALP-EUK", SignatureLibrary.SIGNALP_EUK.getName());
+        deprecatedNames.put("SIGNALP-GRAM_POSITIVE", SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName());
+        deprecatedNames.put("SIGNALP-GRAM_NEGATIVE", SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName());
+
+
         // List of analyses parsed from command line, exactly as the user entered them
         String[] parsedAnalyses = null;
         if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
@@ -899,19 +907,6 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
 
-            //All jobs
-            for (Job job : allJobs.getAnalysisJobs().getJobList()){
-                LOGGER.debug("SignatureLibraryRelease: " +
-                        job.getId() + ": " +
-                        job.getLibraryRelease().getLibrary().getName() + ", " +
-                        job.getLibraryRelease().getVersion() + ", " +
-                        "active: " + job.isActive());
-                if(job.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("gene3d")){
-                    LOGGER.debug("Gene3d: " +
-                            job.getSteps());
-                }
-
-            }
             //User specified jobs
 
             // Now check the user entered analysis versions actually exists
@@ -919,7 +914,11 @@ public class Run extends AbstractI5Runner {
                 String userApplName = mapEntry.getKey();
                 String userApplVersion = mapEntry.getValue();
                 boolean found = false;
-
+                //deal with deprecated application names
+                String possibleUserApplName = deprecatedNames.get(userApplName.toUpperCase());
+                if (possibleUserApplName != null){
+                    userApplName = possibleUserApplName;
+                }
                 for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
                     SignatureLibraryRelease slr = job.getLibraryRelease();
                     String applName = slr.getLibrary().getName();
