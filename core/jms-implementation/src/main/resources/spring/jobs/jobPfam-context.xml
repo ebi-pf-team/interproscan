@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: Pfam-A ############################  -->
+    <bean id="jobPfam" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)"/>
+        <property name="analysis" value="true"/>
+        <property name="active" value="false" />
+        <property name="libraryRelease" ref="signatureLibraryReleasePfamA"/>
+    </bean>
+
+    <bean id="abstractPfamStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPfam"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PFAM}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepPfamWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractPfamStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepPfamRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractPfamStep">
+        <property name="dependsUpon" ref="stepPfamWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pfama} ${hmmer3.hmmsearch.cpu.switch.pfama}"/>
+        <property name="fullPathToHmmFile" value="${pfam-a.hmm.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+
+    </bean>
+
+    <bean id="stepPfamDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPfamStep">
+        <property name="dependsUpon" ref="stepPfamRunHmmer3"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <bean id="stepPfamParseHmmerOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.ParsePfam_A_HMMER3OutputStep"
+          parent="abstractPfamStep">
+        <property name="dependsUpon" ref="stepPfamRunHmmer3"/>
+        <property name="stepDescription" value="Parse the output from HMMER3"/>
+
+        <!-- TODO - Apparently not being used for anything ... ?  Need to test. -->
+        <!--<property name="fullPathToHmmFile" value="${Pfam-A.hmm.path}"/>-->
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
+                        <property name="gaValuesRetriever">
+                            <bean class="uk.ac.ebi.interpro.scan.io.model.GaValuesRetriever">
+                                <constructor-arg value="${pfam-a.hmm.path}"/>
+                            </bean>
+                        </property>
+                        <property name="signatureLibraryRelease" ref="pfamSignatureLibraryReleaseVersion"/>
+                        <property name="signatureLibrary" value="PFAM"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="serialGroup" value="PARSE_PFAM_A"/>
+        <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="retries" value="3"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <bean id="stepPfamDeleteHmmerOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPfamStep">
+        <property name="dependsUpon" ref="stepPfamParseHmmerOutput"/>
+        <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 4 -->
+    <bean id="stepPfamPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA.Pfam_A_PostProcessingStep"
+          parent="abstractPfamStep">
+        <property name="dependsUpon" ref="stepPfamParseHmmerOutput"/>
+        <property name="stepDescription" value="Performs post processing on Pfam data (Hmmer 3 based)"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
+                <property name="clanFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
+                        <property name="pfamASeedFile" value="${pfam-a.seed.path}"/>
+                        <property name="pfamCFile" value="${pfam-clans.path}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" ref="pfamSignatureLibraryReleaseVersion"/>
+        <property name="signatureLibrary" value="PFAM"/>
+        <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
+        </property>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="pfamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAOImpl"/>
+
+    <bean id="signatureLibraryReleasePfamA" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PFAM"/>
+        <constructor-arg type="java.lang.String" ref="pfamSignatureLibraryReleaseVersion"/>
+    </bean>
+
+    <bean id="pfamSignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="${pfam-a.signature.library.release}"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
