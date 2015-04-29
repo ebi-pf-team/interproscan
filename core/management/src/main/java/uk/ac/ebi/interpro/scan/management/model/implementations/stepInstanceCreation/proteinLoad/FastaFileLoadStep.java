@@ -168,26 +168,36 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 } else {
                     analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
                 }
-                LOGGER.debug("analysisJobs: " + analysisJobs);
-                LOGGER.debug("analysisJobNames: " + analysisJobNames);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("analysisJobs: " + analysisJobs);
+                    LOGGER.debug("analysisJobNames: " + analysisJobNames);
+                }
                 for (Job analysisJob : analysisJobs.getJobList()){
                     SignatureLibraryRelease signatureLibraryRelease = analysisJob.getLibraryRelease();
                     if(signatureLibraryRelease != null) {
                         //TODO - should the name always be in upppercase
                         analysisJobMap.put(signatureLibraryRelease.getLibrary().getName().toUpperCase(), signatureLibraryRelease);
-                        LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
+                        }
                     }
                 }
-                LOGGER.debug("analysisJobMap:" + analysisJobMap);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("analysisJobMap:" + analysisJobMap);
+                }
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
-                LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                }
                 StringBuilder analysesToRun = new StringBuilder();
                 for (String key: analysisJobMap.keySet()){
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
                 }
-                LOGGER.debug(analysesPrintOutStr + analysesToRun.toString());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(analysesPrintOutStr + analysesToRun.toString());
+                }
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 StepCreationSequenceLoadListener sequenceLoadListener =
