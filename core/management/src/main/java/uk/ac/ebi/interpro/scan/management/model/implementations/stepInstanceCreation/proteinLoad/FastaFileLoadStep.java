@@ -196,9 +196,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
 //                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames, useMatchLookupService);
                 fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Finished loading sequences and creating step instances.");
-                }
+                LOGGER.debug("Finished loading sequences and creating step instances.");
             } finally {
                 if (fastaFileInputStream != null) {
                     try {
