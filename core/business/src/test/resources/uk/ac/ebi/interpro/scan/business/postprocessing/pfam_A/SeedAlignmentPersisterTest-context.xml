@@ -7,18 +7,19 @@
 
     <bean id="persister" class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.SeedAlignmentPersister">
         <property name="jdbcTemplate" ref="jdbcTemplate"/>
-        <property name="modelTextFile" value="file:/home/pjones/projects/i5_resources/support/data/pfam/24.0/Pfam-A.seed"/>
+        <property name="modelTextFile" value="file:/PATH/TO/data/pfam/26.0/Pfam-A.seed"/>
     </bean>
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <constructor-arg ref="uniparcDataSource"/>
     </bean>
 
+    <!--TODO Remove or re-implement this test. Don't want DB connection details here!-->
     <bean id="uniparcDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
-        <property name="url" value="jdbc:oracle:thin:@gin.ebi.ac.uk:1571:UAPRO"/>
-        <property name="username" value="interpro_webserver"/>
-        <property name="password" value="iwebserv"/>
+        <property name="url" value="jdbc:oracle:thin:@HOSTNAME:1571:UAPRO"/>
+        <property name="username" value="USERNAME"/>
+        <property name="password" value="PASSWORD"/>
     </bean>
 
 </beans>
