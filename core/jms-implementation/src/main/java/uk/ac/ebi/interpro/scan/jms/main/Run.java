@@ -134,7 +134,7 @@ public class Run extends AbstractI5Runner {
             }
 
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.11-51.0");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.12-51.0-prod");
 
 
             //String config = System.getProperty("config");
@@ -158,6 +158,7 @@ public class Run extends AbstractI5Runner {
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
+
                 if (isInvalid(mode, parsedCommandLine)) {
                     printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
                     System.out.println("Available analyses:");    // LEAVE as System.out
@@ -180,6 +181,13 @@ public class Run extends AbstractI5Runner {
 
                 try {
                     analysesToRun = getApplications(parsedCommandLine, jobs);
+                    if (LOGGER.isDebugEnabled()){
+                        StringBuilder analysisItems = new StringBuilder();
+                        for (String analysisItem : analysesToRun){
+                            analysisItems.append(analysisItem).append(" ");
+                        }
+                        LOGGER.debug("analysesToRun :- " + analysisItems.toString());
+                    }
                 } catch (InvalidInputException e) {
                     System.out.println("Invalid input specified for -appl/--applications parameter:\n" + e.getMessage());
                     System.exit(1);
@@ -199,7 +207,7 @@ public class Run extends AbstractI5Runner {
                 parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
                 parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
 //                until we change the analysis  manager
-//                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
+                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
                 validateOutputFormatList(parsedOutputFormats, mode);
             }
 
@@ -733,12 +741,12 @@ public class Run extends AbstractI5Runner {
 
     private static String[]  xmlToXmlSlimOutputChange(String[] options){
         Set<String> parsedOptions = new HashSet<String>();
-	for (String optionsItem : options) {
-	  if (optionsItem.equals("xml")) {
-	    parsedOptions.add("xml-slim");
-          }else{
-           parsedOptions.add(optionsItem);
-	  }
+        for (String optionsItem : options) {
+            if (optionsItem.equals("xml")) {
+                parsedOptions.add("xml-slim");
+            } else {
+                parsedOptions.add(optionsItem);
+            }
         }
         return parsedOptions.toArray(new String[parsedOptions.size()]);
     }
@@ -838,6 +846,14 @@ public class Run extends AbstractI5Runner {
         // To build a list of each analysis and the version specified (valid inputs only)
         List<String> analysesToRun = new ArrayList<String>();
 
+        //Hack to allow old names
+        Map<String, String> deprecatedNames = new HashMap<String, String>();
+        deprecatedNames.put("PFAMA", SignatureLibrary.PFAM.getName());
+        deprecatedNames.put("SIGNALP-EUK", SignatureLibrary.SIGNALP_EUK.getName());
+        deprecatedNames.put("SIGNALP-GRAM_POSITIVE", SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName());
+        deprecatedNames.put("SIGNALP-GRAM_NEGATIVE", SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName());
+
+
         // List of analyses parsed from command line, exactly as the user entered them
         String[] parsedAnalyses = null;
         if (parsedCommandLine.hasOption(I5Option.ANALYSES.getLongOpt())) {
@@ -891,15 +907,23 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
 
+            //User specified jobs
+
             // Now check the user entered analysis versions actually exists
             for (Map.Entry<String, String> mapEntry : userAnalysesMap.entrySet()) {
                 String userApplName = mapEntry.getKey();
                 String userApplVersion = mapEntry.getValue();
                 boolean found = false;
+                //deal with deprecated application names
+                String possibleUserApplName = deprecatedNames.get(userApplName.toUpperCase());
+                if (possibleUserApplName != null){
+                    userApplName = possibleUserApplName;
+                }
                 for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
                     SignatureLibraryRelease slr = job.getLibraryRelease();
                     String applName = slr.getLibrary().getName();
                     String applVersion = slr.getVersion();
+                    LOGGER.debug("SignatureLibraryRelease: " + applName + ", " + applVersion);
                     if (applName.equalsIgnoreCase(userApplName)) {
                         // This analysis name exists, what about the version?
                         if (userApplVersion == null) {
