@@ -141,6 +141,9 @@ public class Job implements Serializable, BeanNameAware {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Job");
+        if(libraryRelease != null ) {
+            sb.append(" (version:").append(libraryRelease.getVersion()).append(")");
+        }
         sb.append("{id='").append(id).append('\'');
         sb.append(", description='").append(description).append('\'');
         sb.append(", steps=").append(steps);
