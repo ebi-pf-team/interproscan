@@ -154,6 +154,20 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     LOGGER.debug("FastaFileLoaderStep.jobs is null? " + jobs == null);
                     LOGGER.debug("Number of jobs in i5: " + jobs.getJobList().size());
                 }
+                //All jobs
+                for (Job job4Debug : jobs.getAnalysisJobs().getJobList()){
+                    LOGGER.debug("SignatureLibraryRelease: " +
+                            job4Debug.getId() + ": " +
+                            job4Debug.getLibraryRelease().getLibrary().getName() + ", " +
+                            job4Debug.getLibraryRelease().getVersion() + ", " +
+                            "active: " + job4Debug.isActive());
+                    if(job4Debug.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("gene3d")){
+                        LOGGER.debug("Gene3d: " + job4Debug.getLibraryRelease().getVersion() + " - " +
+                                job4Debug.getSteps());
+                    }
+
+                }
+
                 Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<String, SignatureLibraryRelease>();
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
