@@ -868,7 +868,7 @@ public class Run extends AbstractI5Runner {
             // Check the input matches the expected regex and build a user entered member database -> version number map
             Map<String, String> userAnalysesMap = new HashMap<String, String>();
             final Pattern applNameRegex = Pattern.compile("^[a-zA-Z_-]+"); // E.g. "PIRSF", "SignalP-GRAM_NEGATIVE"
-            final Pattern applVersionRegex = Pattern.compile("[0-9a-zA-Z.]+$"); // E.g. "3.01", "2.0c"
+            final Pattern applVersionRegex = Pattern.compile("\\d[0-9a-zA-Z.]+$"); // E.g. "3.01", "2.0c"
 
             for (int i = 0; i < parsedAnalyses.length; i++) {
                 final String parsedAnalysis = parsedAnalyses[i]; // E.g. "PIRSF", "PIRSF-3.01"
@@ -879,7 +879,7 @@ public class Run extends AbstractI5Runner {
                     continue;
                 }
                 int lastHyphen = parsedAnalysis.lastIndexOf('-');
-                if (lastHyphen == -1) {
+                if (lastHyphen == -1 || !Character.isDigit(parsedAnalysis.charAt(lastHyphen + 1))) {
                     // No specific version number specified by the user
                     applName = parsedAnalysis;
                 }
@@ -887,9 +887,8 @@ public class Run extends AbstractI5Runner {
                     applName = parsedAnalysis.substring(0, lastHyphen);
                     applVersion = parsedAnalysis.substring(lastHyphen + 1);
                 }
-                Matcher m1 = applNameRegex.matcher(parsedAnalysis);
-                Matcher m2 = applVersionRegex.matcher(parsedAnalysis);
-                if (m1.find() && m2.find()) {
+                final Matcher m1 = applNameRegex.matcher(applName);
+                if (m1.matches() && (applVersion == null || applVersionRegex.matcher(applVersion).matches())) {
                     if (applName.equalsIgnoreCase("SignalP")) {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
@@ -923,7 +922,9 @@ public class Run extends AbstractI5Runner {
                     SignatureLibraryRelease slr = job.getLibraryRelease();
                     String applName = slr.getLibrary().getName();
                     String applVersion = slr.getVersion();
-                    LOGGER.debug("SignatureLibraryRelease: " + applName + ", " + applVersion);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("SignatureLibraryRelease: " + applName + ", " + applVersion);
+                    }
                     if (applName.equalsIgnoreCase(userApplName)) {
                         // This analysis name exists, what about the version?
                         if (userApplVersion == null) {
