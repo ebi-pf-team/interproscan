@@ -41,8 +41,7 @@
         <property name="dependsUpon" ref="stepCoilsWriteFastaFile-2.2"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.coils.path}"/>
-        <property name="binarySwitches" value="-c -m"/>
-        <property name="fullPathToNewCoilMatFile" value="${coils.new_coil.mat.path.2.2}"/>
+        <property name="binarySwitches" value="-c"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>

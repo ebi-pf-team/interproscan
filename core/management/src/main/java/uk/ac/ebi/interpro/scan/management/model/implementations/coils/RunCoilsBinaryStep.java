@@ -50,7 +50,6 @@ public class RunCoilsBinaryStep extends RunBinaryStep {
         final List<String> command = new ArrayList<String>();
         command.add(fullPathToBinary);
         command.addAll(getBinarySwitchesAsList());
-        command.add(fullPathToNewCoilMatFile);
         return command;
     }
 
