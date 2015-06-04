@@ -206,8 +206,6 @@ public class Run extends AbstractI5Runner {
             if (parsedCommandLine.hasOption(I5Option.OUTPUT_FORMATS.getLongOpt())) {
                 parsedOutputFormats = parsedCommandLine.getOptionValues(I5Option.OUTPUT_FORMATS.getLongOpt());
                 parsedOutputFormats = tidyOptionsArray(parsedOutputFormats);
-//                until we change the analysis  manager
-                parsedOutputFormats = xmlToXmlSlimOutputChange(parsedOutputFormats);
                 validateOutputFormatList(parsedOutputFormats, mode);
             }
 
@@ -739,17 +737,6 @@ public class Run extends AbstractI5Runner {
         return parsedOptions.toArray(new String[parsedOptions.size()]);
     }
 
-    private static String[]  xmlToXmlSlimOutputChange(String[] options){
-        Set<String> parsedOptions = new HashSet<String>();
-        for (String optionsItem : options) {
-            if (optionsItem.equals("xml")) {
-                parsedOptions.add("xml-slim");
-            } else {
-                parsedOptions.add(optionsItem);
-            }
-        }
-        return parsedOptions.toArray(new String[parsedOptions.size()]);
-    }
     /**
      * Validate and tidy up the comma separated list of output formats specified by the user:
      * - Do the formats exist?
