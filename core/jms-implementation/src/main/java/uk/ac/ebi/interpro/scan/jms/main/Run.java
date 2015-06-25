@@ -261,6 +261,17 @@ public class Run extends AbstractI5Runner {
 
             //System.exit(0);
 
+        } catch (UnrecognizedOptionException exp) {
+            // bit of a hack - but it at least prints something informative for completely unknown options
+            // if we've caught the exception above COMMAND_LINE_OPTIONS_FOR_HELP should be empty anyway
+            if (COMMAND_LINE_OPTIONS_FOR_HELP.getOptions().size() == 0) {
+                for (Option option : (Collection<Option>) COMMAND_LINE_OPTIONS.getOptions()) {
+                    COMMAND_LINE_OPTIONS_FOR_HELP.addOption(option);
+                }
+            }
+            printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
+            System.out.println("Unrecognised option: " + exp.getOption());
+            System.exit(1);
         } catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
