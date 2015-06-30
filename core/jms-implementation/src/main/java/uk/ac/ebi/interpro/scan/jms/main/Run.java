@@ -155,6 +155,7 @@ public class Run extends AbstractI5Runner {
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
                 temporaryDirectory = jobs.getBaseDirectoryTemporaryFiles();
+                LOGGER.debug("temporaryDirectory: jobs.getBaseDirectoryTemporaryFiles() - " + temporaryDirectory.toString());
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
@@ -249,14 +250,32 @@ public class Run extends AbstractI5Runner {
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
                         || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
                     final AbstractMaster master = (AbstractMaster) runnable;
+                    LOGGER.debug(Utilities.getTimeNow() + " 1. Checking working Temporary Directory -master.getTemporaryDirectory() : " + master.getTemporaryDirectory());
+                    master.setupTemporaryDirectory();
+                    LOGGER.debug(Utilities.getTimeNow() + " 1. temporaryDirectory is  " + temporaryDirectory);
                     temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+                    LOGGER.debug(Utilities.getTimeNow() + " 1. BaseDirectoryTemporary is  " + master.getJobs().getBaseDirectoryTemporaryFiles());
+                    String workingTemporaryDirectory = master.getWorkingTemporaryDirectoryPath();
                     deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
 
-                    LOGGER.debug(Utilities.getTimeNow() + " workingTemporaryDirectory is  " + temporaryDirectory);
+                    LOGGER.debug(Utilities.getTimeNow() + " 1. workingTemporaryDirectory is  " + workingTemporaryDirectory);
                 }
                 System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode...");
 
                 runnable.run();
+
+                //get temp directory for cleanup
+//                if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
+//                        || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
+//                    final AbstractMaster master = (AbstractMaster) runnable;
+//                    LOGGER.debug(Utilities.getTimeNow() + " 2. Checking working Temporary Directory -master.getTemporaryDirectory() : " + master.getTemporaryDirectory());
+//                    master.setupTemporaryDirectory();
+//                    String workingTemporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+//                    deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
+//
+//                    LOGGER.debug(Utilities.getTimeNow() + " 2. workingTemporaryDirectory is  " + temporaryDirectory);
+//                }
+
             }
 
             //System.exit(0);
@@ -337,9 +356,14 @@ public class Run extends AbstractI5Runner {
             //process tmp dir (-T) option
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
                 String temporaryDirectory = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()), parsedCommandLine);
+                if(! directoryExists(temporaryDirectory)){
+                    createDirectory(temporaryDirectory);
+                }
+                //the following becomes superfluous
                 checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
                 master.setTemporaryDirectory(temporaryDirectory);
             }
+            LOGGER.debug("temporaryDirectory: master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
             checkIfProductionMasterAndConfigure(master, parsedCommandLine, ctx);
             checkIfBlackBoxMasterAndConfigure(master, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
         }
@@ -375,7 +399,7 @@ public class Run extends AbstractI5Runner {
         }
         if (master instanceof BlackBoxMaster) {
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
-            LOGGER.debug("Setting up the distributed black box master...");
+            LOGGER.debug("Setting up the black box master...");
             String tcpConnectionString = null;
             if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER) {
                 tcpConnectionString = configureTCPTransport(ctx);
@@ -450,6 +474,7 @@ public class Run extends AbstractI5Runner {
             final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
             bbMaster.setMapToPathway(mapToPathway);
             bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
+            LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());
         }
     }
 
@@ -563,6 +588,7 @@ public class Run extends AbstractI5Runner {
             checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
         }
         master.setTemporaryDirectory(temporaryDirectory);
+        LOGGER.debug("temporaryDirectory: simple master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
     }
 
     /**
