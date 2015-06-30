@@ -47,6 +47,29 @@ public class AbstractI5Runner {
         }
     }
 
+
+    protected static boolean createDirectory(final String filePath) {
+        File dir = new File(filePath);
+        try {
+            boolean dirCreated = dir.mkdirs();
+            return dirCreated;
+        } catch (SecurityException e) {
+            LOGGER.error("Directory creation test. Cannot create the specified directory !\n" +
+                    "Specified directory path (absolute): " + dir.getAbsolutePath(), e);
+            throw new IllegalStateException("The directory (-" + filePath + ")  you specified cannot be written to:", e);
+        }
+
+    }
+
+
+    protected static boolean directoryExists(final String dirPath) {
+        File dir = new File(dirPath);
+        if (dir.exists()) {
+           return true;
+        }
+        return false;
+    }
+
     protected static void checkDirectoryExistence(final String filePath, final String option) {
         String parent = new File(filePath).getParent();
         if (option.equals(I5Option.TEMP_DIRECTORY.getShortOpt())) {
