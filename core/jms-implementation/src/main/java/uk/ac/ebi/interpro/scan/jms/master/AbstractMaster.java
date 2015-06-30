@@ -114,9 +114,10 @@ public abstract class AbstractMaster implements Master {
         this.temporaryFileDirSuffix = temporaryFileDirSuffix;
     }
 
-    protected void setupTemporaryDirectory() {
+    public void setupTemporaryDirectory() {
         //Change base dir temp directory if
         if (baseDirectoryTemporaryFiles != null) {
+            LOGGER.debug("1. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
             if (!baseDirectoryTemporaryFiles.endsWith("/")) {
                 setTemporaryDirectory(baseDirectoryTemporaryFiles + "/");
             }
@@ -127,9 +128,15 @@ public abstract class AbstractMaster implements Master {
             else {
                 // The [UNIQUE] directory needs adding now (temp directory was probably specified by the user on the command line)
                 jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles + temporaryFileDirSuffix);
+                setTemporaryDirectory(jobs.getBaseDirectoryTemporaryFiles());
             }
+            LOGGER.debug("2. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
+        }else{
+            LOGGER.debug("baseDirectoryTemporaryFiles  is null ");
         }
     }
+
+
 
     public void run() {
         if (LOGGER.isDebugEnabled()) LOGGER.debug("Started Master run() method.");
@@ -235,7 +242,7 @@ public abstract class AbstractMaster implements Master {
     public void cleanUpWorkingDirectory(){
         if(isDeleteWorkingDirectoryOnCompletion()) {
             final String temporaryDirectoryName  = getWorkingTemporaryDirectoryPath();
-            LOGGER.debug("temporaryDirectoryName : " + temporaryDirectoryName);
+            LOGGER.debug("Clean temporaryDirectoryName : " + temporaryDirectoryName);
             try {
                 deleteWorkingTemporaryDirectory(temporaryDirectoryName);
             } catch (IOException e) {
