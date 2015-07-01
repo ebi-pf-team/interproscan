@@ -264,18 +264,6 @@ public class Run extends AbstractI5Runner {
 
                 runnable.run();
 
-                //get temp directory for cleanup
-//                if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
-//                        || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
-//                    final AbstractMaster master = (AbstractMaster) runnable;
-//                    LOGGER.debug(Utilities.getTimeNow() + " 2. Checking working Temporary Directory -master.getTemporaryDirectory() : " + master.getTemporaryDirectory());
-//                    master.setupTemporaryDirectory();
-//                    String workingTemporaryDirectory = master.getWorkingTemporaryDirectoryPath();
-//                    deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
-//
-//                    LOGGER.debug(Utilities.getTimeNow() + " 2. workingTemporaryDirectory is  " + temporaryDirectory);
-//                }
-
             }
 
             //System.exit(0);
