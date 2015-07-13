@@ -143,6 +143,25 @@ public class Run extends AbstractI5Runner {
                 LOGGER.info("Running in " + mode + " mode");
             }
 
+            //create the dot i5 dir/file
+            //$USER_HOME/.interproscan-5/interproscan.properties
+            String dotInterproscan5Dir = System.getProperty("user.home") + "/.interproscan-5";
+            LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
+            String interproscan5Properties =  dotInterproscan5Dir + "/interproscan.properties";
+            File interproscan5PropertiesFile = new File(interproscan5Properties);
+            if(! directoryExists(dotInterproscan5Dir)){
+                LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
+                createDirectory(dotInterproscan5Dir);
+
+            }else{
+                LOGGER.debug("Directory " + dotInterproscan5Dir + " exists");
+            }
+            //Create file if it doesnot exists
+            if (! interproscan5PropertiesFile.exists()) {
+                LOGGER.debug(" Creating the  interproscan5Properties file : " + interproscan5Properties);
+                interproscan5PropertiesFile.createNewFile();
+            }
+
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 
             // The command-line distributed mode selects a random port number for communications.
@@ -282,6 +301,9 @@ public class Run extends AbstractI5Runner {
         } catch (ParseException exp) {
             LOGGER.fatal("Exception thrown when parsing command line arguments.  Error message: " + exp.getMessage());
             printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
+            System.exit(1);
+        } catch (IOException e) {
+            e.printStackTrace();
             System.exit(1);
         } finally {
             //clean up the temp files
