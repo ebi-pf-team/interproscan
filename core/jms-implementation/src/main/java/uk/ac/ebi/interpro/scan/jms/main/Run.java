@@ -134,7 +134,7 @@ public class Run extends AbstractI5Runner {
             }
 
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.12-51.0-prod");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.14-53.0");
 
 
             //String config = System.getProperty("config");
@@ -152,9 +152,8 @@ public class Run extends AbstractI5Runner {
             if(! directoryExists(dotInterproscan5Dir)){
                 LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
                 createDirectory(dotInterproscan5Dir);
-
             }else{
-                LOGGER.debug("Directory " + dotInterproscan5Dir + " exists");
+                LOGGER.debug("Directory $USER_HOME/.interproscan-5/interproscan.properties  - " + dotInterproscan5Dir + " exists");
             }
             //Create file if it doesnot exists
             if (! interproscan5PropertiesFile.exists()) {
