@@ -259,20 +259,22 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 e.getMessage() + "\n" +
                 "Pre-calculated match lookup service failed - analysis proceeding to run locally\n" +
                 "============================================================\n\n" +
-                "The pre-calculated match lookup service has been configured\n" +
-                "in the interproscan.properties file. Unfortunately the web\n" +
-                "service has failed. Check the configuration of this service\n" +
-                "in the interproscan.properties file and, if nessary, set the\n" +
-                "following property to look like this:\n\n" +
+                "The pre-calculated match lookup service has been configured in the interproscan.properties file.  \n" +
+                "  precalculated match lookup service url : " +  preCalcMatchClient.getUrl() + "\n" +
+                "  precalculated match lookup service proxy host : " + preCalcMatchClient.getProxyHost() + "  proxy port : " +  preCalcMatchClient.getProxyPort() + "\n\n" +
+                "Unfortunately the web service has failed. Check the configuration of this service\n" +
+                "in the interproscan.properties file and, if necessary, set the following property to look like this:\n\n" +
                 "precalculated.match.lookup.service.url=\n\n" +
-                "If the problem persists, check if this is a firewall or proxy issue.\n" +
-                "If it is a proxy issue, then setting the following property in the " +
-                "interproscan.properties file should work:\n\n" +
+                "If the problem persists, check if this is a firewall or proxy issue. If it is a proxy issue, then setting \n" +
+                "the following property in the interproscan.properties file should work:\n\n" +
                 "precalculated.match.lookup.service.proxy.host=\n" +
                 "precalculated.match.lookup.service.proxy.port=\n\n" +
                 "If this still does not work please inform the InterPro team of this error\n" +
                 "by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n" +
                 "In the meantime, the analysis will continue to run locally.\n\n");
+
+
+
 
     }
 
