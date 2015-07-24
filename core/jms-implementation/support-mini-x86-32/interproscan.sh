@@ -35,6 +35,9 @@ then
     exit 1
 fi
 
-"$JAVA" -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms128M -Xmx2048M -jar  interproscan-5.jar $@ -u $USER_DIR
+"$JAVA" \
+-XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts \
+-XX:+UseFastAccessorMethods -Xms128M -Xmx2048M \
+-jar  interproscan-5.jar $@ -u $USER_DIR
 
 #end 
