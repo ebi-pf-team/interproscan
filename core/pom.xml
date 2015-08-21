@@ -17,29 +17,16 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <scm>
-        <developerConnection>scm:svn:http://interproscan.googlecode.com/svn/trunk/</developerConnection>
-    </scm>
-
     <distributionManagement>
         <repository>
+            <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
             <id>i5.repo</id>
-            <name>i5 maven repository</name>
-            <url>svn:https://interproscan.googlecode.com/svn/repository/</url>
+            <name>InterProScan 5 maven repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
         </repository>
     </distributionManagement>
 
     <repositories>
-
-        <repository>
-            <id>google-code-interproscan</id>
-            <name>google-code-interproscan</name>
-            <layout>default</layout>
-            <url>http://interproscan.googlecode.com/svn/repository/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
 
         <repository>
             <id>apache-maven-snapshots</id>
@@ -101,6 +88,8 @@
         <i5.svn.revision>5.14-53.0</i5.svn.revision>
         <i5.version>${project.version}</i5.version>
         <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+        <!-- github server corresponds to entry in ~/.m2/settings.xml -->
+        <github.global.server>github</github.global.server>
     </properties>
 
     <modules>
@@ -113,12 +102,10 @@
         <module>management</module>
         <module>jms-implementation</module>
         <module>precalcmatches</module>
-        <module>condensed-view</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
-
 
         <!-- Logging -->
         <dependency>
@@ -249,66 +236,39 @@
                     <attach>false</attach>
                     </configuration-->
             </plugin>
-
+            <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
             <plugin>
-                <artifactId>maven-release-plugin</artifactId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
                 <configuration>
-                    <tagBase>
-                        http://interproscan.googlecode.com/svn/tags/
-                    </tagBase>
+                    <altDeploymentRepository>i5.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>emma-maven-plugin</artifactId>-->
-                <!--<version>1.0-alpha-3</version>-->
-                <!--<inherited>true</inherited>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>process-classes</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>instrument</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-          <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.7</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.google.code.maven-svn-wagon</groupId>
-                        <artifactId>maven-svn-wagon</artifactId>
-                        <version>1.4</version>
-                    </dependency>
-                </dependencies>
+            <!-- Configure the site-maven-plugin to upload from your temporary staging i5.repo to your mvn-repo branch on github-->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <configuration>
+                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                    <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                    <repositoryName>interproscan</repositoryName>      <!-- github repo name -->
+                    <repositoryOwner>ebi-pf-team</repositoryOwner>     <!-- github username  -->
+                    <dryRun>true</dryRun> <!-- display creates/updates but don't actually perform any operations on the target GitHub repo -->
+                </configuration>
+                <executions>
+                    <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>com.google.code.maven-svn-wagon</groupId>
-                <artifactId>maven-svn-wagon</artifactId>
-                <version>1.4</version>
-            </extension>
-        </extensions>
-        <!--extensions>
-          <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-scm</artifactId>
-            <version>2.2</version>
-          </extension>
-          <extension>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-manager-plexus</artifactId>
-            <version>1.5</version>
-          </extension>
-          <extension>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-provider-svnexe</artifactId>
-            <version>1.5</version>
-          </extension>
-        </extensions-->
     </build>
 
 </project>
