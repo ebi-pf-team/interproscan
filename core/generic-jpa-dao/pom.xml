@@ -34,20 +34,6 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <!--<repositories>-->
-        <!--&lt;!&ndash;Moved Google code repository from master POM to this location&ndash;&gt;-->
-        <!--&lt;!&ndash;The reason for that is, if somebody runs mvn clean install for the first time, after checking out the project, it tries to download the master POM.&ndash;&gt;-->
-        <!--<repository>-->
-            <!--<id>google-code-interproscan</id>-->
-            <!--<name>google-code-interproscan</name>-->
-            <!--<layout>default</layout>-->
-            <!--<url>http://interproscan.googlecode.com/svn/repository/</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>false</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-    <!--</repositories>-->
-
     <dependencies>
 
         <!-- Everything below here is for testing only. -->
