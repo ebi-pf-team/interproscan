@@ -11,7 +11,7 @@
         <property name="description"
                   value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)"/>
         <property name="analysis" value="true"/>
-        <property name="active" value="false" />
+
         <property name="libraryRelease" ref="signatureLibraryReleasePfamA"/>
     </bean>
 
