@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 import junit.framework.Assert;
+import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,8 @@ public class CondensedViewTest {
 
     @Resource
     private EntryHierarchy entryHierarchy;
+
+    private static final Logger LOG = Logger.getLogger(CondensedViewTest.class.getName());
 
     @Test
     @Ignore
@@ -81,8 +84,17 @@ public class CondensedViewTest {
 
         CondensedView condensedView = new CondensedView(proteinLength, ssms);
         Assert.assertNotNull(condensedView);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(ssms);
+            for (CondensedLine line : condensedView.getLines()) {
+                for (SimpleSuperMatch m : line.getSuperMatchList()) {
+                    LOG.debug(m.getEntries() + " " + m.getLocation());
+                }
+            }
+        }
+
         // Check 10 is condensed down to 4 once hierarchy and position are taken into account
         Assert.assertEquals(4, condensedView.getNumSuperMatchBlobs());
-
     }
 }
