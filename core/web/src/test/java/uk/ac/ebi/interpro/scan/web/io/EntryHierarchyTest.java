@@ -48,6 +48,6 @@ public class EntryHierarchyTest {
     public void testGetEntryHierarchyDataMap() {
         Map<String, EntryHierarchyData> data = entryHierarchy.getEntryHierarchyDataMap();
         assertNotNull(data);
-        assertEquals(7489, data.size());
+        assertEquals(8298, data.size());
     }
 }

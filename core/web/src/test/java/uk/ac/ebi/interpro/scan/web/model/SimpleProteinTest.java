@@ -190,8 +190,8 @@ public class SimpleProteinTest {
         Assert.assertEquals("BRCA1", simpleEntry.getShortName());
         Assert.assertEquals("BRCA1", simpleEntry.getName());
         Assert.assertEquals(EntryType.FAMILY, simpleEntry.getType());
-        Assert.assertEquals(entryHierarchy.getEntryHierarchyData(proteinXrefIdentifier), simpleEntry.getHierarchyData());
-        Assert.assertEquals(entryHierarchy.getHierarchyLevel(proteinXrefIdentifier), simpleEntry.getHierarchyLevel());
+        Assert.assertEquals(entryHierarchy.getEntryHierarchyData(simpleEntry.getAc()), simpleEntry.getHierarchyData());
+        Assert.assertEquals(entryHierarchy.getHierarchyLevel(simpleEntry.getAc()), simpleEntry.getHierarchyLevel());
         Assert.assertEquals(1, simpleEntry.getSignaturesMap().size());
 
         //Test simple entry locations

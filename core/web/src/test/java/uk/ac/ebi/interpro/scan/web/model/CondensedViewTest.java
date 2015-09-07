@@ -94,7 +94,7 @@ public class CondensedViewTest {
             }
         }
 
-        // Check 10 is condensed down to 4 once hierarchy and position are taken into account
-        Assert.assertEquals(4, condensedView.getNumSuperMatchBlobs());
+        // Check 10 is condensed down to 5 once hierarchy and position are taken into account
+        Assert.assertEquals(5, condensedView.getNumSuperMatchBlobs());
     }
 }
