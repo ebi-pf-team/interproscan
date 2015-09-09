@@ -161,10 +161,16 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                             job4Debug.getLibraryRelease().getLibrary().getName() + ", " +
                             job4Debug.getLibraryRelease().getVersion() + ", " +
                             "active: " + job4Debug.isActive());
+
                     if(job4Debug.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("gene3d")){
                         LOGGER.debug("Gene3d: " + job4Debug.getLibraryRelease().getVersion() + " - " +
                                 job4Debug.getSteps());
                     }
+                        if(job4Debug.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("panther")) {
+                            LOGGER.debug("panther: " + job4Debug.getLibraryRelease().getVersion() + " - " +
+                                    job4Debug.getSteps());
+                        }
+
 
                 }
 

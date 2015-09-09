@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
@@ -16,8 +17,7 @@
         <property name="locations">
             <list>
                 <value>file:interproscan.properties</value>
-                <value>file:${user.home}/.interproscan-5/interproscan.properties</value>
-                <value>file:${system.interproscan.properties}</value>
+                <!--<value>file:${user.home}/.interproscan-5/interproscan.properties</value>-->
             </list>
         </property>
         <property name="ignoreResourceNotFound" value="true"/>

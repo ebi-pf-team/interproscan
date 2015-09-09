@@ -14,7 +14,7 @@
         <property name="libraryRelease" ref="signatureLibraryReleaseGene3d-3.3.0"/>
     </bean>
 
-    <bean id="abstractGene3dStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+    <bean id="abstractGene3dStep-3.3.0" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobGene3d-3.3.0"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.GENE3D}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
@@ -22,18 +22,18 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <bean id="stepGene3dWriteFasta"
+    -3.3.0<bean id="stepGene3dWriteFasta-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractGene3dStep">
+          parent="abstractGene3dStep-3.3.0">
         <property name="stepDescription" value="Create FASTA file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <bean id="stepGene3dRunHmmer3"
+    <bean id="stepGene3dRunHmmer3-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepGene3dWriteFasta-3.3.0"/>
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="-Z 10019 --domE 1 ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
@@ -44,18 +44,18 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepGene3dDeleteFastaFile"
+    <bean id="stepGene3dDeleteFastaFile-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepGene3dRunHmmer3-3.3.0"/>
         <property name="stepDescription" value="Delete FASTA file after HMMER3 run"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <bean id="stepGene3dParseHmmerOutput"
+    <bean id="stepGene3dParseHmmerOutput-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3ParseStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepGene3dRunHmmer3-3.3.0"/>
         <property name="stepDescription" value="Parse output from HMMER3"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <!--<property name="fullPath"                       value="${gene3d.hmm.path.3.3.0}"/>-->
@@ -78,18 +78,18 @@
         <property name="retries" value="3"/>
     </bean>
 
-    <bean id="stepGene3dDeleteHmmerOutput"
+    <bean id="stepGene3dDeleteHmmerOutput-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dParseHmmerOutput"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepGene3dParseHmmerOutput-3.3.0"/>
         <property name="stepDescription" value="Delete HMMER output file after parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
-    <bean id="stepCreateSsfFile"
+    <bean id="stepCreateSsfFile-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.WriteGene3dSsfFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dParseHmmerOutput"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepGene3dParseHmmerOutput-3.3.0"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
         <property name="stepDescription" value="Write out SSF file for DomainFinder3 to consume"/>
         <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
@@ -99,10 +99,10 @@
         </property>
     </bean>
 
-    <bean id="stepRunDomainFinder3Step"
+    <bean id="stepRunDomainFinder3Step-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunDomainFinder3BinaryStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepCreateSsfFile"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepCreateSsfFile-3.3.0"/>
         <property name="stepDescription" value="Run DomainFinder3"/>
         <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
         <property name="fullPathToBinary" value="${domainfinder3.path}"/>
@@ -112,10 +112,10 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepGene3dPostProcessingStep"
+    <bean id="stepGene3dPostProcessingStep-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DPostProcessingStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepRunDomainFinder3Step-3.3.0"/>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="stepDescription" value="Performs Gene3D Post Processing"/>
         <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
@@ -129,26 +129,26 @@
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
     </bean>
 
-    <bean id="stepGene3dDeleteSsfInputFile"
+    <bean id="stepGene3dDeleteSsfInputFile-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepRunDomainFinder3Step-3.3.0"/>
         <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
         <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
     </bean>
 
-    <bean id="stepGene3dDeleteSsfErrFile"
+    <bean id="stepGene3dDeleteSsfErrFile-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepRunDomainFinder3Step-3.3.0"/>
         <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
         <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].ssf.err"/>
     </bean>
 
-    <bean id="stepGene3dDeleteSsfOutputFile"
+    <bean id="stepGene3dDeleteSsfOutputFile-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dPostProcessingStep"/>
+          parent="abstractGene3dStep-3.3.0">
+        <property name="dependsUpon" ref="stepGene3dPostProcessingStep-3.3.0"/>
         <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
         <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
     </bean>
