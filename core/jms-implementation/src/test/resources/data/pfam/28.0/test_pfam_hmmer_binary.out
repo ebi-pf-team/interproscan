@@ -1,0 +1,136 @@
+# hmmsearch :: search profile(s) against a sequence database
+# HMMER 3.1b1 (May 2013); http://hmmer.org/
+# Copyright (C) 2013 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query HMM file:                  data/pfam/28.0/pfam_a.hmm
+# target sequence database:        /home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/matthewbuntu_20150908_142410805_io2l//jobPfam/000000000001_000000000006.fasta
+# output directed to file:         /home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/matthewbuntu_20150908_142410805_io2l//jobPfam/000000000001_000000000006.raw.out
+# model-specific thresholding:     GA cutoffs
+# sequence search space set to:    13672
+# number of worker threads:        2
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       KAR9  [M=683]
+Accession:   PF08580.6
+Description: Yeast cortical protein KAR9
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each sequence (and alignments):
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                              1  (683 nodes)
+Target sequences:                            1  (338 residues searched)
+Passed MSV filter:                         0  (0); expected 0.0 (0.02)
+Passed bias filter:                        0  (0); expected 0.0 (0.02)
+Passed Vit filter:                         0  (0); expected 0.0 (0.001)
+Passed Fwd filter:                         0  (0); expected 0.0 (1e-05)
+Initial search space (Z):              13672  [as set by --Z on cmdline]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.01
+# Mc/sec: 23.09
+//
+Query:       RTC_insert  [M=99]
+Accession:   PF05189.9
+Description: RNA 3'-terminal phosphate cyclase (RTC), insert domain
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+    1.7e-08   34.6   0.1    7.4e-08   32.6   0.2    2.0  1  1
+
+
+Domain annotation for each sequence (and alignments):
+>> 1
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   32.6   0.2   5.4e-12   7.4e-08       1      97 [.     184     274 ..     184     276 .. 0.87
+
+  Alignments for each domain:
+  == domain 1  score: 32.6 bits;  conditional E-value: 5.4e-12
+                 S----SEEEEEEEEESS-THH.HHHHHHHHHHHHTTTSSEEEEEEEC-SS-EEEEEEEEE-TT.S-EEEEEEE.......--HHHHHHHHHHHHHHHH CS
+  RTC_insert   1 drGrvkrirGvaystrvspss.anrmieaargvLnkllpdvyiytdsgkspGfgisLvaettttgvlysaeavsalgekgvpaedvGeeaaeeLleei 97
+                 +rG++ ++rG ++ ++v p++ a+r i++  g +    ++++     +++pG+ +sL +e+++  +     +   +gek+v+ae v+ + ++e  +++
+           1 184 ERGNIVQMRGEVLLAGV-PRHvAEREIATLAGSFSLHEQNIH-NLPRDQGPGNTVSLEVESEN-IT---ERF-FVVGEKRVSAEVVAAQLVKEVKRYL 274
+                 79***************.****************98866665.23477**************6.55...777.6789************999987766 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                              1  (99 nodes)
+Target sequences:                            1  (338 residues searched)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):              13672  [as set by --Z on cmdline]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.02
+# Mc/sec: 1.67
+//
+Query:       RTC  [M=220]
+Accession:   PF01137.17
+Description: RNA 3'-terminal phosphate cyclase
+Scores for complete sequences (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Sequence Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+    2.1e-78  262.1   0.2    2.5e-78  261.8   0.2    1.0  1  1
+
+
+Domain annotation for each sequence (and alignments):
+>> 1
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !  261.8   0.2   1.8e-82   2.5e-78       2     219 ..      12     325 ..      11     326 .. 0.98
+
+  Alignments for each domain:
+  == domain 1  score: 261.8 bits;  conditional E-value: 1.8e-82
+          TTTSTHHHHHHHHHHHHH---EEEESTTTTSSS-S--HHHHHHHHHHHHHHT-EEE--STT-SEEEEE------SEEEEEEESSEBHHHHHHHHHHHHTTSSS-EE CS
+          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+  RTC   2 gegGgqilRtalaLsaltgkpvrIenIRanRkkPGLraqhlaavellakitnaevegaeigsteltFkPgeikggeyeadigtAGsitlllqtllplllfakkplt 107
+          gegGgqilR+al+Ls++tg+p++I++IRa+R kPGL +qhl+av+++ +i++a+vegae+gs++l F+Pg+++gg+y+++ig+AGs+tl+lqt+lp+l+fa++p++
+    1  12 GEGGGQILRSALSLSMITGQPFTITSIRAGRAKPGLLRQHLTAVKAATEICGATVEGAELGSQRLLFRPGTVRGGDYRFAIGSAGSCTLVLQTVLPALWFADGPSR 117
+          8********************************************************************************************************* PP
+
+          EEEEEBSBBTTS--HHHHHHTHHHHHHHHT.-EEEEEEEE--BTTTB-EEEEEEEE-.-S---........................................... CS
+          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx........................................... RF
+  RTC 108 ltlkGgTnvsaapsvdylkrvllpllkrfgvveleleikkrGfypkGgGevelevepskklka........................................... 170
+          ++++GgT+++ ap++d+++rvl pll+++g ++ + ++ ++Gfyp+GgG v  ev+p++++++
+    1 118 VEVSGGTDNPSAPPADFIRRVLEPLLAKIG-IHQQTTLLRHGFYPAGGGVVATEVSPVASFNTlqlgergnivqmrgevllagvprhvaereiatlagsfslheqn 222
+          ******************************.79************************988777888**************************************** PP
+
+          .......................................................BSS-HHHHHHHHHHHHHHT.-EEEEESS--HHHHHHHHHHHHHSS-EEE CS
+          .......................................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx RF
+  RTC 171 .......................................................acvDehlqdqlilfmaLaegksrirvgeltlhtetalrvieqflgvkfk 219
+                                                                 a+v+e+l+dql+l+maLa g ++++v++++ h+ t++ v+e+fl v+f+
+    1 223 ihnlprdqgpgntvsleveseniterffvvgekrvsaevvaaqlvkevkrylastAAVGEYLADQLVLPMALA-GAGEFTVAHPSCHLLTNIAVVERFLPVRFS 325
+          *************************************************************************.679*************************97 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query model(s):                              1  (220 nodes)
+Target sequences:                            1  (338 residues searched)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):              13672  [as set by --Z on cmdline]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.01
+# Mc/sec: 7.44
+//
+[ok]
