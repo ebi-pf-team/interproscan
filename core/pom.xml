@@ -17,6 +17,10 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
+    <scm>
+        <developerConnection>scm:svn:http://interproscan.googlecode.com/svn/trunk/</developerConnection>
+    </scm>
+
     <distributionManagement>
         <repository>
             <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
@@ -102,10 +106,12 @@
         <module>management</module>
         <module>jms-implementation</module>
         <module>precalcmatches</module>
+        <module>condensed-view</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
+
 
         <!-- Logging -->
         <dependency>
@@ -272,6 +278,30 @@
                 </executions>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>com.google.code.maven-svn-wagon</groupId>
+                <artifactId>maven-svn-wagon</artifactId>
+                <version>1.4</version>
+            </extension>
+        </extensions>
+        <!--extensions>
+          <extension>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-scm</artifactId>
+            <version>2.2</version>
+          </extension>
+          <extension>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-manager-plexus</artifactId>
+            <version>1.5</version>
+          </extension>
+          <extension>
+            <groupId>org.apache.maven.scm</groupId>
+            <artifactId>maven-scm-provider-svnexe</artifactId>
+            <version>1.5</version>
+          </extension>
+        </extensions-->
     </build>
 
 </project>

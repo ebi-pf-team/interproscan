@@ -18,6 +18,7 @@
             </map>
         </property>
         <property name="doRunLocally" value="true"/>
+        <property name="active" value="false" />
     </bean>
 
     <bean id="fullPathToSignalPBinary" class="java.lang.String">
@@ -110,6 +111,7 @@
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.signalp.match.SignalPMatchParser">
                 <constructor-arg value="gram-"/>
+                <constructor-arg ref="signatureLibraryReleaseSignalp_GRAM_NEGATIVE-4.0"/>
             </bean>
         </property>
     </bean>

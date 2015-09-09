@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: Phobius ############################  -->
+
+    <bean id="pathToPhobiusPerlScript" class="java.lang.String">
+        <constructor-arg value="${binary.phobius.pl.path}"/>
+    </bean>
+
+    <bean id="jobPhobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="A combined transmembrane topology and signal peptide predictor"/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePhobius"/>
+        <!--Check mechanism for licensed binaries-->
+        <property name="nonEmptyPaths">
+            <list value-type="java.lang.String">
+                <ref bean="pathToPhobiusPerlScript"/>
+            </list>
+        </property>
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="binary.phobius.pl.path" value-ref="pathToPhobiusPerlScript"/>
+            </map>
+        </property>
+        <property name="doRunLocally" value="true"/>
+    </bean>
+
+    <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPhobius"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PHOBIUS}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepPhobiusWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractPhobiusStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="serialGroup" value="WRITE_FASTA_PHOBIUS"/>
+        <!-- Phobius cannot cope with all non-standard amino acids.  Pyrrolysine is
+         present in uniparc.  This custom FastaFileWriter will check for any non-standard amino acids
+         in the sequence (other than selenocysteine, which is OK) and substitute Pyrrolysine -> Lysine.
+         If any other characters appear that cannot be handled, the sequence will not be written out to the fasta file.-->
+        <property name="fastaFileWriter">
+            <bean class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter">
+                <property name="validAlphabet" value="ARNDCEQGHILKMFPSTWYVUX"/>
+                <property name="residueSubstitutions">
+                    <map>
+                        <entry key="O" value="K"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepPhobiusRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.phobius.RunPhobiusBinaryStep"
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon" ref="stepPhobiusWriteFastaFile"/>
+        <property name="stepDescription" value="Run Phobius Binary for selected proteins"/>
+        <property name="fullPathToBinary" ref="pathToPhobiusPerlScript"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepPhobiusDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon" ref="stepPhobiusRunBinary"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <bean id="stepPhobiusParseStoreOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.phobius.ParsePhobiusOutputStep"
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon" ref="stepPhobiusRunBinary"/>
+        <property name="stepDescription" value="Parse the output from Phobius"/>
+        <property name="serialGroup" value="PARSE_PHOBIUS"/>
+        <property name="phobiusOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="phobiusMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOImpl">
+                <constructor-arg ref="latestPhobiusSignatureLibraryRelease"/>
+            </bean>
+        </property>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser"/>
+        </property>
+        <property name="retries" value="3"/>
+    </bean>
+
+    <bean id="stepPhobiusDeleteBinaryOutputFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPhobiusStep">
+        <property name="dependsUpon" ref="stepPhobiusParseStoreOutput"/>
+        <property name="stepDescription" value="Delete the phobius output file following successful parsing"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job_phobius  !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="signatureLibraryReleasePhobius" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PHOBIUS"/>
+        <constructor-arg type="java.lang.String" ref="latestPhobiusSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="latestPhobiusSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="${phobius.signature.library.release}"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

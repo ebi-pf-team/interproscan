@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <!--TODO DELETE dbCreator - DON'T THINK THIS IS USED! Also delete whole "condensed-view" module? -->
+    <!--<bean id="dbCreator" class="uk.ac.ebi.interpro.scan.condensed.berkeley.BerkeleyDBCreator">-->
+        <!--<property name="htmlWriter">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter">-->
+                <!--<property name="freeMarkerConfig" ref="freeMarkerConfigHtmlWriter"/>-->
+                <!--<property name="applicationContextConfigLocation"-->
+                          <!--value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>-->
+                <!--<property name="freeMarkerTemplate" value="views/berkeleycondensed/condensed-view.ftl"/>-->
+                <!--<property name="entryHierarchyBeanId" value="entryHierarchy"/>-->
+                <!--<property name="htmlResourcesDir" value="data/freemarker/resources"/>-->
+                <!--<property name="tempDirectory" value="temp/"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="analyser">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.web.io.AnalyseMatchDataResult" scope="singleton" lazy-init="false">-->
+                <!--<constructor-arg index="0" ref="entryHierarchy"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+
+    <!-- Entry hierarchy properties files (locations set in Maven properties for profile)-->
+    <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
+          scope="singleton" lazy-init="false">
+        <property name="entryColourPropertiesFile">
+            <util:properties location="${entry.colours.file.loc}"/>
+        </property>
+        <property name="entryHierarchyDataResource" ref="${entryHierarchyDataResourceId}"/>
+        <property name="entryHierarchyDataResourceReader">
+            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchyDataResourceReader"/>
+        </property>
+        <property name="entryToGoDataResourceReader">
+            <bean class="uk.ac.ebi.interpro.scan.web.io.EntryToGoDataResourceReader"/>
+        </property>
+        <property name="entryToGoDataResource" ref="${entryToGoDataResourceId}"/>
+    </bean>
+
+
+    <bean id="defaultWrapperHtmlWriter" class="freemarker.template.DefaultObjectWrapper"/>
+
+    <bean id="templateLoaderHtmlWriter" class="freemarker.cache.FileTemplateLoader">
+        <constructor-arg ref="templateLoadingDirHtmlWriter"/>
+    </bean>
+
+    <bean id="templateLoadingDirHtmlWriter" class="java.io.File">
+        <constructor-arg value="data/freemarker/WEB-INF/freemarker"/>
+    </bean>
+
+    <!--FreeMarker configuration-->
+    <bean id="freeMarkerConfigHtmlWriter" class="freemarker.template.Configuration">
+        <!--<property name="directoryForTemplateLoading" ref="templateLoadingDir"/>-->
+        <property name="allSharedVariables">
+            <bean class="freemarker.template.SimpleHash">
+                <constructor-arg>
+                    <map>
+                        <entry key="css_resource_jquery_qtip2" value="resources/javascript/qtip2/jquery.qtip.css"/>
+                        <entry key="css_resource_protein" value="resources/css/protein.css"/>
+                        <entry key="css_resource_type_colours" value="resources/css/type_colours.css"/>
+                        <entry key="css_resource_database" value="resources/css/database.css"/>
+                        <entry key="js_resource_jquery171" value="resources/javascript/jquery/jquery-1.7.1.min.js"/>
+                        <entry key="js_resource_jquery_qtip2" value="resources/javascript/qtip2/jquery.qtip.min.js"/>
+                        <entry key="js_resource_protein" value="resources/javascript/protein.js"/>
+                        <entry key="js_resource_jquery_jscroll"
+                               value="resources/javascript/jquery/jquery.jscroll.min.js"/>
+                        <entry key="img_resource_path" value="resources"/>
+                        <entry key="js_resource_common" value="resources/javascript/common.js"/>
+                        <entry key="js_resource_protein_popups" value="resources/javascript/protein-popups.js"/>
+                        <entry key="js_resource_jquery_ui1817_custom"
+                               value="resources/javascript/jquery/jquery-ui-1.8.17.custom.min.js"/>
+                        <entry key="js_resource_protein_jquery_cookie"
+                               value="resources/javascript/jquery/jquery.cookie.js"/>
+                    </map>
+                </constructor-arg>
+                <constructor-arg ref="defaultWrapperHtmlWriter"/>
+            </bean>
+        </property>
+        <property name="templateLoader" ref="templateLoaderHtmlWriter"/>
+    </bean>
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="entryHierarchyDataURLResourceId" class="org.springframework.core.io.UrlResource">
+        <constructor-arg value="file:${entry.hierarchy.file.loc}"/>
+    </bean>
+
+    <bean id="entryHierarchyDataClassPathResourceId" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="entry_hierarchy.csv"/>
+    </bean>
+
+    <bean id="entryToGoDataURLResourceId" class="org.springframework.core.io.UrlResource">
+        <constructor-arg value="file:${entry.go.file.loc}"/>
+    </bean>
+
+    <bean id="entryToGoDataClassPathResourceId" class="org.springframework.core.io.ClassPathResource">
+        <constructor-arg value="entry_to_go.psv"/>
+    </bean>
+
+</beans>

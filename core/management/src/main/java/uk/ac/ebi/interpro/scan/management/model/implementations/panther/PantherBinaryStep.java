@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.panther;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -129,6 +130,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
         // Models
         command.add("-l");
         command.add(this.getModelDirectory());
+
         // Arguments
         command.addAll(this.getBinarySwitchesAsList());
         // BLAST
@@ -147,6 +149,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
         } else {
             command.add(temporaryFileDirectory);
         }
+
         return command;
     }
 }
