@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SignalPRawMatch;
 
@@ -27,7 +28,11 @@ public class SignalPMatchParser implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(SignalPMatchParser.class.getName());
 
-    public static final String SIGNATURE_LIBRARY_RELEASE = "4.0";
+    public static final String SIGNATURE_LIBRARY_RELEASE = "4.1";
+
+    private final SignatureLibraryRelease signatureLibraryRelease;
+
+    //public static final String SIGNATURE_LIBRARY_RELEASE = sig"4.0";
 
     private final SignalPOrganismType type;
 
@@ -41,8 +46,9 @@ public class SignalPMatchParser implements Serializable {
     // Example match: "Name=2   SP='Yes' Cleavage site between pos. 17 and 18: ASA-VP D=0.499 D-cutoff=0.450 Networks=SignalP-TM"
     private static final Pattern SP_LINE = Pattern.compile("^Name=.*\\s+SP=.*Networks=.*$");
 
-    public SignalPMatchParser(String typeShortName) {
+    public SignalPMatchParser(String typeShortName, SignatureLibraryRelease signatureLibraryRelease) {
         this.type = SignalPOrganismType.getSignalPOrganismTypeByShortName(typeShortName);
+        this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
     public Set<RawProtein<SignalPRawMatch>> parse(InputStream is) throws IOException, ParseException {

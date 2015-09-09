@@ -8,7 +8,7 @@
 
     <!-- ######################## JOB: Phobius ############################  -->
 
-    <bean id="pathToPhobiusPerlScript" class="java.lang.String">
+    <bean id="pathToPhobiusPerlScript-1.01" class="java.lang.String">
         <constructor-arg value="${binary.phobius.pl.path.1.01}"/>
     </bean>
 
@@ -17,15 +17,21 @@
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePhobius-1.01"/>
         <!--Check mechanism for licensed binaries-->
+        <property name="nonEmptyPaths">
+            <list value-type="java.lang.String">
+                <ref bean="pathToPhobiusPerlScript-1.01"/>
+            </list>
+        </property>
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
-                <entry key="binary.phobius.pl.path.1.01" value-ref="pathToPhobiusPerlScript"/>
+                <entry key="binary.phobius.pl.path.1.01" value-ref="pathToPhobiusPerlScript-1.01"/>
             </map>
         </property>
+        <property name="active" value="false" />
         <property name="doRunLocally" value="true"/>
     </bean>
 
-    <bean id="abstractPhobiusStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+    <bean id="abstractPhobiusStep-1.01" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobPhobius-1.01"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.PHOBIUS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
@@ -34,9 +40,9 @@
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepPhobiusWriteFastaFile"
+    <bean id="stepPhobiusWriteFastaFile-1.01"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractPhobiusStep">
+          parent="abstractPhobiusStep-1.01">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -60,31 +66,31 @@
     </bean>
 
     <!-- STEP 2 -->
-    <bean id="stepPhobiusRunBinary"
+    <bean id="stepPhobiusRunBinary-1.01"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.phobius.RunPhobiusBinaryStep"
-          parent="abstractPhobiusStep">
-        <property name="dependsUpon" ref="stepPhobiusWriteFastaFile"/>
+          parent="abstractPhobiusStep-1.01">
+        <property name="dependsUpon" ref="stepPhobiusWriteFastaFile-1.01"/>
         <property name="stepDescription" value="Run Phobius Binary for selected proteins"/>
-        <property name="fullPathToBinary" ref="pathToPhobiusPerlScript"/>
+        <property name="fullPathToBinary" ref="pathToPhobiusPerlScript-1.01"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepPhobiusDeleteFastaFile"
+    <bean id="stepPhobiusDeleteFastaFile-1.01"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPhobiusStep">
-        <property name="dependsUpon" ref="stepPhobiusRunBinary"/>
+          parent="abstractPhobiusStep-1.01">
+        <property name="dependsUpon" ref="stepPhobiusRunBinary-1.01"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="stepPhobiusParseStoreOutput"
+    <bean id="stepPhobiusParseStoreOutput-1.01"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.phobius.ParsePhobiusOutputStep"
-          parent="abstractPhobiusStep">
-        <property name="dependsUpon" ref="stepPhobiusRunBinary"/>
+          parent="abstractPhobiusStep-1.01">
+        <property name="dependsUpon" ref="stepPhobiusRunBinary-1.01"/>
         <property name="stepDescription" value="Parse the output from Phobius"/>
         <property name="serialGroup" value="PARSE_PHOBIUS"/>
         <property name="phobiusOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
@@ -99,10 +105,10 @@
         <property name="retries" value="3"/>
     </bean>
 
-    <bean id="stepPhobiusDeleteBinaryOutputFile"
+    <bean id="stepPhobiusDeleteBinaryOutputFile-1.01"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPhobiusStep">
-        <property name="dependsUpon" ref="stepPhobiusParseStoreOutput"/>
+          parent="abstractPhobiusStep-1.01">
+        <property name="dependsUpon" ref="stepPhobiusParseStoreOutput-1.01"/>
         <property name="stepDescription" value="Delete the phobius output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
