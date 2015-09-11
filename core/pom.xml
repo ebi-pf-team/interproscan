@@ -74,7 +74,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependency versions -->
-        <spring.version>3.1.2.RELEASE</spring.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
+        <spring.security.version>4.0.1.RELEASE</spring.security.version>
         <!--<spring.oxm.version>1.5.7</spring.oxm.version>-->
         <spring.oxm.version>1.5.9</spring.oxm.version>
         <hibernate.entity.manager.version>3.6.0.Final</hibernate.entity.manager.version>
@@ -94,6 +95,9 @@
         <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
         <!-- github server corresponds to entry in ~/.m2/settings.xml -->
         <github.global.server>github</github.global.server>
+        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+        <exec-maven-plugin.version>1.1</exec-maven-plugin.version>
     </properties>
 
     <modules>
@@ -220,15 +224,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <overview/>
                 </configuration>
@@ -237,6 +243,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
                 <!--configuration>
                     <finalName>filename-of-generated-jar-file</finalName>
                     <attach>false</attach>
@@ -265,7 +272,7 @@
                     </excludes>
                     <repositoryName>interproscan</repositoryName>      <!-- github repo name -->
                     <repositoryOwner>ebi-pf-team</repositoryOwner>     <!-- github username  -->
-                    <!--<dryRun>true</dryRun> &lt;!&ndash; display creates/updates but don't actually perform any operations on the target GitHub repo &ndash;&gt;-->
+                    <!--<dryRun>true</dryRun> -->          <!-- display creates/updates but don't actually perform any operations on the target GitHub repo -->
                 </configuration>
                 <executions>
                     <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
