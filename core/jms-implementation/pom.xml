@@ -5,13 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>${interprosca-5.version}</version>
+        <version>${interproscan-5.version}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>jms-implementation</artifactId>
-    <version>${interprosca-5.version}</version>
+    <!--<version>${interproscan-5.version}</version>-->
+    <version>5.14_1-53.0</version>
 
     <packaging>jar</packaging>
 
@@ -52,7 +53,8 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-management</artifactId>
-            <version>${interprosca-5.version}</version>
+            <!--<version>${interproscan-5.version}</version>-->
+            <version>5.14_1-53.0</version>
         </dependency>
 
         <dependency>
