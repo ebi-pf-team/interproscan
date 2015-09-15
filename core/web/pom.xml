@@ -5,7 +5,7 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>${interprosca-5.version}</version>
+        <version>${interproscan-5.version}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,7 +16,7 @@
     <packaging>jar</packaging>
 
     <name>InterProScan Web</name>
-    <version>${interprosca-5.version}</version>
+    <version>${interproscan-5.version}</version>
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
@@ -29,12 +29,13 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>${interprosca-5.version}</version>
+            <!--<version>${interproscan-5.version}</version>-->
+            <version>${interproscan-5.old.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-business</artifactId>
-            <version>${interprosca-5.version}</version>
+            <version>${interproscan-5.version}</version>
         </dependency>
 
         <!--  Spring -->
