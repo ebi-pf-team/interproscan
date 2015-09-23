@@ -220,7 +220,7 @@
 
     <build>
         <plugins>
-            <!-- Use Java 6 language features -->
+            <!-- Use Java 8 language features -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
