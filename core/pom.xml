@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.14-53.0</version>
+    <version>5.14x-53.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -103,7 +103,7 @@
 
     <modules>
         <module>generic-jpa-dao</module>
-        <module>model</module>
+        <!--<module>model</module>-->
         <module>io</module>
         <module>persistence</module>
         <module>business</module>
