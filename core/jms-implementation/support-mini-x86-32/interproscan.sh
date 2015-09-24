@@ -35,7 +35,8 @@ then
     exit 1
 fi
 
-"$JAVA" \
+#"$JAVA" \
+/home/nuka/applications/jdk1.8.0_60/bin/java \
 -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts \
 -XX:+UseFastAccessorMethods -Xms128M -Xmx2048M \
 -jar  interproscan-5.jar $@ -u $USER_DIR
