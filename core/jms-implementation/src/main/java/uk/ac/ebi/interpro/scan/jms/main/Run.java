@@ -134,7 +134,7 @@ public class Run extends AbstractI5Runner {
             }
 
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.14-53.0");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.14x-53.0");
 
 
             //String config = System.getProperty("config");
@@ -417,7 +417,7 @@ public class Run extends AbstractI5Runner {
             BlackBoxMaster bbMaster = (BlackBoxMaster) master;
             LOGGER.debug("Setting up the black box master...");
             String tcpConnectionString = null;
-            if (mode == Mode.CL_MASTER || mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER) {
+            if (mode == Mode.DISTRIBUTED_MASTER || mode == Mode.CLUSTER) {
                 tcpConnectionString = configureTCPTransport(ctx);
             }
 
@@ -1047,6 +1047,7 @@ public class Run extends AbstractI5Runner {
         }
 
         // Configure the Broker with a random TCP port number.
+        //final BrokerService broker1 = (BrokerService) ctx.getBean("localhostJMSBroker");
         final BrokerService broker = (BrokerService) ctx.getBean("jmsBroker");
         try {
             // Get hostname

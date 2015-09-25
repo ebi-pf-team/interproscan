@@ -20,11 +20,7 @@ public enum Mode {
     //This mode allows spawning of distributed workers on demand using the new i5jms architecture
     DISTRIBUTED_MASTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
     CLUSTER("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
-    GRID("distributedMaster", "spring/jms/master/distributed-master-context.xml"),
     SINGLESEQ("ssOptimisedBlackBoxMaster", "spring/jms/master/singleseq-optimised-master-context.xml"),
-    CL_MASTER("clDist", "spring/jms/activemq/command-line-distributed-master-context.xml"),
-    CL_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-worker-context.xml"),
-    CL_HIGHMEM_WORKER("distributedWorkerController", "spring/jms/activemq/cl-dist-high-mem-worker-context.xml"),
     // Use this internal mode for creating the H2 in-memory database
     INSTALLER("installer", "spring/installer/installer-context.xml"),
     // Use this mode for creating the test database that lives in /jms-implementation/src/test/resources/

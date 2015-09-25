@@ -135,7 +135,8 @@
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
+            <artifactId>activemq-spring</artifactId>
+            <!--<artifactId>activemq-all</artifactId>-->
             <version>${apache.activemq.version}</version>
 
             <exclusions>
@@ -157,30 +158,34 @@
                 </exclusion>
 
             </exclusions>
-            <type>pom</type>
+            <!--<type>pom</type>-->
         </dependency>
 
-
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-            <version>${apache.activemq.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-pool</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+            <!--<exclusions>-->
+            <!--<exclusion>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-api</artifactId>-->
+            <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
         <!--activemq-core has been replaced with activemq-client and activemq-broker-->
 
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-            <version>${apache.activemq.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-broker</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+        <!--</dependency>-->
 
-         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
-            <version>${apache.activemq.version}</version>
-        </dependency>
-
+         <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-client</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -191,7 +196,7 @@
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
-            <version>3.6</version>
+            <version>4.4</version>
         </dependency>
 
         <dependency>
