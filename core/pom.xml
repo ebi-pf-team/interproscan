@@ -98,7 +98,6 @@
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <exec-maven-plugin.version>1.1</exec-maven-plugin.version>
-        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     </properties>
 
     <modules>
@@ -226,8 +225,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->

@@ -122,7 +122,7 @@ public class Signature implements Serializable {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
-    @XmlElement(name = "xref") // TODO: This should not be here (so TODO comments on getCrossReferences)
+    @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
     @CollectionOfElements
