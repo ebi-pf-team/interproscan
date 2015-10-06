@@ -35,13 +35,14 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_SIG_ACCESSION = 4;
     private static final int COL_IDX_SCORE = 5;
     private static final int COL_IDX_SEQ_SCORE = 6;
-    private static final int COL_IDX_EVALUE = 7;
-    private static final int COL_IDX_SEQ_START = 8;
-    private static final int COL_IDX_SEQ_END = 9;
-    private static final int COL_IDX_HMM_START = 10;
-    private static final int COL_IDX_HMM_END = 11;
+    private static final int COL_IDX_SEQ_EVALUE = 7;
+    private static final int COL_IDX_EVALUE = 8;
+    private static final int COL_IDX_SEQ_START = 9;
+    private static final int COL_IDX_SEQ_END = 10;
+    private static final int COL_IDX_HMM_START = 11;
+    private static final int COL_IDX_HMM_END = 12;
 //    Uncomment because I5 doesn't calculate them at the moment
-    private static final int COL_IDX_HMM_BOUNDS = 12;
+    private static final int COL_IDX_HMM_BOUNDS = 13;
 
     private static final String CREATE_TEMP_TABLE =
             "create global temporary table  berkley_tmp_tab " +
@@ -53,6 +54,7 @@ public class CreateMatchDBFromIprscan {
                     "        m.method_ac as signature_accession, " +
                     "        m.score as score, " +
                     "        m.seqscore as sequence_score, " +
+                    "        m.seqevalue as sequence_evalue, " +
                     "        m.evalue, " +
                     "        m.seq_start, " +
                     "        m.seq_end, " +
@@ -71,7 +73,7 @@ public class CreateMatchDBFromIprscan {
 
     private static final String QUERY_TEMPORARY_TABLE =
             "select  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
-                    "       SEQUENCE_SCORE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
+                    "       SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
                     "       from  berkley_tmp_tab " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       SEQUENCE_SCORE";
@@ -206,6 +208,9 @@ public class CreateMatchDBFromIprscan {
                     Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
                     if (rs.wasNull()) sequenceScore = null;
 
+                    Double sequenceEValue = rs.getDouble(COL_IDX_SEQ_EVALUE);
+                    if (rs.wasNull()) sequenceEValue = null;
+
                     Double locationScore = rs.getDouble(COL_IDX_SCORE);
                     if (rs.wasNull()) locationScore = null;
 
@@ -231,6 +236,7 @@ public class CreateMatchDBFromIprscan {
                                         signatureLibraryName.equals(match.getSignatureLibraryName()) &&
                                         sigLibRelease.equals(match.getSignatureLibraryRelease()) &&
                                         signatureAccession.equals(match.getSignatureAccession()) &&
+                                        (match.getSequenceEValue() == null && sequenceEValue == null || (sequenceEValue != null && sequenceEValue.equals(match.getSequenceEValue()))) &&
                                         (match.getSequenceScore() == null && sequenceScore == null || (sequenceScore != null && sequenceScore.equals(match.getSequenceScore())))) {
                             // Same Match as previous, so just add a new BerkeleyLocation
                             match.addLocation(location);
@@ -249,6 +255,7 @@ public class CreateMatchDBFromIprscan {
                             match.setSignatureLibraryRelease(sigLibRelease);
                             match.setSignatureAccession(signatureAccession);
                             match.setSequenceScore(sequenceScore);
+                            match.setSequenceEValue(sequenceEValue);
                             match.addLocation(location);
                         }
                     } else {
@@ -259,6 +266,7 @@ public class CreateMatchDBFromIprscan {
                         match.setSignatureLibraryRelease(sigLibRelease);
                         match.setSignatureAccession(signatureAccession);
                         match.setSequenceScore(sequenceScore);
+                        match.setSequenceEValue(sequenceEValue);
                         match.addLocation(location);
                     }
                 }
