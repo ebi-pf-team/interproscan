@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
@@ -31,7 +32,8 @@ public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamil
                     berkeleyLocation.getStart(), berkeleyLocation.getEnd()
             ));
         }
-
+        //TODO remove this line
+        System.out.println("evalue: " + valueOrZero(berkeleyMatch.getSequenceEValue()));
         return new SuperFamilyHmmer3Match(
                 signature,
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
