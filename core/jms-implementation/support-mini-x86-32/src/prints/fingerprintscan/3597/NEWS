@@ -1,0 +1,164 @@
+fingpv3_52
+
+Bug fixed - Eval threshold would only take ints, not floats!
+Made changes so that message is output indicating that no match above the
+eval threshold has been found, into the top list.
+
+fingpv3_53
+
+PathFinder now terminates when a very complex MxM is encountered
+Added -n flag to allow old prints.dat format database to be parsed, pval 
+format has become the default.
+
+fingpv3_54
+
+Changed pvalue threshold default to 1e-1
+
+fingpv3_55
+
+Big alteration this time: Distance criteria, was inconsistent with the
+method used by Will Wright in the scan and compare programs.
+Distances were absolute, and thus some partial matches were missed.
+Now distances between motifs are based on intermotif distances, and the
+percentage deviation is applied to these distances.  
+
+fingpv3_56
+
+Added flag -j and variable "julian_selley", to force output of description 
+line and accession codes, onto 1TBH lines. Principlally for Julian, as this
+was lacking from the current output.
+
+fingpv3_57
+
+Added randomizer function to sequence object.
+called with the -s flag (for shuffle)
+Also altered code slightly to deal with intermotif distances differently
+a -d 0 flag will switch off distance criteria, thus selection is made only on
+magnitude.
+
+Further alteration to intermotif code. Now a different 'fairer' approach is 
+taken to calculating intermotif upper and lower limits. An average intermotif
+distance is calculated from the actual highest and lowest distances, then 
+this mean is multiplied by the percentage deviation parameter. Finally this 
+value is taken off the lower limit and added to the upper limit. This means 
+the deviation is uniform at both ends.
+
+fingpv3_58
+
+Added a BLOCKS parsing function.
+Changes were made to the pval outputting functions.
+Modified the table output to 56 chars in the seq field of table 2,
+to take account of large motifs in the BLOCKS database.
+
+Added -R flag, which sets a global variable, to restrict the contents of
+tables, to only scores below the evalue threshold.
+
+Created another output function, table 4, which requires -a to be set to be 
+displayed, this is a crude alignment containing, the sequence, represented
+as '-' except for the motifs, which are spelled out as residues, and the
+consensus (of the motif). (Still completely bug ridden)
+
+fingpv3_59
+
+This started at the same stage of development as fingpv3_58, however 
+a major reorganisation of classes has occured. The modules are now 
+as follows:
+
+Score.hpp
+mystring.hpp
+PathFinder.hpp
+FrequencyTable.hpp
+Sequence_database.hpp
+SubstitutionMatrix.hpp
+FingerPrint.cpp
+
+With SubstitutionMatrix and FrequencyTable objects moving out of 
+Fingerprint.cpp as they were getting large and essentially represent 
+independant entities.
+
+Major change is the completion of the alignment and consensus sequence
+outputting table 4. requiring -a and table 4 to be switched on.
+
+fingpv3_591
+
+Changes inputting of values, reading of lines uses a while loop until \n
+-G places 10 in the PvalueThreshold
+Altered position of interval and start in the motif fd; lines section.
+
+fingpv3_592
+
+Modified the action of the GRAPH flag, this now turns off the PathFinding 
+feature, and merely outputs the MxM list. -G, added debug mode for parameters
+-D, and -g, sets the graph flag without altering the parameters.
+-G works properly now for both the ParsePrints and ParseCompact functions.
+Reorganized the calling of the pathfinder and sequence modules, placed them 
+into a function. (called by both parsing programs)
+Corrected the position of int and st, with a function which works out whether
+the motif length is greater than the allowed 30 and alters the fixed positions
+accordingly. This should now be backwardsly compatable too.
+
+fingpv3_593
+
+Added -I to switch off weighting
+
+fingpv3_594
+
+A few declaration inconsistencies were noticed, mainly static declarations 
+of consts. And a template, made a call to an object without type.
+Altered a few function to fix portability issues.
+
+MAJOR.
+
+IMPORTANT: The E-value calculation
+
+The E-value calculation of FingerPRINTScan was found to be inconsistent, due to ambiguities and a lack 
+of clarity in literature, the following is a rationalization of the _new_ method.
+
+If N is the number of residues in a sequence-database, D is the number of sequences, n is the width 
+of the motif and p = the p-value of a given score then the exact probability of encountering a seq 
+with S >= x can be calculated as:
+
+E = 1 - exp (-p.D)
+or
+E = 1 - exp (-p.(N/n))
+
+The FPScan E-value _was_ calculated as E = p.N, which is WRONG, thus is replaced with the above 
+equations, using the formula below:
+
+The approximation:
+
+E = p.D     if p < 0.1
+or
+E = p.(N/n) if p < 0.1
+
+is more valuable used as the expected value, i.e. the number of sequences with
+s >= x that you would expect to encounter in a database of size D (or N), and
+can by virtue be greater than 1. Note, when used as the expected value, the
+condition that p < 0.1 does not need to hold, this is only used when the
+Expected value approximates the exact probability.
+
+FingerPRINTScan now does p.N/n by default
+and p.D with the -M flag (M for change Method)
+
+-E flag allows the user to supply the parameters for the E-value calculation
+by taking two parameters
+-E NUMSEQS DBLENGTH
+
+NUMSEQS = The total number of sequences in the primary database (D)
+DBLENGTH= The total number of residues in the primary database (N)
+
+fingpv3595
+
+Modified output textfile, usage instructions, -x flag stated that n was
+a positive integer representing the negative power to which 1 is raised, it
+should have stated 10.
+
+Removed a delete statement that was causing runtime errors on SunOS.
+
+fingpv3_596
+
+Moved under GNU autotools thanks to work by Nick Gresham
+The mystring class now dynamically assigns buffers, preventing a segmentation fault when running huge jobs.  You may still run out of RAM though!
+Widened one output field to cope with values >9999.
+The default setting for e-value calculation for v3.596 of FingerPrintScan is E=p.(N/n) and -M causes E = p.D to be calculated.
+It has been noticed that incorrectly repeated alignments can appear in the experimental table 4 if enabled using -0 15 -a.  This is a known bug with an unknown time to fix.
