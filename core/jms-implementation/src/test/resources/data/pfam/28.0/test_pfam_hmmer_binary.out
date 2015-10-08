@@ -4,8 +4,8 @@
 # Freely distributed under the GNU General Public License (GPLv3).
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # query HMM file:                  data/pfam/28.0/pfam_a.hmm
-# target sequence database:        /home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/matthewbuntu_20150908_142410805_io2l//jobPfam/000000000001_000000000006.fasta
-# output directed to file:         /home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/matthewbuntu_20150908_142410805_io2l//jobPfam/000000000001_000000000006.raw.out
+# target sequence database:        temp/matthewbuntu_20150908_142410805_io2l/jobPfam/000000000001_000000000006.fasta
+# output directed to file:         temp/matthewbuntu_20150908_142410805_io2l/jobPfam/000000000001_000000000006.raw.out
 # model-specific thresholding:     GA cutoffs
 # sequence search space set to:    13672
 # number of worker threads:        2
