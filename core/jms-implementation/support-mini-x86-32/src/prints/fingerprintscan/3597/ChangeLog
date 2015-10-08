@@ -1,0 +1,60 @@
+2015-09-12  Gift Nuka <nuka@ebi.ac.uk>
+	* replaced cout with printf for some output in PathFinder.cc as one some user systems this was printing hex numbers?
+        e.g. cout << setw(12) << eval; replaced with  printf("%-12.2g",eval);
+
+2007-12-17	Stephen Hall <sphall@manchester.ac.uk>
+
+	* Calculation method: now E=p.(N/n) by default and -M causes E = p.D to be
+	calculated
+
+2007-07-24	Stephen Hall <sphall@manchester.ac.uk>
+	
+	* Mystring.cc: We now dynamically assign buffers to prevent overruns
+
+2007-02-13	Stephen Hall <sphall@manchester.ac.uk>
+
+	* PathFinder.cc: Set output field pos to be six chars wide to cope
+	with sequences >9,999 amino acids long at lines 1013,1055
+
+2006-06-06	Nick Gresham <n.gresham@manchester.ac.uk>
+
+	* renamed: *.hpp, *.cpp to *.h and *.cc respectively
+
+	* removed ANSI C++ deprecated headers throughout:
+	#include <iostream> instead of #include <iostream.h> 
+	#include <cmath> instead of #include <math.h> 
+	etc.
+
+	* import standard namespace throughout:
+	using namespace std;
+
+	* redundant qualification of methods in class scope removed to allow
+	compilation under gcc 4.1: 
+	e.g. mystring.h line 84
+	int mystring::length() const; replaced by 
+	int length() const;
+
+	* PathFinder.cpp: char literals adjusted at lines 1097,1098,1099,1100
+	setfill(32) replaced with setfill('\x20')
+	setfill(4)  replaced with setfill('\x4')
+
+	* FrequencyTable.cc: API change to count() at line 381
+	count(prof.begin(),prof.end(),*x,counter); replaced with
+	counter = count(prof.begin(),prof.end(),*x)
+	
+	* FrequencyTable.cc: correct types to supplied to pow() at lines 592,670,757
+	if (!pval) { pval = 1.0 / (1.0 * pow(10,16)); } replaced with
+	if (!pval) { pval = 1.0 / (1.0 * pow(10.0, 16)); }
+	
+	* FingerPrint.cc: correct types to supplied to pow() at line 1940 
+	PvalueThreshold = 1.0 / double(pow(10, p)); replaced with
+	PvalueThreshold = 1.0 / double(pow(10.0, p));
+
+	* FingerPrint.cc: multiline string lines 15-41 \ added at end of each
+	line
+
+	* preliminary attempt to bring code under GNU autotools:
+	supplied acinclude.m4, configure.in and Makefile.am
+
+	* minor directory adjustments: moved history to NEWS, license to AUTHORS, 
+	started ChangeLog, deleted GNU_GENERAL_PUBLIC_LICENCE, added COPYING (GPL 2.1) 

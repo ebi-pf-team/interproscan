@@ -1,0 +1,23 @@
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+
+AC_INIT([fingerPRINTScan], [3.5.96] [scordis@bioinf.man.ac.uk])
+
+AM_INIT_AUTOMAKE([1.9 foreign])
+
+AC_PROG_CC
+AC_PROG_CXX
+AC_CXX_HAVE_STD
+AC_CXX_HAVE_STL
+
+AC_CHECK_HEADERS([time.h])
+AC_CHECK_TOOL([STRIP],[strip])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+
+AM_INIT_AUTOMAKE
+AM_PROG_CC_STDC
+AM_PROG_INSTALL_STRIP
+
