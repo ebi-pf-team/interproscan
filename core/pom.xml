@@ -32,10 +32,17 @@
 
     <repositories>
 
+        <!--<repository>-->
+            <!--<id>apache-maven-snapshots</id>-->
+            <!--<name>Apache snapshot repository</name>-->
+            <!--<url>http://svn.apache.org/maven-snapshot-repository/</url>-->
+            <!--<layout>default</layout>-->
+        <!--</repository>-->
+
         <repository>
             <id>apache-maven-snapshots</id>
             <name>Apache snapshot repository</name>
-            <url>http://svn.apache.org/maven-snapshot-repository/</url>
+            <url>http://repository.apache.org/snapshots/</url>
             <layout>default</layout>
         </repository>
 
@@ -74,19 +81,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Dependency versions -->
-        <spring.version>4.2.1.RELEASE</spring.version>
-        <spring.security.version>4.0.1.RELEASE</spring.security.version>
+        <spring.version>4.2.2.RELEASE</spring.version>
+        <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <!--<spring.oxm.version>1.5.7</spring.oxm.version>-->
         <!--<spring.oxm.version>1.5.9</spring.oxm.version>-->
         <spring.oxm.version>4.2.1.RELEASE</spring.oxm.version>
 
-        <hibernate.entity.manager.version>3.6.0.Final</hibernate.entity.manager.version>
+        <hibernate.entity.manager.version>5.0.2.Final</hibernate.entity.manager.version>
         <!--<cglib.version>2.2</cglib.version>-->
-        <groovy.version>1.6.3</groovy.version>
+        <groovy.version>2.4.5</groovy.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
         <mysql.version>5.1.12</mysql.version>
         <!--<slf4j.version>1.5.11</slf4j.version>-->
-        <slf4j.version>1.6.6</slf4j.version>
+        <slf4j.version>1.7.12</slf4j.version>
         <xmlunit.version>1.3</xmlunit.version>
         <!--<jaxb-api.version>2.1</jaxb-api.version>-->
         <jaxb-api.version>2.2.2</jaxb-api.version>
