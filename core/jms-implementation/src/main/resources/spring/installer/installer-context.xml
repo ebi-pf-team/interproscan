@@ -80,7 +80,7 @@
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="HAMAP"/>
                     <property name="releaseVersionNumber" value="${hamap.signature.library.release.prev}"/>
-                    <property name="modelFiles" value="file:${hamap.profile.models.prev_path}"/>
+                    <property name="modelFiles" value="file:${hamap.profile.models.prev.path}"/>
                     <property name="prositeModelType" value="ALL"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobHAMAP"/>
