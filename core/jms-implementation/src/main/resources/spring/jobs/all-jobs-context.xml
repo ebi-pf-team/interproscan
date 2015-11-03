@@ -12,6 +12,7 @@
     <import resource="jobCoils-2.2-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
+    <import resource="jobHAMAPAlt-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPanther-9.0-context.xml"/>
     <import resource="jobPIRSF-3.01-context.xml"/>
@@ -59,6 +60,7 @@
                 <ref bean="jobCoils-2.2"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobHAMAP"/>
+                <ref bean="jobHAMAPAlt"/>
                 <ref bean="jobPanther"/>
                 <ref bean="jobPanther-9.0"/>
                 <ref bean="jobPfam"/>
