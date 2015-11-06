@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.14-53.0</version>
+        <version>5.14x-53.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>jms-implementation</artifactId>
-    <version>5.14-53.0</version>
+    <version>5.14x-53.0</version>
 
     <packaging>jar</packaging>
 
@@ -43,8 +43,9 @@
         <mvn.ebi.interproscan5.support>support-mini-x86-32</mvn.ebi.interproscan5.support>
 
         <!-- 5.3.1 is the version we have been using stably for development.
-        The latest version is 5.5.0 -->
-        <apache.activemq.version>5.6.0</apache.activemq.version>
+        The previous stable version used is 5.5.0
+        The latest version is 5.12.0  -->
+        <apache.activemq.version>5.12.0</apache.activemq.version>
     </properties>
 
     <dependencies>
@@ -52,7 +53,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-management</artifactId>
-            <version>5.14-53.0</version>
+            <version>5.14x-53.0</version>
         </dependency>
 
         <dependency>
@@ -129,22 +130,73 @@
             <version>3.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-            <version>${apache.activemq.version}</version>
-        </dependency>
+        <!-- active mq -->
+        <!-- either have the uber activel-all or have individual modules-->
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
+            <artifactId>activemq-spring</artifactId>
+            <!--<artifactId>activemq-all</artifactId>-->
             <version>${apache.activemq.version}</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+
+            </exclusions>
+            <!--<type>pom</type>-->
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-pool</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+            <!--<exclusions>-->
+            <!--<exclusion>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-api</artifactId>-->
+            <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
+
+        <!--activemq-core has been replaced with activemq-client and activemq-broker-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-broker</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+        <!--</dependency>-->
+
+         <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-client</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
-            <version>3.6</version>
+            <version>4.4</version>
         </dependency>
 
         <dependency>

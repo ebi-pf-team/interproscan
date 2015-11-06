@@ -2,22 +2,60 @@
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:amq="http://activemq.apache.org/schema/core"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.12.0.xsd">
 
-    <import resource="../../spring-properties-context.xml"/>
-    
+    <import resource="classpath:/spring/spring-properties-context.xml"/>
 
     <!--  ActiveMQ destinations (queues and topics) -->
-    <amq:queue id="jobRequestQueue"  physicalName="jms.queue.${mvn.worker.job.request.queue}"/>
-    <amq:queue id="highMemJobRequestQueue"  physicalName="jms.queue.highmem.${mvn.worker.job.request.queue}"/>
-    <amq:queue id="jobResponseQueue" physicalName="jms.queue.${mvn.worker.job.response.queue}"/>
-    <amq:queue id="statsQueue"  physicalName="jms.queue.${mvn.stats.queue}"/>
-    <amq:queue id="monitorQueue" physicalName="jms.queue.${mvn.monitor.queue}"/>
-    <amq:queue id="testQueue"  physicalName="jms.queue.test.queue"/>
+
+    <!--<amq:queue id="jobRequestQueue"  physicalName="jms.queue.${mvn.worker.job.request.queue}"/>-->
+    <!--<amq:queue id="highMemJobRequestQueue"  physicalName="jms.queue.highmem.${mvn.worker.job.request.queue}"/>-->
+    <!--<amq:queue id="jobResponseQueue" physicalName="jms.queue.${mvn.worker.job.response.queue}"/>-->
+    <!--<amq:queue id="statsQueue"  physicalName="jms.queue.${mvn.stats.queue}"/>-->
+    <!--<amq:queue id="monitorQueue" physicalName="jms.queue.${mvn.monitor.queue}"/>-->
+    <!--<amq:queue id="testQueue"  physicalName="jms.queue.test.queue"/>-->
 
     <!--At the moment this topic is used only to send shut down messages to workers-->
-    <amq:topic id="workerManagerTopic" physicalName="jms.topic.${mvn.worker.manager.topic}"/>
+    <!--<amq:topic id="workerManagerTopic" physicalName="jms.topic.${mvn.worker.manager.topic}"/>-->
+
     <!--<amq:queue id="workerManagerResponseQueue" physicalName="jms.queue.${mvn.worker.manager.response.queue}"/>-->
+
+
+    <!-- new queue definitions -->
+    <!--  Default Destination Queue Definition-->
+    <bean id="jobRequestQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="jms.queue.${mvn.worker.job.request.queue}"/>
+    </bean>
+
+    <bean id="highMemJobRequestQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="jms.queue.highmem.${mvn.worker.job.request.queue}"/>
+    </bean>
+
+    <bean id="jobResponseQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="jms.queue.${mvn.worker.job.response.queue}"/>
+    </bean>
+
+    <!--other queues-->
+
+    <bean id="statsQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="jms.queue.${mvn.stats.queue}"/>
+    </bean>
+
+    <bean id="monitorQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="jms.queue.${mvn.monitor.queue}"/>
+    </bean>
+
+    <bean id="testQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="jms.queue.test.queue"/>
+    </bean>
+
+    <!-- topics-->
+
+    <bean id="workerManagerTopic" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg index="0" value="jms.topic.${mvn.worker.manager.topic}"/>
+    </bean>
+
+
 
 </beans>
