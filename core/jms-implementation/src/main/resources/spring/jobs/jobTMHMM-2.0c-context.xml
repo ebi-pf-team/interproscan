@@ -9,11 +9,11 @@
     <!-- ##### JOB: TMHMM - Prediction of transmembrane helices in proteins ############################  -->
     <!-- Used by the UniProt team in their "Annabel" automatic annotation pipeline. -->
 
-    <bean id="pathToBinaryFileId" class="java.lang.String">
+    <bean id="pathToBinaryFileId-2.0c" class="java.lang.String">
         <constructor-arg value="${binary.tmhmm.path}"/>
     </bean>
 
-    <bean id="pathToModelFileId" class="java.lang.String">
+    <bean id="pathToModelFileId-2.0c" class="java.lang.String">
         <constructor-arg value="${tmhmm.model.path}"/>
     </bean>
 
@@ -26,8 +26,8 @@
         <!--Check mechanism for licensed binaries-->
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
-                <entry key="binary.tmhmm.path" value-ref="pathToBinaryFileId"/>
-                <entry key="tmhmm.model.path" value-ref="pathToModelFileId"/>
+                <entry key="binary.tmhmm.path" value-ref="pathToBinaryFileId-2.0c"/>
+                <entry key="tmhmm.model.path" value-ref="pathToModelFileId-2.0c"/>
             </map>
         </property>
         <property name="doRunLocally" value="true"/>
@@ -84,14 +84,14 @@
         <property name="dependsUpon" ref="stepTMHMMWriteFastaFile-2.0c"/>
         <property name="stepDescription" value="Run TMHMM binary for selected protein sequences"/>
         <!--Add path to binary-->
-        <property name="pathToTmhmmBinary" ref="pathToBinaryFileId"/>
+        <property name="pathToTmhmmBinary" ref="pathToBinaryFileId-2.0c"/>
         <!--Add different parameters-->
         <property name="binarySwitches" value="${tmhmm.binary.switches}"/>
         <!--Add background parameter-->
         <property name="binaryBackgroundSwitch"
                   value="0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032"/>
         <!--Add TMHMM model-->
-        <property name="pathToTmhmmModel" ref="pathToModelFileId"/>
+        <property name="pathToTmhmmModel" ref="pathToModelFileId-2.0c"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -111,8 +111,8 @@
           parent="abstractTMHMMStep-2.0c">
         <property name="dependsUpon" ref="stepTMHMMRunBinary-2.0c"/>
         <property name="stepDescription" value="Parse the output from TMHMM binary"/>
-        <property name="parser" ref="tmhmmParser"/>
-        <property name="filteredMatchDAO" ref="tmhmmFilteredMatchDAO"/>
+        <property name="parser" ref="tmhmmParser-2.0c"/>
+        <property name="filteredMatchDAO" ref="tmhmmFilteredMatchDAO-2.0c"/>
         <property name="serialGroup" value="PARSE_TMHMM"/>
         <property name="retries" value="3"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>

@@ -68,7 +68,7 @@
                 <property name="parserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">
                         <!--TODO: We need to pass in or look up release number-->
-                        <property name="signatureLibraryRelease" value="4.0.0"/>
+                        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
                         <property name="alignmentEncoder">
                             <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
                         </property>
@@ -95,7 +95,7 @@
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
         <property name="stepDescription" value="Write out SSF file for DomainFinder3 to consume"/>
         <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
-        <property name="signatureLibraryRelease" value="4.0.0"/>
+        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
         <property name="ssfFileWriter">
             <bean class="uk.ac.ebi.interpro.scan.io.gene3d.SsfFileWriter"/>
         </property>
@@ -124,7 +124,7 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>
         </property>
-        <property name="signatureLibraryRelease" value="4.0.0"/>
+        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.gene3d.Gene3DPostProcessing"/>
         </property>
@@ -163,8 +163,13 @@
 
     <bean id="signatureLibraryReleaseGene3d" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="GENE3D"/>
-        <constructor-arg type="java.lang.String" value="${gene3d.signature.library.release}"/>
+        <constructor-arg type="java.lang.String" ref="latestGene3dSignatureLibraryRelease"/>
     </bean>
+
+    <bean id="latestGene3dSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="${gene3d.signature.library.release}"/>
+    </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
 </beans>
