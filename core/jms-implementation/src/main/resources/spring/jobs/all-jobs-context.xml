@@ -11,7 +11,6 @@
 
     <import resource="jobCoils-2.2-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
-    <import resource="jobGene3d-3.5.0-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPanther-9.0-context.xml"/>
@@ -59,7 +58,6 @@
                 <!--Old versions are not present because they aren't in the H2 database anymore-->
                 <ref bean="jobCoils-2.2"/>
                 <ref bean="jobGene3d"/>
-                <ref bean="jobGene3d-3.5.0"/>
 
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobPanther"/>
