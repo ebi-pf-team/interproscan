@@ -2,7 +2,7 @@
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
@@ -10,7 +10,7 @@
 
     <!-- embedded worker for binary and non-binary jobs -->
     <bean id="amqEmbeddedWorkerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="amqEmbeddedWorker"/>
         <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
@@ -22,7 +22,7 @@
 
     <!-- embedded worker for non-binary jobs -->
     <bean id="amqEmbeddedWorkerThinJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-    <property name="connectionFactory" ref="inVmJmsFactory"/>
+    <property name="connectionFactory" ref="connectionFactory"/>
     <property name="destination" ref="jobRequestQueue"/>
     <property name="messageListener" ref="amqEmbeddedWorker"/>
     <property name="concurrentConsumers" value="2"/>
@@ -72,7 +72,7 @@
 
     <!--Configuration for the statistics listener-->
     <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="statsQueue"/>
         <property name="concurrentConsumers" value="1"/>
         <property name="messageListener" ref="statsMessageListener"/>
