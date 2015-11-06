@@ -12,7 +12,7 @@
     <import resource="classpath:/spring/directoryManager/NoopTemporaryDirectoryManager-context.xml"/>
 
     <!--  lets create an embedded ActiveMQ Broker -->
-    <amq:broker id="jmsBroker"
+    <amq:broker id="jmsBroker-Old"
                 useJmx="false"
                 persistent="true"
                 useShutdownHook="true"

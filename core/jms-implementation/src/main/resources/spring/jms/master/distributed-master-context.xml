@@ -1,14 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <beans
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:amq="http://activemq.apache.org/schema/core"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.12.0.xsd">
 
     <import resource="classpath:/spring/spring-properties-context.xml"/>
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
     <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
     <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
+
+    <!--<import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>-->
+
 
     <import resource="classpath:/spring/jms/activemq/activemq-inVm-connection-config-context.xml"/>
 
@@ -132,13 +136,13 @@
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
         <property name="messageListener" ref="responseMonitorListener"/>
     </bean>
 
     <bean id="masterControllerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="monitorQueue"/>
         <property name="messageListener" ref="monitorQueueMessageListener"/>
     </bean>
@@ -154,7 +158,7 @@
 
     <!--Configuration for the local job queue listener-->
     <bean id="localQueueJmsContainerFatMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="localJobQueueListener"/>
         <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
@@ -164,9 +168,9 @@
         <property name="autoStartup" value="${master.can.run.binaries}"/>
     </bean>
 
-    <!--&lt;!&ndash;Configuration for the local job queue listener as a fat client&ndash;&gt;-->
+    <!--Configuration for the local job queue listener as a fat client-->
     <bean id="localQueueJmsContainerThinMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="localJobQueueListener"/>
         <property name="concurrentConsumers" value="${thinmaster.number.of.embedded.workers}"/>
@@ -207,7 +211,7 @@
 
     <!--Configuration for the statistics listener-->
     <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="statsQueue"/>
         <property name="concurrentConsumers" value="1"/>
         <property name="messageListener" ref="masterStatsMessageListener"/>
