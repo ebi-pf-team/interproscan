@@ -128,7 +128,7 @@
     </bean>
 
     <bean id="latestHamapAltSignatureLibraryRelease" class="java.lang.String">
-        <constructor-arg value="${hamap.signature.library.release}"/>
+        <constructor-arg value="${hamap.alt.signature.library.release}"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>

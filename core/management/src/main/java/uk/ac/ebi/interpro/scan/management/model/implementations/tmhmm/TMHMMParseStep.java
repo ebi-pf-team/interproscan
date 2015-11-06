@@ -23,13 +23,13 @@ public final class TMHMMParseStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(TMHMMParseStep.class.getName());
     private String outputFileNameTemplate;
-    //    private RawMatchDAO<PantherRawMatch> rawMatchDAO;
+    //    private RawMatchDAO<TMHMMRawMatch> rawMatchDAO;
     private TMHMMRawResultParser parser;
     private TMHMMFilteredMatchDAO filteredMatchDAO;
 
     @Required
-    public void setOutputFileNameTemplate(String PantherOutputFileNameTemplate) {
-        this.outputFileNameTemplate = PantherOutputFileNameTemplate;
+    public void setOutputFileNameTemplate(String TMHMMOutputFileNameTemplate) {
+        this.outputFileNameTemplate = TMHMMOutputFileNameTemplate;
     }
 
     @Required
