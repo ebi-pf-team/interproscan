@@ -22,11 +22,6 @@
                     <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
-                    <property name="signatureLibrary" value="TMHMM"/>
-                    <property name="releaseVersionNumber" value="2.0"/>
-                    <property name="analysisJobId" value="jobTMHMM"/>
-                </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
@@ -47,6 +42,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPfam"/>
                 </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
                     <property name="releaseVersionNumber" value="42.0"/>
@@ -119,15 +115,6 @@
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
 
-                <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
-                    <property name="signatureLibrary" value="PANTHER"/>
-                    <property name="releaseVersionNumber" value="9.0"/>
-                    <property name="analysisJobId" value="jobPanther"/>
-                    <property name="modelFiles" value="file:${panther.models.dir.9.0}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="namesTabFile" value="names.tab"/>
-                </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="TIGRFAM"/>
                     <property name="releaseVersionNumber" value="15.0"/>
@@ -151,24 +138,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobSuperFamily-1.75"/>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_EUK"/>
-                    <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP_EUK-4.0"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_GRAM_POSITIVE"/>
-                    <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP_GRAM_POSITIVE-4.0"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_GRAM_NEGATIVE"/>
-                    <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP_GRAM_NEGATIVE-4.0"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
                     <property name="signatureLibrary" value="SIGNALP_EUK"/>
                     <property name="releaseVersionNumber" value="${signalp_euk.signature.library.release}"/>
