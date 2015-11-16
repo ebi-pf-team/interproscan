@@ -97,7 +97,7 @@
             * guarantees that table / column / index identifiers are no longer than 30 characters.
             * turns camelHump wording into underscore_spaced
             Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
-            <property name="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
+            <property name="hibernate.physical_naming_strategy" value="uk.ac.ebi.interpro.scan.model.hibernate.OraclePhysicalNamingStrategy"/>
         </properties>
 
     </persistence-unit>

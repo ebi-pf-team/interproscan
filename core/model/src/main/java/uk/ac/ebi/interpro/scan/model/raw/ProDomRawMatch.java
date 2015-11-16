@@ -2,11 +2,12 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -17,13 +18,12 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = ProDomRawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = ProDomRawMatch.TABLE_NAME, indexes = {
-        @Index(name = "PRODOM_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "PRODOM_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "PRODOM_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "PRODOM_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "PRODOM_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+@Table(name = ProDomRawMatch.TABLE_NAME, indexes = {
+        @Index(name = "PRODOM_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "PRODOM_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "PRODOM_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
+        @Index(name = "PRODOM_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "PRODOM_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class ProDomRawMatch extends RawMatch implements Serializable {
 

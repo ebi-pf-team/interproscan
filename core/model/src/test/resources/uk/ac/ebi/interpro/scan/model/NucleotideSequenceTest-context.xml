@@ -4,11 +4,11 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
                            http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/util/spring-util-4.2.xsd
                            http://www.springframework.org/schema/lang
-                           http://www.springframework.org/schema/lang/spring-lang-2.5.xsd">
+                           http://www.springframework.org/schema/lang/spring-lang-4.2.xsd">
 
     <import resource="jpa-context.xml"/>
     <import resource="oxm-context.xml"/>

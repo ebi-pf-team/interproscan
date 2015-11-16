@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 
@@ -40,7 +39,7 @@ public class Entry implements Serializable {
     @Index(name = "entry_name_idx")
     private String name;
 
-    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "entry_description_chunk")
     @IndexColumn(name = "chunk_index")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
@@ -63,7 +62,7 @@ public class Entry implements Serializable {
     @Column(nullable = true)
     private Date updated;
 
-    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "entry_abstract_chunk")
     @IndexColumn(name = "chunk_index")
     @Column(name = "abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
