@@ -4,6 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <import resource="oxm-context.xml"/>
+    <import resource="../jpa-context.xml"/>
+    <import resource="../oxm-context.xml"/>
 
 </beans>

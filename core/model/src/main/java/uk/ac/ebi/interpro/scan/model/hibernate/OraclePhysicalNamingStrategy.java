@@ -1,17 +1,58 @@
-package de.schauderhaft.hibernate;
+package uk.ac.ebi.interpro.scan.model.hibernate;
 
-import org.hibernate.cfg.DefaultComponentSafeNamingStrategy;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.boot.model.naming.Identifier;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
+import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
 import java.util.StringTokenizer;
 
-public class OracleNamingStrategy extends DefaultComponentSafeNamingStrategy {
-    private static final long serialVersionUID = -3020615242092992933L;
+/**
+ * Physical naming strategy
+ */
+public class OraclePhysicalNamingStrategy extends PhysicalNamingStrategyStandardImpl implements PhysicalNamingStrategy {
 
     private static final int MAX_LENGTH = 30;
 
     private static final String VOWELS = "AEIOUaeiou";
 
-    protected static String addUnderscores(String name) {
+    @Override
+    public Identifier toPhysicalCatalogName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return convert(super.toPhysicalColumnName(identifier, jdbcEnvironment));
+    }
+
+    @Override
+    public Identifier toPhysicalSchemaName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return convert(super.toPhysicalSchemaName(identifier, jdbcEnvironment));
+    }
+
+    @Override
+    public Identifier toPhysicalTableName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return convert(super.toPhysicalTableName(identifier, jdbcEnvironment));
+    }
+
+    @Override
+    public Identifier toPhysicalSequenceName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return convert(super.toPhysicalSequenceName(identifier, jdbcEnvironment));
+    }
+
+    @Override
+    public Identifier toPhysicalColumnName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
+        return convert(super.toPhysicalColumnName(identifier, jdbcEnvironment));
+    }
+
+    private Identifier convert(Identifier identifier) {
+        if (identifier == null || StringUtils.isBlank(identifier.getText())) {
+            return identifier;
+        }
+
+        return Identifier.toIdentifier(abbreviateName(addUnderscores(identifier.getText())));
+    }
+
+    // Add underscores
+
+    private static String addUnderscores(String name) {
         if (name == null)
             return null;
         StringBuffer buf = new StringBuffer(name.replace('.', '_'));
@@ -34,60 +75,9 @@ public class OracleNamingStrategy extends DefaultComponentSafeNamingStrategy {
                 && Character.isUpperCase(buf.charAt(i));
     }
 
-    @Override
-    public String collectionTableName(String ownerEntity,
-                                      String ownerEntityTable, String associatedEntity,
-                                      String associatedEntityTable, String propertyName) {
-        return abbreviateName(super.collectionTableName(
-                addUnderscores(ownerEntity), addUnderscores(ownerEntityTable),
-                addUnderscores(associatedEntity),
-                addUnderscores(associatedEntityTable),
-                addUnderscores(propertyName)));
-    }
+    // Abbreviate
 
-    @Override
-    public String foreignKeyColumnName(String propertyName,
-                                       String propertyEntityName, String propertyTableName,
-                                       String referencedColumnName) {
-        return abbreviateName(super.foreignKeyColumnName(
-                addUnderscores(propertyName),
-                addUnderscores(propertyEntityName),
-                addUnderscores(propertyTableName),
-                addUnderscores(referencedColumnName)));
-    }
-
-    @Override
-    public String logicalCollectionColumnName(String columnName,
-                                              String propertyName, String referencedColumn) {
-        return abbreviateName(super.logicalCollectionColumnName(
-                addUnderscores(columnName), addUnderscores(propertyName),
-                addUnderscores(referencedColumn)));
-    }
-
-    @Override
-    public String logicalCollectionTableName(String tableName,
-                                             String ownerEntityTable, String associatedEntityTable,
-                                             String propertyName) {
-        return abbreviateName(super.logicalCollectionTableName(
-                addUnderscores(tableName), addUnderscores(ownerEntityTable),
-                addUnderscores(associatedEntityTable),
-                addUnderscores(propertyName)));
-    }
-
-    @Override
-    public String logicalColumnName(String columnName, String propertyName) {
-        return abbreviateName(super.logicalColumnName(
-                addUnderscores(columnName), addUnderscores(propertyName)));
-    }
-
-    @Override
-    public String propertyToColumnName(String propertyName) {
-        return abbreviateName(super
-                .propertyToColumnName(addUnderscores(propertyName)));
-    }
-
-
-    public static String abbreviateName(String someName) {
+    private static String abbreviateName(String someName) {
         if (someName.length() <= MAX_LENGTH)
             return someName;
 
@@ -151,10 +141,4 @@ public class OracleNamingStrategy extends DefaultComponentSafeNamingStrategy {
         return index;
     }
 
-    @Override
-    public String classToTableName(String aClassName) {
-
-        return abbreviateName(super
-                .classToTableName(addUnderscores(aClassName)));
-    }
 }
