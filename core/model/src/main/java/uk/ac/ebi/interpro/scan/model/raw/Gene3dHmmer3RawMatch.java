@@ -3,11 +3,12 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
@@ -21,13 +22,12 @@ import javax.persistence.Transient;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = Gene3dHmmer3RawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = Gene3dHmmer3RawMatch.TABLE_NAME, indexes = {
-        @Index(name = "G3D_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "G3D_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "G3D_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "G3D_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "G3D_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+@Table(name = Gene3dHmmer3RawMatch.TABLE_NAME, indexes = {
+        @Index(name = "G3D_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "G3D_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "G3D_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
+        @Index(name = "G3D_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "G3D_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
 

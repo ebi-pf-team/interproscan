@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 /**
  * Specific raw match class for PIRSF.
@@ -15,13 +15,12 @@ import javax.persistence.Entity;
  * @since 1.0-SNAPSHOT
  */
 @Entity
-@javax.persistence.Table(name = PirsfHmmer3RawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = PirsfHmmer3RawMatch.TABLE_NAME, indexes = {
-        @Index(name = "PIRSF3_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "PIRSF3_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "PIRSF3_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "PIRSF3_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "PIRSF3_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+@Table(name = PirsfHmmer3RawMatch.TABLE_NAME, indexes = {
+        @Index(name = "PIRSF3_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "PIRSF3_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "PIRSF3_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
+        @Index(name = "PIRSF3_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "PIRSF3_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class PirsfHmmer3RawMatch extends Hmmer3RawMatch {
 
