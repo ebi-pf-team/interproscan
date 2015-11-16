@@ -1,9 +1,10 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import org.hibernate.annotations.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 /**
  * <a href="http://www.expasy.ch/prosite/">PROSITE</a> Profile raw match.
@@ -12,13 +13,12 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = ProSiteProfileRawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = ProSiteProfileRawMatch.TABLE_NAME, indexes = {
-        @Index(name = "PRSITE_PROF_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "PRSITE_PROF_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "PRSITE_PROF_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "PRSITE_PROF_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "PRSITE_PROF_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+@Table(name = ProSiteProfileRawMatch.TABLE_NAME, indexes = {
+        @Index(name = "PRSITE_PROF_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "PRSITE_PROF_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "PRSITE_PROF_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
+        @Index(name = "PRSITE_PROF_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "PRSITE_PROF_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class ProSiteProfileRawMatch extends ProfileScanRawMatch {
 

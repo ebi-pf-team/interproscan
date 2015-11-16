@@ -20,7 +20,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="interproDataSource"/>
-        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
+        <property name="persistenceProviderClass" value="org.hibernate.jpa.HibernatePersistenceProvider"/>
         <property name="jpaPropertyMap">
             <map>
                 <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
@@ -34,7 +34,7 @@
     * guarantees that table / column / index identifiers are no longer than 30 characters.
     * turns camelHump wording into underscore_spaced
     Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
-                <entry key="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
+                <entry key="hibernate.physical_naming_strategy" value="uk.ac.ebi.interpro.scan.model.hibernate.OraclePhysicalNamingStrategy"/>
             </map>
         </property>
     </bean>

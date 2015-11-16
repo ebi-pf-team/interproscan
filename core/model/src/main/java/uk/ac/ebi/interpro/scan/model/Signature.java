@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 
@@ -63,7 +62,7 @@ public class Signature implements Serializable {
     @Index(name = "signature_name_idx")
     private String name;
 
-    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     //    TODO: Why don't use the non deprecated ElementCollection annotation
 //        @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "signature_description_chunk")
@@ -94,7 +93,7 @@ public class Signature implements Serializable {
     @Index(name = "signature_md5_idx")
     private String md5;
 
-    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "signature_abstract_chunk")
     @IndexColumn(name = "chunk_index")
     @Column(name = "abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
@@ -125,8 +124,8 @@ public class Signature implements Serializable {
     @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
-    @CollectionOfElements
-//    @CollectionOfElements(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+    @ElementCollection
+//    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
     private Set<String> deprecatedAccessions = new HashSet<String>();
