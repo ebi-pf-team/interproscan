@@ -20,10 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -39,6 +36,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name = "GoXrefType")
+@Table(indexes = { @Index(columnList = "IDENTIFIER") })
 public class GoXref extends Xref implements Serializable {
 
     @ManyToMany(mappedBy = "goXRefs",

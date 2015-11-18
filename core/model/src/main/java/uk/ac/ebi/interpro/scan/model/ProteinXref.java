@@ -18,9 +18,7 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -35,6 +33,7 @@ import java.io.Serializable;
  */
 @Entity
 @XmlType(name = "ProteinXrefType")
+@Table(indexes = { @Index(columnList = "IDENTIFIER") })
 public class ProteinXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)

@@ -3,8 +3,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -21,6 +19,12 @@ import java.util.*;
 @Entity
 @XmlRootElement(name = "entry")
 @XmlType(name = "EntryType")
+@Table(indexes = {
+        @Index(name = "ENTRY_AC_IDX", columnList = "ACCESSION"),
+        @Index(name = "ENTRY_NAME_IDX", columnList = "NAME"),
+        @Index(name = "ENTRY_TYPE_IDX", columnList = "TYPE")
+
+})
 public class Entry implements Serializable {
 
     @Transient
@@ -32,16 +36,14 @@ public class Entry implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    @Index(name = "entry_ac_idx")
     private String accession;
 
     @Column
-    @Index(name = "entry_name_idx")
     private String name;
 
     @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable(name = "entry_description_chunk")
-    @IndexColumn(name = "chunk_index")
+    @JoinTable(name = "ENTRY_DESCRIPTION_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
 
@@ -53,7 +55,6 @@ public class Entry implements Serializable {
     private String description;
 
     @Column
-    @Index(name = "entry_type_idx")
     private EntryType type;
 
     @Column(nullable = true)
@@ -63,9 +64,9 @@ public class Entry implements Serializable {
     private Date updated;
 
     @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable(name = "entry_abstract_chunk")
-    @IndexColumn(name = "chunk_index")
-    @Column(name = "abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @JoinTable(name = "ENTRY_ABSTRACT_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
+    @Column(name = "ABSTRACT_CHUNK", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> abstractChunks = Collections.emptyList();
 
     @Column(nullable = true, length = Chunker.CHUNK_SIZE)
