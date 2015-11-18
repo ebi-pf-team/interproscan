@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
 import org.apache.log4j.Logger;
-import org.hibernate.annotations.IndexColumn;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.model.Chunker;
 import uk.ac.ebi.interpro.scan.model.ChunkerSingleton;
@@ -69,8 +68,8 @@ public class StepExecution implements Serializable, Comparable<StepExecution> {
     private Double proportionCompleted;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @JoinTable(name = "exception_chunk")
-    @IndexColumn(name = "chunk_index")
+    @JoinTable(name = "EXCEPTION_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> exceptionChunks;
 

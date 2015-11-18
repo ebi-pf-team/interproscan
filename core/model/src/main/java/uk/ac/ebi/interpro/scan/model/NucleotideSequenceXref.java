@@ -19,7 +19,9 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -32,6 +34,7 @@ import java.io.Serializable;
  */
 @Entity
 @XmlType(name = "NucleotideSequenceXrefType")
+@Table(indexes = { @Index(columnList = "IDENTIFIER") })
 public class NucleotideSequenceXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
