@@ -19,8 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -40,6 +38,11 @@ import java.util.List;
 
 @Entity
 @XmlType(name = "ModelType")
+@Table(indexes = {
+        @Index(name = "MODEL_AC_IDX", columnList = "ACCESSION"),
+        @Index(name = "MODEL_NAME_IDX", columnList = "MODEL_NAME"),
+        @Index(name = "MODEL_MD5_IDX", columnList = "MD5")
+})
 public class Model implements Serializable {
 
     @Transient
@@ -54,18 +57,16 @@ public class Model implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    @Index(name = "model_ac_idx")
     private String accession;
 
     @Column(length = 4000, name = "model_name")
-    @Index(name = "model_name_idx")
     private String name;
 
     //TODO: Hibernate annotation issue: Switched to lazy loading
     @ElementCollection
-    @JoinTable(name = "model_description_chunk")
-    @IndexColumn(name = "chunk_index")
-    @Column(name = "description_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @JoinTable(name = "MODEL_DESCRIPTION_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
+    @Column(name = "DESCRIPTION_CHUNK", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
 
     @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "description_first_chunk")
@@ -88,19 +89,18 @@ public class Model implements Serializable {
 //    @Column (nullable = true, length=100000)
     //    TODO: Hibernate annotation issue: Switched to lazy loading
     @ElementCollection
-    @JoinTable(name = "model_definition_chunk")
-    @IndexColumn(name = "chunk_index")
-    @Column(name = "definition_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @JoinTable(name = "MODEL_DEFINITION_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
+    @Column(name = "DEFINITION_CHUNK", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> definitionChunks = Collections.emptyList();
 
-    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "definition_first_chunk")
+    @Column(nullable = true, length = Chunker.CHUNK_SIZE, name = "DEFINITION_FIRST_CHUNK")
     @XmlTransient
     private String definitionFirstChunk;
 
     @Transient
     private String definition;
 
-    @Index(name = "model_md5_idx")
     private String md5;
 
     /**
