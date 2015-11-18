@@ -19,8 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -39,6 +37,12 @@ import java.util.*;
 @Entity
 @XmlRootElement(name = "signature")
 @XmlType(name = "SignatureType")
+@Table(indexes = {
+        @Index(name = "SIGNATURE_AC_IDX", columnList = "ACCESSION"),
+        @Index(name = "SIGNATURE_NAME_IDX", columnList = "SIG_NAME"),
+        @Index(name = "SIGNATURE_TYPE_IDX", columnList = "TYPE"),
+        @Index(name = "SIGNATURE_MD5_IDX", columnList = "MD5")
+})
 public class Signature implements Serializable {
 
     @Transient
@@ -55,18 +59,14 @@ public class Signature implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    @Index(name = "signature_ac_idx")
     private String accession;
 
     @Column(length = 4000, name = "sig_name")
-    @Index(name = "signature_name_idx")
     private String name;
 
-    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    //    TODO: Why don't use the non deprecated ElementCollection annotation
-//        @ElementCollection(fetch = FetchType.EAGER)
-    @JoinTable(name = "signature_description_chunk")
-    @IndexColumn(name = "chunk_index")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "SIGNATURE_DESCRIPTION_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> descriptionChunks = Collections.emptyList();
 
@@ -81,7 +81,6 @@ public class Signature implements Serializable {
      * Member database specific category for the Signature
      */
     @Column
-    @Index(name = "sig_type_idx")
     private String type;
 
     @Column(nullable = true)
@@ -90,13 +89,12 @@ public class Signature implements Serializable {
     @Column(nullable = true)
     private Date updated;
 
-    @Index(name = "signature_md5_idx")
     private String md5;
 
-    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
-    @JoinTable(name = "signature_abstract_chunk")
-    @IndexColumn(name = "chunk_index")
-    @Column(name = "abstract_chunk", length = Chunker.CHUNK_SIZE, nullable = true)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "SIGNATURE_ABSTRACT_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
+    @Column(name = "ABSTRACT_CHUNK", length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> abstractChunks = Collections.emptyList();
 
     @Column(nullable = true, length = Chunker.CHUNK_SIZE)
@@ -125,7 +123,7 @@ public class Signature implements Serializable {
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
     @ElementCollection
-//    @ElementCollection(fetch = FetchType.EAGER)     // Hibernate specific annotation.
+//    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
     private Set<String> deprecatedAccessions = new HashSet<String>();
