@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
@@ -22,7 +22,7 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    -3.3.0<bean id="stepGene3dWriteFasta-3.3.0"
+    <bean id="stepGene3dWriteFasta-3.3.0"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractGene3dStep-3.3.0">
         <property name="stepDescription" value="Create FASTA file."/>
