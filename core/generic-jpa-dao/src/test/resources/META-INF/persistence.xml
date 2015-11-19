@@ -7,6 +7,7 @@
         </description>
 
         <class>uk.ac.ebi.interpro.scan.genericjpadao.ModelObject</class>
+        <class>uk.ac.ebi.interpro.scan.genericjpadao.RelatedModelObject</class>
 
         <properties>
             <property name="hibernate.show_sql" value="false"/>
