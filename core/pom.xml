@@ -17,10 +17,6 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <scm>
-        <developerConnection>scm:svn:http://interproscan.googlecode.com/svn/trunk/</developerConnection>
-    </scm>
-
     <distributionManagement>
         <repository>
             <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
