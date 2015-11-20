@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>10.2.0.2</version>
+            <version>${oracle.jdbc.version}</version>
         </dependency>
 
         <!--
@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.8</version>
+            <version>0.9.10</version>
         </dependency>
 
     </dependencies>
