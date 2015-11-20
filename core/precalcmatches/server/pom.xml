@@ -35,8 +35,8 @@
 
     <dependencies>
         <dependency>
-            <artifactId>berkeley</artifactId>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>berkeley</artifactId>
             <version>5.14-53.0</version>
         </dependency>
 
