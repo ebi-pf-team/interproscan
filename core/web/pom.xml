@@ -94,13 +94,13 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>8.1.1.v20120215</version>
+            <version>9.3.6.v20151106</version>
         </dependency>
         <!---->
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>2.13</version>
+            <version>2.19</version>
         </dependency>
         <!--Spring mock test-->
         <dependency>
@@ -116,8 +116,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-            <!-- Override the default SLF4J version from the master pom for this web module -->
+            <version>${slf4j.version}</version>
         </dependency>
 
     </dependencies>
