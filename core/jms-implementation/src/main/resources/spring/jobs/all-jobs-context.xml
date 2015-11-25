@@ -12,7 +12,6 @@
     <import resource="jobCoils-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
-    <import resource="jobHAMAPAlt-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPIRSF-3.01-context.xml"/>
 
@@ -53,10 +52,8 @@
                 <ref bean="jobCoils"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobHAMAP"/>
-                <ref bean="jobHAMAPAlt"/>
                 <ref bean="jobPanther"/>
                 <ref bean="jobPfam"/>
-                <ref bean="jobPfamA-27.0"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobProDom-2006.1"/>
