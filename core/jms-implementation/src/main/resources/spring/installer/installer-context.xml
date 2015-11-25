@@ -25,7 +25,7 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
-                    <property name="releaseVersionNumber" value="2.2"/>
+                    <property name="releaseVersionNumber" value="${coils.signature.library.release}"/>
                     <property name="analysisJobId" value="jobCoils"/>
                 </bean>
 
