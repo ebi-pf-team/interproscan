@@ -22,11 +22,6 @@
                     <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
                 </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
-                    <property name="signatureLibrary" value="TMHMM"/>
-                    <property name="releaseVersionNumber" value="2.0"/>
-                    <property name="analysisJobId" value="jobTMHMM"/>
-                </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
@@ -78,16 +73,6 @@
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
-                    <property name="signatureLibrary" value="HAMAP"/>
-                    <property name="releaseVersionNumber" value="${hamap.signature.library.release.prev}"/>
-                    <property name="modelFiles" value="file:${hamap.profile.models.prev.path}"/>
-                    <property name="prositeModelType" value="ALL"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobHAMAP"/>
-                </bean>
-
-
-                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
                     <property name="releaseVersionNumber" value="${prosite.patterns.signature.library.release}"/>
                     <property name="modelFiles" value="file:${prosite.models.path}"/>
@@ -103,26 +88,6 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositeProfiles"/>
                 </bean>
-
-
-
-                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
-                    <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
-                    <property name="releaseVersionNumber" value="${prosite.patterns.signature.library.release.prev}"/>
-                    <property name="modelFiles" value="file:${prosite.models.prev.path}"/>
-                    <property name="prositeModelType" value="PATTERNS"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPrositePatterns"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
-                    <property name="signatureLibrary" value="PROSITE_PROFILES"/>
-                    <property name="releaseVersionNumber" value="${prosite.profiles.signature.library.release.prev}"/>
-                    <property name="modelFiles" value="file:${prosite.models.path.prev}"/>
-                    <property name="prositeModelType" value="PROFILES"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPrositeProfiles"/>
-                </bean>
-
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
@@ -145,15 +110,6 @@
                     <property name="analysisJobId" value="jobPanther"/>
                     <property name="releaseVersionNumber" value="${panther.signature.library.release}"/>
                     <property name="modelFiles" value="file:${panther.models.dir}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="namesTabFile" value="names.tab"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
-                    <property name="signatureLibrary" value="PANTHER"/>
-                    <property name="releaseVersionNumber" value="9.0"/>
-                    <property name="analysisJobId" value="jobPanther"/>
-                    <property name="modelFiles" value="file:${panther.models.dir.9.0}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="namesTabFile" value="names.tab"/>
                 </bean>
@@ -183,24 +139,6 @@
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
                     <property name="signatureLibrary" value="SIGNALP_EUK"/>
-                    <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP_EUK-4.0"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_GRAM_POSITIVE"/>
-                    <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP_GRAM_POSITIVE-4.0"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_GRAM_NEGATIVE"/>
-                    <property name="releaseVersionNumber" value="4.0"/>
-                    <property name="analysisJobId" value="jobSignalP_GRAM_NEGATIVE-4.0"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_EUK"/>
                     <property name="releaseVersionNumber" value="${signalp_euk.signature.library.release}"/>
                     <property name="analysisJobId" value="jobSignalP_EUK"/>
                     <property name="modelFiles" value="file:/dev/null"/>
@@ -217,8 +155,6 @@
                     <property name="analysisJobId" value="jobSignalP_GRAM_NEGATIVE"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
-
-
             </list>
         </property>
         <property name="jdbcEntryDAO" ref="jdbcEntryDAO"/>

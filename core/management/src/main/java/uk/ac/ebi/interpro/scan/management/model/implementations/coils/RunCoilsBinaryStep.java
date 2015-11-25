@@ -26,8 +26,6 @@ public class RunCoilsBinaryStep extends RunBinaryStep {
 
     private String fullPathToBinary;
 
-    private String fullPathToNewCoilMatFile;
-
     private String fastaFileNameTemplate;
 
     @Required
@@ -38,11 +36,6 @@ public class RunCoilsBinaryStep extends RunBinaryStep {
     @Required
     public void setFastaFileNameTemplate(String fastaFileNameTemplate) {
         this.fastaFileNameTemplate = fastaFileNameTemplate;
-    }
-
-    @Required
-    public void setFullPathToNewCoilMatFile(String fullPathToNewCoilMatFile) {
-        this.fullPathToNewCoilMatFile = fullPathToNewCoilMatFile;
     }
 
     @Override
