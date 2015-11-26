@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.15-54.0</version>
+        <version>5.16-55.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-persistence</artifactId>
-    <version>5.15-54.0</version>
+    <version>5.16-55.0</version>
 
     <packaging>jar</packaging>
 
@@ -33,38 +33,24 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <!--<repositories>-->
-    <!--&lt;!&ndash;Moved Google code repository from master POM to this location&ndash;&gt;-->
-    <!--&lt;!&ndash;The reason for that is, if somebody runs mvn clean install for the first time, after checking out the project, it tries to download the master POM.&ndash;&gt;-->
-    <!--<repository>-->
-    <!--<id>google-code-interproscan</id>-->
-    <!--<name>google-code-interproscan</name>-->
-    <!--<layout>default</layout>-->
-    <!--<url>http://interproscan.googlecode.com/svn/repository/</url>-->
-    <!--<snapshots>-->
-    <!--<enabled>false</enabled>-->
-    <!--</snapshots>-->
-    <!--</repository>-->
-    <!--</repositories>-->
-
     <dependencies>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.15-54.0</version>
+            <version>5.16-55.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.15-54.0</version>
+            <version>5.16-55.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.15-54.0</version>
+            <version>5.16-55.0</version>
         </dependency>
 
         <dependency>
