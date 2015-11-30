@@ -90,14 +90,14 @@
         <property name="dependsUpon" ref="stepTMHMMWriteFastaFile"/>
         <property name="stepDescription" value="Run TMHMM binary for selected protein sequences"/>
         <!--Add path to binary-->
-        <property name="pathToTmhmmBinary" ref="pathToBinaryFileId"/>
+        <property name="pathToTmhmmBinary" ref="pathToTMHMMBinaryFileId"/>
         <!--Add different parameters-->
         <property name="binarySwitches" value="${tmhmm.binary.switches}"/>
         <!--Add background parameter-->
         <property name="binaryBackgroundSwitch"
                   value="0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032"/>
         <!--Add TMHMM model-->
-        <property name="pathToTmhmmModel" ref="pathToModelFileId"/>
+        <property name="pathToTmhmmModel" ref="pathToTMHMMModelFileId"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
