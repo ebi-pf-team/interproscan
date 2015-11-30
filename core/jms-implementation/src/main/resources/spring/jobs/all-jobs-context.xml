@@ -10,24 +10,18 @@
 
 
     <import resource="jobCoils-2.2-context.xml"/>
-    <import resource="jobGene3d-context.xml"/>
+    <import resource="jobGene3d-3.5.0-context.xml"/>
+    <!--<import resource="jobGene3d-context.xml"/>-->
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobPanther-context.xml"/>
-    <import resource="jobPanther-9.0-context.xml"/>
     <import resource="jobPIRSF-3.01-context.xml"/>
 
     <import resource="jobPfam-context.xml"/>
-    <import resource="jobPfamA-27.0-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
     <import resource="jobPrints-42.0-context.xml"/>
     <import resource="jobProDom-2006.1-context.xml"/>
-    <import resource="jobPrositeProfiles-20.105-context.xml"/>
-    <import resource="jobPrositePatterns-20.105-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
-    <import resource="jobSignalP_EUK-4.0-context.xml"/>
-    <import resource="jobSignalP_GRAM_POSITIVE-4.0-context.xml"/>
-    <import resource="jobSignalP_GRAM_NEGATIVE-4.0-context.xml"/>
     <import resource="jobSignalP_EUK-context.xml"/>
     <import resource="jobSignalP_GRAM_POSITIVE-context.xml"/>
     <import resource="jobSignalP_GRAM_NEGATIVE-context.xml"/>
@@ -36,7 +30,6 @@
 
     <import resource="jobSuperFamily-1.75-context.xml"/>
     <import resource="jobTMHMM-context.xml"/>
-    <import resource="jobTMHMM-2.0c-context.xml"/>
 
     <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
@@ -57,23 +50,16 @@
                 <!-- Analyses -->
                 <!--Old versions are not present because they aren't in the H2 database anymore-->
                 <ref bean="jobCoils-2.2"/>
-                <ref bean="jobGene3d"/>
+                <ref bean="jobGene3d-3.5.0"/>
 
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobPanther"/>
-                <ref bean="jobPanther-9.0"/>
                 <ref bean="jobPfam"/>
-                <ref bean="jobPfamA-27.0"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobProDom-2006.1"/>
-                <ref bean="jobPrositeProfiles-20.105"/>
-                <ref bean="jobPrositePatterns-20.105"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
-                <ref bean="jobSignalP_EUK-4.0"/>
-                <ref bean="jobSignalP_GRAM_POSITIVE-4.0"/>
-                <ref bean="jobSignalP_GRAM_NEGATIVE-4.0"/>
                 <ref bean="jobSignalP_EUK"/>
                 <ref bean="jobSignalP_GRAM_POSITIVE"/>
                 <ref bean="jobSignalP_GRAM_NEGATIVE"/>
@@ -82,7 +68,6 @@
                 <ref bean="jobPIRSF-3.01" />
                 <ref bean="jobSuperFamily-1.75"/>
                 <ref bean="jobTMHMM"/>
-                <ref bean="jobTMHMM-2.0c"/>
             </list>
         </property>
         <property name="baseDirectoryTemporaryFiles" value="${temporary.file.directory}"/>
