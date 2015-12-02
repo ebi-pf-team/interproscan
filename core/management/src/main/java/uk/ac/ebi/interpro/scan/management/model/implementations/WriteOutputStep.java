@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -243,14 +244,11 @@ public class WriteOutputStep extends Step {
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf('/'));
             File file = new File(workingDirectory);
             if (file.exists()) {
-                for (File subDir : file.listFiles()) {
-                    if (!subDir.delete()) {
-                        LOGGER.warn("At run completion, unable to delete temporary directory " + subDir.getAbsolutePath());
-                    }
+                try {
+                    FileUtils.deleteDirectory(file);
+                }catch (IOException e) {
+                    LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
                 }
-            }
-            if (!file.delete()) {
-                LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
         if (LOGGER.isInfoEnabled()) {
