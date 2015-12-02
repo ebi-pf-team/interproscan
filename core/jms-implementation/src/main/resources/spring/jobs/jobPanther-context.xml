@@ -20,7 +20,6 @@
                 <ref bean="scriptPath" />
                 <ref bean="blastPath" />
                 <ref bean="hmmerPath" />
-                <ref bean="perlScriptTempDir" />
             </list>
         </property>
         <property name="mandatoryParameters">
@@ -31,7 +30,6 @@
                 <entry key="panther.models.dir" value-ref="modelDirectory"/>
                 <entry key="binary.blastall.2.2.6.path" value-ref="blastPath"/>
                 <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerPath"/>
-                <entry key="panther.temporary.file.directory" value-ref="perlScriptTempDir"/>
             </map>
         </property>
     </bean>

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,8 @@ import java.util.List;
  */
 public final class PantherBinaryStep extends RunBinaryStep {
 
+    private static final Logger LOGGER = Logger.getLogger(PantherBinaryStep.class.getName());
+
     private String scriptPath;
     private String modelDirectory;
     private String blastPath;
@@ -25,6 +28,8 @@ public final class PantherBinaryStep extends RunBinaryStep {
     private String perlCommand;
     private String perlLibrary;
     private String perlScriptTempDir;
+
+    final private String PANTHER_TEMP_DIR_SUFFIX = "panther_tmp_files";
 
     public String getFastaFileNameTemplate() {
         return fastaFileNameTemplate;
@@ -98,6 +103,37 @@ public final class PantherBinaryStep extends RunBinaryStep {
     }
 
     /**
+     * create an absolute path to the temporary directory file for panther
+     *
+     * @param temporaryFileDirectory
+     * @return
+     */
+    public String getAbsolutePantherTempDirPath(String temporaryFileDirectory){
+        String absolutePantherTempDirPath = this.getPerlScriptTempDir();
+        LOGGER.debug("pantherTempDir - before update: " + absolutePantherTempDirPath);
+        LOGGER.debug("temporaryFileDirectory: " + temporaryFileDirectory);
+        if (! this.getPerlScriptTempDir().trim().isEmpty()) {
+            if (new File(this.getPerlScriptTempDir()).isAbsolute()) {
+                absolutePantherTempDirPath = this.getPerlScriptTempDir() + File.separator + PANTHER_TEMP_DIR_SUFFIX;
+            }
+        } else {
+            absolutePantherTempDirPath = temporaryFileDirectory + File.separator + PANTHER_TEMP_DIR_SUFFIX;
+        }
+
+        File dir = new File(absolutePantherTempDirPath);
+        try {
+            boolean dirCreated = dir.mkdirs();
+            LOGGER.debug("The directory (-" + absolutePantherTempDirPath + " is created");
+        } catch (SecurityException e) {
+            LOGGER.error("Directory creation . Cannot create the specified directory !\n" +
+                    "Specified directory path (absolute): " + dir.getAbsolutePath(), e);
+            throw new IllegalStateException("The directory (-" + absolutePantherTempDirPath + ")  you specified cannot be written to:", e);
+        }
+        LOGGER.debug("pantherTempDir - after update: " + absolutePantherTempDirPath);
+        return absolutePantherTempDirPath;
+    }
+
+    /**
      * Returns command line for runPanther
      * <p/>
      * Example:
@@ -144,11 +180,9 @@ public final class PantherBinaryStep extends RunBinaryStep {
         command.add(fastaFilePath);
         // Temporary directory
         command.add("-T");
-        if (this.getPerlScriptTempDir() != null) {
-            command.add(this.getPerlScriptTempDir());
-        } else {
-            command.add(temporaryFileDirectory);
-        }
+        command.add(getAbsolutePantherTempDirPath(temporaryFileDirectory));
+
+        LOGGER.debug("panther command is :" + command.toString());
 
         return command;
     }
