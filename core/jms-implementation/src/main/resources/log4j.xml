@@ -43,7 +43,9 @@
         <!--<level value="debug"/>-->
     <!--</logger>-->
 
-
+    <!--<logger name="uk.ac.ebi.interpro.scan.management.model.implementations">-->
+        <!--<level value="debug"/>-->
+    <!--</logger>-->
 
     <!--<logger name="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">-->
     <!--<level value="debug" />-->

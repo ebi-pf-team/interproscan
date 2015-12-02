@@ -54,7 +54,7 @@ public class AbstractI5Runner {
             boolean dirCreated = dir.mkdirs();
             return dirCreated;
         } catch (SecurityException e) {
-            LOGGER.error("Directory creation test. Cannot create the specified directory !\n" +
+            LOGGER.error("Directory creation . Cannot create the specified directory !\n" +
                     "Specified directory path (absolute): " + dir.getAbsolutePath(), e);
             throw new IllegalStateException("The directory (-" + filePath + ")  you specified cannot be written to:", e);
         }
