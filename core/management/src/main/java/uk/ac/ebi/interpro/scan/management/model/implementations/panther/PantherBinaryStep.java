@@ -28,6 +28,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
     private String perlCommand;
     private String perlLibrary;
     private String perlScriptTempDir;
+    private String  userDir;
 
     final private String PANTHER_TEMP_DIR_SUFFIX = "panther_tmp_files";
 
@@ -102,6 +103,14 @@ public final class PantherBinaryStep extends RunBinaryStep {
         this.perlScriptTempDir = perlScriptTempDir;
     }
 
+    public String getUserDir() {
+        return userDir;
+    }
+
+    public void setUserDir(String userDir) {
+        this.userDir = userDir;
+    }
+
     /**
      * create an absolute path to the temporary directory file for panther
      *
@@ -114,7 +123,16 @@ public final class PantherBinaryStep extends RunBinaryStep {
         LOGGER.debug("temporaryFileDirectory: " + temporaryFileDirectory);
         if (! this.getPerlScriptTempDir().trim().isEmpty()) {
             if (new File(this.getPerlScriptTempDir()).isAbsolute()) {
-                absolutePantherTempDirPath = this.getPerlScriptTempDir() + File.separator + PANTHER_TEMP_DIR_SUFFIX;
+                absolutePantherTempDirPath = this.getPerlScriptTempDir()
+                        + File.separator
+                        + PANTHER_TEMP_DIR_SUFFIX;
+            }else{
+                //add the user directory to the path
+                absolutePantherTempDirPath = this.getUserDir()
+                        + File.separator
+                        + this.getPerlScriptTempDir()
+                        + File.separator
+                        + PANTHER_TEMP_DIR_SUFFIX;
             }
         } else {
             absolutePantherTempDirPath = temporaryFileDirectory + File.separator + PANTHER_TEMP_DIR_SUFFIX;
