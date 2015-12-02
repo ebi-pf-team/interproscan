@@ -21,6 +21,7 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
+import uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherBinaryStep;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
@@ -265,11 +266,15 @@ public class Run extends AbstractI5Runner {
                 } else if (runnable instanceof MasterControllerApplication) {
                     runMasterControllerApplicationMode(runnable, parsedCommandLine, ctx, mode);
                 } else {
+
                     checkIfMasterAndConfigure(runnable, analysesToRun, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
 
                     checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
                 }
                 //checkIfDistributedWorkerAndConfigure(runnable, parsedCommandLine, ctx, mode);
+
+
+                String workingTemporaryDirectory = "";
 
                 //get temp directory for cleanup
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
@@ -280,11 +285,14 @@ public class Run extends AbstractI5Runner {
                     LOGGER.debug(Utilities.getTimeNow() + " 1. temporaryDirectory is  " + temporaryDirectory);
                     temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
                     LOGGER.debug(Utilities.getTimeNow() + " 1. BaseDirectoryTemporary is  " + master.getJobs().getBaseDirectoryTemporaryFiles());
-                    String workingTemporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+                    workingTemporaryDirectory = master.getWorkingTemporaryDirectoryPath();
                     deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
 
                     LOGGER.debug(Utilities.getTimeNow() + " 1. workingTemporaryDirectory is  " + workingTemporaryDirectory);
+
+
                 }
+
                 System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode...");
 
                 runnable.run();
