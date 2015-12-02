@@ -292,6 +292,9 @@ public class Run extends AbstractI5Runner {
 
 
                 }
+                //deal with panther
+                final PantherBinaryStep stepPantherRunBinary = (PantherBinaryStep) ctx.getBean("stepPantherRunBinary");
+                stepPantherRunBinary.setUserDir(parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()).trim());
 
                 System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode...");
 
