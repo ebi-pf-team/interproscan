@@ -289,8 +289,6 @@ public class Run extends AbstractI5Runner {
                     deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
 
                     LOGGER.debug(Utilities.getTimeNow() + " 1. workingTemporaryDirectory is  " + workingTemporaryDirectory);
-
-
                 }
 
                 //deal with panther
