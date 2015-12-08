@@ -26,9 +26,9 @@ MAJOR_VERSION=${VERSION%%.*}
 MINOR_VERSION=${VERSION#*.}
 MINOR_VERSION=${MINOR_VERSION%%.*}
 
-if [[ "${MAJOR_VERSION}" == "1" && "${MINOR_VERSION}" -lt "6" ]];
+if [[ "${MAJOR_VERSION}" == "1" && ("${MINOR_VERSION}" -lt "6" || "${MINOR_VERSION}" -gt "7") ]];
 then
-    printf 'Java version 1.6 or above required\n'
+    printf 'Java version 1.6 or 1.7 required\n'
     printf 'Detected version %s.%s\n' "${MAJOR_VERSION}" "${MINOR_VERSION}"
     printf 'Install the correct version \n'
     printf 'or edit the interproscan.sh script to disable version check.\n'
