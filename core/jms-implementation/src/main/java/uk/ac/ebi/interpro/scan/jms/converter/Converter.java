@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.converter;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -264,14 +265,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf('/'));
             File file = new File(workingDirectory);
             if (file.exists()) {
-                for (File subDir : file.listFiles()) {
-                    if (!subDir.delete()) {
-                        LOGGER.warn("At run completion, unable to delete temporary directory " + subDir.getAbsolutePath());
-                    }
+                try {
+                    FileUtils.deleteDirectory(file);
+                }catch (IOException e) {
+                    LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
                 }
-            }
-            if (!file.delete()) {
-                LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
 
