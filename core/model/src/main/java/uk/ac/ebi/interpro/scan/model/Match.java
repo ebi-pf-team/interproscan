@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,11 +52,11 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
     private Long id;
 
     @ManyToOne(optional = false)
-    @ForeignKey(name = "fk_protein")
+    @JoinColumn(name = "PROTEIN_ID", referencedColumnName = "ID")
     private Protein protein;
 
     @ManyToOne(optional = false)
-    @ForeignKey(name = "fk_signature")
+    @JoinColumn(name = "SIGNATURE_ID", referencedColumnName = "ID")
     private Signature signature;
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class, mappedBy = "match")

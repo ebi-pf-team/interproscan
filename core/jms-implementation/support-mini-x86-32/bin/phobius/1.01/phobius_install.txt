@@ -1,5 +1,5 @@
-Developer notes:
-================
+User notes:
+===========
 
 Q: Why are there no Phobius binaries in this directory?
 

@@ -84,7 +84,7 @@ public class StepInstance implements Serializable {
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @Column(length = 350)
 //    @MapKeyJoinColumn ()
-//    @CollectionOfElements(targetElement = String.class, fetch = FetchType.EAGER)
+//    @ElementCollection(targetElement = String.class, fetch = FetchType.EAGER)
 //    @MapKeyManyToMany(targetEntity = String.class)
     private Map<String, String> parameters;
 

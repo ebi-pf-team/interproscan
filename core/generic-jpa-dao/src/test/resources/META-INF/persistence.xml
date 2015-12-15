@@ -1,12 +1,13 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
-    <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="testPersistenceGenericJPADAO" transaction-type="RESOURCE_LOCAL">
         <description>
             Test persistence-unit that uses an in-memory HSQLDB database.
         </description>
 
         <class>uk.ac.ebi.interpro.scan.genericjpadao.ModelObject</class>
+        <class>uk.ac.ebi.interpro.scan.genericjpadao.RelatedModelObject</class>
 
         <properties>
             <property name="hibernate.show_sql" value="false"/>

@@ -35,8 +35,8 @@
 
     <dependencies>
         <dependency>
-            <artifactId>berkeley</artifactId>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>berkeley</artifactId>
             <version>5.16-55.0</version>
         </dependency>
 
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
-            <!-- Stable version at 15 April, 2011 -->
+            <!-- Stable version at 20 Nov, 2015 -->
             <version>1.4.7</version>
         </dependency>
 

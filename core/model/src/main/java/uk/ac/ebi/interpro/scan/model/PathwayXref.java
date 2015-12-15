@@ -4,7 +4,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -22,6 +24,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name = "PathwayXrefType")
+@Table(indexes = { @Index(columnList = "IDENTIFIER") })
 public class PathwayXref extends Xref implements Serializable {
 
     @ManyToMany(mappedBy = "pathwayXRefs",

@@ -36,8 +36,6 @@
 
     <dependencies>
 
-        <!-- Everything below here is for testing only. -->
-
         <!-- Hibernate - includes JPA annotations. -->
         <dependency>
             <groupId>org.hibernate</groupId>
