@@ -9,7 +9,7 @@
    
     <!-- JPA Configuration -->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="testPersistence"/>
+        <property name="persistenceUnitName" value="testPersistenceModel"/>
     </bean>
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 

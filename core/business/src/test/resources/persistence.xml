@@ -1,7 +1,7 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <!-- JPA Persistence unit for local testing in HSQLDB - current in-memory database, but may change. -->
-    <persistence-unit name="testPersistence" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="testPersistenceBusiness" transaction-type="RESOURCE_LOCAL">
 
         <description>
             Test persistence-unit that uses an in-memory HSQLDB database.
