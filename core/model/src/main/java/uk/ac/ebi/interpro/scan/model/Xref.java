@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -44,9 +43,8 @@ abstract class Xref implements Serializable {
     @TableGenerator(name = "XREF_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "xref", initialValue = 0, allocationSize = 50)
     protected Long id;
 
+    // TODO Put an index here instead of the sub-classes? Not currently possible with JPA 2.1?
     @Column(nullable = false, unique = false, updatable = false)
-    //keep the index name small to avoid child table indexes longer than 30 characters
-    @Index(name = "x_idx")
     private String identifier;
 
     @Column(nullable = true)
@@ -86,7 +84,6 @@ abstract class Xref implements Serializable {
         return identifier;
     }
 
-    //TODO: Set visibility to public, check if the code still works
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }

@@ -76,6 +76,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected void loadInMemoryDatabase() throws InterruptedException {
         final Thread databaseLoaderThread = new Thread(databaseCleaner);
+        Long timeStarted = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) LOGGER.debug("Loading database into memory...");
         databaseLoaderThread.start();
         // Pause while the database is loaded from the zip backup
@@ -83,7 +84,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             // Takes about 1500 ms to load the database
             Thread.sleep(200);
         }
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Database loaded.");
+        Long timeSpentLoading = System.currentTimeMillis() - timeStarted;
+        if (LOGGER.isDebugEnabled()) LOGGER.debug("Database loaded in " + timeSpentLoading + " ms.");
     }
 
     /**

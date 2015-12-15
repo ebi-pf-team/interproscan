@@ -58,7 +58,7 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
+            <version>2.6</version>
         </dependency>
 
         <dependency>
@@ -139,63 +139,54 @@
                   java com.sun.tools.jxc.SchemaGenerator -cp target/classes/
                                                          src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java
              -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-xml-schema</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <tasks>
-                                <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
-                                <property name="latest.interpro.schema.version" value="1.1"/>
-                                <mkdir dir="${project.build.schema.dir}"/>
-                                <taskdef name="schemagen"
-                                         classname="com.sun.tools.jxc.SchemaGenTask"
-                                         classpathref="maven.plugin.classpath"/>
-                                <schemagen srcdir="${project.build.sourceDirectory}"
-                                           destdir="${project.build.schema.dir}"
-                                           classpathref="maven.compile.classpath">
-                                    <!-- Following does not work: -->
-                                    <!--schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.artifactId}.xsd" /-->
-                                </schemagen>
-                                <!-- 'schema' child element does not work, so have to rename file by hand -->
-                                <move file="${project.build.schema.dir}/schema1.xsd"
-                                      tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-xjc</artifactId>
-                        <version>2.1.8</version>
-                    </dependency>
-                    <!-- com.sun.mirror.apt.AnnotationProcessorFactory required by schemagen task -->
-                    <dependency>
-                        <groupId>com.sun</groupId>
-                        <artifactId>tools</artifactId>
-                        <version>1.5.0</version>
-                        <scope>system</scope>
-                        <systemPath>${sun.tools.systemPath}</systemPath>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <!--plugin>
-                <groupId>com.sun.tools.jxc.maven2</groupId>
-                <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-xml-schema</id>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-antrun-plugin</artifactId>-->
+                <!--<version>1.8</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>generate-xml-schema</id>-->
+                        <!--<phase>compile</phase>-->
+                        <!--<configuration>-->
+                            <!--<tasks>-->
+                                <!--<property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>-->
+                                <!--<property name="latest.interpro.schema.version" value="1.1"/>-->
+                                <!--<mkdir dir="${project.build.schema.dir}"/>-->
+                                <!--<taskdef name="schemagen"-->
+                                         <!--classname="com.sun.tools.jxc.SchemaGenTask"-->
+                                         <!--classpathref="maven.plugin.classpath"/>-->
+                                <!--<schemagen srcdir="${project.build.sourceDirectory}"-->
+                                           <!--destdir="${project.build.schema.dir}"-->
+                                           <!--classpathref="maven.compile.classpath">-->
+                                    <!--&lt;!&ndash; Following does not work: &ndash;&gt;-->
+                                    <!--&lt;!&ndash;schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.artifactId}.xsd" /&ndash;&gt;-->
+                                <!--</schemagen>-->
+                                <!--&lt;!&ndash; 'schema' child element does not work, so have to rename file by hand &ndash;&gt;-->
+                                <!--<move file="${project.build.schema.dir}/schema1.xsd"-->
+                                      <!--tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>-->
+                            <!--</tasks>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>com.sun.xml.bind</groupId>-->
+                        <!--<artifactId>jaxb-xjc</artifactId>-->
+                        <!--<version>2.2.11</version>-->
+                    <!--</dependency>-->
+                    <!--&lt;!&ndash; com.sun.mirror.apt.AnnotationProcessorFactory required by schemagen task &ndash;&gt;-->
+                    <!--<dependency>-->
+                        <!--<groupId>com.sun</groupId>-->
+                        <!--<artifactId>tools</artifactId>-->
+                        <!--<version>1.5.0</version>-->
+                        <!--<scope>system</scope>-->
+                        <!--<systemPath>${sun.tools.systemPath}</systemPath>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 

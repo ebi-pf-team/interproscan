@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import org.hibernate.annotations.Index;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
@@ -13,13 +14,12 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = PfamHmmer3RawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = PfamHmmer3RawMatch.TABLE_NAME, indexes = {
-        @Index(name = "PFAM_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "PFAM_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "PFAM_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "PFAM_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "PFAM_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+@Table(name = PfamHmmer3RawMatch.TABLE_NAME, indexes = {
+        @Index(name = "PFAM_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "PFAM_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "PFAM_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
+        @Index(name = "PFAM_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "PFAM_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class PfamHmmer3RawMatch extends Hmmer3RawMatch implements Comparable<PfamHmmer3RawMatch> {
 

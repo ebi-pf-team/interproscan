@@ -1,5 +1,5 @@
-Developer notes:
-================
+User notes:
+===========
 
 Q: Why is there no SignalP binary in this directory?
 

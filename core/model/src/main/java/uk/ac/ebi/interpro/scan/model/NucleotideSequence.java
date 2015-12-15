@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -60,8 +59,8 @@ public class NucleotideSequence implements Serializable {
     protected Long id;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @JoinTable(name = "nucleotide_sequence_chunk")  // Hibernate specific annotation.
-    @IndexColumn(name = "chunk_index")
+    @JoinTable(name = "NUCLEOTIDE_SEQUENCE_CHUNK")
+    @OrderColumn(name = "CHUNK_INDEX")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
     private List<String> sequenceChunks;
 
