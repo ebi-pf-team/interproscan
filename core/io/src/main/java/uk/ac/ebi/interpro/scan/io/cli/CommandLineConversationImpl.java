@@ -136,7 +136,9 @@ public class CommandLineConversationImpl implements CommandLineConversation {
                 CommandLineConversationMonitor.binaryRunLock.lock();
                 CommandLineConversationMonitor.simpleBinaryRunDelay(stepInstanceStepId);
             }
-            LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
+            }
             if(verboseLogLevel > 5){
                 System.out.println(CommandLineConversationMonitor.getTimeNow() + " Start process in clc:  " + stepInstanceStepId);
             }
@@ -186,7 +188,9 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         exitStatus = process.waitFor();
 
         while (outputGobbler.isStillRunning() || (!mergeErrorIntoOutput && errorGobbler.isStillRunning())) {
-            LOGGER.debug("The command process " + commands + " is complete, however the output / error 'Gobblers' have not closed their streams yet.  Waiting...");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The command process " + commands + " is complete, however the output / error 'Gobblers' have not closed their streams yet.  Waiting...");
+            }
             Thread.sleep(100);
         }
 

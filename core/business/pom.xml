@@ -56,13 +56,13 @@
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
-            <version>1.2.2</version>
+            <version>1.4</version>
         </dependency>
 
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>10.2.0.2</version>
+            <version>${oracle.jdbc.version}</version>
         </dependency>
 
     </dependencies>

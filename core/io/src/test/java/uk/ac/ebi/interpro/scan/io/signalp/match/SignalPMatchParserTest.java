@@ -22,13 +22,14 @@ import java.util.Set;
  */
 public class SignalPMatchParserTest extends TestCase {
 
+    SignatureLibraryRelease slr = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.1");
+
     @Test
     public void testParse() throws IOException {
 
         String type = SignalPOrganismType.EUK.getTypeShortName();
-        SignatureLibraryRelease signatureLibraryRelease = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.1");
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/signalp/signalp_binary_output.txt");
-        SignalPMatchParser parser = new SignalPMatchParser(type, signatureLibraryRelease);
+        SignalPMatchParser parser = new SignalPMatchParser(type, slr);
         Set<RawProtein<SignalPRawMatch>> proteins = parser.parse(is);
         assertNotNull(proteins);
         assertTrue(proteins.size() == 2);
@@ -43,9 +44,8 @@ public class SignalPMatchParserTest extends TestCase {
     @Test
     public void testInvalidOrganismType() throws IOException {
 
-        SignatureLibraryRelease signatureLibraryRelease = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.1");
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/signalp/signalp_binary_output.txt");
-        SignalPMatchParser parser = new SignalPMatchParser("invalid", signatureLibraryRelease);
+        SignalPMatchParser parser = new SignalPMatchParser("invalid", slr);
         try {
             Set<RawProtein<SignalPRawMatch>> proteins = parser.parse(is);
             if (proteins == null) {
@@ -63,10 +63,9 @@ public class SignalPMatchParserTest extends TestCase {
     @Test
     public void testDifferentOrganismType() throws IOException {
 
-        SignatureLibraryRelease signatureLibraryRelease = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.1");
         String type = SignalPOrganismType.GRAM_NEGATIVE.getTypeShortName();
         InputStream is = getClass().getClassLoader().getResourceAsStream("data/signalp/signalp_binary_output.txt");
-        SignalPMatchParser parser = new SignalPMatchParser(type, signatureLibraryRelease);
+        SignalPMatchParser parser = new SignalPMatchParser(type, slr);
         try {
             Set<RawProtein<SignalPRawMatch>> proteins = parser.parse(is);
             if (proteins == null) {
