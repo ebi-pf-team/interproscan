@@ -1,3 +1,11 @@
-*.iml
-.idea/
+#Files to ignore
+#
+# Ignore interpro.h2.db - file is too big to be commited to GitHub!
+core/jms-implementation/support-mini-x86-32/work/template/interpro.h2.db
+#Igonre .class file
+*.class
+# Ignore target directories
 target/
+# Ignore IntelliJ IDEA files
+.idea
+*.iml

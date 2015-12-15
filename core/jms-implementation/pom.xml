@@ -43,8 +43,9 @@
         <mvn.ebi.interproscan5.support>support-mini-x86-32</mvn.ebi.interproscan5.support>
 
         <!-- 5.3.1 is the version we have been using stably for development.
-        The latest version is 5.5.0 -->
-        <apache.activemq.version>5.6.0</apache.activemq.version>
+        The previous stable version used is 5.5.0
+        The latest version is 5.12.0  -->
+        <apache.activemq.version>5.12.0</apache.activemq.version>
     </properties>
 
     <dependencies>
@@ -64,7 +65,7 @@
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
+            <version>1.3.1</version>
         </dependency>
 
         <!-- Installer JDBC access to InterPro database -->
@@ -72,7 +73,7 @@
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>10.2.0.2</version>
+            <version>${oracle.jdbc.version}</version>
         </dependency>
 
         <!-- JAXB tests -->
@@ -87,12 +88,6 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>forms_rt</artifactId>
-            <version>7.0.3</version>
         </dependency>
 
         <!-- JPA tests -->
@@ -126,25 +121,76 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2</version>
+            <version>3.2.2</version>
         </dependency>
+
+        <!-- active mq -->
+        <!-- either have the uber activel-all or have individual modules-->
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
+            <artifactId>activemq-spring</artifactId>
+            <!--<artifactId>activemq-all</artifactId>-->
             <version>${apache.activemq.version}</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+
+            </exclusions>
+            <!--<type>pom</type>-->
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-pool</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+            <!--<exclusions>-->
+            <!--<exclusion>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-api</artifactId>-->
+            <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
+
+        <!--activemq-core has been replaced with activemq-client and activemq-broker-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-broker</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+        <!--</dependency>-->
+
+         <!--<dependency>-->
+            <!--<groupId>org.apache.activemq</groupId>-->
+            <!--<artifactId>activemq-client</artifactId>-->
+            <!--<version>${apache.activemq.version}</version>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
-            <version>${apache.activemq.version}</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
-            <version>3.6</version>
+            <version>4.4</version>
         </dependency>
 
         <dependency>
@@ -207,7 +253,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-
+                <version>${maven-jar-plugin.version}</version>
                 <configuration>
                     <archive>
                         <!--<index>true</index>-->
@@ -251,7 +297,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.1</version>
+                        <version>${exec-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -275,7 +321,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.1</version>
+                        <version>${exec-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <goals>

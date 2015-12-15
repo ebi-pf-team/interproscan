@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
 
     <!-- Using AspectJ for AOP -->
@@ -20,7 +18,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="interproDataSource"/>
-        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
+        <property name="persistenceProviderClass" value="org.hibernate.jpa.HibernatePersistenceProvider"/>
         <property name="jpaPropertyMap">
             <map>
                 <entry key="hibernate.show_sql" value="${hibernate.show_sql}"/>
@@ -34,7 +32,7 @@
     * guarantees that table / column / index identifiers are no longer than 30 characters.
     * turns camelHump wording into underscore_spaced
     Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
-                <entry key="hibernate.ejb.naming_strategy" value="de.schauderhaft.hibernate.OracleNamingStrategy"/>
+                <entry key="hibernate.physical_naming_strategy" value="uk.ac.ebi.interpro.scan.model.hibernate.OraclePhysicalNamingStrategy"/>
             </map>
         </property>
     </bean>

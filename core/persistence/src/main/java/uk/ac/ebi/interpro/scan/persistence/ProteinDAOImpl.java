@@ -200,7 +200,7 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
             // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
             // being inserted and place in a Map of MD5 to Protein object.
             final Map<String, Protein> md5ToExistingProtein = new HashMap<String, Protein>();
-            final Query query = entityManager.createQuery("select p from Protein p left outer join fetch P.crossReferences where p.md5 in (:md5)");
+            final Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences where p.md5 in (:md5)");
             query.setParameter("md5", newMd5s);
             for (Protein existingProtein : (List<Protein>) query.getResultList()) {
                 if (LOGGER.isDebugEnabled()) {
