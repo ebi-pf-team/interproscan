@@ -2,6 +2,8 @@
 #
 # Ignore interpro.h2.db - file is too big to be commited to GitHub!
 core/jms-implementation/support-mini-x86-32/work/template/interpro.h2.db
+#Ignore Spring security users.properties
+core/web/src/main/webapp/WEB-INF/spring/users.properties
 #Igonre .class file
 *.class
 # Ignore target directories

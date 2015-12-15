@@ -13,6 +13,8 @@ import java.util.StringTokenizer;
  */
 public class OraclePhysicalNamingStrategy extends PhysicalNamingStrategyStandardImpl implements PhysicalNamingStrategy {
 
+    private static final long serialVersionUID = -3020615242092992933L;
+
     private static final int MAX_LENGTH = 30;
 
     private static final String VOWELS = "AEIOUaeiou";
