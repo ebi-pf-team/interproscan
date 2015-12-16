@@ -5,14 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
-
-    <!-- Using AspectJ for AOP -->
-    <!--<aop:aspectj-autoproxy/>-->
-
-    <!-- JPA Configuration -->
-    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean"/>-->
-
-
     <bean id="schemaCreatingEntityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
@@ -27,8 +19,7 @@
                 <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
                 <!-- create, update -->
                 <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl_auto}"/>
-                <!-- Note - the "oracleNamingStrategy" does the following:
-
+                <!-- Note - the "hibernate.physical_naming_strategy" does the following:
                     * guarantees that table / column / index identifiers are no longer than 30 characters.
                     * turns camelHump wording into underscore_spaced
                     Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
