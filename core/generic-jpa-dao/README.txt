@@ -6,21 +6,6 @@
   This module provides a generic interface and implementation for basic
   CRUD activities for use with any data model using JPA annotations.
 
-  Requirements
-  ------------
-
-  To install:
-   o  A Java 1.6 or later compatible virtual machine for your operating system.
-   o  Maven 2.0 or later
-
-  To run:
-   o  A Java 1.6 or later compatible virtual machine for your operating system.
-
-  The Latest Version
-  ------------------
-
-  See EBI Maven repository...
-
   Documentation
   -------------
 
@@ -39,14 +24,6 @@
   Contacts
   --------
 
-  Phil Jones <pjones@ebi.ac.uk>
-  Antony Quinn <aquinn@ebi.ac.uk>
-
-  Acknowledgments
-  ----------------
-
-  InterPro is currently funded by grant number 213037 from the European Union under the program 
-  "FP7 capacities: Scientific Data Repositories". The working title for the project is
-  IMproving Protein Annotation and Co-ordination using Technology (IMPACT).
+  interhelp@ebi.ac.uk
 
   $Id$
