@@ -54,6 +54,14 @@
                 <entry key="hibernate.cache.use_second_level_cache" value="${hibernate.cache.use_second_level_cache}"/>
 
                 <entry key="hibernate.physical_naming_strategy" value="uk.ac.ebi.interpro.scan.model.hibernate.OraclePhysicalNamingStrategy"/>
+
+                <!--c3p0 connection pool-->
+                <entry key="hibernate.c3p0.min_size" value="${hibernate.c3p0.min_size}"/>
+                <entry key="hibernate.c3p0.max_size" value="${hibernate.c3p0.max_size}"/>
+                <entry key="hibernate.c3p0.acquire_increment" value="${hibernate.c3p0.acquire_increment}"/>
+                <entry key="hibernate.c3p0.idle_test_period" value="${hibernate.c3p0.idle_test_period}"/>
+                <entry key="hibernate.c3p0.max_statements" value="${hibernate.c3p0.max_statements}"/>
+                <entry key="hibernate.c3p0.timeout" value="${hibernate.c3p0.timeout}"/>
             </map>
         </property>
     </bean>
