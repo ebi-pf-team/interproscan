@@ -267,7 +267,7 @@
                     <plugin>
                         <groupId>org.simplericity.jettyconsole</groupId>
                         <artifactId>jetty-console-maven-plugin</artifactId>
-                        <version>1.45</version>
+                        <version>1.58</version>
                         <executions>
                             <execution>
                                 <goals>

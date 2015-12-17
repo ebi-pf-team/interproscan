@@ -86,10 +86,10 @@
         <h2.database.version>1.4.189</h2.database.version>
         <i5.svn.revision>5.16-55.0</i5.svn.revision>
         <i5.version>${project.version}</i5.version>
-        <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
         <oracle.jdbc.version>10.2.0.2</oracle.jdbc.version>
         <!-- github server corresponds to entry in ~/.m2/settings.xml -->
         <github.global.server>github</github.global.server>
+        <maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <exec-maven-plugin.version>1.4.0</exec-maven-plugin.version>
