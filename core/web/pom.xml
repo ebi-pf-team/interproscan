@@ -20,10 +20,6 @@
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
-    <properties>
-        <mvn.war.version>2.1.1</mvn.war.version>
-    </properties>
-
     <dependencies>
         <!-- i5 model -->
         <dependency>
