@@ -67,7 +67,7 @@
     </bean>
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
         <property name="messageListener" ref="responseMonitorListener"/>
     </bean>
