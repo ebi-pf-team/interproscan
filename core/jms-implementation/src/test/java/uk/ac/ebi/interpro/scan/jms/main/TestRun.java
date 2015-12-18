@@ -5,8 +5,7 @@ import uk.ac.ebi.interpro.scan.management.model.Job;
 
 import java.util.*;
 
-import static junit.framework.Assert.*;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Will test some of the static main run class methods.
