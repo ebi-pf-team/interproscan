@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,8 +17,8 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.

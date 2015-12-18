@@ -16,23 +16,13 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import junit.framework.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.*;
 
 /**
