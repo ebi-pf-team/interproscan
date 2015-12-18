@@ -51,13 +51,6 @@
 
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>kos</id>
-            <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
