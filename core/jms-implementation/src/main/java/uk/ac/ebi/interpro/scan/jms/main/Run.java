@@ -102,8 +102,8 @@ public class Run extends AbstractI5Runner {
     public static void main(String[] args) {
         // create the command line parser
 
-        CommandLineParser parser = new PosixParser();
-        String modeArgument = null;
+        CommandLineParser parser = new DefaultParser();
+        String modeArgument;
         Mode mode = null;
 
         String temporaryDirectory = null;
@@ -119,24 +119,20 @@ public class Run extends AbstractI5Runner {
             modeArgument = parsedCommandLine.getOptionValue(I5Option.MODE.getLongOpt());
 
             try {
-                mode = (modeArgument != null)
-                        ? Mode.valueOf(modeArgument.toUpperCase())
-                        : DEFAULT_MODE;
+                mode = getMode(modeArgument);
             } catch (IllegalArgumentException iae) {
                 LOGGER.fatal("The mode '" + modeArgument + "' is not handled.  Should be one of: " + Mode.getCommaSepModeList());
                 System.exit(1);
             }
 
-            for (Option option : (Collection<Option>) COMMAND_LINE_OPTIONS.getOptions()) {
+            for (Option option : COMMAND_LINE_OPTIONS.getOptions()) {
                 final String shortOpt = option.getOpt();
                 if (I5Option.showOptInHelpMessage(shortOpt, mode)) {
                     COMMAND_LINE_OPTIONS_FOR_HELP.addOption(option);
                 }
             }
 
-
             System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.16-55.0");
-
 
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
@@ -337,6 +333,19 @@ public class Run extends AbstractI5Runner {
         System.exit(0);
     }
 
+    /**
+     * Get InterProScan mode from the command line argument supplied
+     * @param modeArgument
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static Mode getMode(String modeArgument) throws IllegalArgumentException {
+        Mode mode = (modeArgument != null)
+                    ? Mode.valueOf(modeArgument.toUpperCase())
+                    : DEFAULT_MODE;
+        return mode;
+    }
+
     private static void runMasterControllerApplicationMode(Runnable runnable, CommandLine parsedCommandLine, AbstractApplicationContext ctx, Mode mode) {
         final MasterControllerApplication masterControllerApplication = (MasterControllerApplication) runnable;
 
@@ -393,7 +402,7 @@ public class Run extends AbstractI5Runner {
                 master.setTemporaryDirectory(temporaryDirectory);
             }
             LOGGER.debug("temporaryDirectory: master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
-            checkIfProductionMasterAndConfigure(master, parsedCommandLine, ctx);
+            checkIfProductionMasterAndConfigure(master, ctx);
             checkIfBlackBoxMasterAndConfigure(master, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
         }
     }
@@ -401,7 +410,6 @@ public class Run extends AbstractI5Runner {
 
     private static void checkIfProductionMasterAndConfigure(
             final Master master,
-            final CommandLine parsedCommandLine,
             final AbstractApplicationContext ctx) {
 
         if (master instanceof ProductionMaster) {
