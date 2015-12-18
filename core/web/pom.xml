@@ -20,6 +20,10 @@
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
+    <properties>
+        <jetty.version>9.3.6.v20151106</jetty.version>
+    </properties>
+
     <dependencies>
         <!-- i5 model -->
         <dependency>
@@ -90,7 +94,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.3.6.v20151106</version>
+            <version>${jetty.version}</version>
         </dependency>
         <!---->
         <dependency>
@@ -251,10 +255,10 @@
                     </plugin>
                     <!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
                     <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
+                        <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
                         <!--Set version explicitly if get errors on Windows:-->
-                        <version>8.1.14.v20131031</version>
+                        <version>${jetty.version}</version>
                         <configuration>
                             <war>${project.build.directory}/interpro-protein-page.war</war>
                         </configuration>
