@@ -16,7 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -33,8 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -61,7 +60,7 @@ public class SignatureDAOTest {
     @After
     public void emptySignatureTable(){
         dao.deleteAll();
-        Assert.assertEquals("There should be no Signatures in the Signature table following a call to dao.deleteAll", LONG_ZERO, dao.count());
+        assertEquals("There should be no Signatures in the Signature table following a call to dao.deleteAll", LONG_ZERO, dao.count());
     }
 
     //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed

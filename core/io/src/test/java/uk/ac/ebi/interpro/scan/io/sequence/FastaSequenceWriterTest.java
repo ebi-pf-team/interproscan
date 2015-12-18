@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.runner.RunWith;
 import org.junit.Test;

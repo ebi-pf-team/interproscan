@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import org.junit.runner.RunWith;
 import org.junit.Test;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

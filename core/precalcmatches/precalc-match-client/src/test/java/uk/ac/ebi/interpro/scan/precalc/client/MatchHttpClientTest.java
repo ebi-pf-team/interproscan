@@ -1,6 +1,6 @@
 //package uk.ac.ebi.interpro.scan.precalc.client;
 //
-//import junit.framework.Assert;
+//import org.junit.Assert;
 //import org.apache.http.HttpEntity;
 //import org.apache.http.HttpException;
 //import org.apache.http.HttpRequest;

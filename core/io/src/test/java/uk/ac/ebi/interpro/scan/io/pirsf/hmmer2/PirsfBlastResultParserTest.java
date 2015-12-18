@@ -1,9 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.ebi.interpro.scan.io.pirsf.hmmer2.PirsfBlastResultParser;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,7 +16,7 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PirsfBlastResultParserTest extends TestCase {
+public class PirsfBlastResultParserTest {
 
     private static final String TEST_FILE_NAME = "src/test/resources/data/pirsf/hmmer2/blastResult.out";
 
