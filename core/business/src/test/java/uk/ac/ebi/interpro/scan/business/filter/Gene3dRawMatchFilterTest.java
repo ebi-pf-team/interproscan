@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests {@link Gene3dRawMatchFilter}.

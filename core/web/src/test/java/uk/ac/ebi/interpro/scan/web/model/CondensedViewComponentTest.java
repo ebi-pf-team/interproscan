@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -1,6 +1,5 @@
 //package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 //
-//import junit.framework.TestCase;
 //import org.junit.Before;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -21,7 +20,7 @@
 // */
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration
-//public class BlastProgramTest extends TestCase {
+//public class BlastProgramTest {
 //
 //    @javax.annotation.Resource
 //    private BinaryRunner binRunner;

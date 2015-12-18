@@ -12,8 +12,8 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests for {@link CreateSimpleProteinFromMatchDataImpl}

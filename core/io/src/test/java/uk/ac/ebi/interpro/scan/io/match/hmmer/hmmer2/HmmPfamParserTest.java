@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests for {@link HmmPfamParser}
