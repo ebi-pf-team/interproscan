@@ -12,7 +12,7 @@
         This web application context contains a simple Spring Web MVC web application
     </description>
 
-    <import resource="classpath:/matches-service-context.xml"/>
+    <import resource="./matches-service-context.xml"/>
     <import resource="./berkeley-oxm-context.xml"/>
 
     <!-- The package containing Controllers - used to scan for classes with the @Controller

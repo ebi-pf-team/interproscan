@@ -20,18 +20,7 @@
             <name>Spring External Dependencies Repository</name>
             <url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
         </repository>
-        <repository>
-            <id>kos</id>
-            <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
-        </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>kos</id>
-            <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
 
     <dependencies>
         <dependency>
@@ -267,35 +256,34 @@
                     <plugin>
                         <groupId>org.simplericity.jettyconsole</groupId>
                         <artifactId>jetty-console-maven-plugin</artifactId>
-                        <version>1.45</version>
+                        <version>1.53</version>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>createconsole</goal>
                                 </goals>
                                 <configuration>
-                                    <backgroundImage>${basedir}/src/main/resources/i5_match_lookup_splash_screen.jpg
+                                    <backgroundImage>
+                                        ${basedir}/src/main/resources/i5_match_lookup_splash_screen.jpg
                                     </backgroundImage>
+                                    <additionalDependencies>
+                                        <additionalDependency>
+                                            <artifactId>jetty-console-requestlog-plugin</artifactId>
+                                        </additionalDependency>
+                                        <additionalDependency>
+                                            <artifactId>jetty-console-gzip-plugin</artifactId>
+                                        </additionalDependency>
+                                        <additionalDependency>
+                                            <artifactId>jetty-console-ajp-plugin</artifactId>
+                                        </additionalDependency>
+                                        <additionalDependency>
+                                            <artifactId>jetty-console-startstop-plugin</artifactId>
+                                        </additionalDependency>
+                                    </additionalDependencies>
                                 </configuration>
                             </execution>
                         </executions>
 
-                        <configuration>
-                            <additionalDependencies>
-                                <additionalDependency>
-                                    <artifactId>jetty-console-requestlog-plugin</artifactId>
-                                </additionalDependency>
-                                <additionalDependency>
-                                    <artifactId>jetty-console-gzip-plugin</artifactId>
-                                </additionalDependency>
-                                <additionalDependency>
-                                    <artifactId>jetty-console-ajp-plugin</artifactId>
-                                </additionalDependency>
-                                <additionalDependency>
-                                    <artifactId>jetty-console-startstop-plugin</artifactId>
-                                </additionalDependency>
-                            </additionalDependencies>
-                        </configuration>
                     </plugin>
 
                     <plugin>
