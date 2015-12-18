@@ -20,6 +20,10 @@
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
+    <properties>
+        <jetty.version>9.3.6.v20151106</jetty.version>
+    </properties>
+
     <dependencies>
         <!-- i5 model -->
         <dependency>
@@ -90,7 +94,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.3.6.v20151106</version>
+            <version>${jetty.version}</version>
         </dependency>
         <!---->
         <dependency>
@@ -251,10 +255,10 @@
                     </plugin>
                     <!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
                     <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
+                        <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
                         <!--Set version explicitly if get errors on Windows:-->
-                        <version>8.1.14.v20131031</version>
+                        <version>${jetty.version}</version>
                         <configuration>
                             <war>${project.build.directory}/interpro-protein-page.war</war>
                         </configuration>
@@ -304,76 +308,6 @@ cd /nfs/seqdb/production/interpro/web/interproscan-read-only/core/web; mvn -Ppro
                     file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
                 </entry.colours.file.loc>
                 <pathToImages>http://www.ebi.ac.uk/interpro</pathToImages>
-            </properties>
-
-            <build>
-                <finalName>interpro-protein-page</finalName>
-                <plugins>
-                    <plugin>
-                        <groupId>com.keyboardsamurais.maven</groupId>
-                        <artifactId>maven-timestamp-plugin</artifactId>
-                        <version>1.0</version>
-                        <configuration>
-                            <propertyName>timestamp</propertyName>
-                            <!-- timestampPattern using SimpleDateFormat format. -->
-                            <timestampPattern>yyyyMMdd-HHmm</timestampPattern>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>create</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>${mvn.war.version}</version>
-                        <configuration>
-                            <warName>interpro-protein-page-${timestamp}</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/webapp/WEB-INF/spring</directory>
-                                    <filtering>true</filtering>
-                                    <targetPath>WEB-INF/spring</targetPath>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>tc-test</id>
-            <!-- Profile to deploy to tc-test-3.ebi.ac.uk -->
-            <properties>
-                <default.log.level>warn</default.log.level>
-                <third.party.log.level>warn</third.party.log.level>
-                <deployment.folder>${project.basedir}</deployment.folder>
-                <!-- In this production profile use a full path to the copies of the entry colours properties file
-                and entry hierarchy CSV file on the file system. The files are derived data, not under version control.
-                NOTE: These should have been generated at the time of the last release, therefore will be consistent
-                with the current public database -->
-                <match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/match/
-                </match.data.webservice.url>
-                <structural.match.data.webservice.url>http://wwwint.ebi.ac.uk/interpro-rest/structure/
-                </structural.match.data.webservice.url>
-                <resourceWebPath>/interpro-protein-page/resources</resourceWebPath>
-                <!--Model creation files-->
-                <!--Entry hierarchy data-->
-                <entryHierarchyDataResourceId>entryHierarchyDataURLResourceId</entryHierarchyDataResourceId>
-                <entry.hierarchy.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_hierarchy.csv
-                </entry.hierarchy.file.loc>
-                <!--Entry GO data-->
-                <entryToGoDataResourceId>entryToGoDataURLResourceId</entryToGoDataResourceId>
-                <entry.go.file.loc>/ebi/production/interpro/production/i5webdata/live/entry_to_go.psv
-                </entry.go.file.loc>
-                <!--Entry colours-->
-                <entry.colours.file.loc>
-                    file:/ebi/production/interpro/production/i5webdata/live/entry_colours.properties
-                </entry.colours.file.loc>
-                <pathToImages>http://tc-test-3.ebi.ac.uk:9750/interpro-protein-page/resources</pathToImages>
             </properties>
 
             <build>
