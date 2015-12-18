@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit tests for {@link RawMatchDAO}.

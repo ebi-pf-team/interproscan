@@ -2,13 +2,10 @@ package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
-import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**

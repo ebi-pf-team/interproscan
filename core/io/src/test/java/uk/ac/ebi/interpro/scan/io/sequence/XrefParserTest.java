@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
@@ -12,7 +11,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
  * @author Maxim Scheremetjew
  * @since 1.0
  */
-public class XrefParserTest extends TestCase {
+public class XrefParserTest {
 
     @Test
     public void testGetNucleotideSequenceXref() {

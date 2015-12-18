@@ -14,7 +14,7 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 import javax.annotation.Resource;
 import java.util.*;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link ProteinViewController}
