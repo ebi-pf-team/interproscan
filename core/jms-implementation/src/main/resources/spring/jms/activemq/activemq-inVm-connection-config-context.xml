@@ -5,7 +5,6 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
     <import resource="classpath:/spring/jms/activemq/activemq-queue-config-context.xml"/>
-    <!--<import resource="classpath:/spring/jms/activemq/activemq-broker-context.xml"/>-->
 
     <!-- JMS ConnectionFactory to use, configuring the embedded broker using XML -->
     <!--<amq:connectionFactory-->
