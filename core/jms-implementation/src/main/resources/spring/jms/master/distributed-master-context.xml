@@ -10,10 +10,6 @@
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
     <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
     <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
-
-    <!--<import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>-->
-
-
     <import resource="classpath:/spring/jms/activemq/activemq-inVm-connection-config-context.xml"/>
 
     <!--TODO: This is already defined in the activemg broker context file-->

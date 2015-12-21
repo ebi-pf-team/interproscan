@@ -8,8 +8,6 @@
     <import resource="classpath:/spring/spring-properties-context.xml"/>
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
     <import resource="classpath:/spring/directoryManager/TemporaryDirectoryManager-context.xml"/>
-    <import resource="classpath:/spring/jms/activemq/activemq-cleanrun-master-context.xml"/>
-
     <import resource="classpath:/spring/jms/activemq/activemq-inVm-connection-config-context.xml"/>
 
     <!--TODO: This is already defined in the activemg broker context file-->
@@ -109,7 +107,7 @@
     <bean id="lsfMonitor" class="uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor" />
 
     <bean id="responseMonitorJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobResponseQueue"/>
         <property name="messageListener" ref="responseMonitorListener"/>
     </bean>
@@ -120,7 +118,7 @@
 
     <!--Configuration for the local job queue listener-->
     <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="localJobQueueListener"/>
         <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
@@ -156,7 +154,7 @@
 
     <!--Configuration for the statistics listener-->
     <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="inVmJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="statsQueue"/>
         <property name="concurrentConsumers" value="1"/>
         <property name="messageListener" ref="statsMessageListener"/>
@@ -196,7 +194,7 @@
         <property name="targetMethod" value="createProteinLoadJob"/>
     </bean>
 
-    <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <bean id="proteinLoadTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="proteinLoadQuartzJob"/>
          <!--Wait a while before attempting to load proteins. -->
         <property name="startDelay" value="${ebi.uniparc.protein.load.start.delay.seconds}000"/>
