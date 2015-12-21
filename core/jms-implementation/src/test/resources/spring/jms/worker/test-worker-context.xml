@@ -4,7 +4,6 @@
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <!--<import resource="classpath:/spring/jms/master/distributed-master-context.xml"/>-->
     <import resource="classpath:/spring/jms/worker/distributed-worker-context.xml"/>
 
 

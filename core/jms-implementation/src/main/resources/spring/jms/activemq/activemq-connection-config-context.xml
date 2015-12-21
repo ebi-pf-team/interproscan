@@ -17,17 +17,6 @@ http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/ac
         </amq:prefetchPolicy>
     </amq:connectionFactory>
 
-    <!--<amq:connectionFactory-->
-    <!--id="inVmJmsFactory"-->
-    <!--useCompression="false"-->
-    <!--optimizeAcknowledge="true"-->
-    <!--brokerURL="vm://localhost?create=false"-->
-    <!--alwaysSessionAsync="false">-->
-    <!--<amq:prefetchPolicy>-->
-        <!--<amq:prefetchPolicy queuePrefetch="1"/>-->
-    <!--</amq:prefetchPolicy>-->
-<!--</amq:connectionFactory>-->
-
     <!-- Local Spring JMSTemplate -->
     <bean id="localJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory">
