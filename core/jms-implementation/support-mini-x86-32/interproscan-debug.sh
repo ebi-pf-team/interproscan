@@ -12,28 +12,52 @@ cd $(dirname "$0")
 export EMBOSS_ACDROOT=bin/nucleotide
 export EMBOSS_DATA=bin/nucleotide
 
+# Check Java is installed
+
 JAVA=$(type -p java)
-
 if [[ "$JAVA" == "" ]]; then
-    printf 'Java not found. Please install java\n'
+    printf 'Java not found. Please install Java 1.8 or above\n'
     printf 'and place it on your path,\n'
-    printf 'or edit the interproscan.sh script to refer to your java installation.\n'.
+    printf 'or edit the interproscan.sh script to refer to your Java installation.\n'.
     exit 1
 fi
 
-VERSION=$("$JAVA" -version 2>&1 | { read X; printf '%s' "${X#*\"}"; } )
-MAJOR_VERSION=${VERSION%%.*}
-MINOR_VERSION=${VERSION#*.}
-MINOR_VERSION=${MINOR_VERSION%%.*}
+# Check Java version is supported
 
-if [[ "${MAJOR_VERSION}" == "1" && "${MINOR_VERSION}" -lt "8" ]];
+JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | { read X; printf '%s' "${X#*\"}"; } )
+JAVA_MAJOR_VERSION=${JAVA_VERSION%%.*}
+JAVA_MINOR_VERSION=${JAVA_VERSION#*.}
+JAVA_MINOR_VERSION=${JAVA_MINOR_VERSION%%.*}
+if [[ "${JAVA_MAJOR_VERSION}" == "1" && "${JAVA_MINOR_VERSION}" -lt "8" ]];
 then
-    printf 'Java version 1.8 or above required\n'
-    printf 'Detected version %s.%s\n' "${MAJOR_VERSION}" "${MINOR_VERSION}"
-    printf 'Install the correct version \n'
-    printf 'or edit the interproscan.sh script to disable version check.\n'
+    printf 'Java version 1.8 or above is required to run InterProScan.\n'
+    printf 'Detected version %s.%s\n' "${JAVA_MAJOR_VERSION}" "${JAVA_MINOR_VERSION}"
+    printf 'Please install the correct version.\n'
     exit 1
 fi
+
+# Check Python is installed
+
+#PYTHON=$(type -p python)
+#if [[ "$PYTHON" == "" ]]; then
+#    printf 'Python not found. Please install Python 2.7\n'
+#    printf 'and place it on your path,\n'
+#    printf 'or edit the interproscan.sh script to refer to your Python installation.\n'.
+#    exit 1
+#fi
+
+# Check Python version is supported
+
+#PYTHON_VERSION=$("$PYTHON" -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+#PYTHON_MAJOR_VERSION=${PYTHON_VERSION%%.*}
+#PYTHON_MINOR_VERSION=${PYTHON_VERSION#*.}
+#if [[ "${PYTHON_MAJOR_VERSION}" != "2" || "${PYTHON_MINOR_VERSION}" != "7" ]];
+#then
+#    printf 'Python version 2.7 is required to run InterProScan.\n'
+#    printf 'Detected version %s.%s\n' "${PYTHON_MAJOR_VERSION}" "${PYTHON_MINOR_VERSION}"
+#    printf 'Please install the correct version.\n'
+#    exit 1
+#fi
 
 "$JAVA" -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=localhost:5005,suspend=y -jar -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx2048M interproscan-5.jar "$@" -u $USER_DIR
 
