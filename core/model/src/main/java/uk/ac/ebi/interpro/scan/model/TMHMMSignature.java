@@ -21,7 +21,7 @@ public enum TMHMMSignature {
 
     private String description;
 
-    private TMHMMSignature(String accession, String shortDesc, String description) {
+    TMHMMSignature(String accession, String shortDesc, String description) {
         this.accession = accession;
         this.shortDesc = shortDesc;
         this.description = description;
