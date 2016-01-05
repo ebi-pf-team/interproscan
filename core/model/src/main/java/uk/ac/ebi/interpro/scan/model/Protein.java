@@ -542,48 +542,4 @@ public class Protein implements Serializable {
 
     }
 
-//    /**
-//     * Map protein sequence to and from XML representation
-//     */
-//    @XmlTransient
-//    private static class SequenceAdapter extends XmlAdapter<SequenceType, Map<String, Model>> {
-//
-//        /** Map Java to XML type */
-//        @Override public ModelsType marshal(Map<String, Model> map) {
-//            return (map == null || map.isEmpty() ? null : new ModelsType(new HashSet<Model>(map.values())));
-//        }
-//
-//        /** Map XML type to Java */
-//        @Override public Map<String, Model> unmarshal(ModelsType modelsType) {
-//            Map<String, Model> map = new HashMap<String, Model>();
-//            for (Model m : modelsType.getModels())  {
-//                map.put(m.getKey(), m);
-//            }
-//            return map;
-//        }
-//
-//    }
-//
-//    /**
-//     * Helper class for SequenceAdapter
-//     */
-//    private final static class SequenceType {
-//
-//        @XmlElement(name = "model")
-//        private final Set<Model> models;
-//
-//        private SequenceType() {
-//            models = null;
-//        }
-//
-//        public SequenceType(Set<Model> models) {
-//            this.models = models;
-//        }
-//
-//        public Set<Model> getModels() {
-//            return models;
-//        }
-//
-//    }
-
 }
