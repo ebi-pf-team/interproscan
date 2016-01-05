@@ -17,7 +17,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * InterPro entry type.
@@ -27,7 +26,7 @@ import java.io.Serializable;
  * @since   1.0
  */
 @XmlType(name="EntryTypeType")
-public enum EntryType implements Serializable {
+public enum EntryType {
 
     // TODO: Should this be an enum, or read from the database?
 

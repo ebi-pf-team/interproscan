@@ -17,7 +17,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * Gene Ontology category.
@@ -26,7 +25,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 @XmlType(name="GoCategoryType")
-public enum GoCategory implements Serializable {
+public enum GoCategory {
 
     BIOLOGICAL_PROCESS("GO:0008150", "P", "Biological Process", "Any process specifically pertinent to the functioning of " +
             "integrated living units: cells, tissues, organs, and organisms. A process is a collection of molecular " +
