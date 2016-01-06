@@ -79,7 +79,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
      */
     @Entity
     @Table(name = "hmmer2_location")
-    @XmlType(name = "Hmmer2LocationType")//, propOrder={"start", "end"})
+    @XmlType(name = "Hmmer2LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class Hmmer2Location extends HmmerLocation {
 
         /**

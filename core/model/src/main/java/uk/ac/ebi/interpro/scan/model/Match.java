@@ -21,9 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
@@ -236,6 +234,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
     /**
      * Helper class for MatchAdapter
      */
+    @XmlType(name = "matchesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class MatchesType {
 
         @XmlElement(name = "hmmer2-match")

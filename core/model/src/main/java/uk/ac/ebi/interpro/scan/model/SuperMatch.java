@@ -71,7 +71,7 @@ public class SuperMatch implements Serializable {
         this.entry = entry;
     }
 
-    @XmlElement(name="location", required = true)
+    @XmlElement(name="supermatch-location", required = true)
     public Set<SuperMatch.Location> getLocations() {
         return locations;
     }
@@ -132,6 +132,7 @@ public class SuperMatch implements Serializable {
      * @author Antony Quinn
      * @version $Id$
      */
+    @XmlType(name = "SuperMatchLocationType", propOrder = {"start", "end"}, namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class Location implements Serializable {
 
         private int start;

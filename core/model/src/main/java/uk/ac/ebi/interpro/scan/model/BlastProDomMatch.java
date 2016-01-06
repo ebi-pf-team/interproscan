@@ -61,7 +61,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
      */
     @Entity
     @Table(name = "blast_prodom_location")
-    @XmlType(name = "BlastProDomLocationType")
+    @XmlType(name = "BlastProDomLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class BlastProDomLocation extends Location {
 
         @Column(nullable = false)

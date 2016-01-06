@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import javax.xml.bind.annotation.XmlType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import java.util.Map;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@XmlType(name = "SignalPOrganismType")
 public enum SignalPOrganismType {
     EUK("EUK", "euk", "Eukaryotes", "SIGNALP_EUK"),
     GRAM_POSITIVE("GRAM_POSITIVE", "gram+", "Gram-positive bacteria", "SIGNALP_GRAM+"),

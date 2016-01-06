@@ -66,7 +66,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
      */
     @Entity
     @Table(name = "phobius_location")
-    @XmlType(name = "PhobiusLocationType")
+    @XmlType(name = "PhobiusLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class PhobiusLocation extends Location {
 
         protected PhobiusLocation() {
