@@ -33,6 +33,6 @@ public class MatchDataResourceReaderTest {
     public void testRead() throws IOException {
         Collection<MatchDataRecord> result = reader.read(file);
         assertNotNull(result);
-        assertEquals("Size should be 35.", 35, result.size());
+        assertEquals("Size should be 28.", 28, result.size());
     }
 }
