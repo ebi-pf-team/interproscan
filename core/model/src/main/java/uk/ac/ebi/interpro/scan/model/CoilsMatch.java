@@ -61,7 +61,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
      */
     @Entity
     @Table(name = "coils_location")
-    @XmlType(name = "CoilsLocationType")
+    @XmlType(name = "CoilsLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class CoilsLocation extends Location {
 
         protected CoilsLocation() {

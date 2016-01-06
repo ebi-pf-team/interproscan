@@ -21,10 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.Collections;
@@ -227,6 +224,8 @@ public abstract class Location implements Serializable, Cloneable {
     /**
      * Helper class for LocationAdapter
      */
+    @XmlType(name = "locationsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class LocationsType {
 
         @XmlElement(name = "hmmer2-location")

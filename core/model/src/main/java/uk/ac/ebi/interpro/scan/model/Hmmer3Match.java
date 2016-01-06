@@ -83,7 +83,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
      */
     @Entity
     @Table(name = "hmmer3_location")
-    @XmlType(name = "Hmmer3LocationType")
+    @XmlType(name = "Hmmer3LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class Hmmer3Location extends HmmerLocation {
 
         @Column(name = "envelope_start", nullable = false)
