@@ -356,7 +356,8 @@ public class Protein implements Serializable {
      * the setSequenceObject method retrieves the sequence and MD5 from this object
      * and sets them on the Protein object directly.
      */
-    @XmlType(name = "SequenceType")
+    @XmlType(name = "SequenceType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private static final class Sequence {
 
         private String md5;

@@ -126,7 +126,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
      */
     @Entity
     @Table(name = "panther_location")
-    @XmlType(name = "PantherLocationType")
+    @XmlType(name = "PantherLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class PantherLocation extends Location {
 
         /**

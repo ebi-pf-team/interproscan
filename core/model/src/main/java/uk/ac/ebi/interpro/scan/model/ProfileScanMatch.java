@@ -63,7 +63,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
      */
     @Entity
     @Table(name = "profile_scan_location")
-    @XmlType(name = "ProfileScanLocationType")
+    @XmlType(name = "ProfileScanLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class ProfileScanLocation extends Location {
 
         @Column(nullable = false)

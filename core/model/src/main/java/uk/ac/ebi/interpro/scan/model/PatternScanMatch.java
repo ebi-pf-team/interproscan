@@ -21,12 +21,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -65,9 +61,10 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
      */
     @Entity
     @Table(name = "pattern_scan_location")
-    @XmlType(name = "PatternScanLocationType")
+    @XmlType(name = "PatternScanLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class PatternScanLocation extends Location {
 
+        @Enumerated(EnumType.ORDINAL)   // Using ordinal to keep the database size down.
         @Column(nullable = false, name = "location_level")
         private Level level;
 
@@ -129,8 +126,9 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
          * @author Antony Quinn
          * @author Phil Jones
          */
-        @XmlType(name = "LevelType")
-        public static enum Level {
+        @XmlType(name = "LevelType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+        public enum Level {
 
             STRONG("(0)", "!"),
             WEAK("(-1)", "?"),
@@ -148,7 +146,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
             private final String tag;
             private final String symbol;
 
-            private Level(String tag, String symbol) {
+            Level(String tag, String symbol) {
                 this.tag = tag;
                 this.symbol = symbol;
             }

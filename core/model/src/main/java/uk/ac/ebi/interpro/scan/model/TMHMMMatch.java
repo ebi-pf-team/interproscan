@@ -72,7 +72,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
      */
     @Entity
     @Table(name = "tmhmm_location")
-    @XmlType(name = "TMHMMLocationType")
+    @XmlType(name = "TMHMMLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class TMHMMLocation extends Location {
 
         @Column(nullable = false)
