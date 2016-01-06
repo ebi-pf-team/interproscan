@@ -19,7 +19,7 @@ import java.util.Map;
 
 public final class SignatureLibraryLookup {
 
-    private static final Map<String, SignatureLibrary> libraryNameToSignatureLibrary = new HashMap<String, SignatureLibrary>();
+    private static final Map<String, SignatureLibrary> libraryNameToSignatureLibrary = new HashMap<>();
 
     private SignatureLibraryLookup() {
     }
@@ -36,11 +36,6 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("pfam-a", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam_a", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam a", SignatureLibrary.PFAM);
-
-        libraryNameToSignatureLibrary.put("pfamb", SignatureLibrary.PFAM_B);
-        libraryNameToSignatureLibrary.put("pfam_b_hmmer3", SignatureLibrary.PFAM_B);
-        libraryNameToSignatureLibrary.put("pfam-b", SignatureLibrary.PFAM_B);
-        libraryNameToSignatureLibrary.put("pfam b", SignatureLibrary.PFAM_B);
 
         libraryNameToSignatureLibrary.put("gene-3d", SignatureLibrary.GENE3D);
         libraryNameToSignatureLibrary.put("gene 3d", SignatureLibrary.GENE3D);

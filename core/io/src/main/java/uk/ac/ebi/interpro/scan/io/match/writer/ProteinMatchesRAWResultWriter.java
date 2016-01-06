@@ -64,8 +64,6 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
         //tempMap.put(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), "SignalPHMM"); // New SignalP version does not map cleanly to old
         //tempMap.put(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), "SignalPHMM"); // New SignalP version does not map cleanly to old
         //tempMap.put(SignatureLibrary.PHOBIUS.getName(), ""); // Phobius was new in I5, doesn't exist in I4!
-        //tempMap.put(SignatureLibrary.PFAM_B.getName(), ""); // Not officially part of I5 (as far as users are aware)
-        //tempMap.put(SignatureLibrary.COMPARA.getName(), ""); // Not officially part of I5 (as far as users are aware)
 
         analysisI5toI4 = Collections.unmodifiableMap(tempMap);
     }
