@@ -39,11 +39,6 @@ public enum MatchDataSource {
             "http://pfam.sanger.ac.uk/",
             "http://pfam.sanger.ac.uk/family/$0"),
 
-    PFAM_B("PfamB",
-            PFAM.description,
-            "http://pfam.sanger.ac.uk/",
-            "http://pfam.sanger.ac.uk/pfamb/$0"),
-
     PIRSF(0,
             "PIRSF is a hierarchical classification system based on the 'homeomorphic family' principle. Members are " +
                     "both homologous (evolved from a common ancestor) and homeomorphic (sharing full-length sequence similarity " +
@@ -174,14 +169,14 @@ public enum MatchDataSource {
     private final String homeUrl;
     private final String linkUrl;
 
-    private MatchDataSource() {
+    MatchDataSource() {
         this.name = name(); // Default name (see java.lang.Enum)
         this.description = "";
         this.homeUrl = "";
         this.linkUrl = "";
     }
 
-    private MatchDataSource(String name, String description, String homeUrl, String linkUrl) {
+    MatchDataSource(String name, String description, String homeUrl, String linkUrl) {
         this.name = name;
         this.description = description;
         this.homeUrl = homeUrl;
