@@ -45,7 +45,7 @@ public enum GoCategory {
     private final String name; // Category name (Biological Process, Cellular Component or Molecular Function)
     private final String description;
 
-    private GoCategory(String identifier, String nameCode, String name, String description) {
+    GoCategory(String identifier, String nameCode, String name, String description) {
         this.identifier  = identifier;
         this.nameCode    = nameCode;
         this.name        = name;
