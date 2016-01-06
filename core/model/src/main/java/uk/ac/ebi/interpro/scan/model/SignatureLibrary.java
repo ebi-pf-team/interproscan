@@ -33,7 +33,6 @@ public enum SignatureLibrary {
     GENE3D("Gene3D", "Description to be added"),
     PANTHER("PANTHER", "The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence."),
     PFAM("Pfam", "Description to be added"),
-    PFAM_B("Pfam B", "Description to be added"),
     SMART("SMART", "Description to be added"),
     SUPERFAMILY("SUPERFAMILY", "Description to be added"),
     PIRSF("PIRSF", "Family classification system at the Protein Information Resource"),
@@ -42,7 +41,6 @@ public enum SignatureLibrary {
     PROSITE_PATTERNS("ProSitePatterns", "Description to be added"),
     PROSITE_PROFILES("ProSiteProfiles", "Description to be added"),
     COILS("Coils", "Description to be added"),
-    COMPARA("Compara", "Description to be added"),
     HAMAP("Hamap", "Description to be added"),
     TIGRFAM("TIGRFAM", "Description to be added"),
     SIGNALP_EUK("SignalP_EUK", "SignalP (organism type eukaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for eukaryotes."),
@@ -54,7 +52,7 @@ public enum SignatureLibrary {
 
     private String description;
 
-    private SignatureLibrary(String name, String description) {
+    SignatureLibrary(String name, String description) {
         setName(name);
         setDescription(description);
     }
