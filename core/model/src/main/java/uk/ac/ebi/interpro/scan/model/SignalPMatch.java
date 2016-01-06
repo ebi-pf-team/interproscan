@@ -55,7 +55,7 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
      */
     @Entity
     @Table(name = "signalp_location")
-    @XmlType(name = "SignalPLocationType")
+    @XmlType(name = "SignalPLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class SignalPLocation extends Location {
 
         @Column

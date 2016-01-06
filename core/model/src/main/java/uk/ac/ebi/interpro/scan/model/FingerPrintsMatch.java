@@ -109,7 +109,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
      */
     @Entity
     @Table(name = "finger_prints_location")
-    @XmlType(name = "FingerPrintsLocationType")
+    @XmlType(name = "FingerPrintsLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class FingerPrintsLocation extends Location {
 
         @Column(nullable = false)

@@ -82,7 +82,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
      */
     @Entity
     @Table(name = "superfamilyhmmer3_location")
-    @XmlType(name = "SuperFamilyHmmer3LocationType")
+    @XmlType(name = "SuperFamilyHmmer3LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class SuperFamilyHmmer3Location extends Location {
 
         protected SuperFamilyHmmer3Location() {
