@@ -156,6 +156,7 @@ public abstract class Location implements Serializable, Cloneable {
          */
         @Override
         public LocationsType marshal(Set<? extends Location> locations) {
+            Set<CDDMatch.CDDLocation> cddLocations = new LinkedHashSet<CDDMatch.CDDLocation>();
             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations = new LinkedHashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
@@ -169,7 +170,9 @@ public abstract class Location implements Serializable, Cloneable {
             Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
             for (Location l : locations) {
-                if (l instanceof Hmmer2Match.Hmmer2Location) {
+                if (l instanceof CDDMatch.CDDLocation) {
+                    cddLocations.add((CDDMatch.CDDLocation) l);
+                } else if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location) {
                     hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
@@ -197,7 +200,7 @@ public abstract class Location implements Serializable, Cloneable {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
-            return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(cddLocations, hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
                     patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations);
         }
 
@@ -207,6 +210,7 @@ public abstract class Location implements Serializable, Cloneable {
         @Override
         public Set<Location> unmarshal(LocationsType locationsType) {
             Set<Location> locations = new LinkedHashSet<Location>();
+            locations.addAll(locationsType.getCddLocations());
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
             locations.addAll(locationsType.getSuperFamilyHmmer3Locations());
@@ -228,6 +232,9 @@ public abstract class Location implements Serializable, Cloneable {
      * Helper class for LocationAdapter
      */
     private final static class LocationsType {
+
+        @XmlElement(name = "cdd-location")
+        private final Set<CDDMatch.CDDLocation> cddLocations;
 
         @XmlElement(name = "hmmer2-location")
         private final Set<Hmmer2Match.Hmmer2Location> hmmer2Locations;
@@ -266,6 +273,7 @@ public abstract class Location implements Serializable, Cloneable {
         private final Set<TMHMMMatch.TMHMMLocation> tmhmmLocations;
 
         private LocationsType() {
+            cddLocations = null;
             hmmer2Locations = null;
             hmmer3Locations = null;
             superFamilyHmmer3Locations = null;
@@ -280,7 +288,8 @@ public abstract class Location implements Serializable, Cloneable {
             tmhmmLocations = null;
         }
 
-        public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
+        public LocationsType(Set<CDDMatch.CDDLocation> cddLocations,
+                             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
                              Set<Hmmer3Match.Hmmer3Location> hmmer3Locations,
                              Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations,
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
@@ -292,6 +301,7 @@ public abstract class Location implements Serializable, Cloneable {
                              Set<PantherMatch.PantherLocation> pantherLocations,
                              Set<SignalPMatch.SignalPLocation> signalPLocations,
                              Set<TMHMMMatch.TMHMMLocation> tmhmmLocations) {
+            this.cddLocations = cddLocations;
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
@@ -304,6 +314,10 @@ public abstract class Location implements Serializable, Cloneable {
             this.pantherLocations = pantherLocations;
             this.signalPLocations = signalPLocations;
             this.tmhmmLocations = tmhmmLocations;
+        }
+
+        public Set<CDDMatch.CDDLocation> getCddLocations() {
+            return (cddLocations == null ? Collections.<CDDMatch.CDDLocation>emptySet() : cddLocations);
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {

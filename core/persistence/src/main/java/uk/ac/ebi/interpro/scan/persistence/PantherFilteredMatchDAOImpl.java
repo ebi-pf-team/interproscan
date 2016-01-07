@@ -82,6 +82,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         throw new IllegalStateException("Cannot find PANTHER signature " + currentSignatureAc + " in the database.");
                     }
                 }
+
                 locations.add(new PantherMatch.PantherLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd()));
                 lastRawMatch = rawMatch;
             }
