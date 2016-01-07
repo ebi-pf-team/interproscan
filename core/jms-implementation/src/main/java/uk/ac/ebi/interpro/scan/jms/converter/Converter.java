@@ -264,12 +264,10 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             // Clean up empty working directory.
             final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf('/'));
             File file = new File(workingDirectory);
-            if (file.exists()) {
-                try {
-                    FileUtils.deleteDirectory(file);
-                }catch (IOException e) {
-                    LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
-                }
+            try {
+                FileUtils.deleteDirectory(file);
+            }catch (IOException e) {
+                LOGGER.warn("At convert completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
 
