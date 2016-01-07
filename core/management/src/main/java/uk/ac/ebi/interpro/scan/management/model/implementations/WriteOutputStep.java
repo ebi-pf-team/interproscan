@@ -243,12 +243,10 @@ public class WriteOutputStep extends Step {
             // Clean up empty working directory.
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf('/'));
             File file = new File(workingDirectory);
-            if (file.exists()) {
-                try {
-                    FileUtils.deleteDirectory(file);
-                }catch (IOException e) {
-                    LOGGER.warn("At run completion, unable to delete temporary directory " + file.getAbsolutePath());
-                }
+            try {
+                FileUtils.deleteDirectory(file);
+            }catch (IOException e) {
+                LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
         if (LOGGER.isInfoEnabled()) {

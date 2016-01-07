@@ -234,9 +234,13 @@ public abstract class AbstractMaster implements Master {
         return temporaryDirectoryManager.replacePath(baseDirectoryTemporaryFiles);
     }
 
-    public void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
+    private void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
         File dir = new File(dirPath);
-        FileUtils.deleteDirectory(dir);
+        try {
+            FileUtils.deleteDirectory(dir);
+        }catch (IOException e) {
+            LOGGER.warn("Unable to delete temporary directory " + dir.getAbsolutePath());
+        }
     }
 
     public void cleanUpWorkingDirectory(){
