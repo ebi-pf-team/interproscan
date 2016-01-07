@@ -1182,9 +1182,13 @@ public class Run extends AbstractI5Runner {
      * @param dirPath
      * @throws IOException
      */
-    public static void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
+    private static void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
         File dir = new File(dirPath);
-        FileUtils.deleteDirectory(dir);
+        try {
+            FileUtils.deleteDirectory(dir);
+        }catch (IOException e) {
+            LOGGER.warn("At run completion, unable to delete temporary directory " + dir.getAbsolutePath());
+        }
     }
 
     /**
