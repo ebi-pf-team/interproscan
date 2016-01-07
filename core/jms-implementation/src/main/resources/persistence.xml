@@ -30,6 +30,7 @@
         <class>uk.ac.ebi.interpro.scan.model.PathwayXref</class>
 
         <!-- Concrete Matches -->
+        <class>uk.ac.ebi.interpro.scan.model.CDDMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.HmmerMatch</class>
@@ -45,6 +46,7 @@
         <class>uk.ac.ebi.interpro.scan.model.SignalPMatch</class>
 
         <!-- Concrete Locations. -->
+        <class>uk.ac.ebi.interpro.scan.model.CDDMatch$CDDLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
 
@@ -61,6 +63,8 @@
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
+
+        <!--<class>uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch</class>-->
 
         <class>uk.ac.ebi.interpro.scan.model.raw.HmmerRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch</class>

@@ -14,6 +14,7 @@ package uk.ac.ebi.interpro.scan.management.model;
  */
 public enum SerialGroup {
     WRITE_FASTA_COILS,
+    WRITE_FASTA_CDD,
     WRITE_FASTA_PHOBIUS,
     WRITE_FASTA_SIGNALP_EUK,
     WRITE_FASTA_SIGNALP_GRAM_POS,
@@ -24,6 +25,7 @@ public enum SerialGroup {
     PARSE_GENE3D,
     PARSE_PFAM_A,
     PARSE_PHOBIUS,
+    PARSE_CDD,
     PARSE_COILS,
     PARSE_PRINTS,
     PARSE_HAMAP,

@@ -20,9 +20,16 @@ public class DeleteFileStep extends Step {
 
     private String[] fileNameTemplate;
 
+    //Misc
+    private boolean deleteWorkingDirectoryOnCompletion = true;
+
     @Required
     public void setFileNameTemplate(String... filePathTemplate) {
         this.fileNameTemplate = filePathTemplate;
+    }
+
+    public void setDeleteWorkingDirectoryOnCompletion(boolean deleteWorkingDirectoryOnCompletion) {
+        this.deleteWorkingDirectoryOnCompletion = deleteWorkingDirectoryOnCompletion;
     }
 
     /**
@@ -39,23 +46,28 @@ public class DeleteFileStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.info("Starting step with Id " + this.getId());
-        if (fileNameTemplate != null && fileNameTemplate.length > 0) {
-            for (String fileName : fileNameTemplate) {
-                final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileName);
-                LOGGER.debug("Deleting file: " + fileName);
-                File file = new File(filePathName);
-                if (file.exists()) {
-                    if (!file.delete()) {
-                        LOGGER.error("Unable to delete the file located at " + filePathName);
-                        throw new IllegalStateException("Unable to delete the file located at " + filePathName);
+        LOGGER.debug("deleteWorkingDirectoryOnCompletion: " + deleteWorkingDirectoryOnCompletion);
+        if(deleteWorkingDirectoryOnCompletion) {
+            if (fileNameTemplate != null && fileNameTemplate.length > 0) {
+                for (String fileName : fileNameTemplate) {
+                    final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileName);
+                    LOGGER.debug("Deleting file: " + fileName);
+                    File file = new File(filePathName);
+                    if (file.exists()) {
+                        if (!file.delete()) {
+                            LOGGER.error("Unable to delete the file located at " + filePathName);
+                            throw new IllegalStateException("Unable to delete the file located at " + filePathName);
+                        }
+                    }else{
+                        LOGGER.info("File not found, file located at " + filePathName);
                     }
-                }else{
-                    LOGGER.info("File not found, file located at " + filePathName);
                 }
             }
-        }
-        else {
-            throw new IllegalStateException("Delete file step called without specifying any files to delete");
+            else {
+                throw new IllegalStateException("Delete file step called without specifying any files to delete");
+            }
+        }else{
+            LOGGER.debug("File delete step skipped -  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);
         }
         LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
