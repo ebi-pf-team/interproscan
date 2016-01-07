@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Runs the Phobius binary on the fasta file provided to the output file provided.
+ * Runs the Coils binary on the fasta file provided to the output file provided.
  *
  * @author Phil Jones
  * @version $Id$
