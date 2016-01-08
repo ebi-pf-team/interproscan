@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -43,6 +44,7 @@ import static junit.framework.TestCase.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@Ignore("Does not work on all OS.")
 public class ProteinDAOTest {
 
     /**
