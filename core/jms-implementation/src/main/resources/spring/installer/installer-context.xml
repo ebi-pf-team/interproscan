@@ -36,6 +36,14 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PFAM"/>
+                    <property name="releaseVersionNumber" value="${prev.pfam-a.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${prev.pfam-a.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPfam"/>
+                </bean>
+
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PFAM"/>
                     <property name="releaseVersionNumber" value="${pfam-a.signature.library.release}"/>
                     <property name="modelFiles" value="file:${pfam-a.hmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
