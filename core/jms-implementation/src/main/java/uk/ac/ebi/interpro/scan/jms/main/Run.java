@@ -73,25 +73,26 @@ public class Run extends AbstractI5Runner {
     static {
         //Usual I5 options
         for (I5Option i5Option : I5Option.values()) {
-            OptionBuilder builder = OptionBuilder.withLongOpt(i5Option.getLongOpt())
-                    .withDescription(i5Option.getDescription());
+            final Option.Builder builder;
+            builder = (i5Option.getShortOpt() == null)
+                    ? Option.builder()
+                    : Option.builder(i5Option.getShortOpt());
+            builder.longOpt(i5Option.getLongOpt());
+            builder.desc(i5Option.getDescription());
             if (i5Option.isRequired()) {
-                builder = builder.isRequired();
+                builder.required();
             }
             if (i5Option.getArgumentName() != null) {
-                builder = builder.withArgName(i5Option.getArgumentName());
+                builder.argName(i5Option.getArgumentName());
                 if (i5Option.hasMultipleArgs()) {
-                    builder = builder.hasArgs();
+                    builder.hasArgs();
                 } else {
-                    builder = builder.hasArg();
+                    builder.hasArg();
                 }
             }
+            builder.valueSeparator();
 
-            builder = builder.withValueSeparator();
-
-            final Option option = (i5Option.getShortOpt() == null)
-                    ? builder.create()
-                    : builder.create(i5Option.getShortOpt());
+            final Option option = builder.build();
 
             COMMAND_LINE_OPTIONS.addOption(option);
 
@@ -143,18 +144,26 @@ public class Run extends AbstractI5Runner {
             //create the dot i5 dir/file
             //$USER_HOME/.interproscan-5/interproscan.properties
             String dotInterproscan5Dir = System.getProperty("user.home") + "/.interproscan-5";
-            LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
+            }
             String userInterproscan5Properties = dotInterproscan5Dir + "/interproscan.properties";
             File userInterproscan5PropertiesFile = new File(userInterproscan5Properties);
             if (!directoryExists(dotInterproscan5Dir)) {
-                LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
+                }
                 createDirectory(dotInterproscan5Dir);
             } else {
-                LOGGER.debug("Directory $USER_HOME/.interproscan-5/interproscan.properties  - " + dotInterproscan5Dir + " exists");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Directory $USER_HOME/.interproscan-5/interproscan.properties  - " + dotInterproscan5Dir + " exists");
+                }
             }
             //Create file if it doesnot exists
             if (!userInterproscan5PropertiesFile.exists()) {
-                LOGGER.debug(" Creating the  userInterproscan5Properties file : " + userInterproscan5Properties);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(" Creating the  userInterproscan5Properties file : " + userInterproscan5Properties);
+                }
                 userInterproscan5PropertiesFile.createNewFile();
             }
 
@@ -177,7 +186,9 @@ public class Run extends AbstractI5Runner {
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
                 temporaryDirectory = jobs.getBaseDirectoryTemporaryFiles();
-                LOGGER.debug("temporaryDirectory: jobs.getBaseDirectoryTemporaryFiles() - " + temporaryDirectory.toString());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("temporaryDirectory: jobs.getBaseDirectoryTemporaryFiles() - " + temporaryDirectory.toString());
+                }
                 //Get deactivated jobs
                 final Map<Job, JobStatusWrapper> deactivatedJobs = jobs.getDeactivatedJobs();
                 //Info about active and de-active jobs is shown in the manual instruction (help) as well
@@ -276,15 +287,23 @@ public class Run extends AbstractI5Runner {
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
                         || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
                     final AbstractMaster master = (AbstractMaster) runnable;
-                    LOGGER.debug(Utilities.getTimeNow() + " 1. Checking working Temporary Directory -master.getTemporaryDirectory() : " + master.getTemporaryDirectory());
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(Utilities.getTimeNow() + " 1. Checking working Temporary Directory -master.getTemporaryDirectory() : " + master.getTemporaryDirectory());
+                    }
                     master.setupTemporaryDirectory();
-                    LOGGER.debug(Utilities.getTimeNow() + " 1. temporaryDirectory is  " + temporaryDirectory);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(Utilities.getTimeNow() + " 1. temporaryDirectory is  " + temporaryDirectory);
+                    }
                     temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
-                    LOGGER.debug(Utilities.getTimeNow() + " 1. BaseDirectoryTemporary is  " + master.getJobs().getBaseDirectoryTemporaryFiles());
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(Utilities.getTimeNow() + " 1. BaseDirectoryTemporary is  " + master.getJobs().getBaseDirectoryTemporaryFiles());
+                    }
                     workingTemporaryDirectory = master.getWorkingTemporaryDirectoryPath();
                     deleteWorkingDirectoryOnCompletion = master.isDeleteWorkingDirectoryOnCompletion();
 
-                    LOGGER.debug(Utilities.getTimeNow() + " 1. workingTemporaryDirectory is  " + workingTemporaryDirectory);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(Utilities.getTimeNow() + " 1. workingTemporaryDirectory is  " + workingTemporaryDirectory);
+                    }
 
 
                 }
@@ -401,7 +420,9 @@ public class Run extends AbstractI5Runner {
                 checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
                 master.setTemporaryDirectory(temporaryDirectory);
             }
-            LOGGER.debug("temporaryDirectory: master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("temporaryDirectory: master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
+            }
             checkIfProductionMasterAndConfigure(master, ctx);
             checkIfBlackBoxMasterAndConfigure(master, parsedCommandLine, parsedOutputFormats, ctx, mode, sequenceType);
         }
@@ -511,7 +532,9 @@ public class Run extends AbstractI5Runner {
             final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
             bbMaster.setMapToPathway(mapToPathway);
             bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
-            LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());
+            }
         }
     }
 
@@ -625,7 +648,9 @@ public class Run extends AbstractI5Runner {
             checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
         }
         master.setTemporaryDirectory(temporaryDirectory);
-        LOGGER.debug("temporaryDirectory: simple master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("temporaryDirectory: simple master.getTemporaryDirectory() - " + master.getTemporaryDirectory());
+        }
     }
 
     /**
