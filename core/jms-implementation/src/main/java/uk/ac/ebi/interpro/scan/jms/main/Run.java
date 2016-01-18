@@ -294,7 +294,14 @@ public class Run extends AbstractI5Runner {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(Utilities.getTimeNow() + " 1. temporaryDirectory is  " + temporaryDirectory);
                     }
-                    temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+                    try {
+                        temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
+                    }
+                    catch (IllegalStateException e) {
+                        final String tempDir = master.getTemporaryDirectory();
+                        System.out.println("Could not write to temporary directory: " + tempDir.substring(0, tempDir.lastIndexOf(File.separator)));
+                        System.exit(1);
+                    }
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(Utilities.getTimeNow() + " 1. BaseDirectoryTemporary is  " + master.getJobs().getBaseDirectoryTemporaryFiles());
                     }
@@ -495,7 +502,7 @@ public class Run extends AbstractI5Runner {
                             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         }
                     }
-                    String logDir = ((DistributedBlackBoxMaster) bbMaster).getLogDir() + "/" + projectId.replaceAll("\\s+", "");
+                    String logDir = ((DistributedBlackBoxMaster) bbMaster).getLogDir() + File.separator + projectId.replaceAll("\\s+", "");
                     ((DistributedBlackBoxMaster) bbMaster).setLogDir(logDir);
                     ((DistributedBlackBoxMaster) bbMaster).setSubmissionWorkerLogDir(logDir);
 
@@ -577,7 +584,7 @@ public class Run extends AbstractI5Runner {
             }
             String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
             // If outputBaseFileName is a directory (simply check the ending) then set the defaultFileOutputName
-            if (outputBaseFileName.endsWith("/")) {
+            if (outputBaseFileName.endsWith(File.separator)) {
                 outputBaseFileName += defaultOutputFileName;
             }
             outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
@@ -611,8 +618,8 @@ public class Run extends AbstractI5Runner {
                 System.exit(3);
             }
             String outputDirValue = parsedCommandLine.getOptionValue(I5Option.OUTPUT_DIRECTORY.getLongOpt());
-            if (!outputDirValue.endsWith("/")) {
-                outputDirValue += "/";
+            if (!outputDirValue.endsWith(File.separator)) {
+                outputDirValue += File.separatorChar;
             }
             outputDirValue += defaultOutputFileName;
             String outputBaseFileName = getAbsoluteFilePath(outputDirValue, parsedCommandLine);
@@ -771,7 +778,7 @@ public class Run extends AbstractI5Runner {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
-                String logDir = worker.getLogDir() + "/" + projectId.replaceAll("\\s+", "");
+                String logDir = worker.getLogDir() + File.separator + projectId.replaceAll("\\s+", "");
                 worker.setLogDir(logDir);
                 worker.setSubmissionWorkerLogDir(logDir);
 
