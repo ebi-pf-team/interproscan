@@ -241,7 +241,7 @@ public class WriteOutputStep extends Step {
 
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
-            final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf('/'));
+            final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf(File.separatorChar));
             File file = new File(workingDirectory);
             try {
                 FileUtils.deleteDirectory(file);

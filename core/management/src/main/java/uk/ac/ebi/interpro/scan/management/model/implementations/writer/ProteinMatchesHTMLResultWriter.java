@@ -113,8 +113,8 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
                     try {
                         final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
                         checkTempDirectory(tempDirectory);
-                        if (!tempDirectory.endsWith("/")) {
-                            tempDirectory = tempDirectory + "/";
+                        if (!tempDirectory.endsWith(File.separator)) {
+                            tempDirectory = tempDirectory + File.separator;
                         }
 
                         UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
