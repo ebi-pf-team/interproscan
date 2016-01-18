@@ -118,10 +118,10 @@ public abstract class AbstractMaster implements Master {
         //Change base dir temp directory if
         if (baseDirectoryTemporaryFiles != null) {
             LOGGER.debug("1. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
-            if (!baseDirectoryTemporaryFiles.endsWith("/")) {
-                setTemporaryDirectory(baseDirectoryTemporaryFiles + "/");
+            if (!baseDirectoryTemporaryFiles.endsWith(File.separator)) {
+                setTemporaryDirectory(baseDirectoryTemporaryFiles + File.separator);
             }
-            if (baseDirectoryTemporaryFiles.endsWith(temporaryFileDirSuffix + "/")) {
+            if (baseDirectoryTemporaryFiles.endsWith(temporaryFileDirSuffix + File.separator)) {
                 // The [UNIQUE] was already added (use temp directory as specified in interproscan.properties)
                 jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles);
             }

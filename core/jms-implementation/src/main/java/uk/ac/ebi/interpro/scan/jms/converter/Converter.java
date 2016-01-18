@@ -142,10 +142,10 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
      */
     private void setupTemporaryDirectory() {
         if (temporaryDirectory != null) {
-            if (!temporaryDirectory.endsWith("/")) {
-                temporaryDirectory = temporaryDirectory + "/";
+            if (!temporaryDirectory.endsWith(File.separator)) {
+                temporaryDirectory = temporaryDirectory + File.separator;
             }
-            if (!temporaryDirectory.endsWith(temporaryFileDirSuffix + "/")) {
+            if (!temporaryDirectory.endsWith(temporaryFileDirSuffix + File.separator)) {
                 // The [UNIQUE] directory needs adding now (temp directory was probably specified by the user on the command line)
                 temporaryDirectory = temporaryDirectory + temporaryFileDirSuffix;
             }
@@ -262,7 +262,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         // TODO Possible refactoring to consider, currently there is similar code in WriteOutputStep.execute() method
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
-            final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf('/'));
+            final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf(File.separatorChar));
             File file = new File(workingDirectory);
             try {
                 FileUtils.deleteDirectory(file);

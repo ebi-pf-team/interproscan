@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
 import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -398,8 +399,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 jobArray = "";
                 jobIndex = "." + workerIndex;
             }
-            clusterCommandAguments.append(" -o " + logDir + "/"+ agent_id+".out" + jobIndex);
-            clusterCommandAguments.append(" -e " + logDir + "/"+ agent_id+".err" + jobIndex);
+            clusterCommandAguments.append(" -o " + logDir + File.separator+ agent_id+".out" + jobIndex);
+            clusterCommandAguments.append(" -e " + logDir + File.separator+ agent_id+".err" + jobIndex);
 
             if(gridName.equals("lsf")) {
                 clusterCommandAguments.append(" -J "+ agent_id + jobArray);
