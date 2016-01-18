@@ -103,7 +103,7 @@ public class TarArchiveBuilder {
                 File[] children = tarArchiveEntry.listFiles();
                 if (children != null) {
                     for (File child : children) {
-                        addNewEntryToArchive(new File(child.getAbsolutePath()), os, entryFileName + "/");
+                        addNewEntryToArchive(new File(child.getAbsolutePath()), os, entryFileName + File.separator);
                     }
                 }
             }
