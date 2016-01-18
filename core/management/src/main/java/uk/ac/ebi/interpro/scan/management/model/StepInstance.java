@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model;
 import uk.ac.ebi.interpro.scan.model.KeyGen;
 
 import javax.persistence.*;
+import java.io.File;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -316,7 +317,7 @@ public class StepInstance implements Serializable {
 
         return new StringBuilder()
                 .append(temporaryFileDirectory)
-                .append('/')
+                .append(File.separatorChar)
                 .append(fileNameTemplate)
                 .toString();
     }
