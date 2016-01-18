@@ -17,6 +17,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -314,7 +315,7 @@ public class WorkerState implements Serializable {
         workerState.append("status: " + workerStatus).append("\n");
 
         workerState.append("logDir: " + logDir).append("\n");
-        workerState.append("logDirPath: " + logDir + "/" + projectId
+        workerState.append("logDirPath: " + logDir + File.separator + projectId
                 + "_" + masterTcpUri.hashCode()).append("\n");
         workerState.append("workers spawned: " + workersSpawned).append("\n");
         workerState.append("jotalJobsReceived: " + allJobs.size()).append("\n");

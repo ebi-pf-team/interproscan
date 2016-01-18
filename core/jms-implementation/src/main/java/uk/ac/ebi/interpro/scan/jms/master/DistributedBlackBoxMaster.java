@@ -16,6 +16,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -551,7 +552,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         Collection<WorkerState> workerStateCollection = statsUtil.getWorkerStateMap().values();
         if (workerStateCollection.size() > 0){
             for(WorkerState worker:workerStateCollection){
-                String logPath = "logDirPath: " + logDir + "/" + projectId
+                String logPath = "logDirPath: " + logDir + File.separator + projectId
                         + "_" + worker.getMasterTcpUri().hashCode();
                 StringBuffer workerStateSummary = new StringBuffer("Workers Summary - " + statsUtil.getWorkerStateMap().size() + " workers").append("\n");
                 workerStateSummary.append(worker.getWorkerIdentification() + ":"
