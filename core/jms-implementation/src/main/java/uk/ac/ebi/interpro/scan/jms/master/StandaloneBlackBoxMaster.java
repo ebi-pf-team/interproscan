@@ -22,16 +22,20 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     @Override
     public void run() {
+        int runStatus = 99999;
         final long now = System.currentTimeMillis();
         super.run();
 
+        runStatus = 11;
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
         try {
             loadInMemoryDatabase();
+            runStatus = 21;
             int stepInstancesCreatedByLoadStep = createStepInstances();
+            runStatus = 31;
             if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
             }
@@ -40,8 +44,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             boolean controlledLogging = false;
             while (!shutdownCalled) {
                 boolean completed = true;
-
+                runStatus = 41;
                 for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                    runStatus = 51;
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
@@ -100,6 +105,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 //for standalone es mode this should be < 200
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
+            runStatus = 0;
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by StandaloneBlackBoxMaster: ", e);
             systemExit(999);
@@ -108,7 +114,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             systemExit(999);
         }
 
-        System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+        if (runStatus == 0) {
+            System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+        }else{
+            LOGGER.error("InterProScan analyses failed, check log details for the errors - " + runStatus);
+        }
 
         if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
@@ -118,7 +128,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
             ));
         }
-        systemExit(0);
+        systemExit(runStatus);
     }
 
     /**
@@ -153,23 +163,4 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     }
 
 
-    /**
-     * * check if the job is hamap or prosite
-     *  then assign it higher priority
-     *
-     * @param step
-     * @return
-     */
-    public boolean  isHighPriorityStep(Step step){
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(" Step Id for pirsf, hamap : " + step.getId());
-        }
-        if(step.getId().toLowerCase().contains("pirsf".toLowerCase()) || step.getId().toLowerCase().contains("hamap".toLowerCase())){
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" pirsf/hamap job: " + step.getId()+ " Should have high priority, but priority is normally 4");
-            }
-            return true;
-        }
-        return false;
-    }
 }
