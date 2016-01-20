@@ -11,6 +11,16 @@
 
 /* Include file for Ncoils */
 
+/*
+Rob Russell's ncoils, modified by InterProScan team (EBI) to:
+- Allow easier integration into InterProScan.
+- Remove the dependency on an external matrix file
+- Allow running in daemon mode (NCOILSD).
+
+12/06/2015
+
+*/
+
 struct hept_pref {
 	float **m;		/* 20 x 7 amino acid heptad weights */
 	float smallest;		/* Smallest of the above */
