@@ -3,7 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-/* Based on Rob Russell's ncoils */
+/*
+Rob Russell's ncoils, modified by InterProScan team (EBI) to:
+- Allow easier integration into InterProScan.
+- Remove the dependency on an external matrix file
+- Allow running in daemon mode (NCOILSD).
+
+12/06/2015
+
+*/
 
 void predict (char *seq, float **P, int mode){
 	int i,j,k,l;

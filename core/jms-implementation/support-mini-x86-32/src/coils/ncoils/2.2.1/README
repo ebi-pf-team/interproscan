@@ -1,4 +1,19 @@
-To run the ncoilsd daemon, you need to make it
+NCOILS
+======
+
+To run the ncoils binary, you need to make it:
+
+prompt$ make
+
+To execute it (display usage instructions):
+
+prompt$ ./ncoils -h
+
+
+NCOILSD
+=======
+
+To run the ncoilsd daemon, you need to make it:
 
 prompt$ make
 
@@ -6,7 +21,7 @@ To execute it:
 
 prompt$ ./ncoilsd 51717 /opt/run/ncoilsd /opt/log/ncoilsd 
 
-To test it, there is a client in the test directory. 
+To test it, there is a client in the test directory:
 
 client.pl -file C04A11.3.fasta 
 
