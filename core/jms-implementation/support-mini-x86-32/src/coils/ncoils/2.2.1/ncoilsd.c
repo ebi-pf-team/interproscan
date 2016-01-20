@@ -10,6 +10,13 @@
 =================
 * Ncoils Daemon *
 =================
+
+NCOILSD written InterProScan team (EBI) to:
+- Remove the dependency on an external matrix file
+- Allow running in daemon mode.
+
+12/06/2015
+
 This is a relatively simpe bit of code that wraps up the ncoils program written
 by Rob Russell, which identifies coiled-coils in protein sequences. The process
 forks early, with the parent process exiting and the child process continuing
@@ -20,8 +27,6 @@ Each thread reads the sequence form the socket and predicts the coiled-coils and
 returns the results to the client connection.  The results are in a binary
 format, which is an array of floats.  The size of the array will be the length
 of the read sequences.
-
-
 
 */
 
