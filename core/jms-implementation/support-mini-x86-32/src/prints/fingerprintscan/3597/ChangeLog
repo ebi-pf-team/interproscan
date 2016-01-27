@@ -1,5 +1,5 @@
 2015-09-12  Gift Nuka <nuka@ebi.ac.uk>
-	* replaced cout with printf for some output in PathFinder.cc as one some user systems this was printing hex numbers?
+	* replaced cout with printf for some output in PathFinder.cc as on some user systems this was printing hex numbers?
         e.g. cout << setw(12) << eval; replaced with  printf("%-12.2g",eval);
 
 2007-12-17	Stephen Hall <sphall@manchester.ac.uk>

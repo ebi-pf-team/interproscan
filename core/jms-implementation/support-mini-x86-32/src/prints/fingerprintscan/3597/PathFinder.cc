@@ -31,6 +31,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
 USA, or alternatively look at http://www.gnu.org/copyleft/gpl.html.
 */
 
+/*
+PathFinder.cc code modified 2015-09-12 in InterProScan:
+- Replaced cout with printf for some output in PathFinder.cc as on some user systems this was printing hex numbers?
+    e.g. cout << setw(12) << eval; replaced with  printf("%-12.2g",eval);
+*/
+
+
 /*****************************************************************************
 MotifxMatch
 
