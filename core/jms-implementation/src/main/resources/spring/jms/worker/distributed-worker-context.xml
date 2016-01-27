@@ -7,7 +7,10 @@
 
     <import resource="classpath:/spring/spring-properties-context.xml"/>
     <import resource="classpath:/spring/jobs/all-jobs-context.xml"/>
-    <import resource="classpath:/spring/jms/activemq/activemq-queue-config-context.xml"/>
+    <!--<import resource="classpath:/spring/jms/activemq/activemq-queue-config-context.xml"/>-->
+    <import resource="classpath:/spring/jms/activemq/activemq-inVm-connection-config-context.xml"/>
+    <import resource="classpath:/spring/jms/activemq/activemq-remote-connection-config-context.xml"/>
+
 
     <!--TODO: This is already defined in the activemg broker context file-->
     <!--  Embedded ActiveMQ Broker - in vm connections only· -->
@@ -36,92 +39,92 @@
             </amq:systemUsage>
         </amq:systemUsage>
         <amq:transportConnectors>
-            <amq:transportConnector uri="vm://localhost"/>
+            <amq:transportConnector uri="vm://localhost?create=false"/>
         </amq:transportConnectors>
     </amq:broker>
 
+    <!-- start config to refactor-->
 
-    <!-- Local (e.g. vm) JMS ConnectionFactory -->
-    <!-- JMS ConnectionFactory to use, configuring the embedded broker using XML -->
-    <amq:connectionFactory
-            id="localJmsFactory"
-            useCompression="false"
-            optimizeAcknowledge="true"
-            brokerURL="vm://localhost?create=false"
-            alwaysSessionAsync="false"
-            exceptionListener="#workerExceptionListener"
-            transportListener="#workerTransportListener">
-        <amq:prefetchPolicy>
-            <amq:prefetchPolicy queuePrefetch="1"/>
-        </amq:prefetchPolicy>
-    </amq:connectionFactory>
-
-
-    <!-- JMS Error handler-->
-    <bean id="jmsErrorHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSErrorHandler" />
+    <!--&lt;!&ndash; Local (e.g. vm) JMS ConnectionFactory &ndash;&gt;-->
+    <!--&lt;!&ndash; JMS ConnectionFactory to use, configuring the embedded broker using XML &ndash;&gt;-->
+    <!--<amq:connectionFactory-->
+            <!--id="localJmsFactory"-->
+            <!--useCompression="false"-->
+            <!--optimizeAcknowledge="true"-->
+            <!--brokerURL="vm://localhost?create=false"-->
+            <!--alwaysSessionAsync="false"-->
+            <!--exceptionListener="#workerExceptionListener"-->
+            <!--transportListener="#workerTransportListener">-->
+        <!--<amq:prefetchPolicy>-->
+            <!--<amq:prefetchPolicy queuePrefetch="1"/>-->
+        <!--</amq:prefetchPolicy>-->
+    <!--</amq:connectionFactory>-->
 
 
-    <!-- JMS Exception handler-->
-    <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
-
-    <!-- JMS transport Listener-->
-    <bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
-
-    <!-- JMS Exception Listener-->
-    <bean id="workerExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" >
-        <property name="controller" ref="distributedWorkerController"/>
-    </bean>
-
-    <!-- Local Spring JMSTemplate -->
-    <bean id="localJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory">
-            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="localJmsFactory"/>
-                <property name="sessionCacheSize" value="100"/>
-            </bean>
-        </property>
-        <property name="explicitQosEnabled" value="true"/>
-        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-
-    </bean>
-
-    <!-- Local Spring JMSTopicTemplate -->
-    <bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory">
-            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="localJmsFactory"/>
-            </bean>
-        </property>
-        <property name="pubSubDomain" value="true"/>
-    </bean>
-
-    <!-- Remote (e.g. TCP) JMS ConnectionFactory -->
-    <amq:connectionFactory
-            id="remoteJmsFactory"
-            useCompression="true"
-            optimizeAcknowledge="true"
-            alwaysSessionAsync="false"
-            brokerURL="vm://localhost?create=false"
-            exceptionListener="#workerExceptionListener"
-            transportListener="#workerTransportListener">
-        <amq:prefetchPolicy>
-            <amq:prefetchPolicy queuePrefetch="1"/>
-        </amq:prefetchPolicy>
-    </amq:connectionFactory>
+    <!--&lt;!&ndash; JMS Error handler&ndash;&gt;-->
+    <!--<bean id="jmsErrorHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSErrorHandler" />-->
 
 
-    <!-- Remote Spring JMSTemplate -->
-    <bean id="remoteJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory">
-            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
-                <constructor-arg ref="remoteJmsFactory"/>
-                <property name="sessionCacheSize" value="100"/>
-            </bean>
-        </property>
-        <property name="explicitQosEnabled" value="true"/>
-        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-    </bean>
+    <!--&lt;!&ndash; JMS Exception handler&ndash;&gt;-->
+    <!--<bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />-->
 
+    <!--&lt;!&ndash; JMS transport Listener&ndash;&gt;-->
+    <!--<bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />-->
+
+    <!--&lt;!&ndash; JMS Exception Listener&ndash;&gt;-->
+    <!--<bean id="workerExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" >-->
+        <!--<property name="controller" ref="distributedWorkerController"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; Local Spring JMSTemplate &ndash;&gt;-->
+    <!--<bean id="localJmsTemplate" class="org.springframework.jms.core.JmsTemplate">-->
+        <!--<property name="connectionFactory">-->
+            <!--<bean class="org.springframework.jms.connection.CachingConnectionFactory">-->
+                <!--<constructor-arg ref="localJmsFactory"/>-->
+                <!--<property name="sessionCacheSize" value="100"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="explicitQosEnabled" value="true"/>-->
+        <!--<property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>-->
+
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; Local Spring JMSTopicTemplate &ndash;&gt;-->
+    <!--<bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">-->
+        <!--<property name="connectionFactory">-->
+            <!--<bean class="org.springframework.jms.connection.CachingConnectionFactory">-->
+                <!--<constructor-arg ref="localJmsFactory"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="pubSubDomain" value="true"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; Remote (e.g. TCP) JMS ConnectionFactory &ndash;&gt;-->
+    <!--<amq:connectionFactory-->
+            <!--id="remoteJmsFactory"-->
+            <!--useCompression="true"-->
+            <!--optimizeAcknowledge="true"-->
+            <!--alwaysSessionAsync="false"-->
+            <!--brokerURL="vm://localhost?create=false">-->
+        <!--<amq:prefetchPolicy>-->
+            <!--<amq:prefetchPolicy queuePrefetch="1"/>-->
+        <!--</amq:prefetchPolicy>-->
+    <!--</amq:connectionFactory>-->
+
+
+    <!--&lt;!&ndash; Remote Spring JMSTemplate &ndash;&gt;-->
+    <!--<bean id="remoteJmsTemplate" class="org.springframework.jms.core.JmsTemplate">-->
+        <!--<property name="connectionFactory">-->
+            <!--<bean class="org.springframework.jms.connection.CachingConnectionFactory">-->
+                <!--<constructor-arg ref="remoteJmsFactory"/>-->
+                <!--<property name="sessionCacheSize" value="100"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="explicitQosEnabled" value="true"/>-->
+        <!--<property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>-->
+    <!--</bean>-->
+
+    <!-- end config to refactor-->
 
     <bean id="distributedWorkerController" class="uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl">
         <constructor-arg ref="remoteQueueJmsContainer"/>
@@ -131,7 +134,7 @@
         <property name="maximumLifeSeconds" value="${jvm.maximum.life.seconds}"/>
         <property name="highMemory" value="false"/>
         <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
-        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="remoteWorker" value="true"/>
         <property name="statsQueue"  ref="statsQueue"/>
         <property name="jobRequestQueue"  ref="jobRequestQueue" />
@@ -174,7 +177,7 @@
         </property>
         <property name="statsUtil" ref="workerStatsUtil"/>
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
-        <property name="jmsTopicTemplate" ref="jmsTopicTemplate"/>
+        <property name="jmsTopicTemplate" ref="inVmJmsTopicTemplate"/>
         <property name="responseQueueMessageListener" ref="responseQueueMessageListener"/>
         <property name="workerMonitorQueueListener" ref="monitorQueueMessageListener"/>
         <property name="workerMessageSender" ref="workerMessageSender"/>
@@ -194,6 +197,7 @@
         <property name="workerState" ref="workerState"/>
         <property name="timeKeeper" ref="timeKeeper"/>
         <property name="gridCheckInterval" value="${grid.check.interval.seconds}"/>
+        <property name="queuePrefetchLimit" value="${consumer.prefetch.limit}"/>
 
     </bean>
 
@@ -216,7 +220,7 @@
 
     <!--Configuration for the job response queue listener-->
     <bean id="responseQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-    <property name="connectionFactory" ref="localJmsFactory"/>
+    <property name="connectionFactory" ref="connectionFactory"/>
     <property name="destination" ref="jobResponseQueue"/>
     <property name="concurrentConsumers" value="1"/>
     <property name="messageListener" ref="responseQueueMessageListener"/>
@@ -235,8 +239,8 @@
     <!--Configuration for the local job queue listener-->
 
     <!--&lt;!&ndash;Configuration for the job request queue listener&ndash;&gt;-->
-    <bean id="remoteQueueJmsContainer" depends-on="remoteJmsFactory" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="remoteJmsFactory"   />
+    <bean id="remoteQueueJmsContainer" depends-on="remoteConnectionFactory" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="remoteConnectionFactory"   />
         <property name="destination" ref="jobRequestQueue"/>
         <property name="concurrentConsumers" value="1"/>
         <property name="maxConcurrentConsumers" value="1"/>
@@ -244,24 +248,25 @@
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="receiveTimeout" value="-1"/>
         <property name="messageListener" ref="remoteJobQueueListener"/>
-        <property name="acceptMessagesWhileStopping" value="true"/>
+        <property name="acceptMessagesWhileStopping" value="false"/>
         <property name="exceptionListener" ref="workerExceptionListener"/>
         <property name="errorHandler" ref="jmsErrorHandler"/>
     </bean>
 
     <!--Listens to the remote request queue and propagates to the local one-->
     <bean id="remoteJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.RemoteJobQueueListener">
-        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
         <property name="workerMessageSender" ref="workerMessageSender"/>
         <property name="statsUtil" ref="workerStatsUtil"/>
         <property name="gridThrottle" value="${grid.throttle}"/>
         <property name="maxUnfinishedJobs" value="${worker.maxunfinished.jobs}"/>
         <property name="workerState" ref="workerState"/>
+
     </bean>
 
     <bean id="localQueueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="localJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="localJobQueueListener"/>
         <property name="concurrentConsumers" value="${worker.number.of.embedded.workers}"/>
@@ -277,7 +282,7 @@
     <bean id="localJobQueueListener" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">
         <property name="stepExecutor" ref="embeddedStepExecutor"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
-        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="controller" ref="distributedWorkerController"/>
         <property name="verboseLog" value="${verbose.log}"/>
         <property name="statsUtil" ref="workerStatsUtil"/>
@@ -291,14 +296,14 @@
 
     <bean id="embeddedStepExecutor" class="uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransactionImpl">
         <property name="jobs" ref="jobs"/>
-        <property name="jmsTemplate" ref="localJmsTemplate"/>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="directoryManager" ref="tempDirectoryManager"/>
     </bean>
 
     <!--Configuration for the statistics listener-->
     <bean id="statsMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="localJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="statsQueue"/>
         <property name="concurrentConsumers" value="1"/>
         <property name="messageListener" ref="statsMessageListener"/>
@@ -308,7 +313,7 @@
 
     <!--Configuration for the topic listener-->
     <bean id="managerTopicMessageListenerJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="remoteJmsFactory"/>
+        <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="workerManagerTopic"/>
         <property name="messageListener" ref="managerTopicMessageListener"/>
         <property name="pubSubDomain" value="true" />
@@ -322,9 +327,9 @@
 
     <!-- The worker Sender Implementation used by listeners-->
     <bean id="workerMessageSender" class="uk.ac.ebi.interpro.scan.jms.worker.WorkerMessageSenderImpl">
-        <property name="localJmsTemplate" ref="localJmsTemplate"/>
+        <property name="localJmsTemplate" ref="inVmJmsTemplate"/>
         <property name="remoteJmsTemplate" ref="remoteJmsTemplate"/>
-        <property name="jmsTopicTemplate" ref="jmsTopicTemplate"/>
+        <property name="jmsTopicTemplate" ref="inVmJmsTopicTemplate"/>
         <property name="workerJobRequestQueue" ref="jobRequestQueue"/>
         <property name="workerManagerTopic" ref="workerManagerTopic"/>
         <property name="highmemWorkerJobRequestQueue" ref="highMemJobRequestQueue"/>
@@ -339,7 +344,7 @@
     </bean>
 
     <bean id="workerStatsUtil" class="uk.ac.ebi.interpro.scan.jms.stats.StatsUtil">
-        <property name="jmsTemplate" ref="localJmsTemplate"/>
+        <property name="jmsTemplate" ref="inVmJmsTemplate"/>
         <property name="jobRequestQueue" ref="jobRequestQueue"/>
         <property name="jobResponseQueue" ref="jobResponseQueue"/>
         <property name="workerManagerTopicQueue" ref="workerManagerTopic"/>

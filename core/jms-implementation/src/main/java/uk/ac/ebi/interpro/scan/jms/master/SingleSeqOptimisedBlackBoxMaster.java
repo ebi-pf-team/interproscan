@@ -39,6 +39,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
         final long now = System.currentTimeMillis();
         super.run();
+
+        Utilities.verboseLog = verboseLog;
+        Utilities.verboseLogLevel = verboseLogLevel;
+
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());

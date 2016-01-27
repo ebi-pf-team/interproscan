@@ -90,7 +90,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
      * Sends shut down message to connected workers.
      */
     public void sendShutDownMessage() {
-        LOGGER.debug("Sending a shutdown message to the workerManagerTopicQueue ");
+        LOGGER.debug("Sending a shutdown message onto the workerManagerTopicQueue ");
 
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -171,7 +171,7 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
 
     @Override
     public void sendTopicMessage(final ClusterState clusterState) {
-        LOGGER.debug("Sending a ClusterState message to the workerManagerTopicQueue ");
+        LOGGER.debug("Sending a ClusterState message onto the workerManagerTopicQueue ");
 
         jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {

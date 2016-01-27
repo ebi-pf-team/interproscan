@@ -162,6 +162,7 @@
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="autoStartup" value="${master.can.run.binaries}"/>
+
     </bean>
 
     <!--Configuration for the local job queue listener as a fat client-->
