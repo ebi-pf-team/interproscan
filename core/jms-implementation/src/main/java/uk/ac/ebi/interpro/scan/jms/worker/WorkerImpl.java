@@ -26,7 +26,10 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.*;
+import java.io.IOException;
 import java.lang.IllegalStateException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +164,9 @@ public class WorkerImpl implements Worker {
     private boolean jmsRelatedExceptionReceived = false;
 
     private int jmsRelatedExceptionCount = 0;
+
+    private int queuePrefetchLimit = 0;
+
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
      *
@@ -183,6 +189,16 @@ public class WorkerImpl implements Worker {
 
         //initiallise the JobMonitor
         //this.workerState = new WorkerState(111, UUID.fromString(tcpUri), tcpUri,false);
+    }
+
+
+    public int getQueuePrefetchLimit() {
+        return queuePrefetchLimit;
+    }
+
+    @Required
+    public void setQueuePrefetchLimit(int queuePrefetchLimit) {
+        this.queuePrefetchLimit = queuePrefetchLimit;
     }
 
     public void setProjectId(String projectId) {
@@ -670,6 +686,11 @@ public class WorkerImpl implements Worker {
                 remoteQueueJmsContainer.stop();
                 return true;
             }
+            if (managerTopicMessageListener.isShutdown()){
+                LOGGER.info("stopIfAppropriate():  worker has received shutdown message from master ");
+                shutdown = true;
+                return true;
+            }
         }
         return false;
     }
@@ -703,7 +724,7 @@ public class WorkerImpl implements Worker {
         }
 
         //setup connection to master
-        Thread thread = new Thread(new Runnable() {
+        Thread configureMasterBrokerThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -715,13 +736,13 @@ public class WorkerImpl implements Worker {
                 }
             }
         });
-        thread.start();
+        configureMasterBrokerThread.start();
         long masterBrokerStartUpTime = maximumIdleTimeMillis / 2;
         long endTimeMillis = System.currentTimeMillis() + masterBrokerStartUpTime;
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Wait for configureMasterBrokerConnection to finish, wait time:" + masterBrokerStartUpTime);
         }
-        while (thread.isAlive()) {
+        while (configureMasterBrokerThread.isAlive()) {
             if (System.currentTimeMillis() > endTimeMillis) {
                 LOGGER.warn("configureMasterBrokerConnection did not finish in time (" + masterBrokerStartUpTime + ")ms. It will run in vain.");
                 System.exit(0);
@@ -822,21 +843,27 @@ public class WorkerImpl implements Worker {
                 logMessageListenerContainerState();
                 if (managerTopicMessageListener.isShutdown()) {
                     LOGGER.debug("Worker Run(): Received shutdown message.  message already sent to child workers.");
+                    shutdown = true;
                     break;
                 }
-                Thread.sleep(5 * 1000);
-
-//                workerState.setWorkerStatus("EXITED");
-//                sendWorkerStateMessage(workerState);
-//                Thread.sleep(1 * 1000);
-//                LOGGER.fatal("Force InterruptedException thrown by Worker.  Stopping now.");
-//                System.exit(999);
-
+                Thread.sleep(2 * 1000);
 
             }
             //shutdown the message listener container
+            LOGGER.debug("Worker Run(): shutdown the message listener container");
             // using shutdown() and not stop() as stop() still allows the container to receive messages afterwards
-            remoteQueueJmsContainer.shutdown();
+
+            //TODO check, maybe this shutdown of the container is not necessary
+	    // may be use stop
+            
+            if (! shutdown){
+                long startContainerShutdown = System.currentTimeMillis();
+
+                //remoteQueueJmsContainer.shutdown();
+                remoteQueueJmsContainer.stop();
+	        long timeToShutdownContainer = System.currentTimeMillis() - startContainerShutdown;
+                Utilities.verboseLog("timeToShutdownContainer: using stop()" + timeToShutdownContainer );
+            }
             long waitingTime = 10 * 1000;
             //if shutdown is activated reduce waiting time
             if (shutdown) {
@@ -850,8 +877,12 @@ public class WorkerImpl implements Worker {
             //statsUtil.getStatsMessageListener().hasConsumers()
             LOGGER.debug("Worker Run(): in Shutdown mode.");
 
-            //dont exit until the workers have completed all the tasks and the responseMonitor has completed sending response messages to the master
-            while (workersHaveRunningJobs() || responseQueueListenerBusy || runningJobs.size() > 0 ) {
+            while ((! managerTopicMessageListener.isShutdown()) &&
+                    (workersHaveRunningJobs() || responseQueueListenerBusy || runningJobs.size() > 0 )) {
+                //
+                LOGGER.debug("workersHaveRunningJobs() may be true"
+                        + " responseQueueListenerBusy : " +  responseQueueListenerBusy
+                        + " runningJobs.size() " + runningJobs.size() );
                 //progress Report
                 if(lifeRemaining() < 5 * 1000){
                     LOGGER.warn("The worker has exceeded its lifespan,  life remaining: " + lifeRemaining() + "ms" );
@@ -1316,7 +1347,7 @@ public class WorkerImpl implements Worker {
             LOGGER.debug("State following setMessageSelector call:");
             logMessageListenerContainerState();
         }
-
+        LOGGER.debug("Message selector is set on this worker");
     }
 
     /*
@@ -1414,7 +1445,7 @@ public class WorkerImpl implements Worker {
         activeMQConnectionFactory.setOptimizeAcknowledge(true);
         activeMQConnectionFactory.setUseCompression(true);
         activeMQConnectionFactory.setAlwaysSessionAsync(false);
-        activeMQConnectionFactory.getPrefetchPolicy().setQueuePrefetch(0);
+        activeMQConnectionFactory.getPrefetchPolicy().setQueuePrefetch(getQueuePrefetchLimit()); //TODO monitor
 
         //set the RedeliveryPolicy
         RedeliveryPolicy queuePolicy =  activeMQConnectionFactory.getRedeliveryPolicy();
@@ -1477,8 +1508,40 @@ public class WorkerImpl implements Worker {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("MessageListenerContainer started, connected to: " + masterUri);
         }
+        //check if remote is reachable
+        String address = masterUri.split(":")[1].substring(2);
+        int port = Integer.parseInt(masterUri.split(":")[2]);
+        LOGGER.debug("address: " + address + ":  port" + port);
+        if (isReachable(address, port, 5000)){
+            LOGGER.debug("The master process is reachable, master url: " + masterUri +  " (" + address + ": " + port + ")");
+        }else{
+            LOGGER.warn("The master process is not reachable, url: " + masterUri + " (" + address + ": " + port + ")");
+        }
         return true;
     }
+
+    /**
+     *  check if remote master is reachable
+     * @param addr
+     * @param openPort
+     * @param timeOutMillis
+     * @return
+     */
+    private static boolean isReachable(String addr, int openPort, int timeOutMillis) {
+        // Any Open port on other machine
+        // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
+
+        try {
+            try (Socket soc = new Socket()) {
+                soc.connect(new InetSocketAddress(addr, openPort), timeOutMillis);
+            }
+            return true;
+        } catch (IOException ex) {
+            LOGGER.warn("socket connection failed:  ", ex);
+            return false;
+        }
+    }
+
 
     /**
      * initialise the workerState

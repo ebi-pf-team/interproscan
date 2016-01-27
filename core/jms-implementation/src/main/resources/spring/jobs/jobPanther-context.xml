@@ -125,6 +125,7 @@
         <property name="dependsUpon" ref="stepPantherRunBinary"/>
         <property name="stepDescription" value="Delete the FASTA file following successful run"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
     <!-- STEP 3: Parse and persist raw results -->
@@ -152,6 +153,7 @@
         <property name="dependsUpon" ref="stepPantherParseOutput"/>
         <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
     <!-- STEP 4: Filter and persist filtered results -->

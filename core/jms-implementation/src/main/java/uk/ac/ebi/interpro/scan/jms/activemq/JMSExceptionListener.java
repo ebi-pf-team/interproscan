@@ -26,6 +26,11 @@ public class JMSExceptionListener implements ExceptionListener {
     Long timeFirstException = System.currentTimeMillis();
     Long timePreviousExceptionReceived = System.currentTimeMillis();
 
+    String contextName = "general";
+    JMSExceptionListener(String contextName){
+        this.contextName = contextName;
+    }
+
     public synchronized void onException(JMSException e) {
         Utilities.verboseLog("JMSExceptionListener-  JMSExceptions thrown : " + e);
         timePreviousExceptionReceived = System.currentTimeMillis();
@@ -35,8 +40,21 @@ public class JMSExceptionListener implements ExceptionListener {
         exceptionCount++;
         Exception ex = e.getLinkedException();
         if (ex != null) {
-            LOGGER.debug("Custom JMS Exception handler: ", e);
+            if (contextName.equals("workerExceptionListener") && (controller != null)) {
+                LOGGER.debug("masterURL: " + controller.getMasterUri()
+                        + " thisWorkerURL: " + controller.getTcpUri());
+                if (controller.getTcpUri() != null || controller.getMasterUri() != null) {
+                    LOGGER.warn("context: [" + contextName + "] Custom JMS Exception handler: ", e);
+                }else{
+                    LOGGER.debug("context: [" + contextName + "] Maybe the controller bean is still not yet set up");
+                }
+            } else if (controller == null) {
+                LOGGER.debug("context: [" + contextName + "] Maybe the controller bean is still not yet set up");
+            }else {
+                LOGGER.warn("context: [" + contextName + "] Custom JMS Exception handler: ", e);
+            }
         }
+
         Long timeSinceFirstException = System.currentTimeMillis()  - timeFirstException;
         if((System.currentTimeMillis() - timePreviousExceptionReceived) < 5 * 60 * 1000){
             //We may have a connection problem

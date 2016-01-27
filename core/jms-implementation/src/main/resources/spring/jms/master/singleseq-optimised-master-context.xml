@@ -49,6 +49,7 @@
         <property name="concurrentInVmWorkerCount" value="${number.of.embedded.workers}"/>
         <property name="maxConcurrentInVmWorkerCount" value="${maxnumber.of.embedded.workers}"/>
         <property name="verboseLog" value="${verbose.log}"/>
+        <property name="verboseLogLevel" value="${verbose.log.level}"/>
         <property name="timeDelay" value="${resource.monitor.time.delay}"/>
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
