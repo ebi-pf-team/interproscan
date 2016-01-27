@@ -26,6 +26,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         final long now = System.currentTimeMillis();
         super.run();
 
+        Utilities.verboseLog = verboseLog;
+        Utilities.verboseLogLevel = verboseLogLevel;
+
         runStatus = 11;
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);

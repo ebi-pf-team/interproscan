@@ -104,6 +104,9 @@ public class RemoteJobQueueListener implements MessageListener {
         try {
             workerMessageSender.sendMessage(jobRequestQueue,message, true);
             workerState.addNonFinishedJob(message);
+            if (jobCount % 4 == 0){
+                Utilities.verboseLog("RemoteRequestQueue - Jobs send on this queue: " + jobCount);
+            }
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();

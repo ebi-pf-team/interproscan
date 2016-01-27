@@ -1106,7 +1106,9 @@ public class Run extends AbstractI5Runner {
             // Get hostname
             //get canonical hostname as otherwise hostname may not be exactly how other machines see this host
             final String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-
+            if (Utilities.verboseLogLevel >= 10){
+                Utilities.verboseLog("process hostanem: " + hostname);
+            }
 
             // Select a random port above 1024, excluding LSF ports and check availability.
             boolean portAssigned = false;
@@ -1129,6 +1131,7 @@ public class Run extends AbstractI5Runner {
 
             tc.setUri(new URI(uriString));
             broker.addConnector(tc);
+
             //
             broker.start();
             if (LOGGER.isInfoEnabled()) {

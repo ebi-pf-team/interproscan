@@ -100,6 +100,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         boolean displayStats = true;
 
         Utilities.verboseLog = verboseLog;
+        Utilities.verboseLogLevel = verboseLogLevel;
 
         if(Utilities.verboseLog){
             Utilities.verboseLog("DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
@@ -368,8 +369,10 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     private void systemExit(int status){
         //wait for 30 seconds before shutting to get the stats from the remaining workers
         try {
+            LOGGER.debug("Send shutdown message to workers ");
             messageSender.sendShutDownMessage();
-            Thread.sleep(1 * 20 * 1000);
+            Thread.sleep(1 * 30 * 1000);
+            LOGGER.debug("Shutdown message was sent to workers .. ");
             //if required print the worker states
             if(printWorkerSummary){
                 printWorkerSummary();
@@ -880,7 +883,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     final int remoteJobsNotCompleted = remoteJobs.get() - statsUtil.getRemoteJobsCompleted();
                     remoteJobsNotCompletedEstimate =  remoteJobsNotCompleted;
                     final int localJobsNotCompleted = localJobs.get() - statsUtil.getLocalJobsCompleted();
-                    int queueSize = statsMessageListener.getQueueSize();
+
+                    int queueSize = statsUtil.getRequestQueueSize();
 //                    if (verboseLog && displayStats) {
                     if (verboseLog && (timeSinceLastVerboseDisplay / 1000 ) % 10000 == 0){
                         Utilities.verboseLog("displayStats : " + displayStats + " timePassed: " + (timeSinceLastVerboseDisplay) / 1000 + " seconds");
@@ -919,14 +923,16 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     LOGGER.debug("Poll Job Request Queue queue");
                     final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                     remoteWorkerCount = ((SubmissionWorkerRunner) workerRunner).getWorkerCount();
-                    int consumerCountOnJobQueue = statsMessageListener.getConsumers();
+                    int consumerCountOnJobQueue = statsUtil.getStatsMessageListener().getConsumers();
                     int activeInVmWorkersOnFatMaster = localQueueJmsContainerFatMaster.getActiveConsumerCount();
                     int activeInVmWorkersOnThinMaster = localQueueJmsContainerThinMaster.getActiveConsumerCount();
                     int activeWorkers = activeInVmWorkersOnFatMaster + activeInVmWorkersOnThinMaster;
 
                     activeRemoteWorkerCountEstimate = consumerCountOnJobQueue - activeWorkers;
+			
+		            //TODO use statsUtil instead of statsmessenger
+                    queueSize = statsUtil.getRequestQueueSize();
 
-                    queueSize = statsMessageListener.getQueueSize();
                     int remoteJobsOntheQueue = queueSize - localJobsNotCompleted;
                     if (statsAvailable && queueSize > 0 && remoteJobsOntheQueue > activeInVmWorkersOnFatMaster && activeRemoteWorkerCountEstimate < (maxConsumers - 2)) {
                         LOGGER.debug("Check if we can start a normal worker.");
@@ -966,9 +972,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                     //statsUtil.sendhighMemMessage();
                     LOGGER.debug("Poll High Memory Job Request queue");
-                    final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
-                    remoteHighMemoryWorkerCountEstimate = statsMessageListener.getConsumers();
-                    highMemoryQueueSize = statsMessageListener.getQueueSize();
+                    //final boolean highMemStatsAvailable = statsUtil.pollStatsBrokerHighMemJobQueue();
+                    highMemoryQueueSize = statsUtil.getHighMemRequestQueueSize(); //this will also poll the highmem queue
+                    remoteHighMemoryWorkerCountEstimate = statsUtil.getStatsMessageListener().getConsumers();
 
                     if (verboseLog) {
                         Utilities.verboseLog("Polled High Memory Job Request queue QS : "
@@ -985,7 +991,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             Utilities.verboseLog("highMemoryQueueSize: " + highMemoryQueueSize
                                     + " activeRemoteWorkerCountEstimate: " + activeRemoteWorkerCountEstimate);
                         }
-                        final boolean highMemWorkerRequired = statsMessageListener.newWorkersRequired(completionTimeTarget);
+                        final boolean highMemWorkerRequired = statsUtil.getStatsMessageListener().newWorkersRequired(completionTimeTarget);
                         boolean quickSpawnModeHighMemory = false;
                         if (remoteHighMemoryWorkerCountEstimate < 1 ||
                                 (highMemWorkerRequired && remoteHighMemoryWorkerCountEstimate < 1)) {
