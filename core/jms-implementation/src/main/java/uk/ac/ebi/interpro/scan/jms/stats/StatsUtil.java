@@ -516,6 +516,32 @@ public class StatsUtil {
 
     }
 
+    /**
+     * get the request queue size
+     * @return
+     */
+    public int getRequestQueueSize(){
+        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+        if (!requestQueueStatsAvailable) {
+            System.out.println("JobRequestQueue: not initialised");
+            return -99;
+        }
+        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+    }
+
+    /**
+     * get highmem queuesie
+     * @return
+     */
+    public int getHighMemRequestQueueSize(){
+        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+        if (!requestQueueStatsAvailable) {
+            System.out.println("HighMemJobRequestQueue: not initialised");
+            return -99;
+        }
+        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+    }
+
     public void displayHighMemoryQueueStatistics(){
         final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {

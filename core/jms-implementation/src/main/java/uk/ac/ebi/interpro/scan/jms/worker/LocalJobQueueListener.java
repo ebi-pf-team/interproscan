@@ -111,6 +111,7 @@ public class LocalJobQueueListener implements MessageListener {
         jobCount.incrementAndGet();
         int localCount = jobCount.get();
         String timeNow = Utilities.getTimeNow();
+	    long threadId = Thread.currentThread().getId();
         if(localCount == 1){
             Utilities.verboseLog("first transaction ... ");
         }
@@ -171,9 +172,9 @@ public class LocalJobQueueListener implements MessageListener {
                 statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                Utilities.verboseLog("verboseLogLevel :" + verboseLogLevel);
-                if (verboseLogLevel > 2) {
-                    Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount
+                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
+                if (Utilities.verboseLogLevel > 2) {
+                    Utilities.verboseLog("thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
                             + " - stepInstanceId = " + stepId
                             + "\n stepInstance: " + stepExecution.getStepInstance().toString());
                 }
@@ -181,8 +182,8 @@ public class LocalJobQueueListener implements MessageListener {
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();
 //                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                if(verboseLogLevel > 2){
-                    Utilities.verboseLog("Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+                if(Utilities.verboseLogLevel > 2){
+                    Utilities.verboseLog("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
                     Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
                 statsUtil.jobFinished(stepName);

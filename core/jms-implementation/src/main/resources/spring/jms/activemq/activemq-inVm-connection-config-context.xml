@@ -24,16 +24,23 @@
     <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" >
         <!-- brokerURL, You may have different IP or port -->
         <property name="brokerURL" value="vm://localhost?create=false"/>
+        <property name="prefetchPolicy" ref="prefetchPolicy"/>
         <!--<constructor-arg value="tcp://${jms.broker.host.name}:${jms.broker.port.number}" />-->
         <!--<constructor-arg  value="vm://localhostJMSBroker?create=false" />-->
         <!--<property name=""-->
+     </bean>
+
+    <bean id="prefetchPolicy" class="org.apache.activemq.ActiveMQPrefetchPolicy">
+        <property name="queuePrefetch" value="${consumer.prefetch.limit}"/>
     </bean>
+
 
     <!-- Pooled Spring connection factory -->
     <!--<bean id="connectionFactory"   class="org.springframework.jms.connection.CachingConnectionFactory"  depends-on="jmsBroker">-->
     <bean id="connectionFactory"   class="org.springframework.jms.connection.CachingConnectionFactory">
           <!--class="org.springframework.jms.connection.CachingConnectionFactory" depends-on="jmsBroker">-->
         <constructor-arg ref="amqConnectionFactory" />
+        
     </bean>
 
 
@@ -76,12 +83,13 @@
     </bean>
 
 
-
     <!-- JMS transport Listener-->
     <bean id="masterTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
 
     <!-- JMS Exception Listener-->
-    <bean id="masterExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener" />
+    <bean id="masterExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener">
+        <constructor-arg value="masterExceptionListener"/>
+    </bean>
 
 
 </beans>

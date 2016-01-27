@@ -57,6 +57,7 @@
         <property name="dependsUpon" ref="stepPfamRunHmmer3"/>
         <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
     <!-- STEP 3 -->
@@ -95,6 +96,7 @@
         <property name="dependsUpon" ref="stepPfamParseHmmerOutput"/>
         <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
