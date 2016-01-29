@@ -244,16 +244,14 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
                 || step.getId().toLowerCase().contains("panther".toLowerCase())
                 || step.getId().toLowerCase().contains("prositeprofiles".toLowerCase())
-                || step.getId().toLowerCase().contains("smart".toLowerCase())
                 ){
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" panther/prositeprofiles/smart job: " + step.getId()+ " Should have high priority");
+                LOGGER.debug(" panther/prositeprofiles job: " + step.getId()+ " Should have high priority");
             }
             return true;
         }
 
         return false;
     }
-
 
 }

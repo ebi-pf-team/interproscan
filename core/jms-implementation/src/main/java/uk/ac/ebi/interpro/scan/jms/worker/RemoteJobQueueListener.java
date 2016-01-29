@@ -104,8 +104,26 @@ public class RemoteJobQueueListener implements MessageListener {
         try {
             workerMessageSender.sendMessage(jobRequestQueue,message, true);
             workerState.addNonFinishedJob(message);
-            if (jobCount % 4 == 0){
-                Utilities.verboseLog("RemoteRequestQueue - Jobs send on this queue: " + jobCount);
+            int consumerCount = statsUtil.getRequestQueueConsumerCount();
+            if (consumerCount > 0 && jobCount % consumerCount == 0){
+                Utilities.verboseLog("RemoteRequestQueue - Jobs sent on this queue: " + jobCount);
+            }
+            //check the size of the queue
+            if(gridThrottle){
+                checkQueueState();
+            }else{
+                int stepCountCheck = 4;
+                if (consumerCount > 0) {
+                    stepCountCheck = consumerCount;
+                }
+                if (jobCount % (stepCountCheck * 2) == 0) { //ideally number of workers * 2
+                    //still have some control on the rate of messages being received
+                    //implement a property in statsutil which captures number of consumers on the queue
+                    Utilities.verboseLog("RemoteRequestQueue - Sleep for 10s - Jobs sent on this queue: " + jobCount
+                            + " unfinihsed jobs: " + statsUtil.getUnfinishedJobs()
+                            + " and consumerCount = " + consumerCount);
+                    Thread.sleep(10 * 1000);
+                }
             }
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
@@ -113,10 +131,7 @@ public class RemoteJobQueueListener implements MessageListener {
         }  catch (Exception e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
         }
-        //check the size of the queue
-        if(gridThrottle){
-            checkQueueState();
-        }
+
 
         LOGGER.debug("Worker: received a message from the remote request queue and forwarded it onto the local jobRequestQueue");
     }

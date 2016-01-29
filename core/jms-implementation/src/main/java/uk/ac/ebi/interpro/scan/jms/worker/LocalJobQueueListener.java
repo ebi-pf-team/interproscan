@@ -131,7 +131,7 @@ public class LocalJobQueueListener implements MessageListener {
 //        Utilities.verboseLog(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
 
         final String messageId;
-        final String stepName;
+        String stepName = "";
 
         try {
             messageId = message.getJMSMessageID();
@@ -191,6 +191,9 @@ public class LocalJobQueueListener implements MessageListener {
                 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
                 LOGGER.error("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
+
+                LOGGER.error("StepExecution with errors - stepName: " + stepName);
+
                 // Something went wrong in the execution - try to send back failure
                 // message to the broker.  This in turn may fail if it is the JMS connection
                 // that failed during the execution.
