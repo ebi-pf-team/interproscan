@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.apache.taglibs.standard.tag.common.core.Util;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
@@ -96,6 +97,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
+        Utilities.verboseLog("Master process running on :" + tcpUri);
         Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
         boolean displayStats = true;
 
@@ -131,19 +133,21 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             while (!shutdownCalled) {
-
-                Utilities.verboseLog = verboseLog;
-                Utilities.verboseLogLevel = verboseLogLevel;
-
+                if(verboseLogLevel >=10 ){
+                    Utilities.verboseLog("[Distributed Master] [main loop]:  run() - start of main loop");
+                }
                 Long totalStepInstances = stepInstanceDAO.count();
                 int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
-
-                if(verboseLog){
-                    Utilities.verboseLog("Distributed Master:  run()");
+                if(verboseLogLevel >=10 ){
+                    Utilities.verboseLog("[Distributed Master] [main loop]  totalUnfinishedStepInstances :" + totalUnfinishedStepInstances);
                 }
                 boolean completed = true;
                 int countRegulator = 0;
                 for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                    if(verboseLogLevel >=10 ){
+                        Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances]: Currently on "
+                                + stepInstance);
+                    }
 
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
@@ -155,7 +159,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         unrecoverableErrorStrategy.failed(stepInstance, jobs);
                     }
                     //
-
                     completed &= stepInstance.haveFinished(jobs);
 
 
@@ -191,7 +194,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     }
                     if(canBeSubmittedAfterUnknownfailure){
                         LOGGER.warn("Step being considered for submitting after unkown failure:" + stepInstance);
-
+                    }
+                    if(verboseLogLevel >=10 ){
+                        Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances] "
+                                +  " canBeSubmitted: " + canBeSubmitted + " canBeSubmittedAfterUnknownfailure: " + canBeSubmittedAfterUnknownfailure
+                                + " serialGroupCanRun: " + serialGroupCanRun);
                     }
                     if ((canBeSubmitted || canBeSubmittedAfterUnknownfailure )
                             && serialGroupCanRun) {
@@ -243,7 +250,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Remote jobs: added one more:  " + remoteJobs.get());
                             }
-
                         }
                         else {
                             localJobs.incrementAndGet();
@@ -254,7 +260,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         countRegulator++;
                         controlledLogging = false;
                     }
-                }
+                    if(verboseLogLevel >=10 ){
+                        Utilities.verboseLog("[Distributed Master] [main loop] [End of Iterate over unfinished StepInstances]: "
+                                + " step instance canbesubmitted: "  + canBeSubmitted
+                                + " serialGroupCanRun: " + serialGroupCanRun);
+                    }
+                } // end of for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances())
 
                 totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
 
@@ -331,7 +342,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
                 statsUtil.displayMasterProgress();
                 Thread.sleep(1 * 2 * 1000);   //   Thread.sleep(30*1000);
-            }
+
+                if(verboseLogLevel >=10 ){
+                    Utilities.verboseLog("[Distributed Master] [[main loop]:  run() - end of main loop");
+                }
+            } // end of while (!shutdownCalled)
             //force the worker creation to stop
             shutdownCalled = true;
             messageSender.sendShutDownMessage();
@@ -742,6 +757,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         //create two workers : one high memory and one non high memory
         final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
 
+        String threadName = "[StartNewWorker] ";
         Executor executor = Executors.newSingleThreadExecutor();
 
         executor.execute(new Runnable() {
@@ -803,11 +819,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }else if(initialWorkersCount < 2 && expectedRemoteJobCount > maxConcurrentInVmWorkerCountForWorkers){
                             initialWorkersCount = 2;
                         }else if(initialWorkersCount > (maxConsumers)){
-                            initialWorkersCount = (maxConsumers * 7 / 10);
+                            initialWorkersCount = (maxConsumers * 8 / 10);
                         }
                         //for small set of sequences
                         if(totalJobCount < 2000 && initialWorkersCount > 2){
-                            initialWorkersCount = initialWorkersCount * 6 /10;
+                            initialWorkersCount = initialWorkersCount * 7 /10;
                         }
                         if(initialWorkersCount > 0){
                             if (LOGGER.isDebugEnabled()) {
@@ -861,30 +877,34 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 Long lastHandledLongRunningJobs = System.currentTimeMillis();
                 while (!shutdownCalled) {
                     //statsUtil.sendMessage();
+                    Utilities.verboseLog(threadName + " at start of while (!shutdownCalled)");
                     int timeSinceLastVerboseDisplay =  (int) (System.currentTimeMillis() - timeLastdisplayedStats);
-                    if (timeSinceLastVerboseDisplay > 5 * 60 *1000) {
+                    if (timeSinceLastVerboseDisplay > 2 * 60 *1000) {
                         displayStats = true;
                         timeLastdisplayedStats =  System.currentTimeMillis();
                     }else{
                         displayStats = false;
                     }
                     if(verboseLog && displayStats){
-                        Utilities.verboseLog("Create workers loop: Current Total remoteJobs not completed: "  + remoteJobsNotCompletedEstimate);
-                        Utilities.verboseLog("UnfinishedStepInstances: "  + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-
-//                        Utilities.verboseLog("stats util check: ");
+                        Utilities.verboseLog(threadName + "Create workers loop: Current Total remoteJobs not completed: "  + remoteJobsNotCompletedEstimate);
+                        Utilities.verboseLog(threadName +"unfinishedStepInstances: "  + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+//                      Utilities.verboseLog("threadName +stats util check: ");
                     }
 
 
                     LOGGER.debug("Create workers loop: Current Total remoteJobs not completed: "  + remoteJobsNotCompletedEstimate);
                     final String temporaryDirectoryName = (temporaryDirectoryManager == null) ? null : temporaryDirectoryManager.getReplacement();
-                    final StatsMessageListener statsMessageListener = statsUtil.getStatsMessageListener();
 
                     final int remoteJobsNotCompleted = remoteJobs.get() - statsUtil.getRemoteJobsCompleted();
                     remoteJobsNotCompletedEstimate =  remoteJobsNotCompleted;
                     final int localJobsNotCompleted = localJobs.get() - statsUtil.getLocalJobsCompleted();
-
+                    final int unfinishedStepInstancesCount = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
                     int queueSize = statsUtil.getRequestQueueSize();
+                    Utilities.verboseLog(threadName +"Job Request queuesize " + queueSize);
+                    Utilities.verboseLog(threadName +"Job Request enqueue count " + statsUtil.getStatsMessageListener().getEnqueueCount());
+                    Utilities.verboseLog(threadName +"Job Request dispatch count " + statsUtil.getStatsMessageListener().getDispatchCount());
+                    Utilities.verboseLog(threadName +"Job Request Stats: " + statsUtil.getStatsMessageListener().getStats());
+
 //                    if (verboseLog && displayStats) {
                     if (verboseLog && (timeSinceLastVerboseDisplay / 1000 ) % 10000 == 0){
                         Utilities.verboseLog("displayStats : " + displayStats + " timePassed: " + (timeSinceLastVerboseDisplay) / 1000 + " seconds");
@@ -898,7 +918,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         Utilities.verboseLog("Local jobs completed: " + statsUtil.getLocalJobsCompleted());
                         Utilities.verboseLog("Local jobs not completed: " + localJobsNotCompleted);
                         Utilities.verboseLog("job Request queuesize " + queueSize);
-                        Utilities.verboseLog("All Step instances left to run: ??TODO" );
+                        Utilities.verboseLog("All Step instances left to run:"  + unfinishedStepInstancesCount);
                         Utilities.verboseLog("Total StepInstances: " + totalJobCount);
                         Utilities.verboseLog("LastMessageRecevived by ResponseMonitor at " + statsUtil.getLastMessageReceivedTime());
 
@@ -933,11 +953,18 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 		            //TODO use statsUtil instead of statsmessenger
                     queueSize = statsUtil.getRequestQueueSize();
 
+                    Utilities.verboseLog(threadName +"Job Request queuesize " + queueSize);
+                    Utilities.verboseLog(threadName +"Job Request enqueue count " + statsUtil.getStatsMessageListener().getEnqueueCount());
+                    Utilities.verboseLog(threadName +"Job Request dispatch count " + statsUtil.getStatsMessageListener().getDispatchCount());
+
+
                     int remoteJobsOntheQueue = queueSize - localJobsNotCompleted;
-                    if (statsAvailable && queueSize > 0 && remoteJobsOntheQueue > activeInVmWorkersOnFatMaster && activeRemoteWorkerCountEstimate < (maxConsumers - 2)) {
+                    if (statsAvailable && queueSize > 0 &&
+                            remoteJobsOntheQueue > activeInVmWorkersOnFatMaster
+                            && activeRemoteWorkerCountEstimate < (maxConsumers - 2)) {
                         LOGGER.debug("Check if we can start a normal worker.");
                         if (verboseLog) {
-                            Utilities.verboseLog("remoteJobsOntheQueue: " + remoteJobsOntheQueue
+                            Utilities.verboseLog(threadName + "remoteJobsOntheQueue: " + remoteJobsOntheQueue
                                     + " activeInVmWorkersOnFatMaster: " + activeInVmWorkersOnFatMaster);
                         }
                         //have a standard continency time for lifespan
@@ -956,15 +983,37 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         } else {
                             quickSpawnMode = false;
                         }
-                        //if we havent had any messages on the responsequeu start a new worker
-                        ;
 
+                        //calculate the number of new workers to create
+                        int newWorkerCount = 1;
+                        int idealWorkerCount = remoteJobsOntheQueue / (activeRemoteWorkerCountEstimate *
+                                getMaxConcurrentInVmWorkerCountForWorkers() * queueConsumerRatio);
+                        int estimatedWorkerCount =  (idealWorkerCount - activeRemoteWorkerCountEstimate);
+                        if (maxConsumers > (estimatedWorkerCount + activeRemoteWorkerCountEstimate)){
+                            newWorkerCount = estimatedWorkerCount;
+                        }else{
+                            newWorkerCount = maxConsumers - activeRemoteWorkerCountEstimate;
+                        }
+                        if (newWorkerCount < 1){
+                            //always create a new worker is required to do so
+                            newWorkerCount = 1;
+                        }
+                        if (verboseLog) {
+                            Utilities.verboseLog(threadName + "newWorkerCount: " +newWorkerCount
+                                    + "idealWorkerCount: " +idealWorkerCount
+                                    + " estimatedWorkerCount: " + estimatedWorkerCount
+                                    + " remoteJobsOntheQueue: " + remoteJobsOntheQueue
+                                    + " activeRemoteWorkerCountEstimate: " + activeRemoteWorkerCountEstimate);
+                        }
+
+                        //if we havent had any messages on the responsequeu start a new worker
 
                         if (quickSpawnMode) {
                             LOGGER.debug("Starting a normal worker.");
+                            Utilities.verboseLog(threadName + " Number of workers to create: " + newWorkerCount);
                             setSubmissionWorkerRunnerMasterClockTime();
                             timeLastSpawnedWorkers = System.currentTimeMillis();
-                            normalWorkersCreated = workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName);
+                            normalWorkersCreated = workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName,newWorkerCount);
                             totalRemoteWorkerCreated += normalWorkersCreated;
                             timeNormalWorkerLastCreated = System.currentTimeMillis();
                         }
@@ -1052,6 +1101,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     }
 
                     try {
+                        //sleep for 2 minutes
                         Thread.sleep(2 * 60 * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -1068,10 +1118,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }
                     }
 
-                }
+                } // end of while(! shutdowncalled)
+                LOGGER.warn(threadName +"Shutdown has been called on the master, start new worker thread will end");
 
             }
         });
+
+        LOGGER.warn(threadName +"Start New Worker thread has ended");
     }
 
 

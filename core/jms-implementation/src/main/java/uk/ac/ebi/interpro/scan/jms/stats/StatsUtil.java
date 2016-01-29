@@ -91,6 +91,8 @@ public class StatsUtil {
     private long currentMasterClockTime;
     private long currentMasterlifeSpanRemaining;
 
+    int requestQueueConsumerCount = 0;
+
     private SystemInfo systemInfo;
 
     private Lock pollStatsLock = new ReentrantLock();
@@ -247,6 +249,13 @@ public class StatsUtil {
         this.lastMessageReceivedTime = lastMessageReceivedTime;
     }
 
+    public int getRequestQueueConsumerCount() {
+        return requestQueueConsumerCount;
+    }
+
+    public void setRequestQueueConsumerCount(int requestQueueConsumerCount) {
+        this.requestQueueConsumerCount = requestQueueConsumerCount;
+    }
 
     public ConcurrentMap getAllStepInstances() {
         return submittedStepInstances;
@@ -506,6 +515,7 @@ public class StatsUtil {
             System.out.println("JobRequestQueue: not initialised");
         } else {
             System.out.println("JobRequestQueue:  " + statsMessageListener.getStats().toString());
+            setRequestQueueConsumerCount(statsMessageListener.getConsumers());
         }
         final boolean responseQueueStatsAvailable = pollStatsBrokerResponseQueue();
         if (!responseQueueStatsAvailable) {
@@ -526,6 +536,7 @@ public class StatsUtil {
             System.out.println("JobRequestQueue: not initialised");
             return -99;
         }
+        setRequestQueueConsumerCount(statsMessageListener.getConsumers());
         return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
     }
 
