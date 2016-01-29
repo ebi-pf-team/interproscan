@@ -1219,7 +1219,7 @@ public class WorkerImpl implements Worker {
         int responseDequeueCount =    statsUtil.getStatsMessageListener().getDequeueCount();
         statsUtil.pollStatsBrokerJobQueue();
         int requestEnqueueCount =    statsUtil.getStatsMessageListener().getEnqueueCount();
-
+        int queueConsumerCount =    statsUtil.getStatsMessageListener().getConsumers();
         //unfinishedJobs = requestEnqueueCount - responseDequeueCount;
         statsUtil.setUnfinishedJobs(requestEnqueueCount - responseDequeueCount);
         statsUtil.setTotalJobs(Long.valueOf(requestEnqueueCount));
