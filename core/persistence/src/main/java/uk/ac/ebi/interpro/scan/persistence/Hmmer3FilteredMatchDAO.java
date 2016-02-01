@@ -64,10 +64,14 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     }
                     );
 
+            int matchLocationCount = 0;
             for (Hmmer3Match match : filteredMatches) {
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
                 entityManager.persist(match);
+                matchLocationCount += match.getLocations().size();
             }
+            //TODO use a different utitlity function
+            System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }
     }
 }
