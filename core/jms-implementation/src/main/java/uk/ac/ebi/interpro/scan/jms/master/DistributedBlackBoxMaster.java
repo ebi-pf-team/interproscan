@@ -15,6 +15,8 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.prints.RunFingerPrintScanStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep;
 
 import javax.jms.JMSException;
 import java.io.File;
@@ -86,7 +88,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     private int queueConsumerRatio = 20;
 
     private static final int LOW_PRIORITY = 4;
-    private static final int HIGH_PRIORITY = 8;
+    private static final int HIGH_PRIORITY = 6;
+    private static final int HIGHER_PRIORITY = 8;
+    private static final int HIGHEST_PRIORITY = 9;
 
     /**
      * Run the Master Application.
@@ -97,6 +101,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
+        String threadName = "[masterRun] ";
         Utilities.verboseLog("Master process running on :" + tcpUri);
         Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
         boolean displayStats = true;
@@ -143,7 +148,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
                 boolean completed = true;
                 int countRegulator = 0;
-                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                //TODO check the
+                List <StepInstance> unfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
+                if(verboseLogLevel >=10 ) {
+                    Utilities.verboseLog(threadName + "unfinishedStepInstances: " + unfinishedStepInstances.size());
+                }
+//                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                for (StepInstance stepInstance : unfinishedStepInstances) {
                     if(verboseLogLevel >=10 ){
                         Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances]: Currently on "
                                 + stepInstance);
@@ -160,7 +171,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     }
                     //
                     completed &= stepInstance.haveFinished(jobs);
-
 
                     final boolean canBeSubmitted =  stepInstance.canBeSubmitted(jobs);
                     final boolean canBeSubmittedAfterUnknownfailure  = isCandidateForResubmission(stepInstance);
@@ -199,6 +209,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances] "
                                 +  " canBeSubmitted: " + canBeSubmitted + " canBeSubmittedAfterUnknownfailure: " + canBeSubmittedAfterUnknownfailure
                                 + " serialGroupCanRun: " + serialGroupCanRun);
+                        Utilities.verboseLog(getDependencyInfo(stepInstance));
                     }
                     if ((canBeSubmitted || canBeSubmittedAfterUnknownfailure )
                             && serialGroupCanRun) {
@@ -213,10 +224,16 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         final boolean canRunRemotely = !step.isRequiresDatabaseAccess();
 
                         boolean debugSubmission = true;
+
+                        //prints should be sent to a higher memory queue as it requires more memory
+                        final  boolean isPrintsBinaryStep = (step instanceof RunFingerPrintScanStep) ? true: false;
+
                         //resubmission = debugSubmission;
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
                         //final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
-                        final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
+                        final boolean highMemory = (resubmission || isPrintsBinaryStep)
+                                && workerRunnerHighMemory != null && canRunRemotely;
+
 
                         if (highMemory) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " ("+ step.getId() + ") will be re-run in a high-memory worker.");
@@ -224,9 +241,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
-                        final int priority = step.getSerialGroup() == null || step instanceof WriteFastaFileStep
-                                ? LOW_PRIORITY
-                                : HIGH_PRIORITY;
+                        // RunPsScanStep should have higher priority as it is slow
+                        int priority = LOW_PRIORITY;
+                        if (step instanceof RunPsScanStep) {
+                            priority = HIGHER_PRIORITY;
+                        }else if (step.getSerialGroup() == null || step instanceof WriteFastaFileStep){
+                            priority = LOW_PRIORITY;
+                        }else {
+                            priority = HIGH_PRIORITY;
+                        }
 
                         if(canBeSubmittedAfterUnknownfailure){
                             stepInstance.setStateUnknown(true);
@@ -268,15 +291,23 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 } // end of for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances())
 
                 totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+                if(verboseLogLevel >=10 ) {
+                    Utilities.verboseLog(threadName + "unfinishedStepInstances -- : " + totalUnfinishedStepInstances);
+                }
+
+                //update stats
+                statsUtil.setTotalJobs(totalStepInstances);
+                statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
 
                 if(verboseLog && verboseLogLevel > 4){
                     int submitted = statsUtil.getSubmittedStepInstancesCount();
-                    int notFinished =  statsUtil.getNonAcknowledgedSubmittedStepInstances().size();
+                    int notAcknowledged =  statsUtil.getNonAcknowledgedSubmittedStepInstances().size();
                     Utilities.verboseLog("Distributed Master:  ofl - totalSteps: "
                             + totalStepInstances
                             + " steps left: "  + totalUnfinishedStepInstances
                             + " submitted: " + submitted
-                            + " notFinished: " + notFinished);
+                            + " notFinished: " + statsUtil.getUnfinishedJobs()
+                            + " notAcknowledged: " + notAcknowledged);
                 }
 
                 // Close down (break out of loop) if the analyses are all complete.
@@ -293,6 +324,10 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             LOGGER.debug("Step instances left to run: " + totalUnfinishedStepInstances);
                             LOGGER.debug("Total StepInstances: " + totalStepInstances);
                         }
+                        if(verboseLogLevel >=10 ) {
+                            Utilities.verboseLog(threadName + "completed && totalUnfinishedStepInstances == 0 "
+                                    + " -- exit master loop");
+                        }
                         break;
                     } else {    // This else clause is for LOGGING ONLY - no  logic here.
                         LOGGER.info("Apparently have no more unfinished StepInstances, however it looks like there should be...");
@@ -302,14 +337,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         }
                     }
                 }
-                if (System.currentTimeMillis() - timeLastDisplayedStatsAndUpdatedClusterState > 5 * 60 * 1000) {
+                if (System.currentTimeMillis() - timeLastDisplayedStatsAndUpdatedClusterState > 30 * 60 * 1000) {
                     displayStats = true;
                     timeLastDisplayedStatsAndUpdatedClusterState =  System.currentTimeMillis();
                     if(gridName.equals("lsf") && ! clusterStateUpdatedRecently()) {
                         //shutdown the previous executor task and start a new task
                         scheduledExecutorService.shutdownNow();
                         scheduledExecutorService = updateClusterState();
-                        LOGGER.warn("Restarted scheduledExecutorService for updating ClusterState");
+                        LOGGER.debug("Restarted scheduledExecutorService for updating ClusterState");
+                        Utilities.verboseLog(threadName + "Restarted scheduledExecutorService for updating ClusterState");
                     }
                 }else{
                     displayStats = false;
@@ -338,8 +374,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 if(verboseLog && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0){
                     Utilities.verboseLog("There are no step instances left to run");
                 }
-                statsUtil.setTotalJobs(totalStepInstances);
-                statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
+
                 statsUtil.displayMasterProgress();
                 Thread.sleep(1 * 2 * 1000);   //   Thread.sleep(30*1000);
 
@@ -679,6 +714,44 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             buffer.append(" - state: " + executionState);
         }
         buffer.append(" - final state: " + stepInstance.getStepInstanceState());
+        return buffer.toString();
+    }
+
+
+    private String getDependencyInfo(StepInstance stepInstance){
+        StringBuffer buffer = new StringBuffer("");
+        final StepExecutionState state = stepInstance.getStepInstanceState();
+        if (StepExecutionState.NEW_STEP_INSTANCE == state
+                ||
+                (StepExecutionState.STEP_EXECUTION_FAILED == state && stepInstance.getExecutions().size() < stepInstance.getStep(jobs).getRetries())) {
+            // Then check that all the dependencies have been completed successfully.
+            List<StepInstance> dependsUpon = stepInstance.stepInstanceDependsUpon();
+
+            if (dependsUpon != null) {
+                for (StepInstance dependency : dependsUpon) {
+                    // The state of the dependencies already checked may change during this loop,
+                    // however this is not a problem - the worst that can happen, is that the StepInstance is not
+                    // executed now.
+                    if (dependency.getStepInstanceState() != StepExecutionState.STEP_EXECUTION_SUCCESSFUL) {
+
+                        //TODO
+                        buffer.append("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state
+                                + "can be submitted dependency step: " + dependency.getStepId()
+                                + " id: " + dependency.getId()
+                                + " state: " + dependency.getStepInstanceState()
+                        );
+                        return buffer.toString();
+                    }
+                    buffer.append("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state
+                            + " can be submitted dependency step: " + dependency.getStepId()
+                            + " id: " + dependency.getId()
+                            + " state: " + dependency.getStepInstanceState());
+                }
+            }
+            // All requirements met, so can submit.
+            return buffer.toString();
+        }
+        buffer.append("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state);
         return buffer.toString();
     }
 
@@ -1057,7 +1130,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             timeSinceLastCreatedHMWorker = System.currentTimeMillis() - timeHighMemoryWorkerLastCreated;
                         }
                         boolean waitForPreviousHighMemoryWorkerCreation = false;
-                        if(highMemoryWorkersCreated > 0 && remoteHighMemoryWorkerCountEstimate < 0 && timeSinceLastCreatedHMWorker > 20 * 1000) {
+                        if(highMemoryWorkersCreated > 0 && remoteHighMemoryWorkerCountEstimate < 0 &&
+                                timeSinceLastCreatedHMWorker > 2 * 60 * 1000) {
                             waitForPreviousHighMemoryWorkerCreation = true;
                         }
                         if (!waitForPreviousHighMemoryWorkerCreation){
@@ -1065,7 +1139,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                                     || quickSpawnModeHighMemory) {
                                 LOGGER.debug("Starting a high memory worker.");
                                 if (verboseLog) {
-                                    Utilities.verboseLog("Starting a high memory worker2");
+                                    Utilities.verboseLog("Starting a high memory worker 2");
                                 }
                                 setSubmissionWorkerRunnerMasterClockTime();
                                 highMemoryWorkersCreated = workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);

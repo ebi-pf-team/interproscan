@@ -10,14 +10,13 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
+import javax.swing.text.Utilities;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -333,6 +332,19 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                 reader.close();
             }
         }
+        //TODO consider using the utilities methods
+        System.out.println(getTimeNow() + " RawResults.size : - " + rawResults.size());
         return new HashSet<RawProtein<T>>(rawResults.values());
+    }
+
+    /**
+     * display time now
+     * @return
+     */
+    public static String getTimeNow(){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+        String currentDate = sdf.format(cal.getTime());
+        return currentDate;
     }
 }
