@@ -71,7 +71,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 matchLocationCount += match.getLocations().size();
             }
             //TODO use a different utitlity function
-            System.out.println(" Filtered Match locations size : - " + matchLocationCount);
+            //System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }
     }
 }

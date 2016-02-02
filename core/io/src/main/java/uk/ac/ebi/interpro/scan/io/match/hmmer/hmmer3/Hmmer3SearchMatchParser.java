@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.*;
 
 import javax.swing.text.Utilities;
 import java.io.BufferedReader;
@@ -152,6 +153,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
 
         Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
         BufferedReader reader = null;
+        int rawDomainCount = 0;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
             HmmSearchRecord searchRecord = null;
@@ -180,6 +182,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                     }
                     // Store the matches to the method.
                     hmmer3ParserSupport.addMatch(searchRecord, rawResults);
+		    rawDomainCount += getSequenceMatchCount(searchRecord);
 
                     searchRecord = null;  // Will check if method is not null after finishing the file, and store it if so.
                     stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
@@ -325,6 +328,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             if (searchRecord != null) {
 
                 hmmer3ParserSupport.addMatch(searchRecord, rawResults);
+                rawDomainCount += getSequenceMatchCount(searchRecord);
             }
 
         } finally {
@@ -333,7 +337,9 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             }
         }
         //TODO consider using the utilities methods
-        System.out.println(getTimeNow() + " RawResults.size : - " + rawResults.size());
+//        if (uk.ac.ebi.interpro.scan.jms.stats.Utilites.verboseLog(10, "")){
+//        if (Utilites.verboseLogLevel()> 10){
+        System.out.println(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
         return new HashSet<RawProtein<T>>(rawResults.values());
     }
 
@@ -346,5 +352,13 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         String currentDate = sdf.format(cal.getTime());
         return currentDate;
+    }
+
+    public int getSequenceMatchCount(HmmSearchRecord searchRecord){
+	int count = 0;
+	for (SequenceMatch sequenceMatch:searchRecord.getSequenceMatches().values()){
+                 count += sequenceMatch.getDomainMatches().size();
+	}
+        return count;
     }
 }

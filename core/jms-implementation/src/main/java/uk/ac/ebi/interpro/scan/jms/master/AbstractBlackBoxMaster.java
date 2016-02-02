@@ -68,6 +68,11 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected int gridCheckInterval = 60; //seconds
 
+    protected static final int LOW_PRIORITY = 4;
+    protected static final int HIGH_PRIORITY = 6;
+    protected static final int HIGHER_PRIORITY = 8;
+    protected static final int HIGHEST_PRIORITY = 9;
+
     @Required
     public void setHasInVmWorker(boolean hasInVmWorker) {
         this.hasInVmWorker = hasInVmWorker;
