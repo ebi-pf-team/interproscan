@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -125,7 +126,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             //update the cluster stats
             ScheduledExecutorService scheduledExecutorService = updateClusterState();
             //monior the workers
-            monitorFailedJobs();
+            if(ftMode) { // only run monitoring if we want to receover from some failures
+                monitorFailedJobs();
+            }
 
 
             boolean controlledLogging = false;
@@ -137,17 +140,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 if(verboseLogLevel >=10 ){
                     Utilities.verboseLog("[Distributed Master] [main loop]:  run() - start of main loop");
                 }
-                Long totalStepInstances = stepInstanceDAO.count();
-                int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
-                if(verboseLogLevel >=10 ){
-                    Utilities.verboseLog("[Distributed Master] [main loop]  totalUnfinishedStepInstances :" + totalUnfinishedStepInstances);
-                }
                 boolean completed = true;
-                int countRegulator = 0;
+                Map<Long, String> submittedSteps = new ConcurrentHashMap<Long, String>();
                 //TODO check the
                 List <StepInstance> unfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
                 if(verboseLogLevel >=10 ) {
-                    Utilities.verboseLog(threadName + "unfinishedStepInstances: " + unfinishedStepInstances.size());
+                    Utilities.verboseLog(threadName + "[Distributed Master] [main loop]  totalUnfinishedStepInstances: "
+                            + unfinishedStepInstances.size());
                 }
 //                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
                 for (StepInstance stepInstance : unfinishedStepInstances) {
@@ -155,7 +154,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances]: Currently on "
                                 + stepInstance);
                     }
-
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
@@ -173,7 +171,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                     //serial group has no running step instance
                     final boolean serialGroupCanRun = stepInstanceDAO.serialGroupCanRun(stepInstance, jobs);
-                    if(verboseLogLevel > 5 && totalUnfinishedStepInstances < 50){ //&& (! stepInstance.getStep(jobs).isRequiresDatabaseAccess()) ){
+                    if(verboseLogLevel > 5 && unfinishedStepInstances.size() < 50){ //&& (! stepInstance.getStep(jobs).isRequiresDatabaseAccess()) ){
                         if ((! canBeSubmitted) || (! serialGroupCanRun)){
                             String dependsOn = "";
                             if(stepInstance.getStep(jobs).getId().contains("stepWriteOutput")) {
@@ -253,6 +251,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         // Performed in a transaction.
                         messageSender.sendMessage(stepInstance, highMemory, priority, canRunRemotely);
                         statsUtil.addToSubmittedStepInstances(stepInstance);
+                        submittedSteps.put(stepInstance.getId(), stepInstance.getStepId());
                         if(canBeSubmittedAfterUnknownfailure){
                             LOGGER.warn("Step submitted after unkown failure:" + stepInstance);
                             stepInstance.setStateUnknown(false);
@@ -276,7 +275,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                                 LOGGER.debug("Local jobs: added one more:  " + localJobs.get());
                             }
                         }
-                        countRegulator++;
                         controlledLogging = false;
                     }
                     if(verboseLogLevel >=10 ){
@@ -286,9 +284,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     }
                 } // end of for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances())
 
-                totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+                Long totalStepInstances = stepInstanceDAO.count();
+                int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
                 if(verboseLogLevel >=10 ) {
-                    Utilities.verboseLog(threadName + "unfinishedStepInstances -- : " + totalUnfinishedStepInstances);
+                    Utilities.verboseLog(threadName + "[Distributed Master] [main loop] unfinishedStepInstances -- : "
+                            + totalUnfinishedStepInstances);
+                    Utilities.verboseLog("Submitted the following jobs ");
+                    for (Long jobId : submittedSteps.keySet()){
+                        Utilities.verboseLog("Job jobId:, " + jobId + " : " + submittedSteps.get(jobId));
+                    }
                 }
 
                 //update stats
@@ -372,7 +376,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
 
                 statsUtil.displayMasterProgress();
-                Thread.sleep(1 * 2 * 1000);   //   Thread.sleep(30*1000);
+                Thread.sleep(1 * 1 * 500);   //   Thread.sleep(30*1000);
 
                 if(verboseLogLevel >=10 ){
                     Utilities.verboseLog("[Distributed Master] [[main loop]:  run() - end of main loop");
