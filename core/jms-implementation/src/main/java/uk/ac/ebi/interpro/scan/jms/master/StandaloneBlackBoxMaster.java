@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep;
 
 import javax.jms.JMSException;
 import java.util.concurrent.TimeUnit;
@@ -68,13 +69,18 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         final Step step = stepInstance.getStep(jobs);
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
 
-                        final boolean highPriorityStep = false; //isHighPriorityStep(step);
-                        final boolean lowPriorityStep  =  (! highPriorityStep) &&  (step.getSerialGroup() == null || step instanceof WriteFastaFileStep);
-
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
                         // as they are very abundant.
-                        final int priority = lowPriorityStep ? 4 : 8;
-
+                        // RunPsScanStep should have higher priority as it is slow
+                        //isHighPriorityStep(step);
+                        int priority = LOW_PRIORITY;
+                        if (step instanceof RunPsScanStep) {
+                            priority = HIGHER_PRIORITY;
+                        }else if (step.getSerialGroup() == null || step instanceof WriteFastaFileStep){
+                            priority = LOW_PRIORITY;
+                        }else {
+                            priority = HIGH_PRIORITY;
+                        }
 
                         // Performed in a transaction.
                         LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
