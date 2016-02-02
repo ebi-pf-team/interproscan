@@ -339,7 +339,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
         //TODO consider using the utilities methods
 //        if (uk.ac.ebi.interpro.scan.jms.stats.Utilites.verboseLog(10, "")){
 //        if (Utilites.verboseLogLevel()> 10){
-        System.out.println(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
+      //  System.out.println(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
+//       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
         return new HashSet<RawProtein<T>>(rawResults.values());
     }
 
