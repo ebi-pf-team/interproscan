@@ -538,7 +538,8 @@ public class Run extends AbstractI5Runner {
             bbMaster.setMapToGOAnnotations(mapToGo);
             final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
             bbMaster.setMapToPathway(mapToPathway);
-            bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt()));
+            final boolean mapToIPR = parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt());
+            bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || mapToIPR);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());
             }
@@ -1107,7 +1108,7 @@ public class Run extends AbstractI5Runner {
             //get canonical hostname as otherwise hostname may not be exactly how other machines see this host
             final String hostname = InetAddress.getLocalHost().getCanonicalHostName();
             if (Utilities.verboseLogLevel >= 10){
-                Utilities.verboseLog("process hostanem: " + hostname);
+                Utilities.verboseLog("process hostname: " + hostname);
             }
 
             // Select a random port above 1024, excluding LSF ports and check availability.
