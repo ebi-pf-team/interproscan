@@ -420,4 +420,12 @@ public class Utilities {
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }
+
+    //verbose output using System out
+    public static void verboseLog(int level, String out){
+        if(verboseLogLevel >= level){
+            System.out.println(Utilities.getTimeNow() + " " + out);
+        }
+    }
+
 }

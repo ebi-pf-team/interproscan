@@ -87,10 +87,6 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     private int completionTimeTarget = 2 * 60 * 60 * 1000;
     private int queueConsumerRatio = 20;
 
-    private static final int LOW_PRIORITY = 4;
-    private static final int HIGH_PRIORITY = 6;
-    private static final int HIGHER_PRIORITY = 8;
-    private static final int HIGHEST_PRIORITY = 9;
 
     /**
      * Run the Master Application.
