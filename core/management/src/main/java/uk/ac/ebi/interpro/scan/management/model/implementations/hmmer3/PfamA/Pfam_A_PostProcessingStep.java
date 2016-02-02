@@ -92,8 +92,8 @@ public class Pfam_A_PostProcessingStep extends Step {
             for (final RawProtein rawProtein : rawMatches.values()) {
                 matchCount += rawProtein.getMatches().size();
             }
-        System.out.println("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
-        System.out.println("PfamA: A total of " + matchCount + " raw matches.");
+        //System.out.println("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
+        //System.out.println("PfamA: A total of " + matchCount + " raw matches.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
             //int matchCount = 0;
@@ -111,8 +111,8 @@ public class Pfam_A_PostProcessingStep extends Step {
                 for (final RawProtein rawProtein : filteredMatches.values()) {
                     matchCount += rawProtein.getMatches().size();
                 }
-            System.out.println("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
-            System.out.println("PfamA: A total of " + matchCount + " matches PASSED.");
+            //System.out.println("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
+            //System.out.println("PfamA: A total of " + matchCount + " matches PASSED.");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
                 //int matchCount = 0;
