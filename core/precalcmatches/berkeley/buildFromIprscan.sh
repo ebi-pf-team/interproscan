@@ -9,7 +9,7 @@ cd $(dirname "$0")
 JAVA=$(type -p java)
 
 if [[ "$JAVA" == "" ]]; then
-    printf 'Java not found. Please install java\n'
+    printf 'Java not found. Please install Java\n'
     printf 'and place it on your path,\n'
     printf 'or edit the interproscan.sh script to refer to your java installation.\n'.
     exit 1
@@ -24,8 +24,7 @@ if [[ "${MAJOR_VERSION}" == "1" && "${MINOR_VERSION}" -lt "8" ]];
 then
     printf 'Java version 1.8 or above required\n'
     printf 'Detected version %s.%s\n' "${MAJOR_VERSION}" "${MINOR_VERSION}"
-    printf 'Install the correct version \n'
-    printf 'or edit the interproscan.sh script to disable version check.\n'
+    printf 'Please install the correct version\n'
     exit 1
 fi
 
