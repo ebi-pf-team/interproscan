@@ -15,6 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.prints.RunFingerPrintScanStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep;
 
@@ -99,7 +100,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
         String threadName = "[masterRun] ";
-        Utilities.verboseLog("Master process running on :" + tcpUri);
+        System.out.println("Interproscan 5 Master process running on :" + tcpUri);
         Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
         boolean displayStats = true;
 
@@ -140,6 +141,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 if(verboseLogLevel >=10 ){
                     Utilities.verboseLog("[Distributed Master] [main loop]:  run() - start of main loop");
                 }
+                final long timeNowInMainLoop = System.currentTimeMillis();
                 boolean completed = true;
                 Map<Long, String> submittedSteps = new ConcurrentHashMap<Long, String>();
                 //TODO check the
@@ -150,10 +152,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
 //                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
                 for (StepInstance stepInstance : unfinishedStepInstances) {
-                    if(verboseLogLevel >=10 ){
-                        Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances]: Currently on "
+                    Utilities.verboseLog(10, "[Distributed Master] [main loop] [Iterate over unfinished StepInstances]: Currently on "
                                 + stepInstance);
-                    }
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
@@ -171,39 +171,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                     //serial group has no running step instance
                     final boolean serialGroupCanRun = stepInstanceDAO.serialGroupCanRun(stepInstance, jobs);
-                    if(verboseLogLevel > 5 && unfinishedStepInstances.size() < 50){ //&& (! stepInstance.getStep(jobs).isRequiresDatabaseAccess()) ){
-                        if ((! canBeSubmitted) || (! serialGroupCanRun)){
-                            String dependsOn = "";
-                            if(stepInstance.getStep(jobs).getId().contains("stepWriteOutput")) {
-                                dependsOn = "... all the stepInstances ...";
-                            }else{
-                                List<StepInstance> dependeOnStepInstances = stepInstance.stepInstanceDependsUpon();
-                                for(StepInstance dependsOnSteInstance: dependeOnStepInstances){
-                                    dependsOn += getStepInstanceState(dependsOnSteInstance) + " ... ";
-                                }
-                            }
 
-                            Utilities.verboseLog("-------------------------------\n"
-                                    +"stepInstance considered:  " +  stepInstance.getId()
-                                    + " Step Name: " + stepInstance.getStep(jobs).getId()
-                                    + " canBeSubmitted : " + canBeSubmitted
-                                    + " why? "
-                                    + " dependsOn: " + dependsOn
-                                    + " Executions #: " + stepInstance.getExecutions().size()
-                                    + " serialGroupCanRun: " + serialGroupCanRun
-                                    + " serialgroup: " + stepInstance.getStep(jobs).getSerialGroup()
-                                    + " stepInstance actual: " + getStepInstanceState(stepInstance));
-                        }
-
-                    }
                     if(canBeSubmittedAfterUnknownfailure){
                         LOGGER.warn("Step being considered for submitting after unkown failure:" + stepInstance);
-                    }
-                    if(verboseLogLevel >=10 ){
-                        Utilities.verboseLog("[Distributed Master] [main loop] [Iterate over unfinished StepInstances] "
-                                +  " canBeSubmitted: " + canBeSubmitted + " canBeSubmittedAfterUnknownfailure: " + canBeSubmittedAfterUnknownfailure
-                                + " serialGroupCanRun: " + serialGroupCanRun);
-                        Utilities.verboseLog(getDependencyInfo(stepInstance));
                     }
                     if ((canBeSubmitted || canBeSubmittedAfterUnknownfailure )
                             && serialGroupCanRun) {
@@ -276,14 +246,19 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             }
                         }
                         controlledLogging = false;
+                    } // end if canbesubmitted and serialgroupcanrun
+                    else{
+                        //print why
+                        printStepInstanceState(stepInstance, canBeSubmitted, serialGroupCanRun, unfinishedStepInstances.size());
                     }
-                    if(verboseLogLevel >=10 ){
-                        Utilities.verboseLog("[Distributed Master] [main loop] [End of Iterate over unfinished StepInstances]: "
+                    Utilities.verboseLog(10, "[Distributed Master] [main loop] [End of Iterate over unfinished StepInstances]: "
                                 + " step instance canbesubmitted: "  + canBeSubmitted
                                 + " serialGroupCanRun: " + serialGroupCanRun);
-                    }
+
                 } // end of for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances())
 
+                Utilities.verboseLog("[main loop] time taken to loop over instances : "
+                        + (System.currentTimeMillis() - timeNowInMainLoop) + " mills");
                 Long totalStepInstances = stepInstanceDAO.count();
                 int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
                 if(verboseLogLevel >=10 ) {
@@ -443,6 +418,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         }
         System.exit(status);
     }
+
+
 
     public void setLocalQueueJmsContainerThinMaster(DefaultMessageListenerContainer localQueueJmsContainerThinMaster) {
         this.localQueueJmsContainerThinMaster = localQueueJmsContainerThinMaster;
@@ -702,6 +679,64 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
     /**
      *
+     * print stepInstance info
+     *
+     * @param stepInstance
+     * @return
+     */
+    private void printStepInstanceState(StepInstance stepInstance, boolean canBeSubmitted, boolean serialGroupCanRun,  int unfinishedStepInstances){
+        if (! Utilities.verboseLog){
+            return;
+        }
+
+        StepExecutionState state = stepInstance.getStepInstanceState();
+        if (stepInstance.getStepInstanceState() == StepExecutionState.STEP_EXECUTION_SUBMITTED) {
+            Utilities.verboseLog("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state);
+            return;
+        }
+        if(verboseLogLevel >= 10 && unfinishedStepInstances < 50){ //&& (! stepInstance.getStep(jobs).isRequiresDatabaseAccess()) ){
+
+                String dependsOn = "";
+                if(stepInstance.getStep(jobs).getId().contains("stepWriteOutput")) {
+                    dependsOn = "... all the stepInstances ...";
+                }else{
+                    List<StepInstance> dependeOnStepInstances = stepInstance.stepInstanceDependsUpon();
+                    for(StepInstance dependsOnSteInstance: dependeOnStepInstances){
+                        dependsOn += getStepInstanceState(dependsOnSteInstance) + " ... ";
+                    }
+                }
+
+                Utilities.verboseLog("-------------------------------\n"
+                        +"stepInstance considered:  " +  stepInstance.getId()
+                        + " Step Name: " + stepInstance.getStep(jobs).getId()
+                        + " canBeSubmitted : " + canBeSubmitted
+                        + " why? "
+                        + " dependsOn: " + dependsOn
+                        + " Executions #: " + stepInstance.getExecutions().size()
+                        + " serialGroupCanRun: " + serialGroupCanRun
+                        + " serialgroup: " + stepInstance.getStep(jobs).getSerialGroup()
+                        + " stepInstance actual: " + getStepInstanceState(stepInstance));
+            }
+
+        List<StepInstance> serialGroupStepInstances = stepInstanceDAO.getSerialGroupInstances(stepInstance, jobs);
+        int serialGroupStepInstancesSize = 0;
+        if (serialGroupStepInstances != null) {
+            serialGroupStepInstancesSize = serialGroupStepInstances.size();
+        }
+        Utilities.verboseLog("Steps still running for the serial group: " + stepInstance.getStep(jobs).getSerialGroup()
+                + " (" + serialGroupStepInstancesSize + ")");
+
+        if (serialGroupStepInstancesSize > 0) {
+            for (StepInstance serialGroupStepInstance :serialGroupStepInstances) {
+                Utilities.verboseLog("Serial group check: " + serialGroupStepInstance.getStepId() + " - " + serialGroupStepInstance.getId() + " "
+                        + serialGroupStepInstance.getExecutions());
+            }
+        }
+        Utilities.verboseLog(getDependencyInfo(stepInstance));
+    }
+
+    /**
+     *
      * print the execution state of this stepInstance
      *
      * @param stepInstance
@@ -721,6 +756,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
     private String getDependencyInfo(StepInstance stepInstance){
         StringBuffer buffer = new StringBuffer("");
         final StepExecutionState state = stepInstance.getStepInstanceState();
+
+        if (stepInstance.getStep(jobs) instanceof WriteOutputStep){
+            buffer.append("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state
+                    + " can be submitted dependency step: ALL STEPS");
+            return buffer.toString();
+        }
+
         if (StepExecutionState.NEW_STEP_INSTANCE == state
                 ||
                 (StepExecutionState.STEP_EXECUTION_FAILED == state && stepInstance.getExecutions().size() < stepInstance.getStep(jobs).getRetries())) {
@@ -736,11 +778,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                         //TODO
                         buffer.append("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state
-                                + "can be submitted dependency step: " + dependency.getStepId()
+                                + " can be submitted dependency step: " + dependency.getStepId()
                                 + " id: " + dependency.getId()
                                 + " state: " + dependency.getStepInstanceState()
+
                         );
-                        return buffer.toString();
+                        break;
                     }
                     buffer.append("Job: " + stepInstance.getStepId() + " id: " + stepInstance.getId() + " state: " + state
                             + " can be submitted dependency step: " + dependency.getStepId()
@@ -1059,8 +1102,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                         //calculate the number of new workers to create
                         int newWorkerCount = 1;
-                        int idealWorkerCount = remoteJobsOntheQueue / (activeRemoteWorkerCountEstimate *
-                                getMaxConcurrentInVmWorkerCountForWorkers() * queueConsumerRatio);
+                        int idealWorkerCount = 1;
+                        if(activeRemoteWorkerCountEstimate >= 1) {
+                            idealWorkerCount = remoteJobsOntheQueue / (activeRemoteWorkerCountEstimate *
+                                    getMaxConcurrentInVmWorkerCountForWorkers() * queueConsumerRatio);
+                        }
                         int estimatedWorkerCount =  (idealWorkerCount - activeRemoteWorkerCountEstimate);
                         if (maxConsumers > (estimatedWorkerCount + activeRemoteWorkerCountEstimate)){
                             newWorkerCount = estimatedWorkerCount;
@@ -1193,12 +1239,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     }
 
                 } // end of while(! shutdowncalled)
-                LOGGER.warn(threadName +"Shutdown has been called on the master, start new worker thread will end");
+                LOGGER.debug(threadName +"Shutdown has been called on the master, start new worker thread will end");
 
             }
         });
 
-        LOGGER.warn(threadName +"Start New Worker thread has ended");
+        LOGGER.debug(threadName +"Start New Worker thread has ended");
     }
 
 
