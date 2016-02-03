@@ -46,6 +46,11 @@ public interface StepInstanceDAO extends GenericDAO<StepInstance, String> {
     boolean serialGroupCanRun(StepInstance stepInstance, Jobs jobs);
 
     /**
+     * @return instances with the SerialGroup passed in as argument
+     */
+    List<StepInstance> getSerialGroupInstances(StepInstance stepInstance, Jobs jobs);
+
+    /**
      * Returns true if there are steps left to run
      *
      * @return true if there are steps left to run

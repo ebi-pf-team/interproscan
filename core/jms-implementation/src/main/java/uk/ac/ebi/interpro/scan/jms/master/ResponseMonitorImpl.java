@@ -57,9 +57,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
-                    if(Utilities.verboseLogLevel > 4){
-                        Utilities.verboseLog("ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
-                    }
+                    Utilities.verboseLog(4, "ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
                     statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
 
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
