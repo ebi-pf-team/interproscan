@@ -100,7 +100,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
         String threadName = "[masterRun] ";
-        System.out.println("Interproscan 5 Master process running on :" + tcpUri);
+        System.out.println("Interproscan 5 Master process running on: " + tcpUri);
         Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
         boolean displayStats = true;
 
@@ -198,8 +198,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         final boolean highMemory = (resubmission || isPrintsBinaryStep)
                                 && workerRunnerHighMemory != null && canRunRemotely;
 
-
-                        if (highMemory) {
+                        if (highMemory && resubmission) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " ("+ step.getId() + ") will be re-run in a high-memory worker.");
                         }
 
