@@ -39,6 +39,7 @@
     <bean id="stepInstanceDAO"
           class="uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAOImpl">
         <property name="lockObject" value="lockObject"/>
+        <property name="maxSerialGroupExecutions" value="${max.serial.group.executions}"/>
     </bean>
 
     <bean id="productionStepInstanceDAO"
