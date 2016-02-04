@@ -95,7 +95,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
             String fastaFileInputStatusMessage = "";
             try {
                 File file = new File(providedPath);
-                System.out.println("Loading file " + providedPath);
+                System.out.println(getTimeNow() + " Loading file " + providedPath);
                 if (file.exists()) {
                     fastaFileInputStatusMessage = " - fasta file exists";
                     if (file.canRead()) {
