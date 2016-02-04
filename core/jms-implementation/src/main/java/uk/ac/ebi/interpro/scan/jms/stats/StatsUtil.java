@@ -556,9 +556,9 @@ public class StatsUtil {
     public void displayHighMemoryQueueStatistics(){
         final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            System.out.println("JobRequestQueue: not initialised");
+            Utilities.verboseLog(5,"JobRequestQueue: not initialised");
         } else {
-            System.out.println("HighMemoryJobRequestQueue:  " + statsMessageListener.getStats().toString());
+            Utilities.verboseLog(5,"HighMemoryJobRequestQueue:  " + statsMessageListener.getStats().toString());
         }
 
     }
@@ -626,7 +626,7 @@ public class StatsUtil {
 
 
     /**
-     *   Display master job progress report based on the number of jobs left to run
+     *   Display worker job progress report based on the number of jobs left to run
      */
     public void displayWorkerProgress(){
         if(progressCounter ==  0){
@@ -653,6 +653,16 @@ public class StatsUtil {
             previousUnfinishedJobs = unfinishedJobs;
         }
         progressCounter ++;
+    }
+
+    /**
+     *   Display final worker job progress report based on the number of jobs left to run
+     */
+    public void displayFinalWorkerProgress(){
+        Long workerTotalJobs = totalJobs;
+        int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
+        System.out.println(Utilities.getTimeNow() + " Completed " + finishedJobs + " of " + workerTotalJobs + " jobs");
+        LOGGER.debug(statsMessageListener.getStats());
     }
 
 

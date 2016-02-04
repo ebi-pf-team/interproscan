@@ -916,6 +916,8 @@ public class WorkerImpl implements Worker {
                         TimeUnit.MILLISECONDS.toSeconds(timeAlive) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeAlive))));
             }
+            statsUtil.displayFinalWorkerProgress();
+
         } catch (InterruptedException e) {
             LOGGER.fatal("InterruptedException thrown by Worker.  Stopping now.", e);
             System.exit(999);
