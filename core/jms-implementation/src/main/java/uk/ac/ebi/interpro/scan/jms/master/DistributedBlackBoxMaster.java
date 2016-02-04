@@ -100,7 +100,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
         String threadName = "[masterRun] ";
-        System.out.println("Interproscan 5 Master process running on: " + tcpUri);
+        System.out.println(Utilities.getTimeNow() + " Interproscan 5 Master process running on: " + tcpUri);
         Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
         boolean displayStats = true;
 
