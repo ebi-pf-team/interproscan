@@ -24,9 +24,9 @@ public enum I5Option {
     OUTPUT_DIRECTORY("output-dir", "d", false, "Optional, output directory.  Note that this option, the --outfile (-o) option and the --output-file-base (-b) option are mutually exclusive. The output filename(s) are the same as the input filename, with the appropriate file extension(s) for the output format(s) appended automatically .", "OUTPUT-DIR", false, Mode.SET_OF_ALL_MODES),
     ANALYSES("applications", "appl", false, "Optional, comma separated list of analyses.  If this option is not set, ALL analyses will be run. ", "ANALYSES", true, Mode.SET_OF_STANDARD_MODES),
     PRIORITY("priority", "p", false, "Minimum message priority that the worker will accept (0 low -> 9 high).", "JMS-PRIORITY", false, Mode.SET_OF_NO_MODES),
-    IPRLOOKUP("iprlookup", "iprlookup", false, "Switch on look up of corresponding InterPro annotation.", null, false, Mode.SET_OF_STANDARD_MODES),
-    GOTERMS("goterms", "goterms", false, "Optional, switch on look up of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
-    PATHWAY_LOOKUP("pathways", "pa", false, "Optional, switch on look up of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
+    IPRLOOKUP("iprlookup", "iprlookup", false, "Also include lookup of corresponding InterPro annotation in the TSV and GFF3 output formats.", null, false, Mode.SET_OF_STANDARD_MODES),
+    GOTERMS("goterms", "goterms", false, "Optional, switch on lookup of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
+    PATHWAY_LOOKUP("pathways", "pa", false, "Optional, switch on lookup of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
     MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, Mode.SET_OF_NO_MODES),
     MASTER_MAXLIFE("mastermaxlife", "mastermaxlife", false, "The maximum lifetime of the Master.", "MASTER-MAXLIFE", false, Mode.SET_OF_NO_MODES),
     SEQUENCE_TYPE("seqtype", "t", false, "Optional, the type of the input sequences (dna/rna (n) or protein (p)).  The default sequence type is protein.", "SEQUENCE-TYPE", false, Mode.SET_OF_STANDARD_MODES),
@@ -54,7 +54,7 @@ public enum I5Option {
 
     private EnumSet<Mode> includeInUsageMessage;
 
-    private I5Option(
+    I5Option(
             String longOpt,
             String shortOpt,
             boolean required,
