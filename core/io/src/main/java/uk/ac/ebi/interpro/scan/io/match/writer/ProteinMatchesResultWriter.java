@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import java.io.File;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -21,7 +22,7 @@ import java.util.Set;
  */
 public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter {
 
-    protected FileWriter fileWriter;
+    protected BufferedWriter fileWriter;
 
     protected final String VALUE_SEPARATOR = "|";
 
@@ -40,7 +41,8 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
                 throw new IllegalStateException("The file being written to already exists and cannot be deleted: " + file.getAbsolutePath());
             }
         }
-        this.fileWriter = new FileWriter(file);
+        int bufferSize = 8192;
+        this.fileWriter = new BufferedWriter(new FileWriter(file), bufferSize);
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
     }
 

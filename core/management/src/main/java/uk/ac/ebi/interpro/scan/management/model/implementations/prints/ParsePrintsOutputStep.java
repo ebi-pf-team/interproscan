@@ -13,8 +13,10 @@ import uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -72,7 +74,63 @@ public class ParsePrintsOutputStep extends Step {
             final String printsOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, printsOutputFileNameTemplate);
             inputStreamParser = new FileInputStream(printsOutputFilePath);
             final Set<RawProtein<PrintsRawMatch>> parsedResults = parser.parse(inputStreamParser, printsOutputFilePath, signatureLibraryRelease);
+
+            RawMatch represantiveRawMatch = null;
+            int count = 0;
+
+            for (RawProtein<PrintsRawMatch> rawProtein : parsedResults) {
+                count += rawProtein.getMatches().size();
+                if (represantiveRawMatch == null) {
+                    if (rawProtein.getMatches().size() > 0) {
+                        represantiveRawMatch = rawProtein.getMatches().iterator().next();
+                    }
+                }
+            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Parsed out " + parsedResults.size() + " proteins with matches from file " + printsOutputFilePath);
+
+                LOGGER.debug("A total of " + count + " matches from file " + printsOutputFilePath);
+            }
+
             printsMatchDAO.insertProteinMatches(parsedResults);
+            Long now = System.currentTimeMillis();
+            if (count > 0){
+                int matchesFound = 0;
+                int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
+                if (represantiveRawMatch != null) {
+                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
+                    while (matchesFound < count) {
+                        Utilities.sleep(waitTimeFactor * 1000);
+//                        for ( RawProtein<PrintsRawMatch> rawProtein :printsMatchDAO.getRawMatchesForProteinIdsInRange(stepInstance.getBottomProtein(),
+//                                stepInstance.getTopProtein(), signatureLibraryRelease).values()){
+//                            matchesFound += rawProtein.getMatches().size();
+//                        }
+                        matchesFound = printsMatchDAO.getActualRawMatchesForProteinIdsInRange(stepInstance.getBottomProtein(),
+                                stepInstance.getTopProtein(), signatureLibraryRelease).size();
+                        if (matchesFound < count){
+                            LOGGER.warn("Raw matches not yet committed - sleep for 5 seconds , count: " + count);
+                            Utilities.verboseLog("Raw matches not yet committed - sleep for "
+                                    +  waitTimeFactor + " seconds, matches found: " + matchesFound
+                                    + " matchesCount expected: " + count);
+                        }
+                        Long timeTaken = System.currentTimeMillis() - now;
+                        if(timeTaken > (waitTimeFactor * waitTimeFactor * 100 * 1000)){
+                            LOGGER.warn("H2 database problem: failed to verify " + count + " matches in database for "
+                                    + represantiveRawMatch.getSignatureLibrary().getName()
+                                    + " after " + timeTaken + " ms "
+                                    + " - matches found : " + matchesFound);
+                            break;
+                        }
+                    }
+                }else{
+                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                }
+                Long timeTaken = System.currentTimeMillis() - now;
+                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                        + " time taken: " + timeTaken);
+            }
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Prints file " + printsOutputFileNameTemplate, e);
         } finally {

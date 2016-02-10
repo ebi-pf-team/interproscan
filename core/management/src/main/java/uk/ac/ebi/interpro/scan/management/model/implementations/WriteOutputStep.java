@@ -15,11 +15,13 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiv
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Writes all matches for a slice of proteins to a file.
@@ -150,8 +152,16 @@ public class WriteOutputStep extends Step {
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
-        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
+        int waitTimeFactor = 2;
+        if (! Utilities.isRunningInSingleSeqMode()) {
+            waitTimeFactor = Utilities.getWaitTimeFactor(Utilities.getSequenceCount()).intValue();
+        }
+        Utilities.sleep(waitTimeFactor * 1000);                 //1000 milliseconds is one second.
+        Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
+
+        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size());
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
             LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
@@ -245,7 +255,7 @@ public class WriteOutputStep extends Step {
             File file = new File(workingDirectory);
             try {
                 FileUtils.deleteDirectory(file);
-            }catch (IOException e) {
+            } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
@@ -261,6 +271,7 @@ public class WriteOutputStep extends Step {
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML ");
         if (isSlimOutput) {
             // Only include a protein in the output if it has at least one match
             for (Protein protein : proteins) {
@@ -269,11 +280,11 @@ public class WriteOutputStep extends Step {
                     matchesHolder.addProtein(protein);
                 }
             }
-        }
-        else {
+        } else {
             // Include all proteins in the output, whether they have any matches or not
             matchesHolder.addProteins(proteins);
         }
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
         xmlWriter.writeMatches(outputFile, matchesHolder);
     }
 
@@ -399,6 +410,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance, List<Protein> proteins) throws IOException {
+        Utilities.verboseLog(10, " WriteOutputStep - outputToTSV-etc ");
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
         final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
@@ -410,9 +422,17 @@ public class WriteOutputStep extends Step {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Loaded " + proteins.size() + " proteins.");
             }
+            Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + "Loaded " + proteins.size() + " proteins.");
+            int count = 0;
             for (Protein protein : proteins) {
                 writer.write(protein);
+                count++;
+                if (count % 20000 == 0) {
+                    Utilities.verboseLog(10, " WriteOutout - wrote " + count + " proteins");
+                }
             }
         }
     }
+
+
 }

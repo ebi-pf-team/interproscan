@@ -35,6 +35,11 @@
     </organization>
 
     <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-util</artifactId>
+            <version>5.16-55.0</version>
+        </dependency>
 
         <!-- Hibernate -->
         <dependency>

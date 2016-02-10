@@ -195,7 +195,8 @@ if __name__ == "__main__":
 
     except:
         print (sys.version)
-        sys.exit("Unexpected error: " + sys.exc_info()[0])
+        print ("Unexpected error: ")
+        print (sys.exc_info())
 
 
 

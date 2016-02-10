@@ -6,7 +6,10 @@ import uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.coils.ParseCoilsMatch;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -61,10 +64,35 @@ public class ParseCoilsOutputStep extends Step {
         delayForNfs();
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, coilsOutputFileNameTemplate);
         InputStream is = null;
+        ParseCoilsMatch represantiveRawMatch = null;
+        int count = 0;
         try {
             is = new FileInputStream(fileName);
             Set<ParseCoilsMatch> matches = parser.parse(is, fileName);
+            for (ParseCoilsMatch parseCoilsMatch : matches) {
+                count += 1;
+                if (represantiveRawMatch == null) {
+                        represantiveRawMatch = parseCoilsMatch;
+                }
+            }
+
             matchDAO.persist(matches);
+            //TODO refactor this
+            Long now = System.currentTimeMillis();
+            if (count > 0){
+                int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
+                if (represantiveRawMatch != null) {
+                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.sleep(waitTimeFactor * 1000);
+                    //ignore the usual check until refactoring of the parse step
+                }else{
+                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                }
+                Long timeTaken = System.currentTimeMillis() - now;
+                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                        + " time taken: " + timeTaken);
+            }
         }
         catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Coils file " + fileName, e);
