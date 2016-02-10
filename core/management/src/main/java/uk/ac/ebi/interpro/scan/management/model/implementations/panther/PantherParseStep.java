@@ -7,8 +7,10 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,19 +78,59 @@ public final class PantherParseStep extends Step {
             stream = new FileInputStream(outputFilePath);
             final PantherMatchParser parser = this.parser;
             Set<RawProtein<PantherRawMatch>> parsedResults = parser.parse(stream);
-
+            RawMatch represantiveRawMatch = null;
+            int matchCount = 0;
+            for (final RawProtein<PantherRawMatch> rawProtein : parsedResults) {
+                matchCount += rawProtein.getMatches().size();
+                if (represantiveRawMatch == null) {
+                    if (rawProtein.getMatches().size() > 0) {
+                        represantiveRawMatch = rawProtein.getMatches().iterator().next();
+                    }
+                }
+            }
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PANTHER: Retrieved " + parsedResults.size() + " proteins.");
-                int matchCount = 0;
-                for (final RawProtein rawProtein : parsedResults) {
-                    matchCount += rawProtein.getMatches().size();
-                }
+
                 LOGGER.debug("PANTHER: A total of " + matchCount + " raw matches.");
             }
 
             // Persist parsed raw matches
             LOGGER.info("Persisting parsed raw matches...");
             rawMatchDAO.insertProteinMatches(parsedResults);
+            Long now = System.currentTimeMillis();
+            if (matchCount > 0){
+                int matchesFound = 0;
+                int waitTimeFactor = Utilities.getWaitTimeFactor(matchCount).intValue();
+                if (represantiveRawMatch != null) {
+                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
+                    while (matchesFound < matchCount) {
+                        Utilities.sleep(waitTimeFactor * 1000);
+                        matchesFound = rawMatchDAO.getActualRawMatchesForProteinIdsInRange(stepInstance.getBottomProtein(),
+                                stepInstance.getTopProtein(), signatureLibraryRelease).size();
+                        if (matchesFound < matchCount) {
+                            LOGGER.warn("Raw matches not yet committed - sleep for 5 seconds , count: " + matchCount);
+                            Utilities.verboseLog("Raw matches not yet committed - sleep for "
+                                    + waitTimeFactor + " seconds, matches found: " + matchesFound
+                                    + " matchesCount expected: " + matchCount);
+                        }
+                        Long timeTaken = System.currentTimeMillis() - now;
+                        if(timeTaken > (waitTimeFactor * waitTimeFactor * 100 * 1000)){
+                            LOGGER.warn("H2 database problem: failed to verify " + matchCount + " matches in database for "
+                                    + represantiveRawMatch.getSignatureLibrary().getName()
+                                    + " after " + timeTaken + " ms "
+                                    + " - matches found : " + matchesFound);
+                            break;
+                        }
+                    }
+                }else{
+                    LOGGER.warn("Check if Raw matches committed " + matchCount + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + matchCount + " rm: " + represantiveRawMatch);
+                }
+                Long timeTaken = System.currentTimeMillis() - now;
+                Utilities.verboseLog("ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                        + " time taken: " + timeTaken);
+            }
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Panther file " + outputFileNameTemplate, e);
         } finally {

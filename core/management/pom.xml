@@ -37,6 +37,12 @@
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
+            <artifactId>interproscan-util</artifactId>
+            <version>5.16-55.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-web</artifactId>
             <version>5.16-55.0</version>
         </dependency>
@@ -79,6 +85,7 @@
             <artifactId>commons-compress</artifactId>
             <version>1.10</version>
         </dependency>
+
 
     </dependencies>
 

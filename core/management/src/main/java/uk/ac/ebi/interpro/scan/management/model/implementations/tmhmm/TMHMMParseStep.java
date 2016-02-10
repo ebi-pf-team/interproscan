@@ -6,7 +6,10 @@ import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMProtein;
 import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
 import uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,18 +66,41 @@ public final class TMHMMParseStep extends Step {
 
             Set<TMHMMProtein> proteins = parser.parse(stream);
 
+            TMHMMMatch represantiveRawMatch = null;
+            int locationCount = 0;
+            for (final TMHMMProtein tmhmmProtein : proteins) {
+                locationCount += tmhmmProtein.getMatches().size();
+                if (represantiveRawMatch == null) {
+                    if (tmhmmProtein.getMatches().size() > 0) {
+                        represantiveRawMatch = tmhmmProtein.getMatches().iterator().next();
+                    }
+                }
+            }
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("TMHMM: Retrieved " + proteins.size() + " proteins.");
-                int locationCount = 0;
-                for (final TMHMMProtein tmhmmProtein : proteins) {
-                    locationCount += tmhmmProtein.getMatches().size();
-                }
+
                 LOGGER.debug("TMHHM: A total of " + locationCount + " locations found.");
             }
-
+            int count = locationCount;
             // Persist parsed matches
             LOGGER.info("Persisting parsed matches...");
             filteredMatchDAO.persist(proteins);
+            //TODO refactor this
+            Long now = System.currentTimeMillis();
+            if (count > 0){
+                int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
+                if (represantiveRawMatch != null) {
+                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.sleep(waitTimeFactor * 1000);
+                    //ignore the usual check until refactoring of the parse step
+                }else{
+                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                }
+                Long timeTaken = System.currentTimeMillis() - now;
+                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                        + " time taken: " + timeTaken);
+            }
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse Panther file " + outputFileNameTemplate, e);
         } finally {

@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Set;
 
@@ -104,12 +105,60 @@ public class WriteGene3dSsfFileStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final String inputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getSsfInputFileTemplate());
 
-        // Get raw matches
-        final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = this.getRawMatchDAO().getProteinsByIdRange(
+        int count = 0;
+        int waitTimeFactor = 3;
+        Long proteinCount = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+        Long now = System.currentTimeMillis();
+        Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = this.getRawMatchDAO().getProteinsByIdRange(
                 stepInstance.getBottomProtein(),
                 stepInstance.getTopProtein(),
                 getSignatureLibraryRelease()
         );
+        if(rawProteins.size() > 0) {
+            for (RawProtein<Gene3dHmmer3RawMatch> rawProtein : rawProteins) {
+                count += rawProtein.getMatches().size();
+            }
+        }
+        Long timeTaken = System.currentTimeMillis() - now;
+        while (count == 0) {
+            int matchesFound = 0;
+            int countForWaitTime = proteinCount.intValue() * 200;
+            waitTimeFactor = Utilities.getWaitTimeFactor(countForWaitTime).intValue();
+            Utilities.sleep(waitTimeFactor * 1000);
+            // Get raw matches
+            rawProteins = this.getRawMatchDAO().getProteinsByIdRange(
+                    stepInstance.getBottomProtein(),
+                    stepInstance.getTopProtein(),
+                    getSignatureLibraryRelease()
+            );
+            if(rawProteins.size() > 0) {
+                for (RawProtein<Gene3dHmmer3RawMatch> rawProtein : rawProteins) {
+                    count += rawProtein.getMatches().size();
+                }
+            }
+            Utilities.verboseLog("Raw matches not found (1st check): raw proteins: " + rawProteins.size()
+                    + " protein-range : " + stepInstance.getBottomProtein() + " - "
+                    + stepInstance.getTopProtein()
+                    + " signature : " +  getSignatureLibraryRelease()
+                    + " matchesCount (2nd check): " + count);
+
+            timeTaken = System.currentTimeMillis() - now;
+            if (timeTaken > (waitTimeFactor * 10 * 1000)) {
+                if(! Utilities.isRunningInSingleSeqMode()) {
+                    LOGGER.warn("Possible H2 database problem: failed to  get Gene3d matches for the domain finder raw proteins: "
+                            + rawProteins.size()
+                            + " protein-range : " + stepInstance.getBottomProtein() + " - "
+                            + stepInstance.getTopProtein()
+                            + " signature : " + getSignatureLibraryRelease()
+                            + " matchesCount: " + count);
+                }
+                break;
+            }
+
+        }
+
+        Utilities.verboseLog("Raw proteins: " + rawProteins.size() + " matches: " + count + " timeTaken: " + timeTaken);
+
         // Check we have correct data
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("In execute() method of Gene3dHmmer3FilterStep.java (Gene3D Post Processing.)");

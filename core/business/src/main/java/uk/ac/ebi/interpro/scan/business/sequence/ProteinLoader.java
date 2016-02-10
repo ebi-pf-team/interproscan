@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 
 import java.text.SimpleDateFormat;
@@ -279,7 +280,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         if (count > 10000) {
             System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
         }
+        Utilities.verboseLog(10, " Uploaded/Stored " + count + " sequences for analysis");
+
         LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
+        Utilities.sequenceCount = count;
     }
 
     /**

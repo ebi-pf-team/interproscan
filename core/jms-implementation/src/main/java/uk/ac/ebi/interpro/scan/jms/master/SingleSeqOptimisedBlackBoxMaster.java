@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -42,6 +42,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
+        Utilities.mode = "singleseq";
 
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
