@@ -10,9 +10,12 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * This class performs post-processing (including data persistence)
@@ -88,31 +91,45 @@ public class Pfam_A_PostProcessingStep extends Step {
                 stepInstance.getTopProtein(),
                 getSignatureLibraryRelease()
         );
+        Utilities.verboseLog(10, "Pfam_A_PostProcessingStep : stepinstance:" + stepInstance.toString());
+        if(rawMatches.size() == 0){
+            Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            //do we expect matches?
+            Utilities.sleep(10000);
+            //try again
+            rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
+                    stepInstance.getBottomProtein(),
+                    stepInstance.getTopProtein(),
+                    getSignatureLibraryRelease()
+            );
+            Utilities.verboseLog(10, "matches after : " + rawMatches.size());
+        }
         int matchCount = 0;
-            for (final RawProtein rawProtein : rawMatches.values()) {
-                matchCount += rawProtein.getMatches().size();
-            }
-        //System.out.println("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
-        //System.out.println("PfamA: A total of " + matchCount + " raw matches.");
+        for (final RawProtein rawProtein : rawMatches.values()) {
+            matchCount += rawProtein.getMatches().size();
+        }
+        Utilities.verboseLog(10, " PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
+        Utilities.verboseLog(10, " PfamA: A total of " + matchCount + " raw matches.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
             //int matchCount = 0;
             //for (final RawProtein rawProtein : rawMatches.values()) {
-             //   matchCount += rawProtein.getMatches().size();
+            //   matchCount += rawProtein.getMatches().size();
             //}
             LOGGER.debug("PfamA: A total of " + matchCount + " raw matches.");
         }
-        
+
         // Post process
         try {
             Map<String, RawProtein<PfamHmmer3RawMatch>> filteredMatches = getPostProcessor().process(rawMatches);
 
             matchCount = 0;
-                for (final RawProtein rawProtein : filteredMatches.values()) {
-                    matchCount += rawProtein.getMatches().size();
-                }
-            //System.out.println("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
-            //System.out.println("PfamA: A total of " + matchCount + " matches PASSED.");
+            for (final RawProtein rawProtein : filteredMatches.values()) {
+                matchCount += rawProtein.getMatches().size();
+            }
+            Utilities.verboseLog(10,  " PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
+            Utilities.verboseLog(10,  " PfamA: A total of " + matchCount + " matches PASSED.");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
                 //int matchCount = 0;
@@ -122,6 +139,7 @@ public class Pfam_A_PostProcessingStep extends Step {
                 LOGGER.debug("PfamA: A total of " + matchCount + " matches PASSED.");
             }
             filteredMatchDAO.persist(filteredMatches.values());
+            Utilities.verboseLog(10,  " PfamA: filteredMatches persisted");
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered matches.", e);
         }
@@ -134,4 +152,18 @@ public class Pfam_A_PostProcessingStep extends Step {
         }
         return count;
     }
+
+    /**
+     * display time now
+     *
+     * @return
+     */
+    public static String getTimeNow() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+        String currentDate = sdf.format(cal.getTime());
+        return currentDate;
+    }
+
+
 }

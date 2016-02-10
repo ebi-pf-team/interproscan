@@ -114,4 +114,43 @@ public class RawMatchDAOImpl<T extends RawMatch>
         return rawProteins;
     }
 
+
+
+
+
+
+
+
+    /**
+     * Returns a Map of sequence identifiers to a List of
+     * RawMatch objects for the protein IDs in the range
+     * specified (Database default String ordering)
+     * <p/>
+     * Essential for Pfam-A HMMER3, PRINTS, etc post processing.
+     *
+     * @param bottomId                 return protein IDs >= this String
+     * @param topId                    the return protein IDs <= this String
+     * @param signatureDatabaseRelease
+     * @return a Map of sequence identifiers to a List of
+     *         RawMatch objects for the protein IDs in the range
+     *         specified (Database default String ordering)
+     */
+    @Transactional(readOnly = true)
+    public List<T>  getActualRawMatchesForProteinIdsInRange(
+            long bottomId, long topId, String signatureDatabaseRelease) {
+        Map<String, RawProtein<T>> proteinIdToMatchMap =
+                new HashMap<String, RawProtein<T>>();
+        Query query = entityManager
+                .createQuery(String.format("select p from %s  p  " +
+                        "where p.numericSequenceId >= :bottom " +
+                        "and   p.numericSequenceId <= :top " +
+                        "and   p.signatureLibraryRelease = :sigLibRelease", unqualifiedModelClassName))
+                .setParameter("bottom", bottomId)
+                .setParameter("top", topId)
+                .setParameter("sigLibRelease", signatureDatabaseRelease);
+        @SuppressWarnings("unchecked") List<T> resultList = query.getResultList();
+
+        return resultList;
+    }
+
 }

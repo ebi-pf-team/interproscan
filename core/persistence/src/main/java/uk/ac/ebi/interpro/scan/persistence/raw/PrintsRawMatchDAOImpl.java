@@ -69,4 +69,6 @@ public class PrintsRawMatchDAOImpl extends RawMatchDAOImpl<PrintsRawMatch> imple
         }
         return proteinIdToMatchMap;
     }
+
+
 }
