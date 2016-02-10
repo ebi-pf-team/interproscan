@@ -89,6 +89,7 @@
     </properties>
 
     <modules>
+        <module>util</module>
         <module>generic-jpa-dao</module>
         <module>model</module>
         <module>io</module>

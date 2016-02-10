@@ -5,6 +5,8 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,6 +36,23 @@ public interface RawMatchDAO<T extends RawMatch>
      */
     @Transactional(readOnly = true)
     public T getMatchesByModel(String modelId);
+
+    /**
+     * Returns a List of
+     * RawMatch objects for the protein IDs in the range
+     * specified (Database default String ordering)
+     * <p/>
+     * Essential for PFAM, PRINTS, etc post processing.
+     *
+     * @param bottomId                 return matches with protein IDs >= this String
+     * @param topId                    the return matches with protein IDs <= this String
+     * @param signatureDatabaseRelease
+     * @return a List of
+     *         RawMatch objects for the protein IDs in the range
+     *         specified (Database default String ordering)
+     */
+    @Transactional(readOnly = true)
+    public List<T> getActualRawMatchesForProteinIdsInRange(long bottomId, long topId, String signatureDatabaseRelease);
 
     /**
      * Returns proteins within the given ID range.

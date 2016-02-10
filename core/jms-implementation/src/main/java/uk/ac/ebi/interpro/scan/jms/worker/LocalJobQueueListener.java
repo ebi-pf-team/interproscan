@@ -6,7 +6,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
@@ -172,7 +172,7 @@ public class LocalJobQueueListener implements MessageListener {
                 statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
+//                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
                 if (Utilities.verboseLogLevel > 2) {
                     Utilities.verboseLog("thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
                             + " - stepInstanceId = " + stepId

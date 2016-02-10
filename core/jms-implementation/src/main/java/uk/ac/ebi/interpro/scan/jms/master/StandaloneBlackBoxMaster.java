@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -34,11 +34,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+            Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());
         }
         try {
             loadInMemoryDatabase();
             runStatus = 21;
             int stepInstancesCreatedByLoadStep = createStepInstances();
+            int minimumStepsExpected = 2;
             runStatus = 31;
             if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
@@ -108,7 +110,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 // i5 doesn't finish prematurely.
                 if (completed &&
                         stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
-                        && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep) {
+                        && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep
+                        && stepInstanceDAO.count() >= minimumStepsExpected) {
+                    Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
+                            + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
+                            +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     break;
                 }
                 //for standalone es mode this should be < 200
