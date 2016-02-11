@@ -96,6 +96,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
      */
     public void run() {
         final long now = System.currentTimeMillis();
+        int runStatus = 99999;
         super.run();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
@@ -109,6 +110,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.mode = "distributed";
 
+        runStatus = 11;
+
         if(Utilities.verboseLog){
             Utilities.verboseLog("DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog("DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
@@ -118,9 +121,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         try {
             loadInMemoryDatabase();
 
+            runStatus = 21;
             int stepInstancesCreatedByLoadStep = createStepInstances();
             int minimumStepsExpected = 2;
 
+            runStatus = 31;
             if(verboseLog){
                 Utilities.verboseLog("Initial Step instance count: " + stepInstanceDAO.count());
             }
@@ -146,6 +151,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
                 final long timeNowInMainLoop = System.currentTimeMillis();
                 boolean completed = true;
+                runStatus = 41;
+
                 Map<Long, String> submittedSteps = new ConcurrentHashMap<Long, String>();
                 //TODO check the
                 List <StepInstance> unfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
@@ -160,6 +167,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
+                    runStatus = 51;
                     if (stepInstance.hasFailedPermanently(jobs)) {
                         //shutdown the workers then exit the system
                         messageSender.sendShutDownMessage();
@@ -183,6 +191,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Step submitted:" + stepInstance);
                         }
+                        runStatus = 61;
                         final boolean resubmission = stepInstance.getExecutions().size() > 0;
                         if (resubmission) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " is being re-run following a failure.");
@@ -229,7 +238,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             stepInstance.setStateUnknown(false);
                             failedStepExecutions.remove(stepInstance.getId());
                         }
-
+                        runStatus = 71;
                         if (canRunRemotely){
                             //update remotejobscount for the creation of new workers
                             if(! isRemoteJobsCountSet){
@@ -259,6 +268,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                 } // end of for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances())
 
+                runStatus = 91;
                 Utilities.verboseLog("[main loop] time taken to loop over instances : "
                         + (System.currentTimeMillis() - timeNowInMainLoop) + " mills");
                 Long totalStepInstances = stepInstanceDAO.count();
@@ -371,7 +381,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             if(verboseLog){
                 Utilities.verboseLog("Distributed Master:  all computations completed , entering shutdown mode");
             }
-            System.out.println(Utilities.getTimeNow() + " 100% of analyses done:  InterProScan analyses completed");
+
+            if (runStatus == 0) {
+                System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+            }else{
+                LOGGER.error("InterProScan analyses failed, check log details for the errors - " + runStatus);
+            }
+            
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Remote jobs: " + remoteJobs.get());
             }
@@ -383,6 +399,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
                 ));
             }
+            runStatus = 0;
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by DistributedBlackBoxMaster: ", e);
             systemExit(999);
@@ -392,7 +409,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         }
 
         //finally make the exit
-        systemExit(0);
+        systemExit(runStatus);
     }
 
     /**
