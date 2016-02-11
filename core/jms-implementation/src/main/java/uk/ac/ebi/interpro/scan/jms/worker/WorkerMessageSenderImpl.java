@@ -6,7 +6,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.*;
 import java.io.Serializable;
