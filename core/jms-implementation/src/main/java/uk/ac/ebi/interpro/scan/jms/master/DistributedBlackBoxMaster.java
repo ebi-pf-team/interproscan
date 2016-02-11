@@ -387,7 +387,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             }else{
                 LOGGER.error("InterProScan analyses failed, check log details for the errors - " + runStatus);
             }
-            
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Remote jobs: " + remoteJobs.get());
             }
