@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ErrorHandler;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 /**
  *

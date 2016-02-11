@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.monitoring;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.*;
 

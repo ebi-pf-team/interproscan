@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.*;
 import javax.jms.Queue;

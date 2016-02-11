@@ -61,6 +61,8 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             int stepInstancesCreatedByLoadStep = createStepInstances();
             int inputSize = 1;
 
+            int minimumStepsExpected = 2;
+
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             boolean controlledLogging = false;
@@ -125,7 +127,11 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 // i5 doesn't finish prematurely.
                 if (completed &&
                         stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
-                        && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep) {
+                        && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep
+                        && stepInstanceDAO.count() >= minimumStepsExpected) {
+                    Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
+                            + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
+                            +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     break;
                 }
                 //for standalone es mode this should be < 200

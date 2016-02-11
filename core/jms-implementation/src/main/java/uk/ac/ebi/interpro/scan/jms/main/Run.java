@@ -16,7 +16,7 @@ import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.exception.InvalidInputException;
 import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;

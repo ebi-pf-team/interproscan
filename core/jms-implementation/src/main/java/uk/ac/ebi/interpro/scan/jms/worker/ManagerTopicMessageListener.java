@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
 import uk.ac.ebi.interpro.scan.jms.monitoring.*;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.JMSException;
 import javax.jms.Message;

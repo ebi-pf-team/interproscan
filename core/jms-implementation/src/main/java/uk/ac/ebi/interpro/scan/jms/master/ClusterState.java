@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.Serializable;
 import java.text.DateFormat;
