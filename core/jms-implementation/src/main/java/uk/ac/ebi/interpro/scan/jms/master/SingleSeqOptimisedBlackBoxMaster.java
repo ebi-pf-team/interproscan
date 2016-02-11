@@ -36,13 +36,15 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     @Override
     public void run() {
-
+        int runStatus = 99999;
         final long now = System.currentTimeMillis();
         super.run();
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.mode = "singleseq";
+
+        runStatus = 11;
 
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
@@ -55,13 +57,15 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
         try {
             loadInMemoryDatabase();
+            runStatus = 21;
             if(verboseLog){
-                System.out.println(Utilities.getTimeNow() + " Loaded in memory database ");
+                Utilities.verboseLog(Utilities.getTimeNow() + " Loaded in memory database ");
             }
             int stepInstancesCreatedByLoadStep = createStepInstances();
             int inputSize = 1;
 
             int minimumStepsExpected = 2;
+            runStatus = 31;
 
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
@@ -75,6 +79,8 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 boolean runningFirstStep = stepInstanceDAO.count() == stepInstanceDAO.retrieveUnfinishedStepInstances().size();
 
                 boolean completed = true;
+                runStatus = 41;
+
                 if (stepInstanceSubmitCount == 1 && firstPass && (! isUseMatchLookupService())){
                     if(verboseLog){
                         LOGGER.debug("First steps: " + firstPass);
@@ -82,6 +88,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                     if(! runningFirstStep){
                         for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                            runStatus = 45;
                             if (isHighPriorityStep(stepInstance.getStep(jobs))){
                                 completed &= stepInstance.haveFinished(jobs);
                                 stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
@@ -94,6 +101,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 }else{
                     int submitted = 0;
                     for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                        runStatus = 51;
                         completed &= stepInstance.haveFinished(jobs);
                         submitted = submitStepInstanceToRequestQueue(stepInstance);
                         stepInstanceSubmitCount += submitted;
@@ -137,6 +145,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 //for standalone es mode this should be < 200
                 Thread.sleep(50);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }
+            runStatus = 0;
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown by SingleSeqOptimisedBlackBoxMaster: ", e);
             systemExit(999);
@@ -145,7 +154,13 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             systemExit(999);
         }
 
-        System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+
+        if (runStatus == 0) {
+            System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+        }else{
+            LOGGER.error("InterProScan analyses failed, check log details for the errors - status " + runStatus);
+        }
+
         if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
             System.out.println("Computation time (s): (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
@@ -155,7 +170,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             ));
         }
 
-        systemExit(0);
+        systemExit(runStatus);
     }
 
     /**
