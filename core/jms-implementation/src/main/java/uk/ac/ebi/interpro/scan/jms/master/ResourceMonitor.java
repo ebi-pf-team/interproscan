@@ -3,7 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 import org.apache.commons.collections.functors.WhileClosure;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.Executor;

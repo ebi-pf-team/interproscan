@@ -155,7 +155,8 @@ public class WriteOutputStep extends Step {
 
         int waitTimeFactor = 2;
         if (! Utilities.isRunningInSingleSeqMode()) {
-            waitTimeFactor = Utilities.getWaitTimeFactor(20 * Utilities.getSequenceCount()).intValue();
+            //use loge to get wait time
+            waitTimeFactor = Utilities.getWaitTimeFactorLogE(20 * Utilities.getSequenceCount()).intValue();
         }
         Utilities.sleep(waitTimeFactor * 1000);                 //1000 milliseconds is one second.
         Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");

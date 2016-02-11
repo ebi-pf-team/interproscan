@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 

@@ -19,7 +19,7 @@ import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.WorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.monitoring.*;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -716,6 +716,7 @@ public class WorkerImpl implements Worker {
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
+        Utilities.mode = "distributedWorker";
 
         if(verboseLogLevel > 2){
             Utilities.verboseLog("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());

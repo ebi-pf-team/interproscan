@@ -4,11 +4,12 @@ import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.common.core.Util;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+//import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -106,6 +107,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
+        Utilities.mode = "distributed";
 
         if(Utilities.verboseLog){
             Utilities.verboseLog("DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
@@ -117,6 +119,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             loadInMemoryDatabase();
 
             int stepInstancesCreatedByLoadStep = createStepInstances();
+            int minimumStepsExpected = 2;
 
             if(verboseLog){
                 Utilities.verboseLog("Initial Step instance count: " + stepInstanceDAO.count());
@@ -285,13 +288,19 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
 
                 // Close down (break out of loop) if the analyses are all complete.
-                if (completed && totalUnfinishedStepInstances == 0) {
+                if (completed && totalUnfinishedStepInstances == 0
+                        && totalStepInstances > stepInstancesCreatedByLoadStep
+                        && totalStepInstances >= minimumStepsExpected ) {
+                    Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
+                            + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
+                            +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     // This next 'if' ensures that StepInstances created as a result of loading proteins are
                     // visible.  This is safe, because in the "closeOnCompletion" mode, an "output results" step
                     // is created, so as an absolute minimum there should be one more StepInstance than those
                     // created in the createNucleicAcidLoadStepInstance() or createFastaFileLoadStepInstance() methods.
                     // First clause - checks that the load fasta file thread has finished.
                     // Second clause - if the fasta file thread has finished, checks that all the analysis steps and the output step have finished.
+                    // TODO: The following condition is redundant - refactor
                     if (totalStepInstances > stepInstancesCreatedByLoadStep && totalUnfinishedStepInstances == 0) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("There are no step instances left to run, so about to break out of loop in Master.\n\nStatistics: ");
