@@ -63,6 +63,16 @@ public class Utilities {
         return waitTimeFactor ;
     }
 
+    public static Long getWaitTimeFactorLogE(int matchCount){
+        double logv = Math.log(matchCount);
+        long waitTimeFactor = 1;
+        if (Math.round(logv) > 1){
+            waitTimeFactor = Math.round(logv);
+        }
+        return waitTimeFactor ;
+    }
+
+
     /**
      * display time now
      * @return

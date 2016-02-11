@@ -6,7 +6,7 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
