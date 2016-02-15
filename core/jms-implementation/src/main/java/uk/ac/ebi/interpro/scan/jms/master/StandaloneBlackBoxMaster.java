@@ -137,7 +137,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
-            System.out.println("Execution time : (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
+            System.out.println("Computation time : (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
                     TimeUnit.MILLISECONDS.toMinutes(executionTime),
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
