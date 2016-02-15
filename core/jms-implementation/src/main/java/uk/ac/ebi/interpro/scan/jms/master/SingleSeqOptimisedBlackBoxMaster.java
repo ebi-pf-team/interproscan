@@ -90,13 +90,13 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
                             runStatus = 45;
                             if (isHighPriorityStep(stepInstance.getStep(jobs))){
-                                completed &= stepInstance.haveFinished(jobs);
                                 stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
                                 controlledLogging = false;
                             }
                         }
                         LOGGER.debug("Steps left after first pass: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                         firstPass = false;
+                        completed = false;
                     }
                 }else{
                     int submitted = 0;
