@@ -149,7 +149,7 @@ public class RemoteJobQueueListener implements MessageListener {
         if(jobCount == 4){
             LOGGER.info("checkQueueState - First 4 jobs : maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
             long now = System.currentTimeMillis();
-            if((now - timeFirstMessageReceived) < 1 * 1000){
+            if((now - timeFirstMessageReceived) < 10 * 1000){
                 //wait for 15 seconds as otherwise we end up with lots of workers without work?
                 final long expectedSynchTime = statsUtil.getCurrentMasterClockTime() + (25 * 1000);
                 final long waitMasterSyncTime = expectedSynchTime - now;
