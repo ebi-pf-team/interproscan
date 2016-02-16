@@ -640,7 +640,8 @@ public class StatsUtil {
         if(workerTotalJobs > 5.0){
             progressPercent = (workerTotalJobs - unfinishedJobs) * 100 / workerTotalJobs;
         }
-        if(timeSinceLastReport > 1800000){
+        //display every hour 60 * 60 * 1000
+        if(timeSinceLastReport > 3600000){
             int connectionCount = statsMessageListener.getConsumers();
             int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
             int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
