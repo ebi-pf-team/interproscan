@@ -145,7 +145,7 @@ public class WriteGene3dSsfFileStep extends Step {
             timeTaken = System.currentTimeMillis() - now;
             long chunkSize =  stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             if (timeTaken > (waitTimeFactor * 10 * 1000)) {
-                if(chunkSize > 10 || ! Utilities.isRunningInSingleSeqMode()) {
+                if(chunkSize > 100 && ! Utilities.isRunningInSingleSeqMode()) {
                     LOGGER.warn("Possible H2 database problem: failed to  get Gene3d matches for the domain finder raw proteins: "
                             + rawProteins.size()
                             + " protein-range : " + stepInstance.getBottomProtein() + " - "

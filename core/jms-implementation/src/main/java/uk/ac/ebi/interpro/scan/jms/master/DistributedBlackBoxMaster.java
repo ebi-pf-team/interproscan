@@ -321,6 +321,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             Utilities.verboseLog(threadName + "completed && totalUnfinishedStepInstances == 0 "
                                     + " -- exit master loop");
                         }
+                        runStatus = 0;
                         break;
                     } else {    // This else clause is for LOGGING ONLY - no  logic here.
                         LOGGER.info("Apparently have no more unfinished StepInstances, however it looks like there should be...");
@@ -1113,16 +1114,15 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                     if (masterCanRunBinaries) {
                         masterCanRunRemainingJobs = remoteJobsOntheQueue < activeInVmWorkersOnFatMaster;
                     }
-                    Utilities.verboseLog(threadName + "masterCanRunRemainingBinaryJobs: " + masterCanRunRemainingJobs);
-
-                    if (statsAvailable && queueSize > 0 &&
-                            (!masterCanRunRemainingJobs)
+                    Utilities.verboseLog(10, threadName + "masterCanRunRemainingBinaryJobs: " + masterCanRunRemainingJobs);
+                    Utilities.verboseLog(10, threadName + "statsAvailable: " + statsAvailable);
+                    //if statsAvailable
+                    if (queueSize > 0 && (!masterCanRunRemainingJobs)
                             && activeRemoteWorkerCountEstimate < (maxConsumers - 1)) {
                         LOGGER.debug("Check if we can start a normal worker.");
-                        if (verboseLog) {
-                            Utilities.verboseLog(threadName + "remoteJobsOntheQueue: " + remoteJobsOntheQueue
+                        Utilities.verboseLog(threadName + "remoteJobsOntheQueue: " + remoteJobsOntheQueue
                                     + " activeInVmWorkersOnFatMaster: " + activeInVmWorkersOnFatMaster);
-                        }
+
                         //have a standard continency time for lifespan
                         quickSpawnMode = false;
                         Long intervalSinceLastSpawnedWorkers = System.currentTimeMillis() - timeLastSpawnedWorkers;

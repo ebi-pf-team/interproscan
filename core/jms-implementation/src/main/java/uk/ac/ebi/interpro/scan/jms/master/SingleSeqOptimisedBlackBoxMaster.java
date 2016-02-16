@@ -97,6 +97,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         LOGGER.debug("Steps left after first pass: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                         firstPass = false;
                         completed = false;
+                        Thread.sleep(500); //
                     }
                 }else{
                     int submitted = 0;
@@ -140,6 +141,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
                             + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
                             +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    runStatus = 0;
                     break;
                 }
                 //for standalone es mode this should be < 200
