@@ -19,6 +19,7 @@
                 but are licensed therefore cannot be included with InterProScan -->
             </map>
         </property>
+        <property name="active" value="false" />
     </bean>
 
     <bean id="fullPathToHmmFile-6.2" class="java.lang.String">
