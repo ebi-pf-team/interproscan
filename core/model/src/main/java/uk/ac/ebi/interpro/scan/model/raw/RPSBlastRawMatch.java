@@ -2,11 +2,12 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Index;
+
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import java.io.Serializable;
 
 /**
@@ -15,21 +16,12 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = RPSBlastRawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = RPSBlastRawMatch.TABLE_NAME, indexes = {
-        @Index(name = "RPSBlast_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "RPSBlast_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "RPSBlast_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "RPSBlast_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "RPSBlast_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
-})
-public class RPSBlastRawMatch extends RawMatch implements Serializable {
 
-    public static final String TABLE_NAME = "RPSBlast_RAW_MATCH";
+public abstract class RPSBlastRawMatch extends RawMatch implements Serializable {
 
     /** Example CDD output file:
         DATA
-        SESSION	1	RPSBLAST 2.2.31+	/ebi/production/interpro/programmers/scp/cdd/rpsb/db/Cdd_NCBI	BLOSUM62	0.01
+        SESSION	1	RPSBLAST 2.2.31+	db/Cdd_NCBI	BLOSUM62	0.01
         QUERY	Query_1	Peptide	590	sp|Q96N58|ZN578_HUMAN Zinc finger protein 578 OS=Homo sapiens GN=ZNF578 PE=2 SV=2
         DOMAINS
         1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597

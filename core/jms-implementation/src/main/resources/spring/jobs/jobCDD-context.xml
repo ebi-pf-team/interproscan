@@ -86,9 +86,7 @@
             <bean class="uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser"/>
         </property>
         <property name="matchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl">
-                <constructor-arg ref="latestCDDSignatureLibraryRelease"/>
-            </bean>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO" />
         </property>
         <property name="serialGroup" value="PARSE_CDD"/>
     </bean>
