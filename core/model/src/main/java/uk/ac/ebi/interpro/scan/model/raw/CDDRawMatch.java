@@ -2,11 +2,12 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Index;
+import javax.persistence.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -15,15 +16,14 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = CDDRawMatch.TABLE_NAME)
-@org.hibernate.annotations.Table(appliesTo = CDDRawMatch.TABLE_NAME, indexes = {
-        @Index(name = "CDD_RW_SEQ_IDX", columnNames = {RawMatch.COL_NAME_SEQUENCE_IDENTIFIER}),
-        @Index(name = "CDD_RW_NUM_SEQ_IDX", columnNames = {RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID}),
-        @Index(name = "CDD_RW_MODEL_IDX", columnNames = {RawMatch.COL_NAME_MODEL_ID}),
-        @Index(name = "CDD_RW_SIGLIB_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY}),
-        @Index(name = "CDD_RW_SIGLIB_REL_IDX", columnNames = {RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE})
+@javax.persistence.Table(name = CDDRawMatch.TABLE_NAME,  indexes = {
+        @Index(name = "CDD_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "CDD_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "CDD_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
+        @Index(name = "CDD_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "CDD_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
-public class CDDRawMatch extends RawMatch implements Serializable {
+public class CDDRawMatch extends RPSBlastRawMatch implements Comparable<CDDRawMatch> {
 
     public static final String TABLE_NAME = "CDD_RAW_MATCH";
 
@@ -38,40 +38,6 @@ public class CDDRawMatch extends RawMatch implements Serializable {
         1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	0
 
     */
-
-    @Column
-    int sessionNumber;
-
-    @Column
-    String definitionLine;
-
-    @Column
-    String hitType;
-
-    @Column
-    String pssmId;
-
-    @Column
-    private double bitScore;
-
-    @Column
-    private double evalue;
-
-
-
-    @Column
-    String shortName;
-
-    @Column
-    String incomplete;
-
-    @Column
-    String superfamilyPSSMId;
-
-    protected CDDRawMatch() {
-    }
-
-    //#<session-ordinal>	<query-id[readingframe]>	<hit-type>	<PSSM-ID>	<from>	<to>	<E-Value>	<bitscore>	<accession>	<short-name>	<incomplete>	<superfamily PSSM-ID>
 
 
     public CDDRawMatch(String sequenceIdentifier,
@@ -88,120 +54,42 @@ public class CDDRawMatch extends RawMatch implements Serializable {
                        String incomplete,
                        String superfamilyPSSMId,
                        String signatureLibraryRelease) {
-        super(sequenceIdentifier, model, SignatureLibrary.CDD, signatureLibraryRelease, locationStart, locationEnd);
-        this.sessionNumber = sessionIdentifier;
-        this.hitType = hitType;
-        this.pssmId = pssmId;
-        this.bitScore = bitScore;
-        this.evalue = evalue;
-        this.shortName = shortName;
-        this.incomplete = incomplete;
-        this.superfamilyPSSMId =  superfamilyPSSMId;
+        super(sequenceIdentifier, definitionLine, sessionIdentifier, hitType,  pssmId, model, locationStart, locationEnd,
+                evalue, bitScore,shortName, incomplete,  superfamilyPSSMId, SignatureLibrary.CDD, signatureLibraryRelease);
 
     }
 
-    public String getDefinitionLine() {
-        return definitionLine;
-    }
-
-    public void setDefinitionLine(String definitionLine) {
-        this.definitionLine = definitionLine;
-    }
-
-    public String getHitType() {
-        return hitType;
-    }
-
-    public void setHitType(String hitType) {
-        this.hitType = hitType;
-    }
-
-    public String getPssmId() {
-        return pssmId;
-    }
-
-    public void setPssmId(String pssmId) {
-        this.pssmId = pssmId;
-    }
-
-    public double getBitScore() {
-        return bitScore;
-    }
-
-    public void setBitScore(double bitScore) {
-        this.bitScore = bitScore;
-    }
-
-    public double getEvalue() {
-        return evalue;
-    }
-
-    public void setEvalue(double evalue) {
-        this.evalue = evalue;
-    }
-
-    public int getAessionNumber() {
-        return sessionNumber;
-    }
-
-    public void setSessionNumber(int sessionNumber) {
-        this.sessionNumber = sessionNumber;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    public String getIncomplete() {
-        return incomplete;
-    }
-
-    public void setIncomplete(String incomplete) {
-        this.incomplete = incomplete;
-    }
-
-    public String getSuperfamilyPSSMId() {
-        return superfamilyPSSMId;
-    }
-
-    public void setSuperfamilyPSSMId(String superfamilyPSSMId) {
-        this.superfamilyPSSMId = superfamilyPSSMId;
-    }
-
+    /**
+     * TODO define an ordering on CDD matches or RPSBlast matches
+     *
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than , equal to, or greater than that object.
+     * <p/>
+     * Maybe the required ordering for CDD post processing is:
+     * <p/>
+     * evalue ASC, BitScore DESC
+     *
+     * @param that being the CDDRawMatch to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     *         is less than, equal to, or greater than the specified object.
+     * @throws ClassCastException if the specified object's type prevents it
+     *                            from being compared to this object.
+     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof CDDRawMatch))
-            return false;
-        final CDDRawMatch m = (CDDRawMatch) o;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(pssmId, m.pssmId)
-                .append(sessionNumber, m.sessionNumber)
-                .append(definitionLine, m.definitionLine)
-                .append(bitScore, m.bitScore)
-                .append(evalue, m.evalue)
-                .append(superfamilyPSSMId, m.superfamilyPSSMId)
-                .isEquals();
+    public int compareTo(CDDRawMatch that) {
+        if (this == that) return 0;
+        if (this.getEvalue() < that.getEvalue()) return -1;     // First, sort by ievalue ASC
+        if (this.getEvalue() > that.getEvalue()) return 1;
+        if (this.getBitScore() > that.getBitScore()) return -1;                     // then by score ASC
+        if (this.getBitScore() < that.getBitScore()) return 1;
+        if (this.hashCode() > that.hashCode())
+            return -1;                     // then by hashcode to be consistent with equals.
+        if (this.hashCode() < that.hashCode()) return 1;
+        return 0;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(11, 81)
-                .appendSuper(super.hashCode())
-                .append(pssmId)
-                .append(sessionNumber)
-                .append(definitionLine)
-                .append(bitScore)
-                .append(evalue)
-                .append(superfamilyPSSMId)
-                .toHashCode();
-    }
+
 
 }
 

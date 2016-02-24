@@ -22,7 +22,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "rpsblast_match")
-@XmlType(name = "RPSBlast")
+@XmlType(name = "RPSBlastType")
 public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
     protected RPSBlastMatch() {
