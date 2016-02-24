@@ -94,7 +94,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     /**
      * Instances of this class are returned from the insert method above.
      */
-    public class PersistedProteins {
+    class PersistedProteins {
 
         private final Set<Protein> preExistingProteins = new HashSet<Protein>();
 
