@@ -91,9 +91,9 @@
                 Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
                 p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
                 Signature signature = new Signature("cd000004", "Sortase ");
-                Set<CDDMatch.CDDLocation> locations = new HashSet<CDDMatch.CDDLocation>();
-                locations.add(new CDDMatch.CDDLocation(1, 237));
-                p.addMatch(new CDDMatch(signature, 2.4e-32, locations));
+                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
+                locations.add(new RPSBlastMatch.RPSBlastLocation(1, 237, 2, 2.4e-32));
+                p.addMatch(new RPSBlastMatch(signature,  locations));
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14");
@@ -118,14 +118,14 @@
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
                         <matches>
-                            <cdd-match evalue="2.4E-32">
+                            <rpsblast-match>
                                 <signature ac="cd000004" name="Sortase">
                                     <signature-library-release library="CDD" version="3.14" />
                                 </signature>
                                 <locations>
-                                    <cdd-location start="1" end="237"/>
+                                    <rpsblast-location  evalue="2.4E-32" score="2" start="1" end="237"/>
                                 </locations>
-                            </cdd-match>
+                            </rpsblast-match>
                         </matches>
                     </protein>
                 </protein-matches>

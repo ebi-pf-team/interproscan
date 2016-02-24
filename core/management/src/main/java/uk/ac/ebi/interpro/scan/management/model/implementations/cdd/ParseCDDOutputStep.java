@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser;
-import uk.ac.ebi.interpro.scan.io.match.cdd.ParseCDDMatch;
-import uk.ac.ebi.interpro.scan.model.CDDMatch;
+
+import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +34,8 @@ public class ParseCDDOutputStep extends Step {
 
     private CDDMatchParser parser;
 
-    private CDDFilteredMatchDAO matchDAO;
+    private RawMatchDAO<CDDRawMatch> rawMatchDAO;
+    private FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> matchDAO;
 
     @Required
     public void setCddOutputFileNameTemplate(String cddOutputFileNameTemplate) {
@@ -45,9 +48,15 @@ public class ParseCDDOutputStep extends Step {
     }
 
     @Required
-    public void setMatchDAO(CDDFilteredMatchDAO matchDAO) {
+    public void setMatchDAO(FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> matchDAO) {
         this.matchDAO = matchDAO;
     }
+
+
+
+//    public void setMatchDAO(CDDFilteredMatchDAO matchDAO) {
+//        this.matchDAO = matchDAO;
+//    }
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
