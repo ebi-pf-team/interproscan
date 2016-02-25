@@ -16,7 +16,7 @@ if sys.argv[1]:
    interproscan_dir = sys.argv[1]
 
 d = get_properties(interproscan_dir)
-rpsbproc_ini_file = d['cdd.dataconfig.path'].strip()
+rpsbproc_ini_file = d['cdd.rpsbproc.data.config.path'].strip()
 cdd_data_path = d['cdd.data.path']
 cdd_data_path = cdd_data_path.strip() + '/'
 
