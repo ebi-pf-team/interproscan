@@ -7,8 +7,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
-//import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,20 +58,8 @@ public class RunCDDPostBlastUtilityStep extends RunBinaryStep {
 		command.add("-c");
         command.add(this.dataConfigFilePath);
         command.addAll(getBinarySwitchesAsList());
-        System.out.println("command: " + command.toString());
+        Utilities.verboseLog(10, "command: " + command.toString());
         return command;
     }
 
-//    /**
-//     * Implementations of RunBinaryStep may optionally override this method to
-//     * return an InputStream that can be piped into the command.
-//     * <p/>
-//     * Coils overrides this method as the ncoils binary expects the fasta file to be piped in
-//     * to the command.
-//     */
-//    @Override
-//    protected InputStream createCommandInputStream(StepInstance stepInstance, String temporaryFileDirectory) throws IOException {
-//        final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
-//        return new FileInputStream(new File(fastaFilePath));
-//    }
 }

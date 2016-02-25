@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ public class RunCDDRPSBlastStep extends RunBinaryStep {
     }
 
 
-
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.fastaFileNameTemplate);
@@ -54,7 +54,7 @@ public class RunCDDRPSBlastStep extends RunBinaryStep {
         command.add("-db");
         command.add(this.libraryPath);
         command.addAll(getBinarySwitchesAsList());
-        System.out.println("command: " + command.toString());
+        Utilities.verboseLog(10, "command: " + command.toString());
         return command;
     }
 
