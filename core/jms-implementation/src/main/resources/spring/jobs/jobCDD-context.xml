@@ -38,12 +38,12 @@
     <bean id="stepCDDRunBinaryRPSblast"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.RunCDDRPSBlastStep"
           parent="abstractCDDStep">
-        <!-- /ebi/sp/pro1/interpro/binaries/32_bit_Linux/cdd  -c -m /ebi/sp/pro1/interpro/data/members/coils/2.2/new_coil.mat <  -->
+        <!-- rpsblast - options  -->
         <property name="dependsUpon" ref="stepCDDWriteFastaFile"/>
         <property name="stepDescription" value="Run CDD Binary for selected proteins"/>
-        <property name="fullPathToBinary" value="${binary.cdd.path}"/>
+        <property name="fullPathToBinary" value="${binary.rpsblast.path}"/>
         <property name="libraryPath" value="${cdd.library.path}"/>
-        <property name="binarySwitches" value="${cdd.binary.switches}"/>
+        <property name="binarySwitches" value="${rpsblast.cdd.switches}"/>
         <property name="outputFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -52,15 +52,15 @@
     </bean>
 
     <!-- STEP 3 -->
-    <bean id="stepCDDRunBinaryRPSbproc"
+    <bean id="stepCDDRunPostBlastProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.RunCDDPostBlastUtilityStep"
           parent="abstractCDDStep">
-        <!-- /ebi/sp/pro1/interpro/binaries/32_bit_Linux/cdd  -c -m /ebi/sp/pro1/interpro/data/members/coils/2.2/new_coil.mat <  -->
+        <!-- cmd -options   -->
         <property name="dependsUpon" ref="stepCDDRunBinaryRPSblast"/>
         <property name="stepDescription" value="Run CDD Binary rpsbproc. for selected proteins"/>
-        <property name="fullPathToBinary" value="${binary.cdd.rpsbproc.path}"/>
+        <property name="fullPathToBinary" value="${binary.rpsbproc.path}"/>
         <property name="binarySwitches" value="${cdd.binary.rpsbproc.switches}"/>
-        <property name="dataConfigFilePath" value="${cdd.dataconfig.path}"/>
+        <property name="dataConfigFilePath" value="${cdd.rpsbproc.data.config.path}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
         <property name="retries" value="3"/>
@@ -70,7 +70,7 @@
     <bean id="stepCDDDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractCDDStep">
-        <property name="dependsUpon" ref="stepCDDRunBinaryRPSbproc"/>
+        <property name="dependsUpon" ref="stepCDDRunPostBlastProcessing"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="stepDescription" value="Delete the fasta file following successful run of CDD"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -79,7 +79,7 @@
     <bean id="stepCDDStoreFilteredMatches"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.ParseCDDOutputStep"
           parent="abstractCDDStep">
-        <property name="dependsUpon" ref="stepCDDRunBinaryRPSbproc"/>
+        <property name="dependsUpon" ref="stepCDDRunPostBlastProcessing"/>
         <property name="stepDescription" value="Parse the CDD binary output and store as Filtered matches."/>
         <property name="cddOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="parser">
