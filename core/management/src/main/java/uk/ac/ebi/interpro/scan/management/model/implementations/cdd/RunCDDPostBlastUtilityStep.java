@@ -1,9 +1,14 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.cdd;
 
+
+
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+
+//import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +58,7 @@ public class RunCDDPostBlastUtilityStep extends RunBinaryStep {
 		command.add("-c");
         command.add(this.dataConfigFilePath);
         command.addAll(getBinarySwitchesAsList());
+        System.out.println("command: " + command.toString());
         return command;
     }
 
