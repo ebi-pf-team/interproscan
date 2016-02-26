@@ -148,7 +148,6 @@
             <xs:element name="patternscan-location" type="tns:PatternScanLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="phobius-location" type="tns:PhobiusLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="profilescan-location" type="tns:ProfileScanLocationType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="rpsblast-location" type="tns:RPSBlastLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="signalp-location" type="tns:SignalPLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="superfamilyhmmer3-location" type="tns:SuperFamilyHmmer3LocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="tmhmm-location" type="tns:TMHMMLocationType" minOccurs="0" maxOccurs="unbounded"/>
@@ -243,16 +242,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="RPSBlastLocationType" >
-        <xs:complexContent>
-            <xs:extension base="tns:LocationType">
-                <xs:sequence/>
-                <xs:attribute name="score" type="xs:double" use="required"/>
-                <xs:attribute name="evalue" type="xs:double" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="SignalPLocationType">
         <xs:complexContent>
             <xs:extension base="tns:LocationType">
@@ -337,7 +326,6 @@
             <xs:element name="phobius-match" type="tns:PhobiusMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="blastprodom-match" type="tns:BlastProDomMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="profilescan-match" type="tns:ProfileScanMatchType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="rpsblast-match" type="tns:RPSBlastMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="signalp-match" type="tns:SignalPMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="superfamilyhmmer3-match" type="tns:SuperFamilyHmmer3MatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="tmhmm-match" type="tns:TMHMMMatchType" minOccurs="0" maxOccurs="unbounded"/>
@@ -372,15 +360,6 @@
     </xs:complexType>
 
     <xs:complexType name="ProfileScanMatchType">
-        <xs:complexContent>
-            <xs:extension base="tns:MatchType">
-                <xs:sequence/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
-    <xs:complexType name="RPSBlastMatchType">
         <xs:complexContent>
             <xs:extension base="tns:MatchType">
                 <xs:sequence/>
@@ -531,7 +510,6 @@
 
     <xs:simpleType name="SignatureLibraryType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="CDD"/>
             <xs:enumeration value="PHOBIUS"/>
             <xs:enumeration value="GENE3D"/>
             <xs:enumeration value="PANTHER"/>
