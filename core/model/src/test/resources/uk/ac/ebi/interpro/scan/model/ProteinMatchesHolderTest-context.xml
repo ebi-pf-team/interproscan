@@ -18,6 +18,12 @@
     </bean>
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+        <entry key="CDD">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="cddObject"/>
+                <constructor-arg ref="cddXml"/>
+            </bean>
+        </entry>
         <entry key="Gene3D">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg ref="gene3dObject"/>
@@ -73,6 +79,60 @@
             </bean>
         </entry>
     </util:map>
+
+    <!--  cdd -->
+
+    <lang:groovy id="cddObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+
+                // Create protein
+                Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
+                p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
+                Signature signature = new Signature("cd000004", "Sortase ");
+                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
+                locations.add(new RPSBlastMatch.RPSBlastLocation(1, 237, 2, 2.4e-32));
+                p.addMatch(new RPSBlastMatch(signature,  locations));
+
+                // Create release
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14");
+                signature.setSignatureLibraryRelease(release);
+                // Create holder
+                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                holder.addProtein(p);
+
+                return holder;
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="cddXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                   xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <protein>
+                        <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
+                        <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
+                        <matches>
+                            <rpsblast-match>
+                                <signature ac="cd000004" name="Sortase">
+                                    <signature-library-release library="CDD" version="3.14" />
+                                </signature>
+                                <locations>
+                                    <rpsblast-location  evalue="2.4E-32" score="2" start="1" end="237"/>
+                                </locations>
+                            </rpsblast-match>
+                        </matches>
+                    </protein>
+                </protein-matches>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
 
     <!-- HMM databases -->
 
