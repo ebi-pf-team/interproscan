@@ -1,14 +1,10 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import javax.persistence.Index;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 /**
  *
@@ -16,7 +12,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Entity
-@javax.persistence.Table(name = CDDRawMatch.TABLE_NAME,  indexes = {
+@Table(name = CDDRawMatch.TABLE_NAME,  indexes = {
         @Index(name = "CDD_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
         @Index(name = "CDD_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
         @Index(name = "CDD_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
