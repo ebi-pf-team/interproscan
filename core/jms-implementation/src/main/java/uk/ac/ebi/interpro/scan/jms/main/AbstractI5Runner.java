@@ -5,7 +5,9 @@ import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Abstract class containing common code used by I5 when running in all it's various modes.
@@ -37,81 +39,64 @@ public class AbstractI5Runner {
     }
 
 
-    protected static void checkFileExistence(final String filePath, final String option) {
-        checkDirectoryExistence(filePath, option);
-        File file = new File(filePath);
-        if (!file.exists()) {
-            System.out.println("For the (-" + option + ") option you specified a file which does not exist:");
-            System.out.println(file);
-            System.exit(2);
-        }
-    }
-
-
-    protected static boolean createDirectory(final String filePath) {
-        File dir = new File(filePath);
+    /**
+     * Create any directory/directories required in the supplied path
+     * @param path The path
+     * @return True if all succeeded
+     */
+    protected static boolean createDirectory(final String path) {
+        File dir = new File(path);
         try {
             boolean dirCreated = dir.mkdirs();
             return dirCreated;
         } catch (SecurityException e) {
             LOGGER.error("Directory creation . Cannot create the specified directory !\n" +
                     "Specified directory path (absolute): " + dir.getAbsolutePath(), e);
-            throw new IllegalStateException("The directory (-" + filePath + ")  you specified cannot be written to:", e);
+            throw new IllegalStateException("The directory (-" + path + ")  you specified cannot be written to:", e);
         }
-
     }
 
 
-    protected static boolean directoryExists(final String dirPath) {
-        File dir = new File(dirPath);
-        if (dir.exists()) {
-           return true;
+    /**
+     * Check if a specified path exists and is readable.
+     * @param path The full file or directory path under review (e.g. "/tmp/test_proteins.fasta")
+     * @param checkParent Do we just check the parent path? (e.g. "/tmp")
+     * @param checkWriteable Should we also check that the path or parent path can be written to?
+     * @param option The user input {@link I5Option} this path relates to (or null if not applicable)
+     * @return True if the checks succeed, otherwise false (although the system will exit if a {@link I5Option} check fails)
+     */
+    protected static boolean checkPathExistence(final String path, final boolean checkParent, final boolean checkWriteable, final I5Option option) {
+        String pathToCheck = path;
+        if (checkParent) {
+            pathToCheck = path.substring(0, path.lastIndexOf(File.separator));
         }
-        return false;
-    }
-
-    protected static void checkDirectoryExistence(final String filePath, final String option) {
-        String parent = new File(filePath).getParent();
-        if (option.equals(I5Option.TEMP_DIRECTORY.getShortOpt())) {
-            parent = filePath;
-        }
-        File dir = new File(parent);
-        if (!dir.exists()) {
-            System.out.println("For the (-" + option + ") option you specified a location which doesn't exist:");
-            System.out.println(dir);
+        Path p = FileSystems.getDefault().getPath(pathToCheck);
+        boolean exists = Files.isReadable(p);
+        if (option != null && !exists) {
+            System.out.println("For the (-" + option.getShortOpt() + ") option you specified a location which doesn't exist or is not readable:");
+            System.out.println(path);
             System.exit(2);
         }
-    }
-
-    protected static void checkDirectoryExistenceAndFileWritePermission(final String filePath, final String option) {
-        checkDirectoryExistence(filePath, option);
-        File file = new File(filePath);
-        if (file.exists()) {
-            if (!file.canWrite()) {
-                System.out.println("Can write test.");
-                System.out.println("For the (-" + option + ") option you specified a location which cannot be written to:");
-                System.out.println(file);
+        if (exists && checkWriteable) {
+            boolean writable = Files.isWritable(p);
+            if (option != null && !writable) {
+                System.out.println("For the (-" + option.getShortOpt() + ") option you specified a location which is not writable:");
+                System.out.println(path);
                 System.exit(2);
             }
-        } else {
-            //Do a file creation and deletion file test
-            boolean fileCreated;
-            boolean fileDeleted;
-            try {
-                fileCreated = file.createNewFile();
-                fileDeleted = file.delete();
-                if (!fileCreated || !fileDeleted) {
-                    System.out.println("Create and delete test.");
-                    System.out.println("For the (-" + option + ") option you specified a location which cannot be written to:");
-                    System.out.println(file);
-                    System.exit(2);
-                }
-            } catch (IOException e) {
-                LOGGER.error("File creation test. Cannot create the specified output file!\n" +
-                        "Specified output file path (absolute): " + file.getAbsolutePath(), e);
-                throw new IllegalStateException("For the (-" + option + ") option you specified a location which cannot be written to:", e);
-            }
+            return writable;
         }
+        return exists;
+    }
+
+
+    /**
+     * Checks if a specified path exists.
+     * @param path The path to check (e.g. file path, directory path etc)
+     * @return True if the path exists, otherwise false
+     */
+    protected static boolean checkPathExistence(final String path) {
+        return checkPathExistence(path, false, false, null);
     }
 
 }
