@@ -22,7 +22,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "rpsblast_match")
-@XmlType(name = "RPSBlastType")
+@XmlType(name = "RPSBlastMatchType")
 public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
     protected RPSBlastMatch() {
@@ -70,8 +70,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
      */
     @Entity
     @Table(name = "rpsblast_location")
-    @XmlType(name = "RPSBlastLocationType")
-    //@XmlType(name = "RPSBlastLocationType", propOrder = { "start", "end", "score", "evalue"})
+    @XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    //@XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = { "start", "end", "score", "evalue"})
     public static class RPSBlastLocation extends Location {
 
         @Column(nullable = false, name = "evalue")
