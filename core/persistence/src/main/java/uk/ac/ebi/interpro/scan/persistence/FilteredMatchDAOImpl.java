@@ -87,10 +87,11 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
         final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
-        LOGGER.debug("signatureLibrary:" +  signatureLibrary
-                + " signatureLibraryRelease:"     + signatureLibraryRelease
-                + " filteredProteins" + filteredProteins.size()
-                + " modelIdToSignatureMap size:" + modelIdToSignatureMap.size());
+        LOGGER.debug("signatureLibrary: " +  signatureLibrary
+                + " signatureLibraryRelease: "     + signatureLibraryRelease
+                + " filteredProteins: " + filteredProteins.size()
+                + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+
         StringBuilder signatureList = new StringBuilder();
         for (Signature signature:   modelIdToSignatureMap.values()){
             signatureList.append(signature.getModels().toString());
@@ -180,6 +181,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             for (Signature s : signatures) {
                 for (Model m : s.getModels().values()) {
                     result.put(m.getAccession(), s);
+                    LOGGER.debug("accession: " + m.getAccession() + " signature: " + s);
                 }
             }
         }

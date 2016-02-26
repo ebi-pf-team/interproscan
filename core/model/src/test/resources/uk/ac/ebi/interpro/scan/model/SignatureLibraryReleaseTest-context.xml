@@ -18,6 +18,7 @@
     </bean>
 
     <util:map id="objectXmlMap" value-type="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+
         <!-- HMM databases -->
         <entry key="Gene3D">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
@@ -43,7 +44,15 @@
                 <constructor-arg ref="superfamilyXml"/>
             </bean>
         </entry>
+
         <!-- Non-HMM databases -->
+        <entry key="CDD">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="cddObject"/>
+                <constructor-arg ref="cddXml"/>
+            </bean>
+        </entry>
+
         <entry key="PRINTS">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg ref="printsObject"/>
@@ -282,6 +291,45 @@
     </bean>
 
     <!-- Non-HMM databases -->
+
+
+    <lang:groovy id="cddObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14")
+                Signature signature = release.addSignature(
+                        new Signature.Builder("cd000004")
+                                .name("Sortase")
+                                .type("domain")
+                                .description("Sortase signature.")
+                                .abstractText("Sortases are found in bacteria")
+                                .build())
+                signature.addModel(new Model("cd000004"))
+                return release
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="cddXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <signature-library-release library="CDD" version="3.14"
+                                           xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                           xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.1.xsd">
+                    <signature ac="cd000004" type="domain" name="Sortase" desc="Sortase.">
+                        <abstract>Sortases are found in bacteria.</abstract>
+                        <models>
+                            <model ac="cd000004"/>
+                        </models>
+                    </signature>
+                </signature-library-release>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
 
     <lang:groovy id="proDomObject">
         <lang:inline-script>
