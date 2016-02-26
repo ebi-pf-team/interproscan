@@ -1,0 +1,192 @@
+PACKAGE_NAME: blast
+PACKAGE_VERSION: 2.3.0
+PACKAGE_SIGNATURE: ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+PACKAGE_CONFIG: Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+>>>>>  blastp
+
+blastp: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  blastn
+
+blastn: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  blastx
+
+blastx: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  tblastn
+
+tblastn: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  tblastx
+
+tblastx: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  psiblast
+
+psiblast: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  rpsblast
+
+rpsblast: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  rpstblastn
+
+rpstblastn: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  makembindex
+
+makembindex: 0.0.0
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  segmasker
+
+segmasker: 1.0.0
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  dustmasker
+
+dustmasker: 1.0.0
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  windowmasker
+
+windowmasker: 1.0.0
+ window-masker-algorithm:1.0.0
+ windowmasker-statistics-algorithm-version:1.0.0
+ windowmasker-statistics-format-version:ascii 1.0.0
+ windowmasker-statistics-format-version:binary 1.0.0
+ windowmasker-statistics-format-version:oascii 1.0.0
+ windowmasker-statistics-format-version:obinary 1.0.0
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  deltablast
+
+deltablast: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  makeblastdb
+
+makeblastdb: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  blastdbcmd
+
+blastdbcmd: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  blastdb_aliastool
+
+blastdb_aliastool: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  convert2blastmask
+
+convert2blastmask: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  blastdbcheck
+
+blastdbcheck: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  makeprofiledb
+
+makeprofiledb: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+>>>>>  blast_formatter
+
+blast_formatter: 2.3.0+
+Package: blast 2.3.0, build Nov 30 2015 13:03:37
+ ICC_1313-ReleaseMT64--x86_64-unknown-linux2.6.32-gnu2.12-coremake11
+ Linux64-Centos : icc : ./c++/compilers/unix/ICC.sh --with-strip --without-debug --without-pcre --with-mt --with-openmp --with-flat-makefile --with-build-root-sfx=--Linux64-Centos-icc --with-ncbi-public --without-ccache --without-caution --without-makefile-auto-update --with-projects=scripts/projects/blast/project.lst --with-internal
+
+
+
+
