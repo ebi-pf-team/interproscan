@@ -66,7 +66,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(19, 49)
+        return new HashCodeBuilder(29, 53)
                 .appendSuper(super.hashCode())
                 .append(evalue)
                 .toHashCode();
