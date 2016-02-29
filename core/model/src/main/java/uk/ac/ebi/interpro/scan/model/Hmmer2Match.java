@@ -113,7 +113,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(39, 53)
+            return new HashCodeBuilder(39, 49)
                     .appendSuper(super.hashCode())
                     .toHashCode();
         }

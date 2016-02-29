@@ -90,7 +90,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(29, 53)
+            return new HashCodeBuilder(29, 49)
                     .appendSuper(super.hashCode())
                     .toHashCode();
         }

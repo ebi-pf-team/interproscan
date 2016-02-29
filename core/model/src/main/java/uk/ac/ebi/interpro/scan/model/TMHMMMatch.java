@@ -59,7 +59,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(19, 63)
+        return new HashCodeBuilder(19, 71)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
@@ -169,7 +169,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(19, 61)
+            return new HashCodeBuilder(19, 71)
                     .appendSuper(super.hashCode())
                     .toHashCode();
         }
