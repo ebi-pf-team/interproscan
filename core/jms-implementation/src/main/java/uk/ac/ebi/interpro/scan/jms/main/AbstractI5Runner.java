@@ -22,8 +22,8 @@ public class AbstractI5Runner {
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
     private static final String HELP_MESSAGE_TITLE =
-            "java -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods " +
-                    "-Xms512M -Xmx2048M -jar interproscan-5.jar";
+            "java -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts " +
+                    "-XX:+UseFastAccessorMethods -Xms128M -Xmx2048M -jar interproscan-5.jar";
     private static final String HEADER =
             "\n\nPlease give us your feedback by sending an email to\n\ninterhelp@ebi.ac.uk\n\n";
     private static final String FOOTER = "Copyright \u00a9 EMBL European Bioinformatics Institute, Hinxton, Cambridge, UK. (http://www.ebi.ac.uk) " +
