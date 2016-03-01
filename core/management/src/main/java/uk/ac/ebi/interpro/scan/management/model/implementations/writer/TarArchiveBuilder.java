@@ -45,6 +45,7 @@ public class TarArchiveBuilder {
     }
 
     public void buildTarArchive() throws IOException {
+        // E.g. for "-b OUT" tarArchive = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
         if (tarArchive != null) {
             tarArchive.createNewFile();
         }
