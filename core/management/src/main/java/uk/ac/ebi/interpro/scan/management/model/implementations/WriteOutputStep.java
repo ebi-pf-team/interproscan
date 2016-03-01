@@ -170,76 +170,40 @@ public class WriteOutputStep extends Step {
         }
 
         for (FileOutputFormat outputFormat : outputFormats) {
-            Integer counter = null;
-            boolean pathAvailable = false;
-            File outputFile = null;
-
-            if (explicitPath) {
-                outputFile = new File(filePathName);
-                if (outputFile.exists()) {
-                    if (!outputFile.delete()) {
-                        System.out.println("Unable to overwrite file " + outputFile + ".  Please check file permissions.");
-                        System.exit(101);
-                    }
-                }
-            } else {
-                // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
-                // but using an underscore rather than a space (pah!)
-                while (!pathAvailable) {
-                    final StringBuilder candidateFileName = new StringBuilder(filePathName);
-                    if (counter == null) {
-                        counter = 1;
-                    } else {
-                        // E.g. Output file name could become "test_proteins.fasta_1.tsv"
-                        candidateFileName
-                                .append('_')
-                                .append(counter++);
-                    }
-                    candidateFileName
-                            .append('.')
-                            .append(outputFormat.getFileExtension());
-                    //Extend file name by tar (tar.gz) extension if HTML or SVG
-                    if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
-                        outputFile = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
-                    } else {
-                        outputFile = new File(candidateFileName.toString());
-                    }
-                    pathAvailable = !outputFile.exists();
-                }
-            }
+            File outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
                 switch (outputFormat) {
                     case TSV:
-                        outputToTSV(outputFile, stepInstance, proteins);
+                        outputToTSV(outputPath, stepInstance, proteins);
                         break;
                     case XML:
-                        outputToXML(outputFile, sequenceType, proteins, false);
+                        outputToXML(outputPath, sequenceType, proteins, false);
                         break;
                     case XML_SLIM:
-                        outputToXML(outputFile, sequenceType, proteins, true);
+                        outputToXML(outputPath, sequenceType, proteins, true);
                         break;
                     case GFF3:
-                        outputToGFF(outputFile, stepInstance, sequenceType, proteins);
+                        outputToGFF(outputPath, stepInstance, sequenceType, proteins);
                         break;
                     case GFF3_PARTIAL:
-                        outputToGFFPartial(outputFile, stepInstance, proteins);
+                        outputToGFFPartial(outputPath, stepInstance, proteins);
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             htmlResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToHTML(outputFile, proteins);
+                        outputToHTML(outputPath, proteins);
                         break;
                     case SVG:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             svgResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToSVG(outputFile, proteins);
+                        outputToSVG(outputPath, proteins);
                         break;
                     default:
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
@@ -250,6 +214,13 @@ public class WriteOutputStep extends Step {
         }
 
 
+        cleanUpWorkingDir(temporaryFileDirectory);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Step with Id " + this.getId() + " finished.");
+        }
+    }
+
+    private void cleanUpWorkingDir(String temporaryFileDirectory) {
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf(File.separatorChar));
@@ -260,9 +231,47 @@ public class WriteOutputStep extends Step {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Step with Id " + this.getId() + " finished.");
+    }
+
+    private File getPathName(boolean explicitPath, String filePathName, FileOutputFormat outputFormat) {
+        File outputPath = null;
+
+        if (explicitPath) {
+            outputPath = new File(filePathName);
+            if (outputPath.exists()) {
+                if (!outputPath.delete()) {
+                    System.out.println("Unable to overwrite file " + outputPath + ".  Please check file permissions.");
+                    System.exit(101);
+                }
+            }
+        } else {
+            // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
+            // but using an underscore rather than a space (pah!)
+            Integer counter = null;
+            boolean pathAvailable = false;
+            while (!pathAvailable) {
+                final StringBuilder candidateFileName = new StringBuilder(filePathName);
+                if (counter == null) {
+                    counter = 1;
+                } else {
+                    // E.g. Output file name could become "test_proteins.fasta_1.tsv"
+                    candidateFileName
+                            .append('_')
+                            .append(counter++);
+                }
+                candidateFileName
+                        .append('.')
+                        .append(outputFormat.getFileExtension());
+                //Extend file name by tar (tar.gz) extension if HTML or SVG
+                if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
+                    outputPath = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
+                } else {
+                    outputPath = new File(candidateFileName.toString());
+                }
+                pathAvailable = !outputPath.exists();
+            }
         }
+        return outputPath;
     }
 
     private void outputToXML(File outputFile, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
