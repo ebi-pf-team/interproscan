@@ -234,6 +234,7 @@ public class WriteOutputStep extends Step {
     }
 
     private File getPathName(boolean explicitPath, String filePathName, FileOutputFormat outputFormat) {
+        // E.g. for "-b OUT" filePathName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT"
         File outputPath = null;
 
         if (explicitPath) {
@@ -348,11 +349,23 @@ public class WriteOutputStep extends Step {
 
 
     private void outputToHTML(File file, List<Protein> proteins) throws IOException {
+        // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 htmlResultWriter.write(protein);
             }
             List<File> resultFiles = htmlResultWriter.getResultFiles();
+            // E.g. resultFiles =
+            // - data/freemarker/resources
+            //   - data/freemarker/resources/images
+            //     - data/freemarker/resources/images/ico_type_family_small.png
+            //     ...
+            //   - data/freemarker/resources/javascript
+            //   ...
+            // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P22298.html
+            // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P02939.html
+            // ...
+
             TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlAndSVGOutput);
             tarArchiveBuilder.buildTarArchive();
             //Delete result files in the temp directory at the end
@@ -383,6 +396,7 @@ public class WriteOutputStep extends Step {
      * @throws IOException
      */
     private void outputToSVG(final File outputDir, final List<Protein> proteins) throws IOException {
+        // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
         if (proteins != null && proteins.size() > 0) {
             //If the archive mode is switched off single SVG files should be written to the global output directory
             if (!archiveSVGOutput) {
@@ -393,6 +407,11 @@ public class WriteOutputStep extends Step {
             }
             if (archiveSVGOutput) {
                 List<File> resultFiles = svgResultWriter.getResultFiles();
+                // E.g. resultFiles =
+                // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P22298.svg
+                // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P02939.svg
+                // ...
+
                 TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, outputDir, compressHtmlAndSVGOutput);
                 tarArchiveBuilder.buildTarArchive();
                 //Delete result files in the temp directory at the end
