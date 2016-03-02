@@ -130,8 +130,10 @@ public class CDDModelParser extends AbstractModelFileParser {
                                             + " on line number " + lineNumber + " - so this can't be added to the database");
                                 } else {
                                     description = text3.trim();
+                                    int lengthOfName = name.length();
+                                    //TODO consider using the name as part of the description for the TSV output sake
                                     if (description.length() > 50) {
-                                        description = description.substring(0, 49);
+                                        description = description.substring(0, 46) + "...";
                                     }
                                 }
                                 break;
