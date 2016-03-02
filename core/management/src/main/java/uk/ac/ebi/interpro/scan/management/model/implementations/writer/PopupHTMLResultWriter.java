@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.*;
+import java.nio.file.Paths;
 
 /**
  * Contains common code shared by all types of HTML information popups.
@@ -22,23 +23,18 @@ public abstract class PopupHTMLResultWriter extends GraphicalOutputResultWriter 
     @Required
     public void setHtmlResourcesDir(String path) {
         if (path != null && path.length() > 0) {
-            resultFiles.add(new File(path));
+            resultFiles.add(Paths.get(path));
         }
     }
 
     protected String writePopupHTML(SimpleHash model) throws IOException, TemplateException {
         // Now prepare the HTML
-        Writer writer = null;
-        try {
-            StringWriter stringWriter = new StringWriter();
-            writer = new BufferedWriter(stringWriter);
-            final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
-            temp.process(model, writer);
-            writer.flush();
-            return stringWriter.toString();
-        } finally {
-            if (writer != null) {
-                writer.close();
+        try (StringWriter stringWriter = new StringWriter()){
+            try (Writer writer = new BufferedWriter(stringWriter)) {
+                final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
+                temp.process(model, writer);
+                writer.flush();
+                return stringWriter.toString();
             }
         }
     }

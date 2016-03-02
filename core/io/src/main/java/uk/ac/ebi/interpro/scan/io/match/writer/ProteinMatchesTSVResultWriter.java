@@ -3,9 +3,8 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
-
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 
@@ -22,8 +21,8 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
     private TSVWriter tsvWriter;
 
-    public ProteinMatchesTSVResultWriter(File file) throws IOException {
-        super(file);
+    public ProteinMatchesTSVResultWriter(Path path) throws IOException {
+        super(path);
         this.tsvWriter = new TSVWriter(super.fileWriter);
     }
 
