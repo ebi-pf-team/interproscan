@@ -45,7 +45,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(29, 49)
+        return new HashCodeBuilder(41, 59)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
@@ -119,9 +119,19 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
                     .isEquals();
         }
 
+//        @Override
+//        public int hashCode() {
+//            int result = super.hashCode();
+//            long temp;
+//            temp = Double.doubleToLongBits(evalue);
+//            result = 31 * result + (int) (temp ^ (temp >>> 32));
+//            temp = Double.doubleToLongBits(score);
+//            result = 31 * result + (int) (temp ^ (temp >>> 32));
+//            return result;
+//        }
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(29, 53)
+            return new HashCodeBuilder(41, 59)
                     .appendSuper(super.hashCode())
                     .toHashCode();
         }

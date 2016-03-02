@@ -43,12 +43,11 @@
         <property name="stepDescription" value="Run CDD Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.rpsblast.path}"/>
         <property name="libraryPath" value="${cdd.library.path}"/>
-        <property name="binarySwitches" value="${rpsblast.cdd.switches}"/>
+        <property name="binarySwitches" value="${rpsblast.switches.cdd}"/>
         <property name="outputFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
-
     </bean>
 
     <!-- STEP 3 -->
@@ -59,7 +58,7 @@
         <property name="dependsUpon" ref="stepCDDRunBinaryRPSblast"/>
         <property name="stepDescription" value="Run CDD Binary rpsbproc. for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.rpsbproc.path}"/>
-        <property name="binarySwitches" value="${cdd.binary.rpsbproc.switches}"/>
+        <property name="binarySwitches" value="${rpsbproc.switches.cdd}"/>
         <property name="dataConfigFilePath" value="${cdd.rpsbproc.data.config.path}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
