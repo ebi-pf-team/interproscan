@@ -37,35 +37,31 @@ public class CDDMatchParserTest extends TestCase {
     }
 
     @Test
-    public void testCreateMatch() {
+    public void testCreateMatch() throws IOException {
         //Test of real CDD raw match line
         String rawMatchLine = "1";
-        try {
-            Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
-            InputStream is = modelFileResource.getInputStream();
+        Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
+        InputStream is = modelFileResource.getInputStream();
 
-            Set<RawProtein<CDDRawMatch>> result = instance.parse(is, modelFileResource.getFilename());
-            LOGGER.debug("result: " + result.toString());
-            System.out.println("result: " + result);
-            assertEquals(2, result.size());
-//            assertNotNull("CreateMatch method returned a NULL value!", result);
-//            assertEquals("tr|Q6ZSE3|Q6ZSE3_HUMAN", result.getSequenceIdentifier());
-//            assertEquals("PTHR10024:SF2", result.getModelId());
-//            assertEquals("GB DEF: HYPOTHETICAL PROTEIN FLJ45597", result.getFamilyName());
-//            assertEquals(new Double("2.3e-141"), result.getEvalue());
-//            assertEquals(new Double("480.5"), result.getScore());
-//            assertEquals(1, result.getLocationStart());
-//            assertEquals(341, result.getLocationEnd());
-//            //location start, end is missing
-//            rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR10024:SF2\tGB DEF: HYPOTHETICAL PROTEIN FLJ45597\t2.3e-141\t480.5";
-//            assertNull("Result of createMatch method should be NULL!", instance.createMatch(rawMatchLine));
-//            //
-//            assertNull("Result of createMatch method should be NULL!", instance.createMatch(null));
-//            //
-//            assertNull("Result of createMatch method should be NULL!", instance.createMatch(""));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Set<RawProtein<CDDRawMatch>> result = instance.parse(is, modelFileResource.getFilename());
+        LOGGER.debug("result: " + result.toString());
+        System.out.println("result: " + result);
+        assertEquals(2, result.size());
+//        assertNotNull("CreateMatch method returned a NULL value!", result);
+//        assertEquals("tr|Q6ZSE3|Q6ZSE3_HUMAN", result.getSequenceIdentifier());
+//        assertEquals("PTHR10024:SF2", result.getModelId());
+//        assertEquals("GB DEF: HYPOTHETICAL PROTEIN FLJ45597", result.getFamilyName());
+//        assertEquals(new Double("2.3e-141"), result.getEvalue());
+//        assertEquals(new Double("480.5"), result.getScore());
+//        assertEquals(1, result.getLocationStart());
+//        assertEquals(341, result.getLocationEnd());
+//        //location start, end is missing
+//        rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR10024:SF2\tGB DEF: HYPOTHETICAL PROTEIN FLJ45597\t2.3e-141\t480.5";
+//        assertNull("Result of createMatch method should be NULL!", instance.createMatch(rawMatchLine));
+//        //
+//        assertNull("Result of createMatch method should be NULL!", instance.createMatch(null));
+//        //
+//        assertNull("Result of createMatch method should be NULL!", instance.createMatch(""));
 
     }
 }
