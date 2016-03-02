@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -34,8 +35,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         super();
     }
 
-    public GFFResultWriterForNucSeqs(File file) throws IOException {
-        super(file);
+    public GFFResultWriterForNucSeqs(Path path) throws IOException {
+        super(path);
     }
 
     private String getNucleotideId() {

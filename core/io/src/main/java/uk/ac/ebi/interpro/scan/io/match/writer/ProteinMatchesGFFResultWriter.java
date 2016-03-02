@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,12 +50,12 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         this.matchCounter = 0;
     }
 
-    public ProteinMatchesGFFResultWriter(File file) throws IOException {
-         this(file, true);
+    public ProteinMatchesGFFResultWriter(Path path) throws IOException {
+         this(path, true);
     }
 
-    public ProteinMatchesGFFResultWriter(File file, boolean writeFullGFF) throws IOException {
-        super(file);
+    public ProteinMatchesGFFResultWriter(Path path, boolean writeFullGFF) throws IOException {
+        super(path);
         this.gffWriter = new GFFWriter(super.fileWriter);
         if (writeFullGFF) {
             //Write first line of file - always the same

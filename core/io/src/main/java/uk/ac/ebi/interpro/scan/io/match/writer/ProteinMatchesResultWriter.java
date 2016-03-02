@@ -3,10 +3,10 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
-import java.io.File;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter {
 
-    protected BufferedWriter fileWriter;
+    protected PrintWriter fileWriter;
 
     protected final String VALUE_SEPARATOR = "|";
 
@@ -32,17 +32,23 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
 
     protected DateFormat dmyFormat;
 
+    private static final Charset characterSet = Charset.defaultCharset();
+
     protected ProteinMatchesResultWriter() {
     }
 
-    public ProteinMatchesResultWriter(File file) throws IOException {
-        if (file.exists()) {
-            if (!file.delete()) {
-                throw new IllegalStateException("The file being written to already exists and cannot be deleted: " + file.getAbsolutePath());
+    public ProteinMatchesResultWriter(Path path) throws IOException {
+        if (Files.exists(path)) {
+            try {
+                Files.delete(path);
+            } catch (IOException e) {
+                final String p = path.toAbsolutePath().toString();
+                throw new IllegalStateException("The file being written to already exists and cannot be deleted: " + p);
             }
         }
-        int bufferSize = 8192;
-        this.fileWriter = new BufferedWriter(new FileWriter(file), bufferSize);
+        //int bufferSize = 8192;
+        //this.fileWriter = new BufferedWriter(new FileWriter(file), bufferSize);
+        this.fileWriter = new PrintWriter(Files.newBufferedWriter(path, characterSet));
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
     }
 
@@ -64,7 +70,7 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
 
     protected List<String> getProteinAccessions(Protein protein) {
         Set<ProteinXref> crossReferences = protein.getCrossReferences();
-        List<String> proteinXRefs = new ArrayList<String>(crossReferences.size());
+        List<String> proteinXRefs = new ArrayList<>(crossReferences.size());
         for (ProteinXref crossReference : crossReferences) {
             proteinXRefs.add(crossReference.getIdentifier());
         }

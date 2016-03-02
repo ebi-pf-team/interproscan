@@ -6,6 +6,8 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,27 +20,27 @@ import java.util.List;
  */
 public class TarArchiveBuilder {
 
-    private final List<File> tarArchiveEntries = new ArrayList<File>();
+    private final List<Path> tarArchiveEntries = new ArrayList<>();
 
-    private final File tarArchive;
+    private final Path tarArchive;
 
     private boolean compress;
 
-    public TarArchiveBuilder(File tarArchiveEntry, File tarArchive) {
+    public TarArchiveBuilder(Path tarArchiveEntry, Path tarArchive) {
         this(tarArchiveEntry, tarArchive, false);
     }
 
-    public TarArchiveBuilder(File tarArchiveEntry, File tarArchive, boolean compress) {
+    public TarArchiveBuilder(Path tarArchiveEntry, Path tarArchive, boolean compress) {
         this.tarArchiveEntries.add(tarArchiveEntry);
         this.tarArchive = tarArchive;
         this.compress = compress;
     }
 
-    public TarArchiveBuilder(List<File> tarArchiveEntries, File tarArchive) {
+    public TarArchiveBuilder(List<Path> tarArchiveEntries, Path tarArchive) {
         this(tarArchiveEntries, tarArchive, false);
     }
 
-    public TarArchiveBuilder(List<File> tarArchiveEntries, File tarArchive, boolean compress) {
+    public TarArchiveBuilder(List<Path> tarArchiveEntries, Path tarArchive, boolean compress) {
         this.tarArchiveEntries.addAll(tarArchiveEntries);
         this.tarArchive = tarArchive;
         this.compress = compress;
@@ -47,7 +49,7 @@ public class TarArchiveBuilder {
     public void buildTarArchive() throws IOException {
         // E.g. for "-b OUT" tarArchive = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
         if (tarArchive != null) {
-            tarArchive.createNewFile();
+            Files.createFile(tarArchive);
         }
         FileOutputStream fileOutputStream = null;
         BufferedOutputStream bufferedOutputStream = null;
@@ -55,7 +57,7 @@ public class TarArchiveBuilder {
         TarArchiveOutputStream tarArchiveOutputStream = null;
         //
         try {
-            fileOutputStream = new FileOutputStream(tarArchive);
+            fileOutputStream = new FileOutputStream(tarArchive.toFile());
             bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
             if (compress) {
                 gzipCompressorOutputStream = new GzipCompressorOutputStream(bufferedOutputStream);
@@ -65,8 +67,8 @@ public class TarArchiveBuilder {
                 tarArchiveOutputStream = new TarArchiveOutputStream(bufferedOutputStream);
             }
 
-            for (File entry : tarArchiveEntries) {
-                addNewEntryToArchive(entry, tarArchiveOutputStream, "");
+            for (Path entry : tarArchiveEntries) {
+                addNewEntryToArchive(entry.toFile(), tarArchiveOutputStream, "");
             }
         } finally {
             if (tarArchiveOutputStream != null) {
