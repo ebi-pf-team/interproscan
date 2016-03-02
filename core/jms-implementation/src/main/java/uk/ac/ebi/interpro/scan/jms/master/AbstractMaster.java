@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -255,6 +256,10 @@ public abstract class AbstractMaster implements Master {
             }
         }
     }
+
+
+
+
 
     /**
      * Optionally, set the analyses that should be run.

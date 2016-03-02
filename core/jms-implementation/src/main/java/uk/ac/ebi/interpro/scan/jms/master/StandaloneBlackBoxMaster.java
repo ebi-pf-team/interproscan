@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileSt
 import uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep;
 
 import javax.jms.JMSException;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,7 +41,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             loadInMemoryDatabase();
             runStatus = 21;
             int stepInstancesCreatedByLoadStep = createStepInstances();
-            int minimumStepsExpected = 2;
+            int minimumStepsExpected = getMinimumStepsExpected();
             runStatus = 31;
             if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
@@ -108,13 +109,17 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
-                if (completed &&
-                        stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
+                 if (completed
+                        && stepInstanceDAO.count() == statsUtil.getSubmittedStepInstancesCount()
+                        && statsUtil.getSubmittedStepInstancesCount() >= minimumStepsExpected
+                        && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
                         && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep
                         && stepInstanceDAO.count() >= minimumStepsExpected) {
                     Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
-                            + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
-                            +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                            + " minimumStepsExpected : " + minimumStepsExpected
+                            + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                            +  " unfinishedSteps " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     runStatus = 0;
                     break;
                 }
@@ -155,6 +160,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         try {
             databaseCleaner.closeDatabaseCleaner();
             LOGGER.debug("Ending");
+            Thread.sleep(500); // cool off, then exit
         } catch (Exception e){
             e.printStackTrace();
         } finally {
