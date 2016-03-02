@@ -6,6 +6,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 
 import java.io.*;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class TarArchiveBuilder {
             }
 
             for (Path entry : tarArchiveEntries) {
-                addNewEntryToArchive(entry.toFile(), tarArchiveOutputStream, "");
+                addNewEntryToArchive(entry, tarArchiveOutputStream, "");
             }
         } finally {
             if (tarArchiveOutputStream != null) {
@@ -87,49 +88,30 @@ public class TarArchiveBuilder {
         }
     }
 
-    private void addNewEntryToArchive(final File tarArchiveEntry,
+    private void addNewEntryToArchive(final Path tarArchiveEntry,
                                       final TarArchiveOutputStream os,
                                       String entryFileName) throws IOException {
-        if (!tarArchiveEntry.isHidden()) {
-            entryFileName = entryFileName + tarArchiveEntry.getName();
-            TarArchiveEntry tarEntry = (TarArchiveEntry) os.createArchiveEntry(tarArchiveEntry, entryFileName);
+        if (!Files.isHidden(tarArchiveEntry)) {
+            entryFileName = entryFileName + tarArchiveEntry.getFileName();
+            // E.g. entryFileName = "resources/images/" +  "ico_type_family_small.png"
+            // OR e.g. entryFileName = "resources/" + "css"
+            TarArchiveEntry tarEntry = (TarArchiveEntry) os.createArchiveEntry(tarArchiveEntry.toFile(), entryFileName);
 
             os.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
             os.putArchiveEntry(tarEntry);
 
-            if (tarArchiveEntry.isFile()) {
-//                IOUtils.copy(new FileInputStream(tarArchiveEntry), os);
-                os.write(getBytesFromFile(tarArchiveEntry));
+            if (Files.isRegularFile(tarArchiveEntry)) {
+                os.write(Files.readAllBytes(tarArchiveEntry));
                 os.flush();
                 os.closeArchiveEntry();
-            } else if (tarArchiveEntry.isDirectory()) {
-                File[] children = tarArchiveEntry.listFiles();
-                if (children != null) {
-                    for (File child : children) {
-                        addNewEntryToArchive(new File(child.getAbsolutePath()), os, entryFileName + File.separator);
+            } else if (Files.isDirectory(tarArchiveEntry)) {
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(tarArchiveEntry)) {
+                    for (Path child : directoryStream) {
+                        addNewEntryToArchive(child, os, entryFileName + File.separator);
                     }
                 }
             }
         }
-    }
-
-    private byte[] getBytesFromFile(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-        long length = file.length();
-        if (length > Integer.MAX_VALUE) {
-        }
-        byte[] bytes = new byte[(int) length];
-        int offset = 0;
-        int numRead;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
-        if (offset < bytes.length) {
-            throw new IllegalStateException("Could not completely read the file " + file.getName());
-        }
-        is.close();
-        return bytes;
     }
 
     /**
