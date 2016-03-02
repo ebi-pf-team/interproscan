@@ -19,9 +19,10 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Writes all matches for a slice of proteins to a file.
@@ -113,7 +114,7 @@ public class WriteOutputStep extends Step {
         if (proteinXrefDAO == null) {
             throw new IllegalStateException("Protein Xref database accession object is NULL. Unexpected state. Cannot go on.");
         }
-        Collection<ProteinXref> updates = new HashSet<ProteinXref>();
+        Collection<ProteinXref> updates = new HashSet<>();
         Collection<String> nonUniqueIdentifiers = proteinXrefDAO.getNonUniqueXrefs();
         if (nonUniqueIdentifiers != null && nonUniqueIdentifiers.size() > 0) {
             System.out.println("Found " + nonUniqueIdentifiers.size() + " non unique identifier(s). These identifiers do have different sequences, within the FASTA protein sequence input file.");
@@ -170,7 +171,7 @@ public class WriteOutputStep extends Step {
         }
 
         for (FileOutputFormat outputFormat : outputFormats) {
-            File outputPath = getPathName(explicitPath, filePathName, outputFormat);
+            Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
@@ -233,15 +234,18 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private File getPathName(boolean explicitPath, String filePathName, FileOutputFormat outputFormat) {
+    private Path getPathName(boolean explicitPath, String filePathName, FileOutputFormat outputFormat) {
         // E.g. for "-b OUT" filePathName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT"
-        File outputPath = null;
+        Path outputPath = null;
 
         if (explicitPath) {
-            outputPath = new File(filePathName);
-            if (outputPath.exists()) {
-                if (!outputPath.delete()) {
-                    System.out.println("Unable to overwrite file " + outputPath + ".  Please check file permissions.");
+            outputPath = Paths.get(filePathName);
+            if (Files.exists(outputPath)) {
+                try {
+                    Files.delete(outputPath);
+                } catch (IOException e) {
+                    final String p = outputPath.toAbsolutePath().toString();
+                    System.out.println("Unable to overwrite file " + p + ".  Please check file permissions.");
                     System.exit(101);
                 }
             }
@@ -265,17 +269,17 @@ public class WriteOutputStep extends Step {
                         .append(outputFormat.getFileExtension());
                 //Extend file name by tar (tar.gz) extension if HTML or SVG
                 if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
-                    outputPath = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
+                    outputPath = Paths.get(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
                 } else {
-                    outputPath = new File(candidateFileName.toString());
+                    outputPath = Paths.get(candidateFileName.toString());
                 }
-                pathAvailable = !outputPath.exists();
+                pathAvailable = !Files.exists(outputPath);
             }
         }
         return outputPath;
     }
 
-    private void outputToXML(File outputFile, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+    private void outputToXML(Path outputPath, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
@@ -296,31 +300,25 @@ public class WriteOutputStep extends Step {
             matchesHolder.addProteins(proteins);
         }
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
-        xmlWriter.writeMatches(outputFile, matchesHolder);
+        xmlWriter.writeMatches(outputPath, matchesHolder);
     }
 
-    private void outputToTSV(final File file,
+    private void outputToTSV(final Path path,
                              final StepInstance stepInstance,
                              final List<Protein> proteins) throws IOException {
-        ProteinMatchesTSVResultWriter writer = null;
-        try {
-            writer = new ProteinMatchesTSVResultWriter(file);
+        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
-    private void outputToGFF(File file, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
+    private void outputToGFF(Path path, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
-                writer = new GFFResultWriterForNucSeqs(file);
+                writer = new GFFResultWriterForNucSeqs(path);
             }//Default tsvWriter for proteins
             else {
-                writer = new GFFResultWriterForProtSeqs(file);
+                writer = new GFFResultWriterForProtSeqs(path);
             }
 
             //This step writes features (protein matches) into the GFF file
@@ -334,27 +332,21 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToGFFPartial(File file, StepInstance stepInstance, List<Protein> proteins) throws IOException {
-        ProteinMatchesGFFResultWriter writer = null;
-        try {
-            writer = new GFFResultWriterForProtSeqs(file, false);
+    private void outputToGFFPartial(Path path, StepInstance stepInstance, List<Protein> proteins) throws IOException {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, false)) {
             writeProteinMatches(writer, stepInstance, proteins);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
 
     }
 
 
-    private void outputToHTML(File file, List<Protein> proteins) throws IOException {
+    private void outputToHTML(final Path path, final List<Protein> proteins) throws IOException {
         // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 htmlResultWriter.write(protein);
             }
-            List<File> resultFiles = htmlResultWriter.getResultFiles();
+            List<Path> resultFiles = htmlResultWriter.getResultFiles();
             // E.g. resultFiles =
             // - data/freemarker/resources
             //   - data/freemarker/resources/images
@@ -366,20 +358,7 @@ public class WriteOutputStep extends Step {
             // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P02939.html
             // ...
 
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlAndSVGOutput);
-            tarArchiveBuilder.buildTarArchive();
-            //Delete result files in the temp directory at the end
-            for (File resultFile : resultFiles) {
-                //Only delete HTML files, but not the resource directory which is also part of the result files list
-                if (resultFile.isFile()) {
-                    boolean isDeleted = resultFile.delete();
-                    if (LOGGER.isEnabledFor(Level.WARN)) {
-                        if (!isDeleted) {
-                            LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
-                        }
-                    }
-                }
-            }
+            buildTarArchive(path, resultFiles);
         }
     }
 
@@ -395,35 +374,42 @@ public class WriteOutputStep extends Step {
      * @param proteins  Set of result proteins.
      * @throws IOException
      */
-    private void outputToSVG(final File outputDir, final List<Protein> proteins) throws IOException {
+    private void outputToSVG(final Path path, final List<Protein> proteins) throws IOException {
         // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
         if (proteins != null && proteins.size() > 0) {
             //If the archive mode is switched off single SVG files should be written to the global output directory
             if (!archiveSVGOutput) {
-                svgResultWriter.setTempDirectory(outputDir.getAbsolutePath());
+                final String outputDirPath = path.toAbsolutePath().toString();
+                svgResultWriter.setTempDirectory(outputDirPath);
             }
             for (Protein protein : proteins) {
                 svgResultWriter.write(protein);
             }
             if (archiveSVGOutput) {
-                List<File> resultFiles = svgResultWriter.getResultFiles();
+                List<Path> resultFiles = svgResultWriter.getResultFiles();
                 // E.g. resultFiles =
                 // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P22298.svg
                 // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P02939.svg
                 // ...
 
-                TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, outputDir, compressHtmlAndSVGOutput);
-                tarArchiveBuilder.buildTarArchive();
-                //Delete result files in the temp directory at the end
-                for (File resultFile : resultFiles) {
-                    //Only delete HTML files, but not the resource directory which is also part of the result files list
-                    if (resultFile.isFile()) {
-                        boolean isDeleted = resultFile.delete();
-                        if (LOGGER.isEnabledFor(Level.WARN)) {
-                            if (!isDeleted) {
-                                LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
-                            }
-                        }
+                buildTarArchive(path, resultFiles);
+            }
+        }
+    }
+
+    private void buildTarArchive(Path path, List<Path> resultFiles) throws IOException {
+        TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, path, compressHtmlAndSVGOutput);
+        tarArchiveBuilder.buildTarArchive();
+        //Delete result files in the temp directory at the end
+        for (Path resultFile : resultFiles) {
+            //Only delete HTML/SVG files, but not the resource directory which is also part of the result files list
+            if (Files.isRegularFile(resultFile)) {
+                try {
+                    Files.delete(resultFile);
+                } catch (IOException e) {
+                    if (LOGGER.isEnabledFor(Level.WARN)) {
+                        final String r = resultFile.toAbsolutePath().toString();
+                        LOGGER.warn("Couldn't delete file " + r);
                     }
                 }
             }

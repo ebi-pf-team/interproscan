@@ -7,10 +7,9 @@ import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author Phil Jones
@@ -28,23 +27,21 @@ public class XmlWriter {
         this.marshaller = marshaller;
     }
 
-    public void writeMatches(final File file, final IMatchesHolder matchesHolder) throws IOException {
-        if (file.exists()) {
-            if (!file.delete()) {
-                throw new IllegalStateException("The file " + file.getAbsolutePath() + " already exists and cannot be deleted.");
+    public void writeMatches(final Path path, final IMatchesHolder matchesHolder) throws IOException {
+        if (Files.exists(path)) {
+            try {
+                Files.delete(path);
+            } catch (IOException e) {
+                final String p = path.toAbsolutePath().toString();
+                throw new IllegalStateException("The file " + p + " already exists and cannot be deleted.");
             }
         }
-        BufferedOutputStream bos = null;
+
         LOGGER.debug("About to start writing out match XML.");
-        try {
-            bos = new BufferedOutputStream(new FileOutputStream(file));
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(path.toFile()))) {
             Result result = new StreamResult(bos);
             marshaller.marshal(matchesHolder, result);
             LOGGER.debug("Finished writing out match XML.");
-        } finally {
-            if (bos != null) {
-                bos.close();
-            }
         }
     }
 }

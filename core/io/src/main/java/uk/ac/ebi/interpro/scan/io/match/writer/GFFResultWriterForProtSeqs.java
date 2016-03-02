@@ -2,8 +2,8 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -24,12 +24,12 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
 
     private boolean writeFullGFF = true;
 
-    public GFFResultWriterForProtSeqs(File file) throws IOException {
-        super(file);
+    public GFFResultWriterForProtSeqs(Path path) throws IOException {
+        super(path);
     }
 
-    public GFFResultWriterForProtSeqs(File file, boolean writeFullGFF) throws IOException {
-        super(file, writeFullGFF);
+    public GFFResultWriterForProtSeqs(Path path, boolean writeFullGFF) throws IOException {
+        super(path, writeFullGFF);
         this.writeFullGFF = false;
     }
 
