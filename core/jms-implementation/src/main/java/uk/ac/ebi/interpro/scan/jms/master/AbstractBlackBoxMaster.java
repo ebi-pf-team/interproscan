@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.*;
 
@@ -201,6 +202,31 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         }
         params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
     }
+
+    /**
+     * get the minimun expected steps to run
+     *
+     * @return minimumSteps
+     */
+    public int getMinimumStepsExpected(){
+        int analysesCount = 1;
+        if (analyses != null) {
+            analysesCount = analyses.length;
+        }else{
+            analysesCount = jobs.getActiveAnalysisJobs().getJobIdList().size();
+        }
+        Utilities.verboseLog("analysesCount :  " + analysesCount);
+        int minimumStepForEachAnalysis = 0;
+        int minimumSteps = 2;
+        if (! isUseMatchLookupService()){
+            minimumStepForEachAnalysis = 4; //writefasta, runbinary, deletefasta, parseoutput
+        }
+
+        minimumSteps = minimumSteps + (analysesCount * minimumStepForEachAnalysis);
+
+        return minimumSteps;
+    }
+
 
     /**
      * Called by quartz to load proteins from UniParc.
