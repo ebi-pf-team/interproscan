@@ -48,7 +48,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 final String signatureAc = signature.getAccession();
                 final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
                 final String analysis = signatureLibrary.getName();
-                final String description = match.getSignature().getDescription();
+                final String description = signature.getDescription();
 
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
@@ -76,7 +76,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
                         }
 
-                        final List<String> mappingFields = new ArrayList<String>();
+                        final List<String> mappingFields = new ArrayList<>();
                         mappingFields.add(proteinAc);
                         mappingFields.add(md5);
                         mappingFields.add(Integer.toString(length));
@@ -95,9 +95,9 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                                 mappingFields.add(interProEntry.getAccession());
                                 mappingFields.add(interProEntry.getDescription());
                                 if (mapToGO) {
-                                    List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
+                                    List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
                                     Collections.sort(goXRefs,  new GoXrefComparator());
-                                    if (goXRefs != null && goXRefs.size() > 0) {
+                                    if (goXRefs.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
                                         for (GoXref xref : goXRefs) {
                                             if (sb.length() > 0) {
@@ -111,16 +111,15 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                                     }
                                 }
                                 if (mapToPathway) {
-                                    List<PathwayXref> pathwayXRefs = new ArrayList<PathwayXref>(interProEntry.getPathwayXRefs());
+                                    List<PathwayXref> pathwayXRefs = new ArrayList<>(interProEntry.getPathwayXRefs());
                                     Collections.sort(pathwayXRefs, new PathwayXrefComparator());
-                                    if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
+                                    if (pathwayXRefs.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
                                         for (PathwayXref xref : pathwayXRefs) {
                                             if (sb.length() > 0) {
                                                 sb.append(VALUE_SEPARATOR);
                                             }
-                                            sb
-                                                    .append(xref.getDatabaseName())
+                                            sb.append(xref.getDatabaseName())
                                                     .append(": ")
                                                     .append(xref.getIdentifier());
                                         }
