@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.GFFWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -42,7 +41,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     private int matchCounter;
 
     //    protected final Map<String, String> identifierToSeqMap = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-    protected final Map<String, String> identifierToSeqMap = new TreeMap<String, String>(new Gff3FastaSeqIdComparator());
+    protected final Map<String, String> identifierToSeqMap = new TreeMap<>(new Gff3FastaSeqIdComparator());
 
 
     protected ProteinMatchesGFFResultWriter() {
@@ -93,16 +92,15 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     .append('"');
 //            gffAttributes.add("interPro_entry_desc=" + interProEntry.getDescription());
             if (mapToPathway) {
-                List<PathwayXref> pathwayXRefs = new ArrayList<PathwayXref>(interProEntry.getPathwayXRefs());
+                List<PathwayXref> pathwayXRefs = new ArrayList<>(interProEntry.getPathwayXRefs());
                 Collections.sort(pathwayXRefs, new PathwayXrefComparator());
-                if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
+                if (pathwayXRefs.size() > 0) {
                     StringBuilder sb = new StringBuilder();
                     for (PathwayXref xref : pathwayXRefs) {
                         if (sb.length() > 0) {
                             sb.append(VALUE_SEPARATOR_GFF3);
                         }
-                        sb
-                                .append('"')
+                        sb.append('"')
                                 .append(xref.getDatabaseName())
                                 .append(':')
                                 .append(xref.getIdentifier()).append('"');
@@ -112,9 +110,9 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             }
             matchFeature.addAttribute("Dbxref", dbxrefAttributeValue.toString());
             if (mapToGO) {
-                List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
+                List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
                 Collections.sort(goXRefs, new GoXrefComparator());
-                if (goXRefs != null && goXRefs.size() > 0) {
+                if ((goXRefs.size() > 0)) {
                     StringBuilder sb = new StringBuilder();
                     for (GoXref xref : goXRefs) {
                         if (sb.length() > 0) {
@@ -324,7 +322,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     }
                     //Build match feature line
                     final int locStart = location.getStart();
-                    int locEnd = location.getEnd();
+                    final int locEnd = location.getEnd();
                     final StringBuilder matchIdLocation = new StringBuilder(matchId);
                     matchIdLocation
                             .append('_')
