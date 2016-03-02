@@ -8,9 +8,10 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,15 +93,18 @@ public abstract class GraphicalOutputResultWriter {
     }
 
     protected void checkTempDirectory(String tempDirectory) throws IOException {
-        File tempFileDirectory = new File(tempDirectory);
-        if (!tempFileDirectory.exists()) {
-            boolean isCreated = tempFileDirectory.mkdirs();
-            if (!isCreated) {
+        Path tempFileDirectory = Paths.get(tempDirectory);
+        if (!Files.exists(tempFileDirectory)) {
+            try {
+                Files.createDirectories(tempFileDirectory);
+            } catch (IOException e) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
+                throw e;
             }
-
         } else if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Temp directory already exists, no need to create one.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Temp directory " + tempDirectory + " already exists, no need to create one.");
+            }
         }
     }
 
