@@ -38,7 +38,7 @@ public class XmlWriter {
         }
 
         LOGGER.debug("About to start writing out match XML.");
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(path.toFile()))) {
+        try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(path))) {
             Result result = new StreamResult(bos);
             marshaller.marshal(matchesHolder, result);
             LOGGER.debug("Finished writing out match XML.");
