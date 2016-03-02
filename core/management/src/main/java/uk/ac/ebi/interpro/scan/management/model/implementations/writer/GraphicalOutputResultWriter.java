@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public abstract class GraphicalOutputResultWriter {
     protected String entryHierarchyBeanId;
 
     /* Please read the class comment if you are concerned about thread-safety.*/
-    protected final List<File> resultFiles = new ArrayList<File>();
+    protected final List<Path> resultFiles = new ArrayList<>();
 
     protected String tempDirectory;
 
@@ -70,7 +71,7 @@ public abstract class GraphicalOutputResultWriter {
         this.tempDirectory = tempDirectory;
     }
 
-    public List<File> getResultFiles() {
+    public List<Path> getResultFiles() {
         return resultFiles;
     }
 
