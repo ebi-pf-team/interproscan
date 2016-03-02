@@ -12,6 +12,12 @@ public enum MatchDataSource {
 
     // Signature databases (descriptions from user manual appendices: http://www.ebi.ac.uk/interpro/user_manual.html)
 
+    CDD(0,
+            "CDD is a protein annotation resource that consists of a collection of well-annotated multiple sequence " +
+                    "alignment models for ancient domains and full-length proteins.",
+            "http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml",
+            "http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=$0"),
+
     GENE3D(0,
             "Gene3D HMMs extended predictions of CATH protein structures.",
             "http://gene3d.biochem.ucl.ac.uk/Gene3D/",
