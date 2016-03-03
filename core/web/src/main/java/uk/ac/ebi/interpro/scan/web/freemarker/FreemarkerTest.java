@@ -20,6 +20,8 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,9 +71,10 @@ public class FreemarkerTest {
         SimpleHash model = buildModelMap(simpleProtein, entryHierarchy);
 
         Template temp = cfg.getTemplate(testView);
-        Writer out = new PrintWriter(new FileWriter(resultFilePath));
-        temp.process(model, out);
-        out.flush();
+        try (Writer out = Files.newBufferedWriter(Paths.get(resultFilePath))) {
+            temp.process(model, out);
+            out.flush();
+        }
     }
 
     private static SimpleHash buildModelMap(SimpleProtein p, EntryHierarchy entryHierarchy) {
