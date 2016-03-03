@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter {
 
-    protected PrintWriter fileWriter;
+    protected BufferedWriter fileWriter;
 
     protected final String VALUE_SEPARATOR = "|";
 
@@ -40,7 +40,7 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
     public ProteinMatchesResultWriter(Path path) throws IOException {
         //int bufferSize = 8192;
         //this.fileWriter = new BufferedWriter(new FileWriter(file), bufferSize);
-        this.fileWriter = new PrintWriter(Files.newBufferedWriter(path, characterSet));
+        this.fileWriter = Files.newBufferedWriter(path, characterSet);
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
     }
 

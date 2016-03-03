@@ -59,7 +59,7 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
                         String urlFriendlyId = gen.generate(xref.getIdentifier());
                         final Path newResultFile = Paths.get(tempDirectory + urlFriendlyId + ".svg");
                         resultFiles.add(newResultFile);
-                        writer = new PrintWriter(Files.newBufferedWriter(newResultFile, characterSet));
+                        writer = Files.newBufferedWriter(newResultFile, characterSet);
                         temp.process(model, writer);
                         writer.flush();
                     } catch (TemplateException e) {
