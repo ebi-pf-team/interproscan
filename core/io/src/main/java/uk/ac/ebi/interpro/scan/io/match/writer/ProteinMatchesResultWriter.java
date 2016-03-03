@@ -32,20 +32,12 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
 
     protected DateFormat dmyFormat;
 
-    private static final Charset characterSet = Charset.defaultCharset();
+    protected static final Charset characterSet = Charset.defaultCharset();
 
     protected ProteinMatchesResultWriter() {
     }
 
     public ProteinMatchesResultWriter(Path path) throws IOException {
-        if (Files.exists(path)) {
-            try {
-                Files.delete(path);
-            } catch (IOException e) {
-                final String p = path.toAbsolutePath().toString();
-                throw new IllegalStateException("The file being written to already exists and cannot be deleted: " + p);
-            }
-        }
         //int bufferSize = 8192;
         //this.fileWriter = new BufferedWriter(new FileWriter(file), bufferSize);
         this.fileWriter = new PrintWriter(Files.newBufferedWriter(path, characterSet));
