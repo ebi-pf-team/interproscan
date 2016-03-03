@@ -9,6 +9,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +26,8 @@ import java.util.List;
 public abstract class GraphicalOutputResultWriter {
 
     private static final Logger LOGGER = Logger.getLogger(GraphicalOutputResultWriter.class.getName());
+
+    protected static final Charset characterSet = Charset.defaultCharset();
 
     protected static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
 
