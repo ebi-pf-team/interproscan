@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -31,6 +33,31 @@ public abstract class RPSBlastRawMatch extends RawMatch implements Serializable 
 
     */
 
+    public enum HitType {
+        SPECIFIC("Specific"),
+        NONSPECIFIC("Non-specific"),
+        SUPERFAMILY("Superfamily"),
+        MULTIDOMAIN("Multi-domain");
+
+        private static Map<String, HitType> STRING_TO_HITTYPE = new HashMap<String, HitType>(HitType.values().length);
+
+        static {
+            for (HitType hitType : HitType.values()) {
+                STRING_TO_HITTYPE.put(hitType.hitType, hitType);
+            }
+        }
+
+        String hitType;
+
+        HitType(String hitType) {
+            this.hitType = hitType;
+        }
+
+        public static HitType byHitTypeString(String hitTypeString) {
+            return STRING_TO_HITTYPE.get(hitTypeString);
+        }
+    }
+
     @Column
     int sessionNumber;
 
@@ -38,7 +65,7 @@ public abstract class RPSBlastRawMatch extends RawMatch implements Serializable 
     String definitionLine;
 
     @Column
-    String hitType;
+    HitType hitType;
 
     @Column
     String pssmId;
@@ -69,7 +96,7 @@ public abstract class RPSBlastRawMatch extends RawMatch implements Serializable 
     public RPSBlastRawMatch(String sequenceIdentifier,
                             String definitionLine,
                             int sessionIdentifier,
-                            String hitType,
+                            HitType hitType,
                             String pssmId,
                             String model,
                             int locationStart,
@@ -101,11 +128,11 @@ public abstract class RPSBlastRawMatch extends RawMatch implements Serializable 
         this.definitionLine = definitionLine;
     }
 
-    public String getHitType() {
+    public HitType getHitType() {
         return hitType;
     }
 
-    public void setHitType(String hitType) {
+    public void setHitType(HitType hitType) {
         this.hitType = hitType;
     }
 
@@ -176,6 +203,7 @@ public abstract class RPSBlastRawMatch extends RawMatch implements Serializable 
                 .appendSuper(super.equals(o))
                 .append(pssmId, m.pssmId)
                 .append(sessionNumber, m.sessionNumber)
+                .append(hitType, m.hitType)
                 .append(definitionLine, m.definitionLine)
                 .append(bitScore, m.bitScore)
                 .append(evalue, m.evalue)
@@ -189,6 +217,7 @@ public abstract class RPSBlastRawMatch extends RawMatch implements Serializable 
                 .appendSuper(super.hashCode())
                 .append(pssmId)
                 .append(sessionNumber)
+                .append(hitType)
                 .append(definitionLine)
                 .append(bitScore)
                 .append(evalue)

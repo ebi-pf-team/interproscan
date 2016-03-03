@@ -3,9 +3,14 @@ package uk.ac.ebi.interpro.scan.io.match.cdd;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.net.SyslogAppender;
+import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
+import uk.ac.ebi.interpro.scan.io.match.MatchParser;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
@@ -14,16 +19,20 @@ import java.util.regex.Pattern;
 
 /**
  * Parser for the CDD output format:
- *
+ * <p/>
  * //
  *
  * @author Gift Nuka
  * @version $Id: CDDMatchParser.java,v 1.1 2015/12/16 14:01:17 nuka Exp $
  * @since 5.16
  */
-public class CDDMatchParser implements Serializable {
+public class CDDMatchParser implements Serializable, MatchParser {
 
     private static final Logger LOGGER = Logger.getLogger(CDDMatchParser.class.getName());
+
+    private final SignatureLibrary signatureLibrary;
+    private String signatureLibraryRelease;
+
 
     private static final char PROTEIN_ID_LINE_START = '>';
 
@@ -45,14 +54,13 @@ public class CDDMatchParser implements Serializable {
     private static final String END_OF_RECORD_MARKER = "//";
 
     /**
-     #QUERY	<query-id>	<seq-type>	<seq-length>	<definition-line>
-     #DOMAINS
-     #<session-ordinal>	<query-id[readingframe]>	<hit-type>	<PSSM-ID>	<from>	<to>	<E-Value>	<bitscore>	<accession>	<short-name>	<incomplete>	<superfamily PSSM-ID>
-     QUERY	Query_1	Peptide	590	sp|Q96N58|ZN578_HUMAN Zinc finger protein 578 OS=Homo sapiens GN=ZNF578 PE=2 SV=2
-     DOMAINS
-     1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
-     ENDDOMAINS
-
+     * #QUERY	<query-id>	<seq-type>	<seq-length>	<definition-line>
+     * #DOMAINS
+     * #<session-ordinal>	<query-id[readingframe]>	<hit-type>	<PSSM-ID>	<from>	<to>	<E-Value>	<bitscore>	<accession>	<short-name>	<incomplete>	<superfamily PSSM-ID>
+     * QUERY	Query_1	Peptide	590	sp|Q96N58|ZN578_HUMAN Zinc finger protein 578 OS=Homo sapiens GN=ZNF578 PE=2 SV=2
+     * DOMAINS
+     * 1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
+     * ENDDOMAINS
      */
 
     private static final Pattern QUERY_LINE_PATTERN
@@ -66,13 +74,30 @@ public class CDDMatchParser implements Serializable {
      */
     private static final Pattern START_STOP_PATTERN = Pattern.compile("^(\\d+)\\s+(\\d+).*$");
 
+    public CDDMatchParser() {
+        this.signatureLibrary = null;
+        this.signatureLibraryRelease = null;
+    }
 
-    public Set<RawProtein<CDDRawMatch>> parse(InputStream is, String fileName) throws IOException, ParseException {
+    public SignatureLibrary getSignatureLibrary() {
+        return signatureLibrary;
+    }
+
+    public String getSignatureLibraryRelease() {
+        return signatureLibraryRelease;
+    }
+
+    @Required
+    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+    public Set<RawProtein<CDDRawMatch>> parse(InputStream is) throws IOException, ParseException {
 
         Map<String, RawProtein<CDDRawMatch>> matchData = new HashMap<String, RawProtein<CDDRawMatch>>();
 
         Set<CDDRawMatch> rawMatches = parseFileInput(is);
-        CDDRawMatch rawMatche;
+
         for (CDDRawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
             if (matchData.containsKey(sequenceId)) {
@@ -125,7 +150,7 @@ public class CDDMatchParser implements Serializable {
                         definitionLine = matcher.group(4);
                         sequenceIdentifier = definitionLine.trim();
                         System.out.println("Query: " + queryId
-                                + ": sequenceIdentifier : " + sequenceIdentifier  + " "
+                                + ": sequenceIdentifier : " + sequenceIdentifier + " "
                                 + sequenceType + " " + sequenceLength + " " + definitionLine);
                     }
                 } else if (line.startsWith(DOMAINS_BLOCK_START_MARKER)) {
@@ -142,6 +167,7 @@ public class CDDMatchParser implements Serializable {
                             int sessionNumber = Integer.parseInt(matcher.group(1));
                             String queryId = matcher.group(2);
                             String queryType = matcher.group(3);
+                            RPSBlastRawMatch.HitType hitType = RPSBlastRawMatch.HitType.byHitTypeString(queryType);
                             String pssmID = matcher.group(4);
                             int locationStart = Integer.parseInt(matcher.group(5));
                             int locationEnd = Integer.parseInt(matcher.group(6));
@@ -155,15 +181,10 @@ public class CDDMatchParser implements Serializable {
                             String incomplete = matcher.group(11);
                             String superfamilyPSSMId = matcher.group(12);
 
-//                                                if (proteinIdentifier == null) {
-//                                                    throw new ParseException("CDD output parsing: Trying to parse raw output but don't appear to have a protein ID.", fileName, line, lineNumber);
-//                                                }
-
-                            //TODO remove the hard coded version
-                            matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, queryType,
+                            matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
                                     pssmID, model, locationStart, locationEnd, eValue, score,
-                                    shortName, incomplete, superfamilyPSSMId, "3.14"));
-                            System.out.println("match  : " + (CDDRawMatch) getLastElement(matches));
+                                    shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
+                            Utilities.verboseLog(10, "match  : " + (CDDRawMatch) getLastElement(matches));
                         }
                     }
                 }

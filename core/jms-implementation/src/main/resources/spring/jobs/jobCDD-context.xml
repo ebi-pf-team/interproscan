@@ -66,6 +66,7 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
+    <!-- STEP 4 -->
     <bean id="stepCDDDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractCDDStep">
@@ -75,39 +76,72 @@
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
-    <bean id="stepCDDStoreFilteredMatches"
+    <!-- STEP 5 -->
+    <bean id="stepCDDParsePostBlastProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.ParseCDDOutputStep"
           parent="abstractCDDStep">
         <property name="dependsUpon" ref="stepCDDRunPostBlastProcessing"/>
         <property name="stepDescription" value="Parse the CDD binary output and store as Filtered matches."/>
-        <property name="cddOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser"/>
+            <bean class="uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser">
+                <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
+            </bean>
         </property>
-        <property name="matchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO" />
-        </property>
+        <property name="rawMatchDAO"  ref="cddRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_CDD"/>
     </bean>
+
+    <!-- STEP 6 -->
 
     <bean id="stepCDDDeleteRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractCDDStep">
-        <property name="dependsUpon" ref="stepCDDStoreFilteredMatches"/>
+        <property name="dependsUpon" ref="stepCDDParsePostBlastProcessing"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: CDD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
-    <!-- ######################## Dependencies ############################  -->
-    <bean id="signatureLibraryReleaseCDD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
-        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="CDD"/>
-        <constructor-arg type="java.lang.String" ref="latestCDDSignatureLibraryRelease"/>
+    <!-- STEP 7 -->
+
+    <bean id="stepCDDPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.CDDPostProcessingStep"
+          parent="abstractCDDStep">
+        <property name="dependsUpon" ref="stepCDDParsePostBlastProcessing"/>
+        <property name="serialGroup" value="RPSBLAST_POST_PROCESSING"/>
+        <property name="stepDescription" value="Filter CDD matches and persist filtered results"/>
+        <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.cdd.CDDPostProcessing">
+                <property name="hitTypes">
+                    <list>
+                        <value>SPECIFIC</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
+        </property>
+        <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
     </bean>
 
-    <bean id="latestCDDSignatureLibraryRelease" class="java.lang.String">
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: CDD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- ######################## Dependencies ############################  -->
+
+    <bean id="cddRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseCDD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="CDD"/>
+        <constructor-arg type="java.lang.String" ref="cddSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="cddSignatureLibraryRelease" class="java.lang.String">
         <constructor-arg value="${cdd.signature.library.release}"/>
     </bean>
 
