@@ -210,7 +210,8 @@ public class WriteOutputStep extends Step {
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
                 }
             } catch (IOException ioe) {
-                throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan", ioe);
+                final String p = outputPath.toAbsolutePath().toString();
+                throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan to path: " + p, ioe);
             }
         }
 
@@ -253,6 +254,7 @@ public class WriteOutputStep extends Step {
             // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
             // but using an underscore rather than a space (pah!)
             Integer counter = null;
+            int ioCounter = 0;
             boolean pathAvailable = false;
             while (!pathAvailable) {
                 final StringBuilder candidateFileName = new StringBuilder(filePathName);
@@ -274,7 +276,24 @@ public class WriteOutputStep extends Step {
                     outputPath = Paths.get(candidateFileName.toString());
                 }
                 pathAvailable = !Files.exists(outputPath);
+                if (pathAvailable) {
+                    try {
+                        // Start creating the empty output file now, while the path is still available
+                        outputPath = Files.createFile(outputPath);
+                    } catch (IOException e) {
+                        pathAvailable = false; // Nope, that path has probably just been taken (e.g. by another copy of InterProScan writing to the same output directory)
+                        if (LOGGER.isInfoEnabled()) {
+                            LOGGER.info("Path " + candidateFileName.toString() + " was available for writing to, but I/O exception thrown");
+                        }
+                        ioCounter++;
+                        if (ioCounter > 2000) {
+                            // Stop possible infinite loop!
+                            throw new IllegalStateException("Path " + candidateFileName.toString() + " was available, but I/O exception thrown on file creation");
+                        }
+                    }
+                }
             }
+
         }
         return outputPath;
     }
@@ -448,6 +467,5 @@ public class WriteOutputStep extends Step {
             }
         }
     }
-
 
 }
