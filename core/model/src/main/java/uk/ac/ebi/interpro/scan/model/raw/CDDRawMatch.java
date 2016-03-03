@@ -35,11 +35,13 @@ public class CDDRawMatch extends RPSBlastRawMatch implements Comparable<CDDRawMa
 
     */
 
+    protected CDDRawMatch() {
+    }
 
     public CDDRawMatch(String sequenceIdentifier,
                        String definitionLine,
                        int sessionIdentifier,
-                       String hitType,
+                       HitType hitType,
                        String pssmId,
                        String model,
                        int locationStart,
