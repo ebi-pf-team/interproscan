@@ -28,6 +28,8 @@ public class TSVWriter implements Closeable {
     }
 
     public void close() throws IOException {
-        writer.close();
+        if (writer != null) {
+            writer.close();
+        }
     }
 }
