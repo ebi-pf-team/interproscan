@@ -117,7 +117,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(19, 21)
+            return new HashCodeBuilder(17, 19)
                     .appendSuper(super.hashCode())
                     .append(score)
                     .append(evalue)
