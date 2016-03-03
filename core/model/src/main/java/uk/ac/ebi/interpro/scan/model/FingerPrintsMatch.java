@@ -88,7 +88,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(19, 63)
+        return new HashCodeBuilder(17, 61)
                 .appendSuper(super.hashCode())
                 .append(evalue)
                 .toHashCode();
@@ -178,7 +178,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(19, 61)
+            return new HashCodeBuilder(17, 61)
                     .appendSuper(super.hashCode())
                     .append(pvalue)
                     .append(score)

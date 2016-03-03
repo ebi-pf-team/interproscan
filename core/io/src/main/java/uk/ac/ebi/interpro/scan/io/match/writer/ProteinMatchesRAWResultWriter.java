@@ -104,7 +104,7 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                     }
                     continue;
                 }
-                final String signatureName = match.getSignature().getName();
+                final String signatureName = signature.getName();
 
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
