@@ -31,13 +31,13 @@ import java.util.Set;
  * @since 1.0
  */
 
-/**
-  TODO refactor ideally this should be simply as follows
 
+//  TODO refactor ideally this should be simply as follows
 public class ParseCDDOutputStep extends ParseStep<CDDRawMatch> {
 
 }
- */
+
+/*
 
 public class ParseCDDOutputStep extends Step {
 
@@ -48,7 +48,6 @@ public class ParseCDDOutputStep extends Step {
     private CDDMatchParser parser;
 
     private RawMatchDAO<CDDRawMatch> rawMatchDAO;
-    private FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> matchDAO;
 
     @Required
     public void setCddOutputFileNameTemplate(String cddOutputFileNameTemplate) {
@@ -61,15 +60,15 @@ public class ParseCDDOutputStep extends Step {
     }
 
     @Required
-    public void setMatchDAO(FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> matchDAO) {
-        this.matchDAO = matchDAO;
+    public void setRawMatchDAO(RawMatchDAO<CDDRawMatch> rawMatchDAO) {
+        this.rawMatchDAO = rawMatchDAO;
     }
-
-
 
 //    public void setMatchDAO(CDDFilteredMatchDAO matchDAO) {
 //        this.matchDAO = matchDAO;
 //    }
+
+*/
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -81,6 +80,8 @@ public class ParseCDDOutputStep extends Step {
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory being the directory in which the raw file is being stored.
      */
+
+    /*
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         delayForNfs();
@@ -105,7 +106,7 @@ public class ParseCDDOutputStep extends Step {
                 LOGGER.debug("A total of " + count + " raw matches from file " + fileName);
             }
             //Set<CDDRawMatch> matches = parser.parse(is, fileName);
-            matchDAO.persist(rawProteins);
+            rawMatchDAO.persist(rawProteins);
 
             //TODO refactor this
             Long now = System.currentTimeMillis();
@@ -139,3 +140,5 @@ public class ParseCDDOutputStep extends Step {
 
     }
 }
+
+    */
