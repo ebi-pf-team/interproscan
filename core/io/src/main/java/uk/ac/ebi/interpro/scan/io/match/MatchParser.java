@@ -18,10 +18,10 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
  */
 public interface MatchParser<T extends RawMatch> extends Serializable {
 
-    public SignatureLibrary getSignatureLibrary();
+    SignatureLibrary getSignatureLibrary();
 
-    public String getSignatureLibraryRelease();
+    String getSignatureLibraryRelease();
     
-    public Set<RawProtein<T>> parse(InputStream is) throws IOException;
+    Set<RawProtein<T>> parse(InputStream is) throws IOException;
 
 }

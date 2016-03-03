@@ -294,7 +294,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             final String signatureAc = signature.getAccession();
             final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
             final String analysis = signatureLibrary.getName();
-            final String description = match.getSignature().getDescription();
+            final String description = signature.getDescription();
             final String matchId = MATCH_STRING + getMatchCounter();
 
             final Set<Location> locations = match.getLocations();
