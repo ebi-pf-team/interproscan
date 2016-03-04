@@ -148,7 +148,7 @@ public class WriteOutputStep extends Step {
         final Map<String, String> parameters = stepInstance.getParameters();
         final String outputFormatStr = parameters.get(OUTPUT_FILE_FORMATS);
         final Set<FileOutputFormat> outputFormats = FileOutputFormat.stringToFileOutputFormats(outputFormatStr);
-        boolean explicitPath = parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
+        final boolean explicitPath = parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
         final String filePathName = (explicitPath)
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
@@ -222,7 +222,7 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void cleanUpWorkingDir(String temporaryFileDirectory) {
+    private void cleanUpWorkingDir(final String temporaryFileDirectory) {
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf(File.separatorChar));
@@ -235,7 +235,9 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private Path getPathName(boolean explicitPath, String filePathName, FileOutputFormat outputFormat) {
+    private Path getPathName(final boolean explicitPath,
+                             final String filePathName,
+                             final FileOutputFormat outputFormat) {
         // E.g. for "-b OUT" filePathName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT"
         Path outputPath = null;
 
