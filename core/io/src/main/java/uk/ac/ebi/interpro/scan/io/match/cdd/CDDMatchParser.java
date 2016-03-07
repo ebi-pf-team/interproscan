@@ -195,7 +195,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
                 reader.close();
             }
         }
-        System.out.println("CDD matches : " + matches);
+        Utilities.verboseLog("CDD matches size : " + matches.size());
         return matches;
     }
 
