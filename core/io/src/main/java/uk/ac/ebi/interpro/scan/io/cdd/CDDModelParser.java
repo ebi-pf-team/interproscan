@@ -119,22 +119,25 @@ public class CDDModelParser extends AbstractModelFileParser {
                                 } else {
                                     text2 = text2.trim();
                                     name = text2.trim();
-                                }
-                                break;
-                            case 3:
-                                // Description
-                                // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
-                                String text3 = values[3]; // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
-                                if (text3 == null) {
-                                    LOGGER.warn("CDD model parser could not extract the description from NULL text "
-                                            + " on line number " + lineNumber + " - so this can't be added to the database");
-                                } else {
-                                    description = text3.trim();
-                                    int lengthOfName = name.length();
-                                    //TODO consider using the name as part of the description for the TSV output sake
+
+                                    //name will also be used for description
+                                    description = name;
                                     if (description.length() > 50) {
                                         description = description.substring(0, 46) + "...";
                                     }
+                                }
+                                break;
+                            case 3:
+                                // Description -- see case 2
+                                // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
+                                String text3 = values[3]; // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
+                                if (text3 == null) {
+                                    //now not significant as we are using the name as the description
+                                    LOGGER.debug("CDD model parser could not extract the description from NULL text "
+                                            + " on line number " + lineNumber + " - so this can't be added to the database");
+                                } else {
+                                    String cddAbstract = text3.trim();
+                                    //
                                 }
                                 break;
 
