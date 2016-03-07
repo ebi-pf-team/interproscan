@@ -86,8 +86,8 @@
           parent="abstractSMARTStep">
         <property name="dependsUpon" ref="stepSMARTRunBinary"/>
         <property name="stepDescription" value="Parse the HMMER2 output and store as Filtered matches."/>
-        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="smartRawMatchDAO" ref="smartRawMatchDAO"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="smartRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_SMART"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
