@@ -63,8 +63,7 @@ public class CDDModelParserTest {
             if (!(name.equals("BAR_Arfaptin_like") || name.equals("Kelch"))) {
                 fail("Unexpected name");
             }
-            if (!(description.equals("The Bin/Amphiphysin/Rvs (BAR) domain of Arfapt...")
-                    || description.equals("Kelch repeat. Kelch repeats are 44 to 56 amino..."))) {
+            if (!(description.equals(name))) {
                 fail("Unexpected description");
             }
         }
