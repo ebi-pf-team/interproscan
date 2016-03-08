@@ -11,6 +11,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,11 +53,8 @@ public class CDDModelParser extends AbstractModelFileParser {
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
 
         for (Resource modelFile : modelFiles) {
-            BufferedReader reader = null;
-            try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()))) {
                 StringBuffer modelBuffer = new StringBuffer();
-
-                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
                 int lineNumber = 0;
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -64,9 +62,6 @@ public class CDDModelParser extends AbstractModelFileParser {
                         LOGGER.debug("Parsed " + lineNumber + " lines of the cddid.tbl file.");
                         LOGGER.debug("Parsed " + release.getSignatures().size() + " signatures.");
                     }
-                    String accession = null;
-                    String name = null;
-                    String description = null;
 
                     lineNumber ++;
                     // Load the model line by line into a temporary buffer.
@@ -76,83 +71,51 @@ public class CDDModelParser extends AbstractModelFileParser {
 
                     // Now parse the model line
                     String[] values = line.split("\\t");
-                    LOGGER.debug("signatur line: " + values);
-                    int i = 0;
-                    String textAccession = values[1].trim();
-                    Matcher cdAccMatcher_check = CD_ACCESSION_PATTERN.matcher(textAccession);
-                    Matcher sdAccMather_check = SD_ACCESSION_PATTERN.matcher(textAccession);
-                    if (! (cdAccMatcher_check.find() || sdAccMather_check.find())) {
-                        LOGGER.debug("CDD model parser could not extract the accession from NULL text "
-                                + " or this is not a CDD signature "
-                                + " on line number " + lineNumber + " - so this can't be added to the database"
-                                + " - Accession: " +  textAccession);
+                    if (values.length != 5) {
+                        LOGGER.warn("CDD model parser text not in expected 5 column TSV format "
+                                + " on line number " + lineNumber + " - so this can't be added to the database");
                         continue;
                     }
-                    while (i < values.length) {
-                        switch (i) {
-                            case 1:
-                                // Accession
-                                // Example:cd00011
-                                String text = values[1]; // Example: cd00011
-                                if (text == null) {
-                                    LOGGER.warn("CDD model parser could not extract the accession from NULL text "
-                                            + " on line number " + lineNumber + " - so this can't be added to the database");
-                                } else {
-                                    text = text.trim();
-                                    Matcher cdAccMatcher = CD_ACCESSION_PATTERN.matcher(text);
-                                    Matcher sdAccMather = SD_ACCESSION_PATTERN.matcher(text);
-                                    if (cdAccMatcher.find() || sdAccMather.find()) {
-                                        accession = text;
-                                    } else {
-                                        LOGGER.warn("CDD model parser could not extract the accession from this text: "
-                                                + text + " on line number " + lineNumber + " - so this can't be added to the database");
-                                    }
-                                }
-                                break;
-                            case 2:
-                                // Name
-                                // Example: BAR_Arfaptin_like
-                                String text2 = values[2]; // Example: BAR_Arfaptin_like
-                                if (text2 == null) {
-                                    LOGGER.warn("CDD model parser could not extract the name from NULL text "
-                                            + " on line number " + lineNumber + " - so this can't be added to the database");
-                                } else {
-                                    text2 = text2.trim();
-                                    name = text2.trim();
-
-                                    //name will also be used for description
-                                    description = name;
-                                    if (description.length() > 50) {
-                                        description = description.substring(0, 46) + "...";
-                                    }
-                                }
-                                break;
-                            case 3:
-                                // Description -- see case 2
-                                // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
-                                String text3 = values[3]; // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
-                                if (text3 == null) {
-                                    //now not significant as we are using the name as the description
-                                    LOGGER.debug("CDD model parser could not extract the description from NULL text "
-                                            + " on line number " + lineNumber + " - so this can't be added to the database");
-                                } else {
-                                    String cddAbstract = text3.trim();
-                                    //
-                                }
-                                break;
-
-                        }
-                        i++;
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Signature line: " + Arrays.toString(values));
                     }
+
+                    // Parse model accession
+                    final String accession = (values[1] == null ? "" : values[1].trim());
+                    Matcher cdAcMatcher = CD_ACCESSION_PATTERN.matcher(accession);
+                    Matcher sdAcMather = SD_ACCESSION_PATTERN.matcher(accession);
+                    if (! (cdAcMatcher.find() || sdAcMather.find())) {
+                        LOGGER.warn("CDD model parser could not extract the accession from NULL text "
+                                + " or this is not a CDD signature "
+                                + " on line number " + lineNumber + " - so this can't be added to the database"
+                                + " - Accession: " +  accession);
+                        continue;
+                    }
+
+                    // Parse model name and description
+                    String name = null;
+                    String description = null;
+                    if (values[2] == null) {
+                        LOGGER.warn("CDD model parser could not extract the name from NULL text "
+                                + " on line number " + lineNumber + " - so this can't be added to the database");
+                    }
+                    else {
+                        name = values[2].trim(); // Example: BAR_Arfaptin_like
+                        // Name will also be used for description
+                        description = name;
+                        if (description.length() > 50) {
+                            description = description.substring(0, 46) + "...";
+                        }
+                    }
+
+                    // CDD abstract text
+                    // Example: The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-
+                    //String abstractText = (values[3] == null ? "" : values[3].trim());
 
                     // Now create the signature
                     if (accession != null) {
                         release.addSignature(createSignature(accession, name, description, release, modelBuffer));
                     }
-                }
-            } finally {
-                if (reader != null) {
-                    reader.close();
                 }
             }
         }
