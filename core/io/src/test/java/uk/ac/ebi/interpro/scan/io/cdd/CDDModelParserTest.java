@@ -5,12 +5,13 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.io.cdd.CDDModelParser;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -39,32 +40,35 @@ public class CDDModelParserTest {
         CDDModelParser parser = new CDDModelParser();
         parser.setSignatureLibrary(TEST_LIBRARY);
         parser.setReleaseVersionNumber(TEST_RELEASE_VERSION);
-        LOGGER.debug("test model file: " + modelFileResource.getFilename());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Test model file: " + modelFileResource.getFilename());
+        }
         parser.setModelFiles(modelFileResource);
         SignatureLibraryRelease release = parser.parse();
 
         assertEquals(TEST_LIBRARY, release.getLibrary());
         assertEquals(TEST_RELEASE_VERSION, release.getVersion());
-        Set<Signature> signatures = release.getSignatures();
+        final Set<Signature> signatures = release.getSignatures();
         assertNotNull(signatures);
-        assertEquals(2, signatures.size());
-        for (Signature signature : signatures) {
+        assertEquals(3, signatures.size());
+        for (final Signature signature : signatures) {
             assertNotNull(signature);
-            assertNotNull(signature.getModels());
-            assertEquals(1, signature.getModels().size());
+            final Map<String, Model> models = signature.getModels();
+            assertNotNull(models);
+            assertEquals(1, models.size());
 
             // Detailed signature checks
-            String accession = signature.getAccession();
-            String name = signature.getName();
-            String description = signature.getDescription();
-            if (!(accession.equals("cd00011") || accession.equals("sd00038"))) {
-                fail("Unexpected accession" + accession);
+            final String accession = signature.getAccession();
+            final String name = signature.getName();
+            final String description = signature.getDescription();
+            if (!(accession.equals("cd00004") || accession.equals("cd00011") || accession.equals("sd00038"))) {
+                fail("Unexpected accession: " + accession);
             }
-            if (!(name.equals("BAR_Arfaptin_like") || name.equals("Kelch"))) {
-                fail("Unexpected name");
+            if (!(name.equals("Sortase") || name.equals("BAR_Arfaptin_like") || name.equals("Kelch"))) {
+                fail("Unexpected name: " + name);
             }
             if (!(description.equals(name))) {
-                fail("Unexpected description");
+                fail("Unexpected description: " + description);
             }
         }
     }
