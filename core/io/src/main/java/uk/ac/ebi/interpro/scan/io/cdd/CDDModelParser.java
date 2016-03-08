@@ -69,7 +69,7 @@ public class CDDModelParser extends AbstractModelFileParser {
                     String[] values = line.split("\\t");
                     if (values.length != 5) {
                         LOGGER.warn("CDD model parser text not in expected 5 column TSV format "
-                                + " on line number " + lineNumber + " - so this can't be added to the database");
+                                + "on line number " + lineNumber + " - so this can't be added to the database");
                         continue;
                     }
                     if (LOGGER.isDebugEnabled()) {
@@ -82,9 +82,9 @@ public class CDDModelParser extends AbstractModelFileParser {
                     Matcher sdAcMather = SD_ACCESSION_PATTERN.matcher(accession);
                     if (! (cdAcMatcher.find() || sdAcMather.find())) {
                         LOGGER.warn("CDD model parser could not extract the accession from NULL text "
-                                + " or this is not a CDD signature "
-                                + " on line number " + lineNumber + " - so this can't be added to the database"
-                                + " - Accession: " +  accession);
+                                + "or this is not a CDD signature "
+                                + "on line number " + lineNumber + " - so this can't be added to the database "
+                                + "- Accession: " +  accession);
                         continue;
                     }
 
@@ -93,7 +93,7 @@ public class CDDModelParser extends AbstractModelFileParser {
                     String description = null;
                     if (values[2] == null) {
                         LOGGER.warn("CDD model parser could not extract the name from NULL text "
-                                + " on line number " + lineNumber + " - so this can't be added to the database");
+                                + "on line number " + lineNumber + " - so this can't be added to the database");
                     }
                     else {
                         name = values[2].trim(); // Example: BAR_Arfaptin_like
