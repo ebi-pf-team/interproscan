@@ -21,6 +21,7 @@ import java.util.Set;
  * This class parses and persists the output from hmmpfam for SMART
  *
  * @author Phil Jones, adapted by John Maslen
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
