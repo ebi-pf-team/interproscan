@@ -96,7 +96,7 @@ public class Pfam_A_PostProcessingStep extends Step {
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
             //do we expect matches?
-            Utilities.sleep(10000);
+            Utilities.sleep(2000);
             //try again
             rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                     stepInstance.getBottomProtein(),
