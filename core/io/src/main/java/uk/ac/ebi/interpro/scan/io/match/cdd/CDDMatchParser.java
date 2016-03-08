@@ -61,12 +61,6 @@ public class CDDMatchParser implements Serializable, MatchParser {
             = Pattern.compile("^QUERY\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(.*)$");
     private static final Pattern DOMAIN_LINE_PATTERN
             = Pattern.compile("^(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)");
-    /**
-     * Matches the line with the start and stop coordinates of the cdd region.
-     * Group 1: Start
-     * Group 2: Stop.
-     */
-    private static final Pattern START_STOP_PATTERN = Pattern.compile("^(\\d+)\\s+(\\d+).*$");
 
     public CDDMatchParser() {
         this.signatureLibrary = null;
@@ -117,7 +111,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
             String sequenceIdentifier = "";
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                LOGGER.debug("line: " + line);
+                LOGGER.debug("Line: " + line);
                 //System.out.println("line: " + line);
 
                 if (line.startsWith(SESSION_BLOCK_START_MARKER)) {
@@ -148,7 +142,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
                             break;
                         }
                         //1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
-                        LOGGER.debug("line: " + line);
+                        LOGGER.debug("Line: " + line);
                         System.out.println("Domain line: " + line);
                         Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line);
                         if (matcher.matches()) {
@@ -172,7 +166,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
                             matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
                                     pssmID, model, locationStart, locationEnd, eValue, score,
                                     shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
-                            Utilities.verboseLog(10, "match  : " + getLastElement(matches));
+                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                         }
                     }
                 }
