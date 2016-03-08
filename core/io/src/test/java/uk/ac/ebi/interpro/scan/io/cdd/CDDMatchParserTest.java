@@ -43,7 +43,7 @@ public class CDDMatchParserTest extends TestCase {
         Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
         InputStream is = modelFileResource.getInputStream();
 
-        Set<RawProtein<CDDRawMatch>> result = instance.parse(is, modelFileResource.getFilename());
+        Set<RawProtein<CDDRawMatch>> result = instance.parse(is);
         LOGGER.debug("result: " + result.toString());
         System.out.println("result: " + result);
         assertEquals(2, result.size());
