@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.io.match.cdd;
 
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.net.SyslogAppender;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -33,9 +32,6 @@ public class CDDMatchParser implements Serializable, MatchParser {
     private final SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;
 
-
-    private static final char PROTEIN_ID_LINE_START = '>';
-
     private static final String DATA_BLOCK_START_MARKER = "DATA";
     private static final String DATA_BLOCK_END_MARKER = "ENDDATA";
     private static final String SESSION_BLOCK_START_MARKER = "SESSION";
@@ -50,8 +46,6 @@ public class CDDMatchParser implements Serializable, MatchParser {
 
     private static final String MOTIFS_BLOCK_START_MARKER = "MOTIFS";
     private static final String MOTIFS_BLOCK_END_MARKER = "ENDMOTIFS";
-
-    private static final String END_OF_RECORD_MARKER = "//";
 
     /**
      * #QUERY	<query-id>	<seq-type>	<seq-length>	<definition-line>
@@ -94,7 +88,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
 
     public Set<RawProtein<CDDRawMatch>> parse(InputStream is) throws IOException, ParseException {
 
-        Map<String, RawProtein<CDDRawMatch>> matchData = new HashMap<String, RawProtein<CDDRawMatch>>();
+        Map<String, RawProtein<CDDRawMatch>> matchData = new HashMap<>();
 
         Set<CDDRawMatch> rawMatches = parseFileInput(is);
 
@@ -104,23 +98,20 @@ public class CDDMatchParser implements Serializable, MatchParser {
                 RawProtein<CDDRawMatch> rawProtein = matchData.get(sequenceId);
                 rawProtein.addMatch(rawMatch);
             } else {
-                RawProtein<CDDRawMatch> rawProtein = new RawProtein<CDDRawMatch>(sequenceId);
+                RawProtein<CDDRawMatch> rawProtein = new RawProtein<>(sequenceId);
                 rawProtein.addMatch(rawMatch);
                 matchData.put(sequenceId, rawProtein);
             }
         }
 
-        return new HashSet<RawProtein<CDDRawMatch>>(matchData.values());
+        return new HashSet<>(matchData.values());
     }
 
     public Set<CDDRawMatch> parseFileInput(InputStream is) throws IOException, ParseException {
-        BufferedReader reader = null;
-        Set<CDDRawMatch> matches = new HashSet<CDDRawMatch>();
-        try {
-            reader = new BufferedReader(new InputStreamReader(is));
-            String currentProteinAccession = null;
+        Set<CDDRawMatch> matches = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            String proteinIdentifier = null;
+            String proteinIdentifier;
             int lineNumber = 0;
             String definitionLine = "";
             String sequenceIdentifier = "";
@@ -129,11 +120,8 @@ public class CDDMatchParser implements Serializable, MatchParser {
                 LOGGER.debug("line: " + line);
                 //System.out.println("line: " + line);
 
-                if (line.startsWith(DATA_BLOCK_END_MARKER)) {
-
-                } else if (line.startsWith(SESSION_BLOCK_START_MARKER)) {
+                if (line.startsWith(SESSION_BLOCK_START_MARKER)) {
                     //get the session data line
-                    //line = reader.readLine();
                     proteinIdentifier = line.split("\\s+")[1].trim();
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Protein: " + proteinIdentifier);
@@ -184,15 +172,10 @@ public class CDDMatchParser implements Serializable, MatchParser {
                             matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
                                     pssmID, model, locationStart, locationEnd, eValue, score,
                                     shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
-                            Utilities.verboseLog(10, "match  : " + (CDDRawMatch) getLastElement(matches));
+                            Utilities.verboseLog(10, "match  : " + getLastElement(matches));
                         }
                     }
                 }
-            }
-
-        } finally {
-            if (reader != null) {
-                reader.close();
             }
         }
         Utilities.verboseLog("CDD matches size : " + matches.size());
