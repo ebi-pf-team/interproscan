@@ -54,7 +54,6 @@ public class CDDModelParser extends AbstractModelFileParser {
 
         for (Resource modelFile : modelFiles) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()))) {
-                StringBuffer modelBuffer = new StringBuffer();
                 int lineNumber = 0;
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -64,10 +63,7 @@ public class CDDModelParser extends AbstractModelFileParser {
                     }
 
                     lineNumber ++;
-                    // Load the model line by line into a temporary buffer.
                     line = line.trim();
-                    modelBuffer.append(line);
-                    modelBuffer.append('\n');
 
                     // Now parse the model line
                     String[] values = line.split("\\t");
@@ -114,7 +110,7 @@ public class CDDModelParser extends AbstractModelFileParser {
 
                     // Now create the signature
                     if (accession != null) {
-                        release.addSignature(createSignature(accession, name, description, release, modelBuffer));
+                        release.addSignature(createSignature(accession, name, description, release));
                     }
                 }
             }
@@ -122,9 +118,8 @@ public class CDDModelParser extends AbstractModelFileParser {
         return release;
     }
 
-    protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release, StringBuffer modelBuffer) {
+    protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release) {
         Model model = new Model(accession, name, description, null);
-        modelBuffer.delete(0, modelBuffer.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }
 
