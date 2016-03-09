@@ -207,17 +207,26 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
-                System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
                 }
                 StringBuilder analysesToRun = new StringBuilder();
+                StringJoiner analysesToDisplay = new StringJoiner(", ");
+               
+
                 for (String key: analysisJobMap.keySet()){
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
+                    analysesToDisplay.add(analysisJobMap.get(key).getLibrary().getName()); // + "-" + analysisJobMap.get(key).getVersion());
                 }
+
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + analysesToRun.toString());
                 }
+
+                String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
+                System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() + "]");
+
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 StepCreationSequenceLoadListener sequenceLoadListener =
