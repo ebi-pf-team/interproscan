@@ -12,8 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +51,6 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         BufferedReader reader = null;
         int sequencesParsed = 0;
-        SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         try {
             reader = new BufferedReader(new InputStreamReader(fastaFileInputStream));
             String currentId = null;
@@ -62,7 +59,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
             String line;
             boolean foundIdLine = false;
 
-            final Set<T> parsedMolecules = new HashSet<T>();
+            final Set<T> parsedMolecules = new HashSet<>();
 
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
