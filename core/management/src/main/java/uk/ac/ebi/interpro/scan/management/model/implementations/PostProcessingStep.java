@@ -1,12 +1,12 @@
-package uk.ac.ebi.interpro.scan.management.model.implementations.cdd;
+package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.cdd.CDDPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
-import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
+import uk.ac.ebi.interpro.scan.model.Match;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
@@ -20,24 +20,22 @@ import java.util.Set;
  * @author Gift Nuka, EMBL-EBI
  * @version $Id$
  * @since 1.0
- *
- * TODO use the PostProcessingStep class next time
  */
 
-public class CDDPostProcessingStep extends Step {
+public class PostProcessingStep<T extends RawMatch, U extends Match> extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(CDDPostProcessingStep.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PostProcessingStep.class.getName());
 
-    private CDDPostProcessing<CDDRawMatch> postProcessor;
+    private PostProcessor<T> postProcessor;
 
     private String signatureLibraryRelease;
 
-    private RawMatchDAO<CDDRawMatch> rawMatchDAO;
+    private RawMatchDAO<T> rawMatchDAO;
 
-    private FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> filteredMatchDAO;
+    private FilteredMatchDAO<T, U> filteredMatchDAO;
 
     @Required
-    public void setPostProcessor(CDDPostProcessing<CDDRawMatch> postProcessor) {
+    public void setPostProcessor(PostProcessor<T> postProcessor) {
         this.postProcessor = postProcessor;
     }
 
@@ -47,12 +45,12 @@ public class CDDPostProcessingStep extends Step {
     }
 
     @Required
-    public void setRawMatchDAO(RawMatchDAO<CDDRawMatch> rawMatchDAO) {
+    public void setRawMatchDAO(RawMatchDAO<T> rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
     }
 
     @Required
-    public void setFilteredMatchDAO(FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> filteredMatchDAO) {
+    public void setFilteredMatchDAO(FilteredMatchDAO<T, U> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
@@ -72,13 +70,13 @@ public class CDDPostProcessingStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Retrieve raw results for protein range.
-        Set<RawProtein<CDDRawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
+        Set<RawProtein<T>> rawMatches = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),
                 stepInstance.getTopProtein(),
                 signatureLibraryRelease
         );
 
-        Map<String, RawProtein<CDDRawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<CDDRawMatch>>(rawMatches.size());
+        Map<String, RawProtein<T>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<T>>(rawMatches.size());
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
@@ -101,23 +99,23 @@ public class CDDPostProcessingStep extends Step {
         for (final RawProtein rawProtein : rawMatches) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10, " CDD: Retrieved " + rawMatches.size() + " proteins to post-process."
+        Utilities.verboseLog(10, "  Retrieved " + rawMatches.size() + " proteins to post-process."
                 + " A total of " + matchCount + " raw matches.");
 
-        for (RawProtein<CDDRawMatch> rawMatch : rawMatches) {
+        for (RawProtein<T> rawMatch : rawMatches) {
             proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
         }
-        Map<String, RawProtein<CDDRawMatch>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
+        Map<String, RawProtein<T>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
         filteredMatchDAO.persist(filteredMatches.values());
         matchCount = 0;
         for (final RawProtein rawProtein : filteredMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10,  " CDD: " + filteredMatches.size() + " proteins passed through post processing."
+        Utilities.verboseLog(10,  "  " + filteredMatches.size() + " proteins passed through post processing."
                 + " and a total of " + matchCount + " matches PASSED.");
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("CDD: " + filteredMatches.size() + " proteins passed through post processing.");
-            LOGGER.debug("CDD: A total of " + matchCount + " matches PASSED.");
+            LOGGER.debug(filteredMatches.size() + " proteins passed through post processing.");
+            LOGGER.debug("A total of " + matchCount + " matches PASSED.");
         }
     }
 }
