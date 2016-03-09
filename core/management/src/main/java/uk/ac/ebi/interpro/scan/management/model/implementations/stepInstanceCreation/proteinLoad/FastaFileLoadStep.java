@@ -213,7 +213,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
                 StringBuilder analysesToRun = new StringBuilder();
                 StringJoiner analysesToDisplay = new StringJoiner(", ");
-               
+
 
                 for (String key: analysisJobMap.keySet()){
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
