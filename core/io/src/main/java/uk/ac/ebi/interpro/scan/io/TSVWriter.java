@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-public class TSVWriter implements Closeable {
+public class TSVWriter implements AutoCloseable {
 
     protected Writer writer;
 
