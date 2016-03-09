@@ -215,15 +215,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Collections.singletonList(analysisJobNames));
                 }
-                StringBuilder analysesToRun = new StringBuilder();
-                for (String key: analysisJobMap.keySet()){
-                    analysesToRun.append(analysisJobMap.get(key).getLibrary().getName())
-                            .append("-")
-                            .append(analysisJobMap.get(key));
-                }
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(analysesPrintOutStr + analysesToRun.toString());
-                }
+
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 StepCreationSequenceLoadListener sequenceLoadListener =

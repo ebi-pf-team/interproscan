@@ -49,10 +49,8 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
     public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener,Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
-        BufferedReader reader = null;
         int sequencesParsed = 0;
-        try {
-            reader = new BufferedReader(new InputStreamReader(fastaFileInputStream));
+        try (BufferedReader  reader = new BufferedReader(new InputStreamReader(fastaFileInputStream))) {
             String currentId = null;
             final StringBuffer currentSequence = new StringBuffer();
             int lineNumber = 0;
@@ -140,14 +138,6 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
             }
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new IllegalStateException("Unable to close reader the fasta file input stream ", e);
-                }
-            }
         }
     }
 
