@@ -120,10 +120,10 @@ public class CDDMatchParser implements Serializable, MatchParser {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Protein: " + proteinIdentifier);
                     }
-                    System.out.println("SESSION ID: " + proteinIdentifier);
+//                    System.out.println("SESSION ID: " + proteinIdentifier);
                 } else if (line.startsWith(QUERY_BLOCK_START_MARKER)) {
                     //QUERY	Query_1	Peptide	590	sp|Q96N58|ZN578_HUMAN Zinc finger protein 578 OS=Homo sapiens GN=ZNF578 PE=2 SV=2
-                    System.out.println("Query line: " + line);
+//                    Utilities.verboseLog("Query line: " + line);
                     Matcher matcher = QUERY_LINE_PATTERN.matcher(line);
                     if (matcher.matches()) {
                         String queryId = matcher.group(1);
@@ -131,9 +131,9 @@ public class CDDMatchParser implements Serializable, MatchParser {
                         String sequenceLength = matcher.group(3);
                         definitionLine = matcher.group(4);
                         sequenceIdentifier = definitionLine.trim();
-                        System.out.println("Query: " + queryId
-                                + ": sequenceIdentifier : " + sequenceIdentifier + " "
-                                + sequenceType + " " + sequenceLength + " " + definitionLine);
+//                        Utilities.verboseLog("Query: " + queryId
+//                                + ": sequenceIdentifier : " + sequenceIdentifier + " "
+//                                + sequenceType + " " + sequenceLength + " " + definitionLine);
                     }
                 } else if (line.startsWith(DOMAINS_BLOCK_START_MARKER)) {
                     //DOMAINS
@@ -143,7 +143,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
                         }
                         //1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
                         LOGGER.debug("Line: " + line);
-                        System.out.println("Domain line: " + line);
+//                        Utilities.verboseLog("Domain line: " + line);
                         Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line);
                         if (matcher.matches()) {
                             int sessionNumber = Integer.parseInt(matcher.group(1));
@@ -166,7 +166,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
                             matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
                                     pssmID, model, locationStart, locationEnd, eValue, score,
                                     shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
-                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
+//                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                         }
                     }
                 }
