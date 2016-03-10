@@ -82,7 +82,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     protected void loadInMemoryDatabase() throws InterruptedException {
         final Thread databaseLoaderThread = new Thread(databaseCleaner);
         Long timeStarted = System.currentTimeMillis();
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Loading database into memory...");
+        LOGGER.debug("Loading database into memory...");
         databaseLoaderThread.start();
         // Pause while the database is loaded from the zip backup
         while (databaseCleaner.stillLoading()) {
@@ -101,10 +101,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     protected int createFastaFileLoadStepInstance() {
         int stepInstancesCreated = 0;
         if (fastaFilePath != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Creating FASTA file load step.");
-            }
-            Map<String, String> params = new HashMap<String, String>();
+            LOGGER.debug("Creating FASTA file load step.");
+            Map<String, String> params = new HashMap<>();
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             createBlackBoxParams(params);
             stepInstancesCreated = createStepInstancesForJob("jobLoadFromFasta", params);
@@ -123,10 +121,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     protected int createNucleicAcidLoadStepInstance() {
         int stepInstancesCreated = 0;
         if (fastaFilePath != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Creating nucleic acid load step.");
-            }
-            Map<String, String> params = new HashMap<String, String>();
+            LOGGER.debug("Creating nucleic acid load step.");
+            Map<String, String> params = new HashMap<>();
             params.put(RunGetOrfStep.SEQUENCE_FILE_PATH_KEY, fastaFilePath);
             params.put(FastaFileLoadStep.FASTA_FILE_PATH_KEY, fastaFilePath);
             createBlackBoxParams(params);
@@ -140,7 +136,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     private void createBlackBoxParams(final Map<String, String> params) {
         // Analyses as a comma separated list
         if (analyses != null && analyses.length > 0) {
-            List<String> jobNameList = new ArrayList<String>();
+            List<String> jobNameList = new ArrayList<>();
             Collections.addAll(jobNameList, analyses);
             params.put(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY, StringUtils.collectionToCommaDelimitedString(jobNameList));
         }
@@ -176,7 +172,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
      * @param params
      */
     public void processOutputFormats(final Map<String, String> params, final String[] outputFormats) {
-        List<String> outputFormatList = new ArrayList<String>();
+        List<String> outputFormatList = new ArrayList<>();
         if (outputFormats != null && outputFormats.length > 0) {
             Collections.addAll(outputFormatList, outputFormats);
         }

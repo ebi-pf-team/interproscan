@@ -23,14 +23,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     @Override
     public void run() {
-        int runStatus = 99999;
         final long now = System.currentTimeMillis();
         super.run();
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
 
-        runStatus = 11;
+        int runStatus = 11;
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
@@ -43,7 +42,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             int minimumStepsExpected = 2;
             runStatus = 31;
             if(verboseLog){
-                System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
+                System.out.println(Utilities.getTimeNow() + " DEBUG step instances: " + stepInstanceDAO.count());
             }
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
@@ -75,7 +74,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         // as they are very abundant.
                         // RunPsScanStep should have higher priority as it is slow
                         //isHighPriorityStep(step);
-                        int priority = LOW_PRIORITY;
+                        int priority;
                         if (step instanceof RunPsScanStep) {
                             priority = HIGHER_PRIORITY;
                         }else if (step.getSerialGroup() == null || step instanceof WriteFastaFileStep){
@@ -85,7 +84,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         }
 
                         // Performed in a transaction.
-                        LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+                        }
                         messageSender.sendMessage(stepInstance, false, priority, false);
                         statsUtil.addToSubmittedStepInstances(stepInstance);
                         controlledLogging = false;
@@ -94,9 +95,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 //check what is not completed
 //                statsUtil.memoryMonitor();
                 if(!controlledLogging){
-                    LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
-                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
+                        LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    }
                     controlledLogging = true;
                 }
                 //report progress
