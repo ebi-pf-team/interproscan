@@ -154,14 +154,14 @@ public abstract class AbstractMaster implements Master {
     protected int createStepInstancesForJob(String jobId, Map<String, String> parameters) {
         int stepInstancesCreatedCount = 0;
         Job job = jobs.getJobById(jobId);
-        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
+        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<>();
         for (Step step : job.getSteps()) {
             stepInstancesCreatedCount++;
             StepInstance stepInstance = new StepInstance(step);
             stepInstance.addParameters(parameters);
             List<StepInstance> mappedStepInstance = stepToStepInstances.get(step);
             if (mappedStepInstance == null) {
-                mappedStepInstance = new ArrayList<StepInstance>();
+                mappedStepInstance = new ArrayList<>();
                 stepToStepInstances.put(step, mappedStepInstance);
             }
             mappedStepInstance.add(stepInstance);
