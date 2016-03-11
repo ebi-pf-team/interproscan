@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
 
 import javax.jms.JMSException;
-import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,7 +36,6 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     @Override
     public void run() {
-        int runStatus = 99999;
         final long now = System.currentTimeMillis();
         super.run();
 
@@ -44,7 +43,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.mode = "singleseq";
 
-        runStatus = 11;
+        int runStatus = 11;
 
         if(verboseLog){
             System.out.println(Utilities.getTimeNow() + " DEBUG " + "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
@@ -76,32 +75,37 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
             int stepInstanceSubmitCount = 0;
             while (!shutdownCalled) {
-                boolean runningFirstStep = stepInstanceDAO.count() == stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+                long totalStepsCount = stepInstanceDAO.count();
+                List<StepInstance> unfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
+                int totalUnfinishedStepsCount = unfinishedStepInstances.size();
+                boolean runningFirstStep = totalStepsCount == totalUnfinishedStepsCount;
 
                 boolean completed = true;
                 runStatus = 41;
 
                 if (stepInstanceSubmitCount == 1 && firstPass && (! isUseMatchLookupService())){
-                    if(verboseLog){
+                    if (verboseLog && LOGGER.isDebugEnabled()) {
                         LOGGER.debug("First steps: " + firstPass);
-                        LOGGER.debug("Steps left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        LOGGER.debug("Steps left: " + totalUnfinishedStepsCount);
                     }
                     if(! runningFirstStep){
-                        for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                        for (StepInstance stepInstance : unfinishedStepInstances) {
                             runStatus = 45;
                             if (isHighPriorityStep(stepInstance.getStep(jobs))){
                                 stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
                                 controlledLogging = false;
                             }
                         }
-                        LOGGER.debug("Steps left after first pass: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Steps left after first pass: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        }
                         firstPass = false;
                         completed = false;
-                        Thread.sleep(500); //
+                        Thread.sleep(500);
                     }
-                }else{
+                } else {
                     int submitted = 0;
-                    for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                    for (StepInstance stepInstance : unfinishedStepInstances) {
                         runStatus = 51;
                         completed &= stepInstance.haveFinished(jobs);
                         submitted = submitStepInstanceToRequestQueue(stepInstance);
@@ -111,36 +115,35 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         controlledLogging = false;
                     }
                 }
-                if(!controlledLogging){
-                    LOGGER.debug("InterProScan Master has no stepInstances ready to run yet ... but soon ");
-                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+
+                // Check what is still running
+                totalUnfinishedStepsCount = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+
+                if(!controlledLogging) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("InterProScan Master has no stepInstances ready to run yet ... but soon ");
+                        LOGGER.debug("Step instances left to run: " + totalUnfinishedStepsCount);
+                        LOGGER.debug("Total StepInstances: " + totalStepsCount);
+                    }
 //                    System.out.println(Utilities.getTimeNow() + " DEBUG stepInstanceSubmitCount (2): " + stepInstanceSubmitCount);
                     controlledLogging = true;
                 }
                 //report progress
-                statsUtil.setTotalJobs(stepInstanceDAO.count());
-                statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                statsUtil.setTotalJobs(totalStepsCount);
+                statsUtil.setUnfinishedJobs(totalUnfinishedStepsCount);
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
-
-                if(verboseLog && !controlledLogging){
-                    if(statsUtil.getUnfinishedJobs() < (statsUtil.getTotalJobs() / 2)){
-                        System.out.println(Utilities.getTimeNow() + "Step instances left: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                        System.out.println(Utilities.getTimeNow() + " DEBUG " +  " Total step instances: " + stepInstanceDAO.count());
-                    }
-                }
 
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
                 if (completed &&
-                        stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
-                        && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep
-                        && stepInstanceDAO.count() >= minimumStepsExpected) {
-                    Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
+                        totalUnfinishedStepsCount == 0
+                        && totalStepsCount > stepInstancesCreatedByLoadStep
+                        && totalStepsCount >= minimumStepsExpected) {
+                    Utilities.verboseLog("stepInstanceDAO.count() " + totalStepsCount
                             + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
-                            +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            +  " unfinishedSteps " + totalUnfinishedStepsCount);
                     runStatus = 0;
                     break;
                 }
@@ -224,10 +227,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             // as they are very abundant.
             final int priority = lowPriorityStep ? 4 : 8;
 
-            Long now = System.currentTimeMillis();
-
             // Performed in a transaction.
-            LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+            }
             messageSender.sendMessage(stepInstance, false, priority, false);
             statsUtil.addToSubmittedStepInstances(stepInstance);
             return 1;
@@ -270,7 +273,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 || step.getId().toLowerCase().contains("prositeprofiles".toLowerCase())
                 ){
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" panther/prositeprofiles job: " + step.getId()+ " Should have high priority");
+                LOGGER.debug(" panther/prositeprofiles job: " + step.getId() + " Should have high priority");
             }
             return true;
         }

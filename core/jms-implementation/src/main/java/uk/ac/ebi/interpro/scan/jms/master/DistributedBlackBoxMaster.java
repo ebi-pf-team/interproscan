@@ -154,14 +154,12 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 boolean completed = true;
                 runStatus = 41;
 
-                Map<Long, String> submittedSteps = new ConcurrentHashMap<Long, String>();
-                //TODO check the
+                Map<Long, String> submittedSteps = new ConcurrentHashMap<>();
                 List<StepInstance> unfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
                 if (verboseLogLevel >= 10) {
                     Utilities.verboseLog(threadName + "[Distributed Master] [main loop]  totalUnfinishedStepInstances: "
                             + unfinishedStepInstances.size());
                 }
-//                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
                 for (StepInstance stepInstance : unfinishedStepInstances) {
                     Utilities.verboseLog(10, "[Distributed Master] [main loop] [Iterate over unfinished StepInstances]: Currently on "
                             + stepInstance);
@@ -266,7 +264,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             + " step instance canbesubmitted: " + canBeSubmitted
                             + " serialGroupCanRun: " + serialGroupCanRun);
 
-                } // end of for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances())
+                }
 
                 runStatus = 91;
                 Utilities.verboseLog("[main loop] time taken to loop over instances : "
@@ -301,9 +299,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 if (completed && totalUnfinishedStepInstances == 0
                         && totalStepInstances > stepInstancesCreatedByLoadStep
                         && totalStepInstances >= minimumStepsExpected) {
-                    Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
+                    Utilities.verboseLog("stepInstanceDAO.count() " + totalStepInstances
                             + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
-                            + " unfinishedSteps " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            + " unfinishedSteps " + totalUnfinishedStepInstances);
                     // This next 'if' ensures that StepInstances created as a result of loading proteins are
                     // visible.  This is safe, because in the "closeOnCompletion" mode, an "output results" step
                     // is created, so as an absolute minimum there should be one more StepInstance than those
@@ -346,11 +344,13 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                 }
                 if (!controlledLogging) {
                     //check what is not completed
-                    LOGGER.debug("Distributed Master waiting for step instances to complete ... more step instances may get scheduled ");
-                    LOGGER.debug("Total Remote Step instances sent on the queue: " + remoteJobs.get());
-                    LOGGER.debug("Total Local Step instances sent on the queue: " + localJobs.get());
-                    LOGGER.debug("Total StepInstances to run: " + totalStepInstances);
-                    LOGGER.debug("Step instances left to run: " + totalUnfinishedStepInstances);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Distributed Master waiting for step instances to complete ... more step instances may get scheduled ");
+                        LOGGER.debug("Total Remote Step instances sent on the queue: " + remoteJobs.get());
+                        LOGGER.debug("Total Local Step instances sent on the queue: " + localJobs.get());
+                        LOGGER.debug("Total StepInstances to run: " + totalStepInstances);
+                        LOGGER.debug("Step instances left to run: " + totalUnfinishedStepInstances);
+                    }
                     controlledLogging = true;
                 }
                 if (verboseLog && displayStats) {
@@ -365,7 +365,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                 }
                 //update the statistics plugin
-                if (verboseLog && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0) {
+                if (verboseLog && totalUnfinishedStepInstances == 0) {
                     Utilities.verboseLog("There are no step instances left to run");
                 }
 
