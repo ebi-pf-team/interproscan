@@ -573,7 +573,7 @@ public class Run extends AbstractI5Runner {
         if (haveSetUserDirName) {
             String defaultOutputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
             // E.g. defaultOutputBaseFileName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
-            checkPathExistence(defaultOutputBaseFileName, false, false, I5Option.USER_DIR);
+            checkPathExistence(defaultOutputBaseFileName, true, false, I5Option.USER_DIR);
         }
 
         // Get the value for the (-b) option if specified
