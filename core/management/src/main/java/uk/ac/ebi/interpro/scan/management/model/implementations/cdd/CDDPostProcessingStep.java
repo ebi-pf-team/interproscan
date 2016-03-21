@@ -114,6 +114,7 @@ public class CDDPostProcessingStep extends Step {
             matchCount += rawProtein.getMatches().size();
         }
         Utilities.verboseLog(10,  " CDD: " + filteredMatches.size() + " proteins passed through post processing."
+                + " with a total of " + matchCount + " raw matches."
                 + " and a total of " + matchCount + " matches PASSED.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("CDD: " + filteredMatches.size() + " proteins passed through post processing.");
