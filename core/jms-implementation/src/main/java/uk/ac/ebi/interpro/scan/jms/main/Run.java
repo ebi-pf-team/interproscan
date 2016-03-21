@@ -149,7 +149,7 @@ public class Run extends AbstractI5Runner {
             }
             String userInterproscan5Properties = dotInterproscan5Dir + "/interproscan.properties";
             File userInterproscan5PropertiesFile = new File(userInterproscan5Properties);
-            if (!directoryExists(dotInterproscan5Dir)) {
+            if (!checkPathExistence(dotInterproscan5Dir)) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
                 }
@@ -355,7 +355,7 @@ public class Run extends AbstractI5Runner {
                 cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
 
             }
-	    }
+        }
         System.exit(0);
     }
 
@@ -367,8 +367,8 @@ public class Run extends AbstractI5Runner {
      */
     public static Mode getMode(String modeArgument) throws IllegalArgumentException {
         Mode mode = (modeArgument != null)
-                    ? Mode.valueOf(modeArgument.toUpperCase())
-                    : DEFAULT_MODE;
+                ? Mode.valueOf(modeArgument.toUpperCase())
+                : DEFAULT_MODE;
         return mode;
     }
 
@@ -420,11 +420,9 @@ public class Run extends AbstractI5Runner {
             //process tmp dir (-T) option
             if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
                 String temporaryDirectory = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.TEMP_DIRECTORY.getLongOpt()), parsedCommandLine);
-                if(! directoryExists(temporaryDirectory)){
+                if (!checkPathExistence(temporaryDirectory)) {
                     createDirectory(temporaryDirectory);
                 }
-                //the following becomes superfluous
-                checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
                 master.setTemporaryDirectory(temporaryDirectory);
             }
             if (LOGGER.isDebugEnabled()) {
@@ -560,7 +558,7 @@ public class Run extends AbstractI5Runner {
             if (!fastaFilePath.equals("-")) {
                 fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.INPUT.getLongOpt()), parsedCommandLine);
                 // Check input exists
-                checkFileExistence(fastaFilePath, I5Option.INPUT.getShortOpt());
+                checkPathExistence(fastaFilePath, false, false, I5Option.INPUT);
             }
             master.setFastaFilePath(fastaFilePath);
             defaultOutputFileName = new File(fastaFilePath).getName();
@@ -573,8 +571,9 @@ public class Run extends AbstractI5Runner {
 
         // Check the (-u) default output directory exists for now, but we are not necessarily going to write to this location
         if (haveSetUserDirName) {
-            String outputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
-            checkDirectoryExistence(outputBaseFileName, I5Option.USER_DIR.getShortOpt());
+            String defaultOutputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
+            // E.g. defaultOutputBaseFileName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
+            checkPathExistence(defaultOutputBaseFileName, true, false, I5Option.USER_DIR);
         }
 
         // Get the value for the (-b) option if specified
@@ -584,12 +583,20 @@ public class Run extends AbstractI5Runner {
                 System.exit(3);
             }
             String outputBaseFileName = parsedCommandLine.getOptionValue(I5Option.BASE_OUT_FILENAME.getLongOpt());
-            // If outputBaseFileName is a directory (simply check the ending) then set the defaultFileOutputName
+            outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
+            // E.g. for "-b OUT" outputBaseFileName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT"
+
             if (outputBaseFileName.endsWith(File.separator)) {
+                // If a base directory is supplied then check it's writable and add on the default base file output name
+                // E.g. "-b OUT/"
+                checkPathExistence(outputBaseFileName, false, true, I5Option.BASE_OUT_FILENAME);
                 outputBaseFileName += defaultOutputFileName;
             }
-            outputBaseFileName = getAbsoluteFilePath(outputBaseFileName, parsedCommandLine);
-            checkDirectoryExistenceAndFileWritePermission(outputBaseFileName, I5Option.BASE_OUT_FILENAME.getShortOpt());
+            else {
+                // If a base filename is supplied (with optional path elements) then check the base directory is writable
+                // E.g. "-b OUT"
+                checkPathExistence(outputBaseFileName, true, true, I5Option.BASE_OUT_FILENAME);
+            }
             master.setOutputBaseFilename(outputBaseFileName);
         }
         //Get the value for the (-o) option if specified
@@ -608,7 +615,8 @@ public class Run extends AbstractI5Runner {
             String explicitOutputFilename = outputFilename;
             if (!outputFilename.trim().equals("-")) {
                 explicitOutputFilename = getAbsoluteFilePath(outputFilename, parsedCommandLine);
-                checkDirectoryExistenceAndFileWritePermission(explicitOutputFilename, I5Option.OUTPUT_FILE.getShortOpt());
+                // E.g. for "-o OUT.tsv" explicitOutputFilename = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.tsv"
+                checkPathExistence(explicitOutputFilename, true, true, I5Option.OUTPUT_FILE);
             }
             master.setExplicitOutputFilename(explicitOutputFilename);
         }
@@ -619,20 +627,22 @@ public class Run extends AbstractI5Runner {
                 System.exit(3);
             }
             String outputDirValue = parsedCommandLine.getOptionValue(I5Option.OUTPUT_DIRECTORY.getLongOpt());
+            outputDirValue = getAbsoluteFilePath(outputDirValue, parsedCommandLine);
+            // E.g. for "-d outputs" outputDirValue = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/outputs"
+            checkPathExistence(outputDirValue, false, true, I5Option.OUTPUT_DIRECTORY);
             if (!outputDirValue.endsWith(File.separator)) {
                 outputDirValue += File.separatorChar;
             }
-            outputDirValue += defaultOutputFileName;
-            String outputBaseFileName = getAbsoluteFilePath(outputDirValue, parsedCommandLine);
-            checkDirectoryExistenceAndFileWritePermission(outputBaseFileName, I5Option.OUTPUT_DIRECTORY.getShortOpt());
+            final String outputBaseFileName = outputDirValue + defaultOutputFileName;
             master.setOutputBaseFilename(outputBaseFileName);
         }
         // If the (-b) or (-d) or (-o) options AREN'T specified, but the (-u) option is set (it should always be set)
         // then the default file output path will be (USER_DIR + defaultFileOutputName)
         else if (haveSetUserDirName) {
             String outputBaseFileName = getAbsoluteFilePath(defaultOutputFileName, parsedCommandLine);
+            // E.g. default outputBaseFileName "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
             // Write to the default output location
-            checkDirectoryExistenceAndFileWritePermission(outputBaseFileName, I5Option.USER_DIR.getShortOpt());
+            checkPathExistence(outputBaseFileName, true, true, I5Option.USER_DIR);
             master.setOutputBaseFilename(outputBaseFileName);
         }
 
@@ -652,8 +662,9 @@ public class Run extends AbstractI5Runner {
             }
         }
         final String temporaryDirectory = getAbsoluteFilePath(filePath, parsedCommandLine);
+        // E.g. for "-T temp" temporaryDirectory = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp"
         if (parsedCommandLine.hasOption(I5Option.TEMP_DIRECTORY.getLongOpt())) {
-            checkDirectoryExistenceAndFileWritePermission(temporaryDirectory, I5Option.TEMP_DIRECTORY.getShortOpt());
+            checkPathExistence(temporaryDirectory, false, true, I5Option.TEMP_DIRECTORY);
         }
         master.setTemporaryDirectory(temporaryDirectory);
         if (LOGGER.isDebugEnabled()) {
@@ -1233,8 +1244,8 @@ public class Run extends AbstractI5Runner {
      * @param deleteWorkingDirectoryOnCompletion
      * @param temporaryFileDirectory
      */
-   private static void cleanUpWorkingDirectory(boolean deleteWorkingDirectoryOnCompletion, String temporaryFileDirectory){
-       if(deleteWorkingDirectoryOnCompletion){
+    private static void cleanUpWorkingDirectory(boolean deleteWorkingDirectoryOnCompletion, String temporaryFileDirectory){
+        if(deleteWorkingDirectoryOnCompletion){
             try {
                 if(new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
@@ -1247,18 +1258,18 @@ public class Run extends AbstractI5Runner {
         }else {
             LOGGER.warn("deleteWorkingDirectoryOnCompletion : " + deleteWorkingDirectoryOnCompletion);
         }
-   }
-
-
-   @Override
-   public void finalize()  throws Throwable{
-	try {
-        if (temporaryDirectory != null) {
-            //do some cleanup
-            cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
-        }
-    }finally {
-        super.finalize();
     }
-   }
+
+
+    @Override
+    public void finalize()  throws Throwable{
+        try {
+            if (temporaryDirectory != null) {
+                //do some cleanup
+                cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
+            }
+        }finally {
+            super.finalize();
+        }
+    }
 }
