@@ -93,7 +93,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         final String entryAc = resultSet.getString(1);
         final String entryType = resultSet.getString(2);
         final String name = resultSet.getString(3);
-//        final String checked = resultSet.getString(4);
+        final String checked = resultSet.getString(4);
+        if (!checked.equalsIgnoreCase("Y")) {
+            log.warn("Entry " + entryAc + " is unchecked!");
+        }
 //        final Date created = resultSet.getDate(5);
 //        final Date updated = resultSet.getDate(6);
 //        final String userStamp = resultSet.getString(7);
