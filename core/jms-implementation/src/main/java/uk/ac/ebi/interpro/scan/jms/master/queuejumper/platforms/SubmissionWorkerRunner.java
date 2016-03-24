@@ -59,7 +59,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private int workerCount = 0;
 
-    private int newWorkersCount = 0;
+    private int newWorkersCount = 1;
 
     private String gridName = "lsf";
 
@@ -235,7 +235,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.newWorkersCount = newWorkersCount;
         int actualWorkersStarted = startupNewWorker(priority, tcpUri, temporaryDirectory);
         //reset the masterworker variable
-        this.newWorkersCount = 0;
+        this.newWorkersCount = 1;
         return actualWorkersStarted;
     }
 
@@ -335,6 +335,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                                 + commandToSubmit);
                     }
                     int exitStatus = clc.runCommand(false, commandToSubmit.toString().split(" "));
+                    Utilities.verboseLog(10, "command  submited to cluster:  exitStatus" + exitStatus);
                     if (exitStatus != 0) {
                         LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:"
                                 + commandToSubmit + "\nExit status: "

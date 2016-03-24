@@ -35,9 +35,9 @@
         <level value="error"/>
     </logger>
 
-    <logger name="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-    <level value="error"/>
-    </logger>
+    <!--<logger name="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
+    <!--<level value="error"/>-->
+    <!--</logger>-->
 
     <!--<logger name="uk.ac.ebi.interpro.scan.jms">-->
         <!--<level value="debug"/>-->
@@ -52,7 +52,7 @@
     <!--</logger>-->
 
     <logger name="uk.ac.ebi.interpro.scan">
-    <level value="warn" />
+    <level value="debug" />
     </logger>
 
 
