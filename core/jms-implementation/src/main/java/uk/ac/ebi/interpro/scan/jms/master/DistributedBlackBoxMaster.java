@@ -203,12 +203,14 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         boolean debugSubmission = true;
 
                         //prints should be sent to a higher memory queue as it requires more memory
-                        final boolean isPrintsBinaryStep = (step instanceof RunFingerPrintScanStep) ? true : false;
+                        //disable this feature until its possible to guarantee highmemory worker creation
+                        //final boolean isPrintsBinaryStep = (step instanceof RunFingerPrintScanStep) ? false : false;
 
                         //resubmission = debugSubmission;
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
                         //final boolean highMemory = resubmission && workerRunnerHighMemory != null && canRunRemotely;
-                        final boolean highMemory = (resubmission || isPrintsBinaryStep)
+//                        final boolean highMemory = (resubmission || isPrintsBinaryStep)
+                        final boolean highMemory = (resubmission)
                                 && workerRunnerHighMemory != null && canRunRemotely;
 
                         if (highMemory && resubmission) {
@@ -945,8 +947,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                         //TODO estimate the number of remote jobs needed per number of steps count
                         int remoteJobsEstimate = (int) (totalJobCount / 4);
-                        //initialWorkersCount = Math.round(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
-                        int initialWorkersCount = Math.round(expectedRemoteJobCount / queueConsumerRatio);
+                        //initialWorkersCount = Math.ceil(remoteJobsEstimate / maxMessagesOnQueuePerConsumer);
+                        int initialWorkersCount = (int)  Math.ceil(expectedRemoteJobCount / queueConsumerRatio);
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Remote jobs actual: " + actualRemoteJobs);
                             LOGGER.debug("Remote jobs estimate: " + remoteJobsEstimate);
@@ -957,7 +959,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                         if (verboseLog) {
                             Utilities.verboseLog("Remote jobs actual: " + actualRemoteJobs);
                             Utilities.verboseLog("Remote jobs estimate: " + remoteJobsEstimate);
-                            Utilities.verboseLog("Initial Workers Count: " + initialWorkersCount);
+                            Utilities.verboseLog("Remote jobs estimate: " + remoteJobsEstimate);
+                            Utilities.verboseLog("Queue Consume rRatio: " + queueConsumerRatio);
                             Utilities.verboseLog("Total jobs (StepInstances): " + totalJobCount);
                         }
                         if (initialWorkersCount < 1 && expectedRemoteJobCount < maxConcurrentInVmWorkerCountForWorkers) {
@@ -966,6 +969,10 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             initialWorkersCount = 2;
                         } else if (initialWorkersCount > (maxConsumers)) {
                             initialWorkersCount = (maxConsumers * 8 / 10);
+                        }
+                        //if the master cannot run binaries always create a remote worker
+                        if (initialWorkersCount < 1 && ! masterCanRunBinaries){
+                            initialWorkersCount = 1;
                         }
                         //for small set of sequences
                         if (totalJobCount < 2000 && initialWorkersCount > 10) {
@@ -981,8 +988,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
                             setSubmissionWorkerRunnerMasterClockTime();
                             timeLastSpawnedWorkers = System.currentTimeMillis();
                             //first create one high memory worker
-                            highMemoryWorkersCreated = workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
-                            totalRemoteWorkerCreated += highMemoryWorkersCreated;
+//                            highMemoryWorkersCreated = workerRunnerHighMemory.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, true);
+//                            totalRemoteWorkerCreated += highMemoryWorkersCreated;
                             //create the normal workers
                             normalWorkersCreated = workerRunner.startupNewWorker(LOW_PRIORITY, tcpUri, temporaryDirectoryName, initialWorkersCount);
                             totalRemoteWorkerCreated = normalWorkersCreated;
@@ -1235,7 +1242,9 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
                                 LOGGER.debug("remoteHighMemoryWorkerCountEstimate: " + remoteHighMemoryWorkerCountEstimate);
                                 LOGGER.debug("TotalHighMemoryWorkerCount: " + highMemoryWorkerCount);
+                                LOGGER.debug("highMemoryWorkersCreated: " + highMemoryWorkersCreated);
                                 LOGGER.debug("highMemoryQueueSize: " + highMemoryQueueSize);
+
                             }
                         }
                     }
