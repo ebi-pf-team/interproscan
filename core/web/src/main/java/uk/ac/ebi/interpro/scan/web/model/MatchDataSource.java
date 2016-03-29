@@ -247,6 +247,11 @@ public enum MatchDataSource {
                 }
             }
 
+            // TODO Inconsistent? SignatureLibrary (InterProScan) uses "TIGRFAM" and MatchDataSource (InterPro) uses "TIGRFAMS"
+            if (name.equals("tigrfam")) {
+                return MatchDataSource.TIGRFAMS;
+            }
+
             // Now iterate over the MatchDataSource names to see if we have a match
             for (MatchDataSource m : MatchDataSource.values()) {
                 String mName = m.toString().toLowerCase(); // Possible name match
