@@ -40,19 +40,19 @@ public class Gene3DPostProcessing implements Serializable {
                                                          final Collection<DomainFinderRecord> domainFinderRecords) {
         final Set<RawProtein<Gene3dHmmer3RawMatch>> filteredProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
         final Set<String> matchKeys = new HashSet<String>();
-        for (RawProtein<Gene3dHmmer3RawMatch> p : rawProteins) {
-            String id = p.getProteinIdentifier();
+        for (final RawProtein<Gene3dHmmer3RawMatch> p : rawProteins) {
+            final String id = p.getProteinIdentifier();
             RawProtein<Gene3dHmmer3RawMatch> filteredProtein = new RawProtein<Gene3dHmmer3RawMatch>(id);
-            // TODO: Sort p.getMatches() by location.start so we always get consistent results if need to choose between raw matches
+            // Sort p.getMatches() by location.start so we always get consistent results if need to choose between raw matches
             List<Gene3dHmmer3RawMatch> matchList = new ArrayList<Gene3dHmmer3RawMatch>(p.getMatches());
-            Collections.sort(matchList, new Comparator<Gene3dHmmer3RawMatch>() {
-                public int compare(Gene3dHmmer3RawMatch record1, Gene3dHmmer3RawMatch record2) {
-                    return Integer.valueOf(record1.getLocationStart()).compareTo(record2.getLocationStart());
-                }
+            if (matchList.size() > 1) {
+                Collections.sort(matchList, new Comparator<Gene3dHmmer3RawMatch>() {
+                    public int compare(Gene3dHmmer3RawMatch record1, Gene3dHmmer3RawMatch record2) {
+                        return Integer.valueOf(record1.getLocationStart()).compareTo(record2.getLocationStart());
+                    }
+                });
             }
-            );
-            //for (Gene3dHmmer3RawMatch match : p.getMatches())   {
-            for (Gene3dHmmer3RawMatch match : matchList) {
+            for (final Gene3dHmmer3RawMatch match : matchList) {
                 if (id.equals(match.getSequenceIdentifier())) {
                     addRecord(filteredProtein, match, domainFinderRecords, matchKeys);
                 }
@@ -68,7 +68,10 @@ public class Gene3DPostProcessing implements Serializable {
                            final Gene3dHmmer3RawMatch m,
                            final Collection<DomainFinderRecord> domainFinderRecords,
                            final Set<String> matchKeys) {
-        for (DomainFinderRecord r : domainFinderRecords) {
+        final String mSeqId = m.getSequenceIdentifier();
+        final String mModelId = m.getModelId();
+        final String matchKeyPrefix = mSeqId + '-' + mModelId + '-';
+        for (final DomainFinderRecord r : domainFinderRecords) {
             // Parse segment boundaries
             String s = r.getSegmentBoundaries();
             String[] segments = s.split(DomainFinderRecord.SEGMENT_BOUNDARY_SEPARATOR);
@@ -90,15 +93,9 @@ public class Gene3DPostProcessing implements Serializable {
             // Track matches that we've added in case there are two raw matches with the same e-value that fall within
             // the greater-than/less-than boundaries but have different start and end positions -- in these cases
             // "just take the first match" (Source: Craig McAnulla, June 2010)
-            String matchKey = new StringBuilder()
-                    .append(m.getSequenceIdentifier())
-                    .append('-')
-                    .append(m.getModelId())
-                    .append('-')
-                    .append(r.getSegmentBoundaries())
-                    .toString();
-            if (m.getSequenceIdentifier().equals(r.getSequenceId()) &&
-                    m.getModelId().equals(r.getModelId()) &&
+            String matchKey = matchKeyPrefix + r.getSegmentBoundaries();
+            if (mSeqId.equals(r.getSequenceId()) &&
+                    mModelId.equals(r.getModelId()) &&
                     m.getLocationStart() <= lowestBoundary &&
                     m.getLocationEnd() >= highestBoundary &&
                     m.getDomainIeValue() == r.getDomainIeValue() &&
@@ -110,28 +107,26 @@ public class Gene3DPostProcessing implements Serializable {
                 // Get start and end coordinates for each split domain
                 // For example "10:20:30:40" represents two domains: (start=10,end=20) and (start=30,end=40)
                 // The domain string has already been split, so we have:
-                // segments[0]=10, segments[1]=20, segments[2]=30, segments[4]=40
+                // segments[0]=10, ssfsegments[1]=20, segments[2]=30, segments[4]=40
                 // The even numbered array indexes contain the start position, and
                 // the odd numbered indexes contain the end position
                 int splitDomainStart = 0;
                 for (int i = 0; i < segments.length; i++) {
                     int number = Integer.valueOf(segments[i]);
-                    int splitDomainEnd;
                     // Even numbers (array index 0, 2, 4 ...etc) = start
                     if (i % 2 == 0) {
                         splitDomainStart = number;
                     }
                     // Odd numbers (array index 1, 3, 5 ...etc) = end
                     else {
-                        splitDomainEnd = number;
                         // Create match for each split domain
-                        if (splitDomainEnd > splitDomainStart) {  // Exclude split domain matches where the length is 1.
+                        if (number > splitDomainStart) {  // Exclude split domain matches where the length is 1.
                             Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
-                                    m.getSequenceIdentifier(),
-                                    m.getModelId(),
+                                    mSeqId,
+                                    mModelId,
                                     m.getSignatureLibraryRelease(),
                                     splitDomainStart,
-                                    splitDomainEnd,
+                                    number,
                                     m.getEvalue(),
                                     m.getScore(),
                                     m.getHmmStart(),       // TODO: What should HMM start and end be for split domains?
