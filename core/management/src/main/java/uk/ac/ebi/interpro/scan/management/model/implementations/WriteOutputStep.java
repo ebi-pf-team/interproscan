@@ -161,8 +161,12 @@ public class WriteOutputStep extends Step {
         Utilities.sleep(waitTimeFactor * 1000);                 //1000 milliseconds is one second.
         Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
 
+        Long timeNow = System.currentTimeMillis();
         List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size());
+        Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
+                + " time taken to get proteins: "
+                + (System.currentTimeMillis() - timeNow)
+                + " millis");
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
             LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
