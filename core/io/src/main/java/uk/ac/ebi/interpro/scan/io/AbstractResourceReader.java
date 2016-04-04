@@ -30,20 +30,13 @@ public abstract class AbstractResourceReader<T> implements ResourceReader<T> {
             throw new IllegalStateException(resource.getFilename() + " is not readable");
         }
         final List<T> records = new ArrayList<T>();
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 T record = createRecord(line);
                 if (record != null) {
                     records.add(record);
                 }
-            }
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
             }
         }
         return Collections.unmodifiableList(records);
