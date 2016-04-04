@@ -40,7 +40,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             loadInMemoryDatabase();
             runStatus = 21;
             int stepInstancesCreatedByLoadStep = createStepInstances();
-            int minimumStepsExpected = 2;
+            //calculate minimum expected jobs
+
+            int minimumStepsExpected = getMinimumStepsExpected();
             runStatus = 31;
             if(verboseLog){
                 System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
@@ -105,16 +107,21 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
 
+
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
-                if (completed &&
-                        stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
+                if (completed
+                        && stepInstanceDAO.count() == statsUtil.getSubmittedStepInstancesCount()
+                        && statsUtil.getSubmittedStepInstancesCount() >= minimumStepsExpected
+                        && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
                         && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep
                         && stepInstanceDAO.count() >= minimumStepsExpected) {
                     Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
-                            + " stepInstancesCreatedByLoadStep : " +stepInstancesCreatedByLoadStep
-                            +  " unfinishedSteps " +stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                            + " minimumStepsExpected : " + minimumStepsExpected
+                            + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                            +  " unfinishedSteps " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
                     runStatus = 0;
                     break;
                 }
@@ -178,5 +185,25 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
+
+
+    private int getMinimumStepsExpected(){
+        int analysesCount = 1;
+        if (analyses != null) {
+            analysesCount = analyses.length;
+        }else{
+            analysesCount = jobs.getActiveAnalysisJobs().getJobIdList().size();
+        }
+        Utilities.verboseLog("analysesCount :  " + analysesCount);
+        int minimumStepForEachAnalysis = 0;
+        int minimumSteps = 2;
+        if (! isUseMatchLookupService()){
+            minimumStepForEachAnalysis = 4; //writefasta, runbinary, deletefasta, parseoutput
+        }
+
+        minimumSteps = minimumSteps + (analysesCount * minimumStepForEachAnalysis);
+
+        return minimumSteps;
+    }
 
 }
