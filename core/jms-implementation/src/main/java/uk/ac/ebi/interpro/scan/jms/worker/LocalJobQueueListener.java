@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
+import java.lang.IllegalStateException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -30,6 +31,8 @@ public class LocalJobQueueListener implements MessageListener {
     private StepExecutionTransaction stepExecutor;
 
     boolean verboseLog = false;
+
+    boolean testFailOnce = false;
 
     private int verboseLogLevel;
 
@@ -177,6 +180,10 @@ public class LocalJobQueueListener implements MessageListener {
                     Utilities.verboseLog("thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
                             + " - stepInstanceId = " + stepId
                             + "\n stepInstance: " + stepExecution.getStepInstance().toString());
+                }
+                if (controller != null && ! testFailOnce){
+                    testFailOnce = true;
+                    throw new IllegalStateException("Exception for testing ....");
                 }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;

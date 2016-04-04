@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.cli;
 
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -139,11 +140,11 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
             }
-            if(verboseLogLevel > 5){
-                System.out.println(CommandLineConversationMonitor.getTimeNow() + " Start process in clc:  " + stepInstanceStepId);
-            }
+            Utilities.verboseLog(10, CommandLineConversationMonitor.getTimeNow() + " Start process in clc:  " + stepInstanceStepId);
+
             //fork the process
             process = pb.start();
+            Utilities.verboseLog(10, CommandLineConversationMonitor.getTimeNow() + " Process started in clc:  " + pb.command());
         }finally {
             if(CommandLineConversationMonitor.getBinaryRunDelay() > 0){
                 CommandLineConversationMonitor.binaryRunLock.unlock();
