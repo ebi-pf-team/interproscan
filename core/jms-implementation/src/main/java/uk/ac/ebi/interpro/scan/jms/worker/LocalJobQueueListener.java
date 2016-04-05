@@ -181,10 +181,11 @@ public class LocalJobQueueListener implements MessageListener {
                             + " - stepInstanceId = " + stepId
                             + "\n stepInstance: " + stepExecution.getStepInstance().toString());
                 }
-                if (controller != null && ! testFailOnce){
-                    testFailOnce = true;
-                    throw new IllegalStateException("Exception for testing ....");
-                }
+                //the following code was used to test high memory worker creation, might still be useful later
+//                if (controller != null && ! testFailOnce){
+//                    testFailOnce = true;
+//                    throw new IllegalStateException("Exception for testing ....");
+//                }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
                 timeNow = Utilities.getTimeNow();

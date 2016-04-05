@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -89,7 +89,7 @@ public class ProteinMatchesGFFResultWriterTest {
      */
     @Test
     public void testProcessMatches() throws IOException {
-        ProteinMatchesGFFResultWriter writer = new ProteinMatchesGFFResultWriter(new File("./target/test.gff")) {
+        ProteinMatchesGFFResultWriter writer = new ProteinMatchesGFFResultWriter(Paths.get("./target/test.gff")) {
             @Override
             public int write(Protein protein) throws IOException {
                 // no implementation - this method is not being tested here.
@@ -100,8 +100,8 @@ public class ProteinMatchesGFFResultWriterTest {
                 new SignatureLibraryRelease(SignatureLibrary.PFAM, "1.1"), Collections.<Model>emptySet());
         Protein protein = new Protein("ABCDEFGHIJKLMNOP"); // 16 AA long.
 
-        Set<Match> matches = new HashSet<Match>();
-        Set<Location> locations = new HashSet<Location>();
+        Set<Match> matches = new HashSet<>();
+        Set<Location> locations = new HashSet<>();
         Match match = new Match(signature, locations) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
@@ -138,7 +138,7 @@ public class ProteinMatchesGFFResultWriterTest {
 
         Map<String, String> identifierToSequence = writer.getIdentifierToSeqMap();
         Assert.assertEquals(5, identifierToSequence.size());
-        Map<String, String> unseenIdentifiers = new HashMap<String, String>();
+        Map<String, String> unseenIdentifiers = new HashMap<>();
         unseenIdentifiers.put("match$1_1_16", "ABCDEFGHIJKLMNOP");
         unseenIdentifiers.put("match$1_1_17", "ABCDEFGHIJKLMNOP");
         unseenIdentifiers.put("match$1_1_15", "ABCDEFGHIJKLMNO");

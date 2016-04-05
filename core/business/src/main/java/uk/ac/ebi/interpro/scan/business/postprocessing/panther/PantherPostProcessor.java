@@ -37,7 +37,7 @@ public class PantherPostProcessor implements Serializable {
      */
     public Set<RawProtein<PantherRawMatch>> process(Set<RawProtein<PantherRawMatch>> rawProteins) {
         LOGGER.info("Filtering PANTHER raw matches...");
-        Set<RawProtein<PantherRawMatch>> filteredMatches = new HashSet<RawProtein<PantherRawMatch>>();
+        Set<RawProtein<PantherRawMatch>> filteredMatches = new HashSet<>();
         int rawMatchCounter = 0;
         int filteredMatchesCounter = 0;
         for (RawProtein<PantherRawMatch> rawProtein : rawProteins) {
@@ -46,9 +46,11 @@ public class PantherPostProcessor implements Serializable {
             filteredMatchesCounter += filtered.getMatches().size();
             filteredMatches.add(filtered);
         }
-        LOGGER.info("Finished filtering of PANTHER raw matches. Printing out Summary...");
-        LOGGER.info("Original number of raw matches: " + rawMatchCounter);
-        LOGGER.info("Number of discarded raw matches: " + (rawMatchCounter - filteredMatchesCounter));
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Finished filtering of PANTHER raw matches. Printing out Summary...");
+            LOGGER.info("Original number of raw matches: " + rawMatchCounter);
+            LOGGER.info("Number of discarded raw matches: " + (rawMatchCounter - filteredMatchesCounter));
+        }
         return filteredMatches;
     }
 
@@ -56,7 +58,7 @@ public class PantherPostProcessor implements Serializable {
      * Filter raw matches just by E-Value cutoff.
      */
     private RawProtein<PantherRawMatch> processProtein(final RawProtein<PantherRawMatch> rawProtein) {
-        RawProtein<PantherRawMatch> result = new RawProtein<PantherRawMatch>(rawProtein.getProteinIdentifier());
+        RawProtein<PantherRawMatch> result = new RawProtein<>(rawProtein.getProteinIdentifier());
         for (PantherRawMatch rawProteinMatch : rawProtein.getMatches()) {
             if (rawProteinMatch.getEvalue() <= geteValueCutoff()) {
                 result.addMatch(rawProteinMatch);

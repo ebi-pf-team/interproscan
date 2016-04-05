@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.*;
  * @version $Id$
  */
 @Entity
+@BatchSize(size=4000)
 @XmlRootElement(name = "entry")
 @XmlType(name = "EntryType")
 @Table(indexes = {
