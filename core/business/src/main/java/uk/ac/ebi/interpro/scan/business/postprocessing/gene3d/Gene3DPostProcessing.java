@@ -164,6 +164,7 @@ public class Gene3DPostProcessing implements Serializable {
                             }
                         }
                     }
+                    break; // Found the DomainFinder record with the corresponding raw match
                 }
             }
         }
