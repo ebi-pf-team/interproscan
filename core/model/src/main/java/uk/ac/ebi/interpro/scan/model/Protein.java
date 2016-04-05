@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -81,6 +82,7 @@ public class Protein implements Serializable {
     @JoinTable(name = "PROTEIN_SEQUENCE_CHUNK")
     @OrderColumn(name = "CHUNK_INDEX")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
+    @BatchSize(size=4000)
     private List<String> sequenceChunks;
 
     @Column(nullable = false, updatable = false, length = Chunker.CHUNK_SIZE)
@@ -94,6 +96,7 @@ public class Protein implements Serializable {
     private String md5;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
+    @BatchSize(size=4000)
     private Set<Match> matches = new HashSet<Match>();
 
     @Transient
@@ -102,10 +105,12 @@ public class Protein implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "protein")
     @XmlElement(name = "xref")
+    @BatchSize(size=4000)
     // TODO: This should not be here (so TODO comments on getCrossReferences)
     private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
+    @BatchSize(size=4000)
 //    @XmlElement(name = "orfs", required = true)
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 

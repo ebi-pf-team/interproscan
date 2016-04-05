@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -58,6 +59,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
     private Signature signature;
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class, mappedBy = "match")
+    @BatchSize(size=4000)
     protected Set<T> locations = new LinkedHashSet<T>();
 
     protected Match() {
