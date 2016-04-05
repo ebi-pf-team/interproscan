@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,6 +40,7 @@ import java.util.Set;
  * @version $Id$
  */
 @Entity
+@BatchSize(size=200)
 @Table(uniqueConstraints =
 @UniqueConstraint(columnNames = {"library", "version"}))
 @XmlRootElement(name = "signature-library-release")

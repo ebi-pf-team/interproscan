@@ -21,9 +21,9 @@ import java.util.Map;
 public interface LoadFastaFile extends Serializable {
 
     /**
-     * Set the SequenceLoader implementation (Spring config)
+     * Set the {@link SequenceLoader} implementation (Spring config)
      *
-     * @param sequenceLoader
+     * @param sequenceLoader SequenceLoader implementation
      */
     @Required
     void setSequenceLoader(SequenceLoader sequenceLoader);
@@ -35,7 +35,7 @@ public interface LoadFastaFile extends Serializable {
      * @param fastaFileInputStream  to read
      * @param sequenceLoadListener  to respond to sequence loading - e.g. loading sequence
      *                              data into the database
-     * @param analysisJobNames      to be run
+     * @param analysisJobMap        to be run
      * @param useMatchLookupService if it is available.
      */
     @Transactional

@@ -174,9 +174,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             // Check if the analysis versions are consistent and then proceed
             if(isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
-                if (berkeleyMatchXML != null) {
-                    berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap);
-                }
+                berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap);
             }else{
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )

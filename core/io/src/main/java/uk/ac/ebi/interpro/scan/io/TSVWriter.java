@@ -2,13 +2,12 @@ package uk.ac.ebi.interpro.scan.io;
 
 import org.springframework.util.StringUtils;
 
-import javax.swing.text.StringContent;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-public class TSVWriter implements Closeable {
+public class TSVWriter implements AutoCloseable {
 
     protected Writer writer;
 
@@ -29,6 +28,8 @@ public class TSVWriter implements Closeable {
     }
 
     public void close() throws IOException {
-        writer.close();
+        if (writer != null) {
+            writer.close();
+        }
     }
 }
