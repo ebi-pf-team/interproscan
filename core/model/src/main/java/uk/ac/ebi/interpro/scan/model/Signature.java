@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -68,6 +69,7 @@ public class Signature implements Serializable {
     @JoinTable(name = "SIGNATURE_DESCRIPTION_CHUNK")
     @OrderColumn(name = "CHUNK_INDEX")
     @Column(length = Chunker.CHUNK_SIZE, nullable = true)
+    @BatchSize(size=4000)
     private List<String> descriptionChunks = Collections.emptyList();
 
     @Column(nullable = true, length = Chunker.CHUNK_SIZE)
@@ -95,6 +97,7 @@ public class Signature implements Serializable {
     @JoinTable(name = "SIGNATURE_ABSTRACT_CHUNK")
     @OrderColumn(name = "CHUNK_INDEX")
     @Column(name = "ABSTRACT_CHUNK", length = Chunker.CHUNK_SIZE, nullable = true)
+    @BatchSize(size=4000)
     private List<String> abstractChunks = Collections.emptyList();
 
     @Column(nullable = true, length = Chunker.CHUNK_SIZE)
@@ -107,6 +110,7 @@ public class Signature implements Serializable {
     //TODO: Switch back to eager loading after schema update (loading entries to database)
     @ManyToOne(fetch = FetchType.LAZY)
     // TODO: This needs to be ManyToMany so that a Signature can be re-used across releases.
+    @BatchSize(size=4000)
     private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
@@ -115,17 +119,20 @@ public class Signature implements Serializable {
     @OneToMany(mappedBy = "signature", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 //    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "accession")
+    @BatchSize(size=4000)
     private Map<String, Model> models = new HashMap<String, Model>();
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
+    @BatchSize(size=4000)
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
     @ElementCollection
 //    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
+    @BatchSize(size=4000)
     private Set<String> deprecatedAccessions = new HashSet<String>();
 
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.

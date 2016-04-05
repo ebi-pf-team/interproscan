@@ -8,8 +8,11 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,8 @@ import java.util.List;
 public abstract class GraphicalOutputResultWriter {
 
     private static final Logger LOGGER = Logger.getLogger(GraphicalOutputResultWriter.class.getName());
+
+    protected static final Charset characterSet = Charset.defaultCharset();
 
     protected static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10;
 
@@ -39,7 +44,7 @@ public abstract class GraphicalOutputResultWriter {
     protected String entryHierarchyBeanId;
 
     /* Please read the class comment if you are concerned about thread-safety.*/
-    protected final List<File> resultFiles = new ArrayList<File>();
+    protected final List<Path> resultFiles = new ArrayList<>();
 
     protected String tempDirectory;
 
@@ -70,7 +75,7 @@ public abstract class GraphicalOutputResultWriter {
         this.tempDirectory = tempDirectory;
     }
 
-    public List<File> getResultFiles() {
+    public List<Path> getResultFiles() {
         return resultFiles;
     }
 
@@ -91,15 +96,18 @@ public abstract class GraphicalOutputResultWriter {
     }
 
     protected void checkTempDirectory(String tempDirectory) throws IOException {
-        File tempFileDirectory = new File(tempDirectory);
-        if (!tempFileDirectory.exists()) {
-            boolean isCreated = tempFileDirectory.mkdirs();
-            if (!isCreated) {
+        Path tempFileDirectory = Paths.get(tempDirectory);
+        if (!Files.exists(tempFileDirectory)) {
+            try {
+                Files.createDirectories(tempFileDirectory);
+            } catch (IOException e) {
                 LOGGER.warn("Couldn't create temp directory " + tempDirectory);
+                throw e;
             }
-
         } else if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Temp directory already exists, no need to create one.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Temp directory " + tempDirectory + " already exists, no need to create one.");
+            }
         }
     }
 

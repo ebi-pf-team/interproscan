@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileSt
 import uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep;
 
 import javax.jms.JMSException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,15 +24,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     @Override
     public void run() {
-        int runStatus = 99999;
         final long now = System.currentTimeMillis();
         super.run();
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
 
-        runStatus = 11;
-        if(verboseLog){
+        int runStatus = 11;
+        if(verboseLog) {
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());
@@ -44,8 +44,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             int minimumStepsExpected = getMinimumStepsExpected();
             runStatus = 31;
-            if(verboseLog){
-                System.out.println(Utilities.getTimeNow() + " DEBUG " +  " step instances: " + stepInstanceDAO.count());
+            if(verboseLog) {
+                System.out.println(Utilities.getTimeNow() + " DEBUG step instances: " + stepInstanceDAO.count());
             }
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
@@ -53,7 +53,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             while (!shutdownCalled) {
                 boolean completed = true;
                 runStatus = 41;
-                for (StepInstance stepInstance : stepInstanceDAO.retrieveUnfinishedStepInstances()) {
+                List<StepInstance> unfinshedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
+                for (StepInstance stepInstance : unfinshedStepInstances) {
                     runStatus = 51;
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
@@ -77,7 +78,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         // as they are very abundant.
                         // RunPsScanStep should have higher priority as it is slow
                         //isHighPriorityStep(step);
-                        int priority = LOW_PRIORITY;
+                        int priority;
                         if (step instanceof RunPsScanStep) {
                             priority = HIGHER_PRIORITY;
                         }else if (step.getSerialGroup() == null || step instanceof WriteFastaFileStep){
@@ -87,23 +88,30 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         }
 
                         // Performed in a transaction.
-                        LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+                        }
                         messageSender.sendMessage(stepInstance, false, priority, false);
                         statsUtil.addToSubmittedStepInstances(stepInstance);
                         controlledLogging = false;
                     }
                 }
                 //check what is not completed
+                long totalStepInstances = stepInstanceDAO.count();
+                int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+
 //                statsUtil.memoryMonitor();
                 if(!controlledLogging){
-                    LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
-                    LOGGER.debug("Step instances left to run: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                    LOGGER.debug("Total StepInstances: " + stepInstanceDAO.count());
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("StandAlone Master has no jobs ready .. more Jobs will be made ready ");
+                        LOGGER.debug("Step instances left to run: " + totalUnfinishedStepInstances);
+                        LOGGER.debug("Total StepInstances: " + totalStepInstances);
+                    }
                     controlledLogging = true;
                 }
                 //report progress
-                statsUtil.setTotalJobs(stepInstanceDAO.count());
-                statsUtil.setUnfinishedJobs(stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                statsUtil.setTotalJobs(totalStepInstances);
+                statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
                 statsUtil.displayMasterProgress();
 
@@ -111,17 +119,18 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
+
                 if (completed
-                        && stepInstanceDAO.count() == statsUtil.getSubmittedStepInstancesCount()
+                        && totalStepInstances == statsUtil.getSubmittedStepInstancesCount()
                         && statsUtil.getSubmittedStepInstancesCount() >= minimumStepsExpected
-                        && stepInstanceDAO.retrieveUnfinishedStepInstances().size() == 0
-                        && stepInstanceDAO.count() > stepInstancesCreatedByLoadStep
-                        && stepInstanceDAO.count() >= minimumStepsExpected) {
-                    Utilities.verboseLog("stepInstanceDAO.count() " + stepInstanceDAO.count()
+                        && totalUnfinishedStepInstances == 0
+                        && totalStepInstances > stepInstancesCreatedByLoadStep
+                        && totalStepInstances >= minimumStepsExpected) {
+                    Utilities.verboseLog("stepInstanceDAO.count() " + totalStepInstances
                             + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                             + " minimumStepsExpected : " + minimumStepsExpected
                             + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
-                            +  " unfinishedSteps " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
                     runStatus = 0;
                     break;
                 }
@@ -186,24 +195,5 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     }
 
 
-
-    private int getMinimumStepsExpected(){
-        int analysesCount = 1;
-        if (analyses != null) {
-            analysesCount = analyses.length;
-        }else{
-            analysesCount = jobs.getActiveAnalysisJobs().getJobIdList().size();
-        }
-        Utilities.verboseLog("analysesCount :  " + analysesCount);
-        int minimumStepForEachAnalysis = 0;
-        int minimumSteps = 2;
-        if (! isUseMatchLookupService()){
-            minimumStepForEachAnalysis = 4; //writefasta, runbinary, deletefasta, parseoutput
-        }
-
-        minimumSteps = minimumSteps + (analysesCount * minimumStepForEachAnalysis);
-
-        return minimumSteps;
-    }
 
 }
