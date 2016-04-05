@@ -67,7 +67,7 @@ public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
         final Map<String, Collection<PathwayXref>> result = new HashMap<String, Collection<PathwayXref>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.ENTRY2PATHWAY",
+                    .query("SELECT E2P.* FROM INTERPRO.ENTRY2PATHWAY E2P INNER JOIN INTERPRO.ENTRY E ON (E.ENTRY_AC = E2P.ENTRY_AC) WHERE E.CHECKED = 'Y'",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override
