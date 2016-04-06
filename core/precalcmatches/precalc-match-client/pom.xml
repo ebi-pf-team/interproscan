@@ -5,13 +5,13 @@
     <parent>
         <artifactId>precalcmatches</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.17-56.0</version>
+        <version>5.18-57.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>precalc-match-client</artifactId>
-    <version>5.17-56.0</version>
+    <version>5.18-57.0</version>
 
     <name>Precalculated Match Lookup - Client</name>
 
@@ -20,7 +20,7 @@
         <dependency>
             <artifactId>berkeley</artifactId>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
-            <version>5.17-56.0</version>
+            <version>5.18-57.0</version>
         </dependency>
 
         <dependency>
