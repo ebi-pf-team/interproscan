@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
+import org.hibernate.procedure.internal.Util;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -11,6 +12,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibrary
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.*;
@@ -271,6 +273,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 "by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n" +
                 "In the meantime, the analysis will continue to run locally.\n\n");
 
+        Utilities.verboseLog(e.toString());
 
 
 
@@ -284,8 +287,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                         "As the data in these versions is not the same, you cannot use this match lookup service.\n" +
                         "InterProScan will now run locally\n" +
                         "If you would like to use the match lookup service, you have the following options:\n" +
-                        "i) Download the newest version of InterProScan5 from our FTP site:\n" +
-                        "   ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
+                        "i) Download the newest version of InterProScan5 from our FTP site by following the instructions on:\n" +
+                        "   https://www.ebi.ac.uk/interpro/interproscan.html\n" +
                         "ii) Download the match lookup service for your version of InterProScan from our FTP site and install it locally.\n" +
                         "    You will then need to edit the following property in your configuration file to point to your local installation:\n" +
                         "    precalculated.match.lookup.service.url=\n\n" +
