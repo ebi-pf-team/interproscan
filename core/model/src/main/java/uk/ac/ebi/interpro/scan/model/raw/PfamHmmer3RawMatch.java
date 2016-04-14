@@ -7,7 +7,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import javax.persistence.Entity;
 
 /**
- * <a href="http://pfam.sanger.ac.uk/">Pfam</a> raw match.
+ * <a href="http://pfam.xfam.org/">Pfam</a> raw match.
  *
  * @author Antony Quinn
  * @author Phil Jones
