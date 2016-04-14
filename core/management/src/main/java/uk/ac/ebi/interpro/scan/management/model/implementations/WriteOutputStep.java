@@ -285,8 +285,12 @@ public class WriteOutputStep extends Step {
                 if (pathAvailable) {
                     try {
                         // Start creating the empty output file now, while the path is still available
-                        outputPath = Files.createFile(outputPath);
-                    } catch (IOException e) {
+                        if (outputFormat.equals(FileOutputFormat.SVG) && !archiveSVGOutput) {
+                            outputPath = Files.createDirectories(outputPath);
+                        }
+                        else {
+                            outputPath = Files.createFile(outputPath);
+                        }                    } catch (IOException e) {
                         pathAvailable = false; // Nope, that path has probably just been taken (e.g. by another copy of InterProScan writing to the same output directory)
                         if (LOGGER.isInfoEnabled()) {
                             LOGGER.info("Path " + candidateFileName.toString() + " was available for writing to, but I/O exception thrown");
