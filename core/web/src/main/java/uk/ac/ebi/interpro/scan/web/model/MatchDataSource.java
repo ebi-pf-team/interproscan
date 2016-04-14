@@ -36,8 +36,8 @@ public enum MatchDataSource {
                     "automatically, and are released as Pfam-B. Pfam families have permanent accession numbers and contain " +
                     "functional annotation and cross-references to other databases, while Pfam-B families are re-generated " +
                     "at each release and are unannotated.",
-            "http://pfam.sanger.ac.uk/",
-            "http://pfam.sanger.ac.uk/family/$0"),
+            "http://pfam.xfam.org/",
+            "http://pfam.xfam.org/family/$0"),
 
     PIRSF(0,
             "PIRSF is a hierarchical classification system based on the 'homeomorphic family' principle. Members are " +
