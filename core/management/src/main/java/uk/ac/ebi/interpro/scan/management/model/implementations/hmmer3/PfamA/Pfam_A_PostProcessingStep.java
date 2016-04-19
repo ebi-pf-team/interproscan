@@ -95,12 +95,15 @@ public class Pfam_A_PostProcessingStep extends Step {
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+
+
             int waitTimeFactor = 2;
             if (! Utilities.isRunningInSingleSeqMode()){
                 waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
             }
             Utilities.sleep(waitTimeFactor * 1000);
 
+            
             //try again
             rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                     stepInstance.getBottomProtein(),
@@ -156,18 +159,5 @@ public class Pfam_A_PostProcessingStep extends Step {
         }
         return count;
     }
-
-    /**
-     * display time now
-     *
-     * @return
-     */
-    public static String getTimeNow() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
-        String currentDate = sdf.format(cal.getTime());
-        return currentDate;
-    }
-
 
 }

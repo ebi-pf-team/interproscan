@@ -51,7 +51,7 @@ public class WriteOutputStep extends Step {
     private ProteinMatchesSVGResultWriter svgResultWriter;
 
     //Misc
-    private boolean deleteWorkingDirectoryOnCompletion;
+    private boolean deleteWorkingDirectoryOnCompletion = true;
 
     /* Boolean flag for the HTML and SVG output generation. If TRUE, the generated tar archives will be compress (gzipped) as well */
     private boolean compressHtmlAndSVGOutput;
@@ -227,6 +227,9 @@ public class WriteOutputStep extends Step {
     }
 
     private void cleanUpWorkingDir(final String temporaryFileDirectory) {
+
+        LOGGER.debug("deleteWorkingDirectoryOnCompletion: " + deleteWorkingDirectoryOnCompletion);
+
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf(File.separatorChar));
@@ -236,6 +239,8 @@ public class WriteOutputStep extends Step {
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
+        }else{
+            LOGGER.debug("Files in temporaryFileDirectory not deleted since  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);
         }
     }
 
