@@ -139,6 +139,24 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         public Object clone() throws CloneNotSupportedException {
             return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue());
         }
+
+//        public static class RPSBlastSite extends Site {
+//
+//            @Column(nullable = false, name = "start")
+//            private int start;
+//
+//            @Column(nullable = false, name = "end")
+//            private int end;
+//
+//            private String residue;
+//
+//            protected RPSBlastSite() {
+//            }
+//
+//            public RPSBlastSite(String residue, int start, int end) {
+//                super(residue, start, end);
+//            }
+//        }
     }
 
 }
