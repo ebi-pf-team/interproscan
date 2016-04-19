@@ -15,17 +15,32 @@
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
             <list>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
-                    <property name="signatureLibrary" value="TMHMM"/>
-                    <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
-                    <property name="analysisJobId" value="jobTMHMM"/>
+                <bean class="uk.ac.ebi.interpro.scan.io.cdd.CDDModelParser">
+                    <property name="signatureLibrary" value="CDD"/>
+                    <property name="releaseVersionNumber" value="${cdd.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${cdd.signature.list.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobCDD"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
                     <property name="releaseVersionNumber" value="${coils.signature.library.release}"/>
                     <property name="analysisJobId" value="jobCoils"/>
+                </bean>
+
+                <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
+                    <property name="signatureLibrary" value="GENE3D"/>
+                    <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${gene3d.model2sf_map.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobGene3d"/>
+                </bean>
+
+                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
+                    <property name="signatureLibrary" value="TMHMM"/>
+                    <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
+                    <property name="analysisJobId" value="jobTMHMM"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.phobius.PhobiusDummyParser">
@@ -42,6 +57,7 @@
                     <property name="analysisJobId" value="jobPfam"/>
                 </bean>
 
+
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PFAM"/>
                     <property name="releaseVersionNumber" value="${pfam-a.signature.library.release.prev}"/>
@@ -49,6 +65,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPfam"/>
                 </bean>
+
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
@@ -63,13 +80,6 @@
                     <property name="analysisJobId" value="jobPRINTS"/>
                 </bean>
 
-                <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
-                    <property name="signatureLibrary" value="GENE3D"/>
-                    <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${gene3d.model2sf_map.path}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobGene3d"/>
-                </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="HAMAP"/>
@@ -172,6 +182,7 @@
                     <property name="analysisJobId" value="jobSignalP_GRAM_NEGATIVE"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
+
             </list>
         </property>
         <property name="jdbcEntryDAO" ref="jdbcEntryDAO"/>

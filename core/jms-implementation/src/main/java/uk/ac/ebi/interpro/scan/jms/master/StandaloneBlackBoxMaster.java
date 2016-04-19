@@ -9,7 +9,11 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileSt
 import uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep;
 
 import javax.jms.JMSException;
+
 import java.util.List;
+
+import java.util.concurrent.ThreadFactory;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,7 +44,6 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             loadInMemoryDatabase();
             runStatus = 21;
             int stepInstancesCreatedByLoadStep = createStepInstances();
-            //calculate minimum expected jobs
 
             int minimumStepsExpected = getMinimumStepsExpected();
             runStatus = 31;
@@ -120,6 +123,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
 
+
                 if (completed
                         && totalStepInstances == statsUtil.getSubmittedStepInstancesCount()
                         && statsUtil.getSubmittedStepInstancesCount() >= minimumStepsExpected
@@ -131,6 +135,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             + " minimumStepsExpected : " + minimumStepsExpected
                             + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
                             +  " unfinishedSteps " + totalUnfinishedStepInstances);
+
                     runStatus = 0;
                     break;
                 }
@@ -171,6 +176,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         try {
             databaseCleaner.closeDatabaseCleaner();
             LOGGER.debug("Ending");
+            Thread.sleep(500); // cool off, then exit
         } catch (Exception e){
             e.printStackTrace();
         } finally {
