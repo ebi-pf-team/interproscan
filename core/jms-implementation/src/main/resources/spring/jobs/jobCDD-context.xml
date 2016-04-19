@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: CDD ############################  -->
+    <bean id="jobCDD" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Prediction of CDD domains in Proteins"/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseCDD"/>
+        <property name="doRunLocally" value="true"/>
+        <property name="active" value="true" />
+    </bean>
+
+    <bean id="abstractCDDStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobCDD"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.CDD}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepCDDWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractCDDStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="serialGroup" value="WRITE_FASTA_CDD"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepCDDRunBinaryRPSblast"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.RunCDDRPSBlastStep"
+          parent="abstractCDDStep">
+        <!-- rpsblast - options  -->
+        <property name="dependsUpon" ref="stepCDDWriteFastaFile"/>
+        <property name="stepDescription" value="Run CDD Binary for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.rpsblast.path}"/>
+        <property name="libraryPath" value="${cdd.library.path}"/>
+        <property name="binarySwitches" value="${rpsblast.switches.cdd}"/>
+        <property name="outputFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 3 -->
+    <bean id="stepCDDRunPostBlastProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.RunCDDPostBlastUtilityStep"
+          parent="abstractCDDStep">
+        <!-- cmd -options   -->
+        <property name="dependsUpon" ref="stepCDDRunBinaryRPSblast"/>
+        <property name="stepDescription" value="Run CDD Binary rpsbproc. for selected proteins"/>
+        <property name="fullPathToBinary" value="${binary.rpsbproc.path}"/>
+        <property name="binarySwitches" value="${rpsbproc.switches.cdd}"/>
+        <property name="dataConfigFilePath" value="${cdd.rpsbproc.data.config.path}"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 4 -->
+    <bean id="stepCDDDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractCDDStep">
+        <property name="dependsUpon" ref="stepCDDRunPostBlastProcessing"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of CDD"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <!-- STEP 5 -->
+    <bean id="stepCDDParsePostBlastProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.ParseCDDOutputStep"
+          parent="abstractCDDStep">
+        <property name="dependsUpon" ref="stepCDDRunPostBlastProcessing"/>
+        <property name="stepDescription" value="Parse the CDD binary output and store as Filtered matches."/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser">
+                <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
+            </bean>
+        </property>
+        <property name="rawMatchDAO"  ref="cddRawMatchDAO"/>
+        <property name="serialGroup" value="PARSE_CDD"/>
+    </bean>
+
+    <!-- STEP 6 -->
+
+    <bean id="stepCDDDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractCDDStep">
+        <property name="dependsUpon" ref="stepCDDParsePostBlastProcessing"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+    </bean>
+
+    <!-- STEP 7 -->
+
+    <bean id="stepCDDPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.CDDPostProcessingStep"
+          parent="abstractCDDStep">
+        <property name="dependsUpon" ref="stepCDDParsePostBlastProcessing"/>
+        <property name="serialGroup" value="RPSBLAST_POST_PROCESSING"/>
+        <property name="stepDescription" value="Filter CDD matches and persist filtered results"/>
+        <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.cdd.CDDPostProcessing">
+                <property name="hitTypes">
+                    <list>
+                        <value>SPECIFIC</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
+        </property>
+        <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
+    </bean>
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: CDD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- ######################## Dependencies ############################  -->
+
+    <bean id="cddRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseCDD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="CDD"/>
+        <constructor-arg type="java.lang.String" ref="cddSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="cddSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="${cdd.signature.library.release}"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

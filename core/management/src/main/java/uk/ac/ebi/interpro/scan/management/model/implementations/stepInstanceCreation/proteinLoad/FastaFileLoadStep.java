@@ -211,12 +211,17 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
+
                 String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
                 //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+
+
+
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
                 }
                 StringBuilder analysesToRun = new StringBuilder();
+
 //                StringBuilder analysesToDisplay = new StringBuilder();
                 StringJoiner analysesToDisplay = new StringJoiner(",");
 
@@ -224,6 +229,8 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
                     analysesToDisplay.add(String.join("-", analysisJobMap.get(key).getLibrary().getName(),
                             analysisJobMap.get(key).getVersion()));
+
+
                 }
 
                 if (LOGGER.isDebugEnabled()) {
@@ -231,7 +238,9 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     LOGGER.debug(analysesDisplayStr + analysesToDisplay.toString());
                 }
 
-                System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
+
+                System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() + "]");
+
 
                 Job completionJob = jobs.getJobById(completionJobName);
 
