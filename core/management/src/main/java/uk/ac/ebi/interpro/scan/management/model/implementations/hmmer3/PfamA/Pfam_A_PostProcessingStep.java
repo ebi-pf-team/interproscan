@@ -103,7 +103,7 @@ public class Pfam_A_PostProcessingStep extends Step {
             }
             Utilities.sleep(waitTimeFactor * 1000);
 
-            
+
             //try again
             rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                     stepInstance.getBottomProtein(),
