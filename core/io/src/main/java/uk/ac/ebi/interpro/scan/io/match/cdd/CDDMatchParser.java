@@ -5,10 +5,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
+
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+//import uk.ac.ebi.interpro.scan.model.Site;
+import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
@@ -55,12 +55,22 @@ public class CDDMatchParser implements Serializable, MatchParser {
      * DOMAINS
      * 1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
      * ENDDOMAINS
+     *
+     *SITES
+     #<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
+     1	Query_1	Specific	ATP binding site	P272,P273,G274,T275,G276,K277,T278,L279,D330,N377	10	10	99707
+     1	Query_1	Specific	Walker A motif	G271,P272,P273,G274,T275,G276,K277,T278	8	8	99707
+     1	Query_1	Specific	arginine finger	R885	1	1	99707
+     ENDSITES
      */
 
     private static final Pattern QUERY_LINE_PATTERN
             = Pattern.compile("^QUERY\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(.*)$");
     private static final Pattern DOMAIN_LINE_PATTERN
             = Pattern.compile("^(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)");
+
+    private static final Pattern SITE_LINE_PATTERN
+            =  Pattern.compile("^(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)");
 
     public CDDMatchParser() {
         this.signatureLibrary = null;
@@ -103,6 +113,7 @@ public class CDDMatchParser implements Serializable, MatchParser {
 
     public Set<CDDRawMatch> parseFileInput(InputStream is) throws IOException, ParseException {
         Set<CDDRawMatch> matches = new HashSet<>();
+        HashMap <String, String> pssmid2modelId = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
             String proteinIdentifier;
@@ -162,14 +173,85 @@ public class CDDMatchParser implements Serializable, MatchParser {
                             String shortName = matcher.group(10);
                             String incomplete = matcher.group(11);
                             String superfamilyPSSMId = matcher.group(12);
-
+                            pssmid2modelId.put(pssmID, model);
                             matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
                                     pssmID, model, locationStart, locationEnd, eValue, score,
                                     shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
 //                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                         }
                     }
-                }
+                } else if (line.startsWith(SITES_BLOCK_START_MARKER)) {
+                    //SITES
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith(SITES_BLOCK_END_MARKER)) {
+                            break;
+                        }
+                        //#<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
+                        //1 Query_3 Specific heterodimer interface Q39,K43,W47,Y95,W108,G109 6 6 143182
+                        LOGGER.debug("Line: " + line);
+//                        Utilities.verboseLog("Sites line: " + line);
+                        Matcher matcher = SITE_LINE_PATTERN.matcher(line);
+                        String [] siteInfo = line.split("\\t");
+
+//                        if (matcher.matches()) {
+                        if (siteInfo.length > 5) {
+                            int sessionNumber = Integer.parseInt(siteInfo[0]);
+                            String queryId = siteInfo[2];
+                            String annotQueryType= siteInfo[3];
+//                            RPSBlastRawSite.HitType annotationType = RPSBlastRawSite.HitType.byHitTypeString(annotQueryType);
+                            String title = siteInfo[4];
+                            String residueCoordinates = siteInfo[5];
+                            String residueCoordinateList [] = residueCoordinates.split(",");
+
+
+                            int completeSize = Integer.parseInt(siteInfo[6]);
+                            int mappedSize = Integer.parseInt(siteInfo[7]);
+                            String sourceDomain = siteInfo[8];
+                            String model = pssmid2modelId.get(sourceDomain);
+                            List <IntPair> coordinates = new ArrayList<>();
+                            for (String residueAnnot: residueCoordinateList){
+                                String residue = residueAnnot.substring(0, 1);
+                                int sitelocation = Integer.parseInt(residueAnnot.substring(1));
+                                coordinates.add(new IntPair(residue,sitelocation,sitelocation));
+                            }
+                            for (IntPair intPair:coordinates) {
+                                Site site = new Site(intPair.getResidue(), intPair.getStart(), intPair.getEnd());
+                                CDDRawSite rawSite = new CDDRawSite(sequenceIdentifier, sessionNumber,
+                                        annotationType, title,  intPair.getResidue(), intPair.getStart(), intPair.getEnd(),
+                                        sourceDomain, model, completeSize, mappedSize,
+                                        signatureLibraryRelease);
+                                LOGGER.debug("site: " + rawSite);
+                                LOGGER.debug("site: " + intPair);
+                            }
+                            /*
+                            int sessionNumber = Integer.parseInt(matcher.group(1));
+                            String queryId = matcher.group(2);
+                            String annotQueryType= matcher.group(3);
+                            RPSBlastRawSite.HitType annotationType = RPSBlastRawSite.HitType.byHitTypeString(annotQueryType);
+                            String title = matcher.group(4);
+                            String residueCoordinates = matcher.group(5);
+//                            List <IntPair> coordinates = new In
+                            IntPair oneSite = new IntPair(1, 2);
+                            List <IntPair> coordinates = new ArrayList<>();
+                            coordinates.add(oneSite);
+                            int completeSize = Integer.parseInt(matcher.group(6));
+                            int mappedSize = Integer.parseInt(matcher.group(7));
+                            String sourceDomain = matcher.group(8);
+                            String model = pssmid2modelId.get(sourceDomain);
+                            */
+
+//                            String sequenceIdentifier, String modelId,
+//                                    SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+//                            int siteStart, int siteEnd
+
+//                            matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
+//                                    pssmID, model, locationStart, locationEnd, eValue, score,
+//                                    shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
+//                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
+                        }
+                    }
+                }//end domains
+
             }
         }
         Utilities.verboseLog("CDD matches size : " + matches.size());
