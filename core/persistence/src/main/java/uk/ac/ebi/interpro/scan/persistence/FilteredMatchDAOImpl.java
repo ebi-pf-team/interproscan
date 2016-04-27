@@ -93,11 +93,6 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     + " filteredProteins" + filteredProteins.size()
                     + " modelIdToSignatureMap size:" + modelIdToSignatureMap.size());
         }
-        StringBuilder signatureList = new StringBuilder();
-        for (Signature signature:   modelIdToSignatureMap.values()){
-            signatureList.append(signature.getModels().toString());
-        }
-
 
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
     }
