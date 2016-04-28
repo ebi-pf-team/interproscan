@@ -254,6 +254,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     private void displayLookupError(Exception e) {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
+
+        LOGGER.warn(e);
+        e.printStackTrace();
+        LOGGER.warn(e.toString());
+
         LOGGER.warn("\n\n" +
                 "The following problem was encountered by the pre-calculated match lookup service:\n" +
                 e.getMessage() + "\n" +
@@ -273,7 +278,6 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 "by sending an email to:\n\ninterhelp@ebi.ac.uk\n\n" +
                 "In the meantime, the analysis will continue to run locally.\n\n");
 
-        Utilities.verboseLog(e.toString());
 
 
 
