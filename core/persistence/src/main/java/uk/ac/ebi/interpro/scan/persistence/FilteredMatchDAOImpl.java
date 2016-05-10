@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import javax.persistence.Query;
@@ -101,20 +102,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 
 
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
+
     }
 
-    /**
-     * This is the method that should be implemented by specific FilteredMatchDAOImpl's to
-     * persist filtered matches.
-     *
-     * @param filteredProteins             being the Collection of filtered RawProtein objects to persist
-     * @param modelAccessionToSignatureMap a Map of model accessions to Signature objects.
-     * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
-     */
-    @Transactional
-    protected abstract void persist(Collection<RawProtein<T>> filteredProteins,
-                                    final Map<String, Signature> modelAccessionToSignatureMap,
-                                    final Map<String, Protein> proteinIdToProteinMap);
 
     /**
      * Helper method to retrieve a Map for lookup of Signature
@@ -125,7 +115,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return
      */
     @Transactional(readOnly = true)
-    private Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+    protected Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                                                                    Collection<RawProtein<T>> rawProteins) {
         //Model accession to signatures map
         LOGGER.info("Creating model accession to signature map...");
@@ -200,7 +190,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return a Map of protein IDs to Protein objects.
      */
     @Transactional(readOnly = true)
-    private Map<String, Protein> getProteinIdToProteinMap
+    protected Map<String, Protein> getProteinIdToProteinMap
     (Collection<RawProtein<T>> rawProteins) {
         final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(rawProteins.size());
 
