@@ -4,7 +4,10 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
+import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,10 +22,11 @@ import java.util.Set;
  * @since 5.16
  */
 
+//T extends RawMatch, U extends Match,  R extends RawSite, S extends Site
 
-abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
-        extends FilteredMatchDAOImpl<T, RPSBlastMatch>
-        implements FilteredMatchDAO<T, RPSBlastMatch>  {
+abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RPSBlastRawSite>
+        extends FilteredMatchAndSiteDAO<T,RPSBlastMatch, R, RPSBlastMatch.RPSBlastLocation.RPSBlastSite>
+        {
 
     private static final Logger LOGGER = Logger.getLogger(RPSBlastFilteredMatchDAO.class.getName());
 
@@ -49,8 +53,10 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
      * @param modelIdToSignatureMap a Map of model IDs to Signature objects.
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
+    @Override
     @Transactional
-    public void persist(Collection<RawProtein<T>> rawProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> rawProteins, Collection<R> sites,
+                        Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<T> rawProtein : rawProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -77,7 +83,21 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
                     LOGGER.debug("this is a superfamily match, ignore for now ...");
                     continue;
                 }
+                //TODO add Sites??
                 Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
+
+                //for this location find the sites
+                rawMatch.getSequenceIdentifier();
+                rawMatch.getModelId();
+                rawMatch.getAessionNumber();
+                rawMatch.getLocationStart();
+                rawMatch.getLocationStart();
+                rawMatch.getSignatureLibrary();
+                rawMatch.getSignatureLibraryRelease();
+
+                Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, sites);
+
+                Utilities.verboseLog("filtered sites: " + rpsBlastSites);
                 locations.add(
                         new RPSBlastMatch.RPSBlastLocation(
                                 rawMatch.getLocationStart(),
@@ -86,13 +106,38 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
                                 rawMatch.getEvalue()
                         )
                 );
-                RPSBlastMatch match = new RPSBlastMatch(signature, locations);
+                RPSBlastMatch match = new RPSBlastMatch(signature, locations, rpsBlastSites);
                 LOGGER.debug("rpsBlast match: " + match);
                 protein.addMatch(match);
                 //LOGGER.debug("Protein with match: " + protein);
                 entityManager.persist(match);
             }
         }
+    }
+
+
+
+    /**
+     *  check if site is in the location range [start,end]
+     * @param rawMatch
+     * @param rawSite
+     * @return
+     */
+    boolean siteInLocationRange(T rawMatch, R rawSite){
+        if (rawSite.getSiteStart() >= rawMatch.getLocationStart() && rawSite.getSiteEnd() <= rawMatch.getLocationEnd()){
+            return true;
+        }
+        return false;
+    }
+
+    Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
+        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
+        for (R rawSite: rawSites){
+            if (siteInLocationRange(rawMatch, rawSite)){
+                rpsBlastSites.add(new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd()));
+            }
+        }
+        return rpsBlastSites;
     }
 
 }

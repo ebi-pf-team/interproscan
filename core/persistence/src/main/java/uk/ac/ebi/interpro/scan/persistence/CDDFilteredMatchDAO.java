@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
 
+
 /**
  * CDD filtered match data access object.
  *
@@ -10,7 +11,11 @@ import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
  * @since v5.16
  */
 
-public class CDDFilteredMatchDAO extends RPSBlastFilteredMatchDAO<CDDRawMatch> {
+//<T extends RPSBlastRawMatch,  U extends RPSBlastMatch, R extends RawSite, S extends Site>
+
+public class CDDFilteredMatchDAO
+        extends FilteredMatchIncSiteDAO<CDDRawMatch> {
+//    extends RPSBlastFilteredMatchDAO<CDDRawMatch, CDDRawSite> {
 
 }
 

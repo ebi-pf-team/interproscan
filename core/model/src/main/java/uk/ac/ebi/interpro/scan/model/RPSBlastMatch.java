@@ -7,8 +7,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,12 +27,48 @@ import java.util.Set;
 @XmlType(name = "RPSBlastMatchType")
 public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
+    Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites;
+
     protected RPSBlastMatch() {
     }
 
     public RPSBlastMatch(Signature signature, Set<RPSBlastLocation> locations) {
         super(signature, locations);
     }
+
+    public RPSBlastMatch(Signature signature, Set<RPSBlastLocation> locations, Set<RPSBlastLocation.RPSBlastSite> sites) {
+        super(signature, locations);
+        this.sites = sites;
+    }
+
+    @Transient
+    @XmlJavaTypeAdapter(Site.SiteAdapter.class)
+    public Set<RPSBlastLocation.RPSBlastSite> getSites() {
+        return sites;
+    }
+
+    // Private so can only be set by JAXB, Hibernate ...etc via reflection
+
+
+    protected void setSites(Set<RPSBlastLocation.RPSBlastSite> sites) {
+        this.sites = sites;
+    }
+//
+//    protected void setLocations(final Set<T> locations) {
+//        if (locations != null) {
+//            for (T location : locations) {
+//                location.setMatch(this);
+//                this.locations.add(location);
+//            }
+//        }
+//    }
+//
+//    @Transient
+//    public void addSite(RPSBlastLocation.RPSBlastSite site) {
+//        site...setMatch(this);
+//        this.locations.add(location);
+//    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -140,6 +178,9 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
             return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue());
         }
 
+        @Entity
+        @Table(name = "rpsblast_site")
+        @XmlType(name = "RPSBlastSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
         public static class RPSBlastSite extends Site {
 
 

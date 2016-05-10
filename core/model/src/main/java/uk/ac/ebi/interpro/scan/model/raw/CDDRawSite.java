@@ -13,15 +13,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = CDDRawSite.TABLE_NAME,  indexes = {
-        @Index(name = "CDD_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
-        @Index(name = "CDD_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
-        @Index(name = "CDD_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
-        @Index(name = "CDD_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
-        @Index(name = "CDD_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
+        @Index(name = "CDD_RW_SEQ_IDX", columnList = RawSite.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "CDD_RW_NUM_SEQ_IDX", columnList = RawSite.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "CDD_RW_MODEL_IDX", columnList = RawSite.COL_NAME_MODEL_ID),
+        @Index(name = "CDD_RW_SIGLIB_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "CDD_RW_SIGLIB_REL_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite> {
 
-    public static final String TABLE_NAME = "CDD_RAW_MATCH";
+    public static final String TABLE_NAME = "CDD_RAW_SITE";
 
     /** Example CDD output file:
         DATA
@@ -56,14 +56,9 @@ public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite
     }
 
 
-//    @Override
-//    public String toString() {
-//        return super.toString();
-//
-//    }
 
     /**
-     * TODO define an ordering on CDD matches or RPSBlast matches
+     * TODO define an ordering on CDD sites or RPSBlast sites
      *
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
@@ -73,7 +68,7 @@ public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite
      * <p/>
      * evalue ASC, BitScore DESC
      *
-     * @param that being the CDDRawMatch to be compared.
+     * @param that being the CDDRawSite to be compared.
      * @return a negative integer, zero, or a positive integer as this object
      *         is less than, equal to, or greater than the specified object.
      * @throws ClassCastException if the specified object's type prevents it

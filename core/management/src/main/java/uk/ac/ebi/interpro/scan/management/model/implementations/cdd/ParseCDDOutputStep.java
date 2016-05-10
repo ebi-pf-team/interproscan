@@ -6,12 +6,10 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser;
 
+import uk.ac.ebi.interpro.scan.management.model.implementations.CompositeParseStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.ParseStep;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
-import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
@@ -31,6 +29,6 @@ import java.util.Set;
  * @since 17.0
  */
 
-public class ParseCDDOutputStep extends ParseStep<CDDRawMatch> {
+public class ParseCDDOutputStep extends CompositeParseStep<CDDRawMatch, CDDRawSite> {
 
 }

@@ -4,6 +4,8 @@ package uk.ac.ebi.interpro.scan.io.match.cdd;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
+import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
+import uk.ac.ebi.interpro.scan.io.match.MatchAndSiteParser;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -25,7 +27,7 @@ import java.util.regex.Pattern;
  * @version $Id: CDDMatchParser.java,v 1.1 2015/12/16 14:01:17 nuka Exp $
  * @since 5.16
  */
-public class CDDMatchParser implements Serializable, MatchParser {
+public class CDDMatchParser implements Serializable, MatchAndSiteParser {
 
     private static final Logger LOGGER = Logger.getLogger(CDDMatchParser.class.getName());
 
@@ -90,29 +92,44 @@ public class CDDMatchParser implements Serializable, MatchParser {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public Set<RawProtein<CDDRawMatch>> parse(InputStream is) throws IOException, ParseException {
+    public MatchSiteData parse(InputStream is) throws IOException, ParseException {
 
-        Map<String, RawProtein<CDDRawMatch>> matchData = new HashMap<>();
-
-        Set<CDDRawMatch> rawMatches = parseFileInput(is);
+        Map<String, RawProtein<CDDRawMatch>> rawProteinMap = new HashMap<>();
+        MatchData matchData = parseFileInput(is);
+        Set<CDDRawMatch> rawMatches = matchData.getMatches();
 
         for (CDDRawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
-            if (matchData.containsKey(sequenceId)) {
-                RawProtein<CDDRawMatch> rawProtein = matchData.get(sequenceId);
+            if (rawProteinMap.containsKey(sequenceId)) {
+                RawProtein<CDDRawMatch> rawProtein = rawProteinMap.get(sequenceId);
                 rawProtein.addMatch(rawMatch);
             } else {
                 RawProtein<CDDRawMatch> rawProtein = new RawProtein<>(sequenceId);
                 rawProtein.addMatch(rawMatch);
-                matchData.put(sequenceId, rawProtein);
+                rawProteinMap.put(sequenceId, rawProtein);
             }
         }
 
-        return new HashSet<>(matchData.values());
+        Map<String, RawProteinSite<CDDRawSite>> rawProteinSiteMap = new HashMap<>();
+        Set<CDDRawSite> rawSites = matchData.getSites();
+        for (CDDRawSite rawSite : rawSites) {
+            String sequenceId = rawSite.getSequenceIdentifier();
+            if (rawProteinSiteMap.containsKey(sequenceId)) {
+                RawProteinSite<CDDRawSite> rawProteinSite = rawProteinSiteMap.get(sequenceId);
+                rawProteinSite.addSite(rawSite);
+            } else {
+                RawProteinSite<CDDRawSite> rawProteinSite = new RawProteinSite<>(sequenceId);
+                rawProteinSite.addSite(rawSite);
+                rawProteinSiteMap.put(sequenceId, rawProteinSite);
+            }
+        }
+        Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
+        return new MatchSiteData(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
     }
 
-    public Set<CDDRawMatch> parseFileInput(InputStream is) throws IOException, ParseException {
+    public MatchData parseFileInput(InputStream is) throws IOException, ParseException {
         Set<CDDRawMatch> matches = new HashSet<>();
+        Set<CDDRawSite> sites = new HashSet<>();
         HashMap <String, String> pssmid2modelId = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
@@ -188,74 +205,53 @@ public class CDDMatchParser implements Serializable, MatchParser {
                         }
                         //#<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
                         //1 Query_3 Specific heterodimer interface Q39,K43,W47,Y95,W108,G109 6 6 143182
-                        LOGGER.debug("Line: " + line);
+                        LOGGER.debug("Sites Line: " + line);
 //                        Utilities.verboseLog("Sites line: " + line);
                         Matcher matcher = SITE_LINE_PATTERN.matcher(line);
                         String [] siteInfo = line.split("\\t");
 
 //                        if (matcher.matches()) {
+                        Utilities.verboseLog("Sites tokens: " + Arrays.toString(siteInfo));
                         if (siteInfo.length > 5) {
                             int sessionNumber = Integer.parseInt(siteInfo[0]);
-                            String queryId = siteInfo[2];
-                            String annotQueryType= siteInfo[3];
-//                            RPSBlastRawSite.HitType annotationType = RPSBlastRawSite.HitType.byHitTypeString(annotQueryType);
-                            String title = siteInfo[4];
-                            String residueCoordinates = siteInfo[5];
+                            String queryId = siteInfo[1];
+                            String annotQueryType= siteInfo[2];
+                            RPSBlastRawSite.HitType annotationType = RPSBlastRawSite.HitType.byHitTypeString(annotQueryType);
+                            String title = siteInfo[3];
+                            String residueCoordinates = siteInfo[4];
                             String residueCoordinateList [] = residueCoordinates.split(",");
 
 
-                            int completeSize = Integer.parseInt(siteInfo[6]);
-                            int mappedSize = Integer.parseInt(siteInfo[7]);
-                            String sourceDomain = siteInfo[8];
+                            int completeSize = Integer.parseInt(siteInfo[5]);
+                            int mappedSize = Integer.parseInt(siteInfo[6]);
+                            String sourceDomain = siteInfo[7];
                             String model = pssmid2modelId.get(sourceDomain);
-                            List <IntPair> coordinates = new ArrayList<>();
+
+                            List <ResidueCoordinate> coordinates = new ArrayList<>();
+                            Utilities.verboseLog("Residue tokens: " + Arrays.toString(residueCoordinateList));
                             for (String residueAnnot: residueCoordinateList){
                                 String residue = residueAnnot.substring(0, 1);
                                 int sitelocation = Integer.parseInt(residueAnnot.substring(1));
-                                coordinates.add(new IntPair(residue,sitelocation,sitelocation));
-                            }
-                            for (IntPair intPair:coordinates) {
-                                Site site = new Site(intPair.getResidue(), intPair.getStart(), intPair.getEnd());
+//                                coordinates.add(new ResidueCoordinate(residue,sitelocation,sitelocation));
                                 CDDRawSite rawSite = new CDDRawSite(sequenceIdentifier, sessionNumber,
-                                        annotationType, title,  intPair.getResidue(), intPair.getStart(), intPair.getEnd(),
+                                        annotationType, title,  residue, sitelocation, sitelocation,
                                         sourceDomain, model, completeSize, mappedSize,
                                         signatureLibraryRelease);
                                 LOGGER.debug("site: " + rawSite);
-                                LOGGER.debug("site: " + intPair);
+                                Utilities.verboseLog("raw site: " + rawSite);
+                                sites.add(rawSite);
                             }
-                            /*
-                            int sessionNumber = Integer.parseInt(matcher.group(1));
-                            String queryId = matcher.group(2);
-                            String annotQueryType= matcher.group(3);
-                            RPSBlastRawSite.HitType annotationType = RPSBlastRawSite.HitType.byHitTypeString(annotQueryType);
-                            String title = matcher.group(4);
-                            String residueCoordinates = matcher.group(5);
-//                            List <IntPair> coordinates = new In
-                            IntPair oneSite = new IntPair(1, 2);
-                            List <IntPair> coordinates = new ArrayList<>();
-                            coordinates.add(oneSite);
-                            int completeSize = Integer.parseInt(matcher.group(6));
-                            int mappedSize = Integer.parseInt(matcher.group(7));
-                            String sourceDomain = matcher.group(8);
-                            String model = pssmid2modelId.get(sourceDomain);
-                            */
 
-//                            String sequenceIdentifier, String modelId,
-//                                    SignatureLibrary signatureLibrary, String signatureLibraryRelease,
-//                            int siteStart, int siteEnd
-
-//                            matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
-//                                    pssmID, model, locationStart, locationEnd, eValue, score,
-//                                    shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
-//                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                         }
                     }
-                }//end domains
+                }//end sites
 
             }
         }
         Utilities.verboseLog("CDD matches size : " + matches.size());
-        return matches;
+        Utilities.verboseLog("CDD sites size : " + sites.size());
+
+        return new MatchData(matches, sites);
     }
 
     //get  the last item in the set
@@ -267,4 +263,49 @@ public class CDDMatchParser implements Serializable, MatchParser {
         }
         return lastElement;
     }
+
+    public class ResidueCoordinate {
+        final String residue;
+        final int start;
+        final int end;
+
+        public ResidueCoordinate(String residue, int start, int end) {
+            this.residue = residue;
+            this.start = start;
+            this.end = end;
+        }
+
+        public String getResidue() {
+            return residue;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+    }
+
+    private class MatchData {
+        final Set<CDDRawMatch> matches;
+        final Set<CDDRawSite> sites;
+
+
+        public MatchData(Set<CDDRawMatch> matches, Set<CDDRawSite> sites) {
+            this.matches = matches;
+            this.sites = sites;
+        }
+
+        public Set<CDDRawMatch> getMatches() {
+            return matches;
+        }
+
+        public Set<CDDRawSite> getSites() {
+            return sites;
+        }
+    }
+
 }
