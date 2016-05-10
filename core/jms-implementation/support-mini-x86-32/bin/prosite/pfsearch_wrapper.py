@@ -49,22 +49,32 @@ def get_hamap_profile(profiles_list_filename):
     if not os.path.isfile(profiles_list_filename):
         return profiles
 
+    temp_err_file = profiles_list_filename + '-filtered'
     with open(profiles_list_filename, "r") as profile_list:
         for line in profile_list:
             line = line.strip()
             if not line.startswith('#'):
                 lines.append(line)
                 m = re.search('^(\S+)\s+(\S+)\s+(\S+)\s+(.*)', line)
-                seq_id = m.group(1)
-                profile = m.group(3)
-                profile_path = model_dir + '/' + profile + ".prf"
-                #print line
-
-                if profile in profiles:
-                    profiles[profile].extend([seq_id])
+                hit_line = ''
+                if m:
+                    seq_id = m.group(1)
+                    profile = m.group(3)
+                    profile_path = model_dir + '/' + profile + ".prf"
+                    #print line
+                    hit_line = 'ok - ' + line
+                    if profile in profiles:
+                       profiles[profile].extend([seq_id])
+                    else:
+                       profiles[profile] = [profile_path, seq_id]
+                       #print profiles[profile]
                 else:
-                    profiles[profile] = [profile_path, seq_id]
-                    #print profiles[profile]
+                    print 'something wrong', line
+                    sys.stderr.write('something wrong ' + line)
+                    hit_line = 'not ok - ' + line
+                #append_to_file(temp_err_file, hit_line+'\n') 
+    key_count = len(profiles.keys())
+    append_to_file(temp_err_file, 'profile hits: ' + str(key_count) + '\n')
     return profiles
 
 def get_sequences(fasta_file):
@@ -102,26 +112,53 @@ def get_sequences_for_profile(key_list, seqs_dict):
     #print 'ok', sequences
     return sequences
 
-def create_temp_file(filename):
+def create_temp_file(filename, temp_dir):
     file_prefix = filename + '.'
-    f = NamedTemporaryFile(delete=False, prefix=file_prefix)
+    #temp_dir = '/nfs/nobackup/interpro/nuka/i5/build/release-5.18-hamap/may06-test/temp/tmp'
+    f = NamedTemporaryFile(delete=False, prefix=file_prefix, dir=temp_dir)
     return f.name
+
+def append_to_file(filename, output):
+    with open(filename, 'a') as out_file:
+        out_file.write(output)
 
 def write_to_file(filename, output):
     with open(filename, 'w') as seq_file:
         seq_file.write(output)  
 
-def run_pfsearch_binary(arg_list, profiles, seqs_dict, stats_filename, command_index):
+def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command_index):
     count = 0
     temp_file_list = []
+    stats_filename = input_fasta_file + ".stats"
+    #base_job_dir = os.path.dirname(stats_filename)
+    temp_dir = input_fasta_file + '-tmp'
+    os.makedirs(temp_dir)
     #prf_half = int(len(profiles) / 2)
+    temp_err_file = profiles_list_filename + '-filtered'
+        
+    append_to_file(temp_err_file, 'profile hits in run_pfsearch: ' + str(len(profiles.keys())) + '\n')
+
+    append_to_file(temp_err_file, 'sequence count in run_pfsearch: ' + str(len(seqs_dict.keys())) + '\n')
     get_seq_time = 0
+    keys = profiles.keys()
+    write_to_file(temp_err_file + '-keys', 'profile keys in run_pfsearch: ' + str(len(keys)) + '\n')
     for prf in profiles:
+        prf_seqs = ' '.join(profiles[prf])
+        prf_seqs_count = len(profiles[prf][1:])
+        prf_out = 'processing profile #:' + str(count) + ' ' +  prf + ' seqs:' + str(prf_seqs_count) + ' - ' + prf_seqs + '  \n'
+        append_to_file(temp_err_file, prf_out)
+        if prf == 'MF_00005':
+            #append_to_file(temp_err_file, 'processing MF_00005 \n')
+            mf_output = ' '.join(profiles[prf])            
+            #append_to_file(temp_err_file, mf_output)
+            #append_to_file(temp_err_file, ' ok \n ')
         sequence_ids = profiles[prf][1:]
         get_seq_start_time = time.time()
         input_fasta_sequences = get_sequences_for_profile(sequence_ids, seqs_dict)
         #print input_fasta_sequences
-        temp_file = create_temp_file(prf)
+        #temp_file = create_temp_file(prf, temp_dir)
+        temp_file = temp_dir + '/' + prf
+        temp_output_file = temp_file + '.raw.out'
         #print 'temp file is ', temp_file
         write_to_file(temp_file, input_fasta_sequences)
         get_seq_end_time = time.time()
@@ -137,7 +174,16 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, stats_filename, command_i
         cmd_string = ' '.join(comd_to_run)
         #print "command to run: ",  cmd_string
         count = count  + 1
+        #append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
+        if not os.path.isfile(profiles[prf][0]):
+            #profile not available
+            continue
         output = subprocess.check_output(comd_to_run)
+        #append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
+        #if prf == 'MF_00005':
+        #    append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
+        #    with open(temp_output_file, 'a') as out_temp_file:
+        #        out_temp_file.write(output)
         output = clean_output(output)
         if output.strip():
             with open(output_file, 'a') as out_file:
@@ -147,8 +193,11 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, stats_filename, command_i
 
     for tempfile in temp_file_list:
         #print tempfile
-        os.unlink(tempfile)
+        #todo remove comment
+        #os.unlink(tempfile)
+        testcount = 1
 
+    append_to_file(temp_err_file, 'completed running thru ' + str(count) + ' profiles \n')
     with open(stats_filename, 'w') as stats_file:
         stats_file.write('Total time to get and write ' + str(len(temp_file_list)) + ' seq files :' + str(get_seq_time * 1000) + " ms \n")
     return count
@@ -181,6 +230,7 @@ if __name__ == "__main__":
 
         #get the profiles
         profiles =  get_hamap_profile(profiles_list_filename)
+
         if len(profiles) > 1:
             #get the protein sequences
             seqs_dict = get_sequences(fasta_file)
@@ -189,10 +239,10 @@ if __name__ == "__main__":
             read_file_time = end_time - start_time
             start_time = time.time()
 
-            stats_filename = fasta_file + ".stats"
+            #stats_filename = fasta_file + ".stats"
             #run the pfsearch binary
-            pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, stats_filename, command_index)
-
+            pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, fasta_file, command_index)
+            sys.stderr.write('prfs: ' + str(count))
     except:
         print (sys.version)
         print ("Unexpected error: ")
