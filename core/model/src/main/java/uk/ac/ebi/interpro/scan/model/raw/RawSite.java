@@ -61,11 +61,11 @@ public abstract class RawSite implements Serializable {
     // Column explicitly named so subclass indexes can reference column.
     private String signatureLibraryRelease; // eg. 3.14
 
-    @Column(name = "residue", nullable = false)
-    private String residue;
-
     @Column(name = COL_NAME_TITLE)               // site name
     private String title;
+
+    @Column(name = "residue", nullable = false)
+    private String residue;
 
     @Column
     private int siteStart;
@@ -80,7 +80,7 @@ public abstract class RawSite implements Serializable {
 //            title, coordinates,
 //            completeSize, mappedSize, sourceDomain, signatureLibraryRelease)
 
-    protected RawSite(String sequenceIdentifier, String modelId, String residue, String title, int siteStart, int siteEnd,
+    protected RawSite(String sequenceIdentifier, String modelId,  String title, String residue, int siteStart, int siteEnd,
                       SignatureLibrary signatureLibrary, String signatureLibraryRelease
                      ) {
         this.setSequenceIdentifier(sequenceIdentifier);
@@ -139,6 +139,14 @@ public abstract class RawSite implements Serializable {
 
     private void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getResidue() {
+        return residue;
     }
 
     public int getSiteStart() {
