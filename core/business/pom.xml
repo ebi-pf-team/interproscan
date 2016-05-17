@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.17-56.0</version>
+        <version>5.18-57.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-business</artifactId>
-    <version>5.17-56.0</version>
+    <version>5.18-57.0</version>
 
     <packaging>jar</packaging>
     <name>InterProScan Business Logic</name>
@@ -36,14 +36,14 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>5.17-56.0</version>
+            <version>5.18-57.0</version>
         </dependency>
 
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>precalc-match-client</artifactId>
-            <version>5.17-56.0</version>
+            <version>5.18-57.0</version>
         </dependency>
 
         <dependency>

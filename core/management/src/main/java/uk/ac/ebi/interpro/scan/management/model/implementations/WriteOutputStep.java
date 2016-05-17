@@ -290,7 +290,8 @@ public class WriteOutputStep extends Step {
                         }
                         else {
                             outputPath = Files.createFile(outputPath);
-                        }                    } catch (IOException e) {
+                        }
+                    } catch (IOException e) {
                         pathAvailable = false; // Nope, that path has probably just been taken (e.g. by another copy of InterProScan writing to the same output directory)
                         if (LOGGER.isInfoEnabled()) {
                             LOGGER.info("Path " + candidateFileName.toString() + " was available for writing to, but I/O exception thrown");

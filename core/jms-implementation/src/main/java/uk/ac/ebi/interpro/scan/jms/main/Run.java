@@ -133,7 +133,8 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.17-56.0");
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.18-57.0");
+            //32bitMessage:System.out.println(Utilities.getTimeNow() + " You are running the 32-bit version");
 
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
