@@ -529,7 +529,7 @@ public class StatsUtil {
     public int getRequestQueueSize(){
         final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
         if (!requestQueueStatsAvailable) {
-            System.out.println("JobRequestQueue: not initialised");
+            LOGGER.warn("JobRequestQueue: not initialised");
             return -99;
         }
         setRequestQueueConsumerCount(statsMessageListener.getConsumers());
@@ -543,7 +543,7 @@ public class StatsUtil {
     public int getHighMemRequestQueueSize(){
         final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            System.out.println("HighMemJobRequestQueue: not initialised");
+            Utilities.verboseLog(5, "HighMemJobRequestQueue: not initialised");
             return -99;
         }
         return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
