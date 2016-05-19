@@ -50,7 +50,7 @@
             <protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.2.xsd">
+                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
                 <sequence md5="58F1C327155B01E0EE4C95CE0067973C">MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
                 <xref db="UniParc" id="UPI0001C4B400" name="UPI0001C4B400"/>
                 <matches>

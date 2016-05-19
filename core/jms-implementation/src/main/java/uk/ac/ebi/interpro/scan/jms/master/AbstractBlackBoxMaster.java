@@ -199,6 +199,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
     }
 
+
     /**
      * Called by quartz to load proteins from UniParc.
      */
