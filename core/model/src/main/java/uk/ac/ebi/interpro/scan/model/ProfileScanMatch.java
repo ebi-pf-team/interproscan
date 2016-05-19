@@ -104,6 +104,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
                 return null;
             }
             AlignmentEncoder encoder = new CigarAlignmentEncoder();
+
             return encoder.decode(getMatch().getProtein().getSequence(), cigarAlignment, getStart(), getEnd());
         }
 

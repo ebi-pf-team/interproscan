@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -19,6 +20,8 @@ import java.util.UUID;
  * @version $Id$
  */
 public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<SuperFamilyHmmer3RawMatch, SuperFamilyHmmer3Match> implements SuperFamilyHmmer3FilteredMatchDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(SuperFamilyHmmer3FilteredMatchDAOImpl.class.getName());
 
     private String superFamilyReleaseVersion;
 
@@ -54,6 +57,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
+            LOGGER.debug("Protein: " + protein);
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
                 if (match == null) {
@@ -74,6 +78,8 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
             }
 
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
+                LOGGER.debug("superfamily match: " + match);
+                LOGGER.debug("Protein with match: " + protein);
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
