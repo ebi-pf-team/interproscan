@@ -1,0 +1,118 @@
+#Post-RPSBLAST Processing Utility v0.1
+#Config file:	/ebi/production/interpro/programmers/scp/cdd/rpsb/rpsbproc.ini
+#Input data file:	stdin
+#Output data file:	test.out
+#E-Value cutoff:	0.01
+#Redundancy:	Concise
+#Data requested:	Domain hits and site annotations
+#Output format -- tab-delimited table
+#DATA
+#SESSION	<session-ordinal>	<program>	<database>	<score-matrix>	<evalue-threshold>
+#QUERY	<query-id>	<seq-type>	<seq-length>	<definition-line>
+#DOMAINS
+#<session-ordinal>	<query-id[readingframe]>	<hit-type>	<PSSM-ID>	<from>	<to>	<E-Value>	<bitscore>	<accession>	<short-name>	<incomplete>	<superfamily PSSM-ID>
+#more such lines......
+#ENDDOMAINS
+#SITES
+#<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
+#more such lines......
+#ENDSITES
+#MOTIFS
+#<session-ordinal>	<query-id[readingframe]>	<title>	<from>	<to>	<source-domain>
+#more such lines......
+#ENDMOTIFS
+#ENDQUERY	<query-id>
+#more query sections..
+#ENDSESSION	<session-ordinal>
+#more session sections..
+#ENDDATA
+#=====================================================================
+DATA
+SESSION	1	RPSBLAST 2.2.31+	Cdd_NCBI	BLOSUM62	0.01
+QUERY	Query_1	Peptide	590	sp|Q96N58|ZN578_HUMAN Zinc finger protein 578 OS=Homo sapiens GN=ZNF578 PE=2 SV=2
+DOMAINS
+1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
+ENDDOMAINS
+SITES
+1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	0
+1	Query_1	Specific	Zn binding site	C401,C404,H417,H421	4	4	0
+1	Query_1	Specific	Zn binding site	C429,C432,H445,H449	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K378,F380,Q382,S384,T385,I388,H389,I392,K406,F408,S412,H413,R416,H417,L420,K434,F436,H438,S440,S441,R444,H445,L448	23	23	0
+1	Query_1	Specific	Zn binding site	C289,C292,H305,H309	4	4	0
+1	Query_1	Specific	Zn binding site	C317,C320,H333,H337	4	4	0
+1	Query_1	Specific	Zn binding site	C345,C348,H361,H365	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K294,F296,Y298,S300,S301,C304,H305,C308,K322,F324,S328,S329,C332,H333,C336,K350,F352,Y354,S356,S357,C360,H361,L364	23	23	0
+1	Query_1	Specific	Zn binding site	C345,C348,H361,H365	4	4	0
+1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	0
+1	Query_1	Specific	Zn binding site	C401,C404,H417,H421	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K350,F352,Y354,S356,S357,C360,H361,L364,K378,F380,S384,T385,I388,H389,I392,K406,F408,Q410,S412,H413,R416,H417,L420	23	23	0
+1	Query_1	Specific	Zn binding site	C401,C404,H417,H421	4	4	0
+1	Query_1	Specific	Zn binding site	C429,C432,H445,H449	4	4	0
+1	Query_1	Specific	Zn binding site	C457,C460,H473,H477	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K406,F408,Q410,S412,H413,R416,H417,L420,K434,F436,S440,S441,R444,H445,L448,R462,F464,Q466,S468,N469,R472,H473,I476	23	23	0
+1	Query_1	Specific	Zn binding site	C457,C460,H473,H477	4	4	0
+1	Query_1	Specific	Zn binding site	C485,C488,H501,H505	4	4	0
+1	Query_1	Specific	Zn binding site	C513,C516,H529,H533	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	R462,F464,Q466,S468,N469,R472,H473,I476,K490,F492,S496,S497,C500,H501,L504,K518,F520,V522,S524,H525,R528,H529,L532	23	23	0
+1	Query_1	Specific	Zn binding site	C485,C488,H501,H505	4	4	0
+1	Query_1	Specific	Zn binding site	C513,C516,H529,H533	4	4	0
+1	Query_1	Specific	Zn binding site	C541,C544,H557,H561	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K490,F492,H494,S496,S497,C500,H501,L504,K518,F520,S524,H525,R528,H529,L532,K546,F548,C550,S552,Y553,N556,H557,I560	23	23	0
+1	Query_1	Specific	Zn binding site	C289,C292,H305,H309	4	4	0
+1	Query_1	Specific	Zn binding site	C317,C320,H333,H337	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K266,F268,E270,R272,Y273,R276,H277,C280,K294,F296,S300,S301,C304,H305,C308,K322,F324,Y326,S328,S329,C332,H333,C336	23	23	0
+1	Query_1	Specific	Zn binding site	C513,C516,H529,H533	4	4	0
+1	Query_1	Specific	Zn binding site	C541,C544,H557,H561	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	K518,F520,V522,S524,H525,R528,H529,L532,K546,F548,S552,Y553,N556,H557,I560,K574	23	16	0
+1	Query_1	Specific	Zn binding site	C289,C292,H305,H309	4	4	0
+1	Query_1	Specific	putative nucleic acid binding site	E238,F240,C242,S244,F245,K248,H249,I252,K266,F268,R272,Y273,R276,H277,C280,K294,F296,Y298,S300,S301,C304,H305,C308	23	23	0
+1	Query_1	Specific	putative nucleic acid binding site	F212,H214,S216,L217,Q220,K221,V224,E238,F240,S244,F245,K248,H249,I252,K266,F268,E270,R272,Y273,R276,H277,C280	23	22	0
+ENDSITES
+MOTIFS
+1	Query_1	C2H2 Zn finger	C373	393H	0
+1	Query_1	C2H2 Zn finger	C401	420L	0
+1	Query_1	C2H2 Zn finger	C429	449H	0
+1	Query_1	C2H2 Zn finger	C289	309H	0
+1	Query_1	C2H2 Zn finger	C317	336C	0
+1	Query_1	C2H2 Zn finger	C345	365H	0
+1	Query_1	C2H2 Zn finger	C457	477H	0
+1	Query_1	C2H2 Zn finger	C485	504L	0
+1	Query_1	C2H2 Zn finger	C513	533H	0
+1	Query_1	C2H2 Zn finger	C541	561H	0
+1	Query_1	C2H2 Zn finger	D262	281H	0
+1	Query_1	C2H2 Zn finger	C569	575A	0
+1	Query_1	C2H2 Zn finger	C233	253H	0
+1	Query_1	C2H2 Zn finger	F261	261F	0
+1	Query_1	C2H2 Zn finger	F212	225H	0
+ENDMOTIFS
+ENDQUERY
+QUERY	Query_2	Peptide	562	sp|Q8NAF0|ZN579_HUMAN Zinc finger protein 579 OS=Homo sapiens GN=ZNF579 PE=1 SV=2
+ENDQUERY
+QUERY	Query_3	Peptide	562	sp|Q80VM4|ZN579_MOUSE Zinc finger protein 579 OS=Mus musculus GN=Znf579 PE=1 SV=1
+ENDQUERY
+QUERY	Query_4	Peptide	172	sp|Q9UK33|ZN580_HUMAN Zinc finger protein 580 OS=Homo sapiens GN=ZNF580 PE=1 SV=1
+ENDQUERY
+QUERY	Query_5	Peptide	172	sp|Q9DB38|ZN580_MOUSE Zinc finger protein 580 OS=Mus musculus GN=Znf580 PE=2 SV=1
+ENDQUERY
+QUERY	Query_6	Peptide	197	sp|Q9P0T4|ZN581_HUMAN Zinc finger protein 581 OS=Homo sapiens GN=ZNF581 PE=1 SV=1
+ENDQUERY
+QUERY	Query_7	Peptide	533	sp|A6NCF5|KLH33_HUMAN Kelch-like protein 33 OS=Homo sapiens GN=KLHL33 PE=4 SV=2
+DOMAINS
+1	Query_7	Specific	269808	70	128	1.93712e-11	59.0295	cd14735	BACK_Kelch	-	271628
+ENDDOMAINS
+SITES
+1	Query_7	Specific	Cullin binding site	E83,A84,P85,E88	4	4	269808
+1	Query_7	Specific	putative dimer interface	L98,L99,A106,L107,F111,A116,A117,L119,A120,L122,L123,D124,D126,E127	14	14	269808
+ENDSITES
+MOTIFS
+1	Query_7	KELCH repeat	R312	355L	0
+1	Query_7	KELCH repeat	C359	405G	0
+1	Query_7	KELCH repeat	R408	453S	0
+1	Query_7	KELCH repeat	H455	501P	0
+1	Query_7	KELCH repeat	R504	511I	0
+1	Query_7	KELCH repeat	E249	257P	0
+1	Query_7	KELCH repeat	R261	310Q	0
+ENDMOTIFS
+ENDQUERY
+ENDSESSION	1
+ENDDATA
