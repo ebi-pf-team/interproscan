@@ -48,7 +48,7 @@ public class CreateMatchDBFromIprscan {
             "create global temporary table  berkley_tmp_tab " +
                     "on commit preserve rows " +
                     "as " +
-                    "select p.md5 as protein_md5, " +
+                    "select  /*+ PARALLEL */ p.md5 as protein_md5, " +
                     "        l.library as signature_library_name, " +
                     "        l.version as signature_library_release, " +
                     "        m.method_ac as signature_accession, " +
@@ -72,7 +72,7 @@ public class CreateMatchDBFromIprscan {
                     "        AND r.iprscan_sig_lib_rel_id=l.id";
 
     private static final String QUERY_TEMPORARY_TABLE =
-            "select  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
+            "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
                     "       SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
                     "       from  berkley_tmp_tab " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +

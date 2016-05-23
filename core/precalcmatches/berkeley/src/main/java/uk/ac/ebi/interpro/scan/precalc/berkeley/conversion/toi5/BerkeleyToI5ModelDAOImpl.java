@@ -100,7 +100,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
             if(analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
-                LOGGER.debug("Found Library : sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);
+                LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
             }
             LOGGER.debug("sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);
             LOGGER.debug("librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib));
