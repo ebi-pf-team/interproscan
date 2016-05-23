@@ -11,7 +11,7 @@
         <property name="description" value="Prediction of CDD domains in Proteins"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseCDD"/>
-        <property name="doRunLocally" value="true"/>
+        <!--<property name="doRunLocally" value="true"/>-->
         <property name="active" value="true" />
     </bean>
 
