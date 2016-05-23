@@ -17,7 +17,7 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-    <distributionManagement>
+     <distributionManagement>
         <repository>
             <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
             <id>i5.repo</id>

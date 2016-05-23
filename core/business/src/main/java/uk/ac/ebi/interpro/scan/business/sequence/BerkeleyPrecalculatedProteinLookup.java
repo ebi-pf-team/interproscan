@@ -110,9 +110,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
 
+            long timetaken = System.nanoTime() - startTime;
+            long lookupTimeMillis = 0;
+            if (timetaken > 0) {
+                lookupTimeMillis = timetaken / 1000000;
+            }
+
+            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: "  + lookupTimeMillis + " millis");
+
             if (LOGGER.isDebugEnabled()) {
-                long time = System.nanoTime() - startTime;
-                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + time + "ns");
+
+                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
             if (berkeleyMatchXML != null) {
                 berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobMap);
@@ -170,9 +178,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 startTime = System.nanoTime();
             }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(md5s);
+
+            long timetaken = System.nanoTime() - startTime;
+            long lookupTimeMillis = 0;
+            if (timetaken > 0) {
+                lookupTimeMillis = timetaken / 1000000;
+            }
+
+            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+
             if (LOGGER.isDebugEnabled()) {
-                long time = System.nanoTime() - startTime;
-                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + time + "ns");
+               LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
             }
             // Check if the analysis versions are consistent and then proceed
             if(isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
