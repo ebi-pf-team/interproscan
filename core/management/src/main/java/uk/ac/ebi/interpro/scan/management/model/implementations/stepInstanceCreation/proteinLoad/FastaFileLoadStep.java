@@ -11,8 +11,12 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -71,6 +75,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        Utilities.verboseLog(10, " FastaFileLoadStep - starting");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("FastaFileLoadStep.fastaFileLoader : " + fastaFileLoader);
         }
@@ -92,21 +97,21 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
         if (providedPath != null) {
             // Try resolving the fasta file as an absolute file path
             InputStream fastaFileInputStream = null;
-            String fastaFileInputStatusMessage = "";
+            String fastaFileInputStatusMessage;
             try {
-                File file = new File(providedPath);
+                Path path = Paths.get(providedPath); // E.g. "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
                 System.out.println(getTimeNow() + " Loading file " + providedPath);
-                if (file.exists()) {
+                if (Files.exists(path)) {
                     fastaFileInputStatusMessage = " - fasta file exists";
-                    if (file.canRead()) {
+                    if (Files.isReadable(path)) {
                         //
-                        if (file.length() == 0) {
+                        if (Files.size(path) == 0) {
                             //GetORF result file
                             // If getorf predicted nothing, there is nothing more to do.
                             // TODO Consider if there is a better way of dealing with this than throwing an Exception
                             // Should skip all subsequent steps, BUT should not "fail" - should elegantly report no proteins with zero exit status
                             // Need to output empty files of the types expected, so external pipeline is not broken.
-                            if (file.getName().contains("orfs")) {
+                            if (path.getFileName().toString().contains("orfs")) {
                                 System.out.println("\nThe ORF predication tool EMBOSS: getorf produced an empty result file (" + providedPath + ").");
                                 System.out.println("Therefore there are no proteins for InterproScan to analyse");
                                 System.out.println("Finishing...");
@@ -119,9 +124,9 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                             System.exit(0);
                         }
                         try {
-                            fastaFileInputStream = new FileInputStream(file);
+                            fastaFileInputStream = Files.newInputStream(path);
                         } catch (FileNotFoundException e) {
-                            System.out.println("\nERROR: Could not find FASTA input file " + file.getAbsolutePath());
+                            System.out.println("\nERROR: Could not find FASTA input file " + path.toAbsolutePath().toString());
                             System.out.println("Exiting...");
                             System.exit(2);
                         }
@@ -151,37 +156,36 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("FastaFileLoaderStep.jobs is null? " + jobs == null);
                     LOGGER.debug("Number of jobs in i5: " + jobs.getJobList().size());
-                }
-                //All jobs
-                for (Job job4Debug : jobs.getAnalysisJobs().getJobList()){
-                    LOGGER.debug("SignatureLibraryRelease: " +
-                            job4Debug.getId() + ": " +
-                            job4Debug.getLibraryRelease().getLibrary().getName() + ", " +
-                            job4Debug.getLibraryRelease().getVersion() + ", " +
-                            "active: " + job4Debug.isActive());
+                    //All jobs
+                    for (Job job4Debug : jobs.getAnalysisJobs().getJobList()){
+                        LOGGER.debug("SignatureLibraryRelease: " +
+                                job4Debug.getId() + ": " +
+                                job4Debug.getLibraryRelease().getLibrary().getName() + ", " +
+                                job4Debug.getLibraryRelease().getVersion() + ", " +
+                                "active: " + job4Debug.isActive());
 
-                    if(job4Debug.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("gene3d")){
-                        LOGGER.debug("Gene3d: " + job4Debug.getLibraryRelease().getVersion() + " - " +
-                                job4Debug.getSteps());
-                    }
+                        if(job4Debug.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("gene3d")){
+                            LOGGER.debug("Gene3d: " + job4Debug.getLibraryRelease().getVersion() + " - " +
+                                    job4Debug.getSteps());
+                        }
                         if(job4Debug.getLibraryRelease().getLibrary().getName().equalsIgnoreCase("panther")) {
                             LOGGER.debug("panther: " + job4Debug.getLibraryRelease().getVersion() + " - " +
                                     job4Debug.getSteps());
                         }
-
-
+                    }
                 }
 
-                Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<String, SignatureLibraryRelease>();
+                Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<>();
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
                     analysisJobs = jobs.getActiveAnalysisJobs();
                     List<String> analysisJobIdList = analysisJobs.getJobIdList();
                     StringBuilder analysisJobNamesBuilder = new StringBuilder();
                     for (String jobName : analysisJobIdList) {
-                        if (analysisJobNamesBuilder.length() > 0) analysisJobNamesBuilder.append(',');
+                        if (analysisJobNamesBuilder.length() > 0) {
+                            analysisJobNamesBuilder.append(',');
+                        }
                         analysisJobNamesBuilder.append(jobName);
                     }
                     analysisJobNames = analysisJobNamesBuilder.toString();
@@ -207,26 +211,38 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
-                System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
+                //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
                 }
                 StringBuilder analysesToRun = new StringBuilder();
+//                StringBuilder analysesToDisplay = new StringBuilder();
+                StringJoiner analysesToDisplay = new StringJoiner(",");
+
                 for (String key: analysisJobMap.keySet()){
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
+                    analysesToDisplay.add(String.join("-", analysisJobMap.get(key).getLibrary().getName(),
+                            analysisJobMap.get(key).getVersion()));
                 }
+
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(analysesPrintOutStr + analysesToRun.toString());
+                    LOGGER.debug(analysesPrintOutStr + Collections.singletonList(analysisJobNames));
+                    LOGGER.debug(analysesDisplayStr + analysesToDisplay.toString());
                 }
+
+                System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
+
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 StepCreationSequenceLoadListener sequenceLoadListener =
                         new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
-//                fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobNames, useMatchLookupService);
                 fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
                 LOGGER.debug("Finished loading sequences and creating step instances.");
+            } catch (IOException e) {
+                e.printStackTrace();
             } finally {
                 if (fastaFileInputStream != null) {
                     try {
@@ -237,12 +253,12 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
             }
         }
+        Utilities.verboseLog(10, " FastaFileLoadStep - done");
     }
 
     private String getTimeNow() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
-        String currentDate = sdf.format(cal.getTime());
-        return currentDate;
+        return sdf.format(cal.getTime()); // Return the current date
     }
 }

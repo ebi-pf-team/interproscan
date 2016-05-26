@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.ParseStep;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
@@ -20,9 +21,16 @@ import java.util.Set;
  * This class parses and persists the output from hmmpfam for SMART
  *
  * @author Phil Jones, adapted by John Maslen
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+
+public class ParseSmartHmmpfamOutputStep extends ParseStep<SmartRawMatch> {
+
+}
+
+/*
 // TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseStep
 public class ParseSmartHmmpfamOutputStep extends Step {
 
@@ -49,12 +57,16 @@ public class ParseSmartHmmpfamOutputStep extends Step {
         this.parser = parser;
     }
 
+*/
+
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory
      */
+
+    /*
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         delayForNfs();
@@ -118,3 +130,5 @@ public class ParseSmartHmmpfamOutputStep extends Step {
         }
     }
 }
+
+    */

@@ -36,8 +36,8 @@ public enum MatchDataSource {
                     "automatically, and are released as Pfam-B. Pfam families have permanent accession numbers and contain " +
                     "functional annotation and cross-references to other databases, while Pfam-B families are re-generated " +
                     "at each release and are unannotated.",
-            "http://pfam.sanger.ac.uk/",
-            "http://pfam.sanger.ac.uk/family/$0"),
+            "http://pfam.xfam.org/",
+            "http://pfam.xfam.org/family/$0"),
 
     PIRSF(0,
             "PIRSF is a hierarchical classification system based on the 'homeomorphic family' principle. Members are " +
@@ -245,6 +245,11 @@ public enum MatchDataSource {
                     name = name.replaceAll("positive", "+prok");
                     name = name.replaceAll("negative", "-prok");
                 }
+            }
+
+            // TODO Inconsistent? SignatureLibrary (InterProScan) uses "TIGRFAM" and MatchDataSource (InterPro) uses "TIGRFAMS"
+            if (name.equals("tigrfam")) {
+                return MatchDataSource.TIGRFAMS;
             }
 
             // Now iterate over the MatchDataSource names to see if we have a match

@@ -46,6 +46,8 @@
                 <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
                 <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
                 <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
+                <entry key="hibernate.jdbc.fetch_size" value="${hibernate.jdbc.fetch_size}"/>
+                <entry key="hibernate.max_fetch_depth" value="${hibernate.max_fetch_depth}"/>
                 <entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl_auto}"/>
 
                 <entry key="hibernate.generate_statistics" value="${hibernate.generate_statistics}"/>

@@ -147,7 +147,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(39, 63)
+            return new HashCodeBuilder(39, 59)
                     .appendSuper(super.hashCode())
                     .append(envelopeStart)
                     .append(envelopeEnd)

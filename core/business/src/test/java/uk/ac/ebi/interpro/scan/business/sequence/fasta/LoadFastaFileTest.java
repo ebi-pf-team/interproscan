@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import java.io.IOException;
@@ -49,13 +48,10 @@ public class LoadFastaFileTest {
     public void testLoader() throws IOException {
         LOGGER.debug("Loader:" + loader);
         LOGGER.debug("FastaFile: " + fastaFile);
-        loader.loadSequences(fastaFile.getInputStream(), new SequenceLoadListener() {
-            @Override
-            public void sequencesLoaded(Long bottomNewSequenceId, Long topNewSequenceId, Long bottomPrecalculatedSequenceId, Long topPrecalculatedSequenceId) {
-                LOGGER.debug("Loaded New:" + bottomNewSequenceId + "-" + topNewSequenceId);
-                LOGGER.debug("Loaded New:" + bottomPrecalculatedSequenceId + "-" + topPrecalculatedSequenceId);
+        loader.loadSequences(fastaFile.getInputStream(), (bottomNewSequenceId, topNewSequenceId, bottomPrecalculatedSequenceId, topPrecalculatedSequenceId) -> {
+            LOGGER.debug("Loaded New:" + bottomNewSequenceId + "-" + topNewSequenceId);
+            LOGGER.debug("Loaded New:" + bottomPrecalculatedSequenceId + "-" + topPrecalculatedSequenceId);
 
-            }
         }, null, false);
         LOGGER.debug("Proteins loaded: " + proteinDAO.count());
     }

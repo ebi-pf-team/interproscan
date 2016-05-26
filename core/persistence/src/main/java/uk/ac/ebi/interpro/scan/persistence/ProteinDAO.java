@@ -44,7 +44,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      *         primary key is not present in the database.
      */
     @Transactional(readOnly = true)
-    public Protein getProteinAndCrossReferencesByProteinId(Long id);
+    Protein getProteinAndCrossReferencesByProteinId(Long id);
 
     /**
      * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
@@ -53,7 +53,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
      */
     @Transactional(readOnly = true)
-    public List<Protein> getProteinsBetweenIds(long bottom, long top);
+    List<Protein> getProteinsBetweenIds(long bottom, long top);
 
     /**
      * Queries a list of proteins by the specified protein identifiers. For further information please have a look at
@@ -63,7 +63,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * @param proteinIds Set of protein identifiers.
      */
     @Transactional(readOnly = true)
-    public List<Protein> getProteinsByIds(Set<Long> proteinIds);
+    List<Protein> getProteinsByIds(Set<Long> proteinIds);
 
     /**
      * Inserts new Proteins.
@@ -78,7 +78,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      *         (Allows the caller to retrieve the primary keys for the proteins).
      */
     @Transactional
-    public PersistedProteins insertNewProteins(Collection<Protein> newProteins);
+    PersistedProteins insertNewProteins(Collection<Protein> newProteins);
 
 
     /**
@@ -89,7 +89,7 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom, long top);
+    List<Protein> getProteinsAndMatchesAndCrossReferencesBetweenIds(long bottom, long top);
 
     /**
      * Instances of this class are returned from the insert method above.
