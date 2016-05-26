@@ -15,6 +15,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.Map;
@@ -74,10 +75,43 @@ public class SmartPostProcessingStep extends Step {
                 signatureLibraryRelease
         );
 
+        Utilities.verboseLog(10, "Smart PostProcessingStep : stepinstance:" + stepInstance.toString());
+        if(rawMatches.size() == 0){
+            Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            //TODO do we expect matches?
+            int waitTimeFactor = 2;
+            if (! Utilities.isRunningInSingleSeqMode()){
+                 waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
+            }
+            Utilities.sleep(waitTimeFactor * 1000);
+
+            //try again
+            rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
+                    stepInstance.getBottomProtein(),
+                    stepInstance.getTopProtein(),
+                    signatureLibraryRelease
+            );
+            Utilities.verboseLog(10, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
+        }
+
         // Post process
         try {
+            int matchCount = 0;
+            for (final RawProtein rawProtein : rawMatches.values()) {
+                matchCount += rawProtein.getMatches().size();
+            }
+            Utilities.verboseLog(10, " SMART: Retrieved " + rawMatches.size() + " proteins to post-process with " + matchCount + " raw matches.");
+
             Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
             filteredMatchDAO.persist(filteredMatches.values());
+
+            matchCount = 0;
+            for (final RawProtein rawProtein : filteredMatches.values()) {
+                matchCount += rawProtein.getMatches().size();
+            }
+            Utilities.verboseLog(10,  " SMART: " + filteredMatches.size() + " proteins passed through post processing.");
+            Utilities.verboseLog(10,  " SMART: A total of " + matchCount + " matches PASSED.");
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PRINTS matches.", e);
         }

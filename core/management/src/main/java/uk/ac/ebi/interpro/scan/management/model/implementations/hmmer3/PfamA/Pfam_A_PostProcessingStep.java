@@ -95,15 +95,19 @@ public class Pfam_A_PostProcessingStep extends Step {
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
-            //do we expect matches?
-            Utilities.sleep(10000);
+            int waitTimeFactor = 2;
+            if (! Utilities.isRunningInSingleSeqMode()){
+                waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
+            }
+            Utilities.sleep(waitTimeFactor * 1000);
+
             //try again
             rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                     stepInstance.getBottomProtein(),
                     stepInstance.getTopProtein(),
                     getSignatureLibraryRelease()
             );
-            Utilities.verboseLog(10, "matches after : " + rawMatches.size());
+            Utilities.verboseLog(10, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
         }
         int matchCount = 0;
         for (final RawProtein rawProtein : rawMatches.values()) {

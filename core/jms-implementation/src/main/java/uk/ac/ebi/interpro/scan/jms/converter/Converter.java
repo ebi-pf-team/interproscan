@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -183,7 +186,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             source = new StreamSource(new FileReader(new File(xmlInputFilePath)));
             IMatchesHolder object = (IMatchesHolder) marshaller.unmarshal(source);
 
-            Collection<Protein> proteins = null;
+            Collection<Protein> proteins;
             Collection<NucleotideSequence> nucleotideSequences = null;
             final char sequenceType;
 
@@ -191,7 +194,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 proteins = ((ProteinMatchesHolder) object).getProteins();
                 sequenceType = 'p';
             } else {
-                proteins = new HashSet<Protein>();
+                proteins = new HashSet<>();
                 nucleotideSequences = ((NucleicAcidMatchesHolder) object).getNucleotideSequences();
                 for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
                     Set<OpenReadingFrame> openReadingFrames = nucleotideSequence.getOpenReadingFrames();
@@ -214,7 +217,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             for (String fileOutputFormat : getOutputFormats()) {
                 if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.GFF3.getFileExtension())) {
                     LOGGER.info("Generating GFF3 result output...");
-                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.GFF3);
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.GFF3);
                     if (sequenceType == 'n') {
                         outputNucleotideSequencesToGFF(outputFile, nucleotideSequences);
                     } else {
@@ -223,22 +226,22 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     LOGGER.info("Finished generation of GFF3.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.TSV.getFileExtension())) {
                     LOGGER.info("Generating TSV result output...");
-                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.TSV);
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.TSV);
                     outputToTSV(outputFile, proteins);
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
-                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
-                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.SVG);
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.SVG);
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension())) {
                     LOGGER.info("Generating RAW result output...");
-                    File outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.RAW);
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.RAW);
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
@@ -273,7 +276,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     }
 
-    private File initOutputFile(final boolean isExplicitFileNameSet,
+    private Path initOutputFile(final boolean isExplicitFileNameSet,
                                 final FileOutputFormat fileFormat) {
 
         /* Boolean flag for the HTML and SVG output generation. If TRUE, the generated tar archives will be compress (gzipped) as well */
@@ -282,13 +285,15 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         /* Not required. If TRUE (default), it will archive all SVG output files into a single archive.*/
         boolean archiveSVGOutput = true;
 
-        File outputFile = null;
+        Path outputPath = null;
 
         if (isExplicitFileNameSet) {
-            outputFile = new File(explicitFileName);
-            if (outputFile.exists()) {
-                if (!outputFile.delete()) {
-                    System.out.println("Unable to overwrite file " + outputFile + ".  Please check file permissions.");
+            outputPath = Paths.get(explicitFileName);
+            if (Files.exists(outputPath)) {
+                try {
+                    Files.delete(outputPath);
+                } catch (IOException e) {
+                    System.out.println("Unable to overwrite file " + outputPath + ".  Please check file permissions.");
                     System.exit(101);
                 }
             }
@@ -312,51 +317,32 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                         .append(fileFormat.getFileExtension());
                 //Extend file name by tar (tar.gz) extension if HTML or SVG
                 if (fileFormat.equals(FileOutputFormat.HTML) || fileFormat.equals(FileOutputFormat.SVG)) {
-                    outputFile = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, fileFormat));
+                    outputPath = Paths.get(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, fileFormat));
                 } else {
-                    outputFile = new File(candidateFileName.toString());
+                    outputPath = Paths.get(candidateFileName.toString());
                 }
-                pathAvailable = !outputFile.exists();
+                pathAvailable = !Files.exists(outputPath);
             }
 
         }
-        return outputFile;
+        return outputPath;
     }
 
-    private void outputToTSV(final File file,
+    private void outputToTSV(final Path path,
                              final Collection<Protein> proteins) throws IOException {
-        ProteinMatchesTSVResultWriter writer = null;
-        try {
-            writer = new ProteinMatchesTSVResultWriter(file);
+        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, proteins);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
-    private void outputToHTML(final File file,
+    private void outputToHTML(final Path path,
                               final Collection<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 htmlResultWriter.write(protein);
             }
-            List<File> resultFiles = htmlResultWriter.getResultFiles();
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, true);
-            tarArchiveBuilder.buildTarArchive();
-            //Delete result files in the temp directory at the end
-            for (File resultFile : resultFiles) {
-                //Only delete HTML files, but not the resource directory which is also part of the result files list
-                if (resultFile.isFile()) {
-                    boolean isDeleted = resultFile.delete();
-                    if (LOGGER.isEnabledFor(Level.WARN)) {
-                        if (!isDeleted) {
-                            LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
-                        }
-                    }
-                }
-            }
+            List<Path> resultFiles = htmlResultWriter.getResultFiles();
+            buildTarArchive(path, resultFiles);
         }
     }
 
@@ -372,7 +358,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
      * @param proteins  Set of result proteins.
      * @throws IOException
      */
-    private void outputToSVG(final File outputDir, final Collection<Protein> proteins) {
+    private void outputToSVG(final Path path, final Collection<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 try {
@@ -381,79 +367,61 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     LOGGER.error("Cannot write SVG output file!", e);
                 }
             }
-            List<File> resultFiles = svgResultWriter.getResultFiles();
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, outputDir, true);
-            try {
-                tarArchiveBuilder.buildTarArchive();
-            } catch (IOException e) {
-                LOGGER.error("Cannot build the TAR archive!", e);
-            }
-            //Delete result files in the temp directory at the end
-            for (File resultFile : resultFiles) {
-                //Only delete HTML files, but not the resource directory which is also part of the result files list
-                if (resultFile.isFile()) {
-                    boolean isDeleted = resultFile.delete();
+            List<Path> resultFiles = svgResultWriter.getResultFiles();
+            buildTarArchive(path, resultFiles);
+        }
+    }
+
+    private void buildTarArchive(Path path, List<Path> resultFiles) throws IOException {
+        TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, path, true);
+        tarArchiveBuilder.buildTarArchive();
+        //Delete result files in the temp directory at the end
+        for (Path resultFile : resultFiles) {
+            //Only delete HTML files, but not the resource directory which is also part of the result files list
+            if (Files.isRegularFile(resultFile)) {
+                try {
+                    Files.delete(resultFile);
+                } catch (IOException e) {
                     if (LOGGER.isEnabledFor(Level.WARN)) {
-                        if (!isDeleted) {
-                            LOGGER.warn("Cannot delete file " + resultFile.getAbsolutePath());
-                        }
+                        final String r = resultFile.toAbsolutePath().toString();
+                        LOGGER.warn("Couldn't delete file " + r);
                     }
                 }
             }
         }
     }
 
-    private void outputProteinsToGFF(final File outputFile,
+    private void outputProteinsToGFF(final Path path,
                                      final Collection<Protein> proteins) throws IOException {
-        ProteinMatchesGFFResultWriter writer = null;
-        try {
-            writer = new GFFResultWriterForProtSeqs(outputFile);
-
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, proteins);
             //This step writes FASTA sequence at the end of the GFF file
             writeFASTASequences(writer);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
-    private void outputNucleotideSequencesToGFF(final File outputFile,
+    private void outputNucleotideSequencesToGFF(final Path path,
                                                 final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
-        GFFResultWriterForNucSeqs writer = null;
-        try {
-            writer = new GFFResultWriterForNucSeqs(outputFile);
-
+        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, nucleotideSequences);
             //This step writes FASTA sequence at the end of the GFF file
             writeFASTASequences(writer);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
     /**
      * Output in InterProScan 4 RAW (TSV) output format.
      *
-     * @param file     The file to create
+     * @param path     The file to create
      * @param proteins Protein data
      * @throws IOException In the event of an input/output error.
      */
-    private void outputToRAW(final File file,
+    private void outputToRAW(final Path path,
                              final Collection<Protein> proteins) throws IOException {
-        ProteinMatchesRAWResultWriter writer = null;
-        try {
-            writer = new ProteinMatchesRAWResultWriter(file);
+        try (ProteinMatchesRAWResultWriter writer = new ProteinMatchesRAWResultWriter(path)) {
             writeProteinMatches(writer, proteins);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 

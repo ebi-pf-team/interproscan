@@ -41,7 +41,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(29, 49)
+        return new HashCodeBuilder(27, 47)
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
@@ -85,7 +85,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(29, 53)
+            return new HashCodeBuilder(27, 47)
                     .appendSuper(super.hashCode())
                     .toHashCode();
         }
