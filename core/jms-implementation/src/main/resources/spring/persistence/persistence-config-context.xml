@@ -18,6 +18,8 @@
                 <entry key="hibernate.default_schema" value="${hibernate.default_schema}"/>
                 <entry key="hibernate.use_sql_comments" value="${hibernate.use_sql_comments}"/>
                 <entry key="hibernate.jdbc.batch_size" value="${hibernate.jdbc.batch_size}"/>
+                <entry key="hibernate.jdbc.fetch_size" value="${hibernate.jdbc.fetch_size}"/>
+                <entry key="hibernate.max_fetch_depth" value="${hibernate.max_fetch_depth}"/>
                 <!-- Note - the "hibernate.physical_naming_strategy" does the following:
     * guarantees that table / column / index identifiers are no longer than 30 characters.
     * turns camelHump wording into underscore_spaced

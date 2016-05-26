@@ -9,5 +9,5 @@ import java.io.IOException;
  * Write proteins to output
  */
 public interface ProteinMatchesWriter extends Closeable {
-    public int write(Protein protein) throws IOException;
+    int write(Protein protein) throws IOException;
 }

@@ -13,6 +13,9 @@ import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -54,9 +57,9 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
 
                         UrlFriendlyIdGenerator gen = UrlFriendlyIdGenerator.getInstance();
                         String urlFriendlyId = gen.generate(xref.getIdentifier());
-                        final File newResultFile = new File(tempDirectory + urlFriendlyId + ".svg");
+                        final Path newResultFile = Paths.get(tempDirectory + urlFriendlyId + ".svg");
                         resultFiles.add(newResultFile);
-                        writer = new PrintWriter(new FileWriter(newResultFile));
+                        writer = Files.newBufferedWriter(newResultFile, characterSet);
                         temp.process(model, writer);
                         writer.flush();
                     } catch (TemplateException e) {
