@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: SMART ############################  -->
+    <bean id="jobSMART" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="SMART allows the identification and analysis of domain architectures based on Hidden Markov Models or HMMs"/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseSmart"/>
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="smart.hmm.bin.path" value-ref="fullPathToHmmFile"/>
+                <!-- NOTE: SMART "overlapping" and "THRESHOLDS" files are required to perform full SMART post processing,
+                but are licensed therefore cannot be included with InterProScan -->
+            </map>
+        </property>
+        <property name="active" value="true" />
+    </bean>
+
+    <bean id="fullPathToHmmFile" class="java.lang.String">
+        <constructor-arg value="${smart.hmm.bin.path}"/>
+    </bean>
+
+    <bean id="abstractSMARTStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobSMART"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.SMART}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepSMARTWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractSMARTStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+
+    <!--TODO - The run binary step for HMMER should choose between search or scan, depending
+        TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
+        TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
+
+    <!-- STEP 2 -->
+    <bean id="stepSMARTRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.smart.RunSmartBinaryStep"
+          parent="abstractSMARTStep">
+        <!-- In example command line below, replace _ with -
+        hmmpfam _-cpu 1 _-acc -A 0 smart.HMMs.bin  XXX.fasta -->
+        <property name="dependsUpon" ref="stepSMARTWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMM on selected proteins"/>
+
+        <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
+        <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.smart} ${hmmer2.hmmpfam.cpu.switch.smart}"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToHmmFile" ref="fullPathToHmmFile"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+        <property name="smartResourceManager" ref="smartResourceManager"/>
+    </bean>
+
+    <bean id="smartResourceManager" class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartResourceManager">
+        <property name="overlappingFileResource" value="file:${smart.overlapping.path}"/>
+        <property name="thresholdFileResource" value="file:${smart.threshold.path}"/>
+    </bean>
+
+    <bean id="stepSMARTDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractSMARTStep">
+        <property name="dependsUpon" ref="stepSMARTRunBinary"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of HMMER2"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+    <bean id="stepSMARTStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.smart.ParseSmartHmmpfamOutputStep"
+          parent="abstractSMARTStep">
+        <property name="dependsUpon" ref="stepSMARTRunBinary"/>
+        <property name="stepDescription" value="Parse the HMMER2 output and store as Filtered matches."/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="smartRawMatchDAO"/>
+        <property name="serialGroup" value="PARSE_SMART"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">
+                <property name="signatureLibrary" value="SMART"/>
+                <property name="signatureLibraryRelease" ref="smartSignatureLibraryReleaseVersion"/>
+                <property name="hmmer2ParserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.SmartHmmer2ParserSupport">
+                        <property name="signatureLibraryRelease" ref="smartSignatureLibraryReleaseVersion"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="stepSMARTDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractSMARTStep">
+        <property name="dependsUpon" ref="stepSMARTStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <bean id="stepSmartPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.smart.SmartPostProcessingStep"
+          parent="abstractSMARTStep">
+        <property name="dependsUpon" ref="stepSMARTStoreRawMatches"/>
+        <property name="stepDescription" value="Performs post processing and Match persistence on SMART data"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing">
+                <property name="smartResourceManager" ref="smartResourceManager"/>
+                <property name="overlappingFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser"/>
+                </property>
+                <property name="thresholdFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.io.smart.SmartThresholdFileParser"/>
+                </property>
+                <property name="proteinDAO" ref="proteinDAO"/>
+            </bean>
+        </property>
+        <property name="serialGroup" value="HMMER2_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" ref="smartSignatureLibraryReleaseVersion"/>
+        <property name="rawMatchDAO" ref="smartRawMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchDAOImpl"/>
+        </property>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SMART !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="smartRawMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAOImpl">
+    </bean>
+
+    <bean id="signatureLibraryReleaseSmart"
+          class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SMART"/>
+        <constructor-arg type="java.lang.String" ref="smartSignatureLibraryReleaseVersion"/>
+    </bean>
+
+    <bean id="smartSignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="${smart.signature.library.release}"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

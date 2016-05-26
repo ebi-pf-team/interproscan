@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -34,8 +34,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         super();
     }
 
-    public GFFResultWriterForNucSeqs(File file) throws IOException {
-        super(file);
+    public GFFResultWriterForNucSeqs(Path path) throws IOException {
+        super(path);
     }
 
     private String getNucleotideId() {
@@ -43,7 +43,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
     }
 
     private void setNucleotideId(String nucleotideId) {
-        this.nucleotideId = super.getValidGFF3SeqId(nucleotideId);
+        this.nucleotideId = getValidGFF3SeqId(nucleotideId);
     }
 
     /**
@@ -74,8 +74,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         List<String> proteinIdsFromGetOrf = getProteinAccessions(protein);
         for (String proteinIdFromGetorf : proteinIdsFromGetOrf) {
             if (matches.size() > 0) {
-                proteinIdFromGetorf = super.getValidGFF3SeqId(proteinIdFromGetorf);
-                writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdForGFF, proteinIdFromGetorf);
+                proteinIdFromGetorf = getValidGFF3SeqId(proteinIdFromGetorf);
+                writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdFromGetorf);
                 processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
             }
         }
@@ -104,7 +104,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
             Set<Match> matches = protein.getMatches();
             List<String> proteinIdsFromGetOrf = getProteinAccessions(protein);
             for (String proteinIdFromGetorf : proteinIdsFromGetOrf) {
-                proteinIdFromGetorf = super.getValidGFF3SeqId(proteinIdFromGetorf);
+                proteinIdFromGetorf = getValidGFF3SeqId(proteinIdFromGetorf);
                 if (matches.size() > 0) {
                     // II.
                     final StringBuilder concatenatedNucSeqIdentifiers = new StringBuilder();
@@ -135,7 +135,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                         super.gffWriter.write(getNucleicAcidLine(nucleotideSequence));
                         //Build protein identifier for GFF3
                         String proteinIdForGFF = buildProteinIdentifier(orf);
-                        proteinIdForGFF = super.getValidGFF3SeqId(proteinIdForGFF);
+                        proteinIdForGFF = getValidGFF3SeqId(proteinIdForGFF);
 
                         //Write sequence to the FASTA part
                         addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
@@ -174,7 +174,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      * @throws IOException
      */
     private void writeSequenceRegionPart(final Protein protein, final int sequenceLength, final String md5,
-                                         String proteinIdForGFF, final String proteinIdFromGetorf) throws IOException {
+                                         final String proteinIdFromGetorf) throws IOException {
         // I.
         for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
             // II.
@@ -210,8 +210,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                 super.gffWriter.write("##sequence-region " + concatenatedNucSeqIdentifiersStr + " 1 " + nucleotideSequence.getSequence().length());
                 super.gffWriter.write(getNucleicAcidLine(nucleotideSequence));
                 //Build protein identifier for GFF3
-                proteinIdForGFF = buildProteinIdentifier(orf);
-                proteinIdForGFF = super.getValidGFF3SeqId(proteinIdForGFF);
+                String proteinIdForGFF = buildProteinIdentifier(orf);
+                proteinIdForGFF = getValidGFF3SeqId(proteinIdForGFF);
 
                 //Write sequence to the FASTA part
                 addFASTASeqToMap(proteinIdForGFF, protein.getSequence());
@@ -247,14 +247,14 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      * Generates an ORF identifier used in GFF3.
      */
     private String buildOrfIdentifier(OpenReadingFrame orf) {
-        return new StringBuilder("orf_").append(getIdentifierSuffix(orf)).toString();
+        return "orf_" + getIdentifierSuffix(orf);
     }
 
     /**
      * Generates an protein identifier used in GFF3.
      */
     private String buildProteinIdentifier(OpenReadingFrame orf) {
-        return new StringBuilder("pep_").append(getIdentifierSuffix(orf)).toString();
+        return "pep_" + getIdentifierSuffix(orf);
     }
 
     private String getIdentifierSuffix(OpenReadingFrame orf) {
@@ -263,8 +263,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
             return "";
         }
         StringBuilder sb = new StringBuilder(getNucleotideId());
-        sb
-                .append("_")
+        sb.append("_")
                 .append(orf.getStart())
                 .append("_")
                 .append(orf.getEnd())

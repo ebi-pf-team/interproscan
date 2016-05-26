@@ -19,6 +19,7 @@
                 but are licensed therefore cannot be included with InterProScan -->
             </map>
         </property>
+        <property name="active" value="false" />
     </bean>
 
     <bean id="fullPathToHmmFile-6.2" class="java.lang.String">
@@ -85,8 +86,8 @@
           parent="abstractSMARTStep-6.2">
         <property name="dependsUpon" ref="stepSMARTRunBinary-6.2"/>
         <property name="stepDescription" value="Parse the HMMER2 output and store as Filtered matches."/>
-        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="smartRawMatchDAO" ref="smartRawMatchDAO-6.2"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="smartRawMatchDAO-6.2"/>
         <property name="serialGroup" value="PARSE_SMART"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser">

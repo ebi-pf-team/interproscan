@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
 
 import java.io.*;
+import java.nio.file.Paths;
 
 /**
  * A class to render HTML for the condensed view only. Less complicated than {@link ProteinMatchesHTMLResultWriter}
@@ -26,7 +27,7 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
     @Required
     public void setHtmlResourcesDir(String path) {
         if (path != null && path.length() > 0) {
-            resultFiles.add(new File(path));
+            resultFiles.add(Paths.get(path));
         }
     }
 
@@ -63,17 +64,12 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
         }
         //Build model for FreeMarker
         final SimpleHash model = buildModelMap(condensedView, viewId, showFullInfo);
-        Writer writer = null;
-        try {
-            StringWriter stringWriter = new StringWriter();
-            writer = new BufferedWriter(stringWriter);
-            final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
-            temp.process(model, writer);
-            writer.flush();
-            return stringWriter.toString();
-        } finally {
-            if (writer != null) {
-                writer.close();
+        try (StringWriter stringWriter = new StringWriter() ){
+            try (Writer writer = new BufferedWriter(stringWriter)) {
+                final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
+                temp.process(model, writer);
+                writer.flush();
+                return stringWriter.toString();
             }
         }
     }

@@ -61,7 +61,7 @@ public class Entry2SignaturesDAOImpl implements Entry2SignaturesDAO {
         final Map<String, Collection<String>> result = new HashMap<String, Collection<String>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT * FROM INTERPRO.ENTRY2METHOD",
+                    .query("SELECT E2M.* FROM INTERPRO.ENTRY2METHOD E2M INNER JOIN INTERPRO.ENTRY E ON (E.ENTRY_AC = E2M.ENTRY_AC) WHERE E.CHECKED = 'Y'",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override

@@ -19,9 +19,10 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Writes all matches for a slice of proteins to a file.
@@ -113,7 +114,7 @@ public class WriteOutputStep extends Step {
         if (proteinXrefDAO == null) {
             throw new IllegalStateException("Protein Xref database accession object is NULL. Unexpected state. Cannot go on.");
         }
-        Collection<ProteinXref> updates = new HashSet<ProteinXref>();
+        Collection<ProteinXref> updates = new HashSet<>();
         Collection<String> nonUniqueIdentifiers = proteinXrefDAO.getNonUniqueXrefs();
         if (nonUniqueIdentifiers != null && nonUniqueIdentifiers.size() > 0) {
             System.out.println("Found " + nonUniqueIdentifiers.size() + " non unique identifier(s). These identifiers do have different sequences, within the FASTA protein sequence input file.");
@@ -147,7 +148,7 @@ public class WriteOutputStep extends Step {
         final Map<String, String> parameters = stepInstance.getParameters();
         final String outputFormatStr = parameters.get(OUTPUT_FILE_FORMATS);
         final Set<FileOutputFormat> outputFormats = FileOutputFormat.stringToFileOutputFormats(outputFormatStr);
-        boolean explicitPath = parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
+        final boolean explicitPath = parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
         final String filePathName = (explicitPath)
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
@@ -161,8 +162,12 @@ public class WriteOutputStep extends Step {
         Utilities.sleep(waitTimeFactor * 1000);                 //1000 milliseconds is one second.
         Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
 
+        Long timeNow = System.currentTimeMillis();
         List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size());
+        Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
+                + " time taken to get proteins: "
+                + (System.currentTimeMillis() - timeNow)
+                + " millis");
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
             LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
@@ -170,86 +175,58 @@ public class WriteOutputStep extends Step {
         }
 
         for (FileOutputFormat outputFormat : outputFormats) {
-            Integer counter = null;
-            boolean pathAvailable = false;
-            File outputFile = null;
-
-            if (explicitPath) {
-                outputFile = new File(filePathName);
-                if (outputFile.exists()) {
-                    if (!outputFile.delete()) {
-                        System.out.println("Unable to overwrite file " + outputFile + ".  Please check file permissions.");
-                        System.exit(101);
-                    }
-                }
-            } else {
-                // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
-                // but using an underscore rather than a space (pah!)
-                while (!pathAvailable) {
-                    final StringBuilder candidateFileName = new StringBuilder(filePathName);
-                    if (counter == null) {
-                        counter = 1;
-                    } else {
-                        // E.g. Output file name could become "test_proteins.fasta_1.tsv"
-                        candidateFileName
-                                .append('_')
-                                .append(counter++);
-                    }
-                    candidateFileName
-                            .append('.')
-                            .append(outputFormat.getFileExtension());
-                    //Extend file name by tar (tar.gz) extension if HTML or SVG
-                    if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
-                        outputFile = new File(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
-                    } else {
-                        outputFile = new File(candidateFileName.toString());
-                    }
-                    pathAvailable = !outputFile.exists();
-                }
-            }
+            Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
                 switch (outputFormat) {
                     case TSV:
-                        outputToTSV(outputFile, stepInstance, proteins);
+                        outputToTSV(outputPath, stepInstance, proteins);
                         break;
                     case XML:
-                        outputToXML(outputFile, sequenceType, proteins, false);
+                        outputToXML(outputPath, sequenceType, proteins, false);
                         break;
                     case XML_SLIM:
-                        outputToXML(outputFile, sequenceType, proteins, true);
+                        outputToXML(outputPath, sequenceType, proteins, true);
                         break;
                     case GFF3:
-                        outputToGFF(outputFile, stepInstance, sequenceType, proteins);
+                        outputToGFF(outputPath, stepInstance, sequenceType, proteins);
                         break;
                     case GFF3_PARTIAL:
-                        outputToGFFPartial(outputFile, stepInstance, proteins);
+                        outputToGFFPartial(outputPath, stepInstance, proteins);
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             htmlResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToHTML(outputFile, proteins);
+                        outputToHTML(outputPath, proteins);
                         break;
                     case SVG:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             svgResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToSVG(outputFile, proteins);
+                        outputToSVG(outputPath, proteins);
                         break;
                     default:
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
                 }
             } catch (IOException ioe) {
-                throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan", ioe);
+                final String p = outputPath.toAbsolutePath().toString();
+                throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan to path: " + p, ioe);
             }
         }
 
 
+        cleanUpWorkingDir(temporaryFileDirectory);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Step with Id " + this.getId() + " finished.");
+        }
+    }
+
+    private void cleanUpWorkingDir(final String temporaryFileDirectory) {
         if (deleteWorkingDirectoryOnCompletion) {
             // Clean up empty working directory.
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf(File.separatorChar));
@@ -260,12 +237,79 @@ public class WriteOutputStep extends Step {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
         }
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Step with Id " + this.getId() + " finished.");
-        }
     }
 
-    private void outputToXML(File outputFile, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+    private Path getPathName(final boolean explicitPath,
+                             final String filePathName,
+                             final FileOutputFormat outputFormat) {
+        // E.g. for "-b OUT" filePathName = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT"
+        Path outputPath = null;
+
+        if (explicitPath) {
+            outputPath = Paths.get(filePathName);
+            if (Files.exists(outputPath)) {
+                try {
+                    Files.delete(outputPath);
+                } catch (IOException e) {
+                    final String p = outputPath.toAbsolutePath().toString();
+                    System.out.println("Unable to overwrite file " + p + ".  Please check file permissions.");
+                    System.exit(101);
+                }
+            }
+        } else {
+            // Try to use the file name provided. If the file already exists, append a bracketed number (Chrome style).
+            // but using an underscore rather than a space (pah!)
+            Integer counter = null;
+            int ioCounter = 0;
+            boolean pathAvailable = false;
+            while (!pathAvailable) {
+                final StringBuilder candidateFileName = new StringBuilder(filePathName);
+                if (counter == null) {
+                    counter = 1;
+                } else {
+                    // E.g. Output file name could become "test_proteins.fasta_1.tsv"
+                    candidateFileName
+                            .append('_')
+                            .append(counter++);
+                }
+                candidateFileName
+                        .append('.')
+                        .append(outputFormat.getFileExtension());
+                //Extend file name by tar (tar.gz) extension if HTML or SVG
+                if (outputFormat.equals(FileOutputFormat.HTML) || outputFormat.equals(FileOutputFormat.SVG)) {
+                    outputPath = Paths.get(TarArchiveBuilder.buildTarArchiveName(candidateFileName.toString(), archiveSVGOutput, compressHtmlAndSVGOutput, outputFormat));
+                } else {
+                    outputPath = Paths.get(candidateFileName.toString());
+                }
+                pathAvailable = !Files.exists(outputPath);
+                if (pathAvailable) {
+                    try {
+                        // Start creating the empty output file now, while the path is still available
+                        if (outputFormat.equals(FileOutputFormat.SVG) && !archiveSVGOutput) {
+                            outputPath = Files.createDirectories(outputPath);
+                        }
+                        else {
+                            outputPath = Files.createFile(outputPath);
+                        }
+                    } catch (IOException e) {
+                        pathAvailable = false; // Nope, that path has probably just been taken (e.g. by another copy of InterProScan writing to the same output directory)
+                        if (LOGGER.isInfoEnabled()) {
+                            LOGGER.info("Path " + candidateFileName.toString() + " was available for writing to, but I/O exception thrown");
+                        }
+                        ioCounter++;
+                        if (ioCounter > 2000) {
+                            // Stop possible infinite loop!
+                            throw new IllegalStateException("Path " + candidateFileName.toString() + " was available, but I/O exception thrown on file creation");
+                        }
+                    }
+                }
+            }
+
+        }
+        return outputPath;
+    }
+
+    private void outputToXML(Path outputPath, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
@@ -286,31 +330,25 @@ public class WriteOutputStep extends Step {
             matchesHolder.addProteins(proteins);
         }
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
-        xmlWriter.writeMatches(outputFile, matchesHolder);
+        xmlWriter.writeMatches(outputPath, matchesHolder);
     }
 
-    private void outputToTSV(final File file,
+    private void outputToTSV(final Path path,
                              final StepInstance stepInstance,
                              final List<Protein> proteins) throws IOException {
-        ProteinMatchesTSVResultWriter writer = null;
-        try {
-            writer = new ProteinMatchesTSVResultWriter(file);
+        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
-    private void outputToGFF(File file, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
+    private void outputToGFF(Path path, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
-                writer = new GFFResultWriterForNucSeqs(file);
+                writer = new GFFResultWriterForNucSeqs(path);
             }//Default tsvWriter for proteins
             else {
-                writer = new GFFResultWriterForProtSeqs(file);
+                writer = new GFFResultWriterForProtSeqs(path);
             }
 
             //This step writes features (protein matches) into the GFF file
@@ -324,40 +362,33 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToGFFPartial(File file, StepInstance stepInstance, List<Protein> proteins) throws IOException {
-        ProteinMatchesGFFResultWriter writer = null;
-        try {
-            writer = new GFFResultWriterForProtSeqs(file, false);
+    private void outputToGFFPartial(Path path, StepInstance stepInstance, List<Protein> proteins) throws IOException {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, false)) {
             writeProteinMatches(writer, stepInstance, proteins);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
 
     }
 
 
-    private void outputToHTML(File file, List<Protein> proteins) throws IOException {
+    private void outputToHTML(final Path path, final List<Protein> proteins) throws IOException {
+        // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 htmlResultWriter.write(protein);
             }
-            List<File> resultFiles = htmlResultWriter.getResultFiles();
-            TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, file, compressHtmlAndSVGOutput);
-            tarArchiveBuilder.buildTarArchive();
-            //Delete result files in the temp directory at the end
-            for (File resultFile : resultFiles) {
-                //Only delete HTML files, but not the resource directory which is also part of the result files list
-                if (resultFile.isFile()) {
-                    boolean isDeleted = resultFile.delete();
-                    if (LOGGER.isEnabledFor(Level.WARN)) {
-                        if (!isDeleted) {
-                            LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
-                        }
-                    }
-                }
-            }
+            List<Path> resultFiles = htmlResultWriter.getResultFiles();
+            // E.g. resultFiles =
+            // - data/freemarker/resources
+            //   - data/freemarker/resources/images
+            //     - data/freemarker/resources/images/ico_type_family_small.png
+            //     ...
+            //   - data/freemarker/resources/javascript
+            //   ...
+            // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P22298.html
+            // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P02939.html
+            // ...
+
+            buildTarArchive(path, resultFiles);
         }
     }
 
@@ -373,29 +404,42 @@ public class WriteOutputStep extends Step {
      * @param proteins  Set of result proteins.
      * @throws IOException
      */
-    private void outputToSVG(final File outputDir, final List<Protein> proteins) throws IOException {
+    private void outputToSVG(final Path path, final List<Protein> proteins) throws IOException {
+        // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
         if (proteins != null && proteins.size() > 0) {
             //If the archive mode is switched off single SVG files should be written to the global output directory
             if (!archiveSVGOutput) {
-                svgResultWriter.setTempDirectory(outputDir.getAbsolutePath());
+                final String outputDirPath = path.toAbsolutePath().toString();
+                svgResultWriter.setTempDirectory(outputDirPath);
             }
             for (Protein protein : proteins) {
                 svgResultWriter.write(protein);
             }
             if (archiveSVGOutput) {
-                List<File> resultFiles = svgResultWriter.getResultFiles();
-                TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, outputDir, compressHtmlAndSVGOutput);
-                tarArchiveBuilder.buildTarArchive();
-                //Delete result files in the temp directory at the end
-                for (File resultFile : resultFiles) {
-                    //Only delete HTML files, but not the resource directory which is also part of the result files list
-                    if (resultFile.isFile()) {
-                        boolean isDeleted = resultFile.delete();
-                        if (LOGGER.isEnabledFor(Level.WARN)) {
-                            if (!isDeleted) {
-                                LOGGER.warn("Couldn't delete file " + resultFile.getAbsolutePath());
-                            }
-                        }
+                List<Path> resultFiles = svgResultWriter.getResultFiles();
+                // E.g. resultFiles =
+                // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P22298.svg
+                // - ~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/my-computer-name_20160301_141713605_ivyx/jobWriteOutput/P02939.svg
+                // ...
+
+                buildTarArchive(path, resultFiles);
+            }
+        }
+    }
+
+    private void buildTarArchive(Path path, List<Path> resultFiles) throws IOException {
+        TarArchiveBuilder tarArchiveBuilder = new TarArchiveBuilder(resultFiles, path, compressHtmlAndSVGOutput);
+        tarArchiveBuilder.buildTarArchive();
+        //Delete result files in the temp directory at the end
+        for (Path resultFile : resultFiles) {
+            //Only delete HTML/SVG files, but not the resource directory which is also part of the result files list
+            if (Files.isRegularFile(resultFile)) {
+                try {
+                    Files.delete(resultFile);
+                } catch (IOException e) {
+                    if (LOGGER.isEnabledFor(Level.WARN)) {
+                        final String r = resultFile.toAbsolutePath().toString();
+                        LOGGER.warn("Couldn't delete file " + r);
                     }
                 }
             }
@@ -434,6 +478,5 @@ public class WriteOutputStep extends Step {
             }
         }
     }
-
 
 }
