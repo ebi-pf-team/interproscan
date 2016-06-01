@@ -322,7 +322,7 @@ public class CreateMatchDBFromIprscan {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to load the oracle.jdbc.OracleDriver class", e);
         } catch (SQLException e) {
-            throw new IllegalStateException("SQLException thrown by Onion", e);
+            throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
         } finally {
             if (store != null) {
                 try {
