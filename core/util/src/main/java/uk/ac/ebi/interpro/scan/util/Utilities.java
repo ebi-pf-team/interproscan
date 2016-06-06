@@ -26,6 +26,8 @@ public class Utilities {
 
     public static String mode = "standalone";
 
+    public static Boolean lookupMatchVersionProblemMessageDisplayed = false;
+
     public static int sequenceCount = 0;
 
     public static int logBase = 10;
