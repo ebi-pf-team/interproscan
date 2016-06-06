@@ -12,12 +12,13 @@
     <bean id="berkeleyMatchDBService"
           class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMatchDBService">
         <constructor-arg value="${berkeleydb.path.matches}"/>
-
     </bean>
 
     <bean id="berkeleyMD5Service" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMD5DBService">
         <constructor-arg value="${berkeleydb.path.md5}"/>
-
     </bean>
 
+    <bean id="berkeleydb.deployment.path" class="java.lang.String">
+        <constructor-arg value="${catalina.base}" />
+    </bean>
 </beans>

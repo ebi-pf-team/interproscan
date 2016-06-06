@@ -7,6 +7,9 @@ package uk.ac.ebi.interpro.scan.precalc.server.service.impl;
 public abstract class AbstractDBService {
 
     protected static final String DATA_PATH_JAVA_OPTION = "berkely.db.data";
+    protected static final String CATALINA_BASE = System.getProperty("catalina.base");
+
+    protected static final String TOMCAT_DEPLOY_PATH = "deploy";
 
     protected String setPath(String pathProperty) {
         if (pathProperty.contains(DATA_PATH_JAVA_OPTION)) {
@@ -17,4 +20,19 @@ public abstract class AbstractDBService {
             return pathProperty.replace(DATA_PATH_JAVA_OPTION, dataPath);
         } else return pathProperty;
     }
+
+    /**
+     * set the database path,
+     * filter jetty based deployments by looking at the deploy directory
+     *
+     * @param pathProperty
+     * @return
+     */
+    protected String setDeploymentPath(String pathProperty) {
+        if (pathProperty.contains(TOMCAT_DEPLOY_PATH)) {
+            return setPath(CATALINA_BASE + "/" + pathProperty);
+        }
+        return setPath(pathProperty);
+    }
+
 }
