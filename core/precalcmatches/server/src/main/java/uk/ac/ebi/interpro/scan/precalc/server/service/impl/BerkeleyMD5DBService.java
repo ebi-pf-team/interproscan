@@ -35,7 +35,7 @@ public class BerkeleyMD5DBService extends AbstractDBService {
     public BerkeleyMD5DBService(String databasePath, int cacheSizeInMegabytes) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
         this.cacheSizeInBytes = cacheSizeInMegabytes * 1024 * 1024;
-        this.databasePath = setPath(databasePath);
+        this.databasePath = setDeploymentPath(databasePath);
         System.out.println("Initializing BerkeleyDB MD5 Database (creating indexes): Please wait...");
         initializeMD5Index();
     }

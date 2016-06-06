@@ -25,6 +25,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedInputStream;
@@ -124,12 +125,15 @@ public class MatchHttpClient {
             public BerkeleyMatchXML handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
+//                Utilities.verboseLog("response:" + response.toString());
+//                Utilities.verboseLog("responseEntity:" + responseEntity.toString());
                 if (responseEntity != null) {
                     // Stream in the response to the unmarshaller
                     BufferedInputStream bis = null;
 
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
+//                        Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
                         return (BerkeleyMatchXML) unmarshaller.unmarshal(new StreamSource(bis));
                     } finally {
                         if (bis != null) {
@@ -168,6 +172,7 @@ public class MatchHttpClient {
         BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
+//        Utilities.verboseLog("matchXML:" + matchXML.toString());
         return matchXML;
     }
 
