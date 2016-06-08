@@ -5,13 +5,13 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.17-56.0</version>
+        <version>5.18-57.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>precalcmatches</artifactId>
-    <version>5.17-56.0</version>
+    <version>5.18-57.0</version>
 
     <packaging>pom</packaging>
 
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>5.17-56.0</version>
+            <version>5.18-57.0</version>
         </dependency>
 
         <dependency>

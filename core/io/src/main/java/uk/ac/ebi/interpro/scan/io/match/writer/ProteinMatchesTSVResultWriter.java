@@ -74,6 +74,8 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getEvalue() );
                         }  else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
                             score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
+                        } else if (location instanceof RPSBlastMatch.RPSBlastLocation) {
+                            score = Double.toString( ((RPSBlastMatch.RPSBlastLocation) location).getEvalue() );
                         }
 
                         final List<String> mappingFields = new ArrayList<>();

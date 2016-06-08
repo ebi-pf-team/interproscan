@@ -111,6 +111,7 @@
                     <ref bean="statsFileNameTemplate"/>
                   </list>
         </property>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
 
