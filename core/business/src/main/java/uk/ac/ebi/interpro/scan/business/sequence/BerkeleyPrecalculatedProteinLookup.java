@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
+import org.hibernate.procedure.internal.Util;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -11,6 +12,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibrary
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.*;
@@ -108,9 +110,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
 
+            long timetaken = System.nanoTime() - startTime;
+            long lookupTimeMillis = 0;
+            if (timetaken > 0) {
+                lookupTimeMillis = timetaken / 1000000;
+            }
+
+            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: "  + lookupTimeMillis + " millis");
+
             if (LOGGER.isDebugEnabled()) {
-                long time = System.nanoTime() - startTime;
-                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + time + "ns");
+
+                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
             if (berkeleyMatchXML != null) {
                 berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobMap);
@@ -168,9 +178,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 startTime = System.nanoTime();
             }
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(md5s);
+
+            long timetaken = System.nanoTime() - startTime;
+            long lookupTimeMillis = 0;
+            if (timetaken > 0) {
+                lookupTimeMillis = timetaken / 1000000;
+            }
+
+            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+
             if (LOGGER.isDebugEnabled()) {
-                long time = System.nanoTime() - startTime;
-                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + time + "ns");
+               LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
             }
             // Check if the analysis versions are consistent and then proceed
             if(isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
@@ -252,6 +270,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     private void displayLookupError(Exception e) {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
+
+        LOGGER.warn(e);
+        e.printStackTrace();
+        LOGGER.warn(e.toString());
+
         LOGGER.warn("\n\n" +
                 "The following problem was encountered by the pre-calculated match lookup service:\n" +
                 e.getMessage() + "\n" +
@@ -284,8 +307,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                         "As the data in these versions is not the same, you cannot use this match lookup service.\n" +
                         "InterProScan will now run locally\n" +
                         "If you would like to use the match lookup service, you have the following options:\n" +
-                        "i) Download the newest version of InterProScan5 from our FTP site:\n" +
-                        "   ftp://ftp.ebi.ac.uk/pub/databases/interpro/\n" +
+                        "i) Download the newest version of InterProScan5 from our FTP site by following the instructions on:\n" +
+                        "   https://www.ebi.ac.uk/interpro/interproscan.html\n" +
                         "ii) Download the match lookup service for your version of InterProScan from our FTP site and install it locally.\n" +
                         "    You will then need to edit the following property in your configuration file to point to your local installation:\n" +
                         "    precalculated.match.lookup.service.url=\n\n" +

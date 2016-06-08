@@ -5,14 +5,14 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.17-56.0</version>
+        <version>5.18-57.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-model</artifactId>
-    <version>5.17-56.0</version>
+    <version>5.18-57.0</version>
 
     <packaging>jar</packaging>
 
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.17-56.0</version>
+            <version>5.18-57.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -161,7 +161,7 @@
                         <configuration>
                             <target>
                                 <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
-                                <property name="latest.interpro.schema.version" value="1.2"/>
+                                <property name="latest.interpro.schema.version" value="1.3"/>
                                 <mkdir dir="${project.build.schema.dir}"/>
                                 <taskdef name="schemagen"
                                          classname="com.sun.tools.jxc.SchemaGenTask"
