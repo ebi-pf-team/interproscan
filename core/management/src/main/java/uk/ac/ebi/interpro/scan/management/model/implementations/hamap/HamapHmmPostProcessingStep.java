@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,13 +77,44 @@ public class HamapHmmPostProcessingStep extends Step {
                 signatureLibraryRelease
         );
 
+        if(rawMatches.size() == 0){
+            Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            int waitTimeFactor = 2;
+            if (! Utilities.isRunningInSingleSeqMode()){
+                waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
+            }
+            Utilities.sleep(waitTimeFactor * 1000);
+
+            rawMatches = rawMatchDAO.getProteinsByIdRange(
+                    stepInstance.getBottomProtein(),
+                    stepInstance.getTopProtein(),
+                    signatureLibraryRelease
+            );
+            Utilities.verboseLog(10, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
+        }
+        int matchCount = 0;
+        for (final RawProtein rawProtein : rawMatches) {
+            matchCount += rawProtein.getMatches().size();
+        }
+        Utilities.verboseLog(10, " HAMAP: Retrieved " + rawMatches.size() + " proteins to post-process.");
+        Utilities.verboseLog(10, " HAMAP: A total of " + matchCount + " raw matches.");
+
         LOGGER.debug("print the raw matches");
         for (RawProtein<HamapRawMatch> rawMatch: rawMatches ) {
             LOGGER.debug(rawMatch);
         }
         //do we need to run the post processor? maybe for now no???
+        matchCount = 0;
+        for (final RawProtein rawProtein : rawMatches) {
+            matchCount += rawProtein.getMatches().size();
+        }
+        Utilities.verboseLog(10,  " HAMAP: " + rawMatches.size() + " proteins passed through post processing.");
+        Utilities.verboseLog(10,  " HAMAP: A total of " + matchCount + " matches PASSED.");
+
         //we now persist the raw matches
         filteredMatchDAO.persist(rawMatches);
+        Utilities.verboseLog(10,  " HAMAP: filteredMatches persisted");
 
         //maybe we dont need the following for now
 
