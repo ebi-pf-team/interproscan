@@ -27,8 +27,6 @@ import java.util.Set;
 @XmlType(name = "RPSBlastMatchType")
 public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
-    Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites;
-
     protected RPSBlastMatch() {
     }
 
@@ -36,23 +34,18 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         super(signature, locations);
     }
 
-    public RPSBlastMatch(Signature signature, Set<RPSBlastLocation> locations, Set<RPSBlastLocation.RPSBlastSite> sites) {
-        super(signature, locations);
-        this.sites = sites;
-    }
-
-    @Transient
-    @XmlJavaTypeAdapter(Site.SiteAdapter.class)
-    public Set<RPSBlastLocation.RPSBlastSite> getSites() {
-        return sites;
-    }
-
-    // Private so can only be set by JAXB, Hibernate ...etc via reflection
+//    @Transient
+//    @XmlJavaTypeAdapter(Site.SiteAdapter.class)
+//    public Set<RPSBlastLocation.RPSBlastSite> getSites() {
+//        return sites;
+//    }
+//
+//    // Private so can only be set by JAXB, Hibernate ...etc via reflection
 
 
-    protected void setSites(Set<RPSBlastLocation.RPSBlastSite> sites) {
-        this.sites = sites;
-    }
+//    protected void setSites(Set<RPSBlastLocation.RPSBlastSite> sites) {
+//        this.sites = sites;
+//    }
 //
 //    protected void setLocations(final Set<T> locations) {
 //        if (locations != null) {
@@ -117,6 +110,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
         @Column(nullable = false, name = "score")
         private double score;
+
+//        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites;
 
         protected RPSBlastLocation() {
         }
