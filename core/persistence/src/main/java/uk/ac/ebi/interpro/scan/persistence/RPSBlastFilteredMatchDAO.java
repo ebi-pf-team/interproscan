@@ -106,7 +106,11 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                                 rawMatch.getEvalue()
                         )
                 );
-                RPSBlastMatch match = new RPSBlastMatch(signature, locations, rpsBlastSites);
+                //
+                // RPSBlastMatch match = new RPSBlastMatch(signature, locations, rpsBlastSites);
+                RPSBlastMatch match = new RPSBlastMatch(signature, locations);
+
+
                 LOGGER.debug("rpsBlast match: " + match);
                 protein.addMatch(match);
                 //LOGGER.debug("Protein with match: " + protein);

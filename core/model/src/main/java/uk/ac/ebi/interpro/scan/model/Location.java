@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -41,7 +42,6 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
 public abstract class Location implements Serializable, Cloneable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
     @TableGenerator(name = "LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "location", initialValue = 0, allocationSize = 50)
@@ -57,6 +57,10 @@ public abstract class Location implements Serializable, Cloneable {
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     private Match match;
+
+//    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
+//    @BatchSize(size=4000)
+//    protected Set<T> sites = new LinkedHashSet<T>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
