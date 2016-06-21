@@ -103,7 +103,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                                     + " matchesCount expected: " + count);
                         }
                         Long timeTaken = System.currentTimeMillis() - now;
-                        if(timeTaken > (waitTimeFactor * waitTimeFactor * 100 * 1000)){
+                        if(timeTaken > (waitTimeFactor * waitTimeFactor * 100 * 1000) && matchesFound < count){
                             LOGGER.warn("H2 database problem: failed to verify " + count + " matches in database for "
                                     + represantiveRawMatch.getSignatureLibrary().getName()
                                     + " after " + timeTaken + " ms "
