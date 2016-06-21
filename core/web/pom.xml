@@ -5,18 +5,17 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.18-57.0</version>
+        <version>5.19-58.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan-web</artifactId>
 
     <!--Default packaging is JAR, but the WAR file is build at the same time by simply running the MAVEN install goal-->
     <packaging>jar</packaging>
 
     <name>InterProScan Web</name>
-    <version>5.18-57.0</version>
+    <version>5.19-58.0</version>
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
@@ -29,12 +28,12 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.18-57.0</version>
+            <version>5.19-58.0</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-business</artifactId>
-            <version>5.18-57.0</version>
+            <version>5.19-58.0</version>
         </dependency>
 
         <!--  Spring -->
