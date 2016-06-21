@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for Linux/x86 (vers 1st October 2002), see www.w3.org" />
+
+    <title></title>
+  </head>
+
+  <body>
+<pre>
+IMPALA: Integrating Matrix Profiles And Local Alignments
+
+1. Files in Distribution
+
+The following IMPALA source code files are distributed:
+
+copymat.c 
+impatool.c
+makemat.c  
+posit2.c
+profiles.c       
+newkar.c
+profiles.h
+Makefile
+
+2. Compilation
+
+Run the following commands in the directory, containing IMPALA source code files:
+
+make makemat
+make copymat
+make impala
+
+This will result in three binary executable files:
+
+makemat : primary profile preprocessor 
+  (converts a collection of binary profiles, created by the -C option
+   of PSI-BLAST, into portable ASCII form);
+
+copymat : secondary profile preprocessor 
+  (converts ASCII matrices, produced by the primary preprocessor, 
+   into database that can be read into memory quickly);
+
+impala          : search program (searches a database of score 
+  matrices, prepared by copymat, producing BLAST-like output).
+
+3. Conversion of profiles into searchable database
+
+3.1. Primary preprocessing
+
+Prepare the following files:
+
+i.      a collection of PSI-BLAST-generated profiles with arbitrary 
+       names and suffix .chk; 
+
+ii.     a collection of "profile master sequences", associated with 
+    the profiles, each in a separate file with arbitrary name and a 3 character
+    suffix starting with c;
+    the sequences can have deflines; they need not be sequences in nr or
+    in any other sequence database; if the sequences have deflines, then
+    the deflines must be unique.
+
+iii.    a list of profile file names, one per line, named 
+    &lt;database_name&gt;.pn;
+
+iv.     a list of master sequence file names, one per line, in the same 
+    order as a list of profile names, named 
+     &lt;database_name&gt;.sn;
+
+The following files will be created:
+
+i.      a collection of ASCII files, corresponding to each of the 
+      original profiles, named 
+     &lt;profile_name&gt;.mtx;
+
+ii.     a list of ASCII matrix files, named 
+      &lt;database_name&gt;.mn;
+
+iii.    ASCII file with auxiliary information, named 
+       &lt;database_name&gt;.aux;
+
+Arguments to makemat:
+
+    -P database name (required)
+    -G Cost to open a gap (optional)
+       default = 11
+    -E Cost to extend a gap (optional)
+       default = 1
+    -U Underlying amino acid scoring matrix (optional)
+       default = BLOSUM62
+    -d Underlying sequence database used to create profiles (optional)
+       default = nr
+    -z Effective size of sequence database given by -d
+       default = current size of -d option
+       Note: It may make sense to use -z without -d when the
+       profiles were created with an older, smaller version of an
+       existing database 
+    -S  Scaling factor for  matrix outputs to avoid round-off problems
+       default = PRO_DEFAULT_SCALING_UP (currently defined as 100)
+       Use 1.0 to have no scaling
+       Output scores will be scaled back down to a unit scale to make
+       them look more like BLAST scores, but we found working with a larger
+       scale to help with roundoff problems.
+    -H get help (overrides all other arguments)
+Note: It is not enforced that the values of -G and -E passed to makemat
+were actually used in making the checkpoints. However, the values fed
+in to makemat are propagated to copymat and impala.
+
+3.1. Secondary preprocessing
+
+Prepare the following files:
+
+i.      a collection of ASCII files, corresponding to each of the 
+  original profiles, named 
+  &lt;profile_name&gt;.mtx 
+(created by makemat);
+
+ii.     a collection of "profile master sequences", associated with 
+  the profiles, each in a separate file with arbitrary name and a 3 character
+  suffix starting with c.
+
+iii.    a list of ASCII_matrix files, named 
+     &lt;database_name&gt;.mn 
+   (created by makemat);
+
+iv.     a list of master sequence file names, one per
+  line, in the same order as a list of matrix names, named 
+  &lt;database_name&gt;.sn;
+
+v.      ASCII file with auxiliary information, named 
+  &lt;database_name&gt;.aux 
+(created by makemat);
+
+The files input to copymatices are in ASCII format and thus portable 
+between machines with different encodings for machine-readable files
+
+The following files will be created:
+
+i.      a huge binary file, containing all profile matrices, named
+ &lt;database_name&gt;.mat;
+
+Arguments to copymat
+
+    -P database name (required)
+    -H get help (overrides all other arguments)
+
+4. Search
+
+Before you start searching, check that you have copies of or soft
+links to all the files associated with the PSSM library. If the
+library has K PSSMs, you should have
+
+     K files with names ending in .mtx
+     K files with names ending in a 3-letter extension starting with c
+     1 file with name ending in .pn
+     1 file with name ending in .sn
+     1 file with name ending in .aux
+     1 file with name ending in .mn
+     1 file with name ending in .mat
+
+Arguments to impala
+
+   -i  query sequence file (required)
+   -P  database of profiles (required)
+   -o  output file (optional)
+       default = stdout
+   -e  Expectation value threshold  (E), (optional, same as for BLAST)
+       default = 10 
+   -m  alignment view (optional, same as for BLAST)
+   -z  effective length of database (optional)
+       -1 = length given via -z option to makemat
+       default (0) implies  length is actual length of profile library
+          adjusted for end effects
+   -H  get help (overrides all other options)
+
+5. Directory convention
+
+  Since IMPALA requires a large number of files, it may be convenient
+to store your impala files in various directories. For copymat,
+makemat, and impala the following parsing convention applies
+to the string that follows the -P argument.
+If the string starts with a '/', then it is deemed to be a full
+path name. Whatever prefix occurs upto and including the rightmost
+'/' is deemed to be a prefix that should be prepended to all
+file names in the .sn, .pn, and .mn files.
+
+Example: If you call any of the 3 programs including the
+   argument -P /foo/bar/wolf1187
+then
+   /foo/bar/ is prepended to every filename listed in 
+       wolf1187.pn
+       wolf1187.sn
+       wolf1187.mn
+   before opening the file, but the files
+       wolf1187.pn
+       wolf1187.sn
+       wolf1187.mn
+   themselves are not changed.
+
+6. Output
+
+IMPALA output closely mimics output of BLASTP family programs and
+should be compatible with SEALS BLAST parsers.
+
+Send suggestions, comments, complaints only to Alejandro Schaffer
+schaffer@helix.nih.gov
+
+
+Reference:
+
+  Schaffer, A.A., Wolf, Y.I., Ponting, C.P. Koonin, E.V.,
+Aravind, L., Altschul, S. F., IMPALA: Matching a Protein Sequence 
+Against a Collection of PSI-BLAST-Constructed Position-Specific 
+Score Matrices, Bioninformatics, to appear.
+
+Please cite the above paper if you publish any results computed by IMPALA.
+</pre>
+  </body>
+</html>
+

@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator"
+    content="HTML Tidy for Linux/x86 (vers 1st October 2002), see www.w3.org" />
+
+    <title></title>
+  </head>
+
+  <body>
+<pre>
+RPS Blast: Reversed Position Specific Blast
+
+
+RPS-BLAST (Reverse PSI-BLAST) searches a query sequence against a database 
+of profiles.  This is the opposite of PSI-BLAST that searches a profile 
+against a database of sequences, hence the 'Reverse'.  RPS-BLAST
+uses a BLAST-like algorithm, finding single- or double-word hits
+and then performing an ungapped extension on these candidate matches.
+If a sufficiently high-scoring ungapped alignment is produced, a gapped
+extension is performed and those (gapped) alignments with sufficiently
+low expect value are reported.  This procedure is in contrast to IMPALA
+that performs a Smith-Waterman calculation between the query and 
+each profile, rather than using a word-hit approach to identify
+matches that should be extended.
+
+RPS-BLAST uses a BLAST database, but also has some other files that
+contain a precomputed lookup table for the profiles to allow the search
+to proceed faster.  Unfortunately it was not possible to make this
+lookup table architecture independent (like the BLAST databases themselves)
+and one cannot take a RPS-BLAST databases prepared on a big-endian
+system (e.g., Solaris Sparc) and run it on a small-endian system
+(e.g., NT).  The RPS-BLAST database must be prepared again for the small-endian
+system.
+
+The CD-Search databases for RPS-BLAST can be found at:
+
+ ftp://ftp.ncbi.nih.gov/pub/mmdb/cdd/
+
+It is necessary to untar the archive and run copymat and formatdb. 
+It is not necessary to run makemat on the databases from this
+directory.
+
+RPS-BLAST was coded by Sergei Shavirin with some help from Tom Madden.
+RPS-BLAST reuses some of the IMPALA code for precomputing the lookup tables 
+and all of the IMPALA code for evaluating the statistical significance of a match.  
+
+
+1. Binary files used in RPS Blast:
+
+The following binary files are used to setup and run RPS Blast:
+
+makemat : primary profile preprocessor 
+  (converts a collection of binary profiles, created by the -C option
+   of PSI-BLAST, into portable ASCII form);
+
+copymat : secondary profile preprocessor 
+  (converts ASCII matrices, produced by the primary preprocessor, 
+   into database that can be read into memory quickly);
+
+formatdb  : general BLAST database formatter.    
+
+rpsblast  : search program (searches a database of score 
+  matrices, prepared by copymat, producing BLAST-like output).
+
+2. Conversion of profiles into searchable database
+
+*Note*: if you are starting with *.mtx files obtained from the NCBI FTP site or
+another source you should skip the steps listed in 2.1.
+
+2.1. Primary preprocessing
+
+Prepare the following files:
+
+i.      a collection of PSI-BLAST-generated profiles with arbitrary 
+       names and suffix .chk; 
+
+ii.     a collection of "profile master sequences", associated with 
+    the profiles, each in a separate file with arbitrary name and a 3 character
+    suffix starting with c;
+    the sequences can have deflines; they need not be sequences in nr or
+    in any other sequence database; if the sequences have deflines, then
+    the deflines must be unique.
+
+iii.    a list of profile file names, one per line, named 
+    &lt;database_name&gt;.pn;
+
+iv.     a list of master sequence file names, one per line, in the same 
+    order as a list of profile names, named 
+     &lt;database_name&gt;.sn;
+
+The following files will be created:
+
+a.      a collection of ASCII files, corresponding to each of the 
+      original profiles, named 
+     &lt;profile_name&gt;.mtx;
+
+b.      a list of ASCII matrix files, named 
+      &lt;database_name&gt;.mn;
+
+c.      ASCII file with auxiliary information, named 
+       &lt;database_name&gt;.aux;
+
+Arguments to makemat:
+
+    -P database name (required)
+    -G Cost to open a gap (optional)
+       default = 11
+    -E Cost to extend a gap (optional)
+       default = 1
+    -U Underlying amino acid scoring matrix (optional)
+       default = BLOSUM62
+    -d Underlying sequence database used to create profiles (optional)
+       default = nr
+    -z Effective size of sequence database given by -d
+       default = current size of -d option
+       Note: It may make sense to use -z without -d when the
+       profiles were created with an older, smaller version of an
+       existing database 
+    -S  Scaling factor for  matrix outputs to avoid round-off problems
+       default = PRO_DEFAULT_SCALING_UP (currently defined as 100)
+       Use 1.0 to have no scaling
+       Output scores will be scaled back down to a unit scale to make
+       them look more like BLAST scores, but we found working with a larger
+       scale to help with roundoff problems.
+    -H get help (overrides all other arguments)
+Note: It is not enforced that the values of -G and -E passed to makemat
+were actually used in making the checkpoints. However, the values fed
+in to makemat are propagated to copymat and rpsblast.
+
+ATTENTION: It is strongly recommended to use -S 1 - the scaling factor
+            should be set to 1 for rpsblast at this point in time.
+
+2.2. Secondary preprocessing
+
+Prepare the following files:
+
+i.      a collection of ASCII files, corresponding to each of the 
+  original profiles, named 
+  &lt;profile_name&gt;.mtx 
+(created by makemat);
+
+ii.     a collection of "profile master sequences", associated with 
+  the profiles, each in a separate file with arbitrary name and a 3 character
+  suffix starting with c.
+
+iii.    a list of ASCII_matrix files, named 
+     &lt;database_name&gt;.mn 
+   (created by makemat);
+
+iv.     a list of master sequence file names, one per
+  line, in the same order as a list of matrix names, named 
+  &lt;database_name&gt;.sn;
+
+v.      ASCII file with auxiliary information, named 
+  &lt;database_name&gt;.aux 
+(created by makemat);
+
+The files input to copymatices are in ASCII format and thus portable 
+between machines with different encodings for machine-readable files
+
+The following files will be created:
+
+a.      a huge binary file, containing all profile matrices, named
+ &lt;database_name&gt;.rps;
+b.     a huge binary file, containing lookup table for the Blast search
+ corresponding to matrixes named &lt;database_name&gt;.loo
+c.    File containing concatenation of all FASTA  "profile master sequences".
+     named  &lt;database_name&gt; (without extention)
+
+Arguments to copymat
+
+    -P database name (required)
+    -H get help (overrides all other arguments)
+    -r format data for RPS Blast
+
+ATTENTION: "-r" parameter have to be set to TRUE to format data for
+           RPS Blast at this step.
+
+NOTE: copymat requires a fair amount of memory as it first constructs
+the the lookup table in memory before writing it to disk.  Users have
+found that they require a machine with at least 500 Meg of memory for this
+task.
+
+2.3 Creating of BLAST database from &lt;database_name&gt; file containing
+    all "profile master sequences".
+
+"formatdb" program should be run to create regular BLAST database of all
+"profile master sequences":
+
+    formatdb -i &lt;database_name&gt;    -o T
+
+3. Search
+
+Arguments to RPS Blast
+
+   -i  query sequence file (required)
+   -d  RPS BLAST Database [File In]
+   -p  if query sequence protein (if FALSE 6 frame franslation will be
+                                  conducted as in blastx program)
+   -P  0 for multiple hits 1-pass, 1 for single hit 1-pass [Integer]
+    default = 0
+   -o  output file (optional)
+       default = stdout
+   -e  Expectation value threshold  (E), (optional, same as for BLAST)
+       default = 10 
+   -m  alignment view (optional, same as for BLAST)
+   -z  effective length of database (optional)
+       -1 = length given via -z option to makemat
+       default (0) implies  length is actual length of profile library
+          adjusted for end effects
+
+
+
+APPENDIX:
+
+A. Documentation of the .mtx file format
+
+Format of the .mtx file:
+
+L     = Length of SEQ
+SEQ   = Sequence
+ka#-* = Karlin/Altschul parameters, block #.  There are three blocks,
+        each containing four floating point numbers on separate lines.
+pX-Y  = The position specific scores as integers.
+
+
+The first element of this file format is [L].  This is the sequence
+length.  The second line contains the sequence itself, in NCBI AA
+notation.  After this, there are three KA blocks (four lines of
+floating point numbers each), then the positional scores.
+
+The positional scores are arranged in a grid.  Each line contains 26
+elements, corresponding to the 26 elements in the NCBI AA encoding,
+and there are L lines where L is the previously mentioned sequence
+length.
+
+Using the symbols mentioned above, it looks something like this:
+
+&lt;L&gt;
+&lt;SEQ&gt;
+&lt;ka1-1&gt;
+&lt;ka1-2&gt;
+&lt;ka1-3&gt;
+&lt;ka1-4&gt;
+&lt;ka2-1&gt;
+&lt;ka2-2&gt;
+&lt;ka2-3&gt;
+&lt;ka2-4&gt;
+&lt;ka3-1&gt;
+&lt;ka3-2&gt;
+&lt;ka3-3&gt;
+&lt;ka3-4&gt;
+&lt;p1-1&gt; &lt;p1-2&gt; &lt;p1-3&gt; ... &lt;p1-26&gt;
+&lt;p2-1&gt; &lt;p2-2&gt; &lt;p2-3&gt; ... &lt;p2-26&gt;
+...
+&lt;pL-1&gt; &lt;pL-2&gt; &lt;pL-3&gt; ... &lt;pL-26&gt;
+
+
+One can find the explanation for the three blocks of KA-parameters in
+makemat's source code, lines 188-190:
+
+    putMatrixKbp(checkFile, compactSearch-&gt;kbp_gap_std[0], scaleScores, 1/scalingFactor);
+    putMatrixKbp(checkFile, compactSearch-&gt;kbp_gap_psi[0], scaleScores, 1/scalingFactor);
+    putMatrixKbp(checkFile, sbp-&gt;kbp_ideal, scaleScores, 1/scalingFactor);
+
+Thus, the first KA block is the standard score, the second is for
+PSI-Blast, and the third is the ideal score.
+</pre>
+  </body>
+</html>
+
