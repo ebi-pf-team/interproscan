@@ -11,6 +11,9 @@
     <packaging>pom</packaging>
     <name>InterProScan</name>
     <url>http://www.ebi.ac.uk/interpro/</url>
+    <description>InterProScan is the software package that allows sequences (protein and nucleic) to be scanned against
+        InterPro's signatures
+    </description>
 
     <organization>
         <name>European Bioinformatics Institute</name>
