@@ -21,13 +21,27 @@
     </organization>
 
      <distributionManagement>
-        <repository>
-            <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
-            <id>i5.repo</id>
-            <name>InterProScan 5 maven repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
+         <snapshotRepository>
+         <id>ossrh</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+         </snapshotRepository>
+         <repository>
+         <id>ossrh</id>
+         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+         </repository>
     </distributionManagement>
+
+    <scm>
+        <connection>
+            scm:git:https://github.com/ebi-pf-team/interproscan
+        </connection>
+        <developerConnection>
+            scm:git:https://github.com/ebi-pf-team/interproscan
+        </developerConnection>
+        <url>
+            https://github.com/ebi-pf-team/interproscan.git
+        </url>
+    </scm>
 
     <repositories>
 
@@ -207,12 +221,22 @@
                 <configuration>
                     <overview/>
                 </configuration>
+                <executions>
+                </executions>
             </plugin>
             <!-- Create JAR of source files (source:jar, source:test-jar) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
+                <executions>
+                    <!--<execution>-->
+                    <!--<id>attach-sources</id>-->
+                    <!--<goals>-->
+                    <!--<goal>jar</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
+                </executions>
                 <!--configuration>
                     <finalName>filename-of-generated-jar-file</finalName>
                     <attach>false</attach>
@@ -223,7 +247,9 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>
                 <configuration>
-                    <altDeploymentRepository>i5.repo::default::file://${user.dir}/target/mvn-repo</altDeploymentRepository>
+                    <skip>true</skip>
+                    <altDeploymentRepository>i5.repo::default::file://${user.dir}/target/mvn-repo
+                    </altDeploymentRepository>
                 </configuration>
             </plugin>
             <!-- Configure the site-maven-plugin to upload from your temporary staging i5.repo to your mvn-repo branch on github-->
@@ -234,7 +260,8 @@
                 <configuration>
                     <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                    <outputDirectory>${user.dir}/target/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                    <outputDirectory>${user.dir}/target/mvn-repo
+                    </outputDirectory> <!-- matches distribution management repository url above -->
                     <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
                     <excludes>
                         <exclude>**/*dist*</exclude>
@@ -249,16 +276,22 @@
                         <goals>
                             <goal>site</goal>
                         </goals>
-                        <phase>deploy</phase>
+                        <!--<phase>deploy</phase>-->
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.0</version>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <escapeString>\</escapeString>
+                    <serverId>localhost-nexus-snapshots</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <stagingProfileId>17571ea8a23397</stagingProfileId>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <!--<description>${project.version}</description>-->
+                    <!--<description>interproscan-5.18-57.0-SNAPSHOT</description>-->
                 </configuration>
             </plugin>
         </plugins>
@@ -287,5 +320,74 @@
           </extension>
         </extensions-->
     </build>
+
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <developers>
+        <developer>
+            <id>gnuka</id>
+            <name>Gift Nuka</name>
+            <email>nuka@ebi.ac.uk</email>
+            <organization>EMBL-EBI</organization>
+        </developer>
+        <developer>
+            <id>mfraser</id>
+            <name>Matthew Fraser</name>
+            <email>matthew@ebi.ac.uk</email>
+            <organization>EMBL-EBI</organization>
+        </developer>
+    </developers>
+    <contributors>
+    </contributors>
+
 
 </project>
