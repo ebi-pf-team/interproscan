@@ -45,7 +45,7 @@
 
     <!-- TODO may be uncomment the following if the build fails, otherwise should work ok -->
     <!-- commented out as ossrh recommnds so, for uploading to mvn central-->
-    
+
     <!--<repositories>-->
         <!--<repository>-->
             <!--<id>apache-maven-snapshots</id>-->
@@ -294,6 +294,14 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     <!--<description>${project.version}</description>-->
                     <!--<description>interproscan-5.18-57.0-SNAPSHOT</description>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <escapeString>\</escapeString>
                 </configuration>
             </plugin>
         </plugins>
