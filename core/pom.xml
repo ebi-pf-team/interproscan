@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,27 +20,27 @@
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-     <distributionManagement>
-         <!--<snapshotRepository>-->
-         <!--<id>ossrh_snapshots</id>-->
-         <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-         <!--</snapshotRepository>-->
-         <!--<repository>-->
-         <!--<id>ossrh_staging</id>-->
-         <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-         <!--</repository>-->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh_snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh_staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
 
-         <snapshotRepository>
-             <id>localhost-nexus-snapshots</id>
-             <name>Local Nexus snapshot repository</name>
-             <url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
-         </snapshotRepository>
-         <repository>
-             <id>localhost-nexus-staging</id>
-             <name>Local Nexus release repository</name>
-             <url>http://localhost:8081/nexus/content/repositories/releases/</url>
-         </repository>
-     </distributionManagement>
+        <!--<snapshotRepository>-->
+        <!--<id>localhost-nexus-snapshots</id>-->
+        <!--<name>Local Nexus snapshot repository</name>-->
+        <!--<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>-->
+        <!--</snapshotRepository>-->
+        <!--<repository>-->
+        <!--<id>localhost-nexus-staging</id>-->
+        <!--<name>Local Nexus release repository</name>-->
+        <!--<url>http://localhost:8081/nexus/content/repositories/releases/</url>-->
+        <!--</repository>-->
+    </distributionManagement>
 
     <scm>
         <connection>
@@ -51,33 +52,33 @@
         <url>
             https://github.com/ebi-pf-team/interproscan.git
         </url>
-      <tag>5.19-58.0-SNAPSHOT</tag>
-  </scm>
+        <tag>5.19-58.0-SNAPSHOT</tag>
+    </scm>
 
     <!-- TODO may be uncomment the following if the build fails, otherwise should work ok -->
     <!-- commented out as ossrh recommnds so, for uploading to mvn central-->
 
     <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>apache-maven-snapshots</id>-->
-            <!--<name>Apache snapshot repository</name>-->
-            <!--<url>http://repository.apache.org/snapshots/</url>-->
-            <!--<layout>default</layout>-->
-        <!--</repository>-->
+    <!--<repository>-->
+    <!--<id>apache-maven-snapshots</id>-->
+    <!--<name>Apache snapshot repository</name>-->
+    <!--<url>http://repository.apache.org/snapshots/</url>-->
+    <!--<layout>default</layout>-->
+    <!--</repository>-->
 
-        <!--<repository>-->
-            <!--<id>JBoss</id>-->
-            <!--<name>JBoss releases</name>-->
-            <!--<url>http://repository.jboss.org/nexus/content/groups/public</url>-->
-        <!--</repository>-->
+    <!--<repository>-->
+    <!--<id>JBoss</id>-->
+    <!--<name>JBoss releases</name>-->
+    <!--<url>http://repository.jboss.org/nexus/content/groups/public</url>-->
+    <!--</repository>-->
 
-        <!--&lt;!&ndash; Required for sleepycat (BerkelyDB) &ndash;&gt;-->
-        <!--<repository>-->
-            <!--<id>oracleReleases</id>-->
-            <!--<name>Oracle Released Java Packages</name>-->
-            <!--<url>http://download.oracle.com/maven</url>-->
-            <!--<layout>default</layout>-->
-        <!--</repository>-->
+    <!--&lt;!&ndash; Required for sleepycat (BerkelyDB) &ndash;&gt;-->
+    <!--<repository>-->
+    <!--<id>oracleReleases</id>-->
+    <!--<name>Oracle Released Java Packages</name>-->
+    <!--<url>http://download.oracle.com/maven</url>-->
+    <!--<layout>default</layout>-->
+    <!--</repository>-->
 
     <!--</repositories>-->
 
@@ -232,7 +233,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.3</version>
                 <configuration>
-                    <overview />
+                    <overview/>
                 </configuration>
                 <executions>
                 </executions>
