@@ -5,7 +5,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.19-58.0-SNAPSHOT</version>
+    <version>5.19-58.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -51,7 +51,7 @@
         <url>
             https://github.com/ebi-pf-team/interproscan.git
         </url>
-        <tag>5.19-58.0-SNAPSHOT</tag>
+        <tag>interproscan-5.19-58.0</tag>
     </scm>
 
     <!-- TODO may be uncomment the following if the build fails, otherwise should work ok -->
