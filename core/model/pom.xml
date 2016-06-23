@@ -1,17 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.19-58.0</version>
+        <version>5.19-58.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-model</artifactId>
-    <version>5.19-58.0</version>
+    <version>5.19-58.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -37,7 +35,7 @@
         <mvn.i5.database.connection.url>jdbc:hsqldb:mem:mem:testmodel</mvn.i5.database.connection.url>
         <!--<mvn.i5.database.connection.url>jdbc:hsqldb:hsql://localhost/i5</mvn.i5.database.connection.url>-->
         <mvn.i5.database.username>sa</mvn.i5.database.username>
-        <mvn.i5.database.password></mvn.i5.database.password>
+        <mvn.i5.database.password />
         <mvn.hibernate.dialect>org.hibernate.dialect.HSQLDialect</mvn.hibernate.dialect>
         <mvn.hibernate.show_sql>false</mvn.hibernate.show_sql>
         <mvn.hibernate.format_sql>false</mvn.hibernate.format_sql>
@@ -108,7 +106,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.19-58.0</version>
+            <version>5.19-58.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -159,24 +157,18 @@
                         <phase>compile</phase>
                         <configuration>
                             <target>
-                                <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
-                                <property name="latest.interpro.schema.version" value="1.3"/>
-                                <mkdir dir="${project.build.schema.dir}"/>
-                                <taskdef name="schemagen"
-                                         classname="com.sun.tools.jxc.SchemaGenTask"
-                                         classpathref="maven.plugin.classpath"/>
-                                <schemagen srcdir="${project.build.sourceDirectory}/uk/ac/ebi/interpro/scan/model"
-                                           destdir="${project.build.schema.dir}"
-                                           classpathref="maven.compile.classpath"
-                                           includeantruntime="false">
-                                    <include name = "*.java"/>
-                                    <exclude name="package-info.java"/>
+                                <property name="project.build.schema.dir" value="${project.build.directory}/schemas/" />
+                                <property name="latest.interpro.schema.version" value="1.3" />
+                                <mkdir dir="${project.build.schema.dir}" />
+                                <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
+                                <schemagen srcdir="${project.build.sourceDirectory}/uk/ac/ebi/interpro/scan/model" destdir="${project.build.schema.dir}" classpathref="maven.compile.classpath" includeantruntime="false">
+                                    <include name="*.java" />
+                                    <exclude name="package-info.java" />
                                     <!-- Following does not work: -->
                                     <!--<schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd" />-->
                                 </schemagen>
                                 <!-- 'schema' child element does not work, so have to rename file by hand -->
-                                <move file="${project.build.schema.dir}/schema1.xsd"
-                                      tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>
+                                <move file="${project.build.schema.dir}/schema1.xsd" tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd" />
                             </target>
                         </configuration>
                         <goals>
