@@ -42,7 +42,7 @@ public class Utilities {
 
     /**
      * sleep for the specified milliseconds
-     * @param sleepTime
+     * @param sleepTime sleep time in milli seconds
      */
     public static void sleep(int sleepTime) {
         try {
@@ -77,7 +77,7 @@ public class Utilities {
 
     /**
      * display time now
-     * @return
+     * @return currentDate current date formatted in "dd/MM/yyyy HH:mm:ss:SSS"
      */
     public static String getTimeNow(){
         Calendar cal = Calendar.getInstance();
@@ -100,7 +100,7 @@ public class Utilities {
 
     /**
      * return true if running in single seq mode
-     * @return
+     * @return true if running in single seq mode
      */
     public static boolean isRunningInSingleSeqMode(){
         if (mode.equals("singleseq")) {
@@ -111,8 +111,8 @@ public class Utilities {
 
     /**
      * Lock a given file
-     * @param filename
-     * @return
+     * @param filename the file to lock
+     * @return true if locked else false
      */
     public static boolean lock(File filename){
         boolean fileLockSucceeded = false;
@@ -170,8 +170,8 @@ public class Utilities {
 
     /**
      * release the lock
-     * @param filename
-     * @return
+     * @param filename filename lock to release
+     * @return true if successfully unlocked
      */
     public static boolean releaseLock(File filename){
         File lockFile =  new File(filename+".filelock");
@@ -206,6 +206,9 @@ public class Utilities {
 
     /**
      * Gets a string representing the pid of this program - Java VM
+     * @return process id
+     * @throws IOException
+     * @throws InterruptedException
      */
     public static String getPid() throws IOException,InterruptedException {
 
@@ -228,6 +231,10 @@ public class Utilities {
 
     /**
      * Gets a string representing the pid of this program - Java VM
+     * @param PID the process id of the program
+     * @throws IOException
+     * @throws InterruptedException
+     * @return string representing the pid of this program - Java VM     *
      */
     public static String getSwapMemoryDetails(String PID) throws IOException,InterruptedException {
 
@@ -264,7 +271,11 @@ public class Utilities {
         }
     }
     /**
-     * Gets a string representing the pid of this program - Java VM
+     * Gets swap memory details for the process given by pid of this program - Java VM
+     * @param PID the process id of the program
+     * @throws IOException
+     * @throws InterruptedException
+     * @return swap memory details
      */
     public static String getSwapMemoryDetailsCLC(String PID) throws IOException,InterruptedException {
 
@@ -296,6 +307,10 @@ public class Utilities {
 
     /**
      * run the 'free -m' command to get system swap and memory usage
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @return the free memory stats
      */
     public static String runFreeCmd() throws IOException,InterruptedException {
         Vector<String> commands=new Vector<String>();
@@ -308,7 +323,10 @@ public class Utilities {
     }
 
     /**
-     * run the vmstat command to get more swap and memeory usage
+     * run the vmstat command to get more swap and memeory usage     *
+     * @throws IOException
+     * @throws InterruptedException
+     * @return swap and memeory usage
      */
     public static String runVmstatCmd() throws IOException,InterruptedException {
         Vector<String> commands=new Vector<String>();
@@ -322,6 +340,9 @@ public class Utilities {
 
     /**
      * get vm stats from /proc
+     * @throws IOException
+     * @throws InterruptedException
+     * @return process status
      */
     public static String getProcStatus() throws IOException,InterruptedException {
         String PID = getPid();
@@ -337,6 +358,9 @@ public class Utilities {
 
     /**
      * get vm stats from /proc
+     * @throws IOException
+     * @throws InterruptedException
+     * @return process status
      */
     public static String getProcSelfStatus() throws IOException,InterruptedException {
         Vector<String> commands=new Vector<String>();
@@ -350,6 +374,9 @@ public class Utilities {
 
     /**
      * get vm stats from /proc
+     * @throws IOException
+     * @throws InterruptedException
+     * @return output from bjobs command
      */
     public static String runBjobs(String runId) throws IOException,InterruptedException {
         Vector<String> commands =new Vector<String>();
@@ -362,6 +389,12 @@ public class Utilities {
     }
 
 
+    /**
+     *
+     * @return output from running ps command
+     * @throws IOException
+     * @throws InterruptedException
+     */
     static public  String getCurrentProcess() throws IOException,InterruptedException {
         String PID = getPid();
         Vector<String> commands=new Vector<String>();
@@ -451,8 +484,8 @@ public class Utilities {
     /**
      * run bash commands
      *
-     * @param commands
-     * @return
+     * @param commands comand to run
+     * @return output or null
      * @throws IOException
      * @throws InterruptedException
      */
@@ -479,14 +512,20 @@ public class Utilities {
         return null;
     }
 
-    //verbose output using System out
+    /** verbose output using System out     *
+     * @param out string to print out
+     */
     public static void verboseLog(String out){
         if(verboseLogLevel > 0){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }
 
-    //verbose output using System out
+    /**
+     * verbose output using System out
+     * @param level log level
+     * @param out strin to print out
+     */
     public static void verboseLog(int level, String out){
         if(verboseLogLevel >= level){
             System.out.println(Utilities.getTimeNow() + " " + out);
