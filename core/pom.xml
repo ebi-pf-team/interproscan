@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -232,8 +233,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.3</version>
                 <configuration>
-                    <overview />
-                <additionalparam>-Xdoclint:none</additionalparam>
+                    <overview/>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
                 <executions>
                 </executions>
@@ -264,6 +265,22 @@
                     <skip>true</skip>
                     <altDeploymentRepository>i5.repo::default::file://${user.dir}/target/mvn-repo
                     </altDeploymentRepository>
+                </configuration>
+            </plugin>
+            <!-- the maven release plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <!--
+                      During release:perform, enable the "release" profile
+                     -->
+                    <releaseProfiles>release</releaseProfiles>
+                    <!--<arguments>-Pproject-name-release</arguments>-->
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                    <goals>deploy</goals>
                 </configuration>
             </plugin>
             <!-- Configure the site-maven-plugin to upload from your temporary staging i5.repo to your mvn-repo branch on github-->
@@ -300,7 +317,7 @@
                 <version>1.6.7</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>localhost-nexus-snapshots</serverId>
+                    <serverId>ossrh_staging</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <stagingProfileId>17571ea8a23397</stagingProfileId>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
