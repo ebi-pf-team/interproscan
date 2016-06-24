@@ -45,6 +45,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         return fullPathToHmmScanBinary;
     }
 
+    @Required
     public void setFullPathToHmmScanBinary(String fullPathToHmmScanBinary) {
         this.fullPathToHmmScanBinary = fullPathToHmmScanBinary;
     }
