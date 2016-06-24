@@ -29,6 +29,7 @@ public enum SerialGroup {
     PARSE_COILS,
     PARSE_PRINTS,
     PARSE_HAMAP,
+    PARSE_SFLD,
     PARSE_SMART,
     PARSE_TIGRFAM,
     PARSE_PANTHER,

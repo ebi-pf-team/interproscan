@@ -21,6 +21,7 @@
     <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
+    <import resource="jobSFLD-context.xml"/>
     <import resource="jobSignalP_EUK-context.xml"/>
     <import resource="jobSignalP_GRAM_POSITIVE-context.xml"/>
     <import resource="jobSignalP_GRAM_NEGATIVE-context.xml"/>
@@ -60,6 +61,7 @@
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
+                <ref bean="jobSFLD"/>
                 <ref bean="jobSignalP_EUK"/>
                 <ref bean="jobSignalP_GRAM_POSITIVE"/>
                 <ref bean="jobSignalP_GRAM_NEGATIVE"/>
