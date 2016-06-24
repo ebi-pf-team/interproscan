@@ -18,16 +18,16 @@
         <a id="${prefix}-location-${matchId}"
            title="${title} ${location.start} - ${location.end}"
            class="match ${colourClass}"
-           style="left:  ${((location.start - 1) / proteinLength) * 100}%;
-                   width: ${((location.end - location.start + 1) / proteinLength) * 100}%;"
+           style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
+                   width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
            href="/interpro/popup/match?id=${prefix}-popup-${matchId}&methodAc=${signature.ac}&entryAc=${entryAc}&start=${location.start?c}&end=${location.end?c}">
     <#else>
        <#--Un-integrated signature, therefore has no entryAc associated-->
     <a id="${prefix}-location-${matchId}"
        title="${title} ${location.start} - ${location.end}"
        class="match ${colourClass}"
-       style="left:  ${((location.start - 1) / proteinLength) * 100}%;
-               width: ${((location.end - location.start + 1) / proteinLength) * 100}%;"
+       style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
+               width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
        href="/interpro/popup/match?id=${prefix}-popup-${matchId}&methodAc=${signature.ac}&db=${signature.dataSource.sourceName}&start=${location.start?c}&end=${location.end?c}">
     </#if>
         <#--<@locationMacro.location locationSpanId=prefix+"-span-"+matchId proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>-->
