@@ -1,6 +1,6 @@
 #Post-RPSBLAST Processing Utility v0.1
 #Config file:
-#Input data file:	/nfs/nobackup/interpro/matthew/i5_temp/5.19-58.0_extracted/interproscan-5.19-58.0/temp/ebi6-242.ebi.ac.uk_20160628_110142626_binz//jobCDD/000000000001_000000000001.blast.raw.out
+#Input data file:	/example/path/temp/ebi6-242.ebi.ac.uk_20160628_110142626_binz//jobCDD/000000000001_000000000001.blast.raw.out
 #Output data file:	stdout
 #E-Value cutoff:	0.01
 #Redundancy:	Standard
