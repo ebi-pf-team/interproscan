@@ -24,6 +24,7 @@ import org.hibernate.annotations.BatchSize;
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -41,7 +42,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
-public abstract class Location implements Serializable, Cloneable {
+public abstract class Location<T extends Site> implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
     @TableGenerator(name = "LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "location", initialValue = 0, allocationSize = 50)
@@ -58,9 +59,9 @@ public abstract class Location implements Serializable, Cloneable {
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     private Match match;
 
-//    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
-//    @BatchSize(size=4000)
-//    protected Set<T> sites = new LinkedHashSet<T>();
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
+    @BatchSize(size=4000)
+    protected Set<T> sites = new LinkedHashSet<T>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -71,6 +72,12 @@ public abstract class Location implements Serializable, Cloneable {
     public Location(int start, int end) {
         setStart(start);
         setEnd(end);
+    }
+
+    public Location(int start, int end, Set<T> sites) {
+        setStart(start);
+        setEnd(end);
+        setSites(sites);
     }
 
     /**
@@ -142,6 +149,30 @@ public abstract class Location implements Serializable, Cloneable {
     @XmlTransient
     public Match getMatch() {
         return match;
+    }
+
+    @Transient
+    @XmlJavaTypeAdapter(Site.SiteAdapter.class)
+    public Set<T> getSites() {
+//        return Collections.unmodifiableSet(sites);
+        return sites;
+    }
+
+    // Private so can only be set by JAXB, Hibernate ...etc via reflection
+
+    protected void setSites(final Set<T> sites) {
+        if (sites != null) {
+            for (T site : sites) {
+                site.setLocation(this);
+                this.sites.add(site);
+            }
+        }
+    }
+
+    @Transient
+    public void addSite(T site) {
+        site.setLocation(this);
+        this.sites.add(site);
     }
 
     /**

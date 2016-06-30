@@ -7,10 +7,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,35 +31,6 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     public RPSBlastMatch(Signature signature, Set<RPSBlastLocation> locations) {
         super(signature, locations);
     }
-
-//    @Transient
-//    @XmlJavaTypeAdapter(Site.SiteAdapter.class)
-//    public Set<RPSBlastLocation.RPSBlastSite> getSites() {
-//        return sites;
-//    }
-//
-//    // Private so can only be set by JAXB, Hibernate ...etc via reflection
-
-
-//    protected void setSites(Set<RPSBlastLocation.RPSBlastSite> sites) {
-//        this.sites = sites;
-//    }
-//
-//    protected void setLocations(final Set<T> locations) {
-//        if (locations != null) {
-//            for (T location : locations) {
-//                location.setMatch(this);
-//                this.locations.add(location);
-//            }
-//        }
-//    }
-//
-//    @Transient
-//    public void addSite(RPSBlastLocation.RPSBlastSite site) {
-//        site...setMatch(this);
-//        this.locations.add(location);
-//    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -103,7 +72,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     @Table(name = "rpsblast_location")
     @XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     //@XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = { "start", "end", "score", "evalue"})
-    public static class RPSBlastLocation extends Location {
+    public static class RPSBlastLocation extends Location<RPSBlastLocation.RPSBlastSite> {
 
         @Column(nullable = false, name = "evalue")
         private double evalue;
@@ -111,13 +80,11 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         @Column(nullable = false, name = "score")
         private double score;
 
-//        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites;
-
         protected RPSBlastLocation() {
         }
 
-        public RPSBlastLocation(int start, int end, double score, double evalue) {
-            super(start, end);
+        public RPSBlastLocation(int start, int end, double score, double evalue, Set<RPSBlastSite> sites) {
+            super(start, end, sites);
             setScore(score);
             setEvalue(evalue);
         }
@@ -140,7 +107,6 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
             this.score = score;
         }
 
-
         @Override
         public boolean equals(Object o) {
             if (this == o)
@@ -152,16 +118,6 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
                     .isEquals();
         }
 
-//        @Override
-//        public int hashCode() {
-//            int result = super.hashCode();
-//            long temp;
-//            temp = Double.doubleToLongBits(evalue);
-//            result = 31 * result + (int) (temp ^ (temp >>> 32));
-//            temp = Double.doubleToLongBits(score);
-//            result = 31 * result + (int) (temp ^ (temp >>> 32));
-//            return result;
-//        }
         @Override
         public int hashCode() {
             return new HashCodeBuilder(41, 59)
@@ -170,7 +126,11 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         }
 
         public Object clone() throws CloneNotSupportedException {
-            return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue());
+            final Set<RPSBlastSite> clonedLocations = new HashSet<>(this.getSites().size());
+            for (RPSBlastSite site : this.getSites()) {
+                clonedLocations.add((RPSBlastSite) site.clone());
+            }
+            return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), clonedLocations);
         }
 
         @Entity
@@ -178,13 +138,53 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         @XmlType(name = "RPSBlastSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
         public static class RPSBlastSite extends Site {
 
+            @Column(name = "description", nullable = false)
+            private String description;
+
 
             protected RPSBlastSite() {
             }
 
-            public RPSBlastSite(String residue, int start, int end) {
-                super(residue, start, end);
+            public RPSBlastSite(String description, Set<ResidueLocation> residueLocations) {
+                super(residueLocations);
+                setDescription(description);
             }
+
+            @XmlAttribute(required = true)
+            public String getDescription() {
+                return description;
+            }
+
+            private void setDescription(String description) {
+                this.description = description;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof RPSBlastSite))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(41, 59)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                final Set<ResidueLocation> clonedResidueLocations = new HashSet<>(this.getResidueLocations().size());
+                for (ResidueLocation rl : this.getResidueLocations()) {
+                    clonedResidueLocations.add((ResidueLocation) rl.clone());
+                }
+                return new RPSBlastSite(this.getDescription(), clonedResidueLocations);
+            }
+
         }
     }
 
