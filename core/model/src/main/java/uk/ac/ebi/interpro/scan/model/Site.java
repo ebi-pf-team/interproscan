@@ -38,13 +38,13 @@ public abstract class Site implements Serializable, Cloneable {
     @Column(name = "num_locations", nullable = false)
     private int numLocations;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, targetEntity = ResidueLocation.class, mappedBy = "site")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, targetEntity = SiteLocation.class, mappedBy = "site")
 //    @MapKey(name = "id")
     @BatchSize(size=4000)
-    private Set<ResidueLocation> residueLocations = new LinkedHashSet<>();
+    private Set<SiteLocation> siteLocations = new LinkedHashSet<>();
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
-    private Location location;
+    private LocationWithSites location;
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -52,9 +52,9 @@ public abstract class Site implements Serializable, Cloneable {
     protected Site() {
     }
 
-    public Site(Set<ResidueLocation> residueLocations) {
-        setNumLocations((residueLocations == null) ? 0 : residueLocations.size());
-        setResidueLocations(residueLocations);
+    public Site(Set<SiteLocation> siteLocations) {
+        setNumLocations((siteLocations == null) ? 0 : siteLocations.size());
+        setSiteLocations(siteLocations);
     }
 
     /**
@@ -82,26 +82,26 @@ public abstract class Site implements Serializable, Cloneable {
 
     @Transient
 //    @XmlElement(name = "residue_location")
-    public Set<ResidueLocation> getResidueLocations() {
-//        return Collections.unmodifiableSet(residueLocations);
-        return residueLocations;
+    public Set<SiteLocation> getSiteLocations() {
+//        return Collections.unmodifiableSet(siteLocations);
+        return siteLocations;
     }
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
 
-    protected void setResidueLocations(final Set<ResidueLocation> residueLocations) {
-        if (residueLocations != null) {
-            for (ResidueLocation residueLocation : residueLocations) {
-                residueLocation.setSite(this);
-                this.residueLocations.add(residueLocation);
+    protected void setSiteLocations(final Set<SiteLocation> siteLocations) {
+        if (siteLocations != null) {
+            for (SiteLocation siteLocation : siteLocations) {
+                siteLocation.setSite(this);
+                this.siteLocations.add(siteLocation);
             }
         }
     }
 
     @Transient
-    public void addResidueLocation(ResidueLocation residueLocation) {
-        residueLocation.setSite(this);
-        this.residueLocations.add(residueLocation);
+    public void addSiteLocation(SiteLocation siteLocation) {
+        siteLocation.setSite(this);
+        this.siteLocations.add(siteLocation);
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class Site implements Serializable, Cloneable {
      *
      * @param location to which this Location is related.
      */
-    void setLocation(Location location) {
+    void setLocation(LocationWithSites location) {
         this.location = location;
     }
 
@@ -119,7 +119,7 @@ public abstract class Site implements Serializable, Cloneable {
      * @return
      */
     @XmlTransient
-    public Location getLocation() {
+    public LocationWithSites getLocation() {
         return location;
     }
 
@@ -194,7 +194,7 @@ public abstract class Site implements Serializable, Cloneable {
         final Site h = (Site) o;
         return new EqualsBuilder()
                 .append(numLocations, h.numLocations)
-                .append(residueLocations, h.residueLocations)
+                .append(siteLocations, h.siteLocations)
                 .isEquals();
     }
 
@@ -202,7 +202,7 @@ public abstract class Site implements Serializable, Cloneable {
     public int hashCode() {
         return new HashCodeBuilder(19, 57)
                 .append(numLocations)
-                .append(residueLocations)
+                .append(siteLocations)
                 .toHashCode();
     }
 
