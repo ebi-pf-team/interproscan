@@ -277,6 +277,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 }
             }
         }
+        if (count == 1){
+            //SINGLE_SEQUENCE_MODE
+            Utilities.setMode("singleseq");
+        }
         if (count > 10000) {
             System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
         }
