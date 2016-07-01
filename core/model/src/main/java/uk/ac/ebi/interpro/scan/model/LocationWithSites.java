@@ -45,7 +45,7 @@ import java.util.Set;
 //@XmlType(name = "LocationWithSitesType", propOrder = {"start", "end"})
 public abstract class LocationWithSites<T extends Site> extends Location {
 
-    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location_with_sites")
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
     @BatchSize(size=4000)
     protected Set<T> sites = new LinkedHashSet<>();
 
