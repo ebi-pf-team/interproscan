@@ -51,7 +51,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     }
 
     public Object clone() throws CloneNotSupportedException {
-        final Set<RPSBlastLocation> clonedLocations = new HashSet<RPSBlastLocation>(this.getLocations().size());
+        final Set<RPSBlastLocation> clonedLocations = new HashSet<>(this.getLocations().size());
         for (RPSBlastLocation location : this.getLocations()) {
             clonedLocations.add((RPSBlastLocation) location.clone());
         }
@@ -72,7 +72,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     @Table(name = "rpsblast_location")
     @XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     //@XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = { "start", "end", "score", "evalue"})
-    public static class RPSBlastLocation extends Location<RPSBlastLocation.RPSBlastSite> {
+    public static class RPSBlastLocation extends LocationWithSites<RPSBlastLocation.RPSBlastSite> {
 
         @Column(nullable = false, name = "evalue")
         private double evalue;
@@ -145,8 +145,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
             protected RPSBlastSite() {
             }
 
-            public RPSBlastSite(String description, Set<ResidueLocation> residueLocations) {
-                super(residueLocations);
+            public RPSBlastSite(String description, Set<SiteLocation> siteLocations) {
+                super(siteLocations);
                 setDescription(description);
             }
 
@@ -178,11 +178,11 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
             }
 
             public Object clone() throws CloneNotSupportedException {
-                final Set<ResidueLocation> clonedResidueLocations = new HashSet<>(this.getResidueLocations().size());
-                for (ResidueLocation rl : this.getResidueLocations()) {
-                    clonedResidueLocations.add((ResidueLocation) rl.clone());
+                final Set<SiteLocation> clonedSiteLocations = new HashSet<>(this.getSiteLocations().size());
+                for (SiteLocation sl : this.getSiteLocations()) {
+                    clonedSiteLocations.add((SiteLocation) sl.clone());
                 }
-                return new RPSBlastSite(this.getDescription(), clonedResidueLocations);
+                return new RPSBlastSite(this.getDescription(), clonedSiteLocations);
             }
 
         }
