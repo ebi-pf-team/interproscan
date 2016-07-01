@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,9 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
         List<String> command = new ArrayList<String>();
 
-        if (isSingleSeqMode()){
+//        if (isSingleSeqMode()){
+        if (Utilities.isRunningInSingleSeqMode()){
+            Utilities.verboseLog("SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }else{
             command.add(this.getFullPathToBinary());
