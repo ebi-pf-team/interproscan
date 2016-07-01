@@ -8,10 +8,7 @@ import org.hibernate.annotations.*;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.xml.bind.annotation.XmlAttribute;;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -164,6 +161,8 @@ public abstract class Site implements Serializable, Cloneable {
         /**
          * Helper class for SiteAdapter
          */
+        @XmlType(name = "sitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
         private final static class SitesType {
 
             //TODO Add for others, see 'Location'
