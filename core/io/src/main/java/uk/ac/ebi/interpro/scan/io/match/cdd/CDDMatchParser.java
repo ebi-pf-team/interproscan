@@ -227,7 +227,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                             String sourceDomain = siteInfo[7];
                             String model = pssmid2modelId.get(sourceDomain);
 
-                            List <ResidueCoordinate> coordinates = new ArrayList<>();
+//                            List <ResidueCoordinate> coordinates = new ArrayList<>();
                             Utilities.verboseLog("Residue tokens: " + Arrays.toString(residueCoordinateList));
                             for (String residueAnnot: residueCoordinateList){
                                 String residue = residueAnnot.substring(0, 1);
@@ -264,30 +264,30 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
         return lastElement;
     }
 
-    public class ResidueCoordinate {
-        final String residue;
-        final int start;
-        final int end;
-
-        public ResidueCoordinate(String residue, int start, int end) {
-            this.residue = residue;
-            this.start = start;
-            this.end = end;
-        }
-
-        public String getResidue() {
-            return residue;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-    }
+//    public class ResidueCoordinate {
+//        final String residue;
+//        final int start;
+//        final int end;
+//
+//        public ResidueCoordinate(String residue, int start, int end) {
+//            this.residue = residue;
+//            this.start = start;
+//            this.end = end;
+//        }
+//
+//        public String getResidue() {
+//            return residue;
+//        }
+//
+//        public int getStart() {
+//            return start;
+//        }
+//
+//        public int getEnd() {
+//            return end;
+//        }
+//
+//    }
 
     private class MatchData {
         final Set<CDDRawMatch> matches;
