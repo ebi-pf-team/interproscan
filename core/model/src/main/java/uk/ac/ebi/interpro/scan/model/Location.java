@@ -19,12 +19,10 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -42,7 +40,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
-public abstract class Location<T extends Site> implements Serializable, Cloneable {
+public abstract class Location implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
     @TableGenerator(name = "LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "location", initialValue = 0, allocationSize = 50)
@@ -59,10 +57,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     private Match match;
 
-    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
-    @BatchSize(size=4000)
-    protected Set<T> sites = new LinkedHashSet<T>();
-
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -72,12 +66,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
     public Location(int start, int end) {
         setStart(start);
         setEnd(end);
-    }
-
-    public Location(int start, int end, Set<T> sites) {
-        setStart(start);
-        setEnd(end);
-        setSites(sites);
     }
 
     /**
@@ -151,30 +139,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
         return match;
     }
 
-    @Transient
-    @XmlJavaTypeAdapter(Site.SiteAdapter.class)
-    public Set<T> getSites() {
-//        return Collections.unmodifiableSet(sites);
-        return sites;
-    }
-
-    // Private so can only be set by JAXB, Hibernate ...etc via reflection
-
-    protected void setSites(final Set<T> sites) {
-        if (sites != null) {
-            for (T site : sites) {
-                site.setLocation(this);
-                this.sites.add(site);
-            }
-        }
-    }
-
-    @Transient
-    public void addSite(T site) {
-        site.setLocation(this);
-        this.sites.add(site);
-    }
-
     /**
      * Ensure sub-classes of AbstractLocation are represented correctly in XML.
      *
@@ -188,7 +152,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
          */
         @Override
         public LocationsType marshal(Set<? extends Location> locations) {
-            Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations = new LinkedHashSet<RPSBlastMatch.RPSBlastLocation>();
             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations = new LinkedHashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
@@ -202,9 +165,7 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
             Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
             for (Location l : locations) {
-                if (l instanceof RPSBlastMatch.RPSBlastLocation) {
-                    rpsBlastLocations.add((RPSBlastMatch.RPSBlastLocation) l);
-                } else if (l instanceof Hmmer2Match.Hmmer2Location) {
+                if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location) {
                     hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
@@ -232,7 +193,7 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
-            return new LocationsType(rpsBlastLocations, hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
                     patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations);
         }
 
@@ -242,7 +203,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
         @Override
         public Set<Location> unmarshal(LocationsType locationsType) {
             Set<Location> locations = new LinkedHashSet<Location>();
-            locations.addAll(locationsType.getRpsBlastLocations());
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
             locations.addAll(locationsType.getSuperFamilyHmmer3Locations());
@@ -266,9 +226,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
     @XmlType(name = "locationsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class LocationsType {
-
-        @XmlElement(name = "rpsblast-location")
-        private final Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations;
 
         @XmlElement(name = "hmmer2-location")
         private final Set<Hmmer2Match.Hmmer2Location> hmmer2Locations;
@@ -307,7 +264,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
         private final Set<TMHMMMatch.TMHMMLocation> tmhmmLocations;
 
         private LocationsType() {
-            rpsBlastLocations = null;
             hmmer2Locations = null;
             hmmer3Locations = null;
             superFamilyHmmer3Locations = null;
@@ -322,8 +278,7 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
             tmhmmLocations = null;
         }
 
-        public LocationsType(Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations,
-                             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
+        public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
                              Set<Hmmer3Match.Hmmer3Location> hmmer3Locations,
                              Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations,
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
@@ -335,7 +290,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
                              Set<PantherMatch.PantherLocation> pantherLocations,
                              Set<SignalPMatch.SignalPLocation> signalPLocations,
                              Set<TMHMMMatch.TMHMMLocation> tmhmmLocations) {
-            this.rpsBlastLocations = rpsBlastLocations;
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
@@ -348,10 +302,6 @@ public abstract class Location<T extends Site> implements Serializable, Cloneabl
             this.pantherLocations = pantherLocations;
             this.signalPLocations = signalPLocations;
             this.tmhmmLocations = tmhmmLocations;
-        }
-
-        public Set<RPSBlastMatch.RPSBlastLocation> getRpsBlastLocations() {
-            return (rpsBlastLocations == null ? Collections.<RPSBlastMatch.RPSBlastLocation>emptySet() : rpsBlastLocations);
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {

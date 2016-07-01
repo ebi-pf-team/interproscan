@@ -85,24 +85,31 @@
     <lang:groovy id="cddObject">
         <lang:inline-script>
             <![CDATA[
-                import uk.ac.ebi.interpro.scan.model.*
+            import uk.ac.ebi.interpro.scan.model.*
 
-                // Create protein
-                Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
-                p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
-                Signature signature = new Signature("cd000004", "Sortase ");
-                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
-                locations.add(new RPSBlastMatch.RPSBlastLocation(1, 237, 2, 2.4e-32));
-                p.addMatch(new RPSBlastMatch(signature,  locations));
+            // Create protein
+            Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
+            p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
+            Signature signature = new Signature("cd000004", "Sortase ");
+            // Per residue annotations (sites)
+            Set<SiteLocation> siteLocations = new HashSet<>();
+            siteLocations.add(new SiteLocation("Q", 39, 39));
+            siteLocations.add(new SiteLocation("K", 43, 43));
+            Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = new HashSet<>();
+            sites.add(new RPSBlastMatch.RPSBlastLocation.RPSBlastSite("heterodimer interface", siteLocations))
+            // Match location
+            Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<>();
+            locations.add(new RPSBlastMatch.RPSBlastLocation(1, 237, 2, 2.4e-32, sites));
+            p.addMatch(new RPSBlastMatch(signature, locations));
 
-                // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14");
-                signature.setSignatureLibraryRelease(release);
-                // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
-                holder.addProtein(p);
+            // Create release
+            SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14");
+            signature.setSignatureLibraryRelease(release);
+            // Create holder
+            ProteinMatchesHolder holder = new ProteinMatchesHolder();
+            holder.addProtein(p);
 
-                return holder;
+            return holder;
             ]]>
         </lang:inline-script>
     </lang:groovy>

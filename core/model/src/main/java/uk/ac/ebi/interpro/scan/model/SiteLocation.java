@@ -36,7 +36,7 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ResidueLocationType", propOrder = {"residue", "start", "end"})
 @Table(name = "residue_location")
-public class ResidueLocation implements Serializable, Cloneable {
+public class SiteLocation implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RESIDUE_LOCN_IDGEN")
     @TableGenerator(name = "RESIDUE_LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "residue_location", initialValue = 0, allocationSize = 50)
@@ -59,10 +59,10 @@ public class ResidueLocation implements Serializable, Cloneable {
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
-    protected ResidueLocation() {
+    protected SiteLocation() {
     }
 
-    public ResidueLocation(String residue, int start, int end) {
+    public SiteLocation(String residue, int start, int end) {
         setResidue(residue);
         setStart(start);
         setEnd(end);
@@ -163,9 +163,9 @@ public class ResidueLocation implements Serializable, Cloneable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof ResidueLocation))
+        if (!(o instanceof SiteLocation))
             return false;
-        final ResidueLocation h = (ResidueLocation) o;
+        final SiteLocation h = (SiteLocation) o;
         return new EqualsBuilder()
                 .append(residue, h.residue)
                 .append(start, h.start)
@@ -188,7 +188,7 @@ public class ResidueLocation implements Serializable, Cloneable {
     }
 
     public Object clone() throws CloneNotSupportedException {
-        return new ResidueLocation(this.getResidue(), this.getStart(), this.getEnd());
+        return new SiteLocation(this.getResidue(), this.getStart(), this.getEnd());
     }
 
 }
