@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.regex.Pattern;
 
@@ -53,6 +54,26 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
         if (domainMatch.getAlignment() == null || domainMatch.getAlignment().trim().length() == 0) {
             throw new IllegalStateException("Attempting to create a Gene3D match that has no alignment data.");
         }
+        Utilities.verboseLog("match: " +
+                sequenceMatch.getSequenceIdentifier() + " " +
+                hmmSearchRecord.getModelAccession()+ " " +
+                signatureLibraryRelease + " " +
+                sequenceMatch.getEValue() + " " +
+                sequenceMatch.getScore() + " " +
+                sequenceMatch.getBias() + " " +
+                domainMatch.getHmmfrom() + " " +
+                domainMatch.getHmmto() + " " +
+                domainMatch.getHmmBounds() + " " +
+                domainMatch.getScore() + " " +
+                domainMatch.getEnvFrom() + " " +
+                domainMatch.getEnvTo() + " " +
+                domainMatch.getAliFrom() + " " +
+                domainMatch.getAliTo() + " " +
+                domainMatch.getAcc() + " " +
+                domainMatch.getCEvalue() + " " +
+                domainMatch.getIEvalue() + " " +
+                domainMatch.getBias()
+        );
         return new Gene3dHmmer3RawMatch(
                 sequenceMatch.getSequenceIdentifier(),
                 hmmSearchRecord.getModelAccession(),
