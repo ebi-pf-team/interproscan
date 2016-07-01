@@ -3,14 +3,15 @@ package uk.ac.ebi.interpro.scan.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAttribute;;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -37,7 +38,8 @@ public abstract class Site implements Serializable, Cloneable {
     @Column(name = "num_locations", nullable = false)
     private int numLocations;
 
-    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = ResidueLocation.class, mappedBy = "site")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, targetEntity = ResidueLocation.class, mappedBy = "site")
+//    @MapKey(name = "id")
     @BatchSize(size=4000)
     private Set<ResidueLocation> residueLocations = new LinkedHashSet<>();
 
