@@ -8,7 +8,10 @@
     <persistence-unit name="persistenceJms" transaction-type="RESOURCE_LOCAL">
         <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.LocationWithSites</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.Site</class>
+        <class>uk.ac.ebi.interpro.scan.model.SiteLocation</class>
 
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
