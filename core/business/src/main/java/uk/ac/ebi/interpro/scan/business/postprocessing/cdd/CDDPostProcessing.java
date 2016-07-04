@@ -48,10 +48,10 @@ public class CDDPostProcessing<T extends RPSBlastRawMatch> implements Serializab
             LOGGER.warn("The RPSBlastProcessing class has been initialised such that NO matches will pass. " +
                     "(The list of acceptable hit types is empty).");
         }
-        Map<String, RawProtein<T>> filteredMatches = new HashMap<String, RawProtein<T>>();
+        Map<String, RawProtein<T>> filteredMatches = new HashMap<>();
         for (String candidateProteinId : proteinIdToRawMatchMap.keySet()) {
             RawProtein<T> candidateRawProtein = proteinIdToRawMatchMap.get(candidateProteinId);
-            RawProtein<T> filteredProtein = new RawProtein<T>(candidateRawProtein.getProteinIdentifier());
+            RawProtein<T> filteredProtein = new RawProtein<>(candidateRawProtein.getProteinIdentifier());
             for (T rawMatch : candidateRawProtein.getMatches()) {
                 if (hitTypes.contains(rawMatch.getHitType())) {
                     filteredProtein.addMatch(rawMatch);
