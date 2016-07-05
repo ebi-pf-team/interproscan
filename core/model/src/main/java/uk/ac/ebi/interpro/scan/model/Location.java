@@ -40,6 +40,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
+@XmlSeeAlso(LocationWithSites.class)
 public abstract class Location implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
@@ -152,6 +153,7 @@ public abstract class Location implements Serializable, Cloneable {
          */
         @Override
         public LocationsType marshal(Set<? extends Location> locations) {
+            Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations = new LinkedHashSet<>();
             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations = new LinkedHashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
@@ -165,7 +167,10 @@ public abstract class Location implements Serializable, Cloneable {
             Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
             for (Location l : locations) {
-                if (l instanceof Hmmer2Match.Hmmer2Location) {
+                // TODO RPSBlastLocation is not a Location but is acually a LocationWithSite subclass - review?
+                if (l instanceof RPSBlastMatch.RPSBlastLocation) {
+                    rpsBlastLocations.add((RPSBlastMatch.RPSBlastLocation) l);
+                } else if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location) {
                     hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
@@ -193,7 +198,7 @@ public abstract class Location implements Serializable, Cloneable {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
-            return new LocationsType(hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(rpsBlastLocations, hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
                     patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations);
         }
 
@@ -202,7 +207,8 @@ public abstract class Location implements Serializable, Cloneable {
          */
         @Override
         public Set<Location> unmarshal(LocationsType locationsType) {
-            Set<Location> locations = new LinkedHashSet<Location>();
+            Set<Location> locations = new LinkedHashSet<>();
+            locations.addAll(locationsType.getRpsBlastLocations());
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
             locations.addAll(locationsType.getSuperFamilyHmmer3Locations());
@@ -226,6 +232,9 @@ public abstract class Location implements Serializable, Cloneable {
     @XmlType(name = "locationsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class LocationsType {
+
+        @XmlElement(name = "rpsblast-location")
+        private final Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations;
 
         @XmlElement(name = "hmmer2-location")
         private final Set<Hmmer2Match.Hmmer2Location> hmmer2Locations;
@@ -264,6 +273,7 @@ public abstract class Location implements Serializable, Cloneable {
         private final Set<TMHMMMatch.TMHMMLocation> tmhmmLocations;
 
         private LocationsType() {
+            rpsBlastLocations = null;
             hmmer2Locations = null;
             hmmer3Locations = null;
             superFamilyHmmer3Locations = null;
@@ -278,7 +288,8 @@ public abstract class Location implements Serializable, Cloneable {
             tmhmmLocations = null;
         }
 
-        public LocationsType(Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
+        public LocationsType(Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations,
+                             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
                              Set<Hmmer3Match.Hmmer3Location> hmmer3Locations,
                              Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations,
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
@@ -290,6 +301,7 @@ public abstract class Location implements Serializable, Cloneable {
                              Set<PantherMatch.PantherLocation> pantherLocations,
                              Set<SignalPMatch.SignalPLocation> signalPLocations,
                              Set<TMHMMMatch.TMHMMLocation> tmhmmLocations) {
+            this.rpsBlastLocations = rpsBlastLocations;
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
@@ -302,6 +314,10 @@ public abstract class Location implements Serializable, Cloneable {
             this.pantherLocations = pantherLocations;
             this.signalPLocations = signalPLocations;
             this.tmhmmLocations = tmhmmLocations;
+        }
+
+        public Set<RPSBlastMatch.RPSBlastLocation> getRpsBlastLocations() {
+            return (rpsBlastLocations == null ? Collections.<RPSBlastMatch.RPSBlastLocation>emptySet() : rpsBlastLocations);
         }
 
         public Set<Hmmer2Match.Hmmer2Location> getHmmer2Locations() {
