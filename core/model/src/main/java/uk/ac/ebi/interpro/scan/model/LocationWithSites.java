@@ -22,11 +22,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -41,8 +37,6 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "LocationWithSitesType")
-//@XmlType(name = "LocationWithSitesType", propOrder = {"start", "end"})
 public abstract class LocationWithSites<T extends Site> extends Location {
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
@@ -82,66 +76,6 @@ public abstract class LocationWithSites<T extends Site> extends Location {
     public void addSite(T site) {
         site.setLocation(this);
         this.sites.add(site);
-    }
-
-    /**
-     * Ensure sub-classes of AbstractLocation are represented correctly in XML.
-     *
-     * @author Antony Quinn
-     */
-    @XmlTransient
-    static final class LocationWithSitesAdapter extends XmlAdapter<LocationsWithSitesType, Set<? extends LocationWithSites>> {
-
-        /**
-         * Map Java to XML type
-         */
-        @Override
-        public LocationsWithSitesType marshal(Set<? extends LocationWithSites> locations) {
-            Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations = new LinkedHashSet<RPSBlastMatch.RPSBlastLocation>();
-            for (LocationWithSites l : locations) {
-                if (l instanceof RPSBlastMatch.RPSBlastLocation) {
-                    rpsBlastLocations.add((RPSBlastMatch.RPSBlastLocation) l);
-                } else {
-                    throw new IllegalArgumentException("Unrecognised Location class: " + l);
-                }
-            }
-            return new LocationsWithSitesType(rpsBlastLocations);
-        }
-
-        /**
-         * Map XML type to Java
-         */
-        @Override
-        public Set<LocationWithSites> unmarshal(LocationsWithSitesType locationsWithSitesType) {
-            Set<LocationWithSites> locations = new LinkedHashSet<>();
-            locations.addAll(locationsWithSitesType.getRpsBlastLocations());
-            return locations;
-        }
-
-    }
-
-    /**
-     * Helper class for LocationAdapter
-     */
-    @XmlType(name = "locationsWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-    @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
-    private final static class LocationsWithSitesType {
-
-        @XmlElement(name = "rpsblast-location")
-        private final Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations;
-
-        private LocationsWithSitesType() {
-            rpsBlastLocations = null;
-        }
-
-        public LocationsWithSitesType(Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations) {
-            this.rpsBlastLocations = rpsBlastLocations;
-        }
-
-        public Set<RPSBlastMatch.RPSBlastLocation> getRpsBlastLocations() {
-            return (rpsBlastLocations == null ? Collections.<RPSBlastMatch.RPSBlastLocation>emptySet() : rpsBlastLocations);
-        }
-
     }
 
     @Override
