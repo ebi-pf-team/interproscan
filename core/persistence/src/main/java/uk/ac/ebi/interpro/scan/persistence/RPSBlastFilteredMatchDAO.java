@@ -9,10 +9,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implements the persistence method for RPSBlast matches (as filtered matches).
@@ -54,8 +51,23 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
      */
     @Override
     @Transactional
-    public void persist(Collection<RawProtein<T>> rawProteins, Collection<R> sites,
+    public void persist(Collection<RawProtein<T>> rawProteins, Collection<R> rawSites,
                         Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+
+        // Map seqId to raw sites for that sequence
+        Map<String, List<R>> seqIdToRawSitesMap = new HashMap<>();
+        for (R rawSite : rawSites) {
+            String seqId = rawSite.getSequenceIdentifier();
+            if (seqIdToRawSitesMap.containsKey(seqId)) {
+                seqIdToRawSitesMap.get(seqId).add(rawSite);
+            }
+            else {
+                List<R> s = new ArrayList<>();
+                s.add(rawSite);
+                seqIdToRawSitesMap.put(seqId, s);
+            }
+        }
+
         for (RawProtein<T> rawProtein : rawProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -88,13 +100,13 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 //for this location find the sites
                 rawMatch.getSequenceIdentifier();
                 rawMatch.getModelId();
-                rawMatch.getAessionNumber();
+                rawMatch.getSessionNumber();
                 rawMatch.getLocationStart();
                 rawMatch.getLocationStart();
                 rawMatch.getSignatureLibrary();
                 rawMatch.getSignatureLibraryRelease();
 
-                Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, sites);
+                Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
 
                 Utilities.verboseLog("filtered sites: " + rpsBlastSites);
                 locations.add(
@@ -107,7 +119,6 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         )
                 );
                 //
-                // RPSBlastMatch match = new RPSBlastMatch(signature, locations, rpsBlastSites);
                 RPSBlastMatch match = new RPSBlastMatch(signature, locations);
 
 
@@ -128,19 +139,34 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
      * @return
      */
     boolean siteInLocationRange(T rawMatch, R rawSite){
-        if (rawSite.getSiteStart() >= rawMatch.getLocationStart() && rawSite.getSiteEnd() <= rawMatch.getLocationEnd()){
-            return true;
-        }
-        return false;
+        return rawSite.getSiteStart() >= rawMatch.getLocationStart() && rawSite.getSiteEnd() <= rawMatch.getLocationEnd();
     }
 
     Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
+        // TODO Is site title unique for this pssmid/match in this sequence? Assumes yes for now
+        Map<String, Set<SiteLocation>> siteTitleToSiteLocationsMap = new HashMap<>();
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
         for (R rawSite: rawSites){
-            if (siteInLocationRange(rawMatch, rawSite)){
-                //TODO
-//                rpsBlastSites.add(new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd()));
+            if (rawMatch.getPssmId().equalsIgnoreCase(rawSite.getPssmId())) {
+                if (siteInLocationRange(rawMatch, rawSite)) {
+                    SiteLocation sl = new SiteLocation(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd());
+                    String siteTitle = rawSite.getTitle();
+                    if (siteTitleToSiteLocationsMap.containsKey(siteTitle)) {
+                        siteTitleToSiteLocationsMap.get(siteTitle).add(sl);
+                    }
+                    else {
+                        Set<SiteLocation> sls = new HashSet<>();
+                        sls.add(sl);
+                        siteTitleToSiteLocationsMap.put(siteTitle, sls);
+                    }
+                }
             }
+        }
+        for (Map.Entry<String, Set<SiteLocation>> entry : siteTitleToSiteLocationsMap.entrySet()) {
+            String key = entry.getKey();
+            Set<SiteLocation> value = entry.getValue();
+            RPSBlastMatch.RPSBlastLocation.RPSBlastSite s = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(key, value);
+            rpsBlastSites.add(s);
         }
         return rpsBlastSites;
     }

@@ -149,7 +149,7 @@
 ////                //for this location find the sites
 ////                rawMatch.getSequenceIdentifier();
 ////                rawMatch.getModelId();
-////                rawMatch.getAessionNumber();
+////                rawMatch.getSessionNumber();
 ////                rawMatch.getLocationStart();
 ////                rawMatch.getLocationStart();
 ////                rawMatch.getSignatureLibrary();

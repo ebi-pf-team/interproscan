@@ -159,7 +159,7 @@ public abstract class RPSBlastRawMatch extends RawMatch {
         this.evalue = evalue;
     }
 
-    public int getAessionNumber() {
+    public int getSessionNumber() {
         return sessionNumber;
     }
 
