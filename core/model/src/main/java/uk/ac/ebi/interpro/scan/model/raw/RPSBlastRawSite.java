@@ -109,7 +109,7 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
         this.pssmId = pssmId;
     }
 
-    public int getAessionNumber() {
+    public int getSessionNumber() {
         return sessionNumber;
     }
 
