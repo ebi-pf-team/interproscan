@@ -13,11 +13,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = CDDRawSite.TABLE_NAME,  indexes = {
-        @Index(name = "CDD_RW_SEQ_IDX", columnList = RawSite.COL_NAME_SEQUENCE_IDENTIFIER),
-        @Index(name = "CDD_RW_NUM_SEQ_IDX", columnList = RawSite.COL_NAME_NUMERIC_SEQUENCE_ID),
-        @Index(name = "CDD_RW_MODEL_IDX", columnList = RawSite.COL_NAME_MODEL_ID),
-        @Index(name = "CDD_RW_SIGLIB_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY),
-        @Index(name = "CDD_RW_SIGLIB_REL_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
+        @Index(name = "CDD_RW_S_SEQ_IDX", columnList = RawSite.COL_NAME_SEQUENCE_IDENTIFIER),
+        @Index(name = "CDD_RW_S_NUM_SEQ_IDX", columnList = RawSite.COL_NAME_NUMERIC_SEQUENCE_ID),
+        @Index(name = "CDD_RW_S_MODEL_IDX", columnList = RawSite.COL_NAME_MODEL_ID),
+        @Index(name = "CDD_RW_S_SIGLIB_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY),
+        @Index(name = "CDD_RW_S_SIGLIB_REL_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
 public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite> {
 

@@ -9,8 +9,8 @@ import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchAndSiteDAO;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.FilteredMatchIncSiteDAO;
 
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAO;
@@ -40,7 +40,7 @@ public class CDDPostProcessingStep extends Step {
 
     private RawSiteDAO<CDDRawSite> rawSiteDAO;
 
-    private FilteredMatchDAO filteredMatchDAO;
+    private FilteredMatchAndSiteDAO filteredMatchAndSiteDAO;
 
     @Required
     public void setPostProcessor(CDDPostProcessing<CDDRawMatch> postProcessor) {
@@ -58,8 +58,8 @@ public class CDDPostProcessingStep extends Step {
     }
 
     @Required
-    public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
-        this.filteredMatchDAO = filteredMatchDAO;
+    public void setFilteredMatchAndSiteDAO(FilteredMatchAndSiteDAO filteredMatchAndSiteDAO) {
+        this.filteredMatchAndSiteDAO = filteredMatchAndSiteDAO;
     }
 
     public void setRawSiteDAO(RawSiteDAO<CDDRawSite> rawSiteDAO) {
@@ -89,7 +89,7 @@ public class CDDPostProcessingStep extends Step {
         );
 
 
-        Map<String, RawProtein<CDDRawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<CDDRawMatch>>(rawMatches.size());
+        Map<String, RawProtein<CDDRawMatch>> proteinIdToRawProteinMap = new HashMap<>(rawMatches.size());
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
@@ -121,11 +121,11 @@ public class CDDPostProcessingStep extends Step {
         //TODO somewhere here add the sites??
 
         Map<String, RawProtein<CDDRawMatch>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
-        filteredMatchDAO.persist(filteredMatches.values());
+//        filteredMatchAndSiteDAO.persist(filteredMatches.values());
 
         Utilities.verboseLog("filtered matches count: " + filteredMatches.size());
 
-        CDDFilteredMatchDAO filteredMatchIncSiteDAO = new CDDFilteredMatchDAO();
+//        CDDFilteredMatchDAO filteredMatchIncSiteDAO = new CDDFilteredMatchDAO();
         Set<CDDRawSite> rawSites = rawSiteDAO.getSitesByProteinIdRange(
                 stepInstance.getBottomProtein(),
                 stepInstance.getTopProtein(),
@@ -133,7 +133,7 @@ public class CDDPostProcessingStep extends Step {
         );
         Utilities.verboseLog("filtered sites: " + rawSites);
 
-        filteredMatchIncSiteDAO.persist(filteredMatches.values(), rawSites);
+        filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 
         matchCount = 0;
         for (final RawProtein rawProtein : filteredMatches.values()) {
