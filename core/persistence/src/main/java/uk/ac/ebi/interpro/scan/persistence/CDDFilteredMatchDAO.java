@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.CDDRawSite;
 
 
 /**
@@ -10,12 +11,7 @@ import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
  * @version $id
  * @since v5.16
  */
-
-//<T extends RPSBlastRawMatch,  U extends RPSBlastMatch, R extends RawSite, S extends Site>
-
-public class CDDFilteredMatchDAO
-        extends FilteredMatchIncSiteDAO<CDDRawMatch> {
-//    extends RPSBlastFilteredMatchDAO<CDDRawMatch, CDDRawSite> {
+public class CDDFilteredMatchDAO extends RPSBlastFilteredMatchDAO<CDDRawMatch, CDDRawSite> {
 
 }
 

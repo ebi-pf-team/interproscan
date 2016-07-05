@@ -123,9 +123,8 @@
                 </property>
             </bean>
         </property>
-        <property name="filteredMatchDAO">
-            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>-->
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatch2DAO"/>
+        <property name="filteredMatchAndSiteDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
         </property>
         <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
         <property name="rawSiteDAO" ref="cddRawSiteDAO"/>
