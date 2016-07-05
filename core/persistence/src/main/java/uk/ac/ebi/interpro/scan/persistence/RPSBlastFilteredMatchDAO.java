@@ -25,8 +25,7 @@ import java.util.Set;
 //T extends RawMatch, U extends Match,  R extends RawSite, S extends Site
 
 abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RPSBlastRawSite>
-        extends FilteredMatchAndSiteDAO<T,RPSBlastMatch, R, RPSBlastMatch.RPSBlastLocation.RPSBlastSite>
-        {
+        extends FilteredMatchAndSiteDAOImpl<T,RPSBlastMatch, R, RPSBlastMatch.RPSBlastLocation.RPSBlastSite> {
 
     private static final Logger LOGGER = Logger.getLogger(RPSBlastFilteredMatchDAO.class.getName());
 
@@ -84,7 +83,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                     continue;
                 }
                 //TODO add Sites??
-                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
+                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<>();
 
                 //for this location find the sites
                 rawMatch.getSequenceIdentifier();
@@ -103,7 +102,8 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                                 rawMatch.getLocationStart(),
                                 rawMatch.getLocationEnd(),
                                 rawMatch.getBitScore(),
-                                rawMatch.getEvalue()
+                                rawMatch.getEvalue(),
+                                rpsBlastSites
                         )
                 );
                 //
@@ -138,7 +138,8 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
         for (R rawSite: rawSites){
             if (siteInLocationRange(rawMatch, rawSite)){
-                rpsBlastSites.add(new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd()));
+                //TODO
+//                rpsBlastSites.add(new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd()));
             }
         }
         return rpsBlastSites;
