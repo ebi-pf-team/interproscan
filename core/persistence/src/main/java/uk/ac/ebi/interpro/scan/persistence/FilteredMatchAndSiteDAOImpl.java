@@ -104,79 +104,7 @@ public abstract class FilteredMatchAndSiteDAOImpl<T extends RawMatch, U extends 
 
     }
 
-
     @Transactional
     public abstract void persist(Collection<RawProtein<T>> rawProteins, Collection<E> sites,
                                  Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap);
-    /*
-        for (RawProtein<T> rawProtein : rawProteins) {
-            Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
-            if (protein == null) {
-                throw new IllegalStateException("Cannot store match to a protein that is not in database " +
-                        "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
-            }
-
-            //LOGGER.debug("Protein: " + protein);
-            Collection<T> rawMatches = rawProtein.getMatches();
-
-            for (T rawMatch : rawMatches) {
-                // RPSBlast matches consist of a YES/NO result, therefore there will
-                // only ever be 1 raw match for each protein, but never mind!
-                if (rawMatch == null) continue;
-
-                Signature signature = modelIdToSignatureMap.get(rawMatch.getModelId());
-                LOGGER.debug("rpsBlast match model id:" + rawMatch.getModelId() + " signature: " + signature);
-                LOGGER.debug("modelIdToSignatureMap: " + modelIdToSignatureMap);
-
-                if (rawMatch.getModelId().startsWith("cl")){
-                    LOGGER.debug("this is a superfamily match, ignore for now ...");
-                    continue;
-                }
-                //TODO add Sites??
-                Set<L> locations = new HashSet<L>();
-
-
-                Set<K> residueSites = getSites(rawMatch, sites);
-
-                Utilities.verboseLog("filtered sites: " + residueSites);
-                locations.add(
-                        new L(
-                                rawMatch.getLocationStart(),
-                                rawMatch.getLocationEnd()
-                        )
-                );
-                U match = new U(signature, locations);
-                LOGGER.debug("rpsBlast match: " + match);
-                protein.addMatch(match);
-                //LOGGER.debug("Protein with match: " + protein);
-                entityManager.persist(match);
-            }
-        }
-        */
-
-
-
-//    /**
-//     *  check if site is in the location range [start,end]
-//     * @param rawMatch
-//     * @param rawSite
-//     * @return
-//     */
-//    boolean siteInLocationRange(T rawMatch, E rawSite){
-//        if (rawSite.getSiteStart() >= rawMatch.getLocationStart() && rawSite.getSiteEnd() <= rawMatch.getLocationEnd()){
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    Set<K> getSites(T rawMatch, Collection<E> rawSites){
-//        Set<K> sites = new HashSet<>();
-//        for (E rawSite: rawSites){
-//            if (siteInLocationRange(rawMatch, rawSite)){
-//                sites.add(new K(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd()));
-//            }
-//        }
-//        return sites;
-//    }
-
 }
