@@ -218,27 +218,36 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                             String annotQueryType= siteInfo[2];
                             RPSBlastRawSite.HitType annotationType = RPSBlastRawSite.HitType.byHitTypeString(annotQueryType);
                             String title = siteInfo[3];
-                            String residueCoordinates = siteInfo[4];
-                            String residueCoordinateList [] = residueCoordinates.split(",");
-
-
+                            String residues = siteInfo[4];
                             int completeSize = Integer.parseInt(siteInfo[5]);
                             int mappedSize = Integer.parseInt(siteInfo[6]);
                             String sourceDomain = siteInfo[7];
                             String model = pssmid2modelId.get(sourceDomain);
 
+                            String residueCoordinateList [] = residues.split(",");
                             Utilities.verboseLog("Residue tokens: " + Arrays.toString(residueCoordinateList));
-                            for (String residueAnnot: residueCoordinateList){
-                                String residue = residueAnnot.substring(0, 1);
-                                int sitelocation = Integer.parseInt(residueAnnot.substring(1));
-                                CDDRawSite rawSite = new CDDRawSite(sequenceIdentifier, sessionNumber,
-                                        annotationType, title,  residue, sitelocation, sitelocation,
-                                        sourceDomain, model, completeSize, mappedSize,
-                                        signatureLibraryRelease);
-                                LOGGER.debug("site: " + rawSite);
-                                Utilities.verboseLog("raw site: " + rawSite);
-                                sites.add(rawSite);
+                            Integer firstStart = null;
+                            Integer lastEnd = null;
+                            for (String residueAnnot: residueCoordinateList) {
+                                //String residue = residueAnnot.substring(0, 1);
+                                int siteLocation = Integer.parseInt(residueAnnot.substring(1));
+                                if (firstStart == null || siteLocation < firstStart) {
+                                    firstStart = siteLocation;
+                                }
+                                if (lastEnd == null || siteLocation > lastEnd) {
+                                    lastEnd = siteLocation;
+                                }
                             }
+                            if (firstStart == null) {
+                                throw new IllegalStateException("First/last residue co-ordinates could not be found from " + residues);
+                            }
+                            CDDRawSite rawSite = new CDDRawSite(sequenceIdentifier, sessionNumber,
+                                    annotationType, title,  residues, firstStart, lastEnd,
+                                    sourceDomain, model, completeSize, mappedSize,
+                                    signatureLibraryRelease);
+                            LOGGER.debug("site: " + rawSite);
+                            Utilities.verboseLog("raw site: " + rawSite);
+                            sites.add(rawSite);
 
                         }
                     }
