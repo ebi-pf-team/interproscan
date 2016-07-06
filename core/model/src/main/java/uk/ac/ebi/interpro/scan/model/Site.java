@@ -8,11 +8,11 @@ import org.hibernate.annotations.*;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.xml.bind.annotation.*;;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Gift Nuka
@@ -78,6 +78,7 @@ public abstract class Site implements Serializable, Cloneable {
     }
 
     @Transient
+    @XmlJavaTypeAdapter(SiteLocationAdapter.class)
 //    @XmlElement(name = "residue_location")
     public Set<SiteLocation> getSiteLocations() {
 //        return Collections.unmodifiableSet(siteLocations);
@@ -272,4 +273,52 @@ public abstract class Site implements Serializable, Cloneable {
      */
     @Override
     public abstract Object clone() throws CloneNotSupportedException;
+
+    /**
+     * Map models to and from XML representation
+     */
+    @XmlTransient
+    private static class SiteLocationAdapter extends XmlAdapter<SiteLocationsType, Set<SiteLocation>> {
+
+        /**
+         * Map Java to XML type
+         */
+        public SiteLocationsType marshal(Set<SiteLocation> set) {
+            return (set == null || set.isEmpty() ? null : new SiteLocationsType(set));
+        }
+
+        /**
+         * Map XML type to Java
+         */
+        @Override
+        public Set<SiteLocation> unmarshal(SiteLocationsType siteLocationsType) {
+            return siteLocationsType.getSiteLocations();
+        }
+
+    }
+
+    /**
+     * Helper class for ModelAdapter
+     */
+    @XmlType(name = "siteLocationsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+    private final static class SiteLocationsType {
+
+        @XmlElement(name = "siteLocation")
+        private final Set<SiteLocation> siteLocations;
+
+        private SiteLocationsType() {
+            siteLocations = null;
+        }
+
+        public SiteLocationsType(Set<SiteLocation> siteLocations) {
+            this.siteLocations = siteLocations;
+        }
+
+        public Set<SiteLocation> getSiteLocations() {
+            return siteLocations;
+        }
+
+    }
+
 }
