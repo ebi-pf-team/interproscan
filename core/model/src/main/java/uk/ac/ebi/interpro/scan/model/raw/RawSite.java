@@ -64,33 +64,28 @@ public abstract class RawSite implements Serializable {
     @Column(name = COL_NAME_TITLE)               // site name
     private String title;
 
-    @Column(name = "residue", nullable = false)
-    private String residue;
+    @Column(name = "residues", nullable = false)
+    private String residues;
 
     @Column
-    private int siteStart;
+    private int firstStart;
 
     @Column
-    private int siteEnd;
+    private int lastEnd;
 
     protected RawSite() {
     }
 
-//    RawSite(sequenceIdentifier, definitionLine, sessionNumber, annotationType,
-//            title, coordinates,
-//            completeSize, mappedSize, sourceDomain, signatureLibraryRelease)
-
-    protected RawSite(String sequenceIdentifier, String modelId,  String title, String residue, int siteStart, int siteEnd,
-                      SignatureLibrary signatureLibrary, String signatureLibraryRelease
-                     ) {
+    protected RawSite(String sequenceIdentifier, String modelId, String title, String residues, int firstStart, int lastEnd,
+                      SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
         this.setSequenceIdentifier(sequenceIdentifier);
         this.setModelId(modelId);
         this.title = title;
-        this.residue = residue;
+        this.residues = residues;
         this.setSignatureLibrary(signatureLibrary);
         this.setSignatureLibraryRelease(signatureLibraryRelease);
-        this.setSiteStart(siteStart);
-        this.setSiteEnd(siteEnd);
+        this.setFirstStart(firstStart);
+        this.setLastEnd(lastEnd);
     }
 
 
@@ -145,24 +140,24 @@ public abstract class RawSite implements Serializable {
         return title;
     }
 
-    public String getResidue() {
-        return residue;
+    public String getResidues() {
+        return residues;
     }
 
-    public int getSiteStart() {
-        return siteStart;
+    public int getFirstStart() {
+        return firstStart;
     }
 
-    private void setSiteStart(int siteStart) {
-        this.siteStart = siteStart;
+    private void setFirstStart(int firstStart) {
+        this.firstStart = firstStart;
     }
 
-    public int getSiteEnd() {
-        return siteEnd;
+    public int getLastEnd() {
+        return lastEnd;
     }
 
-    private void setSiteEnd(int siteEnd) {
-        this.siteEnd = siteEnd;
+    private void setLastEnd(int lastEnd) {
+        this.lastEnd = lastEnd;
     }
 
     @Override
@@ -178,8 +173,8 @@ public abstract class RawSite implements Serializable {
                 .append(signatureLibraryRelease, m.signatureLibraryRelease)
                 .append(modelId, m.modelId)
                 .append(title, m.title)
-                .append(siteStart, m.siteStart)
-                .append(siteEnd, m.siteEnd)
+                .append(firstStart, m.firstStart)
+                .append(lastEnd, m.lastEnd)
                 .isEquals();
     }
 
@@ -191,8 +186,8 @@ public abstract class RawSite implements Serializable {
                 .append(signatureLibraryRelease)
                 .append(modelId)
                 .append(title)
-                .append(siteStart)
-                .append(siteEnd)
+                .append(firstStart)
+                .append(lastEnd)
                 .toHashCode();
     }
 
@@ -201,23 +196,23 @@ public abstract class RawSite implements Serializable {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    /**
-     * Listener for raw match to filtered match conversions.
-     *
-     * @author Antony Quinn
-     */
-    public interface Listener {
-
-        /**
-         * Returns signature instance corresponding to model accession, and signature library name and release version.
-         *
-         * @param modelAccession          {@see uk.ac.ebi.interpro.scan.model.Model#getAccession()}
-         * @param signatureLibrary        {@see uk.ac.ebi.interpro.scan.model.SignatureLibrary}
-         * @param signatureLibraryRelease {@see uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
-         * @return Signature instance corresponding to model accession, and signature library name and release version
-         */
-        public Signature getSignature(String modelAccession, SignatureLibrary signatureLibrary, String signatureLibraryRelease);
-
-    }
+//    /**
+//     * Listener for raw match to filtered match conversions.
+//     *
+//     * @author Antony Quinn
+//     */
+//    public interface Listener {
+//
+//        /**
+//         * Returns signature instance corresponding to model accession, and signature library name and release version.
+//         *
+//         * @param modelAccession          {@see uk.ac.ebi.interpro.scan.model.Model#getAccession()}
+//         * @param signatureLibrary        {@see uk.ac.ebi.interpro.scan.model.SignatureLibrary}
+//         * @param signatureLibraryRelease {@see uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
+//         * @return Signature instance corresponding to model accession, and signature library name and release version
+//         */
+//        public Signature getSignature(String modelAccession, SignatureLibrary signatureLibrary, String signatureLibraryRelease);
+//
+//    }
 
 }

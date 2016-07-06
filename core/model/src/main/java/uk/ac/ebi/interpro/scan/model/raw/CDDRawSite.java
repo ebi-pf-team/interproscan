@@ -42,16 +42,16 @@ public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite
                       int sessionIdentifier,
                       HitType hitType,
                       String title,
-                      String residue,
-                      int siteStart,
-                      int siteEnd,
+                      String residues,
+                      int firstStart,
+                      int lastEnd,
                       String pssmId,
                       String model,
                       int completeSize,
                       int mappedSize,
                       String signatureLibraryRelease) {
         super(sequenceIdentifier, sessionIdentifier,
-                hitType, title, residue, siteStart, siteEnd, pssmId, model,
+                hitType, title, residues, firstStart, lastEnd, pssmId, model,
                 completeSize, mappedSize, SignatureLibrary.CDD, signatureLibraryRelease);
     }
 
@@ -77,10 +77,10 @@ public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite
     @Override
     public int compareTo(CDDRawSite that) {
         if (this == that) return 0;
-        if (this.getSiteStart() < that.getSiteStart()) return -1;     // First, sort by state ASC
-        if (this.getSiteStart() > that.getSiteStart()) return 1;
-        if (this.getSiteEnd() > that.getSiteEnd()) return -1;                     // then by score ASC
-        if (this.getSiteEnd() < that.getSiteEnd()) return 1;
+        if (this.getFirstStart() < that.getFirstStart()) return -1;     // First, sort by state ASC
+        if (this.getFirstStart() > that.getFirstStart()) return 1;
+        if (this.getLastEnd() > that.getLastEnd()) return -1;                     // then by score ASC
+        if (this.getLastEnd() < that.getLastEnd()) return 1;
         if (this.hashCode() > that.hashCode())
             return -1;                     // then by hashcode to be consistent with equals.
         if (this.hashCode() < that.hashCode()) return 1;

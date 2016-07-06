@@ -139,34 +139,27 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
      * @return
      */
     boolean siteInLocationRange(T rawMatch, R rawSite){
-        return rawSite.getSiteStart() >= rawMatch.getLocationStart() && rawSite.getSiteEnd() <= rawMatch.getLocationEnd();
+        return rawSite.getFirstStart() >= rawMatch.getLocationStart() && rawSite.getLastEnd() <= rawMatch.getLocationEnd();
     }
 
     Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
-        // TODO Is site title unique for this pssmid/match in this sequence? Assumes yes for now
-        Map<String, Set<SiteLocation>> siteTitleToSiteLocationsMap = new HashMap<>();
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
         for (R rawSite: rawSites){
             if (rawMatch.getPssmId().equalsIgnoreCase(rawSite.getPssmId())) {
                 if (siteInLocationRange(rawMatch, rawSite)) {
-                    SiteLocation sl = new SiteLocation(rawSite.getResidue(), rawSite.getSiteStart(), rawSite.getSiteEnd());
-                    String siteTitle = rawSite.getTitle();
-                    if (siteTitleToSiteLocationsMap.containsKey(siteTitle)) {
-                        siteTitleToSiteLocationsMap.get(siteTitle).add(sl);
+                    final String siteTitle = rawSite.getTitle();
+                    final String[] residueCoordinateList = rawSite.getResidues().split(",");
+                    Set<SiteLocation> siteLocations = new HashSet<>();
+                    for (String residueAnnot: residueCoordinateList) {
+                        String residue = residueAnnot.substring(0, 1);
+                        int position = Integer.parseInt(residueAnnot.substring(1));
+                        SiteLocation siteLocation = new SiteLocation(residue, position, position);
+                        siteLocations.add(siteLocation);
                     }
-                    else {
-                        Set<SiteLocation> sls = new HashSet<>();
-                        sls.add(sl);
-                        siteTitleToSiteLocationsMap.put(siteTitle, sls);
-                    }
+                    RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteTitle, siteLocations);
+                    rpsBlastSites.add(site);
                 }
             }
-        }
-        for (Map.Entry<String, Set<SiteLocation>> entry : siteTitleToSiteLocationsMap.entrySet()) {
-            String key = entry.getKey();
-            Set<SiteLocation> value = entry.getValue();
-            RPSBlastMatch.RPSBlastLocation.RPSBlastSite s = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(key, value);
-            rpsBlastSites.add(s);
         }
         return rpsBlastSites;
     }
