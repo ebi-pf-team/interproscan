@@ -66,7 +66,9 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
     private static final String SITE_SECTION_START = "Sites";
 
     // Group 1: Uniparc protein accession
-    private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+)\\s+e-value:\\s+(\\S+)\\s+score:\\s+(\\S+)\\s+bias:\\s+(\\S+).*$");
+//    private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+)\\s+e-value:\\s+(\\S+)\\s+score:\\s+(\\S+)\\s+bias:\\s+(\\S+).*$");
+    private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+).*$");
+
     private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
     private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
@@ -155,11 +157,11 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             if (sequenceSectionHeaderMatcher.matches()) {
                                 domains.clear();
                                 currentSequenceIdentifier = sequenceSectionHeaderMatcher.group(1);
-                                double sequenceEvalue = Double.parseDouble(sequenceSectionHeaderMatcher.group(2));
-                                double sequenceScore = Double.parseDouble(sequenceSectionHeaderMatcher.group(3));
-                                double sequenceBias = Double.parseDouble(sequenceSectionHeaderMatcher.group(4));
-                                sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceEvalue, sequenceScore, sequenceBias);
-                                Utilities.verboseLog(sequenceMatch.toString());
+//                                double sequenceEvalue = Double.parseDouble(sequenceSectionHeaderMatcher.group(2));
+//                                double sequenceScore = Double.parseDouble(sequenceSectionHeaderMatcher.group(3));
+//                                double sequenceBias = Double.parseDouble(sequenceSectionHeaderMatcher.group(4));
+//                                sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceEvalue, sequenceScore, sequenceBias);
+                                Utilities.verboseLog("currentSequenceIdentifier = " + currentSequenceIdentifier);
                             } else {
                                 throw new ParseException("This line looks like a domain section header line, but it is not possible to parse out the sequence id.", null, line, lineNumber);
                             }
@@ -185,6 +187,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             DomainMatch domainMatch = new DomainMatch(sequenceDomainMatch);
                                 //add the domain match to the search record
                             searchRecord = new HmmSearchRecord(sequenceDomainMatch.getModelAccession());
+                            sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceDomainMatch.getSequenceEvalue(), sequenceDomainMatch.getSequenceScore(), sequenceDomainMatch.getSequenceBias());
                             searchRecord.addSequenceMatch(sequenceMatch);
                             searchRecord.addDomainMatch(currentSequenceIdentifier, new DomainMatch(sequenceDomainMatch));
                             domains.put(sequenceDomainMatch.getModelAccession(), domainMatch);
@@ -206,8 +209,9 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                         }
                         break;
                     case LOOKING_FOR_SITE_DATA_LINE:
-                        if (line.startsWith(SEQUENCE_SECTION_START)) {
+                        if (line.startsWith(END_OF_RECORD)) {
                             stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
+
                         }else{
 
                         }
