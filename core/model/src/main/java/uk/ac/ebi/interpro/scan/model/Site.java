@@ -304,7 +304,7 @@ public abstract class Site implements Serializable, Cloneable {
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class SiteLocationsType {
 
-        @XmlElement(name = "siteLocation")
+        @XmlElement(name = "site-location")
         private final Set<SiteLocation> siteLocations;
 
         private SiteLocationsType() {
