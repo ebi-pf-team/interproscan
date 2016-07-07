@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
  * @author Antony Quinn
  * @version $Id$
  * @since 1.0-SNAPSHOT
- * <p/>
+ * <p>
  * Query:       7tm_2  [M=242]
  * Accession:   PF00002.17
  * Description: 7 transmembrane receptor (Secretin family)
@@ -39,14 +40,14 @@ import java.util.regex.Pattern;
  * E-value  score  bias    E-value  score  bias    exp  N  Sequence      Description
  * ------- ------ -----    ------- ------ -----   ---- --  --------      -----------
  * 8e-42  152.1   7.7    1.1e-41  151.6   5.3    1.2  1  UPI00000015B6
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Domain and alignment annotation for each sequence:
  * >> UPI00000015B6
  * #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
  * ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
  * 1 !  151.6   5.3   1.3e-48   1.1e-41       4     242 .]    2376    2605 ..    2373    2605 .. 0.94
- * <p/>
+ * <p>
  * Alignments for each domain:
  * == domain 1    score: 151.6 bits;  conditional E-value: 1.3e-48
  * ----S----------------------------------------------------------------------------------------- CS
@@ -54,21 +55,21 @@ import java.util.regex.Pattern;
  * lk++t+v+l++ l+aLl++++ l+l+r lr++++ i  nL ++l l+++++l++i++ +   +     C+v+a++lh+++l++f W l+E+l+l
  * UPI00000015B6 2376 LKTLTYVALGVTLAALLLTFFFLTLLRILRSNQHGIRRNLTAALGLAQLVFLLGINQADLPFA-----CTVIAILLHFLYLCTFSWALLEALHL 2464
  * 799*****************************************************9999997.....************************** PP
- * <p/>
+ * <p>
  * -------------------------------------.--------.----------------------------------------------- CS
  * 7tm_2   98 ylllvltffserkklkvylliGwgvPavvvvvwaivrkagyenekc.WlsnekkllwiikgpvlviilvNfvllinilrvlvqklrsketseke 190
  * y++l++++  ++  +++y+++GwgvPa ++ ++++++++gy+n ++ Wls  ++l+w+++gpv++++ + ++l i   r  ++  r+  ++ k
  * UPI00000015B6 2465 YRALTEVRDVNTGPMRFYYMLGWGVPAFITGLAVGLDPEGYGNPDFcWLSIYDTLIWSFAGPVAFAVSMSVFLYILAARASCAAQRQGFEK-KG 2557
  * ************************************99****8877****99*****************************998844444.44 PP
- * <p/>
+ * <p>
  * ---------------------------------------------------- CS
  * 7tm_2  191 kkrkklvkstlvllpLLGityvlflfapeekvssvvflyleailnslqGffv 242
  * +   ++ ++++l+LL+ t++l+l+ ++++  + +f+yl+a+ n++qG f+
  * UPI00000015B6 2558 PVS--GLQPSFAVLLLLSATWLLALLSVNSD--TLLFHYLFATCNCIQGPFI 2605
  * 444..58999********************5..8***************886 PP
- * <p/>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
+ * <p>
  * Internal pipeline statistics summary:
  * -------------------------------------
  * Query model(s):                            1  (242 nodes)
@@ -77,6 +78,8 @@ import java.util.regex.Pattern;
  * Passed bias filter:                        1  (1); expected 0.0 (0.02)
  */
 public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser {
+
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Hmmer3SearchMatchParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 
@@ -93,6 +96,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
     private static final String DOMAIN_ALIGNMENT_SECTION_START = "  ==";
 
     private static final String START_OF_DOMAIN_ALIGNMENT_SECTION = "Alignments for each domain";
+
+    private static final String END_OF_OUTPUT_FILE = "[ok]";
 
     //Output File to write Gene3D parser output in ssf format suitable for Domain Finder input
     //File ssfFile = new File("C:\\Manjula\\input_for_DF.txt");
@@ -176,13 +181,27 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                 if (line.startsWith(END_OF_RECORD)) {
                     // Process a complete record - store all sequence / domain scores
                     // for the method.
+                    //if there are no matches then just exit
                     if (searchRecord == null) {
-                        throw new ParseException("Got to the end of a hmmscan full output file section without finding any details of a method.", null, line, lineNumber);
+                        String nextLine = null;
+                        boolean domainParsingError = true;
+                        if ((nextLine = reader.readLine()) != null) {
+                            if (nextLine.trim().equals(END_OF_OUTPUT_FILE)) {
+                                //likely there were no domain hits
+                                Utilities.verboseLog("likely there were no domain hits");
+                                Utilities.verboseLog("rawDomainCount: " + rawDomainCount);
+                                domainParsingError = false;
+                            }
+                        }
+                        if (domainParsingError) {
+                            LOGGER.warn("Parsing error- line:" + line + " next line: " + nextLine);
+                            throw new ParseException("Got to the end of a hmmscan/hmmsearch full output file section without finding any details of a method.", null, line, lineNumber);
+                        }
+                    }else {
+                        // Store the matches to the method.
+                        hmmer3ParserSupport.addMatch(searchRecord, rawResults);
+                        rawDomainCount += getSequenceMatchCount(searchRecord);
                     }
-                    // Store the matches to the method.
-                    hmmer3ParserSupport.addMatch(searchRecord, rawResults);
-                    rawDomainCount += getSequenceMatchCount(searchRecord);
-
                     searchRecord = null;  // Will check if method is not null after finishing the file, and store it if so.
                     stage = ParsingStage.LOOKING_FOR_METHOD_ACCESSION;
                 } else {   // Trying to be efficient - only look for EXPECTED lines in the entry.
