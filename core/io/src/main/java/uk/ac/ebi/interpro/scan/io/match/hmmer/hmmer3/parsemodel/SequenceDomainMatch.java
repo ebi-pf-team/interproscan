@@ -29,7 +29,7 @@ public class SequenceDomainMatch implements Serializable {
      * Group[12] i-Evalue (float)
      * Group[13] acc (float)
      */
-    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
+    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
     public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\s+.*$");
 
@@ -40,6 +40,12 @@ public class SequenceDomainMatch implements Serializable {
 
 
     private final String modelAccession;
+
+    private final double sequenceEvalue;
+
+    private final double sequenceScore;
+
+    private final double sequenceBias;
 
     private final double score;
 
@@ -69,23 +75,39 @@ public class SequenceDomainMatch implements Serializable {
 
     public SequenceDomainMatch(Matcher domainLineMatcher) {
         this.modelAccession = domainLineMatcher.group(1);
-        this.hmmto = Integer.parseInt(domainLineMatcher.group(2));
-        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(3));
-        this.hmmBounds = domainLineMatcher.group(4);
-        this.score = Double.parseDouble(domainLineMatcher.group(5));
-        this.bias = Double.parseDouble(domainLineMatcher.group(6));
-        this.aliFrom = Integer.parseInt(domainLineMatcher.group(7));
-        this.aliTo = Integer.parseInt(domainLineMatcher.group(8));
-        this.envFrom = Integer.parseInt(domainLineMatcher.group(9));
-        this.envTo = Integer.parseInt(domainLineMatcher.group(10));
-        this.cEvalue = Double.parseDouble(domainLineMatcher.group(11));
-        this.iEvalue = Double.parseDouble(domainLineMatcher.group(12));
-        this.acc = Double.parseDouble(domainLineMatcher.group(13));
+        this.sequenceEvalue = Double.parseDouble(domainLineMatcher.group(2));
+        this.sequenceScore = Double.parseDouble(domainLineMatcher.group(3));
+        this.sequenceBias = Double.parseDouble(domainLineMatcher.group(4));
+
+        this.hmmto = Integer.parseInt(domainLineMatcher.group(5));
+        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(6));
+        this.hmmBounds = domainLineMatcher.group(7);
+        this.score = Double.parseDouble(domainLineMatcher.group(8));
+        this.bias = Double.parseDouble(domainLineMatcher.group(9));
+        this.aliFrom = Integer.parseInt(domainLineMatcher.group(10));
+        this.aliTo = Integer.parseInt(domainLineMatcher.group(11));
+        this.envFrom = Integer.parseInt(domainLineMatcher.group(12));
+        this.envTo = Integer.parseInt(domainLineMatcher.group(13));
+        this.cEvalue = Double.parseDouble(domainLineMatcher.group(14));
+        this.iEvalue = Double.parseDouble(domainLineMatcher.group(15));
+        this.acc = Double.parseDouble(domainLineMatcher.group(16));
 
     }
 
     public String getModelAccession() {
         return modelAccession;
+    }
+
+    public double getSequenceEvalue() {
+        return sequenceEvalue;
+    }
+
+    public double getSequenceScore() {
+        return sequenceScore;
+    }
+
+    public double getSequenceBias() {
+        return sequenceBias;
     }
 
     public String getAlignment() {
@@ -148,6 +170,9 @@ public class SequenceDomainMatch implements Serializable {
     public String toString() {
         return "SequenceDomainMatch{" +
                 "accession=" + modelAccession +
+                ", sequenceEvalue =" + sequenceEvalue +
+                ", sequenceScore =" + sequenceScore +
+                ", sequenceBias = " + sequenceBias +
                 ", score=" + score +
                 ", bias=" + bias +
                 ", cEvalue=" + cEvalue +

@@ -44,13 +44,14 @@
         
         /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/SFLD/15.0/SFLDs_15.0_HMM.LIB  -->
         <property name="dependsUpon" ref="stepSFLDWriteFastaFile"/>
-        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.sfld} ${hmmer3.hmmsearch.cpu.switch.sfld}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+
         <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" value="${sfld.hmm.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -61,7 +62,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.sfld.RunSFLDBinaryStep"
           parent="abstractSFLDStep">
         <property name="dependsUpon" ref="stepSFLDRunHmmer3"/>
-        <property name="stepDescription" value="Run sfld dummy binary run for selected proteins"/>
+        <property name="stepDescription" value="Run sfld postprocessing binary for selected proteins"/>
         <property name="requiresDatabaseAccess" value="false"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -84,9 +85,32 @@
                         <property name="hmmKey" value="ACCESSION"/>
                     </bean>
                 </property>
+
             </bean>
         </property>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+        <property name="rawMatchDAO" ref="SFLDRawMatchDAO"/>
+    </bean>
+
+    <bean id="stepSFLDStoreRawHmmScanMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3ScanParseStep"
+          parent="abstractSFLDStep">
+        <property name="dependsUpon" ref="stepSFLDDummyBinaryRun"/>
+        <property name="stepDescription" value="Parse the SFLD binary output and store as Filtered matches."/>
+        <property name="serialGroup" value="PARSE_SFLD"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
+                        <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
+                        <property name="hmmKey" value="ACCESSION"/>
+                    </bean>
+                </property>
+                <property name="useHmmsearch" value="false"/>
+            </bean>
+        </property>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
         <property name="rawMatchDAO" ref="SFLDRawMatchDAO"/>
     </bean>
