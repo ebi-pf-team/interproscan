@@ -64,7 +64,7 @@ public abstract class RawSite implements Serializable {
     @Column(name = COL_NAME_TITLE)               // site name
     private String title;
 
-    @Column(name = "residues", nullable = false)
+    @Column(name = "residues", nullable = false, length = 500)
     private String residues;
 
     @Column
@@ -195,24 +195,5 @@ public abstract class RawSite implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
-//    /**
-//     * Listener for raw match to filtered match conversions.
-//     *
-//     * @author Antony Quinn
-//     */
-//    public interface Listener {
-//
-//        /**
-//         * Returns signature instance corresponding to model accession, and signature library name and release version.
-//         *
-//         * @param modelAccession          {@see uk.ac.ebi.interpro.scan.model.Model#getAccession()}
-//         * @param signatureLibrary        {@see uk.ac.ebi.interpro.scan.model.SignatureLibrary}
-//         * @param signatureLibraryRelease {@see uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease#getVersion()}
-//         * @return Signature instance corresponding to model accession, and signature library name and release version
-//         */
-//        public Signature getSignature(String modelAccession, SignatureLibrary signatureLibrary, String signatureLibraryRelease);
-//
-//    }
 
 }
