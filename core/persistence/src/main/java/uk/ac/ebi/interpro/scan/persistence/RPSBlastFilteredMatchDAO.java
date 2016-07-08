@@ -144,20 +144,22 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
 
     Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
-        for (R rawSite: rawSites){
-            if (rawMatch.getPssmId().equalsIgnoreCase(rawSite.getPssmId())) {
-                if (siteInLocationRange(rawMatch, rawSite)) {
-                    final String siteTitle = rawSite.getTitle();
-                    final String[] residueCoordinateList = rawSite.getResidues().split(",");
-                    Set<SiteLocation> siteLocations = new HashSet<>();
-                    for (String residueAnnot: residueCoordinateList) {
-                        String residue = residueAnnot.substring(0, 1);
-                        int position = Integer.parseInt(residueAnnot.substring(1));
-                        SiteLocation siteLocation = new SiteLocation(residue, position, position);
-                        siteLocations.add(siteLocation);
+        if (rawSites != null) {
+            for (R rawSite : rawSites) {
+                if (rawMatch.getPssmId().equalsIgnoreCase(rawSite.getPssmId())) {
+                    if (siteInLocationRange(rawMatch, rawSite)) {
+                        final String siteTitle = rawSite.getTitle();
+                        final String[] residueCoordinateList = rawSite.getResidues().split(",");
+                        Set<SiteLocation> siteLocations = new HashSet<>();
+                        for (String residueAnnot : residueCoordinateList) {
+                            String residue = residueAnnot.substring(0, 1);
+                            int position = Integer.parseInt(residueAnnot.substring(1));
+                            SiteLocation siteLocation = new SiteLocation(residue, position, position);
+                            siteLocations.add(siteLocation);
+                        }
+                        RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteTitle, siteLocations);
+                        rpsBlastSites.add(site);
                     }
-                    RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteTitle, siteLocations);
-                    rpsBlastSites.add(site);
                 }
             }
         }
@@ -166,52 +168,3 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
 
 }
 
-//public class CDDFilteredMatchDAOImpl2 extends FilteredMatchDAOImpl<CDDRawMatch, CDDMatch> implements CDDFilteredMatchDAO {
-//
-//    private String cddReleaseVersion;
-//
-//    /**
-//     * Sets the class of the model that the DAO instance handles.
-//     * Note that this has been set up to use constructor injection
-//     * because it makes it easy to sub-class GenericDAOImpl in a robust
-//     * manner.
-//     * <p/>
-//     * Model class specific sub-classes should define a no-argument constructor
-//     * that calls this constructor with the appropriate class.
-//     */
-//    public CDDFilteredMatchDAOImpl2(String version) {
-//        super(CDDMatch.class);
-//        this.cddReleaseVersion = version;
-//    }
-//
-//    /**
-//     * Persists a set of ParseCDDMatch objects as filtered matches:
-//     * there is no filtering step with CDD.
-//     *
-//     * @param cddMatches being a Set of ParseCDDMatch objects to be persisted.
-//     */
-//    @Transactional
-//    public void persist(Collection<RawProtein<CDDRawMatch>> rawProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap){
-//        Signature cddSignature = null; //was loadPersistedSignature()
-//        Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(cddMatches);
-//        for (ParseCDDMatch parseCDDMatch : cddMatches) {
-//            final Protein persistentProtein = proteinIdToProteinMap.get(parseCDDMatch.getProteinDatabaseIdentifier());
-//            if (persistentProtein == null) {
-//                throw new IllegalArgumentException("Attempting to store a CDD match for a protein with id " + parseCDDMatch.getProteinDatabaseIdentifier() + ", however this does not exist in the database.");
-//            }
-//            // Signature currentSignatureAc = parseCDDMatch.getModelId();
-//            cddSignature = modelIdToSignatureMap.get(currentSignatureAc);
-//            if (cddSignature == null) {
-//                throw new IllegalStateException("Cannot find PANTHER signature " + currentSignatureAc + " in the database.");
-//            }
-//
-//            Set<CDDMatch.CDDLocation> locations = Collections.singleton(
-//                    new CDDMatch.CDDLocation(parseCDDMatch.getStartCoordinate(), parseCDDMatch.getEndCoordinate())
-//            );
-//            CDDMatch match = new CDDMatch(cddSignature, locations);
-//            persistentProtein.addMatch(match);
-//            entityManager.persist(match);
-//        }
-//    }
-//
-//}
