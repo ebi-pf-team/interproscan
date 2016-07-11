@@ -26,8 +26,8 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
         1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
         ENDDOMAINS
         SITES
-        1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	0
-
+        1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	143639
+        ENDSITES
     */
 
     public enum HitType {
@@ -69,8 +69,7 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
     protected RPSBlastRawSite() {
     }
 
-    //#<session-ordinal>	<query-id[readingframe]>	<hit-type>	<PSSM-ID>	<from>	<to>	<E-Value>	<bitscore>	<accession>	<short-name>	<incomplete>	<superfamily PSSM-ID>
-
+    //#<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
 
     public RPSBlastRawSite(String sequenceIdentifier,
                            int sessionIdentifier,

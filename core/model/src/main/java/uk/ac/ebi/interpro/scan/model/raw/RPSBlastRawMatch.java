@@ -28,8 +28,8 @@ public abstract class RPSBlastRawMatch extends RawMatch {
         1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
         ENDDOMAINS
         SITES
-        1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	0
-
+        1	Query_1	Specific	Zn binding site	C373,C376,H389,H393	4	4	143639
+        ENDSITES
     */
 
     public enum HitType {
