@@ -18,9 +18,6 @@ import java.util.*;
  * @version $Id$
  * @since 5.16
  */
-
-//T extends RawMatch, U extends Match,  R extends RawSite, S extends Site
-
 abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RPSBlastRawSite>
         extends FilteredMatchAndSiteDAOImpl<T,RPSBlastMatch, R, RPSBlastMatch.RPSBlastLocation.RPSBlastSite> {
 
@@ -87,17 +84,17 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 if (rawMatch == null) continue;
 
                 Signature signature = modelIdToSignatureMap.get(rawMatch.getModelId());
-                LOGGER.debug("rpsBlast match model id:" + rawMatch.getModelId() + " signature: " + signature);
-                LOGGER.debug("modelIdToSignatureMap: " + modelIdToSignatureMap);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rpsBlast match model id:" + rawMatch.getModelId() + " signature: " + signature);
+                    LOGGER.debug("modelIdToSignatureMap: " + modelIdToSignatureMap);
+                }
 
                 if (rawMatch.getModelId().startsWith("cl")){
                     LOGGER.debug("this is a superfamily match, ignore for now ...");
                     continue;
                 }
-                //TODO add Sites??
                 Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<>();
 
-                //for this location find the sites
                 rawMatch.getSequenceIdentifier();
                 rawMatch.getModelId();
                 rawMatch.getSessionNumber();
@@ -106,6 +103,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 rawMatch.getSignatureLibrary();
                 rawMatch.getSignatureLibraryRelease();
 
+                //for this location find the sites
                 Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
 
                 Utilities.verboseLog("filtered sites: " + rpsBlastSites);
@@ -118,11 +116,13 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                                 rpsBlastSites
                         )
                 );
-                //
+
                 RPSBlastMatch match = new RPSBlastMatch(signature, locations);
 
 
-                LOGGER.debug("rpsBlast match: " + match);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rpsBlast match: " + match);
+                }
                 protein.addMatch(match);
                 //LOGGER.debug("Protein with match: " + protein);
                 entityManager.persist(match);
