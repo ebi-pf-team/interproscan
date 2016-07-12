@@ -41,6 +41,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
     private String outputFileNameAlignmentsTemplate;
 
+    private boolean forceHmmsearch = true;
 
     public String getFullPathToBinary() {
         return fullPathToBinary;
@@ -130,6 +131,14 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         this.outputAlignments = outputAlignments;
     }
 
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
+
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
 
@@ -139,7 +148,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         List<String> command = new ArrayList<String>();
 
 //        if (isSingleSeqMode()){
-        if (Utilities.isRunningInSingleSeqMode()){
+        if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
             Utilities.verboseLog("SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }else{

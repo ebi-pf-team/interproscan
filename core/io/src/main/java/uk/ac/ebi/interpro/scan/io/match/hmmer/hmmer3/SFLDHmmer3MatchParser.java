@@ -157,10 +157,6 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             if (sequenceSectionHeaderMatcher.matches()) {
                                 domains.clear();
                                 currentSequenceIdentifier = sequenceSectionHeaderMatcher.group(1);
-//                                double sequenceEvalue = Double.parseDouble(sequenceSectionHeaderMatcher.group(2));
-//                                double sequenceScore = Double.parseDouble(sequenceSectionHeaderMatcher.group(3));
-//                                double sequenceBias = Double.parseDouble(sequenceSectionHeaderMatcher.group(4));
-//                                sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceEvalue, sequenceScore, sequenceBias);
                                 Utilities.verboseLog("currentSequenceIdentifier = " + currentSequenceIdentifier);
                             } else {
                                 throw new ParseException("This line looks like a domain section header line, but it is not possible to parse out the sequence id.", null, line, lineNumber);
