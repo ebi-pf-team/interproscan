@@ -44,7 +44,7 @@ public class RunSFLDBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
-        final String exampleFile =  "/ebi/production/interpro/programmers/nuka/projects/git/interproscan5/github/interproscan/core/jms-implementation/target/interproscan-5-dist/data/sfld/201606_27/sfld.example.raw.out";
+        final String exampleFile =  "data/sfld/201606_27/sfld.example.raw.out";
 
         //simulate the sfld post processing binary run
         try {

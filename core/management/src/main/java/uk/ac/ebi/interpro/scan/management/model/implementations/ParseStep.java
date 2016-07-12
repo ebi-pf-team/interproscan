@@ -119,6 +119,10 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                                     + " - matches found : " + matchesFound);
                             break;
                         }
+                        //TODO remove this break statement after SFLD is completed implemented
+                        LOGGER.warn("For test purposes: rememeber to remove the break statement ");
+                        break;
+
                     }
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
