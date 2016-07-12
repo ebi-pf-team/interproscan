@@ -32,6 +32,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
     private String outputFileTemplate;
     private MatchParser<T> parser;
     private RawMatchDAO<T> rawMatchDAO;
+    private boolean useSingleSequenceMode;
 
     public MatchParser<T> getParser() {
         return parser;
@@ -54,6 +55,14 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
     @Required
     public void setRawMatchDAO(RawMatchDAO<T> rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
+    }
+
+    public boolean isUseSingleSequenceMode() {
+        return useSingleSequenceMode;
+    }
+
+    public void setUseSingleSequenceMode(boolean useSingleSequenceMode) {
+        this.useSingleSequenceMode = useSingleSequenceMode;
     }
 
     @Override
