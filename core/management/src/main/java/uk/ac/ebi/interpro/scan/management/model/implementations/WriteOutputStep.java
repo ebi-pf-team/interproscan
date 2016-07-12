@@ -154,7 +154,7 @@ public class WriteOutputStep extends Step {
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
 
-        int waitTimeFactor = 2;
+        int waitTimeFactor = 1;  //check what is the average time it takes to get raw results
         if (! Utilities.isRunningInSingleSeqMode()) {
             //use loge to get wait time
             waitTimeFactor = Utilities.getWaitTimeFactorLogE(20 * Utilities.getSequenceCount()).intValue();
