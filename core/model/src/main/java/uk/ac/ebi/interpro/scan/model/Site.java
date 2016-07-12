@@ -79,7 +79,7 @@ public abstract class Site implements Serializable, Cloneable {
 
     @Transient
     @XmlJavaTypeAdapter(SiteLocationAdapter.class)
-//    @XmlElement(name = "residue_location")
+    @XmlElement(name = "site-locations")
     public Set<SiteLocation> getSiteLocations() {
 //        return Collections.unmodifiableSet(siteLocations);
         return siteLocations;
