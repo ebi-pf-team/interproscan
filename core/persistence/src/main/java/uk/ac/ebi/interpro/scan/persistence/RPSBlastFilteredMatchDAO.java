@@ -160,10 +160,11 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         if (rawSite.getMappedSize() != rawSite.getCompleteSize()) {
                             LOGGER.debug("Raw site " + siteTitle + " mapped size " + rawSite.getMappedSize() + " did not match complete size " + rawSite.getCompleteSize());
                         }
-                        if (siteLocations.size() != rawSite.getMappedSize()) {
-                            throw new IllegalStateException("Found " + siteLocations.size() + " site locations for raw site " + siteTitle + " with residues " + rawSite.getResidues() + " when expected " + rawSite.getMappedSize());
-                        }
                         RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteTitle, siteLocations);
+                        if (site.getNumLocations() != rawSite.getMappedSize()) {
+                            throw new IllegalStateException("Found " + site.getNumLocations() + " site locations for raw site " + siteTitle + " with residues " + rawSite.getResidues() + " when expected " + rawSite.getMappedSize());
+                        }
+
                         rpsBlastSites.add(site);
                     }
                 }
