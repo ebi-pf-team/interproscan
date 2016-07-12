@@ -64,7 +64,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     }
 
     /**
-     * Location of CDD match on a protein sequence
+     * Location of RPS-Blast (e.g. CDD)  match on a protein sequence
      *
      * @author Gift Nuka
      */
