@@ -65,6 +65,11 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
     @Column
     String pssmId;
 
+    @Column
+    int completeSize;
+
+    @Column
+    int mappedSize;
 
     protected RPSBlastRawSite() {
     }
@@ -87,6 +92,8 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
         super(sequenceIdentifier, model, title, residues, firstStart, lastEnd,signatureLibrary, signatureLibraryRelease);
         this.sessionNumber = sessionIdentifier;
         this.hitType = hitType;
+        this.completeSize = completeSize;
+        this.mappedSize = mappedSize;
         this.pssmId = pssmId;
 
 
@@ -116,6 +123,21 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
         this.sessionNumber = sessionNumber;
     }
 
+    public int getCompleteSize() {
+        return completeSize;
+    }
+
+    public void setCompleteSize(int completeSize) {
+        this.completeSize = completeSize;
+    }
+
+    public int getMappedSize() {
+        return mappedSize;
+    }
+
+    public void setMappedSize(int mappedSize) {
+        this.mappedSize = mappedSize;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -129,6 +151,8 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
                 .append(pssmId, m.pssmId)
                 .append(sessionNumber, m.sessionNumber)
                 .append(hitType, m.hitType)
+                .append(completeSize, m.completeSize)
+                .append(mappedSize, m.mappedSize)
                 .isEquals();
     }
 
@@ -139,6 +163,8 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
                 .append(pssmId)
                 .append(sessionNumber)
                 .append(hitType)
+                .append(completeSize)
+                .append(mappedSize)
                 .toHashCode();
     }
 
