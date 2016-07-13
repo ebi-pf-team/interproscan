@@ -36,7 +36,7 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
      */
     @Override
     @Transactional
-    protected void persist(Collection<RawProtein<T>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
