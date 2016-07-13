@@ -5,11 +5,15 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.cdd.CDDPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.CDDRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchAndSiteDAO;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashMap;
@@ -34,7 +38,9 @@ public class CDDPostProcessingStep extends Step {
 
     private RawMatchDAO<CDDRawMatch> rawMatchDAO;
 
-    private FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> filteredMatchDAO;
+    private RawSiteDAO<CDDRawSite> rawSiteDAO;
+
+    private FilteredMatchAndSiteDAO filteredMatchAndSiteDAO;
 
     @Required
     public void setPostProcessor(CDDPostProcessing<CDDRawMatch> postProcessor) {
@@ -52,8 +58,12 @@ public class CDDPostProcessingStep extends Step {
     }
 
     @Required
-    public void setFilteredMatchDAO(FilteredMatchDAO<CDDRawMatch, RPSBlastMatch> filteredMatchDAO) {
-        this.filteredMatchDAO = filteredMatchDAO;
+    public void setFilteredMatchAndSiteDAO(FilteredMatchAndSiteDAO filteredMatchAndSiteDAO) {
+        this.filteredMatchAndSiteDAO = filteredMatchAndSiteDAO;
+    }
+
+    public void setRawSiteDAO(RawSiteDAO<CDDRawSite> rawSiteDAO) {
+        this.rawSiteDAO = rawSiteDAO;
     }
 
     /**
@@ -78,7 +88,8 @@ public class CDDPostProcessingStep extends Step {
                 signatureLibraryRelease
         );
 
-        Map<String, RawProtein<CDDRawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<CDDRawMatch>>(rawMatches.size());
+
+        Map<String, RawProtein<CDDRawMatch>> proteinIdToRawProteinMap = new HashMap<>(rawMatches.size());
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
@@ -107,13 +118,29 @@ public class CDDPostProcessingStep extends Step {
         for (RawProtein<CDDRawMatch> rawMatch : rawMatches) {
             proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
         }
+        //TODO somewhere here add the sites??
+
         Map<String, RawProtein<CDDRawMatch>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
-        filteredMatchDAO.persist(filteredMatches.values());
+//        filteredMatchAndSiteDAO.persist(filteredMatches.values());
+
+        Utilities.verboseLog("filtered matches count: " + filteredMatches.size());
+
+//        CDDFilteredMatchDAO filteredMatchIncSiteDAO = new CDDFilteredMatchDAO();
+        Set<CDDRawSite> rawSites = rawSiteDAO.getSitesByProteinIdRange(
+                stepInstance.getBottomProtein(),
+                stepInstance.getTopProtein(),
+                signatureLibraryRelease
+        );
+        Utilities.verboseLog("filtered sites: " + rawSites);
+
+        filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
+
         matchCount = 0;
         for (final RawProtein rawProtein : filteredMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
         Utilities.verboseLog(10,  " CDD: " + filteredMatches.size() + " proteins passed through post processing."
+                + " with a total of " + matchCount + " raw matches."
                 + " and a total of " + matchCount + " matches PASSED.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("CDD: " + filteredMatches.size() + " proteins passed through post processing.");

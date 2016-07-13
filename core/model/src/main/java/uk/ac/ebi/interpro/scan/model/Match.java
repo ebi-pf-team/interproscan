@@ -70,6 +70,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
         setSignature(signature);
     }
 
+
     @XmlTransient
     public Long getId() {
         return id;

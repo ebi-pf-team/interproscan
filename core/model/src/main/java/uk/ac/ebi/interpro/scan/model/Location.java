@@ -40,8 +40,8 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
+@XmlSeeAlso(LocationWithSites.class)
 public abstract class Location implements Serializable, Cloneable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
     @TableGenerator(name = "LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "location", initialValue = 0, allocationSize = 50)
@@ -153,7 +153,7 @@ public abstract class Location implements Serializable, Cloneable {
          */
         @Override
         public LocationsType marshal(Set<? extends Location> locations) {
-            Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations = new LinkedHashSet<RPSBlastMatch.RPSBlastLocation>();
+            Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations = new LinkedHashSet<>();
             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations = new LinkedHashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
@@ -167,6 +167,7 @@ public abstract class Location implements Serializable, Cloneable {
             Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
             for (Location l : locations) {
+                // TODO RPSBlastLocation is not a Location but is acually a LocationWithSite subclass - review?
                 if (l instanceof RPSBlastMatch.RPSBlastLocation) {
                     rpsBlastLocations.add((RPSBlastMatch.RPSBlastLocation) l);
                 } else if (l instanceof Hmmer2Match.Hmmer2Location) {
@@ -206,7 +207,7 @@ public abstract class Location implements Serializable, Cloneable {
          */
         @Override
         public Set<Location> unmarshal(LocationsType locationsType) {
-            Set<Location> locations = new LinkedHashSet<Location>();
+            Set<Location> locations = new LinkedHashSet<>();
             locations.addAll(locationsType.getRpsBlastLocations());
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
