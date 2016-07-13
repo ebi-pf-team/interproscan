@@ -81,10 +81,11 @@ public class CDDModelParser extends AbstractModelFileParser {
                     Matcher cdAcMatcher = CD_ACCESSION_PATTERN.matcher(accession);
                     Matcher sdAcMather = SD_ACCESSION_PATTERN.matcher(accession);
                     if (! (cdAcMatcher.find() || sdAcMather.find())) {
-                        LOGGER.warn("CDD model parser could not extract the accession from NULL text "
-                                + "or this is not a CDD signature "
-                                + "on line number " + lineNumber + " - so this can't be added to the database "
-                                + "- Accession: " +  accession);
+                        // E.g. accession = "CHL00001"
+                        if (LOGGER.isInfoEnabled()) {
+                            LOGGER.info("CDD model parser skipping CDD signature accession " + accession
+                                    + " on line number " + lineNumber + " - so this can't be added to the database");
+                        }
                         continue;
                     }
 

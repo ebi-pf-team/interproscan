@@ -8,7 +8,10 @@
     <persistence-unit name="persistenceJms" transaction-type="RESOURCE_LOCAL">
         <!-- Interfaces -->
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.LocationWithSites</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.Site</class>
+        <class>uk.ac.ebi.interpro.scan.model.SiteLocation</class>
 
         <class>uk.ac.ebi.interpro.scan.model.Protein</class>
         <class>uk.ac.ebi.interpro.scan.model.Model</class>
@@ -61,6 +64,9 @@
         <class>uk.ac.ebi.interpro.scan.model.TMHMMMatch$TMHMMLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.SignalPMatch$SignalPLocation</class>
 
+        <!--Concrete Sites-->
+        <class>uk.ac.ebi.interpro.scan.model.RPSBlastMatch$RPSBlastLocation$RPSBlastSite</class>
+
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
 
@@ -88,6 +94,9 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
+
+        <!--Raw Sites-->
+        <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawSite</class>
 
         <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>
         <class>uk.ac.ebi.interpro.scan.management.model.StepInstance</class>
