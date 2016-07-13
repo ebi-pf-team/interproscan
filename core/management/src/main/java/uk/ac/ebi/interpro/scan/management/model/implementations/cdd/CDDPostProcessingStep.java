@@ -118,14 +118,11 @@ public class CDDPostProcessingStep extends Step {
         for (RawProtein<CDDRawMatch> rawMatch : rawMatches) {
             proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
         }
-        //TODO somewhere here add the sites??
 
         Map<String, RawProtein<CDDRawMatch>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
-//        filteredMatchAndSiteDAO.persist(filteredMatches.values());
 
         Utilities.verboseLog("filtered matches count: " + filteredMatches.size());
 
-//        CDDFilteredMatchDAO filteredMatchIncSiteDAO = new CDDFilteredMatchDAO();
         Set<CDDRawSite> rawSites = rawSiteDAO.getSitesByProteinIdRange(
                 stepInstance.getBottomProtein(),
                 stepInstance.getTopProtein(),
