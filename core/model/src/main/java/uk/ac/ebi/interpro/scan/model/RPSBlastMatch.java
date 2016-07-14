@@ -126,11 +126,11 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Set<RPSBlastSite> clonedLocations = new HashSet<>(this.getSites().size());
+            final Set<RPSBlastSite> clonedSites = new HashSet<>(this.getSites().size());
             for (RPSBlastSite site : this.getSites()) {
-                clonedLocations.add((RPSBlastSite) site.clone());
+                clonedSites.add((RPSBlastSite) site.clone());
             }
-            return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), clonedLocations);
+            return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), clonedSites);
         }
 
         @Entity
