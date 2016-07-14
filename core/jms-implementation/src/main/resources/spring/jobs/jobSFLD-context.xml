@@ -92,7 +92,7 @@
         </property>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-        <property name="rawMatchDAO" ref="SFLDRawMatchDAO"/>
+        <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="useSingleSequenceMode" value="${sfld.hmmsearch.force}"/>
     </bean>
 
@@ -122,7 +122,7 @@
             <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="rawMatchDAO" ref="SFLDRawMatchDAO"/>
+        <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="signatureLibrary" value="SFLD"/>
         <property name="filter">
             <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
@@ -132,7 +132,7 @@
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SFLD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="SFLDRawMatchDAO"
+    <bean id="sfldRawMatchDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch"/>
     </bean>

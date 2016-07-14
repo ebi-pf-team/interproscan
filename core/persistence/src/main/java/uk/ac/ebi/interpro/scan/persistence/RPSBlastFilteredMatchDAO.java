@@ -53,15 +53,16 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
 
         // Map seqId to raw sites for that sequence
         Map<String, List<R>> seqIdToRawSitesMap = new HashMap<>();
-        for (R rawSite : rawSites) {
-            String seqId = rawSite.getSequenceIdentifier();
-            if (seqIdToRawSitesMap.containsKey(seqId)) {
-                seqIdToRawSitesMap.get(seqId).add(rawSite);
-            }
-            else {
-                List<R> s = new ArrayList<>();
-                s.add(rawSite);
-                seqIdToRawSitesMap.put(seqId, s);
+        if (rawSites != null) {
+            for (R rawSite : rawSites) {
+                String seqId = rawSite.getSequenceIdentifier();
+                if (seqIdToRawSitesMap.containsKey(seqId)) {
+                    seqIdToRawSitesMap.get(seqId).add(rawSite);
+                } else {
+                    List<R> s = new ArrayList<>();
+                    s.add(rawSite);
+                    seqIdToRawSitesMap.put(seqId, s);
+                }
             }
         }
 
