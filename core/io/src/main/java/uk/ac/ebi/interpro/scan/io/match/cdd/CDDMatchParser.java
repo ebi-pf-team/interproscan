@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.io.match.MatchAndSiteParser;
-import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 //import uk.ac.ebi.interpro.scan.model.Site;
@@ -124,7 +123,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
             }
         }
         Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
-        return new MatchSiteData(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+        return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
     }
 
     public MatchData parseFileInput(InputStream is) throws IOException, ParseException {
@@ -224,25 +223,8 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                             String sourceDomain = siteInfo[7];
                             String model = pssmid2modelId.get(sourceDomain);
 
-                            String residueCoordinateList [] = residues.split(",");
-                            Utilities.verboseLog("Residue tokens: " + Arrays.toString(residueCoordinateList));
-                            Integer firstStart = null;
-                            Integer lastEnd = null;
-                            for (String residueAnnot: residueCoordinateList) {
-                                //String residue = residueAnnot.substring(0, 1);
-                                int siteLocation = Integer.parseInt(residueAnnot.substring(1));
-                                if (firstStart == null || siteLocation < firstStart) {
-                                    firstStart = siteLocation;
-                                }
-                                if (lastEnd == null || siteLocation > lastEnd) {
-                                    lastEnd = siteLocation;
-                                }
-                            }
-                            if (firstStart == null) {
-                                throw new IllegalStateException("First/last residue co-ordinates could not be found from " + residues);
-                            }
                             CDDRawSite rawSite = new CDDRawSite(sequenceIdentifier, sessionNumber,
-                                    annotationType, title,  residues, firstStart, lastEnd,
+                                    annotationType, title,  residues,
                                     sourceDomain, model, completeSize, mappedSize,
                                     signatureLibraryRelease);
                             LOGGER.debug("site: " + rawSite);

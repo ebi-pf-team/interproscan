@@ -43,23 +43,19 @@ public class CDDRawSite extends RPSBlastRawSite implements Comparable<CDDRawSite
                       HitType hitType,
                       String title,
                       String residues,
-                      int firstStart,
-                      int lastEnd,
                       String pssmId,
                       String model,
                       int completeSize,
                       int mappedSize,
                       String signatureLibraryRelease) {
         super(sequenceIdentifier, sessionIdentifier,
-                hitType, title, residues, firstStart, lastEnd, pssmId, model,
+                hitType, title, residues, pssmId, model,
                 completeSize, mappedSize, SignatureLibrary.CDD, signatureLibraryRelease);
     }
 
 
 
     /**
-     * TODO define an ordering on CDD sites or RPSBlast sites
-     *
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than , equal to, or greater than that object.
