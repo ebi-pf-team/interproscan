@@ -81,15 +81,13 @@ public abstract class RPSBlastRawSite extends RawSite implements Serializable {
                            HitType hitType,
                            String title,
                            String residues,
-                           int firstStart,
-                           int lastEnd,
                            String pssmId,
                            String model,
                            int completeSize,
                            int mappedSize,
                            SignatureLibrary signatureLibrary,
                            String signatureLibraryRelease) {
-        super(sequenceIdentifier, model, title, residues, firstStart, lastEnd,signatureLibrary, signatureLibraryRelease);
+        super(sequenceIdentifier, model, title, residues, signatureLibrary, signatureLibraryRelease);
         this.sessionNumber = sessionIdentifier;
         this.hitType = hitType;
         this.completeSize = completeSize;

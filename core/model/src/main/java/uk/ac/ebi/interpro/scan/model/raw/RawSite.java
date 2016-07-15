@@ -4,7 +4,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import uk.ac.ebi.interpro.scan.model.KeyGen;
-import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.*;
@@ -76,7 +75,7 @@ public abstract class RawSite implements Serializable {
     protected RawSite() {
     }
 
-    protected RawSite(String sequenceIdentifier, String modelId, String title, String residues, int firstStart, int lastEnd,
+    protected RawSite(String sequenceIdentifier, String modelId, String title, String residues,
                       SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
         this.setSequenceIdentifier(sequenceIdentifier);
         this.setModelId(modelId);
@@ -84,6 +83,25 @@ public abstract class RawSite implements Serializable {
         this.residues = residues;
         this.setSignatureLibrary(signatureLibrary);
         this.setSignatureLibraryRelease(signatureLibraryRelease);
+
+        // Calculate first/last residue postion from residue co-ordinates
+        String residueCoordinateList [] = residues.split(",");
+        Integer firstStart = null;
+        Integer lastEnd = null;
+        for (String residueAnnot: residueCoordinateList) {
+            //String residue = residueAnnot.substring(0, 1);
+            int siteLocation = Integer.parseInt(residueAnnot.substring(1));
+            if (firstStart == null || siteLocation < firstStart) {
+                firstStart = siteLocation;
+            }
+            if (lastEnd == null || siteLocation > lastEnd) {
+                lastEnd = siteLocation;
+            }
+        }
+        if (firstStart == null) {
+            throw new IllegalStateException("First/last residue co-ordinates could not be found from " + residues);
+        }
+
         this.setFirstStart(firstStart);
         this.setLastEnd(lastEnd);
     }
