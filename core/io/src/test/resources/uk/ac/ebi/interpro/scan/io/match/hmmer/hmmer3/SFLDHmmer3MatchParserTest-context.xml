@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <bean id="instance" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParser">
+        <property name="parserSupport">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
+                <property name="signatureLibraryRelease" value="201606_27"/>
+                <property name="hmmKey" value="NAME"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--TODO: Get up-to-date HMMER3 sample file for testing    -->
+    <bean id="pfamFile" class="org.springframework.core.io.ClassPathResource">
+        <!--TODO: Add hmmer3b2-large to Subversion -->
+        <!--<constructor-arg value="data/hmmer3/hmmsearch/hmmer3b2-large"/>-->
+        <constructor-arg value="data/hmmer3/hmmsearch/CELR2-PF12003.txt"/>
+    </bean>
+
+</beans>
