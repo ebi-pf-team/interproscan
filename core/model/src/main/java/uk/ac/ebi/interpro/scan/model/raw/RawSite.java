@@ -89,6 +89,7 @@ public abstract class RawSite implements Serializable {
         Integer firstStart = null;
         Integer lastEnd = null;
         for (String residueAnnot: residueCoordinateList) {
+            residueAnnot = residueAnnot.trim();
             //String residue = residueAnnot.substring(0, 1);
             int siteLocation = Integer.parseInt(residueAnnot.substring(1));
             if (firstStart == null || siteLocation < firstStart) {

@@ -77,7 +77,7 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
         LOGGER.debug("Output fileName: " + fileName);
         try {
             is = new FileInputStream(fileName);
-            MatchSiteData<T, U> matchSiteData = getParser().parse(is);
+            MatchSiteData<T, U> matchSiteData = getParser().parseMatchesAndSites(is);
             final Set<RawProtein<T>> results = matchSiteData.getRawProteins();
             RawMatch represantiveRawMatch = null;
             int count = 0;

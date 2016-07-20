@@ -91,7 +91,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public MatchSiteData parse(InputStream is) throws IOException, ParseException {
+    public MatchSiteData parseMatchesAndSites(InputStream is) throws IOException, ParseException {
 
         Map<String, RawProtein<CDDRawMatch>> rawProteinMap = new HashMap<>();
         MatchData matchData = parseFileInput(is);
