@@ -43,7 +43,7 @@ public class CDDMatchParserTest {
         Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
         InputStream is = modelFileResource.getInputStream();
 
-        MatchSiteData result = instance.parse(is);
+        MatchSiteData result = instance.parseMatchesAndSites(is);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("result: " + result);
         }
