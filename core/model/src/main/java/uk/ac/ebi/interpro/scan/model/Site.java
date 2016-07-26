@@ -129,61 +129,64 @@ public abstract class Site implements Serializable, Cloneable {
     @XmlTransient
     static final class SiteAdapter extends javax.xml.bind.annotation.adapters.XmlAdapter<SitesType, Set<? extends Site>> {
 
-            /**
-             * Map Java to XML type
-             */
-            @Override
-            public SitesType marshal(Set<? extends Site> sites) {
-                Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new LinkedHashSet<>();
-                for (Site s : sites) {
-                    if (s instanceof RPSBlastMatch.RPSBlastLocation.RPSBlastSite) {
-                        rpsBlastSites.add((RPSBlastMatch.RPSBlastLocation.RPSBlastSite) s);
+        /**
+         * Map Java to XML type
+         */
+        @Override
+        public SitesType marshal(Set<? extends Site> sites) {
+            if (sites == null) {
+                return null;
+            }
+            Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new LinkedHashSet<>();
+            for (Site s : sites) {
+                if (s instanceof RPSBlastMatch.RPSBlastLocation.RPSBlastSite) {
+                    rpsBlastSites.add((RPSBlastMatch.RPSBlastLocation.RPSBlastSite) s);
 //                } else if (s instanceof Hmmer2Match.Hmmer2Location.CDDSite) {
 //                    hmmer2Locations.add((Hmmer2Match.Hmmer2Location.CDDSite) s);
-                    } else {
-                        throw new IllegalArgumentException("Unrecognised Site class: " + s);
-                    }
+                } else {
+                    throw new IllegalArgumentException("Unrecognised Site class: " + s);
                 }
-                return new SitesType(rpsBlastSites);
             }
-
-            /**
-             * Map XML type to Java
-             */
-            @Override
-            public Set<Site> unmarshal(SitesType sitesType) {
-                Set<Site> sites = new LinkedHashSet<>();
-                sites.addAll(sitesType.getRpsBlastSites());
-                //TODO sites.addAll(sitesType.getX()); for others, see 'Location'
-                return sites;
-            }
-
+            return new SitesType(rpsBlastSites);
         }
+
         /**
-         * Helper class for SiteAdapter
+         * Map XML type to Java
          */
-        @XmlType(name = "sitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-        @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
-        private final static class SitesType {
-
-            //TODO Add for others, see 'Location'
-
-            @XmlElement(name = "rpsblast-site")
-            private final Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites;
-
-            private SitesType() {
-                rpsBlastSites = null;
-            }
-
-            public SitesType(Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites) {
-                this.rpsBlastSites = rpsBlastSites;
-            }
-
-
-            public Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getRpsBlastSites() {
-                return (rpsBlastSites == null ? Collections.<RPSBlastMatch.RPSBlastLocation.RPSBlastSite>emptySet() : rpsBlastSites);
-            }
+        @Override
+        public Set<Site> unmarshal(SitesType sitesType) {
+            Set<Site> sites = new LinkedHashSet<>();
+            sites.addAll(sitesType.getRpsBlastSites());
+            //TODO sites.addAll(sitesType.getX()); for others, see 'Location'
+            return sites;
         }
+
+    }
+    /**
+     * Helper class for SiteAdapter
+     */
+    @XmlType(name = "sitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+    private final static class SitesType {
+
+        //TODO Add for others, see 'Location'
+
+        @XmlElement(name = "rpsblast-site")
+        private final Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites;
+
+        private SitesType() {
+            rpsBlastSites = null;
+        }
+
+        public SitesType(Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites) {
+            this.rpsBlastSites = rpsBlastSites;
+        }
+
+
+        public Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getRpsBlastSites() {
+            return (rpsBlastSites == null ? Collections.<RPSBlastMatch.RPSBlastLocation.RPSBlastSite>emptySet() : rpsBlastSites);
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
