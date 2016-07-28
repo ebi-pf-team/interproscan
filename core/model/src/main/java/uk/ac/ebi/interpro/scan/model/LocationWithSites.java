@@ -63,8 +63,12 @@ public abstract class LocationWithSites<T extends Site> extends Location {
 
     // Private so can only be set by JAXB, Hibernate ...etc via reflection
 
-    protected void setSites(final Set<T> sites) {
-        if (sites != null) {
+    public void setSites(final Set<T> sites) {
+        if (sites == null) {
+            this.sites = null;
+        }
+        else {
+            this.sites = new LinkedHashSet<>();
             for (T site : sites) {
                 site.setLocation(this);
                 this.sites.add(site);
@@ -74,6 +78,9 @@ public abstract class LocationWithSites<T extends Site> extends Location {
 
     @Transient
     public void addSite(T site) {
+        if (this.sites == null) {
+            this.sites = new LinkedHashSet<>();
+        }
         site.setLocation(this);
         this.sites.add(site);
     }

@@ -63,6 +63,7 @@ public class WriteOutputStep extends Step {
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
     public static final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
+    public static final String EXCLUDE_SITES = "EXCLUDE_SITES";
     public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
     public static final String MAP_TO_GO = "MAP_TO_GO";
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
@@ -185,10 +186,10 @@ public class WriteOutputStep extends Step {
                         outputToTSV(outputPath, stepInstance, proteins);
                         break;
                     case XML:
-                        outputToXML(outputPath, sequenceType, proteins, false);
+                        outputToXML(outputPath, stepInstance, sequenceType, proteins, false);
                         break;
                     case XML_SLIM:
-                        outputToXML(outputPath, sequenceType, proteins, true);
+                        outputToXML(outputPath, stepInstance, sequenceType, proteins, true);
                         break;
                     case GFF3:
                         outputToGFF(outputPath, stepInstance, sequenceType, proteins);
@@ -313,7 +314,7 @@ public class WriteOutputStep extends Step {
         return outputPath;
     }
 
-    private void outputToXML(Path outputPath, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+    private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
@@ -321,6 +322,16 @@ public class WriteOutputStep extends Step {
             matchesHolder = new ProteinMatchesHolder();
         }
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML ");
+
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(EXCLUDE_SITES));
+        xmlWriter.setExcludeSites(excludeSites);
+        if (excludeSites) {
+            for (Protein protein : proteins) {
+                removeSites(protein);
+            }
+        }
+
         if (isSlimOutput) {
             // Only include a protein in the output if it has at least one match
             for (Protein protein : proteins) {
@@ -483,4 +494,21 @@ public class WriteOutputStep extends Step {
         }
     }
 
+    private void removeSites(Protein protein) {
+        Set<Match> matches = protein.getMatches();
+        if (matches != null && matches.size() > 0) {
+            for (Match match : matches) {
+                Set<Location> locations = match.getLocations();
+                if (locations != null && locations.size() > 0) {
+                    for (Location location : locations) {
+                        if (location instanceof LocationWithSites) {
+                            LocationWithSites l = (LocationWithSites) location;
+                            l.setSites(null);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }
