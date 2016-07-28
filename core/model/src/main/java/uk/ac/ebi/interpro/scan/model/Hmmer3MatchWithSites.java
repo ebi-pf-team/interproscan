@@ -166,5 +166,60 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
             return clone;
         }
 
+        @Entity
+        @Table(name = "hmmer3_site")
+        @XmlType(name = "Hmmer3SiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class Hmmer3Site extends Site {
+
+            @Column(name = "description", nullable = false)
+            private String description;
+
+
+            protected Hmmer3Site() {
+            }
+
+            public Hmmer3Site(String description, Set<SiteLocation> siteLocations) {
+                super(siteLocations);
+                setDescription(description);
+            }
+
+            @XmlAttribute(required = true)
+            public String getDescription() {
+                return description;
+            }
+
+            private void setDescription(String description) {
+                this.description = description;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof Hmmer3Site))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(41, 79)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                final Set<SiteLocation> clonedSiteLocations = new HashSet<>(this.getSiteLocations().size());
+                for (SiteLocation sl : this.getSiteLocations()) {
+                    clonedSiteLocations.add((SiteLocation) sl.clone());
+                }
+                return new Hmmer3Site(this.getDescription(), clonedSiteLocations);
+            }
+
+        }
+
+
     }
 }
