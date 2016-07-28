@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.cdd;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.business.postprocessing.PostProcessor;
+import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -20,7 +22,7 @@ import java.util.Map;
  * @since 1.0
  */
 
-public class CDDPostProcessing<T extends RPSBlastRawMatch> implements Serializable {
+public class CDDPostProcessing<T extends RPSBlastRawMatch> implements PostProcessor<T> {
 
     private static final Logger LOGGER = Logger.getLogger(CDDPostProcessing.class.getName());
 
