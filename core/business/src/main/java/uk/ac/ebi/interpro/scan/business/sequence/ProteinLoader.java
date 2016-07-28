@@ -179,6 +179,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             }
+            Utilities.verboseLog("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);

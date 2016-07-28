@@ -147,7 +147,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 // Example: Sequence: UPI0000054B90 e-value: 2.1E-56 score: 189.1 bias: 5.2
-                Utilities.verboseLog("line: "+ line);
+//                Utilities.verboseLog("line: "+ line  + "  stage: " + stage.toString() );
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
@@ -157,13 +157,18 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             if (sequenceSectionHeaderMatcher.matches()) {
                                 domains.clear();
                                 currentSequenceIdentifier = sequenceSectionHeaderMatcher.group(1);
-                                Utilities.verboseLog("currentSequenceIdentifier = " + currentSequenceIdentifier);
+//                                Utilities.verboseLog("currentSequenceIdentifier = " + currentSequenceIdentifier);
                             } else {
                                 throw new ParseException("This line looks like a domain section header line, but it is not possible to parse out the sequence id.", null, line, lineNumber);
                             }
                             stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
                         }
-                        break;
+                        if (line.startsWith(END_OF_RECORD)) {
+                            //the end of the record might be at the start of the output
+                            continue;
+                        }
+
+                            break;
                     case LOOKING_FOR_DOMAIN_SECTION:
                         // Example: Domains:
                         if (line.startsWith(DOMAIN_SECTION_START)) {
@@ -189,7 +194,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             domains.put(sequenceDomainMatch.getModelAccession(), domainMatch);
                             hmmer3ParserSupport.addMatch(searchRecord, rawResults);
                             rawDomainCount += getSequenceMatchCount(searchRecord);
-                            Utilities.verboseLog(sequenceDomainMatch.toString());
+//                            Utilities.verboseLog(sequenceDomainMatch.toString());
                         }
                         break;
                     case LOOKING_FOR_SITE_SECTION:

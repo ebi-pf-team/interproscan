@@ -98,6 +98,14 @@
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.tblout.out"/>
     </bean>
 
+    <bean id="rawAnalaysisOutputDomTbloutFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.domtblout.out"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputAlignmentsFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.align.out"/>
+    </bean>
+
     <bean id="clcMonitor" class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationMonitor">
         <property name="binaryRunDelay" value="${binary.run.delay}"/>
         <property name="checkForkInProgress" value="${check.fork.progress}"/>
@@ -312,7 +320,7 @@
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
         <property name="proteinPrecalcLookupBatchSize" value="${precalculated.match.protein.lookup.batch.size}"/>
-        <!-- MUST NOT EXCEED 1000 -->
+        <!-- MUST NOT EXCEED 1000  why? -->
         <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="proteinLookup" ref="precalculatedLookup"/>
