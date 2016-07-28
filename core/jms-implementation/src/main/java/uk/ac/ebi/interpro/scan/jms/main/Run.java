@@ -533,6 +533,10 @@ public class Run extends AbstractI5Runner {
                 bbMaster.disablePrecalc();
             }
 
+            // Exclude sites from output?
+            final boolean excludeSites = parsedCommandLine.hasOption(I5Option.NOSITES.getLongOpt());
+            bbMaster.setExcludeSites(excludeSites);
+
             // GO terms and/or pathways will also imply IPR lookup
             final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
             bbMaster.setMapToGOAnnotations(mapToGo);
