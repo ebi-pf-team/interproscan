@@ -142,6 +142,7 @@ public class WriteOutputStep extends Step {
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting step with Id " + this.getId());
         }
@@ -177,6 +178,7 @@ public class WriteOutputStep extends Step {
         for (FileOutputFormat outputFormat : outputFormats) {
             Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
+                Utilities.verboseLog("Writing out " + outputPath.toString());
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
@@ -320,7 +322,7 @@ public class WriteOutputStep extends Step {
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML ");
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
         if (isSlimOutput) {
             // Only include a protein in the output if it has at least one match
             for (Protein protein : proteins) {

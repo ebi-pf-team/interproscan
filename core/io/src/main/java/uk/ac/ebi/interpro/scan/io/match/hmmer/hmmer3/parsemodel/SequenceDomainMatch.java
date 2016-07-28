@@ -16,6 +16,9 @@ public class SequenceDomainMatch implements Serializable {
     /**
      * model_accession  hmmstart hmmend  [hhmbounds] domain_score envelope_start envelope_end ali_start ali_end domain_ce_value domain_ie_value  expected_accurracy domain_bias
      * Group[1] Model (string)
+     *          Sequence e-value
+     *          Sequence score
+     *          Sequence bias
      * Group[2] hmm start (int)
      * Group[3] hmm end (int)
      * Group[4] hmmbounds, e.g. "[]"
@@ -29,7 +32,11 @@ public class SequenceDomainMatch implements Serializable {
      * Group[12] i-Evalue (float)
      * Group[13] acc (float)
      */
-    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
+
+    //Domains:
+    //SFLDG00317	9.200e-04	1.340e+01	0.100	17	60	11.200	13	77	22	65	1.300e-05	4.300e-03	0.780	0.100
+
+    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+).*$");
 
     public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\s+.*$");
 
@@ -81,17 +88,16 @@ public class SequenceDomainMatch implements Serializable {
 
         this.hmmto = Integer.parseInt(domainLineMatcher.group(5));
         this.hmmfrom = Integer.parseInt(domainLineMatcher.group(6));
-        this.hmmBounds = domainLineMatcher.group(7);
-        this.score = Double.parseDouble(domainLineMatcher.group(8));
-        this.bias = Double.parseDouble(domainLineMatcher.group(9));
-        this.aliFrom = Integer.parseInt(domainLineMatcher.group(10));
-        this.aliTo = Integer.parseInt(domainLineMatcher.group(11));
-        this.envFrom = Integer.parseInt(domainLineMatcher.group(12));
-        this.envTo = Integer.parseInt(domainLineMatcher.group(13));
-        this.cEvalue = Double.parseDouble(domainLineMatcher.group(14));
-        this.iEvalue = Double.parseDouble(domainLineMatcher.group(15));
-        this.acc = Double.parseDouble(domainLineMatcher.group(16));
-
+        this.hmmBounds = ".."; //domainLineMatcher.group(7);
+        this.score = Double.parseDouble(domainLineMatcher.group(7));
+        this.aliFrom = Integer.parseInt(domainLineMatcher.group(8));
+        this.aliTo = Integer.parseInt(domainLineMatcher.group(9));
+        this.envFrom = Integer.parseInt(domainLineMatcher.group(10));
+        this.envTo = Integer.parseInt(domainLineMatcher.group(11));
+        this.cEvalue = Double.parseDouble(domainLineMatcher.group(12));
+        this.iEvalue = Double.parseDouble(domainLineMatcher.group(13));
+        this.acc = Double.parseDouble(domainLineMatcher.group(14));
+        this.bias = Double.parseDouble(domainLineMatcher.group(15));
     }
 
     public String getModelAccession() {
