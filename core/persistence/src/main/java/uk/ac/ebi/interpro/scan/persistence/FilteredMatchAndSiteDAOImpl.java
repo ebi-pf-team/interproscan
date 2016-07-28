@@ -89,10 +89,12 @@ public abstract class FilteredMatchAndSiteDAOImpl<T extends RawMatch, U extends 
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
         final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
 
-        LOGGER.debug("signatureLibrary: " +  signatureLibrary
-                + " signatureLibraryRelease: "     + signatureLibraryRelease
-                + " filteredProteins: " + filteredProteins.size()
-                + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("signatureLibrary: " + signatureLibrary
+                    + " signatureLibraryRelease: " + signatureLibraryRelease
+                    + " filteredProteins: " + filteredProteins.size()
+                    + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+        }
 
 
         StringBuilder signatureList = new StringBuilder();

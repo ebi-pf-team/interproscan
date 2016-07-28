@@ -45,6 +45,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
      * runnable StepExecutions available.
      */
     protected CleanRunDatabase databaseCleaner;
+    private boolean excludeSites = false;
     private boolean mapToInterPro = false;
     private boolean mapToGO = false;
     private boolean mapToPathway = false;
@@ -159,6 +160,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             params.put(WriteOutputStep.OUTPUT_EXPLICIT_FILE_PATH_KEY, explicitFileName);
         }
 
+        params.put(WriteOutputStep.EXCLUDE_SITES, Boolean.toString(excludeSites));
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(StepInstanceCreatingStep.USE_MATCH_LOOKUP_SERVICE, Boolean.toString(useMatchLookupService));
@@ -298,6 +300,11 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     @Override
     public void setOutputFormats(String[] outputFormats) {
         this.outputFormats = outputFormats;
+    }
+
+    @Override
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
     }
 
     @Override
