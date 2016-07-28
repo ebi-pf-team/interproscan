@@ -111,23 +111,39 @@
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
-    <!-- TODO - Check for changes - presumably now using different objects to store the results? -->
+
     <bean id="stepSFLDPostProcessing"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.CDDPostProcessingStep"
           parent="abstractSFLDStep">
         <property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>
-        <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
-        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
-        <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>
-        </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
-        <property name="signatureLibrary" value="SFLD"/>
-        <property name="filter">
-            <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
+        <property name="stepDescription" value="Store raw SFLD matches as filtered matches"/>
+        <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
+        <!--<property name="postProcessor"/> No post processing required-->
+        <property name="filteredMatchAndSiteDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
         </property>
+        <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
+        <property name="rawSiteDAO" ref="sfldRawSiteDAO"/>
     </bean>
+
+    <!--&lt;!&ndash; TODO - Check for changes - presumably now using different objects to store the results? &ndash;&gt;-->
+    <!--<bean id="stepSFLDPostProcessing"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"-->
+          <!--parent="abstractSFLDStep">-->
+        <!--<property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>-->
+        <!--<property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>-->
+        <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
+        <!--<property name="filteredMatchDAO">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>-->
+        <!--</property>-->
+        <!--<property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
+        <!--<property name="rawMatchDAO" ref="sfldRawMatchDAO"/>-->
+        <!--<property name="signatureLibrary" value="SFLD"/>-->
+        <!--<property name="filter">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>-->
+        <!--</property>-->
+    <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SFLD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
@@ -135,6 +151,10 @@
     <bean id="sfldRawMatchDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch"/>
+    </bean>
+
+    <bean id="sfldRawSiteDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite"/>
     </bean>
 
     <bean id="signatureLibraryReleaseSFLD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
