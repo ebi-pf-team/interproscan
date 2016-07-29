@@ -137,17 +137,20 @@ public abstract class Site implements Serializable, Cloneable {
             if (sites == null) {
                 return null;
             }
+
             Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new LinkedHashSet<>();
+            Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> hmmer3Sites = new LinkedHashSet<>();
+
             for (Site s : sites) {
                 if (s instanceof RPSBlastMatch.RPSBlastLocation.RPSBlastSite) {
                     rpsBlastSites.add((RPSBlastMatch.RPSBlastLocation.RPSBlastSite) s);
-//                } else if (s instanceof Hmmer2Match.Hmmer2Location.CDDSite) {
-//                    hmmer2Locations.add((Hmmer2Match.Hmmer2Location.CDDSite) s);
+                } else if (s instanceof Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site) {
+                    hmmer3Sites.add((Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site) s);
                 } else {
                     throw new IllegalArgumentException("Unrecognised Site class: " + s);
                 }
             }
-            return new SitesType(rpsBlastSites);
+            return new SitesType(rpsBlastSites, hmmer3Sites);
         }
 
         /**
@@ -157,7 +160,7 @@ public abstract class Site implements Serializable, Cloneable {
         public Set<Site> unmarshal(SitesType sitesType) {
             Set<Site> sites = new LinkedHashSet<>();
             sites.addAll(sitesType.getRpsBlastSites());
-            //TODO sites.addAll(sitesType.getX()); for others, see 'Location'
+            sites.addAll(sitesType.getHmmer3Sites());
             return sites;
         }
 
@@ -169,22 +172,30 @@ public abstract class Site implements Serializable, Cloneable {
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class SitesType {
 
-        //TODO Add for others, see 'Location'
-
         @XmlElement(name = "rpsblast-site")
         private final Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites;
 
+        @XmlElement(name = "hmmer3-site")
+        private final Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> hmmer3Sites;
+
         private SitesType() {
             rpsBlastSites = null;
+            hmmer3Sites = null;
         }
 
-        public SitesType(Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites) {
+        public SitesType(Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites,
+                         Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> hmmer3Sites) {
             this.rpsBlastSites = rpsBlastSites;
+            this.hmmer3Sites = hmmer3Sites;
         }
 
 
         public Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getRpsBlastSites() {
             return (rpsBlastSites == null ? Collections.<RPSBlastMatch.RPSBlastLocation.RPSBlastSite>emptySet() : rpsBlastSites);
+        }
+
+        public Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> getHmmer3Sites() {
+            return (hmmer3Sites == null ? Collections.<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site>emptySet() : hmmer3Sites);
         }
     }
 

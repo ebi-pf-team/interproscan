@@ -11,7 +11,7 @@ import uk.ac.ebi.interpro.scan.model.raw.CDDRawSite;
  * @version $id
  * @since v5.16
  */
-public class CDDFilteredMatchDAO extends RPSBlastFilteredMatchDAO<CDDRawMatch, CDDRawSite> {
+public class CDDFilteredMatchDAOImpl extends RPSBlastFilteredMatchDAO<CDDRawMatch, CDDRawSite> {
 
 }
 
