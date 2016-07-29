@@ -124,7 +124,7 @@
             </bean>
         </property>
         <property name="filteredMatchAndSiteDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl"/>
         </property>
         <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
         <property name="rawSiteDAO" ref="cddRawSiteDAO"/>

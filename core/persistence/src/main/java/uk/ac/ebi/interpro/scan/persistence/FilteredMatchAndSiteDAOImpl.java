@@ -109,4 +109,16 @@ public abstract class FilteredMatchAndSiteDAOImpl<T extends RawMatch, U extends 
     @Transactional
     public abstract void persist(Collection<RawProtein<T>> rawProteins, Collection<E> sites,
                                  Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap);
+
+
+    /**
+     *  check if site is in the location range [start,end]
+     * @param rawMatch
+     * @param rawSite
+     * @return
+     */
+    protected boolean siteInLocationRange(T rawMatch, E rawSite){
+        return rawSite.getFirstStart() >= rawMatch.getLocationStart() && rawSite.getLastEnd() <= rawMatch.getLocationEnd();
+    }
+
 }
