@@ -1,26 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.cdd;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.postprocessing.cdd.CDDPostProcessing;
-import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.MatchAndSitePostProcessingStep;
-import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
-import uk.ac.ebi.interpro.scan.model.Site;
 import uk.ac.ebi.interpro.scan.model.raw.*;
-import uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.FilteredMatchAndSiteDAO;
-import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
-
-import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAO;
-import uk.ac.ebi.interpro.scan.util.Utilities;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Gift Nuka, EMBL-EBI

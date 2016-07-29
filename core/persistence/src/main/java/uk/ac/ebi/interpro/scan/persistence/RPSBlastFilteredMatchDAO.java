@@ -131,19 +131,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
         }
     }
 
-
-
-    /**
-     *  check if site is in the location range [start,end]
-     * @param rawMatch
-     * @param rawSite
-     * @return
-     */
-    boolean siteInLocationRange(T rawMatch, R rawSite){
-        return rawSite.getFirstStart() >= rawMatch.getLocationStart() && rawSite.getLastEnd() <= rawMatch.getLocationEnd();
-    }
-
-    Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
+    private Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
         if (rawSites != null) {
             for (R rawSite : rawSites) {

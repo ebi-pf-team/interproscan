@@ -113,7 +113,7 @@
 
 
     <bean id="stepSFLDPostProcessing"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.cdd.CDDPostProcessingStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"
           parent="abstractSFLDStep">
         <property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
@@ -121,7 +121,7 @@
         <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
         <!--<property name="postProcessor"/> No post processing required-->
         <property name="filteredMatchAndSiteDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>
         </property>
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="rawSiteDAO" ref="sfldRawSiteDAO"/>
