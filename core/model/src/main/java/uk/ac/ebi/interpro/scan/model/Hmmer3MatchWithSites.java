@@ -169,27 +169,13 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         @Entity
         @Table(name = "hmmer3_site")
         @XmlType(name = "Hmmer3SiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-        public static class Hmmer3Site extends Site {
-
-            @Column(name = "description", nullable = false)
-            private String description;
-
+        public static class Hmmer3Site extends HmmerSite {
 
             protected Hmmer3Site() {
             }
 
             public Hmmer3Site(String description, Set<SiteLocation> siteLocations) {
-                super(siteLocations);
-                setDescription(description);
-            }
-
-            @XmlAttribute(required = true)
-            public String getDescription() {
-                return description;
-            }
-
-            private void setDescription(String description) {
-                this.description = description;
+                super(description, siteLocations);
             }
 
             @Override
