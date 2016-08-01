@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.Map;
@@ -46,8 +47,8 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
-
             }
+            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
             // Convert raw matches to filtered matches
             Collection<Hmmer3Match> filteredMatches =
                     Hmmer3RawMatch.getMatches(rp.getMatches(), new RawMatch.Listener() {
@@ -59,6 +60,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                             if (signature == null) {
                                 throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                             }
+                            //why not return just signature
                             return modelAccessionToSignatureMap.get(modelAccession);
                         }
                     }
