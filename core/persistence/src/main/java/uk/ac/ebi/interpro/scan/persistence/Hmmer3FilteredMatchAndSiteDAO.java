@@ -3,10 +3,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite;
+import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.*;
@@ -18,8 +15,8 @@ import java.util.*;
  * @author Phil Jones
  * @version $Id$
  */
-abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, U extends SFLDHmmer3RawSite>
-        extends FilteredMatchAndSiteDAOImpl<T, Hmmer3Match, U, Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> {
+abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends Hmmer3RawSite>
+        extends FilteredMatchAndSiteDAOImpl<T, Hmmer3Match, E, Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> {
 
     private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchAndSiteDAO.class.getName());
 
@@ -36,17 +33,17 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, U extends
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Transactional
-    public void persist(Collection<RawProtein<T>> filteredProteins, Collection<U> rawSites, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, Collection<E> rawSites, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
 
         // Map seqId to raw sites for that sequence
-        Map<String, List<U>> seqIdToRawSitesMap = new HashMap<>();
+        Map<String, List<E>> seqIdToRawSitesMap = new HashMap<>();
         if (rawSites != null) {
-            for (U rawSite : rawSites) {
+            for (E rawSite : rawSites) {
                 String seqId = rawSite.getSequenceIdentifier();
                 if (seqIdToRawSitesMap.containsKey(seqId)) {
                     seqIdToRawSitesMap.get(seqId).add(rawSite);
                 } else {
-                    List<U> s = new ArrayList<>();
+                    List<E> s = new ArrayList<>();
                     s.add(rawSite);
                     seqIdToRawSitesMap.put(seqId, s);
                 }
@@ -86,18 +83,18 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, U extends
 
             // Convert raw matches to filtered matches
             Collection<Hmmer3Match> filteredMatches =
-                    Hmmer3RawMatch.getMatches(rp.getMatches(), new RawMatch.Listener() {
-                        @Override
-                        public Signature getSignature(String modelAccession,
-                                                      SignatureLibrary signatureLibrary,
-                                                      String signatureLibraryRelease) {
-                            Signature signature = modelAccessionToSignatureMap.get(modelAccession);
-                            if (signature == null) {
-                                throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
+                    getMatchesWithSites(rp.getMatches(), seqIdToRawSitesMap, new RawMatch.Listener() {
+                                @Override
+                                public Signature getSignature(String modelAccession,
+                                                              SignatureLibrary signatureLibrary,
+                                                              String signatureLibraryRelease) {
+                                    Signature signature = modelAccessionToSignatureMap.get(modelAccession);
+                                    if (signature == null) {
+                                        throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
+                                    }
+                                    return modelAccessionToSignatureMap.get(modelAccession);
+                                }
                             }
-                            return modelAccessionToSignatureMap.get(modelAccession);
-                        }
-                    }
                     );
 
             int matchLocationCount = 0;
@@ -111,10 +108,10 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, U extends
         }
     }
 
-    private Set<HmmerLocationWithSites.HmmerSite> getSites(T rawMatch, Collection<U> rawSites){
+    private Set<HmmerLocationWithSites.HmmerSite> getSites(T rawMatch, Collection<E> rawSites){
         Set<HmmerLocationWithSites.HmmerSite> hmmerSites = new HashSet<>();
         if (rawSites != null) {
-            for (U rawSite : rawSites) {
+            for (E rawSite : rawSites) {
                 if (rawMatch.getModelId().equalsIgnoreCase(rawSite.getModelId())) {
                     if (siteInLocationRange(rawMatch, rawSite)) {
                         final String siteTitle = rawSite.getTitle();
@@ -135,5 +132,83 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, U extends
         }
         return hmmerSites;
     }
+
+
+
+
+
+
+
+
+
+
+    // TODO Move below elsewhere - refactor?
+
+    public Collection<Hmmer3Match> getMatchesWithSites(Collection<T> rawMatches,
+                                                              Map<String, List<E>> seqIdToRawSitesMap,
+                                                              RawMatch.Listener rawMatchListener) {
+        Collection<Hmmer3Match> matches = new HashSet<>();
+        // Get a list of unique model IDs
+        SignatureLibrary signatureLibrary = null;
+        String signatureLibraryRelease = null;
+        Map<String, Set<T>> matchesByModel = new HashMap<>();
+        for (T m : rawMatches) {
+            // Get signature library name and release
+            if (signatureLibrary == null) {
+                signatureLibrary = m.getSignatureLibrary();
+                signatureLibraryRelease = m.getSignatureLibraryRelease();
+            } else if (!signatureLibrary.equals(m.getSignatureLibrary()) ||
+                    !signatureLibraryRelease.equals(m.getSignatureLibraryRelease())) {
+                throw new IllegalArgumentException("Filtered matches are from different signature library versions " +
+                        "(more than one library version found)");
+            }
+            // Get unique list of model IDs
+            String modelId = m.getModelId();
+            if (matchesByModel.containsKey(modelId)) {
+                matchesByModel.get(modelId).add(m);
+            } else {
+                Set<T> set = new HashSet<>();
+                set.add(m);
+                matchesByModel.put(modelId, set);
+            }
+        }
+        // Find the location(s) for each match and create a Match instance
+        for (String key : matchesByModel.keySet()) {
+            Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
+            matches.add(getMatch(signature, key, matchesByModel));
+        }
+        // Next step would be to link this with protein...
+        return matches;
+
+    }
+
+    private Hmmer3Match getMatch(Signature signature, String modelId, Map<String, Set<T>> matchesByModel) {
+        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<>();
+        double score = 0, evalue = 0;
+        for (T m : matchesByModel.get(modelId)) {
+            // Score and evalue should be the same (repeated for each location)
+            score = m.getScore();
+            evalue = m.getEvalue();
+            locations.add(getLocation(m));
+        }
+        return new Hmmer3Match(signature, score, evalue, locations);
+    }
+
+    private Hmmer3Match.Hmmer3Location getLocation(T m) {
+        return new Hmmer3Match.Hmmer3Location(
+                m.getLocationStart(),
+                m.getLocationEnd(),
+                m.getLocationScore(),
+                m.getDomainIeValue(),
+                m.getHmmStart(),
+                m.getHmmEnd(),
+                HmmBounds.parseSymbol(m.getHmmBounds()),
+                m.getEnvelopeStart(),
+                m.getEnvelopeEnd()
+        );
+    }
+
+
+
 
 }
