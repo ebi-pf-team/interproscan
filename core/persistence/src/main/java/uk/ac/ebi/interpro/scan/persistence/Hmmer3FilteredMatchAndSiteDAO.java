@@ -3,25 +3,23 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.*;
-import uk.ac.ebi.interpro.scan.util.Utilities;
+import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawSite;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.util.*;
 
 /**
- * HMMER3 filtered match data access object.
- *
- * @author Antony Quinn
- * @author Phil Jones
- * @version $Id$
+ * HMMER3 filtered match and site data access object.
  */
 abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends Hmmer3RawSite>
-        extends FilteredMatchAndSiteDAOImpl<T, Hmmer3Match, E, Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> {
+        extends FilteredMatchAndSiteDAOImpl<T, Hmmer3MatchWithSites, E, Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> {
 
     private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchAndSiteDAO.class.getName());
 
     public Hmmer3FilteredMatchAndSiteDAO() {
-        super(Hmmer3Match.class);
+        super(Hmmer3MatchWithSites.class);
     }
 
     /**
@@ -59,31 +57,9 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
 
             }
 
-            Collection<T> rawMatches = rp.getMatches();
-            for (T rawMatch : rawMatches) {
-                // For this match find the sites
-                Set<HmmerLocationWithSites.HmmerSite> hmmerSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
-                Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations = new HashSet<>();
-                Utilities.verboseLog("filtered sites: " + hmmerSites);
-                locations.add(
-                        new Hmmer3MatchWithSites.Hmmer3LocationWithSites(
-                                rawMatch.getLocationStart(),
-                                rawMatch.getLocationEnd(),
-                                rawMatch.getScore(),
-                                rawMatch.getEvalue(),
-                                rawMatch.getHmmStart(),
-                                rawMatch.getHmmEnd(),
-                                HmmBounds.parseSymbol(rawMatch.getHmmBounds()),
-                                rawMatch.getEnvelopeStart(),
-                                rawMatch.getEnvelopeEnd(),
-                                hmmerSites
-                        )
-                );
-            }
-
             // Convert raw matches to filtered matches
-            Collection<Hmmer3Match> filteredMatches =
-                    getMatchesWithSites(rp.getMatches(), seqIdToRawSitesMap, new RawMatch.Listener() {
+            Collection<Hmmer3MatchWithSites> filteredMatches =
+                    getMatchesWithSites(rp.getMatches(), seqIdToRawSitesMap.get(rp.getProteinIdentifier()), new RawMatch.Listener() {
                                 @Override
                                 public Signature getSignature(String modelAccession,
                                                               SignatureLibrary signatureLibrary,
@@ -98,7 +74,7 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
                     );
 
             int matchLocationCount = 0;
-            for (Hmmer3Match match : filteredMatches) {
+            for (Hmmer3MatchWithSites match : filteredMatches) {
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
@@ -118,6 +94,7 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
                         final String[] residueCoordinateList = rawSite.getResidues().split(",");
                         Set<SiteLocation> siteLocations = new HashSet<>();
                         for (String residueAnnot : residueCoordinateList) {
+                            residueAnnot = residueAnnot.trim();
                             String residue = residueAnnot.substring(0, 1);
                             int position = Integer.parseInt(residueAnnot.substring(1));
                             SiteLocation siteLocation = new SiteLocation(residue, position, position);
@@ -134,23 +111,14 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
     }
 
 
-
-
-
-
-
-
-
-
-    // TODO Move below elsewhere - refactor?
-
-    public Collection<Hmmer3Match> getMatchesWithSites(Collection<T> rawMatches,
-                                                              Map<String, List<E>> seqIdToRawSitesMap,
+    public Collection<Hmmer3MatchWithSites> getMatchesWithSites(Collection<T> rawMatches,
+                                                              List<E> rawSites,
                                                               RawMatch.Listener rawMatchListener) {
-        Collection<Hmmer3Match> matches = new HashSet<>();
+        Collection<Hmmer3MatchWithSites> matches = new HashSet<>();
         // Get a list of unique model IDs
         SignatureLibrary signatureLibrary = null;
         String signatureLibraryRelease = null;
+
         Map<String, Set<T>> matchesByModel = new HashMap<>();
         for (T m : rawMatches) {
             // Get signature library name and release
@@ -175,27 +143,27 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
         // Find the location(s) for each match and create a Match instance
         for (String key : matchesByModel.keySet()) {
             Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
-            matches.add(getMatch(signature, key, matchesByModel));
+            matches.add(getMatch(signature, key, matchesByModel, rawSites));
         }
         // Next step would be to link this with protein...
         return matches;
 
     }
 
-    private Hmmer3Match getMatch(Signature signature, String modelId, Map<String, Set<T>> matchesByModel) {
-        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<>();
+    private Hmmer3MatchWithSites getMatch(Signature signature, String modelId, Map<String, Set<T>> matchesByModel, List<E> rawSites) {
+        Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations = new HashSet<>();
         double score = 0, evalue = 0;
         for (T m : matchesByModel.get(modelId)) {
             // Score and evalue should be the same (repeated for each location)
             score = m.getScore();
             evalue = m.getEvalue();
-            locations.add(getLocation(m));
+            locations.add(getLocation(m, rawSites));
         }
-        return new Hmmer3Match(signature, score, evalue, locations);
+        return new Hmmer3MatchWithSites(signature, score, evalue, locations);
     }
 
-    private Hmmer3Match.Hmmer3Location getLocation(T m) {
-        return new Hmmer3Match.Hmmer3Location(
+    private Hmmer3MatchWithSites.Hmmer3LocationWithSites getLocation(T m, List<E> rawSites) {
+        return new Hmmer3MatchWithSites.Hmmer3LocationWithSites(
                 m.getLocationStart(),
                 m.getLocationEnd(),
                 m.getLocationScore(),
@@ -204,7 +172,8 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
                 m.getHmmEnd(),
                 HmmBounds.parseSymbol(m.getHmmBounds()),
                 m.getEnvelopeStart(),
-                m.getEnvelopeEnd()
+                m.getEnvelopeEnd(),
+                getSites(m, rawSites)
         );
     }
 

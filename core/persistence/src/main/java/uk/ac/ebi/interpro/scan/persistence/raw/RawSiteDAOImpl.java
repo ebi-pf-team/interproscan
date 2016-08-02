@@ -32,7 +32,9 @@ public class RawSiteDAOImpl<T extends RawSite>
 //    @Override
     public void insertSites(Set<RawProteinSite<T>> rawSites) {
         for (RawProteinSite<T> rawProteinSite : rawSites) {
-            LOGGER.debug("Persisting " + rawSites.size() + " raw sites.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Persisting " + rawSites.size() + " raw sites.");
+            }
             Utilities.verboseLog("Persisting " + rawSites.size() + " raw sites.");
             insert(new HashSet<T>(rawProteinSite.getSites()));
         }
