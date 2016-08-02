@@ -65,6 +65,7 @@
         <class>uk.ac.ebi.interpro.scan.model.SignalPMatch$SignalPLocation</class>
 
         <!--Concrete Sites-->
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3MatchWithSites$Hmmer3LocationWithSites$Hmmer3Site</class>
         <class>uk.ac.ebi.interpro.scan.model.RPSBlastMatch$RPSBlastLocation$RPSBlastSite</class>
 
         <!-- Raw Matches -->
