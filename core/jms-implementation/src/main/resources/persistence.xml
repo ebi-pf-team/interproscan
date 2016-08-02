@@ -39,6 +39,7 @@
         <class>uk.ac.ebi.interpro.scan.model.HmmerMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3MatchWithSites</class>
         <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch</class>
@@ -52,6 +53,7 @@
         <class>uk.ac.ebi.interpro.scan.model.RPSBlastMatch$RPSBlastLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location</class>
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3MatchWithSites$Hmmer3LocationWithSites</class>
 
         <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation</class>
         <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation</class>
