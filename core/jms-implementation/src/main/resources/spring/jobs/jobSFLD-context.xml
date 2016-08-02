@@ -81,6 +81,8 @@
         
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParser">
+                <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SFLD"/>
+                <constructor-arg type="java.lang.String" ref="sfldSignatureLibraryReleaseVersion"/>
                 <property name="parserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
                         <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
