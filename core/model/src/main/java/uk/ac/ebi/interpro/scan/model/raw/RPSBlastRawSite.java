@@ -16,7 +16,7 @@ import java.util.Map;
  * @version $Id$
  */
 @Entity
-public abstract class RPSBlastRawSite extends RawSite implements Serializable {
+public abstract class RPSBlastRawSite extends RawSite {
 
     /** Example CDD output file:
         DATA

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * <a href="http://SFLD.edu/">SFLD</a> raw match.
+ * <a href="http://SFLD.edu/">SFLD</a> raw site.
  */
 @Entity
 @Table(name = SFLDHmmer3RawSite.TABLE_NAME, indexes = {
@@ -18,7 +18,7 @@ import java.io.Serializable;
         @Index(name = "SFLD_RW_S_SIGLIB_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY),
         @Index(name = "SFLD_RW_S_SIGLIB_REL_IDX", columnList = RawSite.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
-public class SFLDHmmer3RawSite  extends RawSite implements Comparable<SFLDHmmer3RawSite>, Serializable {
+public class SFLDHmmer3RawSite extends Hmmer3RawSite implements Comparable<SFLDHmmer3RawSite> {
 
     public static final String TABLE_NAME = "SFLD_HMMER3_RAW_SITE";
 
