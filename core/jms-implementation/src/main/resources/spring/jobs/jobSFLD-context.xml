@@ -93,7 +93,7 @@
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
-        <property name="useSingleSequenceMode" value="${sfld.hmmsearch.force}"/>
+        <property name="rawSiteDAO"  ref="sfldRawSiteDAO"/>
     </bean>
 
     <bean id="stepSFLDDeleteJobFiles"
