@@ -84,32 +84,6 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
         }
     }
 
-    private Set<HmmerLocationWithSites.HmmerSite> getSites(T rawMatch, Collection<E> rawSites){
-        Set<HmmerLocationWithSites.HmmerSite> hmmerSites = new HashSet<>();
-        if (rawSites != null) {
-            for (E rawSite : rawSites) {
-                if (rawMatch.getModelId().equalsIgnoreCase(rawSite.getModelId())) {
-                    if (siteInLocationRange(rawMatch, rawSite)) {
-                        final String siteTitle = rawSite.getTitle();
-                        final String[] residueCoordinateList = rawSite.getResidues().split(",");
-                        Set<SiteLocation> siteLocations = new HashSet<>();
-                        for (String residueAnnot : residueCoordinateList) {
-                            residueAnnot = residueAnnot.trim();
-                            String residue = residueAnnot.substring(0, 1);
-                            int position = Integer.parseInt(residueAnnot.substring(1));
-                            SiteLocation siteLocation = new SiteLocation(residue, position, position);
-                            siteLocations.add(siteLocation);
-                        }
-                        Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site(siteTitle, siteLocations);
-
-                        hmmerSites.add(site);
-                    }
-                }
-            }
-        }
-        return hmmerSites;
-    }
-
 
     public Collection<Hmmer3MatchWithSites> getMatchesWithSites(Collection<T> rawMatches,
                                                               List<E> rawSites,
@@ -177,7 +151,31 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
         );
     }
 
+    private Set<HmmerLocationWithSites.HmmerSite> getSites(T rawMatch, Collection<E> rawSites){
+        Set<HmmerLocationWithSites.HmmerSite> hmmerSites = new HashSet<>();
+        if (rawSites != null) {
+            for (E rawSite : rawSites) {
+                if (rawMatch.getModelId().equalsIgnoreCase(rawSite.getModelId())) {
+                    if (siteInLocationRange(rawMatch, rawSite)) {
+                        final String siteTitle = rawSite.getTitle();
+                        final String[] residueCoordinateList = rawSite.getResidues().split(",");
+                        Set<SiteLocation> siteLocations = new HashSet<>();
+                        for (String residueAnnot : residueCoordinateList) {
+                            residueAnnot = residueAnnot.trim();
+                            String residue = residueAnnot.substring(0, 1);
+                            int position = Integer.parseInt(residueAnnot.substring(1));
+                            SiteLocation siteLocation = new SiteLocation(residue, position, position);
+                            siteLocations.add(siteLocation);
+                        }
+                        Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site(siteTitle, siteLocations);
 
+                        hmmerSites.add(site);
+                    }
+                }
+            }
+        }
+        return hmmerSites;
+    }
 
 
 }
