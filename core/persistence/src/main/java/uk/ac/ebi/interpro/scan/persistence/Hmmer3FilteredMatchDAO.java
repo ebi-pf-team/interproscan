@@ -48,7 +48,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
             }
-            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
+//            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
             // Convert raw matches to filtered matches
             Collection<Hmmer3Match> filteredMatches =
                     Hmmer3RawMatch.getMatches(rp.getMatches(), new RawMatch.Listener() {
@@ -68,6 +68,14 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
 
             int matchLocationCount = 0;
             for (Hmmer3Match match : filteredMatches) {
+                for (T rawMatch: rp.getMatches()){
+                    if (! isLocationWithinRange(protein, rawMatch)){
+                        LOGGER.error("Location coordinates Error - sequenceLength: " + protein.getSequenceLength()
+                                +  " Location : " + rawMatch.getLocationStart() + "-" +  rawMatch.getLocationEnd());
+                        throw new IllegalStateException("Attempting to persist a match location outside sequence range " +
+                        rawMatch.toString() + "\n" + protein.toString());
+                    }
+                }
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
