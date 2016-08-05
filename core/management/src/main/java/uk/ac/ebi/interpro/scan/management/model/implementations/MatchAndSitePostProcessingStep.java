@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.PostProcessor;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Site;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -16,6 +17,7 @@ import uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -86,12 +88,12 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
 
 
         Map<String, RawProtein<A>> proteinIdToRawProteinMap = new HashMap<>(rawMatches.size());
-        if(rawMatches.size() == 0){
+        if (rawMatches.size() == 0) {
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
 
             int waitTimeFactor = 2;
-            if (! Utilities.isRunningInSingleSeqMode()){
+            if (!Utilities.isRunningInSingleSeqMode()) {
                 waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
             }
             Utilities.sleep(waitTimeFactor * 1000);
@@ -119,21 +121,24 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
         if (postProcessor == null) {
             // No post processing required, raw matches = filtered matches
             filteredMatches = proteinIdToRawProteinMap;
-        }
-        else {
+        } else {
             // Post processing required
             filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
         }
 
         Utilities.verboseLog("filtered matches count: " + filteredMatches.size());
 
-        Set<C> rawSites = rawSiteDAO.getSitesByProteinIdRange(
-                stepInstance.getBottomProtein(),
-                stepInstance.getTopProtein(),
-                signatureLibraryRelease
-        );
-        Utilities.verboseLog("filtered sites: " + rawSites);
-
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
+        Set<C> rawSites = new HashSet<>();
+        if (!excludeSites) {
+            rawSites = rawSiteDAO.getSitesByProteinIdRange(
+                    stepInstance.getBottomProtein(),
+                    stepInstance.getTopProtein(),
+                    signatureLibraryRelease
+            );
+            Utilities.verboseLog("filtered sites: " + rawSites);
+        }
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 
         matchCount = 0;

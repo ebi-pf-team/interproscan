@@ -160,10 +160,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             params.put(WriteOutputStep.OUTPUT_EXPLICIT_FILE_PATH_KEY, explicitFileName);
         }
 
-        params.put(WriteOutputStep.EXCLUDE_SITES, Boolean.toString(excludeSites));
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(StepInstanceCreatingStep.USE_MATCH_LOOKUP_SERVICE, Boolean.toString(useMatchLookupService));
+        params.put(StepInstanceCreatingStep.EXCLUDE_SITES, Boolean.toString(excludeSites));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
@@ -300,6 +300,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     @Override
     public void setOutputFormats(String[] outputFormats) {
         this.outputFormats = outputFormats;
+    }
+
+    protected boolean isExcludeSites() {
+        return excludeSites;
     }
 
     @Override
