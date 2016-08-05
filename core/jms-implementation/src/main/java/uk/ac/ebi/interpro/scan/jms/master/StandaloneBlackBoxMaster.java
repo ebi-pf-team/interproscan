@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -98,6 +99,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         // Performed in a transaction.
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("About to send a message for StepInstance: " + stepInstance);
+                        }
+                        if (this.isExcludeSites()) {
+                            stepInstance.addParameter(StepInstanceCreatingStep.EXCLUDE_SITES, Boolean.TRUE.toString());
                         }
                         messageSender.sendMessage(stepInstance, false, priority, false);
                         statsUtil.addToSubmittedStepInstances(stepInstance);
