@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.io.match.MatchAndSiteParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawProteinSite;
@@ -17,6 +18,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -131,23 +133,27 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
             }
 
             //deal with sites if any
-            final Set<RawProteinSite<U>> rawProteinSites = matchSiteData.getRawProteinSites();
-            Utilities.verboseLog("Parsed out " + rawProteinSites.size() + " proteins with sites from file " + fileName);
-            RawSite represantiveRawSite = null;
-            count = 0;
-            if (rawProteinSites.size() > 0) {
-                for (RawProteinSite<U> rawProteinSite : rawProteinSites) {
-                    count += rawProteinSite.getSites().size();
-                    if (represantiveRawSite == null) {
-                        if (rawProteinSite.getSites().size() > 0) {
-                            represantiveRawSite = rawProteinSite.getSites().iterator().next();
+            final Map<String, String> parameters = stepInstance.getParameters();
+            final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
+            if (!excludeSites) {
+                final Set<RawProteinSite<U>> rawProteinSites = matchSiteData.getRawProteinSites();
+                Utilities.verboseLog("Parsed out " + rawProteinSites.size() + " proteins with sites from file " + fileName);
+                RawSite represantiveRawSite = null;
+                count = 0;
+                if (rawProteinSites.size() > 0) {
+                    for (RawProteinSite<U> rawProteinSite : rawProteinSites) {
+                        count += rawProteinSite.getSites().size();
+                        if (represantiveRawSite == null) {
+                            if (rawProteinSite.getSites().size() > 0) {
+                                represantiveRawSite = rawProteinSite.getSites().iterator().next();
+                            }
                         }
                     }
                 }
-            }
-            Utilities.verboseLog("A total of " + count + " residue sites from file " + fileName);
+                Utilities.verboseLog("A total of " + count + " residue sites from file " + fileName);
 
-            rawSiteDAO.insertSites(rawProteinSites);
+                rawSiteDAO.insertSites(rawProteinSites);
+            }
             now = System.currentTimeMillis();
 
 

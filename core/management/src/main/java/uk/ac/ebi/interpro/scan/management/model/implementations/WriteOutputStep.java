@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.io.XmlWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
@@ -63,7 +64,6 @@ public class WriteOutputStep extends Step {
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
     public static final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
-    public static final String EXCLUDE_SITES = "EXCLUDE_SITES";
     public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
     public static final String MAP_TO_GO = "MAP_TO_GO";
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
@@ -324,7 +324,7 @@ public class WriteOutputStep extends Step {
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML ");
 
         final Map<String, String> parameters = stepInstance.getParameters();
-        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(EXCLUDE_SITES));
+        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
         xmlWriter.setExcludeSites(excludeSites);
         if (excludeSites) {
             for (Protein protein : proteins) {
