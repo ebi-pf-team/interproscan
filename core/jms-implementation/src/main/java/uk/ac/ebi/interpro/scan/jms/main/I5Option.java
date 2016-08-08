@@ -27,7 +27,7 @@ public enum I5Option {
     IPRLOOKUP("iprlookup", "iprlookup", false, "Also include lookup of corresponding InterPro annotation in the TSV and GFF3 output formats.", null, false, Mode.SET_OF_STANDARD_MODES),
     GOTERMS("goterms", "goterms", false, "Optional, switch on lookup of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
     PATHWAY_LOOKUP("pathways", "pa", false, "Optional, switch on lookup of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
-    NOSITES("exclude-sites", "es", false, "Optional, excludes sites from the XML output", null, false, Mode.SET_OF_STANDARD_MODES),
+    NOSITES("exclude-sites", "x", false, "Optional, excludes sites from the XML output", null, false, Mode.SET_OF_STANDARD_MODES),
     MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, Mode.SET_OF_NO_MODES),
     MASTER_MAXLIFE("mastermaxlife", "mastermaxlife", false, "The maximum lifetime of the Master.", "MASTER-MAXLIFE", false, Mode.SET_OF_NO_MODES),
     SEQUENCE_TYPE("seqtype", "t", false, "Optional, the type of the input sequences (dna/rna (n) or protein (p)).  The default sequence type is protein.", "SEQUENCE-TYPE", false, Mode.SET_OF_STANDARD_MODES),
