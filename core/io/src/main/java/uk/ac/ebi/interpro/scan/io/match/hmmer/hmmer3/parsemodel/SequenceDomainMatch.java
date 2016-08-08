@@ -85,9 +85,9 @@ public class SequenceDomainMatch implements Serializable {
         this.sequenceEvalue = Double.parseDouble(domainLineMatcher.group(2));
         this.sequenceScore = Double.parseDouble(domainLineMatcher.group(3));
         this.sequenceBias = Double.parseDouble(domainLineMatcher.group(4));
+        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(5));
+        this.hmmto = Integer.parseInt(domainLineMatcher.group(6));
 
-        this.hmmto = Integer.parseInt(domainLineMatcher.group(5));
-        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(6));
         this.hmmBounds = ".."; //domainLineMatcher.group(7);
         this.score = Double.parseDouble(domainLineMatcher.group(7));
         this.aliFrom = Integer.parseInt(domainLineMatcher.group(8));

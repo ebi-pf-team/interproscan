@@ -183,17 +183,21 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
                         } else if (domainDataLineMatcher.matches()) {
                             SequenceDomainMatch sequenceDomainMatch = new SequenceDomainMatch(domainDataLineMatcher);
-                            //we now have a match and can create a raw match
-                            DomainMatch domainMatch = new DomainMatch(sequenceDomainMatch);
-                            //add the domain match to the search record
-                            searchRecord = new HmmSearchRecord(sequenceDomainMatch.getModelAccession());
-                            sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceDomainMatch.getSequenceEvalue(), sequenceDomainMatch.getSequenceScore(), sequenceDomainMatch.getSequenceBias());
-                            searchRecord.addSequenceMatch(sequenceMatch);
-                            searchRecord.addDomainMatch(currentSequenceIdentifier, new DomainMatch(sequenceDomainMatch));
-                            domains.put(sequenceDomainMatch.getModelAccession(), domainMatch);
-                            hmmer3ParserSupport.addMatch(searchRecord, rawResults);
-                            rawDomainCount += getSequenceMatchCount(searchRecord);
-                            LOGGER.debug(sequenceDomainMatch.toString());
+                            if (checkDomainCoordinates(sequenceDomainMatch)){
+                                //we now have a match and can create a raw match
+                                DomainMatch domainMatch = new DomainMatch(sequenceDomainMatch);
+                                //add the domain match to the search record
+                                searchRecord = new HmmSearchRecord(sequenceDomainMatch.getModelAccession());
+                                sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceDomainMatch.getSequenceEvalue(), sequenceDomainMatch.getSequenceScore(), sequenceDomainMatch.getSequenceBias());
+                                searchRecord.addSequenceMatch(sequenceMatch);
+                                searchRecord.addDomainMatch(currentSequenceIdentifier, new DomainMatch(sequenceDomainMatch));
+                                domains.put(sequenceDomainMatch.getModelAccession(), domainMatch);
+                                hmmer3ParserSupport.addMatch(searchRecord, rawResults);
+                                rawDomainCount += getSequenceMatchCount(searchRecord);
+                                LOGGER.debug(sequenceDomainMatch.toString());
+                            }else{
+                                throw new ParseException("Domain coordinates error - sequenceId: " + currentSequenceIdentifier + sequenceDomainMatch.toString());
+                            }
                         }
                         if (line.startsWith(END_OF_RECORD)) {
                             stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
@@ -266,4 +270,24 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
         return count;
     }
 
+    public boolean checkDomainCoordinates(SequenceDomainMatch sequenceDomainMatch){
+        boolean domainCoordinatesCorrect = true;
+        if (sequenceDomainMatch.getAliFrom() > sequenceDomainMatch.getAliTo()){
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo() );
+        }
+        if (sequenceDomainMatch.getHmmfrom() > sequenceDomainMatch.getHmmto()){
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo());
+        }
+        if (sequenceDomainMatch.getEnvFrom() > sequenceDomainMatch.getEnvTo()){
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo());
+        }
+
+        return  domainCoordinatesCorrect;
+    }
 }
