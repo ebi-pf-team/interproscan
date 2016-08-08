@@ -93,7 +93,7 @@
             </bean>
         </property>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
-        <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="rawSiteDAO"  ref="sfldRawSiteDAO"/>
     </bean>
@@ -125,6 +125,7 @@
         <property name="filteredMatchAndSiteDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>
         </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="rawSiteDAO" ref="sfldRawSiteDAO"/>
     </bean>
