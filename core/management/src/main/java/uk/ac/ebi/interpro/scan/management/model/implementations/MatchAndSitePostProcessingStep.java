@@ -41,6 +41,8 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
 
     protected FilteredMatchAndSiteDAO<A, B, C, D> filteredMatchAndSiteDAO;
 
+    protected boolean excludeSites;
+
     public void setPostProcessor(PostProcessor<A> postProcessor) {
         this.postProcessor = postProcessor;
     }
@@ -62,6 +64,11 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
     @Required
     public void setFilteredMatchAndSiteDAO(FilteredMatchAndSiteDAO<A, B, C, D> filteredMatchAndSiteDAO) {
         this.filteredMatchAndSiteDAO = filteredMatchAndSiteDAO;
+    }
+
+    @Required
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
     }
 
     /**
@@ -131,13 +138,15 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
         Set<C> rawSites = new HashSet<>();
-        if (!excludeSites) {
-            rawSites = rawSiteDAO.getSitesByProteinIdRange(
-                    stepInstance.getBottomProtein(),
-                    stepInstance.getTopProtein(),
-                    signatureLibraryRelease
-            );
-            Utilities.verboseLog("filtered sites: " + rawSites);
+        if (!excludeSites) { // Check command line argument
+            if (!this.excludeSites) { // No command line argument, so check properties file configuration
+                rawSites = rawSiteDAO.getSitesByProteinIdRange(
+                        stepInstance.getBottomProtein(),
+                        stepInstance.getTopProtein(),
+                        signatureLibraryRelease
+                );
+                Utilities.verboseLog("filtered sites: " + rawSites);
+            }
         }
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 
@@ -152,4 +161,5 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
             LOGGER.debug("A total of " + matchCount + " matches PASSED.");
         }
     }
+
 }

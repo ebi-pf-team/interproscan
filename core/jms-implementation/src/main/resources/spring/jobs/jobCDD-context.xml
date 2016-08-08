@@ -88,6 +88,7 @@
                 <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
             </bean>
         </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO"  ref="cddRawMatchDAO"/>
         <property name="rawSiteDAO"  ref="cddRawSiteDAO"/>
         <property name="serialGroup" value="PARSE_CDD"/>
@@ -126,6 +127,7 @@
         <property name="filteredMatchAndSiteDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl"/>
         </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
         <property name="rawSiteDAO" ref="cddRawSiteDAO"/>
     </bean>
