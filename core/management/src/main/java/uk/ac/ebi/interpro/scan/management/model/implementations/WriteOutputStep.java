@@ -60,6 +60,8 @@ public class WriteOutputStep extends Step {
     /* Not required. If TRUE (default), it will archive all SVG output files into a single archive.*/
     private boolean archiveSVGOutput = true;
 
+    private boolean excludeSites;
+
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
@@ -106,6 +108,11 @@ public class WriteOutputStep extends Step {
     @Required
     public void setXrefDao(ProteinXrefDAO proteinXrefDAO) {
         this.proteinXrefDAO = proteinXrefDAO;
+    }
+
+    @Required
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
     }
 
     /**
@@ -326,7 +333,7 @@ public class WriteOutputStep extends Step {
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
         xmlWriter.setExcludeSites(excludeSites);
-        if (excludeSites) {
+        if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
             for (Protein protein : proteins) {
                 removeSites(protein);
             }

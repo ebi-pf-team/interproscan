@@ -36,6 +36,7 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
     private MatchAndSiteParser<T, U> parser;
     private RawMatchDAO<T> rawMatchDAO;
     private RawSiteDAO<U> rawSiteDAO;
+    private boolean excludeSites;
 
     public MatchAndSiteParser<T, U> getParser() {
         return parser;
@@ -65,6 +66,11 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
     @Required
     public void setRawSiteDAO(RawSiteDAO<U> rawSiteDAO) {
         this.rawSiteDAO = rawSiteDAO;
+    }
+
+    @Required
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
     }
 
     @Override
@@ -135,24 +141,26 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
             //deal with sites if any
             final Map<String, String> parameters = stepInstance.getParameters();
             final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
-            if (!excludeSites) {
-                final Set<RawProteinSite<U>> rawProteinSites = matchSiteData.getRawProteinSites();
-                Utilities.verboseLog("Parsed out " + rawProteinSites.size() + " proteins with sites from file " + fileName);
-                RawSite represantiveRawSite = null;
-                count = 0;
-                if (rawProteinSites.size() > 0) {
-                    for (RawProteinSite<U> rawProteinSite : rawProteinSites) {
-                        count += rawProteinSite.getSites().size();
-                        if (represantiveRawSite == null) {
-                            if (rawProteinSite.getSites().size() > 0) {
-                                represantiveRawSite = rawProteinSite.getSites().iterator().next();
+            if (!excludeSites) { // Check command line argument
+                if (!this.excludeSites) { // No command line argument, so check properties file configuration
+                    final Set<RawProteinSite<U>> rawProteinSites = matchSiteData.getRawProteinSites();
+                    Utilities.verboseLog("Parsed out " + rawProteinSites.size() + " proteins with sites from file " + fileName);
+                    RawSite represantiveRawSite = null;
+                    count = 0;
+                    if (rawProteinSites.size() > 0) {
+                        for (RawProteinSite<U> rawProteinSite : rawProteinSites) {
+                            count += rawProteinSite.getSites().size();
+                            if (represantiveRawSite == null) {
+                                if (rawProteinSite.getSites().size() > 0) {
+                                    represantiveRawSite = rawProteinSite.getSites().iterator().next();
+                                }
                             }
                         }
                     }
-                }
-                Utilities.verboseLog("A total of " + count + " residue sites from file " + fileName);
+                    Utilities.verboseLog("A total of " + count + " residue sites from file " + fileName);
 
-                rawSiteDAO.insertSites(rawProteinSites);
+                    rawSiteDAO.insertSites(rawProteinSites);
+                }
             }
             now = System.currentTimeMillis();
 
