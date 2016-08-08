@@ -478,8 +478,8 @@ public class WriteOutputStep extends Step {
             for (Protein protein : proteins) {
                 writer.write(protein);
                 count++;
-                if (count % 20000 == 0) {
-                    Utilities.verboseLog(10, " WriteOutout - wrote " + count + " proteins");
+                if (count % 40000 == 0) {
+                    Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins");
                 }
             }
         }
