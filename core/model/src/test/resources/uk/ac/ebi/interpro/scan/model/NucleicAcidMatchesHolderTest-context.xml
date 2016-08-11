@@ -165,12 +165,12 @@
             <value>
                 <![CDATA[
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
-                                                       xmlns:pfam="http://pfam.sanger.ac.uk"
+                                                       xmlns:pfam="http://pfam.xfam.org"
                                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
                                                                            http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.2.xsd
-                                                                           http://pfam.sanger.ac.uk
-                                                                           http://pfam.sanger.ac.uk/static/documents/schemas/results.xsd">
+                                                                           http://pfam.xfam.org
+                                                                           http://pfam.xfam.org/static/documents/schemas/results.xsd">
                         <protein>
                             <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
                             <xref db="UniProt" id="A0A000" name="A0A000_9ACTO"/>
