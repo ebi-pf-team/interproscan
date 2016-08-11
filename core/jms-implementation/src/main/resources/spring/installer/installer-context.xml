@@ -42,14 +42,6 @@
                     <property name="analysisJobId" value="jobPfam"/>
                 </bean>
 
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PFAM"/>
-                    <property name="releaseVersionNumber" value="${pfam-a.signature.library.release.prev}"/>
-                    <property name="modelFiles" value="file:${pfam-a.hmm.path.prev}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPfam"/>
-                </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
                     <property name="releaseVersionNumber" value="42.0"/>
@@ -128,14 +120,6 @@
                     <property name="modelFiles" value="file:${tigrfam.hmm.path.15.0}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobTIGRFAM-15.0"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="SMART"/>
-                    <property name="releaseVersionNumber" value="6.2"/>
-                    <property name="modelFiles" value="file:${smart.hmm.path.6.2}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobSMART-6.2"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
