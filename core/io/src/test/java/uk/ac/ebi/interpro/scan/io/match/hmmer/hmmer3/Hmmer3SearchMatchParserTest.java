@@ -120,6 +120,8 @@ public class Hmmer3SearchMatchParserTest {
         parse(pfamParser, pfamFile.getInputStream());
     }
 
+
+
     private <T extends Hmmer3RawMatch> Set<RawProtein<T>> parse(Hmmer3SearchMatchParser<T> parser,
                                                                 InputStream is)
             throws IOException {
