@@ -21,7 +21,8 @@ import java.util.Set;
  * @version $Id$
  */
 //public class Gene3dHmmer3FilterStep extends FilterStep<Gene3dHmmer3RawMatch, Hmmer3Match> {
-public class Gene3dHmmer3FilterStep extends Step {
+public class
+Gene3dHmmer3FilterStep extends Step {
 
     private static final Logger LOGGER = Logger.getLogger(Gene3dHmmer3FilterStep.class.getName());
 
