@@ -7,7 +7,7 @@
     <bean id="sfldParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParser">
         <property name="parserSupport" >
              <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
-                <property name="signatureLibraryRelease" value="201607_27"/>
+                <property name="signatureLibraryRelease" value="201607.27"/>
                 <property name="hmmKey" value="ACCESSION"/>
              </bean>
         </property>
