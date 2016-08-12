@@ -62,6 +62,8 @@ public class StatsUtil {
 
     private Long progressReportTime = Long.MAX_VALUE;
 
+    private static boolean forceDisplayProgress = false;
+
     static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
 
     private AtomicLong remoteJobsCount = new AtomicLong(0);
@@ -253,6 +255,14 @@ public class StatsUtil {
 
     public void setRequestQueueConsumerCount(int requestQueueConsumerCount) {
         this.requestQueueConsumerCount = requestQueueConsumerCount;
+    }
+
+    public static boolean isForceDisplayProgress() {
+        return forceDisplayProgress;
+    }
+
+    public static void setForceDisplayProgress(boolean forceDisplayProgress) {
+        StatsUtil.forceDisplayProgress = forceDisplayProgress;
     }
 
     public ConcurrentMap getAllStepInstances() {
@@ -606,6 +616,9 @@ public class StatsUtil {
                     previousUnfinishedJobs = unfinishedJobs;
                     progressCounter ++;
                 }
+            }
+            if (forceDisplayProgress){
+                displayProgress = true;
             }
             if(displayProgress){
                 progressReportTime = System.currentTimeMillis();

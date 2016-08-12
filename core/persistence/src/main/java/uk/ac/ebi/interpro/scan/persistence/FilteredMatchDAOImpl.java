@@ -231,4 +231,20 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
     protected int boundedLocationEnd(Protein protein, RawMatch rawMatch) {
         return (rawMatch.getLocationEnd() > protein.getSequenceLength()) ? protein.getSequenceLength() : rawMatch.getLocationEnd();
     }
+
+    /**
+     * Check if the location is withing the sequence length
+     *
+     * @param protein
+     * @param rawMatch
+     * @return
+     */
+    public boolean isLocationWithinRange(Protein protein, RawMatch rawMatch){
+        if (protein.getSequenceLength() < rawMatch.getLocationEnd() || protein.getSequenceLength() < rawMatch.getLocationStart()){
+            return false;
+        }
+        return true;
+    }
+
+
 }
