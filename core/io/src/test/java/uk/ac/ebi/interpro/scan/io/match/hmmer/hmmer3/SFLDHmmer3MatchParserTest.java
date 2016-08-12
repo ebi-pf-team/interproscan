@@ -1,31 +1,31 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawProteinSite;
-import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite;
+import uk.ac.ebi.interpro.scan.model.raw.*;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Tests the match parsing of the SFLDHmmer3MatchParser class.
+ * Tests for {@link SFLDHmmer3MatchParser}
  *
  * @author Gift Nuka
+ *
  * @version $Id$
- * @since 1.0-SNAPSHOT
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -33,34 +33,39 @@ public class SFLDHmmer3MatchParserTest {
 
     private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParserTest.class.getName());
 
-    private static final String TEST_MODEL_FILE = "data/sfld/201607_27/sfld.example.raw.out";
+    // SFLD
+    @Resource
+    private SFLDHmmer3MatchParser<SFLDHmmer3RawMatch> sfldParser;
 
-    @javax.annotation.Resource
-    private SFLDHmmer3MatchParser<SFLDHmmer3RawMatch> instance;
-
+    @Resource
+    private org.springframework.core.io.Resource sfldFile;
 
     @Test
-    public void testParseMatches() throws IOException {
-        Resource modelFileResource = new ClassPathResource(TEST_MODEL_FILE);
-        InputStream is = modelFileResource.getInputStream();
+    public void testSFLDParser() throws IOException {
 
-        MatchSiteData result = instance.parseMatchesAndSites(is);
+        InputStream is = sfldFile.getInputStream();
+
+        MatchSiteData result = sfldParser.parseMatchesAndSites(is);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("result: " + result);
         }
 
-        // Check raw proteins
-        Set<RawProtein> rawProteins = result.getRawProteins();
+        Set<RawProtein<SFLDHmmer3RawMatch>> rawProteins = result.getRawProteins();
+        LOGGER.debug("result: " + proteins.toString());
+        System.out.println("result: " + proteins);
         assertNotNull(rawProteins);
-        assertEquals(2, rawProteins.size());
-
+        assertEquals(5, rawProteins.size());
+        int matchCount = 0;
         for (final RawProtein<SFLDHmmer3RawMatch> rawProtein : rawProteins) {
             final Collection<SFLDHmmer3RawMatch> rawMatches = rawProtein.getMatches();
             assertNotNull(rawMatches);
+            matchCount += rawMatches.size();
             final SFLDHmmer3RawMatch rawMatch = rawMatches.iterator().next();
             final String modelId = rawMatch.getModelId();
-            assertTrue(modelId.equals("SFLDS00014") || modelId.equals("SFLDS00024") || modelId.equals("SFLDS00454"));
+            assertTrue(rawMatches.size() > 0);
+            assertNotNull(modelId);
         }
+        assertEquals(16, matchCount);
 
         // Check sites for raw proteins
         Set<RawProteinSite> rawProteinSites = result.getRawProteinSites();
@@ -71,5 +76,8 @@ public class SFLDHmmer3MatchParserTest {
             assertNotNull(s);
             assertTrue(s.size() > 0);
         }
+
+
     }
+
 }
