@@ -36,7 +36,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
     public BerkeleyMatchDBService(String databasePath, int cacheSizeInMegabytes) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
         this.cacheSizeInBytes = cacheSizeInMegabytes * 1024 * 1024;
-        this.databasePath = setPath(databasePath);
+        this.databasePath = setDeploymentPath(databasePath);
         System.out.println("Initializing BerkeleyDB Match Database (creating indexes): Please wait...");
         initializeMD5Index();
     }

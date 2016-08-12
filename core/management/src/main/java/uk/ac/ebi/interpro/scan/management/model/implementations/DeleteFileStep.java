@@ -45,7 +45,8 @@ public class DeleteFileStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.info("Starting step with Id " + this.getId());
-        if (deleteWorkingDirectoryOnCompletion) {
+        LOGGER.debug("deleteWorkingDirectoryOnCompletion: " + deleteWorkingDirectoryOnCompletion);
+        if(deleteWorkingDirectoryOnCompletion) {
             if (fileNameTemplate != null && fileNameTemplate.length > 0) {
                 for (String fileName : fileNameTemplate) {
                     final String filePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fileName);
@@ -56,17 +57,17 @@ public class DeleteFileStep extends Step {
                             LOGGER.error("Unable to delete the file located at " + filePathName);
                             throw new IllegalStateException("Unable to delete the file located at " + filePathName);
                         }
-                    } else {
+                    }else{
                         LOGGER.info("File not found, file located at " + filePathName);
                     }
                 }
-            } else {
+            }
+            else {
                 throw new IllegalStateException("Delete file step called without specifying any files to delete");
             }
-        } else{
-            LOGGER.info("Delete files property is set to : " + deleteWorkingDirectoryOnCompletion);
+        }else{
+            LOGGER.debug("File delete step skipped -  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);
         }
-
         LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 }

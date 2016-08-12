@@ -6,7 +6,7 @@ Alexandre Gattiker, Elisabeth Gasteiger, Amos Bairoch.
 ScanProsite: a reference implementation of a PROSITE scanning tool.
 Applied Bioinformatics 2002:1(2) 107-108.
 
-Contact: prosite@isb-sib.ch
+Contact: prosite@expasy.org
 
 ps_scan is a perl program used to scan one or several patterns, rules and/or
 profiles from PROSITE against one or several protein sequnces in Swiss-Prot or
@@ -14,7 +14,7 @@ FASTA format. It requires two compiled external programs from the PFTOOLS
 package : "pfscan" used to scan a sequence against a profile library and
 "psa2msa" which is necessary for the "-o msa" output format only.
 
-Authors: 
+Authors:
  Alexandre Gattiker
  Edouard de Castro; E-mail: ecastro@isb-sib.ch
  Elisabeth Gasteiger
@@ -22,13 +22,13 @@ Authors:
 Installation
 ------------
 
-Download a binary package for your platform from 
+Download a binary package for your platform from
 
-ftp://ftp.expasy.org/databases/prosite/tools/ps_scan/ps_scan_<platform>.tar.gz
+ftp://ftp.expasy.org/databases/prosite/ps_scan/ps_scan_<platform>.tar.gz
 
 or the source packages from
 
-ftp://ftp.expasy.org/databases/prosite/tools/ps_scan/sources/
+ftp://ftp.lausanne.isb-sib.ch/pub/software/unix/pftools/
 
 in which case you will need gcc or a compatible fortran compiler to compile the
 pftools sources.
@@ -40,7 +40,7 @@ stored them in a directory in your PATH.
 A local copy of the PROSITE database is also needed. You may download it
 in a single file from
 
-ftp://ftp.expasy.org/databases/prosite/release_with_updates/prosite.dat
+ftp://ftp.expasy.org/databases/prosite/prosite.dat
 
 Usage
 -----
@@ -53,8 +53,8 @@ Input/Output:
   -o : specify an output format : $formats_string
   -d : specify a prosite.dat file
   -p : specify a pattern or the AC of a prosite motif
-  -f : specify a motif AC to scan against together with all its 
-       releated post-processing motifs (but show only specified 
+  -f : specify a motif AC to scan against together with all its
+       releated post-processing motifs (but show only specified
        motif hits)
 Selection:
   -r : do not scan profiles
@@ -63,7 +63,7 @@ Selection:
   -l : cut-off level for profiles (default : 0)
 Pattern match mode:
   -x : specify maximum number of accepted matches of X's in sequence
-       (default=1)
+       (default=0)
   -g : Turn greediness off
   -v : Turn overlaps off
   -i : Allow included matches
