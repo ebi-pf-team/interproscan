@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -89,8 +90,9 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                             }
                             currentSequence.delete(0, currentSequence.length());
                             if (sequencesParsed % 5000 == 0) {
-                                if (sequencesParsed % 10000 == 0) {
+                                if (sequencesParsed % 20000 == 0) {
                                     //TODO use utilities.verboselog
+                                    Utilities.verboseLog("Parsed " + sequencesParsed + " sequences");
                                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
                                 }else{
                                     if(LOGGER.isInfoEnabled()){
@@ -127,9 +129,12 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 addToMoleculeCollection(currentSequence.toString(), currentId, parsedMolecules);
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
+            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
+
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
             sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
+            Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
             sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
         } catch (IOException e) {

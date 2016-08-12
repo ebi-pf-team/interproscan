@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
  *
  * @author Gift Nuka
  * @version $Id$
- * @since 1.0-SNAPSHOT
+ * @since 5.20-SNAPSHOT
  * <p>
  * #Sequence:  e-value:  score:  bias:
  * #Domains:
@@ -48,6 +49,8 @@ import java.util.regex.Pattern;
  */
 public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteParser {
 
+    private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParser.class.getName());
+
     private static final String END_OF_RECORD = "//";
 
     /**
@@ -64,13 +67,14 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
     private static final String SITE_SECTION_START = "Sites";
 
-    // Group 1: Uniparc protein accession
+    //     Group 1: Uniparc protein accession
 //    private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+)\\s+e-value:\\s+(\\S+)\\s+score:\\s+(\\S+)\\s+bias:\\s+(\\S+).*$");
     private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+).*$");
 
     private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
     private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
+    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)(\\s*,\\s*\\S+)*\\s(\\S).*$");
     /**
      * This interface has a single method that
      * takes the HmmsearchOutputMethod object, containing sequence
@@ -171,30 +175,30 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             StringBuilder alignSeq = new StringBuilder();
             DomainMatch currentDomain = null;
             SequenceMatch sequenceMatch = null;
-            //generate ssf file for Domain Finder
-            //DomainFinderInputWriter dfiw = new DomainFinderInputWriter();
+
             ParsingStage stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-            //Matcher domainAlignSequenceMatcher = null;
             int lineNumber = 0;
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                // Example: Sequence: UPI0000054B90 e-value: 2.1E-56 score: 189.1 bias: 5.2
-                Utilities.verboseLog("line: "+ line);
+                // Example: Sequence: UPI0000054B90
+                LOGGER.debug("line: " + line + "  stage: " + stage.toString());
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
-                            //clear the
-                            // Find out which model the domain matches are for and then parse them.
                             Matcher sequenceSectionHeaderMatcher = SEQUENCE_SECTION_START_PATTERN.matcher(line);
                             if (sequenceSectionHeaderMatcher.matches()) {
                                 domains.clear();
                                 currentSequenceIdentifier = sequenceSectionHeaderMatcher.group(1);
-                                Utilities.verboseLog("currentSequenceIdentifier = " + currentSequenceIdentifier);
+                                LOGGER.debug("currentSequenceIdentifier = " + currentSequenceIdentifier);
                             } else {
                                 throw new ParseException("This line looks like a domain section header line, but it is not possible to parse out the sequence id.", null, line, lineNumber);
                             }
                             stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
+                        }
+                        if (line.startsWith(END_OF_RECORD)) {
+                            //the end of the record might be at the start of the output
+                            continue;
                         }
                         break;
                     case LOOKING_FOR_DOMAIN_SECTION:
@@ -202,7 +206,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                         if (line.startsWith(DOMAIN_SECTION_START)) {
                             domains.clear();
                             stage = ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE;
-                        }else {
+                        } else {
                             throw new ParseException("This line looks like a domain header line, but it is not possible to parse the header.", null, line, lineNumber);
                         }
                         break;
@@ -210,47 +214,58 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                         Matcher domainDataLineMatcher = SequenceDomainMatch.DOMAIN_LINE_PATTERN.matcher(line);
                         if (line.startsWith(SITE_SECTION_START)) {
                             stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
-                        }else if (domainDataLineMatcher.matches()) {
-                            SequenceDomainMatch  sequenceDomainMatch = new SequenceDomainMatch(domainDataLineMatcher);
-                            //we now have a match and can create a raw match
-                            DomainMatch domainMatch = new DomainMatch(sequenceDomainMatch);
+                        } else if (domainDataLineMatcher.matches()) {
+                            SequenceDomainMatch sequenceDomainMatch = new SequenceDomainMatch(domainDataLineMatcher);
+                            if (checkDomainCoordinates(sequenceDomainMatch)){
+                                //we now have a match and can create a raw match
+                                DomainMatch domainMatch = new DomainMatch(sequenceDomainMatch);
                                 //add the domain match to the search record
-                            searchRecord = new HmmSearchRecord(sequenceDomainMatch.getModelAccession());
-                            sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceDomainMatch.getSequenceEvalue(), sequenceDomainMatch.getSequenceScore(), sequenceDomainMatch.getSequenceBias());
-                            searchRecord.addSequenceMatch(sequenceMatch);
-                            searchRecord.addDomainMatch(currentSequenceIdentifier, new DomainMatch(sequenceDomainMatch));
-                            domains.put(sequenceDomainMatch.getModelAccession(), domainMatch);
-                            hmmer3ParserSupport.addMatch(searchRecord, rawResults);
-                            rawDomainCount += getSequenceMatchCount(searchRecord);
-                            Utilities.verboseLog(sequenceDomainMatch.toString());
+                                searchRecord = new HmmSearchRecord(sequenceDomainMatch.getModelAccession());
+                                sequenceMatch = new SequenceMatch(currentSequenceIdentifier, sequenceDomainMatch.getSequenceEvalue(), sequenceDomainMatch.getSequenceScore(), sequenceDomainMatch.getSequenceBias());
+                                searchRecord.addSequenceMatch(sequenceMatch);
+                                searchRecord.addDomainMatch(currentSequenceIdentifier, new DomainMatch(sequenceDomainMatch));
+                                domains.put(sequenceDomainMatch.getModelAccession(), domainMatch);
+                                hmmer3ParserSupport.addMatch(searchRecord, rawResults);
+                                rawDomainCount += getSequenceMatchCount(searchRecord);
+                                LOGGER.debug(sequenceDomainMatch.toString());
+                            }else{
+                                throw new ParseException("Domain coordinates error - sequenceId: " + currentSequenceIdentifier + sequenceDomainMatch.toString());
+                            }
                         }
-                        break;
-//                    case LOOKING_FOR_SITE_SECTION:
-//                        // Example: Sites:
-//                        if (line.startsWith(SEQUENCE_SECTION_START)) {
-////                            sites.clear();
-//                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-//                        } else if (line.startsWith(SITE_SECTION_START)) {
-//                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
-//                            Utilities.verboseLog("Site Section ");
-//                        } else {
-//                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
-//                        }
-//                        break;
-                    case LOOKING_FOR_SITE_DATA_LINE:
                         if (line.startsWith(END_OF_RECORD)) {
                             stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-
+                            LOGGER.debug("there are no sites for seq id: " + currentSequenceIdentifier);
+                            currentSequenceIdentifier = null;
+                        }
+                        break;
+                    case LOOKING_FOR_SITE_SECTION:
+                        // Example: Sites:
+                        if (line.startsWith(SEQUENCE_SECTION_START)) {
+//                            sites.clear();
+                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
+                        } else if (line.startsWith(SITE_SECTION_START)) {
+                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
+                            LOGGER.debug("Site Section ");
                         } else {
-                            // E.g. line = "SFLDS00014 C38, C63"
-                            String[] tokens = line.split("\\s+", 2);
-                            if (tokens.length != 2) {
-                                throw new IllegalStateException("Could not parse site from line: " + line);
-                            }
-                            String ac = tokens[0];
-                            String residues = tokens[1];
-                            SFLDHmmer3RawSite rawSite = new SFLDHmmer3RawSite(currentSequenceIdentifier, ac, residues, ac, signatureLibraryRelease);
+                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
+                        }
+                        break;
+                    case LOOKING_FOR_SITE_DATA_LINE:
+                        Matcher sitesDataLineMatcher = SITES_LINE_PATTERN.matcher(line);
+                        if (line.startsWith(END_OF_RECORD)) {
+                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
+                            currentSequenceIdentifier = null;
+                        } else if (sitesDataLineMatcher.matches()) {
+                            LOGGER.debug("Site line parse");
 
+                            String model = sitesDataLineMatcher.group(1);
+                            String firstSite= sitesDataLineMatcher.group(2);
+                            String otherSites = sitesDataLineMatcher.group(3);
+                            String allSites = firstSite + otherSites;
+
+                            String description= sitesDataLineMatcher.group(4);
+
+                            SFLDHmmer3RawSite rawSite = new SFLDHmmer3RawSite(currentSequenceIdentifier, model, allSites, description, signatureLibraryRelease);
                             rawSites.add(rawSite);
                         }
                         break;
@@ -260,6 +275,15 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
         //TODO consider using the utilities methods
         Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
+        //Utilities.verboseLog(rawResults.values().toString());
+        /*
+        //can be used to check if we have the correct mtahces
+        for (RawProtein<T> rawProtein : rawResults.values()) {
+            for (T rawMatch : rawProtein.getMatches()) {
+                Utilities.verboseLog(rawMatch.toString());
+            }
+        }
+        */
 //       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
 
         for (RawProtein<T> rawProtein : rawResults.values()) {
@@ -295,4 +319,24 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
     }
 
+    public boolean checkDomainCoordinates(SequenceDomainMatch sequenceDomainMatch){
+        boolean domainCoordinatesCorrect = true;
+        if (sequenceDomainMatch.getAliFrom() > sequenceDomainMatch.getAliTo()){
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo() );
+        }
+        if (sequenceDomainMatch.getHmmfrom() > sequenceDomainMatch.getHmmto()){
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo());
+        }
+        if (sequenceDomainMatch.getEnvFrom() > sequenceDomainMatch.getEnvTo()){
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo());
+        }
+
+        return  domainCoordinatesCorrect;
+    }
 }

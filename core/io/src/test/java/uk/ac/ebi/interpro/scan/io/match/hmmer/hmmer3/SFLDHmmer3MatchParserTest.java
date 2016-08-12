@@ -33,7 +33,7 @@ public class SFLDHmmer3MatchParserTest {
 
     private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParserTest.class.getName());
 
-    private static final String TEST_MODEL_FILE = "data/sfld/201606_27/sfld.example.raw.out";
+    private static final String TEST_MODEL_FILE = "data/sfld/201607_27/sfld.example.raw.out";
 
     @javax.annotation.Resource
     private SFLDHmmer3MatchParser<SFLDHmmer3RawMatch> instance;

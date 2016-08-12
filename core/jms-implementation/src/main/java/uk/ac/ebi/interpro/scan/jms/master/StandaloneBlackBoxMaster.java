@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -94,6 +95,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             priority = LOW_PRIORITY;
                         }else {
                             priority = HIGH_PRIORITY;
+                        }
+
+                        //if inteproscan is onthe last step, watermark this point
+                        if (step instanceof WriteOutputStep) {
+                            Utilities.verboseLog("Processing WriteOutputStep ..." );
+                            StatsUtil.setForceDisplayProgress(true);
+                            statsUtil.displayMasterProgress();
+                            StatsUtil.setForceDisplayProgress(false);
                         }
 
                         // Performed in a transaction.

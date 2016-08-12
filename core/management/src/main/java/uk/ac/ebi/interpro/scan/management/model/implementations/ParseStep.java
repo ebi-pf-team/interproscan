@@ -120,8 +120,8 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                             break;
                         }
                         //TODO remove this break statement after SFLD is completed implemented
-                        LOGGER.warn("For test purposes: rememeber to remove the break statement ");
-                        break;
+//                        LOGGER.warn("For test purposes: rememeber to remove the break statement ");
+//                        break;
 
                     }
                 }else{
