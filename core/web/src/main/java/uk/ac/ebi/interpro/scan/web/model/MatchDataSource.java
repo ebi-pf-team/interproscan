@@ -82,6 +82,11 @@ public enum MatchDataSource {
 
     PROSITE_PROFILES("PROSITE profiles", PROSITE.description, PROSITE.homeUrl, PROSITE.linkUrl),
 
+    SFLD(0,
+            "The Structure-Function Linkage Database (SFLD) is a hierarchical classification of enzymes that relates specific sequence-structure features to specific chemical capabilities.",
+            "http://sfld.rbvi.ucsf.edu/django/",
+            "http://sfld.rbvi.ucsf.edu/django/$1/$0"),
+
     SMART(0,
             "SMART (a Simple Modular Architecture Research Tool) uses hidden Markov models (HMMs) and allows the " +
                     "identification of genetically mobile domains and the analysis of domain architectures. These domains are " +
@@ -190,7 +195,7 @@ public enum MatchDataSource {
     }
 
     // Dummy int just allows us to specify description without having to give name
-    private MatchDataSource(int dummy, String description, String homeUrl, String linkUrl) {
+    MatchDataSource(int dummy, String description, String homeUrl, String linkUrl) {
         this.name = name(); // Default name (see java.lang.Enum)
         this.description = description;
         this.homeUrl = homeUrl;
@@ -224,6 +229,22 @@ public enum MatchDataSource {
             accession = accession.substring(3);
         } else if (this == SWISSMODEL && longerThanThree && accession.startsWith("SW_")) {
             accession = accession.substring(3);
+        }
+        if (this == SFLD && accession.length() > 5) {
+            // E.g. For "SFLDG01135" use URL "http://sfld.rbvi.ucsf.edu/django/subgroup/01135/"
+            String sfldUrl = linkUrl;
+            switch (accession.charAt(4)) {
+                case 'F':
+                    sfldUrl = linkUrl.replaceAll("\\$1", "family");
+                    break;
+                case 'G':
+                    sfldUrl = linkUrl.replaceAll("\\$1", "subgroup");
+                    break;
+                case 'S':
+                    sfldUrl = linkUrl.replaceAll("\\$1", "superfamily");
+                    break;
+            }
+            return ACCESSION_PATTERN.matcher(sfldUrl).replaceAll(accession.substring(5));
         }
         return ACCESSION_PATTERN.matcher(linkUrl).replaceAll(accession);
     }

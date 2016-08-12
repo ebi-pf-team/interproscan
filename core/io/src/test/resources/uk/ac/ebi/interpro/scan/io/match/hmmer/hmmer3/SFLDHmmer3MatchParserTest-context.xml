@@ -11,27 +11,10 @@
                 <property name="hmmKey" value="ACCESSION"/>
              </bean>
         </property>
-        <property name="signatureLibrary" value="SFLD"/>
     </bean>
-
 
     <bean id="sfldFile" class="org.springframework.core.io.ClassPathResource">
              <constructor-arg value="data/sfld/sfld_match_site_output.txt"/>
-    </bean>
-
-
-    <!--Email from Sead Eddy: "HMMER3 should only keep highest scoring domain"-->
-    <bean id="highestScoringDomainFile" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/hmmer3/hmmsearch/Q5HDF6-1aopA02.txt"/>
-    </bean>
-
-    <bean id="sfldFile2" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/sfld/sfld_match_site_output.txt"/>
-    </bean>
-
-    <bean id="signatureLibraryReleaseSFLD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
-        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SFLD"/>
-        <constructor-arg type="java.lang.String" value="${sfld.signature.library.release}"/>
     </bean>
 
 </beans>
