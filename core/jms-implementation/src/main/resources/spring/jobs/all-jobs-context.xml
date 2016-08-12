@@ -311,6 +311,7 @@
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
         <property name="proteinPrecalcLookupBatchSize" value="${precalculated.match.protein.lookup.batch.size}"/>
         <!-- MUST NOT EXCEED 1000 -->
+        <!-- maybe the comment above only applies to when using the lookup match service -gn-->
         <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
         <property name="proteinInsertBatchSizeNoLookup" value="${precalculated.match.protein.insert.batch.size.nolookup}"/>
         <property name="proteinDAO" ref="proteinDAO"/>
