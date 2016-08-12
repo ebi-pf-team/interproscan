@@ -188,8 +188,6 @@ public class LocalJobQueueListener implements MessageListener {
 //                }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
-                timeNow = Utilities.getTimeNow();
-//                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
                 if(Utilities.verboseLogLevel > 2){
                     Utilities.verboseLog("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
                     Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);

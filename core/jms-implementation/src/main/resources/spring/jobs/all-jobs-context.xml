@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
@@ -9,6 +8,7 @@
     <!--Old versions are switched off because they aren't in the database anymore-->
 
 
+    <import resource="jobCDD-context.xml"/>
     <import resource="jobCoils-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
@@ -49,6 +49,7 @@
 
                 <!-- Analyses -->
                 <!--Old versions are not present because they aren't in the H2 database anymore-->
+                <ref bean="jobCDD"/>
                 <ref bean="jobCoils"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobHAMAP"/>
