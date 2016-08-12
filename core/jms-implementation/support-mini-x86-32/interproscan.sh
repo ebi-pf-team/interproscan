@@ -61,7 +61,7 @@ fi
 
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts \
--XX:+UseFastAccessorMethods -Xms128M -Xmx2048M \
+-XX:+UseFastAccessorMethods -Xms1028M -Xmx2048M \
 -jar  interproscan-5.jar $@ -u $USER_DIR
 
 #end 

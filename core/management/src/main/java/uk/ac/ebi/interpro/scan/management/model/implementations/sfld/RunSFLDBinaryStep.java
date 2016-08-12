@@ -25,60 +25,89 @@ public class RunSFLDBinaryStep extends RunBinaryStep {
 
     private String fullPathToBinary;
 
-    private String fastaFileNameTemplate;
 
-    private String outputFileNameTbloutTemplate;
+    private String inputFileNameRawOutTemplate;
 
+    private String inputFileNameDomTbloutTemplate;
+
+    private String inputFileNameAlignmentsTemplate;
+
+    private String sitesAnnotationFileName;
 
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
     }
 
-    @Required
-    public void setFastaFileNameTemplate(String fastaFileNameTemplate) {
-        this.fastaFileNameTemplate = fastaFileNameTemplate;
+    public String getInputFileNameRawOutTemplate() {
+        return inputFileNameRawOutTemplate;
     }
+
+    @Required
+    public void setInputFileNameRawOutTemplate(String inputFileNameRawOutTemplate) {
+        this.inputFileNameRawOutTemplate = inputFileNameRawOutTemplate;
+    }
+
+    public String getInputFileNameDomTbloutTemplate() {
+        return inputFileNameDomTbloutTemplate;
+    }
+
+    @Required
+    public void setInputFileNameDomTbloutTemplate(String inputFileNameDomTbloutTemplate) {
+        this.inputFileNameDomTbloutTemplate = inputFileNameDomTbloutTemplate;
+    }
+
+    public String getInputFileNameAlignmentsTemplate() {
+        return inputFileNameAlignmentsTemplate;
+    }
+
+    @Required
+    public void setInputFileNameAlignmentsTemplate(String inputFileNameAlignmentsTemplate) {
+        this.inputFileNameAlignmentsTemplate = inputFileNameAlignmentsTemplate;
+    }
+
+    public String getSitesAnnotationFileName() {
+        return sitesAnnotationFileName;
+    }
+
+    @Required
+    public void setSitesAnnotationFileName(String sitesAnnotationFileName) {
+        this.sitesAnnotationFileName = sitesAnnotationFileName;
+    }
+
 
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
-        final String exampleFile =  "data/sfld/201606_27/sfld.example.raw.out";
 
-        //simulate the sfld post processing binary run
-        try {
-            BufferedReader inputStream = new BufferedReader(new FileReader(exampleFile));
-            File outputFile = new File(outputFilePathName);
-            // if File doesnt exists, then create it
-            if (!outputFile.exists()) {
-                outputFile.createNewFile();
-            }
-            FileWriter filewriter = new FileWriter(outputFile.getAbsoluteFile());
-            BufferedWriter outputStream = new BufferedWriter(filewriter);
-            String count;
-            while ((count = inputStream.readLine()) != null) {
-                outputStream.write(count);
-                outputStream.newLine();
-            }
-            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
-        }catch (Exception e){
+        final String inputFileNameRawOut = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameRawOutTemplate());
+        final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
 
-        }
+        final String inputFileNameAlignments = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameAlignmentsTemplate());
 
-        command.add("ls");
-//        command.add(outputFilePathName);
-        Utilities.verboseLog("binary cmd to run: " + command.toString());
-        return command;
+        command.add(fullPathToBinary);
+
+        command.add("-s");
+        command.add(sitesAnnotationFileName);
+
+        command.add("-a");
+        command.add(inputFileNameAlignments);
+
+        command.add("-O");
+        command.add(inputFileNameRawOut);
+
+        command.add("-d");
+        command.add(inputFileNameDomTblout);
 
         // output file option
-//        if(this.isUsesFileOutputSwitch()){
-//            command.add("-o");
-//            command.add(outputFilePathName);
-//        }
-//        command.addAll(getBinarySwitchesAsList());
+        if(this.isUsesFileOutputSwitch()){
+            command.add("-o");
+            command.add(outputFilePathName);
+        }
+
+        Utilities.verboseLog("binary cmd to run: " + command.toString());
+        return command;
 
     }
 
