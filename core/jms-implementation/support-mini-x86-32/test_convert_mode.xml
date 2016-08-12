@@ -1871,6 +1871,17 @@
                     <tmhmm-location start="171" end="193"/>
                 </locations>
             </tmhmm-match>
+            <hmmer3-match evalue="0.0" score="160.6">
+                <signature ac="SFLDG01135" desc="C1.5.6: HAD, Beta-PGM, Phosphatase Like" name="C1.5.6:_HAD,_Beta-PGM,_Phosph">
+                    <models>
+                        <model ac="SFLDG01135" desc="C1.5.6: HAD, Beta-PGM, Phosphatase Like" name="C1.5.6:_HAD,_Beta-PGM,_Phosph"/>
+                    </models>
+                    <signature-library-release library="SFLD" version="201607.27"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-end="220" env-start="5" score="160.4" evalue="0.0" hmm-start="2" hmm-end="217" hmm-length="0" start="6" end="216"/>
+                </locations>
+            </hmmer3-match>
         </matches>
     </protein>
 </protein-matches>
