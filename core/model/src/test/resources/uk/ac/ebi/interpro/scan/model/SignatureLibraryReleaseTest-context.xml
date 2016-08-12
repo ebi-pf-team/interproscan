@@ -32,6 +32,12 @@
                 <constructor-arg ref="pfamXml"/>
             </bean>
         </entry>
+        <entry key="SFLD">
+            <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
+                <constructor-arg ref="sfldObject"/>
+                <constructor-arg ref="sfldXml"/>
+            </bean>
+        </entry>
         <entry key="SMART">
             <bean class="uk.ac.ebi.interpro.scan.model.ObjectXmlPair">
                 <constructor-arg ref="smartObject"/>
@@ -205,6 +211,44 @@
                     <signature ac="PIRSF000743" name="RPO19" type="family" desc="DNA-directed RNA polymerase, RPO19 subunit">
                         <models>
                             <model ac="PIRSF000743" name="RPO19"/>
+                        </models>
+                    </signature>
+                </signature-library-release>
+                ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+
+    <lang:groovy id="sfldObject">
+        <lang:inline-script>
+            <![CDATA[
+                import uk.ac.ebi.interpro.scan.model.*
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SFLD, "201607.27")
+                Signature signature = release.addSignature(
+                        new Signature.Builder("SFLDG01017")
+                                .name("Polyprenyl_Transferase_Like")
+                                .type("family")
+                                .description("Polyprenyl Transferase Like")
+                                .abstractText("Members of this subgroup represent the chain elongation proteins. [PMID:23493556,PMID:21562622].")
+                                .build())
+                signature.addModel(new Model("SFLDG01017", "Polyprenyl_Transferase_Like", "Polyprenyl Transferase Like"))
+                return release
+            ]]>
+        </lang:inline-script>
+    </lang:groovy>
+    <bean id="sfldXml" class="java.lang.String">
+        <constructor-arg>
+            <value>
+                <![CDATA[
+                <signature-library-release library="SFLD" version="201607.27"
+                                           xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
+                                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                           xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
+                    <signature ac="SFLDG01017" name="Polyprenyl_Transferase_Like" type="family" desc="7 transmembrane receptor (rhodopsin family)">
+                        <abstract>Members of this subgroup represent the chain elongation proteins. [PMID:23493556,PMID:21562622].</abstract>
+                        <models>
+                            <model ac="SFLDG01017" name="Polyprenyl_Transferase_Like" desc="Polyprenyl Transferase Like"/>
                         </models>
                     </signature>
                 </signature-library-release>

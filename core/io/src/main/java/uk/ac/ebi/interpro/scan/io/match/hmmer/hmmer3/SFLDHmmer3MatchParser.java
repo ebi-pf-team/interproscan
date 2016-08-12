@@ -182,7 +182,9 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 // Example: Sequence: UPI0000054B90
-                LOGGER.debug("line: " + line + "  stage: " + stage.toString());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("line: " + line + "  stage: " + stage.toString());
+                }
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
