@@ -38,6 +38,8 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
     private int proteinInsertBatchSize;
 
+    private int proteinInsertBatchSizeNoLookup;
+
     private int proteinPrecalcLookupBatchSize;
 
     private Set<Protein> proteinsAwaitingPrecalcLookup;
@@ -62,6 +64,11 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     public void setProteinInsertBatchSize(int proteinInsertBatchSize) {
         this.proteinInsertBatchSize = proteinInsertBatchSize;
         proteinsAwaitingPersistence = new HashSet<>(proteinInsertBatchSize);
+    }
+
+    @Required
+    public void setProteinInsertBatchSizeNoLookup(int proteinInsertBatchSizeNoLookup) {
+        this.proteinInsertBatchSizeNoLookup = proteinInsertBatchSizeNoLookup;
     }
 
     @Required
@@ -124,6 +131,16 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     private void lookupProteins(Map<String, SignatureLibraryRelease> analysisJobMap) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             final boolean usingLookupService = proteinLookup != null;
+            if (! usingLookupService){
+//                Utilities.verboseLog("proteinsAwaitingPrecalcLookup.size() " + proteinsAwaitingPersistence.size()
+//                        + " proteinInsertBatchSize: " + proteinInsertBatchSize
+//                        + " proteinInsertBatchSizeNoLookup: " + proteinInsertBatchSizeNoLookup);
+                //update the insertbatch size
+                proteinInsertBatchSize = proteinInsertBatchSizeNoLookup;
+//                Utilities.verboseLog("After update - proteinsAwaitingPrecalcLookup.size() " + proteinsAwaitingPersistence.size()
+//                        + " proteinInsertBatchSize: " + proteinInsertBatchSize
+//                        + " proteinInsertBatchSizeNoLookup: " + proteinInsertBatchSizeNoLookup);
+            }
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
                     : null;
@@ -147,6 +164,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                     }
                 }
             } else {
+                //there are no matches or we are not using the lookup match service
+                //
+
                 for (Protein protein : proteinsAwaitingPrecalcLookup) {
                     addProteinToBatch(protein);
                 }
@@ -164,7 +184,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      */
     private void addProteinToBatch(Protein protein) {
         proteinsAwaitingPersistence.add(protein);
+
         if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) {
+            Utilities.verboseLog("proteinInsertBatchSize " + proteinInsertBatchSize);
             persistBatch();
         }
     }
@@ -179,6 +201,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             }
+            Utilities.verboseLog("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
@@ -265,9 +288,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
                 lookupProteins(analysisJobMap);
             }
-            if(count % 5000 == 0){
-                if (count % 10000 == 0) {
+            if(count % 4000 == 0){
+                if (count % 16000 == 0) {
                     //TODO use utilities.verboselog to log this
+                    Utilities.verboseLog("Stored " + count + " sequences");
                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Stored " + count + " sequences");
 
                 }else{
