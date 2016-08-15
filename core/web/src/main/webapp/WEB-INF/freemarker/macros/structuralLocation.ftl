@@ -32,8 +32,8 @@
    href="/interpro/popup/struct-match?id=match-popup-${structMatchId}&proteinAc=${proteinAc}&db=${databaseName}&start=${location.start?c}&end=${location.end?c}"
    title="${title} ${location.start} - ${location.end}"
    class="match ${databaseName}"
-   style="left:  ${((location.start - 1) / proteinLength) * 100}%;
-           width: ${((location.end - location.start + 1) / proteinLength) * 100}%;">
+   style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
+           width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;">
     <@locationMacro.location locationSpanId="match-span-"+structMatchId proteinLength=proteinLength titlePrefix=title location=location colourClass=databaseName/>
 </a>
 </#if>
