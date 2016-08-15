@@ -40,7 +40,7 @@
 
                 <#--Draw in scale markers for this line-->
                 <#list scale?split(",") as scaleMarker>
-                    <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+                    <span class="grade" style="left:${((scaleMarker?number?int / proteinLength) * 100)?c}%;" title="${scaleMarker}"></span>
                 </#list>
 
             </div>
@@ -62,15 +62,15 @@
                     <#list scale?split(",") as scaleMarker>
                         <#-- to build an exception for 0 -->
                         <#if scaleMarker?number == 0>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
+                            <span class="scale_bar" style="left:${((scaleMarker?number / proteinLength) * 100)?c}%;"
                                   title="1"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / proteinLength) * 100+1}%;">1</span>
+                                      style="left:${((scaleMarker?number / proteinLength) * 100+1)?c}%;">1</span>
                         <#else>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
+                            <span class="scale_bar" style="left:${((scaleMarker?number / proteinLength) * 100)?c}%;"
                                   title="${scaleMarker}"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / proteinLength) * 100}%;">${scaleMarker}</span>
+                                      style="left:${((scaleMarker?number / proteinLength) * 100)?c}%;">${scaleMarker}</span>
                         </#if>
                     </#list>
                 </div>
