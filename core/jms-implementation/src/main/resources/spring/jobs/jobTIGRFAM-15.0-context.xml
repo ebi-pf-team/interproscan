@@ -45,6 +45,7 @@
         /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/tigrfam/15.0/TIGRFAMs_15.0_HMM.LIB  -->
         <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile-15.0"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.tigrfam.15.0} ${hmmer3.hmmsearch.cpu.switch.tigrfam}"/>
         <property name="usesFileOutputSwitch" value="true"/>
