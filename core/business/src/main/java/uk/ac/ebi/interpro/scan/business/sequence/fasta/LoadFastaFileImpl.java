@@ -130,11 +130,13 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 addToMoleculeCollection(currentSequence.toString(), currentId, parsedMolecules);
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
-            Utilities.verboseLog("Completed Parsing " + sequencesParsed + " sequences");
+
+            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
 
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
             sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
+            Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
             sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
             Utilities.verboseLog("Store and persist the sequences ...  completed");

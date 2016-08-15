@@ -22,6 +22,7 @@
                 <entry key="SUPERFAMILY" value-ref="superfamilyMatchConverter"/>
                 <entry key="PRODOM" value-ref="prodomMatchConverter"/>
                 <entry key="HAMAP" value-ref="prositeProfilesMatchConverter"/>
+                <entry key="SFLD" value-ref="hmmer3BerkeleyMatchConverter"/>
                 <entry key="SMART" value-ref="hmmer2BerkeleyMatchConverter"/>
                 <entry key="SIGNALP_EUK" value-ref="signalpMatchConverter"/>
                 <entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpMatchConverter"/>

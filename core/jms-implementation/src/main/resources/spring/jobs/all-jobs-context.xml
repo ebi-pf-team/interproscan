@@ -21,12 +21,13 @@
     <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
+    <import resource="jobSFLD-context.xml"/>
     <import resource="jobSignalP_EUK-context.xml"/>
     <import resource="jobSignalP_GRAM_POSITIVE-context.xml"/>
     <import resource="jobSignalP_GRAM_NEGATIVE-context.xml"/>
     <import resource="jobSMART-context.xml"/>
     <import resource="jobSMART-6.2-context.xml"/>
-    <import resource="jobTIGRFAM-15.0-context.xml"/>
+    <import resource="jobTIGRFAM-context.xml"/>
 
     <import resource="jobSuperFamily-1.75-context.xml"/>
     <import resource="jobTMHMM-context.xml"/>
@@ -60,12 +61,13 @@
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
+                <ref bean="jobSFLD"/>
                 <ref bean="jobSignalP_EUK"/>
                 <ref bean="jobSignalP_GRAM_POSITIVE"/>
                 <ref bean="jobSignalP_GRAM_NEGATIVE"/>
                 <ref bean="jobSMART"/>
                 <ref bean="jobSMART-6.2"/>
-                <ref bean="jobTIGRFAM-15.0"/>
+                <ref bean="jobTIGRFAM"/>
                 <ref bean="jobPIRSF-3.01" />
                 <ref bean="jobSuperFamily-1.75"/>
                 <ref bean="jobTMHMM"/>
@@ -94,6 +96,14 @@
 
     <bean id="rawAnalaysisOutputTbloutFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.tblout.out"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputDomTbloutFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.domtblout.out"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputAlignmentsFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.align.out"/>
     </bean>
 
     <bean id="clcMonitor" class="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationMonitor">
@@ -310,6 +320,7 @@
 
     <bean id="proteinLoader" class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
         <property name="proteinPrecalcLookupBatchSize" value="${precalculated.match.protein.lookup.batch.size}"/>
+
         <!-- MUST NOT EXCEED 1000 -->
         <!-- maybe the comment above only applies to when using the lookup match service -gn-->
         <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>

@@ -86,6 +86,10 @@ public class Utilities {
         return currentDate;
     }
 
+    public static void setMode(String mode) {
+        Utilities.mode = mode;
+    }
+
     public static String getMode(){
         return mode;
     }

@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.4" targetNamespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" xmlns:tns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="entry" type="tns:EntryType"/>
+
+    <xs:element name="interpro-release" type="tns:ReleaseType"/>
+
+    <xs:element name="nucleotide-sequence" type="tns:NucleotideType"/>
+
+    <xs:element name="nucleotide-sequence-matches" type="tns:nucleicAcidMatchesType"/>
+
+    <xs:element name="orf" type="tns:OrfType"/>
+
+    <xs:element name="protein" type="tns:ProteinType"/>
+
+    <xs:element name="protein-matches" type="tns:proteinMatchesType"/>
+
+    <xs:element name="signature" type="tns:SignatureType"/>
+
+    <xs:element name="signature-library-release" type="tns:SignatureLibraryReleaseType"/>
+
+    <xs:complexType name="BlastProDomMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="MatchType" abstract="true">
+        <xs:sequence>
+            <xs:element ref="tns:signature"/>
+            <xs:element name="locations" type="tns:locationsType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SignatureType">
+        <xs:sequence>
+            <xs:element name="abstract" type="xs:string" minOccurs="0"/>
+            <xs:element name="comment" type="xs:string" minOccurs="0"/>
+            <xs:element name="xref" type="tns:SignatureXrefType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="deprecated-ac" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="tns:entry" minOccurs="0"/>
+            <xs:element name="models" type="tns:modelsType" minOccurs="0"/>
+            <xs:element ref="tns:signature-library-release" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="ac" type="xs:string" use="required"/>
+        <xs:attribute name="created" type="xs:string"/>
+        <xs:attribute name="desc" type="xs:string"/>
+        <xs:attribute name="md5" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="updated" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="SignatureXrefType">
+        <xs:complexContent>
+            <xs:extension base="tns:XrefType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="XrefType" abstract="true">
+        <xs:sequence/>
+        <xs:attribute name="db" type="xs:string"/>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="EntryType">
+        <xs:sequence>
+            <xs:element name="go-xref" type="tns:GoXrefType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="pathway-xref" type="tns:PathwayXrefType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="abstract" type="xs:string"/>
+        <xs:attribute name="ac" type="xs:string" use="required"/>
+        <xs:attribute name="created" type="xs:string"/>
+        <xs:attribute name="desc" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="type" type="tns:EntryTypeType"/>
+        <xs:attribute name="updated" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="GoXrefType">
+        <xs:complexContent>
+            <xs:extension base="tns:XrefType">
+                <xs:sequence/>
+                <xs:attribute name="category" type="tns:GoCategoryType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PathwayXrefType">
+        <xs:complexContent>
+            <xs:extension base="tns:XrefType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="modelsType" final="extension restriction">
+        <xs:sequence>
+            <xs:element name="model" type="tns:ModelType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ModelType">
+        <xs:sequence/>
+        <xs:attribute name="ac" type="xs:string" use="required"/>
+        <xs:attribute name="desc" type="xs:string"/>
+        <xs:attribute name="md5" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="SignatureLibraryReleaseType">
+        <xs:sequence>
+            <xs:element ref="tns:signature" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="library" type="tns:SignatureLibraryType" use="required"/>
+        <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="locationsType" final="extension restriction">
+        <xs:sequence>
+            <xs:element name="blastprodom-location" type="tns:BlastProDomLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="coils-location" type="tns:CoilsLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="fingerprints-location" type="tns:FingerPrintsLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="hmmer2-location" type="tns:Hmmer2LocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="hmmer3-location" type="tns:Hmmer3LocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="panther-location" type="tns:PantherLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="patternscan-location" type="tns:PatternScanLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="phobius-location" type="tns:PhobiusLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="profilescan-location" type="tns:ProfileScanLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="rpsblast-location" type="tns:RPSBlastLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="signalp-location" type="tns:SignalPLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="superfamilyhmmer3-location" type="tns:SuperFamilyHmmer3LocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="tmhmm-location" type="tns:TMHMMLocationType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BlastProDomLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="LocationType" abstract="true">
+        <xs:sequence/>
+        <xs:attribute name="start" type="xs:int" use="required"/>
+        <xs:attribute name="end" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="CoilsLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="FingerPrintsLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+                <xs:attribute name="motifNumber" type="xs:int" use="required"/>
+                <xs:attribute name="pvalue" type="xs:double" use="required"/>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Hmmer2LocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:HmmerLocationType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HmmerLocationType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+                <xs:attribute name="hmm-start" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-end" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-length" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Hmmer3LocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:HmmerLocationType">
+                <xs:sequence/>
+                <xs:attribute name="env-end" type="xs:int" use="required"/>
+                <xs:attribute name="env-start" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PantherLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PatternScanLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence>
+                    <xs:element name="alignment" type="xs:string"/>
+                </xs:sequence>
+                <xs:attribute name="level" type="tns:LevelType" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PhobiusLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ProfileScanLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence>
+                    <xs:element name="alignment" type="xs:string"/>
+                </xs:sequence>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RPSBlastLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SignalPLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+                <xs:attribute name="score" type="xs:double"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SuperFamilyHmmer3LocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TMHMMLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CoilsMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="FingerPrintsMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+                <xs:attribute name="graphscan" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Hmmer2MatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:HmmerMatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HmmerMatchType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Hmmer3MatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:HmmerMatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="keyGen" abstract="true">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="matchesType" final="extension restriction">
+        <xs:sequence>
+            <xs:element name="coils-match" type="tns:CoilsMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="fingerprints-match" type="tns:FingerPrintsMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="hmmer2-match" type="tns:Hmmer2MatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="hmmer3-match" type="tns:Hmmer3MatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="panther-match" type="tns:PantherMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="patternscan-match" type="tns:PatternScanMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="phobius-match" type="tns:PhobiusMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="blastprodom-match" type="tns:BlastProDomMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="profilescan-match" type="tns:ProfileScanMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="rpsblast-match" type="tns:RPSBlastMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="signalp-match" type="tns:SignalPMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="superfamilyhmmer3-match" type="tns:SuperFamilyHmmer3MatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="tmhmm-match" type="tns:TMHMMMatchType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PantherMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+                <xs:attribute name="familyName" type="xs:string" use="required"/>
+                <xs:attribute name="score" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PatternScanMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PhobiusMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ProfileScanMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RPSBlastMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SignalPMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SuperFamilyHmmer3MatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+                <xs:attribute name="evalue" type="xs:double" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TMHMMMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="nucleicAcidMatchesType" final="extension restriction">
+        <xs:sequence>
+            <xs:element ref="tns:nucleotide-sequence" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="NucleotideType">
+        <xs:sequence>
+            <xs:element name="sequence" type="tns:NucleotideSequenceType" minOccurs="0"/>
+            <xs:element name="xref" type="tns:NucleotideSequenceXrefType" maxOccurs="unbounded"/>
+            <xs:element ref="tns:orf" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="NucleotideSequenceType" final="extension restriction">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="md5" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="NucleotideSequenceXrefType">
+        <xs:complexContent>
+            <xs:extension base="tns:XrefType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="OrfType">
+        <xs:sequence>
+            <xs:element ref="tns:protein" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="end" type="xs:int" use="required"/>
+        <xs:attribute name="start" type="xs:int" use="required"/>
+        <xs:attribute name="strand" type="tns:NucleotideSequenceStrandType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ProteinType">
+        <xs:sequence>
+            <xs:element name="sequence" type="tns:SequenceType" minOccurs="0"/>
+            <xs:element name="xref" type="tns:ProteinXrefType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="super-match" type="tns:SuperMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="matches" type="tns:matchesType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SequenceType" final="extension restriction">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="md5" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="ProteinXrefType">
+        <xs:complexContent>
+            <xs:extension base="tns:XrefType">
+                <xs:sequence/>
+                <xs:attribute name="desc" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SuperMatchType">
+        <xs:sequence>
+            <xs:element ref="tns:entry"/>
+            <xs:element name="supermatch-location" type="tns:SuperMatchLocationType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SuperMatchLocationType">
+        <xs:sequence/>
+        <xs:attribute name="start" type="xs:int" use="required"/>
+        <xs:attribute name="end" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="persistenceConversion" final="extension restriction">
+        <xs:sequence/>
+    </xs:complexType>
+
+    <xs:complexType name="proteinMatchesType" final="extension restriction">
+        <xs:sequence>
+            <xs:element ref="tns:protein" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ReleaseType">
+        <xs:sequence>
+            <xs:element ref="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="GoCategoryType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CELLULAR_COMPONENT"/>
+            <xs:enumeration value="BIOLOGICAL_PROCESS"/>
+            <xs:enumeration value="MOLECULAR_FUNCTION"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="EntryTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ACTIVE_SITE"/>
+            <xs:enumeration value="DOMAIN"/>
+            <xs:enumeration value="CONSERVED_SITE"/>
+            <xs:enumeration value="UNKNOWN"/>
+            <xs:enumeration value="REPEAT"/>
+            <xs:enumeration value="FAMILY"/>
+            <xs:enumeration value="BINDING_SITE"/>
+            <xs:enumeration value="PTM"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SignatureLibraryType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PFAM"/>
+            <xs:enumeration value="TMHMM"/>
+            <xs:enumeration value="PROSITE_PATTERNS"/>
+            <xs:enumeration value="SUPERFAMILY"/>
+            <xs:enumeration value="SMART"/>
+            <xs:enumeration value="COILS"/>
+            <xs:enumeration value="CDD"/>
+            <xs:enumeration value="PRINTS"/>
+            <xs:enumeration value="SIGNALP_EUK"/>
+            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
+            <xs:enumeration value="PROSITE_PROFILES"/>
+            <xs:enumeration value="TIGRFAM"/>
+            <xs:enumeration value="PHOBIUS"/>
+            <xs:enumeration value="GENE3D"/>
+            <xs:enumeration value="PIRSF"/>
+            <xs:enumeration value="HAMAP"/>
+            <xs:enumeration value="PRODOM"/>
+            <xs:enumeration value="PANTHER"/>
+            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
+            <xs:enumeration value="SFLD"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="LevelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="STRONG"/>
+            <xs:enumeration value="WEAK"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NucleotideSequenceStrandType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ANTISENSE"/>
+            <xs:enumeration value="SENSE"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
