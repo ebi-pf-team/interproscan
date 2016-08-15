@@ -60,7 +60,7 @@
 
                                                 <#--Draw in scale markers for this line-->
                                                     <#list scale?split(",") as scaleMarker>
-                                                        <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+                                                        <span class="grade" style="left:${((scaleMarker?number?int / proteinLength) * 100)?c}%;" title="${scaleMarker}"></span>
                                                     </#list>
                                                 </div>
                                             </div>
@@ -115,7 +115,7 @@
 
                                                 <#--Draw in scale markers for this line-->
                                                     <#list scale?split(",") as scaleMarker>
-                                                        <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+                                                        <span class="grade" style="left:${((scaleMarker?number?int / proteinLength) * 100)?c}%;" title="${scaleMarker}"></span>
                                                     </#list>
 
                                         </li>
