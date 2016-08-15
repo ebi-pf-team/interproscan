@@ -49,6 +49,12 @@ public class SequenceMatch implements Serializable {
         this.sequenceIdentifier = domainLineMatcher.group(SEQUENCE_ID_GROUP);
 
     }
+    public SequenceMatch(String  sequenceIdentifier, double eValue, double score, double bias) {
+        this.sequenceIdentifier = sequenceIdentifier;
+        this.eValue = eValue;
+        this.score = score;
+        this.bias = bias;
+    }
 
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
@@ -78,5 +84,14 @@ public class SequenceMatch implements Serializable {
         return domainMatches;
     }
 
-
+    @Override
+    public String toString() {
+        return "SequenceMatch{" +
+                "sequenceIdentifier='" + sequenceIdentifier + '\'' +
+                ", eValue=" + eValue +
+                ", score=" + score +
+                ", bias=" + bias +
+                ", domainMatches=" + domainMatches +
+                '}';
+    }
 }

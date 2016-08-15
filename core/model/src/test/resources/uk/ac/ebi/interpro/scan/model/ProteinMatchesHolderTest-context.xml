@@ -113,7 +113,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                     <protein>
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
@@ -167,7 +167,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                                       http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                                       http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                     <protein>
                         <sequence md5="1de2cf633901ff1f00785735c8ce7e70">MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
                         <xref db="UniProt" id="A0A314" name="RR12_COFAR"/>
@@ -285,7 +285,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                     <protein>
                         <sequence md5="829339ede4627f6a6bf9166f3e9526d9">MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
                         <xref db="UniProt" id="Q8MLZ5" name="GAP2_CAEEL"/>
@@ -339,7 +339,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                     <protein>
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
@@ -396,7 +396,7 @@
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                         <protein>
                             <sequence md5="ae2f4d0c928c8017da2df2d5cf15f01">MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
                             <xref db="UniProt" id="P02700" name="OPSD_SHEEP"/>
@@ -472,7 +472,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                     <protein>
                         <sequence md5="daa9d1290a78528c68605d254f9ba358">MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
                         <xref db="UniParc" id="UPI000048E726" name="UPI000048E726"/>
@@ -535,7 +535,7 @@
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                         <protein>
                             <sequence md5="386964a0a573631d643f2a7e7de03066">MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
                             <xref db="UniParc" id="UPI0001AFC88D" name="UPI0001AFC88D"/>
@@ -598,7 +598,7 @@
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                         <!--<signature-library-release library="PROSITE_PROFILES" version="20.35" />-->
                         <protein>
                             <sequence md5="de25966e66a6340eed9d837b05ffc58b">MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
@@ -664,7 +664,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
                     <protein>
                         <sequence md5="52e5277916375709c7865985a7e88f80">MVSTMLSGLVLWLTFGWTPALAYSPRTPDRVSETDIQRLLHGVMEQLGIARPRVEYPAHQAMNLVGPQSIEGGAHEGLQHLGPFGNIPNIVAELTGDNTPKDFSEDQGYPDPPNPCPIGKTDDGCLENTPDTAEFSREFQLHQHLFDPEHDYPGLGKWNKKLLYEKMKGGQRRKRRSVNPYLQGQRLDNVVAKKSVPHFSDEDKDPE</sequence>
                         <xref id="P01165|7B2_PIG"/>

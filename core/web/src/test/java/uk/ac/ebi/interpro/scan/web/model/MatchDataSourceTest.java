@@ -4,6 +4,7 @@ import org.junit.Test;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Check we can get the relevant {@link MatchDataSource} from the supplied {@link SignatureLibrary} name.
@@ -48,4 +49,26 @@ public class MatchDataSourceTest {
         final MatchDataSource m = MatchDataSource.parseName(name);
         assertEquals(MatchDataSource.SIGNALP_GRAM_NEGATIVE, m);
     }
+
+    @Test
+    public void testCDD() {
+        final String name = SignatureLibrary.CDD.getName();
+        final MatchDataSource m = MatchDataSource.parseName(name);
+        assertEquals(MatchDataSource.CDD, m);
+    }
+
+    @Test
+    public void testSFLD() {
+        final String name = SignatureLibrary.SFLD.getName();
+        final MatchDataSource m = MatchDataSource.parseName(name);
+        assertEquals(MatchDataSource.SFLD, m);
+        String linkUrl = m.getLinkUrl("SFLDG01135");
+        assertTrue(linkUrl.endsWith("/subgroup/01135"));
+        linkUrl = m.getLinkUrl("SFLDS00003");
+        assertTrue(linkUrl.endsWith("/superfamily/00003"));
+        linkUrl = m.getLinkUrl("SFLDF00288");
+        assertTrue(linkUrl.endsWith("/family/00288"));
+    }
+
+
 }
