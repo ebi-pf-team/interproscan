@@ -66,7 +66,6 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     }
 
 
-
     protected int getMatchCounter() {
         matchCounter++;
         return matchCounter;
@@ -306,9 +305,9 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     // To maintain compatibility, we output the same value for the score column as I4
                     // In some cases we have to take the value from the match
                     if (match instanceof SuperFamilyHmmer3Match) {
-                        score = Double.toString( ((SuperFamilyHmmer3Match) match).getEvalue());
+                        score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                     } else if (match instanceof PantherMatch) {
-                        score = Double.toString( ((PantherMatch) match).getEvalue());
+                        score = Double.toString(((PantherMatch) match).getEvalue());
                     } else if (match instanceof FingerPrintsMatch) {
                         score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                     }
@@ -316,9 +315,11 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     if (location instanceof HmmerLocation) {
                         score = Double.toString(((HmmerLocation) location).getEvalue());
                     } else if (location instanceof BlastProDomMatch.BlastProDomLocation) {
-                        score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getEvalue() );
-                    }  else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
-                        score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
+                        score = Double.toString(((BlastProDomMatch.BlastProDomLocation) location).getEvalue());
+                    } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {
+                        score = Double.toString(((ProfileScanMatch.ProfileScanLocation) location).getScore());
+                    } else if (location instanceof RPSBlastMatch.RPSBlastLocation) {
+                        score = Double.toString(((RPSBlastMatch.RPSBlastLocation) location).getEvalue());
                     }
                     //Build match feature line
                     final int locStart = location.getStart();
