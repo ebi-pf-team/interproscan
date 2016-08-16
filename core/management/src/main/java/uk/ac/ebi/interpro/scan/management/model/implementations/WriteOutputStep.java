@@ -248,7 +248,7 @@ public class WriteOutputStep extends Step {
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
-        }else{
+        } else {
             LOGGER.debug("Files in temporaryFileDirectory not deleted since  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);
         }
     }
@@ -336,9 +336,10 @@ public class WriteOutputStep extends Step {
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
         xmlWriter.setExcludeSites(excludeSites);
         if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
-            for (Protein protein : proteins) {
-                removeSites(protein);
-            }
+            removeSites(proteins, true);
+        }
+        else if (isSlimOutput) {
+            removeSites(proteins, false);
         }
 
         if (isSlimOutput) {
@@ -503,16 +504,28 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void removeSites(Protein protein) {
-        Set<Match> matches = protein.getMatches();
-        if (matches != null && matches.size() > 0) {
-            for (Match match : matches) {
-                Set<Location> locations = match.getLocations();
-                if (locations != null && locations.size() > 0) {
-                    for (Location location : locations) {
-                        if (location instanceof LocationWithSites) {
-                            LocationWithSites l = (LocationWithSites) location;
-                            l.setSites(null);
+    /**
+     * Remove sites from any protein match locations (make sites NULL so they don't appear at all in the XML output)
+     * @param proteins The proteins
+     * @param all Remove all site data (not just empty sites)?
+     */
+    private void removeSites(List<Protein> proteins, boolean all) {
+        for (Protein protein : proteins) {
+            Set<Match> matches = protein.getMatches();
+            if (matches != null && matches.size() > 0) {
+                for (Match match : matches) {
+                    Set<Location> locations = match.getLocations();
+                    if (locations != null && locations.size() > 0) {
+                        for (Location location : locations) {
+                            if (location instanceof LocationWithSites) {
+                                LocationWithSites l = (LocationWithSites) location;
+                                Set<Site> sites = l.getSites();
+                                if (sites != null) {
+                                    if (all || sites.size() < 1) {
+                                        l.setSites(null);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
