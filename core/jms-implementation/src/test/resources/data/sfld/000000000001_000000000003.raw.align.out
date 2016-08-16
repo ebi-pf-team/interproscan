@@ -1,0 +1,75 @@
+# STOCKHOLM 1.0
+
+#=GS 3/278-506 DE [subseq from] 3
+
+3/278-506         --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#=GR 3/278-506 PP ........................................................................................................................................................................................................
+#=GC PP_cons      ........................................................................................................................................................................................................
+#=GC RF           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+3/278-506         -------------------------------------------------------------------------DTKLFCLMLPPS-THLQVPIGQHVYLKLTITGTEIVKPYTPVSDSLLsefkepvlpNNKYIYFLIKiyPAGLFTPELD------HLQIGDFVSISSPEGNFKISqFQELEDLFLLAAGTGFTPMIKI
+#=GR 3/278-506 PP .........................................................................567778889977.89*************999999********97666799******7778888888335788999999......7899999999999996655527777******************
+#=GC PP_cons      .........................................................................567778889977.89*************999999********97666.........7778888888..5788999999......78999999999999966555.7777******************
+#=GC RF           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.........xxxxxxxxxx..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxx
+
+3/278-506         LNYALTNI---PTLRKVKLMFFNKTEDDIIWRSQLEK--LAFKDKRFDIEFVLSAPTSE--------------------------------WNGKQGHISP-ALLSEFLKR--SLDKSKVLICICGPMPFTEQGIRLLHDLNFS---KDEIH--------
+#=GR 3/278-506 PP *****953...469****************9999999..45555568788777776553................................5567788877.889999985..4688999999999999999998888888877...44554........
+#=GC PP_cons      *****953...469****************9999999..45555568788777776553................................5567788877.889999985..4688999999999999999998888888877...44554........
+#=GC RF           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//
+# STOCKHOLM 1.0
+
+#=GS 1/1-197 DE [subseq from] 1
+
+1/1-197         MKVEIFSDVVCPWCYIGHTRFRAAVRAY--GKPVQVAYRPFQLSPEAVSDGTPLTAWLERRFG--GQALQMIDRVVGVAAQEGLDLKYDQAIGANTAEAHRLVWLAQRDGKAPEMTDRLFRAHFSDGLDVGDAQVLAKLAAEVGVDDT--------GEGAAEVKADLDRARNLGISGVPLFLFEDKYAVSGAQPVDVLVG
+#=GR 1/1-197 PP 89**************************..99*******************************..9******************************************************************************9976........99******************************************
+#=GC PP_cons    89**************************..99*******************************..9******************************************************************************9976........99******************************************
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+1/1-197         ALREVEQRE--
+#=GR 1/1-197 PP ****99875..
+#=GC PP_cons    ****99875..
+#=GC RF         xxxxxxxxxxx
+//
+# STOCKHOLM 1.0
+
+#=GS 2/1-341 DE [subseq from] 2
+
+2/1-341         MKPFQPQLIYIEPRALEYPLGRQLLEKFKKQGLEIRETTSHNQVRNIPGKNELQQYRNAKSTLVIGVRKTLKFDTSKPSAEYAIPLATGCMGHCHYCYLQTTLGSKPYIRTYVNIDEIFDAADQYIKERAPEITRFEAACTSDIVGIDHLTHTLKKTIEHIGQTDHGLLRFVTKYHHVDHLLDANHNGKTRFRFSVNSDF
+#=GR 2/1-341 PP 689*****************************************************************************************************************************************************************************************************
+#=GC PP_cons    689*****************************************************************************************************************************************************************************************************
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+2/1-341         VIKKYEPGTSSFLERIEAASKVAKADYPLGFIIAPLILHENWKEGYLDLFERLEAILPPYATKDLTFELIQHRFTKTAKNVIKKRYPKTTLEMNEEERKYKWGRYGRGKYVYKNENAQELKETLEMYVQRFFPKAKVEYFT
+#=GR 2/1-341 PP *******************************************************************************************************************************************96
+#=GC PP_cons    *******************************************************************************************************************************************96
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//
+# STOCKHOLM 1.0
+
+#=GS 2/1-341 DE [subseq from] 2
+
+2/1-341         -MKPFQPQLIYIEPRALEYPLGRQLLEKFKKQGLEIRETTSHNQVRNIPGKNELQQYRNAKSTLVIGVRKTLKFDTSKPSAEYAIPLATGCMGHCHYCYLQTTLGSKPYIRTYVNIDEIFDAADQYIKERAPEITRFEAACTSDIVGIDHLTHTLKKTIEHIGQTDHGLLRFVTKYHHVDHLLDANHNGKTRFRFSVNSD
+#=GR 2/1-341 PP .79*****************************************************************************************************************************************************************************************************
+#=GC PP_cons    .79*****************************************************************************************************************************************************************************************************
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+2/1-341         FVIKKYEPGTSSFLERIEAASKVAKADYPLGFIIAPLILHENWKEGYLDLFERLEAILPPYATKDLTFELIQHRFTKTAKNVIKKRYPKTTLEMNEEERKYKWGRYGRGKYVYKNENAQELKETLEMYVQRFFPKAKVEYFT
+#=GR 2/1-341 PP *********************************************************************************************************************************************8
+#=GC PP_cons    *********************************************************************************************************************************************8
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//
+# STOCKHOLM 1.0
+
+#=GS 2/4-340 DE [subseq from] 2
+
+2/4-340         -FQPQLIYIEPRALEYPLGRQLLEKFKKQ-GLEIRETTSHNQVRNIPGKNELQQYRNAKSTLVIGVRKTLKFDTSKPSAEYAIPLATGCMGHCHYCYLQTTLGSKPYIRTYVNIDEIFDAADQYIKERAPEITRFEAACTSDIVGIDHLTHTLKKTIEHIGQTDHGLLRFVTKYHHVDHLLDANHNGKTRFRFSVNSDFV
+#=GR 2/4-340 PP .889999********************97.*****988766666************************************************************************************************************************************************************
+#=GC PP_cons    .889999********************97.*****988766666************************************************************************************************************************************************************
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+2/4-340         IKKYEPGTSSFLERIEAASKVAKADYPLGFIIAPLILHENWKEGYLDLFERLEAILPPYATKDLTFELIQHRFTKTAKNVIKKRYPKTTLEMNEEERKYKWGRYGRGKYVYKNENAQELKETLEMYVQRFFPKAKVEYF-
+#=GR 2/4-340 PP ****************************************************************************************************************************************995.
+#=GC PP_cons    ****************************************************************************************************************************************995.
+#=GC RF         xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//
