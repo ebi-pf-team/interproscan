@@ -100,7 +100,6 @@ public class Pfam_A_PostProcessingStep extends Step {
                 waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
             }
             Utilities.sleep(waitTimeFactor * 1000);
-
             //try again
             rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                     stepInstance.getBottomProtein(),
@@ -156,18 +155,5 @@ public class Pfam_A_PostProcessingStep extends Step {
         }
         return count;
     }
-
-    /**
-     * display time now
-     *
-     * @return
-     */
-    public static String getTimeNow() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
-        String currentDate = sdf.format(cal.getTime());
-        return currentDate;
-    }
-
 
 }

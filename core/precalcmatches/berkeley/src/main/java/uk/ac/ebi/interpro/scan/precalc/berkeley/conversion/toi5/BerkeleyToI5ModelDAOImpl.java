@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,7 +50,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
 
     @Transactional(readOnly = true)
     public void populateProteinMatches(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap) {
-
+        String debugString = "";
         final Map<String, Protein> md5ToProteinMap = new HashMap<String, Protein>(preCalculatedProteins.size());
         // Populate the lookup map.
         for (Protein protein : preCalculatedProteins) {
@@ -71,7 +72,9 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
                 if (analysisJobName != null) {
                     analysisJob = analysisJobName;
                     versionNumber = analysisJobMap.get(analysisJobName).getVersion();
-                    LOGGER.debug("Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber);
+                    debugString = "Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber;
+//                    Utilities.verboseLog(10, debugString);
+                    LOGGER.debug(debugString);
                 } else {
                     throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJobName);
                 }
@@ -100,10 +103,15 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
             if(analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
-                LOGGER.debug("Found Library : sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);
+                LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
             }
+            debugString = "sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion;
+            debugString +=  "\n librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib);
+//            Utilities.verboseLog(10, debugString);
+
             LOGGER.debug("sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);
             LOGGER.debug("librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib));
+
             // Check to see if the signature library is required for the analysis.
             // First check: librariesToAnalyse == null -> -appl option hasn't been set
             // Second check: Analysis library has been request with the right release version -> -appl PIRSF-2.84
