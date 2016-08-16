@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawProteinSite;
 import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -68,13 +69,12 @@ public class SFLDHmmer3MatchParserTest {
         // Check sites for raw proteins
         Set<RawProteinSite> rawProteinSites = result.getRawProteinSites();
         assertNotNull(rawProteinSites);
-        //TODO test sites!
-//        assertEquals(2, rawProteinSites.size());
-//        for (RawProteinSite rawProteinSite : rawProteinSites) {
-//            Collection<SFLDHmmer3RawSite> s = rawProteinSite.getSites();
-//            assertNotNull(s);
-//            assertTrue(s.size() > 0);
-//        }
+        assertEquals(2, rawProteinSites.size());
+        for (RawProteinSite rawProteinSite : rawProteinSites) {
+            Collection<SFLDHmmer3RawSite> s = rawProteinSite.getSites();
+            assertNotNull(s);
+            assertTrue(s.size() > 0);
+        }
 
     }
 
