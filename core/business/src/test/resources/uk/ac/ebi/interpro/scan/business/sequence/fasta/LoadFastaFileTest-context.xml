@@ -22,6 +22,7 @@
         <property name="proteinPrecalcLookupBatchSize" value="50"/>
         <property name="getOrfOutput" value="false"/>
         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
+        <property name="proteinInsertBatchSizeNoLookup" value="1000"/>
     </bean>
 
     <bean id="sequenceLoadListener" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.NoopSequenceLoadListener"/>
