@@ -66,6 +66,19 @@ public class AbstractI5Runner {
      * @return True if the checks succeed, otherwise false (although the system will exit if a {@link I5Option} check fails)
      */
     protected static boolean checkPathExistence(final String path, final boolean checkParent, final boolean checkWriteable, final I5Option option) {
+        return checkPathExistence(path, checkParent, checkWriteable, option, false);
+    }
+
+    /**
+     * Check if a specified path exists and is readable.
+     * @param path The full file or directory path under review (e.g. "/tmp/test_proteins.fasta")
+     * @param checkParent Do we just check the parent path? (e.g. "/tmp")
+     * @param checkWriteable Should we also check that the path or parent path can be written to?
+     * @param option The user input {@link I5Option} this path relates to (or null if not applicable)
+     * @param checkIsFile Check if the path is a file or symblic link to a file (e.g. not a directory)?
+     * @return True if the checks succeed, otherwise false (although the system will exit if a {@link I5Option} check fails)
+     */
+    protected static boolean checkPathExistence(final String path, final boolean checkParent, final boolean checkWriteable, final I5Option option, boolean checkIsFile) {
         String pathToCheck = path;
         if (checkParent) {
             pathToCheck = path.substring(0, path.lastIndexOf(File.separator));
@@ -77,14 +90,21 @@ public class AbstractI5Runner {
             System.out.println(path);
             System.exit(2);
         }
-        if (exists && checkWriteable) {
-            boolean writable = Files.isWritable(p);
-            if (option != null && !writable) {
-                System.out.println("For the (-" + option.getShortOpt() + ") option you specified a location which is not writable:");
+        if (exists) {
+            if (checkIsFile && !Files.isRegularFile(p)) {
+                System.out.println("For the (-" + option.getShortOpt() + ") option you specified a location which is not a file:");
                 System.out.println(path);
                 System.exit(2);
             }
-            return writable;
+            if (checkWriteable) {
+                boolean writable = Files.isWritable(p);
+                if (option != null && !writable) {
+                    System.out.println("For the (-" + option.getShortOpt() + ") option you specified a location which is not writable:");
+                    System.out.println(path);
+                    System.exit(2);
+                }
+                return writable;
+            }
         }
         return exists;
     }
