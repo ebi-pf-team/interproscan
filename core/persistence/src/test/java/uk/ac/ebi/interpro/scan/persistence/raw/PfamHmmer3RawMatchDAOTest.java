@@ -144,6 +144,7 @@ public class PfamHmmer3RawMatchDAOTest {
         for (RawProtein rawProtein : matches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
+
         assertEquals(5, matchCount);
     }
 
