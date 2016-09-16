@@ -69,7 +69,7 @@ public final class HmmSearchRecord implements Serializable {
     public void addDomainMatch(String sequenceId, DomainMatch domainMatch) {
         SequenceMatch parentSequenceMatch = this.sequenceMatches.get(sequenceId);
         if (parentSequenceMatch == null) {
-            throw new IllegalStateException("Cannot add a domain match without a corresponding sequence match.");
+            throw new IllegalStateException("Cannot add a domain match without a corresponding sequence match." + sequenceId);
         }
         parentSequenceMatch.addDomainMatch(domainMatch);
     }

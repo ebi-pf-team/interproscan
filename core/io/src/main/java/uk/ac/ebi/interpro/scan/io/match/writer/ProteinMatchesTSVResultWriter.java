@@ -43,7 +43,10 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
         String date = dmyFormat.format(new Date());
 
         Set<Match> matches = protein.getMatches();
+
         for (String proteinAc: proteinAcs) {
+//            Utilities.verboseLog("sequence mapping: " + proteinAc + " -> " + protein.getId() + "  length: " +  protein.getSequenceLength() ) ;
+
             for (Match match : matches) {
 //                Utilities.verboseLog("print-match: " + match);
                 final Signature signature = match.getSignature();

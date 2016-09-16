@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: TIGRFAM ############################  -->
+    <bean id="jobTIGRFAM" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseTigrfam"/>
+    </bean>
+
+    <bean id="abstractTIGRFAMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobTIGRFAM"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.TIGRFAM}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepTIGRFAMWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractTIGRFAMStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+
+    <!--TODO - The run binary step for HMMER should choose between search or scan, depending
+        TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
+        TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
+
+    <!-- STEP 2 -->
+    <bean id="stepTIGRFAMRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractTIGRFAMStep">
+        <!-- In example command line below, replace _ with -
+        
+        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/tigrfam/15.0/TIGRFAMs_15.0_HMM.LIB  -->
+        <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile"/>
+        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.tigrfam} ${hmmer3.hmmsearch.cpu.switch.tigrfam}"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToHmmFile" value="${tigrfam.hmm.path}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepTIGRFAMDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMRunHmmer3"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+
+    <bean id="stepTIGRFAMStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseTigrFamHMMER3OutputStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMRunHmmer3"/>
+        <property name="stepDescription" value="Parse the TigrFam binary output and store as Filtered matches."/>
+        <property name="serialGroup" value="PARSE_TIGRFAM"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+                <property name="useHmmsearch" value="false"/>
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.TigrFamHmmer3ParserSupport">
+                        <property name="signatureLibraryRelease" ref="tigrfamSignatureLibraryReleaseVersion"/>
+                        <property name="hmmKey" value="ACCESSION"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="tigrfamRawMatchDAO"/>
+    </bean>
+
+    <bean id="stepTIGRFAMDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+    </bean>
+
+    <!-- TODO - Check for changes - presumably now using different objects to store the results? -->
+    <bean id="stepTIGRFamPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.TigrFamHmmer3FilterStep"
+          parent="abstractTIGRFAMStep">
+        <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
+        <property name="signatureLibraryRelease" ref="tigrfamSignatureLibraryReleaseVersion"/>
+        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer3FilteredMatchDAOImpl"/>
+        </property>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="rawMatchDAO" ref="tigrfamRawMatchDAO"/>
+        <property name="signatureLibrary" value="TIGRFAM"/>
+        <property name="filter">
+            <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
+        </property>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: TIGRFAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="tigrfamRawMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch"/>
+    </bean>
+
+    <!--<bean id="prositePatternRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">-->
+    <!--<constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch"/>-->
+    <!--</bean>-->
+
+    <bean id="signatureLibraryReleaseTigrfam" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="TIGRFAM"/>
+        <constructor-arg type="java.lang.String" ref="tigrfamSignatureLibraryReleaseVersion"/>
+    </bean>
+
+
+    <bean id="tigrfamSignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="${tigrfam.signature.library.release}"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
