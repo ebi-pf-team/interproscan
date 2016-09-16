@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <bean id="sfldParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParser">
+        <property name="parserSupport" >
+             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
+                <property name="signatureLibraryRelease" value="1"/>
+                <property name="hmmKey" value="ACCESSION"/>
+             </bean>
+        </property>
+    </bean>
+
+    <bean id="sfldFile" class="org.springframework.core.io.ClassPathResource">
+             <constructor-arg value="data/sfld/sfld_match_site_output.txt"/>
+    </bean>
+
+</beans>

@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -39,10 +40,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());
         }
+        long nowAfterLoadingDatabase = now;
         try {
             loadInMemoryDatabase();
             runStatus = 21;
+            nowAfterLoadingDatabase = System.currentTimeMillis();
+
             int stepInstancesCreatedByLoadStep = createStepInstances();
+
 
             //calculate minimum expected jobs
 
@@ -89,6 +94,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             priority = LOW_PRIORITY;
                         }else {
                             priority = HIGH_PRIORITY;
+                        }
+
+                        //if inteproscan is onthe last step, watermark this point
+                        if (step instanceof WriteOutputStep) {
+                            Utilities.verboseLog("Processing WriteOutputStep ..." );
+                            StatsUtil.setForceDisplayProgress(true);
+                            statsUtil.displayMasterProgress();
+                            StatsUtil.setForceDisplayProgress(false);
                         }
 
                         // Performed in a transaction.
@@ -158,10 +171,16 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         if(verboseLog){
             final long executionTime =   System.currentTimeMillis() - now;
+            final long executionTimeExclLoadDatabase =   System.currentTimeMillis() - nowAfterLoadingDatabase;
             System.out.println("Computation time : (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
                     TimeUnit.MILLISECONDS.toMinutes(executionTime),
                     TimeUnit.MILLISECONDS.toSeconds(executionTime) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime))
+            ));
+            System.out.println("Computation time exc ldb : (" + TimeUnit.MILLISECONDS.toSeconds(executionTimeExclLoadDatabase)+ " s) => " + String.format("%d min, %d sec",
+                    TimeUnit.MILLISECONDS.toMinutes(executionTimeExclLoadDatabase),
+                    TimeUnit.MILLISECONDS.toSeconds(executionTimeExclLoadDatabase) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTimeExclLoadDatabase))
             ));
         }
         systemExit(runStatus);
