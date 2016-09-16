@@ -32,6 +32,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
     private String outputFileTemplate;
     private MatchParser<T> parser;
     private RawMatchDAO<T> rawMatchDAO;
+    private boolean useSingleSequenceMode;
 
     public MatchParser<T> getParser() {
         return parser;
@@ -54,6 +55,14 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
     @Required
     public void setRawMatchDAO(RawMatchDAO<T> rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
+    }
+
+    public boolean isUseSingleSequenceMode() {
+        return useSingleSequenceMode;
+    }
+
+    public void setUseSingleSequenceMode(boolean useSingleSequenceMode) {
+        this.useSingleSequenceMode = useSingleSequenceMode;
     }
 
     @Override
@@ -110,6 +119,10 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                                     + " - matches found : " + matchesFound);
                             break;
                         }
+                        //TODO remove this break statement after SFLD is completed implemented
+//                        LOGGER.warn("For test purposes: rememeber to remove the break statement ");
+//                        break;
+
                     }
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);

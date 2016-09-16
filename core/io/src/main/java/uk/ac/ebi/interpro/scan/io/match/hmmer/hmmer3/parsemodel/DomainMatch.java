@@ -80,6 +80,22 @@ public class DomainMatch implements Serializable {
 
     }
 
+    public DomainMatch(SequenceDomainMatch sequenceDomainMatch) {
+        this.score = sequenceDomainMatch.getScore();
+        this.bias = sequenceDomainMatch.getBias();
+        this.cEvalue = sequenceDomainMatch.getCEvalue();
+        this.iEvalue = sequenceDomainMatch.getIEvalue();
+        this.hmmfrom = sequenceDomainMatch.getHmmfrom();
+        this.hmmto = sequenceDomainMatch.getHmmto();
+        this.hmmBounds = sequenceDomainMatch.getHmmBounds();
+        this.aliFrom = sequenceDomainMatch.getAliFrom();
+        this.aliTo = sequenceDomainMatch.getAliTo();
+        this.envFrom = sequenceDomainMatch.getEnvFrom();
+        this.envTo = sequenceDomainMatch.getEnvTo();
+        this.acc = sequenceDomainMatch.getAcc();
+    }
+
+
 
     public String getAlignment() {
         return alignment;
@@ -137,5 +153,22 @@ public class DomainMatch implements Serializable {
         this.alignment = alignment;
     }
 
-
+    @Override
+    public String toString() {
+        return "DomainMatch{" +
+                "score=" + score +
+                ", bias=" + bias +
+                ", cEvalue=" + cEvalue +
+                ", iEvalue=" + iEvalue +
+                ", hmmfrom=" + hmmfrom +
+                ", hmmto=" + hmmto +
+                ", hmmBounds='" + hmmBounds + '\'' +
+                ", aliFrom=" + aliFrom +
+                ", aliTo=" + aliTo +
+                ", envFrom=" + envFrom +
+                ", envTo=" + envTo +
+                ", acc=" + acc +
+                ", alignment='" + alignment + '\'' +
+                '}';
+    }
 }

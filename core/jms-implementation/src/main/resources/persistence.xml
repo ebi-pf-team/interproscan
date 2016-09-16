@@ -76,6 +76,7 @@
 
         <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch</class>
