@@ -995,6 +995,7 @@ public class Run extends AbstractI5Runner {
                     applVersion = parsedAnalysis.substring(lastHyphen + 1);
                 }
                 final Matcher m1 = applNameRegex.matcher(applName);
+                
                 if (m1.matches() && (applVersion == null || applVersionRegex.matcher(applVersion).matches())) {
                     if (applName.equalsIgnoreCase("SignalP")) {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
@@ -1006,7 +1007,11 @@ public class Run extends AbstractI5Runner {
                     }
                 }
                 else {
-                    inputErrorMessages.add(parsedAnalysis + " not a valid input.");
+                    if (m1.matches() && applName.equalsIgnoreCase("SFLD")){
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SFLD.getName(), applVersion);
+                    }else {
+                        inputErrorMessages.add(parsedAnalysis + " not a valid input.");
+                    }
                 }
             }
             if (inputErrorMessages.size() > 0) {
