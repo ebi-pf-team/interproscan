@@ -73,7 +73,7 @@
         <property name="serialGroup" value="PARSE_TIGRFAM"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
-                <property name="useHmmsearch" value="false"/>
+                <property name="useHmmsearch" value="true"/>
                 <property name="parserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.TigrFamHmmer3ParserSupport">
                         <property name="signatureLibraryRelease" ref="tigrfamSignatureLibraryReleaseVersion"/>
