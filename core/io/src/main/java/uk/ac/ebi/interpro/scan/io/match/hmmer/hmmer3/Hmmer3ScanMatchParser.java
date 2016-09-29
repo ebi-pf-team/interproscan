@@ -273,7 +273,7 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                Utilities.verboseLog(line);
+//                Utilities.verboseLog(line);
                 // New code block to handle matches where there is a sequence match with
                 // no corresponding domain matches.
                 if (stage == ParsingStage.LOOKING_FOR_DOMAIN_DATA_LINE && line.startsWith(DOMAIN_SECTION_START)) {
