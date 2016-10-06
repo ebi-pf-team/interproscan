@@ -117,6 +117,9 @@ public class CreateMatchDBFromIprscan {
             connection = DriverManager.getConnection(databaseUrl, username, password);
 
             // First, create the populate the temporary table before create the BerkeleyDB, to prevent timeouts.
+            // we now create the table outside this process
+            /*
+
             Statement statement = null;
             try {
                 statement = connection.createStatement();
@@ -127,6 +130,7 @@ public class CreateMatchDBFromIprscan {
                 }
             }
 
+            */
             long now = System.currentTimeMillis();
             System.out.println((now - startMillis) + " milliseconds to create the temporary table.");
             startMillis = now;
@@ -285,6 +289,8 @@ public class CreateMatchDBFromIprscan {
 
             // Truncate the temporary table
             // Then add the additional SignalP data
+            //
+            /*
             statement = null;
             try {
                 statement = connection.createStatement();
@@ -294,6 +300,7 @@ public class CreateMatchDBFromIprscan {
                     statement.close();
                 }
             }
+            */
 
             now = System.currentTimeMillis();
             System.out.println((now - startMillis) + " milliseconds to truncate the temporary table.");
@@ -301,6 +308,8 @@ public class CreateMatchDBFromIprscan {
 
             // And drop the table
             // Then add the additional SignalP data
+            //
+            /*
             statement = null;
             try {
                 statement = connection.createStatement();
@@ -310,6 +319,7 @@ public class CreateMatchDBFromIprscan {
                     statement.close();
                 }
             }
+            */
 
             now = System.currentTimeMillis();
             System.out.println((now - startMillis) + " milliseconds to drop the temporary table.");

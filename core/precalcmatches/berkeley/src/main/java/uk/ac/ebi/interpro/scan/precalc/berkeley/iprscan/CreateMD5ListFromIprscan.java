@@ -25,11 +25,14 @@ public class CreateMD5ListFromIprscan {
 
     private static final String databaseName = "IPRSCAN";
 
+//    private static final String MD5_QUERY =
+//            "select * from (select p.md5 as protein_md5 " +
+//                    "  from iprscan.uniparc_protein p " +
+//                    "  where p.UPI <= ?) " +
+//                    "  order by protein_md5";
+
     private static final String MD5_QUERY =
-            "select * from (select p.md5 as protein_md5 " +
-                    "  from iprscan.uniparc_protein p " +
-                    "  where p.UPI <= ?) " +
-                    "  order by protein_md5";
+            "select md5 as protein_md5 from berkerly_tmp_upi_md5 order by protein_md5";
 
 
     public static void main(String[] args) {
@@ -95,7 +98,7 @@ public class CreateMD5ListFromIprscan {
             connection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword);
 
             PreparedStatement ps = connection.prepareStatement(MD5_QUERY);
-            ps.setString(1, maxUPI);
+//            ps.setString(1, maxUPI);
             ResultSet rs = ps.executeQuery();
 
             int proteinCount = 0;
