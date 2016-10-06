@@ -138,25 +138,11 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         @XmlType(name = "RPSBlastSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
         public static class RPSBlastSite extends Site {
 
-            @Column(name = "description", nullable = false)
-            private String description;
-
-
             protected RPSBlastSite() {
             }
 
             public RPSBlastSite(String description, Set<SiteLocation> siteLocations) {
-                super(siteLocations);
-                setDescription(description);
-            }
-
-            @XmlAttribute(required = true)
-            public String getDescription() {
-                return description;
-            }
-
-            private void setDescription(String description) {
-                this.description = description;
+                super(description, siteLocations);
             }
 
             @Override

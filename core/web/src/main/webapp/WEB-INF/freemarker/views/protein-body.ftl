@@ -1,5 +1,7 @@
 <#--Returns main body of protein page for inclusion in the InterProScan 5 HTML output, or elsewhere -->
 <#import "../macros/condensedView.ftl" as condensedViewMacro/>
+<#import "../macros/residueLocation.ftl" as residueLocationMacro/>
+<#import "../macros/signatureText.ftl" as signatureTextMacro>
 
 <#if protein??>
 
@@ -106,6 +108,45 @@
                 </div>
             </div>
         </#if>
+
+        <#--Per residue features-->
+        <#if protein.sites?has_content>
+            <#global residueId=0>
+            <h3>Per residue annotation</h3>
+            <#--<div class="prot_sum">-->
+            <div class="prot_sum">
+                <div class="bot-row">
+                    <div class="bot-row-line-top"></div>
+                    <ol class="signatures">
+                            <#list protein.sites as site>
+                            <li class="signature">
+                                <@signatureTextMacro.signatureText signature=site.signature/>
+
+                                <div class="bot-row-line">
+                            <#--<div class="matches">-->
+                            <div class="matches">
+                                <#list site.siteLocations as residueMatch>
+                                    <#global residueId=residueId + 1>
+                                        <@residueLocationMacro.residueLocation residueId=residueId proteinLength=proteinLength residue=residueMatch site=site colourClass="uni" />
+                                </#list>
+
+                            <#--Draw in scale markers for this line-->
+                                <#list scale?split(",") as scaleMarker>
+                                    <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+                                </#list>
+
+                            </div>
+                            </div>
+                            </li>
+                            </#list>
+                    </ol>
+                    <div class="bot-row-line-bot"></div>
+                </div>
+
+            </div>
+
+        </#if>
+
 
     <#else>
         <#-- No matches so the detailed matches section is omitted. -->

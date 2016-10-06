@@ -28,6 +28,8 @@ public final class SimpleProtein implements Serializable {
     private Set<SimpleEntry> familyEntries = null;
     private List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
 
+    private List<SimpleSite> sites = new ArrayList<>();
+
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                          int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
@@ -261,6 +263,11 @@ public final class SimpleProtein implements Serializable {
         return resultValue;
     }
 
+    public List<SimpleSite> getSites() {
+        Collections.sort(sites);
+        return sites;
+    }
+
     /**
      * USED BY FREEMARKER - DON'T DELETE
      *
@@ -419,6 +426,19 @@ public final class SimpleProtein implements Serializable {
                 simpleSignature.getLocations().add(simpleLocation);
                 // Add location to the list of super matches
                 simpleEntry.getLocations().add(simpleLocation);
+
+                // Add any sites from that location
+                if (location instanceof LocationWithSites) {
+                    final Set<Site> siteSet = ((LocationWithSites) location).getSites();
+                    for (Site site : siteSet) {
+                        SimpleSite simpleSite = new SimpleSite(site.getDescription(), site.getNumLocations(), simpleSignature);
+                        for (SiteLocation siteLocation : site.getSiteLocations()) {
+                            SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd()));
+                            simpleSite.addSiteLocation(simpleSiteLocation);
+                        }
+                        simpleProtein.getSites().add(simpleSite);
+                    }
+                }
             }
         }
         return simpleProtein;
