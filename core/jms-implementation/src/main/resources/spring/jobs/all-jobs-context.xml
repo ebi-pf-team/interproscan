@@ -37,7 +37,6 @@
     <import resource="classpath:/spring/uapro-db-access-context.xml"/>
     <import resource="classpath:/spring/match-converter-context.xml"/>
     <import resource="classpath:/spring/berkeley-oxm-context.xml"/>
-    <import resource="classpath:/spring/berkeley-oxm-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/jobWriteOutput-context.xml"/>
 
     <bean id="jobs" class="uk.ac.ebi.interpro.scan.management.model.Jobs">

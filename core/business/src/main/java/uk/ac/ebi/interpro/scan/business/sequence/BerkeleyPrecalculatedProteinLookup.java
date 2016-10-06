@@ -192,6 +192,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (LOGGER.isDebugEnabled()) {
                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
             }
+            startTime = System.nanoTime();
             // Check if the analysis versions are consistent and then proceed
             if(isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
 //                Utilities.verboseLog(10, "Analysis versions ARE Consistent" );
@@ -202,6 +203,12 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 Utilities.verboseLog(10, "Analysis versions NOT Consistent" );
                 return null;
             }
+            timetaken = System.nanoTime() - startTime;
+            lookupTimeMillis = 0;
+            if (timetaken > 0) {
+                lookupTimeMillis = timetaken / 1000000;
+            }
+            Utilities.verboseLog(10, "Time to convert to i5 matches " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             timetaken = System.nanoTime() - startTime;
             lookupTimeMillis = 0;
