@@ -223,7 +223,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SFLD, "201607.27")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SFLD, "1")
                 Signature signature = release.addSignature(
                         new Signature.Builder("SFLDG01017")
                                 .name("Polyprenyl_Transferase_Like")
@@ -240,7 +240,7 @@
         <constructor-arg>
             <value>
                 <![CDATA[
-                <signature-library-release library="SFLD" version="201607.27"
+                <signature-library-release library="SFLD" version="1"
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5

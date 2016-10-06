@@ -560,7 +560,7 @@ public class Run extends AbstractI5Runner {
             if (!fastaFilePath.equals("-")) {
                 fastaFilePath = getAbsoluteFilePath(parsedCommandLine.getOptionValue(I5Option.INPUT.getLongOpt()), parsedCommandLine);
                 // Check input exists
-                checkPathExistence(fastaFilePath, false, false, I5Option.INPUT);
+                checkPathExistence(fastaFilePath, false, false, I5Option.INPUT, true);
             }
             master.setFastaFilePath(fastaFilePath);
             defaultOutputFileName = new File(fastaFilePath).getName();
