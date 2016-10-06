@@ -190,25 +190,11 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
     @XmlType(name = "HmmerSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class HmmerSite extends Site {
 
-        @Column(name = "description", nullable = false)
-        private String description;
-
-
         protected HmmerSite() {
         }
 
         public HmmerSite(String description, Set<SiteLocation> siteLocations) {
-            super(siteLocations);
-            setDescription(description);
-        }
-
-        @XmlAttribute(required = true)
-        public String getDescription() {
-            return description;
-        }
-
-        private void setDescription(String description) {
-            this.description = description;
+            super(description, siteLocations);
         }
 
         @Override

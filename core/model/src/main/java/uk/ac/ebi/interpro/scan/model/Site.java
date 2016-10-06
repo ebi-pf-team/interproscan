@@ -32,6 +32,10 @@ public abstract class Site implements Serializable, Cloneable {
     @TableGenerator(name = "SITE_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "site", initialValue = 0, allocationSize = 50)
     private Long id;
 
+    @Column(name = "description")
+    private String description;
+
+
     @Column(name = "num_locations", nullable = false)
     private int numLocations;
 
@@ -49,7 +53,8 @@ public abstract class Site implements Serializable, Cloneable {
     protected Site() {
     }
 
-    public Site(Set<SiteLocation> siteLocations) {
+    public Site(String description, Set<SiteLocation> siteLocations) {
+        setDescription(description);
         setNumLocations((siteLocations == null) ? 0 : siteLocations.size());
         setSiteLocations(siteLocations);
     }
@@ -66,6 +71,15 @@ public abstract class Site implements Serializable, Cloneable {
      * @param id being the persistence unique identifier for this object.
      */
     private void setId(Long id) {
+    }
+
+    @XmlAttribute(required = true)
+    public String getDescription() {
+        return description;
+    }
+
+    private void setDescription(String description) {
+        this.description = description;
     }
 
     @XmlAttribute(required = true)
@@ -207,6 +221,7 @@ public abstract class Site implements Serializable, Cloneable {
             return false;
         final Site h = (Site) o;
         return new EqualsBuilder()
+                .append(description, h.description)
                 .append(numLocations, h.numLocations)
                 .append(siteLocations, h.siteLocations)
                 .isEquals();
@@ -215,6 +230,7 @@ public abstract class Site implements Serializable, Cloneable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(19, 57)
+                .append(description)
                 .append(numLocations)
                 .append(siteLocations)
                 .toHashCode();
