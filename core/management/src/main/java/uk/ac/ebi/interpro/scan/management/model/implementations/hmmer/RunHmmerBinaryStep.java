@@ -148,6 +148,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         List<String> command = new ArrayList<String>();
 
 //        if (isSingleSeqMode()){
+        forceHmmsearch = true;  // we will use hmmsearch until parsing for hmmscan output is implemenetd
         if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
             Utilities.verboseLog("SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
