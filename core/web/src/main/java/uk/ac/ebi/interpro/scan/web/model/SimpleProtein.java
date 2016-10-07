@@ -268,6 +268,10 @@ public final class SimpleProtein implements Serializable {
         return sites;
     }
 
+    public void setSites(List<SimpleSite> sites) {
+        this.sites = sites;
+    }
+
     /**
      * USED BY FREEMARKER - DON'T DELETE
      *
