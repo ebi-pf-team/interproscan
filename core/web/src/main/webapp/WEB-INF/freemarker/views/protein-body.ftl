@@ -5,6 +5,7 @@
 
 <#if protein??>
 
+    <#assign proteinAc = protein.ac>
     <#assign proteinLength = protein.length>
 
         <#if (protein.familyEntries?has_content)>
@@ -127,7 +128,7 @@
                             <div class="matches">
                                 <#list site.siteLocations as residueMatch>
                                     <#global residueId=residueId + 1>
-                                        <@residueLocationMacro.residueLocation residueId=residueId proteinLength=proteinLength residue=residueMatch site=site colourClass="uni" />
+                                        <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site colourClass="uni" />
                                 </#list>
 
                             <#--Draw in scale markers for this line-->
