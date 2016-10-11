@@ -64,7 +64,7 @@ public abstract class Site implements Serializable, Cloneable {
      */
     @XmlTransient
     public Long getId() {
-        return null;
+        return id;
     }
 
     /**

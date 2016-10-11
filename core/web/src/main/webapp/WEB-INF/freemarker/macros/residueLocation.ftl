@@ -1,7 +1,7 @@
 <#import "location.ftl" as locationMacro>
 <#import "residueLocationPopup.ftl" as residueLocationPopupMacro>
 
-<#macro residueLocation residueId proteinLength residue site colourClass>
+<#macro residueLocation residueId proteinAc proteinLength residue site colourClass>
     <#assign title=residue.residue>
     <#assign locationObj=residue.location>
 
@@ -28,12 +28,11 @@
         <#assign prefix=viewId+"-"+prefix>
     </#if>
     <a id="${prefix}-location-${residueId}"
-       href="/interpro/popup/residue?id=${prefix}-popup-${residueId}&start=${locationObj.start?c}&end=${locationObj.end?c}"
+       href="/interpro/popup/residue?id=${prefix}-popup-${residueId}&proteinAc=${proteinAc}&siteId=${site.id}&residue=${title}&start=${locationObj.start?c}&end=${locationObj.end?c}"
        title="${title} ${locationObj.start} - ${locationObj.end}"
        class="match ${colourClass}"
        style="left:  ${((locationObj.start - 1) / proteinLength) * 100}%;
        width: ${((locationObj.end - locationObj.start + 1) / proteinLength) * 100}%;">
-        <#--<@locationMacro.location locationSpanId="${prefix}-span-"+residueId proteinLength=proteinLength titlePrefix=title location=locationObj colourClass=colourClass/>-->
     </a>
 
     </#if>
