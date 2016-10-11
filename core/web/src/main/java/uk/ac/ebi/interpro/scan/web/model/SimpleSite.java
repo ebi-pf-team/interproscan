@@ -5,15 +5,21 @@ import java.util.*;
 
 public class SimpleSite implements Comparable<SimpleSite>, Serializable {
 
+    private final long id;
     private final String description;
     private final int numLocations;
     private final SimpleSignature signature;
     private final SortedSet<SimpleSiteLocation> siteLocations = new TreeSet<>();
 
-    public SimpleSite(String description, int numLocations, SimpleSignature signature) {
+    public SimpleSite(long id, String description, int numLocations, SimpleSignature signature) {
+        this.id = id;
         this.description = description;
         this.numLocations = numLocations;
         this.signature = signature;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getDescription() {
@@ -73,6 +79,7 @@ public class SimpleSite implements Comparable<SimpleSite>, Serializable {
 
         SimpleSite that = (SimpleSite) o;
 
+        if (id != that.id) return false;
         if (!description.equals(that.description)) return false;
         if (numLocations != that.numLocations) return false;
         if (!signature.getAc().equals(that.signature.getAc())) return false;
@@ -92,7 +99,8 @@ public class SimpleSite implements Comparable<SimpleSite>, Serializable {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("SimpleSite");
-        sb.append("{description=").append(description);
+        sb.append("{id=").append(id);
+        sb.append(", description=").append(description);
         sb.append(", numLocations=").append(numLocations);
         sb.append(", signature=").append(signature.getAc());
         sb.append('}');
