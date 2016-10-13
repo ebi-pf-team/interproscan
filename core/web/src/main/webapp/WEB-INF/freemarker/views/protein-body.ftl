@@ -121,10 +121,15 @@
                     <ol class="signatures">
                             <#list protein.sites as site>
                             <li class="signature">
-                                <@signatureTextMacro.signatureText signature=site.signature/>
-
+                                <#--<@signatureTextMacro.signatureText signature=site.signature/>-->
+                                <div class="bot-row-signame">
+                                    <#if site.description?length < 28>
+                                        ${site.description}
+                                    <#else>
+                                        ${site.description[0..24]}...
+                                    </#if>
+                                </div>
                                 <div class="bot-row-line">
-                            <#--<div class="matches">-->
                             <div class="matches">
                                 <#list site.siteLocations as residueMatch>
                                     <#global residueId=residueId + 1>
