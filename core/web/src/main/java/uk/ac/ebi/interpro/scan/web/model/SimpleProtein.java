@@ -360,6 +360,42 @@ public final class SimpleProtein implements Serializable {
         return false;
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there are no sites.
+     *
+     * @return true if one or more sites are present, otherwise false
+     */
+    public boolean hasSites() {
+        if (this.sites == null || this.sites.size() < 1) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there are no sites.
+     *
+     * @return required HTML snippet.
+     */
+    public String disabledStyleIfNoSites() {
+        return (hasSites()) ? "" : "class=\"disabled\"";
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute disabled="disabled" if there are no sites.
+     *
+     * @return required HTML snippet.
+     */
+    public String disableIfNoSites() {
+        return (hasSites()) ? "" : "disabled=\"disabled\"";
+    }
+
 
     private static final String UNKNOWN = "Unknown";
 
