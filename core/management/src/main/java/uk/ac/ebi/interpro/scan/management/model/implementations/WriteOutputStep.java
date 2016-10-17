@@ -194,6 +194,9 @@ public class WriteOutputStep extends Step {
                     case TSV:
                         outputToTSV(outputPath, stepInstance, proteins);
                         break;
+                    case TSV_PRO:
+                        outputToTSVPRO(outputPath, stepInstance, proteins);
+                        break;
                     case XML:
                         outputToXML(outputPath, stepInstance, sequenceType, proteins, false);
                         break;
@@ -363,6 +366,22 @@ public class WriteOutputStep extends Step {
                              final List<Protein> proteins) throws IOException {
         try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
+        }
+    }
+
+    private void outputToTSVPRO(final Path path,
+                             final StepInstance stepInstance,
+                             final List<Protein> proteins) throws IOException {
+        //first write the tsv production output
+        try (ProteinMatchesTSVProResultWriter writer = new ProteinMatchesTSVProResultWriter(path)) {
+            writeProteinMatches(writer, stepInstance, proteins);
+        }
+        //write the site tsv production output
+        Path tsvProSitesPath =  Paths.get(path.toString() + ".sites");
+        Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
+        try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
+
+            writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
         }
     }
 
