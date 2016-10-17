@@ -23,6 +23,7 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public abstract class LocationWithSites<T extends Site> extends Location {
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
     @BatchSize(size=4000)
-    protected Set<T> sites = null;
+    protected Set<T> sites = new HashSet<T>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
