@@ -38,6 +38,8 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
     private int proteinInsertBatchSize;
 
+    private int proteinInsertBatchSizeNoLookup;
+
     private int proteinPrecalcLookupBatchSize;
 
     private Set<Protein> proteinsAwaitingPrecalcLookup;
@@ -62,6 +64,12 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     public void setProteinInsertBatchSize(int proteinInsertBatchSize) {
         this.proteinInsertBatchSize = proteinInsertBatchSize;
         proteinsAwaitingPersistence = new HashSet<>(proteinInsertBatchSize);
+    }
+
+
+    @Required
+    public void setProteinInsertBatchSizeNoLookup(int proteinInsertBatchSizeNoLookup) {
+        this.proteinInsertBatchSizeNoLookup = proteinInsertBatchSizeNoLookup;
     }
 
     @Required
@@ -124,6 +132,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     private void lookupProteins(Map<String, SignatureLibraryRelease> analysisJobMap) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             final boolean usingLookupService = proteinLookup != null;
+            if (! usingLookupService){
+                proteinInsertBatchSize = proteinInsertBatchSizeNoLookup;
+            }
+
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
                     : null;
