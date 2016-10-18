@@ -139,8 +139,18 @@
                                 e.g. "PROSITE_PROFILES" becomes "prosite-profiles" -->
                                     ${site.signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
                                     </#assign>
+                                    <#assign entry=site.entry>
+                                    <#assign colourClass>
+                                      <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
+                                      ${dbClass} c${entryColours[entry.ac]} ${entry.type}
+                                      <#elseif entry.type?lower_case?starts_with("unknown")>
+                                      ${dbClass} uni
+                                      <#else>
+                                      ${dbClass} ${entry.type}
+                                      </#if>
+                                    </#assign>
 
-                                    <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site colourClass=dbClass+" uni" />
+                                    <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site colourClass=colourClass />
                                 </#list>
 
                             <#--Draw in scale markers for this line-->
