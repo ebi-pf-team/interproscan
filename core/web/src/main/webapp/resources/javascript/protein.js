@@ -33,11 +33,23 @@ function displayType(checkbox) {
 
 function displayUnintegrated(checkbox) {
     var checked = checkbox.checked;
-    $.cookie('#' + checkbox.id, checked, { path: '/' });
+    $.cookie('#' + checkbox.id, checked, {path: '/'});
     if (checked) {
-        $('#uni_sign').show("blind", { direction: "vertical" }, 300);
+        $('#uni_sign').show("blind", {direction: "vertical"}, 300);
     }
     else {
-        $('#uni_sign').hide("blind", { direction: "vertical" }, 300);
+        $('#uni_sign').hide("blind", {direction: "vertical"}, 300);
     }
 }
+
+function displaySites(checkbox) {
+    var checked = checkbox.checked;
+    $.cookie('#' + checkbox.id, checked, { path: '/' });
+    if (checked) {
+        $('#sites').show("blind", { direction: "vertical" }, 300);
+    }
+    else {
+        $('#sites').hide("blind", { direction: "vertical" }, 300);
+    }
+}
+
