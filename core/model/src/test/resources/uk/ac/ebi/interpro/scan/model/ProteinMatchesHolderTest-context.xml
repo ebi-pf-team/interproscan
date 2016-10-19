@@ -91,7 +91,7 @@
             Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
             p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
             Signature signature = new Signature("cd000004", "Sortase ");
-            // Per residue annotations (sites)
+            // Residue annotations (sites)
             Set<SiteLocation> siteLocations = new HashSet<>();
             siteLocations.add(new SiteLocation("Q", 39, 39));
             siteLocations.add(new SiteLocation("K", 43, 43));
