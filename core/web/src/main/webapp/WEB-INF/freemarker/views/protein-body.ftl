@@ -110,11 +110,11 @@
             </div>
         </#if>
 
-        <#--Per residue features-->
+        <#--Residue annotation features-->
         <#if protein.sites?has_content>
             <#global residueId=0>
             <div id="sites">
-            <h3>Per residue annotation</h3>
+            <h3>Residue annotation</h3>
             <#--<div class="prot_sum">-->
             <div class="prot_sum">
                 <div class="bot-row">
