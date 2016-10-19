@@ -214,13 +214,14 @@ a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_o
 .menu-filter fieldset label.view_all {padding-left:19px;padding-top:5px; background: url(../images/ico_type_all.png) no-repeat 0 2px; font-weight:bold;}
 .menu-filter div { margin-bottom:10px;}
 .menu-filter div H1 {color:#2e5882; font-size:110%;font-weight:bold; background-color:#f2f6f8; border:1px solid #9eb6ce; padding: 4px 10px; margin:0; }
-.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
+.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-sites fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
 .menu-filter div fieldset {border: 1px solid #d1d1d1;  margin:0;}
 .menu-filter .disabled {border:0px solid red;-moz-opacity: .5; opacity: 0.50; filter: alpha(opacity=50);}
 .menu-filter .disabled label {cursor:default;}
-.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {display: block;}
-.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
+.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-sites div, .menu-filter .menu-filter-colour div {display: block;}
+.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-sites fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
 .menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
+.menu-filter .menu-filter-sites label  {border:0px green solid;padding-left:2px;padding-top:5px; }
 .menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 2px;}
 .menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 2px;}
 .menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 2px;}
