@@ -64,6 +64,9 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         String score = "-";
                         String status = "T";
 
+                        //Default seq score
+                        String seqScore = "-";
+
                         // To maintain compatibility, we output the same value for the score column as I4
                         // In some cases we have to take the value from the match
                         if (match instanceof SuperFamilyHmmer3Match) {
@@ -92,6 +95,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         mappingFields.add(signatureAc);
                         mappingFields.add(Integer.toString(location.getStart()));
                         mappingFields.add(Integer.toString(location.getEnd()));
+                        mappingFields.add(seqScore);
                         mappingFields.add(score);
                         mappingFields.add(date);
 
@@ -103,3 +107,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
         return locationCount;
     }
 }
+
+
+
+

@@ -145,7 +145,10 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                         stepInstance.getTopProtein(),
                         signatureLibraryRelease
                 );
-                Utilities.verboseLog("filtered sites: " + rawSites);
+                for (C repRawSite:rawSites) {
+                    Utilities.verboseLog("rep filtered site: " +repRawSite );
+                    break;
+                }
             }
         }
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);

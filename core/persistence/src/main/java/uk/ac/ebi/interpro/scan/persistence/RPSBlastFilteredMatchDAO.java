@@ -107,7 +107,8 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 //for this location find the sites
                 Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
 
-                Utilities.verboseLog("filtered sites: " + rpsBlastSites);
+               LOGGER.debug("filtered sites: " + rpsBlastSites);
+
                 locations.add(
                         new RPSBlastMatch.RPSBlastLocation(
                                 rawMatch.getLocationStart(),

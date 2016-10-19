@@ -5,6 +5,7 @@
 
 <#if protein??>
 
+    <#assign proteinAc = protein.ac>
     <#assign proteinLength = protein.length>
 
         <#if (protein.familyEntries?has_content)>
@@ -112,6 +113,7 @@
         <#--Per residue features-->
         <#if protein.sites?has_content>
             <#global residueId=0>
+            <div id="sites">
             <h3>Per residue annotation</h3>
             <#--<div class="prot_sum">-->
             <div class="prot_sum">
@@ -120,14 +122,25 @@
                     <ol class="signatures">
                             <#list protein.sites as site>
                             <li class="signature">
-                                <@signatureTextMacro.signatureText signature=site.signature/>
-
+                                <#--<@signatureTextMacro.signatureText signature=site.signature/>-->
+                                <div class="bot-row-signame">
+                                    <#if site.description?length < 28>
+                                        ${site.description}
+                                    <#else>
+                                        ${site.description[0..24]}...
+                                    </#if>
+                                </div>
                                 <div class="bot-row-line">
-                            <#--<div class="matches">-->
                             <div class="matches">
                                 <#list site.siteLocations as residueMatch>
                                     <#global residueId=residueId + 1>
-                                        <@residueLocationMacro.residueLocation residueId=residueId proteinLength=proteinLength residue=residueMatch site=site colourClass="uni" />
+                                    <#assign dbClass>
+                                    <#-- Make the data source name lowercase and replace whitespace and underscores with hyphens,
+                                e.g. "PROSITE_PROFILES" becomes "prosite-profiles" -->
+                                    ${site.signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
+                                    </#assign>
+
+                                    <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site colourClass=dbClass+" uni" />
                                 </#list>
 
                             <#--Draw in scale markers for this line-->
@@ -143,6 +156,7 @@
                     <div class="bot-row-line-bot"></div>
                 </div>
 
+            </div>
             </div>
 
         </#if>
