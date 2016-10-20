@@ -38,7 +38,7 @@ public enum EntryType {
     }
 
 
-    private EntryType(String name) {
+    EntryType(String name) {
         this.name = name;
     }
 
@@ -72,7 +72,7 @@ public enum EntryType {
         }
     }
 
-    private EntryType(String... names) {
+    EntryType(String... names) {
         this.name = name(); // Default name (see java.lang.Enum)
         // Store list of alternative names
         this.alternativeNames.addAll(Arrays.asList(names));

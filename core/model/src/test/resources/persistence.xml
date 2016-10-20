@@ -11,25 +11,6 @@
             Test persistence-unit that uses an in-memory HSQLDB database.
         </description>
 
-        <!-- Interfaces -->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Location</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Match</class>-->
-
-        <!--<class>uk.ac.ebi.interpro.scan.model.Entry</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.EntryType</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.GoCategory</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.GoXref</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Release</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.PathwayXref</class>-->
-
-        <!--<class>uk.ac.ebi.interpro.scan.model.Protein</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Model</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Xref</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.ProteinXref</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.SignatureXref</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.Signature</class>-->
-        <!--<class>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</class>-->
-
         <properties>
             <property name="hibernate.show_sql" value="${mvn.hibernate.show_sql}"/>
             <property name="hibernate.format_sql" value="${mvn.hibernate.format_sql}"/>

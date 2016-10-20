@@ -20,7 +20,9 @@ public enum FileOutputFormat {
     GFF3_PARTIAL("gff3-partial"),
     // XML_SLIM is an internal format, the same as XML output but proteins with no matches are not included at all in
     // the file
-    XML_SLIM("xml-slim");
+    XML_SLIM("xml-slim"),
+    //TSV_PRO is the format for production purposes in InterPRo
+    TSV_PRO("tsv-pro");
 
     private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
 
@@ -74,6 +76,8 @@ public enum FileOutputFormat {
             return SVG;
         } else if (outputFormat.equalsIgnoreCase(RAW.getFileExtension())) {
             return RAW;
+        } else if (outputFormat.equalsIgnoreCase(TSV_PRO.getFileExtension())) {
+            return TSV_PRO;
         } else {
             return TSV;
         }
@@ -103,6 +107,8 @@ public enum FileOutputFormat {
                 fileOutputFormats.add(SVG);
             } else if (format.equalsIgnoreCase(TSV.getFileExtension())) {
                 fileOutputFormats.add(TSV);
+            } else if (format.equalsIgnoreCase(TSV_PRO.getFileExtension())) {
+                    fileOutputFormats.add(TSV_PRO);
             } else if (format.equalsIgnoreCase(RAW.getFileExtension())) {
                 fileOutputFormats.add(RAW);
             } else {

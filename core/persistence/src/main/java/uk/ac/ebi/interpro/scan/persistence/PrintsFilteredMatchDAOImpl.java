@@ -43,7 +43,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
      */
     @Override
     @Transactional
-    protected void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
         for (RawProtein<PrintsRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());

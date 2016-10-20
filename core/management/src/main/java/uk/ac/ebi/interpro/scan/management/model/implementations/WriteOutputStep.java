@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.io.XmlWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
@@ -59,6 +60,8 @@ public class WriteOutputStep extends Step {
     /* Not required. If TRUE (default), it will archive all SVG output files into a single archive.*/
     private boolean archiveSVGOutput = true;
 
+    private boolean excludeSites;
+
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
@@ -105,6 +108,11 @@ public class WriteOutputStep extends Step {
     @Required
     public void setXrefDao(ProteinXrefDAO proteinXrefDAO) {
         this.proteinXrefDAO = proteinXrefDAO;
+    }
+
+    @Required
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
     }
 
     /**
@@ -186,11 +194,14 @@ public class WriteOutputStep extends Step {
                     case TSV:
                         outputToTSV(outputPath, stepInstance, proteins);
                         break;
+                    case TSV_PRO:
+                        outputToTSVPRO(outputPath, stepInstance, proteins);
+                        break;
                     case XML:
-                        outputToXML(outputPath, sequenceType, proteins, false);
+                        outputToXML(outputPath, stepInstance, sequenceType, proteins, false);
                         break;
                     case XML_SLIM:
-                        outputToXML(outputPath, sequenceType, proteins, true);
+                        outputToXML(outputPath, stepInstance, sequenceType, proteins, true);
                         break;
                     case GFF3:
                         outputToGFF(outputPath, stepInstance, sequenceType, proteins);
@@ -240,7 +251,7 @@ public class WriteOutputStep extends Step {
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
             }
-        }else{
+        } else {
             LOGGER.debug("Files in temporaryFileDirectory not deleted since  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);
         }
     }
@@ -315,7 +326,7 @@ public class WriteOutputStep extends Step {
         return outputPath;
     }
 
-    private void outputToXML(Path outputPath, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+    private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
@@ -323,6 +334,17 @@ public class WriteOutputStep extends Step {
             matchesHolder = new ProteinMatchesHolder();
         }
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
+
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
+        xmlWriter.setExcludeSites(excludeSites);
+        if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
+            removeSites(proteins, true);
+        }
+        else if (isSlimOutput) {
+            removeSites(proteins, false);
+        }
+
         if (isSlimOutput) {
             // Only include a protein in the output if it has at least one match
             for (Protein protein : proteins) {
@@ -344,6 +366,22 @@ public class WriteOutputStep extends Step {
                              final List<Protein> proteins) throws IOException {
         try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
+        }
+    }
+
+    private void outputToTSVPRO(final Path path,
+                             final StepInstance stepInstance,
+                             final List<Protein> proteins) throws IOException {
+        //first write the tsv production output
+        try (ProteinMatchesTSVProResultWriter writer = new ProteinMatchesTSVProResultWriter(path)) {
+            writeProteinMatches(writer, stepInstance, proteins);
+        }
+        //write the site tsv production output
+        Path tsvProSitesPath =  Paths.get(path.toString() + ".sites");
+        Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
+        try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
+
+            writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
         }
     }
 
@@ -485,4 +523,33 @@ public class WriteOutputStep extends Step {
         }
     }
 
+    /**
+     * Remove sites from any protein match locations (make sites NULL so they don't appear at all in the XML output)
+     * @param proteins The proteins
+     * @param all Remove all site data (not just empty sites)?
+     */
+    private void removeSites(List<Protein> proteins, boolean all) {
+        for (Protein protein : proteins) {
+            Set<Match> matches = protein.getMatches();
+            if (matches != null && matches.size() > 0) {
+                for (Match match : matches) {
+                    Set<Location> locations = match.getLocations();
+                    if (locations != null && locations.size() > 0) {
+                        for (Location location : locations) {
+                            if (location instanceof LocationWithSites) {
+                                LocationWithSites l = (LocationWithSites) location;
+                                Set<Site> sites = l.getSites();
+                                if (sites != null) {
+                                    if (all || sites.size() < 1) {
+                                        l.setSites(null);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }
