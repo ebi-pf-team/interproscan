@@ -54,7 +54,7 @@
                 <div ${protein.disabledStyleIfNoSites()}>
                     <input type="checkbox" name="sites" id="check-7" value="Sites"
                            checked="checked" ${protein.disableIfNoSites()}/>
-                    <label for="check-7">Show residues</label>
+                    <label for="check-7">Residue annotation</label>
                 </div>
             </fieldset>
         </div>

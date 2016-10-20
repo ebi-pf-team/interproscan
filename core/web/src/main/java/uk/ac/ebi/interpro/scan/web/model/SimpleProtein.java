@@ -477,7 +477,7 @@ public final class SimpleProtein implements Serializable {
                             if (siteId == null) {
                                 siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
                             }
-                            SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature);
+                            SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
                             for (SiteLocation siteLocation : site.getSiteLocations()) {
                                 SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd()));
                                 simpleSite.addSiteLocation(simpleSiteLocation);
