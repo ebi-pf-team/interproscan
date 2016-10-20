@@ -210,7 +210,8 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                         String [] siteInfo = line.split("\\t");
 
 //                        if (matcher.matches()) {
-                        Utilities.verboseLog("Sites tokens: " + Arrays.toString(siteInfo));
+                        LOGGER.debug("Sites tokens: " + Arrays.toString(siteInfo));
+
                         if (siteInfo.length > 5) {
                             int sessionNumber = Integer.parseInt(siteInfo[0]);
                             String queryId = siteInfo[1];
@@ -227,8 +228,8 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                                     annotationType, title,  residues,
                                     sourceDomain, model, completeSize, mappedSize,
                                     signatureLibraryRelease);
-                            LOGGER.debug("site: " + rawSite);
-                            Utilities.verboseLog("raw site: " + rawSite);
+//                            LOGGER.debug("site: " + rawSite);
+                            LOGGER.debug("raw site: " + rawSite);
                             sites.add(rawSite);
 
                         }
