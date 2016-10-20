@@ -9,6 +9,13 @@ import java.util.Map;
 public interface BlackBoxMaster extends SimpleBlackBoxMaster {
 
     /**
+     * Boolean switch which excludes sites from the output.
+     *
+     * @param excludeSites Default is false (not activated)
+     */
+    void setExcludeSites(boolean excludeSites);
+
+    /**
      * Boolean switch which activates the InterPro lookup.
      *
      * @param mapToInterPro Default is FALSE (not activated)

@@ -12,7 +12,7 @@ import java.util.Collection;
 @XmlTransient
 public interface IMatchesHolder {
 
-    public void addProtein(Protein protein);
+    void addProtein(Protein protein);
 
-    public void addProteins(Collection<Protein> proteins);
+    void addProteins(Collection<Protein> proteins);
 }

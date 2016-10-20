@@ -1,8 +1,11 @@
 <#--Returns main body of protein page for inclusion in the InterProScan 5 HTML output, or elsewhere -->
 <#import "../macros/condensedView.ftl" as condensedViewMacro/>
+<#import "../macros/residueLocation.ftl" as residueLocationMacro/>
+<#import "../macros/signatureText.ftl" as signatureTextMacro>
 
 <#if protein??>
 
+    <#assign proteinAc = protein.ac>
     <#assign proteinLength = protein.length>
 
         <#if (protein.familyEntries?has_content)>
@@ -106,6 +109,63 @@
                 </div>
             </div>
         </#if>
+
+        <#--Residue annotation features-->
+        <#if protein.sites?has_content>
+            <#global residueId=0>
+            <div id="sites">
+            <h3>Residue annotation</h3>
+            <#--<div class="prot_sum">-->
+            <div class="prot_sum">
+                <div class="bot-row">
+                    <div class="bot-row-line-top"></div>
+                    <ol class="signatures">
+                            <#list protein.sites as site>
+                            <li class="signature">
+                                <div class="bot-row-signame">
+                                <#--Setup variables ready for displaying site/signature information,-->
+                                <#--e.g. for CDD could condense "nucleotide binding site cd04242 " to "nucleotide binding site c...".-->
+                                <#--e.g. for SFLD could condense "SFLD_Res01 SFLDG01017" to "SFLDG01017".-->
+                                    <#assign signature = site.signature>
+                                    <#if signature.dataSource.sourceName == 'SFLD'>
+                                        ${signature.ac}
+                                    <#else>
+                                        <#assign siteText>
+                                            ${site.description} ${signature.ac}
+                                        </#assign>
+                                        <#assign siteText = siteText?trim>
+                                        <#if siteText?length <= 20>
+                                            ${siteText}
+                                        <#else>
+                                            <span title="${siteText}">${siteText[0..17]}...</span>
+                                        </#if>
+                                    </#if>
+                                </div>
+                                <div class="bot-row-line">
+                            <div class="matches">
+                                <#list site.siteLocations as residueMatch>
+                                    <#global residueId=residueId + 1>
+                                    <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site />
+                                </#list>
+
+                            <#--Draw in scale markers for this line-->
+                                <#list scale?split(",") as scaleMarker>
+                                    <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+                                </#list>
+
+                            </div>
+                            </div>
+                            </li>
+                            </#list>
+                    </ol>
+                    <div class="bot-row-line-bot"></div>
+                </div>
+
+            </div>
+            </div>
+
+        </#if>
+
 
     <#else>
         <#-- No matches so the detailed matches section is omitted. -->

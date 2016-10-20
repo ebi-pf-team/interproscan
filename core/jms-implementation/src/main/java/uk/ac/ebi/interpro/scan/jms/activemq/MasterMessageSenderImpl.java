@@ -108,7 +108,9 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
      */
     @Transactional
     public void sendMessage(StepInstance stepInstance, final boolean highMemory, final int priority, final boolean canRunRemotely) throws JMSException {
-        LOGGER.debug("Attempting to send message to queue - high memory: " + highMemory + "  priority: " + priority + " can run remotely: " + canRunRemotely);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Attempting to send message to queue - high memory: " + highMemory + "  priority: " + priority + " can run remotely: " + canRunRemotely);
+        }
         final StepExecution stepExecution = stepInstance.createStepExecution();
         stepExecutionDAO.insert(stepExecution);
         stepExecution.submit(stepExecutionDAO);
@@ -126,7 +128,9 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
                 LOGGER.warn("High memory job request queue (destination) isn't set up properly!");
             }
         }
-        LOGGER.debug("Using queue: " +  ((Queue)workerJobRequestQueue).getQueueName());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Using queue: " + ((Queue) workerJobRequestQueue).getQueueName());
+        }
         synchronized (JMS_TEMPLATE_LOCK) {
             jmsTemplate.setPriority(priority);
             jmsTemplate.send(workerJobRequestQueue, new MessageCreator() {
@@ -151,12 +155,13 @@ public class MasterMessageSenderImpl implements MasterMessageSender {
                         }
                         LOGGER.debug(buf);
                     }
-                    LOGGER.debug("Adding to queue Message with ID:"+ message.getJMSMessageID()+
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Adding to queue Message with ID:"+ message.getJMSMessageID()+
                             " highmem: "+message.getBooleanProperty(HIGH_MEMORY_PROPERTY) +" " + (highMemory ? "highmemWorker" : "normalMemoryWorker") +
                             " StepExecution with priority " + priority +
                             " that can run remotely: " + stepExecution.toString()  +
-                            " on the queuue: "+ ((Queue)workerJobRequestQueue).getQueueName()
-                    );
+                            " on the queuue: "+ ((Queue)workerJobRequestQueue).getQueueName());
+                    }
 
                     return message;
                 }

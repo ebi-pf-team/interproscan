@@ -91,6 +91,8 @@
         
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParser">
+                <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SFLD"/>
+                <constructor-arg type="java.lang.String" ref="sfldSignatureLibraryReleaseVersion"/>
                 <property name="parserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
                         <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
@@ -101,9 +103,9 @@
             </bean>
         </property>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
-        <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-        <property name="rawMatchDAO" ref="SFLDRawMatchDAO"/>
-        <property name="useSingleSequenceMode" value="${sfld.hmmsearch.force}"/>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
+        <property name="rawSiteDAO"  ref="sfldRawSiteDAO"/>
     </bean>
 
     <bean id="stepSFLDDeleteJobFiles"
@@ -121,30 +123,51 @@
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
-    <!-- TODO - Check for changes - presumably now using different objects to store the results? -->
+
     <bean id="stepSFLDPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"
           parent="abstractSFLDStep">
         <property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="stepDescription" value="Store raw SFLD matches as filtered matches"/>
         <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
-        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
-        <property name="filteredMatchDAO">
+        <!--<property name="postProcessor"/> No post processing required-->
+        <property name="filteredMatchAndSiteDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>
         </property>
-        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="rawMatchDAO" ref="SFLDRawMatchDAO"/>
-        <property name="signatureLibrary" value="SFLD"/>
-        <property name="filter">
-            <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
-        </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
+        <property name="rawSiteDAO" ref="sfldRawSiteDAO"/>
     </bean>
+
+    <!--&lt;!&ndash; TODO - Check for changes - presumably now using different objects to store the results? &ndash;&gt;-->
+    <!--<bean id="stepSFLDPostProcessing"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"-->
+          <!--parent="abstractSFLDStep">-->
+        <!--<property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>-->
+        <!--<property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>-->
+        <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
+        <!--<property name="filteredMatchDAO">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>-->
+        <!--</property>-->
+        <!--<property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
+        <!--<property name="rawMatchDAO" ref="sfldRawMatchDAO"/>-->
+        <!--<property name="signatureLibrary" value="SFLD"/>-->
+        <!--<property name="filter">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>-->
+        <!--</property>-->
+    <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SFLD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
-    <bean id="SFLDRawMatchDAO"
+    <bean id="sfldRawMatchDAO"
           class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch"/>
+    </bean>
+
+    <bean id="sfldRawSiteDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite"/>
     </bean>
 
     <bean id="signatureLibraryReleaseSFLD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">

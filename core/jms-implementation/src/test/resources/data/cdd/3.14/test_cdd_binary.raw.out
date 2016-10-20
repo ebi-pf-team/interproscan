@@ -1,0 +1,50 @@
+#Post-RPSBLAST Processing Utility v0.1
+#Config file:
+#Input data file:	/example/path/temp/ebi6-242.ebi.ac.uk_20160628_110142626_binz//jobCDD/000000000001_000000000001.blast.raw.out
+#Output data file:	stdout
+#E-Value cutoff:	0.01
+#Redundancy:	Standard
+#Data requested:	Domain hits and site annotations
+#Output format -- tab-delimited table
+#DATA
+#SESSION	<session-ordinal>	<program>	<database>	<score-matrix>	<evalue-threshold>
+#QUERY	<query-id>	<seq-type>	<seq-length>	<definition-line>
+#DOMAINS
+#<session-ordinal>	<query-id[readingframe]>	<hit-type>	<PSSM-ID>	<from>	<to>	<E-Value>	<bitscore>	<accession>	<short-name>	<incomplete>	<superfamily PSSM-ID>
+#more such lines......
+#ENDDOMAINS
+#SITES
+#<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
+#more such lines......
+#ENDSITES
+#MOTIFS
+#<session-ordinal>	<query-id[readingframe]>	<title>	<from>	<to>	<source-domain>
+#more such lines......
+#ENDMOTIFS
+#ENDQUERY	<query-id>
+#more query sections..
+#ENDSESSION	<session-ordinal>
+#more session sections..
+#ENDDATA
+#=====================================================================
+DATA
+SESSION	1	RPSBLAST 2.3.0+	data/cdd/3.14/db/Cdd_NCBI	BLOSUM62	0.01
+QUERY	Query_1	Peptide	493	1
+DOMAINS
+1	Query_1	Specific	238030	365	485	1.17862e-19	83.0798	cd00075	HATPase_c	-	275468
+1	Query_1	Specific	119399	249	309	7.82584e-12	59.9188	cd00082	HisKA	-	260177
+1	Query_1	Specific	100122	197	240	0.000231544	37.9998	cd06225	HAMP	-	260769
+ENDDOMAINS
+SITES
+1	Query_1	Specific	ATP binding site	N369,N373,I376,V419,N421,G423,E425,I426,G452,L453,G454,L455,I471,S473,G478,T479,I481	17	17	238030
+1	Query_1	Specific	Mg2+ binding site	N373	1	1	238030
+1	Query_1	Specific	G-X-G motif	G423,E425,G452,G454	4	4	238030
+1	Query_1	Specific	phosphorylation site	H261	1	1	119399
+1	Query_1	Specific	dimer interface	M255,I259,L263,P266,I270,Y273,Y287,I291,K294,M298,M301,L305	12	12	119399
+1	Query_1	Specific	dimerization interface	I198,Q199,L201,I202,M205,K206,F208,E223,I224,E226,L227,H230,F231,Y233,M234,E237,I238	19	17	100122
+ENDSITES
+ENDQUERY
+ENDSESSION	1
+ENDDATA
+
+#Total Blastout object processed	1
