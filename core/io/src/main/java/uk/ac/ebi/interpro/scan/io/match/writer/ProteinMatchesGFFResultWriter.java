@@ -49,10 +49,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         this.matchCounter = 0;
     }
 
-
     public ProteinMatchesGFFResultWriter(Path path) throws IOException {
-        this(path, true);
-
+         this(path, true);
     }
 
     public ProteinMatchesGFFResultWriter(Path path, boolean writeFullGFF) throws IOException {
