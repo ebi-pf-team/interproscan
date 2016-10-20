@@ -66,7 +66,6 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         proteinsAwaitingPersistence = new HashSet<>(proteinInsertBatchSize);
     }
 
-
     @Required
     public void setProteinInsertBatchSizeNoLookup(int proteinInsertBatchSizeNoLookup) {
         this.proteinInsertBatchSizeNoLookup = proteinInsertBatchSizeNoLookup;

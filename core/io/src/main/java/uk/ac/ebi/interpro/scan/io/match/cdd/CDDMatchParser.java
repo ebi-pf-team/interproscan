@@ -8,7 +8,6 @@ import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.io.match.MatchAndSiteParser;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-//import uk.ac.ebi.interpro.scan.model.Site;
 import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
