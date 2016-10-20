@@ -9,13 +9,15 @@ public class SimpleSite implements Comparable<SimpleSite>, Serializable {
     private final String description;
     private final int numLocations;
     private final SimpleSignature signature;
+    private final SimpleEntry entry;
     private final SortedSet<SimpleSiteLocation> siteLocations = new TreeSet<>();
 
-    public SimpleSite(long id, String description, int numLocations, SimpleSignature signature) {
+    public SimpleSite(long id, String description, int numLocations, SimpleSignature signature, SimpleEntry entry) {
         this.id = id;
         this.description = description;
         this.numLocations = numLocations;
         this.signature = signature;
+        this.entry = entry;
     }
 
     public long getId() {
@@ -32,6 +34,10 @@ public class SimpleSite implements Comparable<SimpleSite>, Serializable {
 
     public SimpleSignature getSignature() {
         return signature;
+    }
+
+    public SimpleEntry getEntry() {
+        return entry;
     }
 
     public SortedSet<SimpleSiteLocation> getSiteLocations() {
@@ -83,6 +89,7 @@ public class SimpleSite implements Comparable<SimpleSite>, Serializable {
         if (!description.equals(that.description)) return false;
         if (numLocations != that.numLocations) return false;
         if (!signature.getAc().equals(that.signature.getAc())) return false;
+        if (!entry.equals(that.entry)) return false;
         if (!siteLocations.equals(siteLocations)) return false;
 
         return true;
@@ -103,6 +110,7 @@ public class SimpleSite implements Comparable<SimpleSite>, Serializable {
         sb.append(", description=").append(description);
         sb.append(", numLocations=").append(numLocations);
         sb.append(", signature=").append(signature.getAc());
+        sb.append(", entry=").append(entry);
         sb.append('}');
         return sb.toString();
     }

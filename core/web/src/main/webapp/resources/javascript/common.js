@@ -17,4 +17,9 @@ $(document).ready(function() {
             viewport: $(window) // Keep the tooltip on-screen at all times
         }
     });
+    $('span[title]').qtip({
+        position: {
+            viewport: $(window) // Keep the tooltip on-screen at all times
+        }
+    });
 });
