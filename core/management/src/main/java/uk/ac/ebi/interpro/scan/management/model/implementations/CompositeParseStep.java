@@ -156,7 +156,9 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
                                 }
                             }
                         }
+                        Utilities.verboseLog("represantiveRawSite :" + represantiveRawSite.toString());
                     }
+
                     Utilities.verboseLog("A total of " + count + " residue sites from file " + fileName);
 
                     rawSiteDAO.insertSites(rawProteinSites);

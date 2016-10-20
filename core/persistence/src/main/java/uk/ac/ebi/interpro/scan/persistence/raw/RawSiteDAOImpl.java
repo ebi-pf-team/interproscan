@@ -35,7 +35,6 @@ public class RawSiteDAOImpl<T extends RawSite>
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + rawSites.size() + " raw sites.");
             }
-            Utilities.verboseLog("Persisting " + rawSites.size() + " raw sites.");
             insert(new HashSet<T>(rawProteinSite.getSites()));
         }
         entityManager.flush();
