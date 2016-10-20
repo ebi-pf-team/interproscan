@@ -122,35 +122,30 @@
                     <ol class="signatures">
                             <#list protein.sites as site>
                             <li class="signature">
-                                <#--<@signatureTextMacro.signatureText signature=site.signature/>-->
                                 <div class="bot-row-signame">
-                                    <#if site.description?length < 28>
-                                        ${site.description}
+                                <#--Setup variables ready for displaying site/signature information,-->
+                                <#--e.g. for CDD could condense "nucleotide binding site cd04242 " to "nucleotide binding site c...".-->
+                                <#--e.g. for SFLD could condense "SFLD_Res01 SFLDG01017" to "SFLDG01017".-->
+                                    <#assign signature = site.signature>
+                                    <#if signature.dataSource.sourceName == 'SFLD'>
+                                        ${signature.ac}
                                     <#else>
-                                        ${site.description[0..24]}...
+                                        <#assign siteText>
+                                            ${site.description} ${signature.ac}
+                                        </#assign>
+                                        <#assign siteText = siteText?trim>
+                                        <#if siteText?length <= 20>
+                                            ${siteText}
+                                        <#else>
+                                            <span title="${siteText}">${siteText[0..17]}...</span>
+                                        </#if>
                                     </#if>
                                 </div>
                                 <div class="bot-row-line">
                             <div class="matches">
                                 <#list site.siteLocations as residueMatch>
                                     <#global residueId=residueId + 1>
-                                    <#assign dbClass>
-                                    <#-- Make the data source name lowercase and replace whitespace and underscores with hyphens,
-                                e.g. "PROSITE_PROFILES" becomes "prosite-profiles" -->
-                                    ${site.signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
-                                    </#assign>
-                                    <#assign entry=site.entry>
-                                    <#assign colourClass>
-                                      <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
-                                      ${dbClass} c${entryColours[entry.ac]} ${entry.type}
-                                      <#elseif entry.type?lower_case?starts_with("unknown")>
-                                      ${dbClass} uni
-                                      <#else>
-                                      ${dbClass} ${entry.type}
-                                      </#if>
-                                    </#assign>
-
-                                    <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site colourClass=colourClass />
+                                    <@residueLocationMacro.residueLocation residueId=residueId proteinAc=proteinAc proteinLength=proteinLength residue=residueMatch site=site />
                                 </#list>
 
                             <#--Draw in scale markers for this line-->
