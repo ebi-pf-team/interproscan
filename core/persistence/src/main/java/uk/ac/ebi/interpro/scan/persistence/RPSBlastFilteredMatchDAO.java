@@ -4,12 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
+import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implements the persistence method for RPSBlast matches (as filtered matches).
@@ -18,11 +18,8 @@ import java.util.Set;
  * @version $Id$
  * @since 5.16
  */
-
-
-abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
-        extends FilteredMatchDAOImpl<T, RPSBlastMatch>
-        implements FilteredMatchDAO<T, RPSBlastMatch>  {
+abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RPSBlastRawSite>
+        extends FilteredMatchAndSiteDAOImpl<T,RPSBlastMatch, R, RPSBlastMatch.RPSBlastLocation.RPSBlastSite> {
 
     private static final Logger LOGGER = Logger.getLogger(RPSBlastFilteredMatchDAO.class.getName());
 
@@ -49,8 +46,26 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
      * @param modelIdToSignatureMap a Map of model IDs to Signature objects.
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
+    @Override
     @Transactional
-    public void persist(Collection<RawProtein<T>> rawProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> rawProteins, Collection<R> rawSites,
+                        Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+
+        // Map seqId to raw sites for that sequence
+        Map<String, List<R>> seqIdToRawSitesMap = new HashMap<>();
+        if (rawSites != null) {
+            for (R rawSite : rawSites) {
+                String seqId = rawSite.getSequenceIdentifier();
+                if (seqIdToRawSitesMap.containsKey(seqId)) {
+                    seqIdToRawSitesMap.get(seqId).add(rawSite);
+                } else {
+                    List<R> s = new ArrayList<>();
+                    s.add(rawSite);
+                    seqIdToRawSitesMap.put(seqId, s);
+                }
+            }
+        }
+
         for (RawProtein<T> rawProtein : rawProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -70,24 +85,46 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
                 if (rawMatch == null) continue;
 
                 Signature signature = modelIdToSignatureMap.get(rawMatch.getModelId());
-                LOGGER.debug("rpsBlast match model id:" + rawMatch.getModelId() + " signature: " + signature);
-                LOGGER.debug("modelIdToSignatureMap: " + modelIdToSignatureMap);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rpsBlast match model id:" + rawMatch.getModelId() + " signature: " + signature);
+                    LOGGER.debug("modelIdToSignatureMap: " + modelIdToSignatureMap);
+                }
 
                 if (rawMatch.getModelId().startsWith("cl")){
                     LOGGER.debug("this is a superfamily match, ignore for now ...");
                     continue;
                 }
-                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
+                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<>();
+
+                rawMatch.getSequenceIdentifier();
+                rawMatch.getModelId();
+                rawMatch.getSessionNumber();
+                rawMatch.getLocationStart();
+                rawMatch.getLocationStart();
+                rawMatch.getSignatureLibrary();
+                rawMatch.getSignatureLibraryRelease();
+
+                //for this location find the sites
+                Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
+
+               LOGGER.debug("filtered sites: " + rpsBlastSites);
+
                 locations.add(
                         new RPSBlastMatch.RPSBlastLocation(
                                 rawMatch.getLocationStart(),
                                 rawMatch.getLocationEnd(),
                                 rawMatch.getBitScore(),
-                                rawMatch.getEvalue()
+                                rawMatch.getEvalue(),
+                                rpsBlastSites
                         )
                 );
+
                 RPSBlastMatch match = new RPSBlastMatch(signature, locations);
-                LOGGER.debug("rpsBlast match: " + match);
+
+
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rpsBlast match: " + match);
+                }
                 protein.addMatch(match);
                 //LOGGER.debug("Protein with match: " + protein);
                 entityManager.persist(match);
@@ -95,54 +132,36 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch>
         }
     }
 
+    private Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> getSites(T rawMatch, Collection<R> rawSites){
+        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
+        if (rawSites != null) {
+            for (R rawSite : rawSites) {
+                if (rawMatch.getPssmId().equalsIgnoreCase(rawSite.getPssmId())) {
+                    if (siteInLocationRange(rawMatch, rawSite)) {
+                        final String siteTitle = rawSite.getTitle();
+                        final String[] residueCoordinateList = rawSite.getResidues().split(",");
+                        Set<SiteLocation> siteLocations = new HashSet<>();
+                        for (String residueAnnot : residueCoordinateList) {
+                            String residue = residueAnnot.substring(0, 1);
+                            int position = Integer.parseInt(residueAnnot.substring(1));
+                            SiteLocation siteLocation = new SiteLocation(residue, position, position);
+                            siteLocations.add(siteLocation);
+                        }
+                        if (rawSite.getMappedSize() != rawSite.getCompleteSize()) {
+                            LOGGER.debug("Raw site " + siteTitle + " mapped size " + rawSite.getMappedSize() + " did not match complete size " + rawSite.getCompleteSize());
+                        }
+                        RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteTitle, siteLocations);
+                        if (site.getNumLocations() != rawSite.getMappedSize()) {
+                            throw new IllegalStateException("Found " + site.getNumLocations() + " site locations for raw site " + siteTitle + " with residues " + rawSite.getResidues() + " when expected " + rawSite.getMappedSize());
+                        }
+
+                        rpsBlastSites.add(site);
+                    }
+                }
+            }
+        }
+        return rpsBlastSites;
+    }
+
 }
 
-//public class CDDFilteredMatchDAOImpl2 extends FilteredMatchDAOImpl<CDDRawMatch, CDDMatch> implements CDDFilteredMatchDAO {
-//
-//    private String cddReleaseVersion;
-//
-//    /**
-//     * Sets the class of the model that the DAO instance handles.
-//     * Note that this has been set up to use constructor injection
-//     * because it makes it easy to sub-class GenericDAOImpl in a robust
-//     * manner.
-//     * <p/>
-//     * Model class specific sub-classes should define a no-argument constructor
-//     * that calls this constructor with the appropriate class.
-//     */
-//    public CDDFilteredMatchDAOImpl2(String version) {
-//        super(CDDMatch.class);
-//        this.cddReleaseVersion = version;
-//    }
-//
-//    /**
-//     * Persists a set of ParseCDDMatch objects as filtered matches:
-//     * there is no filtering step with CDD.
-//     *
-//     * @param cddMatches being a Set of ParseCDDMatch objects to be persisted.
-//     */
-//    @Transactional
-//    public void persist(Collection<RawProtein<CDDRawMatch>> rawProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap){
-//        Signature cddSignature = null; //was loadPersistedSignature()
-//        Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(cddMatches);
-//        for (ParseCDDMatch parseCDDMatch : cddMatches) {
-//            final Protein persistentProtein = proteinIdToProteinMap.get(parseCDDMatch.getProteinDatabaseIdentifier());
-//            if (persistentProtein == null) {
-//                throw new IllegalArgumentException("Attempting to store a CDD match for a protein with id " + parseCDDMatch.getProteinDatabaseIdentifier() + ", however this does not exist in the database.");
-//            }
-//            // Signature currentSignatureAc = parseCDDMatch.getModelId();
-//            cddSignature = modelIdToSignatureMap.get(currentSignatureAc);
-//            if (cddSignature == null) {
-//                throw new IllegalStateException("Cannot find PANTHER signature " + currentSignatureAc + " in the database.");
-//            }
-//
-//            Set<CDDMatch.CDDLocation> locations = Collections.singleton(
-//                    new CDDMatch.CDDLocation(parseCDDMatch.getStartCoordinate(), parseCDDMatch.getEndCoordinate())
-//            );
-//            CDDMatch match = new CDDMatch(cddSignature, locations);
-//            persistentProtein.addMatch(match);
-//            entityManager.persist(match);
-//        }
-//    }
-//
-//}

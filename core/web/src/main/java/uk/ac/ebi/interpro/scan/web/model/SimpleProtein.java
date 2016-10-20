@@ -28,6 +28,8 @@ public final class SimpleProtein implements Serializable {
     private Set<SimpleEntry> familyEntries = null;
     private List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
 
+    private List<SimpleSite> sites = new ArrayList<>();
+
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                          int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
@@ -261,6 +263,15 @@ public final class SimpleProtein implements Serializable {
         return resultValue;
     }
 
+    public List<SimpleSite> getSites() {
+        Collections.sort(sites);
+        return sites;
+    }
+
+    public void setSites(List<SimpleSite> sites) {
+        this.sites = sites;
+    }
+
     /**
      * USED BY FREEMARKER - DON'T DELETE
      *
@@ -349,6 +360,42 @@ public final class SimpleProtein implements Serializable {
         return false;
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there are no sites.
+     *
+     * @return true if one or more sites are present, otherwise false
+     */
+    public boolean hasSites() {
+        if (this.sites == null || this.sites.size() < 1) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there are no sites.
+     *
+     * @return required HTML snippet.
+     */
+    public String disabledStyleIfNoSites() {
+        return (hasSites()) ? "" : "class=\"disabled\"";
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute disabled="disabled" if there are no sites.
+     *
+     * @return required HTML snippet.
+     */
+    public String disableIfNoSites() {
+        return (hasSites()) ? "" : "disabled=\"disabled\"";
+    }
+
 
     private static final String UNKNOWN = "Unknown";
 
@@ -419,6 +466,27 @@ public final class SimpleProtein implements Serializable {
                 simpleSignature.getLocations().add(simpleLocation);
                 // Add location to the list of super matches
                 simpleEntry.getLocations().add(simpleLocation);
+
+                // Add any sites from that location
+                if (location instanceof LocationWithSites) {
+                    final Set<Site> siteSet = ((LocationWithSites) location).getSites();
+                    if (siteSet != null) {
+                        long i = 1L;
+                        for (Site site : siteSet) {
+                            Long siteId = site.getId();
+                            if (siteId == null) {
+                                siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
+                            }
+                            SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
+                            for (SiteLocation siteLocation : site.getSiteLocations()) {
+                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd()));
+                                simpleSite.addSiteLocation(simpleSiteLocation);
+                            }
+                            simpleProtein.getSites().add(simpleSite);
+                            i++;
+                        }
+                    }
+                }
             }
         }
         return simpleProtein;

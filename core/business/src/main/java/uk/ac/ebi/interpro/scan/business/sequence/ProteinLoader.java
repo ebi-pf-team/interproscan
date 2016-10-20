@@ -66,6 +66,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         proteinsAwaitingPersistence = new HashSet<>(proteinInsertBatchSize);
     }
 
+
     @Required
     public void setProteinInsertBatchSizeNoLookup(int proteinInsertBatchSizeNoLookup) {
         this.proteinInsertBatchSizeNoLookup = proteinInsertBatchSizeNoLookup;
@@ -132,15 +133,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             final boolean usingLookupService = proteinLookup != null;
             if (! usingLookupService){
-//                Utilities.verboseLog("proteinsAwaitingPrecalcLookup.size() " + proteinsAwaitingPersistence.size()
-//                        + " proteinInsertBatchSize: " + proteinInsertBatchSize
-//                        + " proteinInsertBatchSizeNoLookup: " + proteinInsertBatchSizeNoLookup);
-                //update the insertbatch size
                 proteinInsertBatchSize = proteinInsertBatchSizeNoLookup;
-//                Utilities.verboseLog("After update - proteinsAwaitingPrecalcLookup.size() " + proteinsAwaitingPersistence.size()
-//                        + " proteinInsertBatchSize: " + proteinInsertBatchSize
-//                        + " proteinInsertBatchSizeNoLookup: " + proteinInsertBatchSizeNoLookup);
             }
+
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
                     : null;

@@ -34,11 +34,11 @@
             <!--<protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" -->
             <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
             <!--xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 -->
-            <!--http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd" >-->
+            <!--http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd" >-->
             <!--...-->
             <!--</protein>-->
             <!--<util:map value-type="java.lang.String">-->
-            <!--<entry value="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">-->
+            <!--<entry value="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">-->
             <!--<key>-->
             <!--<util:constant static-field="javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION"/>-->
             <!--</key>-->
@@ -52,7 +52,7 @@
 
     <!--TODO: Read this from Maven properties-->
     <bean id="schema" class="org.springframework.core.io.FileSystemResource">
-        <constructor-arg value="target/test-classes/xsd/interproscan-model-1.4.xsd"/>
+        <constructor-arg value="target/test-classes/xsd/interproscan-model-2.0.xsd"/>
     </bean>
 
     <!-- Alternative declaration if don't need to set any additional properties:

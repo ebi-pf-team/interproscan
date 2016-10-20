@@ -33,7 +33,7 @@ public class PrositePatternFilteredMatchDAO
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Override
-    protected void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<ProSitePatternRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             for (ProSitePatternRawMatch rawMatch : rawProtein.getMatches()) {
