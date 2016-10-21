@@ -5,8 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.RawProteinSite;
 import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -41,13 +44,20 @@ public class SFLDHmmer3MatchParserTest {
 
         InputStream is = sfldFile.getInputStream();
 
-        Set<RawProtein<SFLDHmmer3RawMatch>> proteins = sfldParser.parse(is);
-        LOGGER.debug("result: " + proteins.toString());
-        System.out.println("result: " + proteins);
-        assertEquals(5, proteins.size());
+        MatchSiteData result = sfldParser.parseMatchesAndSites(is);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("result: " + result);
+        }
+
+        Set<RawProtein<SFLDHmmer3RawMatch>> rawProteins = result.getRawProteins();
+        LOGGER.debug("result: " + rawProteins.toString());
+        System.out.println("result: " + rawProteins);
+        assertNotNull(rawProteins);
+        assertEquals(5, rawProteins.size());
         int matchCount = 0;
-        for (final RawProtein<SFLDHmmer3RawMatch> rawProtein : proteins) {
+        for (final RawProtein<SFLDHmmer3RawMatch> rawProtein : rawProteins) {
             final Collection<SFLDHmmer3RawMatch> rawMatches = rawProtein.getMatches();
+            assertNotNull(rawMatches);
             matchCount += rawMatches.size();
             final SFLDHmmer3RawMatch rawMatch = rawMatches.iterator().next();
             final String modelId = rawMatch.getModelId();
@@ -55,6 +65,16 @@ public class SFLDHmmer3MatchParserTest {
             assertNotNull(modelId);
         }
         assertEquals(16, matchCount);
+
+        // Check sites for raw proteins
+        Set<RawProteinSite> rawProteinSites = result.getRawProteinSites();
+        assertNotNull(rawProteinSites);
+        assertEquals(2, rawProteinSites.size());
+        for (RawProteinSite rawProteinSite : rawProteinSites) {
+            Collection<SFLDHmmer3RawSite> s = rawProteinSite.getSites();
+            assertNotNull(s);
+            assertTrue(s.size() > 0);
+        }
 
     }
 
