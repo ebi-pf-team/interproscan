@@ -33,7 +33,7 @@ import java.util.Set;
  * HMMER3 match with sites.
  */
 @Entity
-@Table(name = "hmmer3_with_sites_match")
+@Table(name = "hmmer3_match_with_sites")
 @XmlType(name = "Hmmer3MatchWithSitesType")
 public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSites.Hmmer3LocationWithSites> implements Serializable {
 
@@ -79,7 +79,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
      * @author Antony Quinn
      */
     @Entity
-    @Table(name = "hmmer3_with_sites_location")
+    @Table(name = "hmmer3_location_with_sites")
     @XmlType(name = "Hmmer3LocationWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class Hmmer3LocationWithSites extends HmmerLocationWithSites {
 
