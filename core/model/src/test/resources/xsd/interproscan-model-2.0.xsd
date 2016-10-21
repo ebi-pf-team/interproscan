@@ -129,6 +129,7 @@
             <xs:element name="hmmer2-location" type="tns:Hmmer2LocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-with-sites-location" type="tns:Hmmer3LocationWithSitesType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-location" type="tns:Hmmer3LocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="mobidb-location" type="tns:MobiDBLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="panther-location" type="tns:PantherLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="patternscan-location" type="tns:PatternScanLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="phobius-location" type="tns:PhobiusLocationType" minOccurs="0" maxOccurs="unbounded"/>
@@ -168,15 +169,23 @@
 
     <xs:complexType name="sitesType" final="extension restriction">
         <xs:sequence>
+            <xs:element name="hmmer3-site" type="tns:Hmmer3SiteType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="rpsblast-site" type="tns:RPSBlastSiteType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="RPSBlastSiteType">
+    <xs:complexType name="Hmmer3SiteType">
+        <xs:complexContent>
+            <xs:extension base="tns:HmmerSiteType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HmmerSiteType">
         <xs:complexContent>
             <xs:extension base="tns:SiteType">
                 <xs:sequence/>
-                <xs:attribute name="description" type="xs:string" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -185,6 +194,7 @@
         <xs:sequence>
             <xs:element name="site-locations" type="tns:siteLocationsType" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="description" type="xs:string" use="required"/>
         <xs:attribute name="numLocations" type="xs:int" use="required"/>
     </xs:complexType>
 
@@ -199,6 +209,14 @@
         <xs:attribute name="residue" type="xs:string" use="required"/>
         <xs:attribute name="start" type="xs:int" use="required"/>
         <xs:attribute name="end" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="RPSBlastSiteType">
+        <xs:complexContent>
+            <xs:extension base="tns:SiteType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="CoilsLocationType">
@@ -270,6 +288,14 @@
                 <xs:sequence/>
                 <xs:attribute name="env-end" type="xs:int" use="required"/>
                 <xs:attribute name="env-start" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="MobiDBLocationType">
+        <xs:complexContent>
+            <xs:extension base="tns:LocationType">
+                <xs:sequence/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -409,15 +435,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="HmmerSiteType">
-        <xs:complexContent>
-            <xs:extension base="tns:SiteType">
-                <xs:sequence/>
-                <xs:attribute name="description" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="keyGen" abstract="true">
         <xs:sequence/>
     </xs:complexType>
@@ -429,6 +446,7 @@
             <xs:element name="hmmer2-match" type="tns:Hmmer2MatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-match" type="tns:Hmmer3MatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-with-sites-match" type="tns:Hmmer3MatchWithSitesType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="mobidb-match" type="tns:MobiDBMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="panther-match" type="tns:PantherMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="patternscan-match" type="tns:PatternScanMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="phobius-match" type="tns:PhobiusMatchType" minOccurs="0" maxOccurs="unbounded"/>
@@ -439,6 +457,14 @@
             <xs:element name="superfamilyhmmer3-match" type="tns:SuperFamilyHmmer3MatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="tmhmm-match" type="tns:TMHMMMatchType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MobiDBMatchType">
+        <xs:complexContent>
+            <xs:extension base="tns:MatchType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="PantherMatchType">
@@ -614,39 +640,40 @@
 
     <xs:simpleType name="EntryTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="CONSERVED_SITE"/>
-            <xs:enumeration value="BINDING_SITE"/>
             <xs:enumeration value="UNKNOWN"/>
             <xs:enumeration value="ACTIVE_SITE"/>
             <xs:enumeration value="DOMAIN"/>
-            <xs:enumeration value="REPEAT"/>
-            <xs:enumeration value="FAMILY"/>
             <xs:enumeration value="PTM"/>
+            <xs:enumeration value="BINDING_SITE"/>
+            <xs:enumeration value="FAMILY"/>
+            <xs:enumeration value="REPEAT"/>
+            <xs:enumeration value="CONSERVED_SITE"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="SignatureLibraryType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
-            <xs:enumeration value="TIGRFAM"/>
-            <xs:enumeration value="PANTHER"/>
-            <xs:enumeration value="PIRSF"/>
-            <xs:enumeration value="PRINTS"/>
-            <xs:enumeration value="PRODOM"/>
-            <xs:enumeration value="GENE3D"/>
-            <xs:enumeration value="SMART"/>
-            <xs:enumeration value="PFAM"/>
-            <xs:enumeration value="SUPERFAMILY"/>
-            <xs:enumeration value="TMHMM"/>
             <xs:enumeration value="SFLD"/>
-            <xs:enumeration value="PROSITE_PATTERNS"/>
-            <xs:enumeration value="HAMAP"/>
-            <xs:enumeration value="CDD"/>
-            <xs:enumeration value="SIGNALP_EUK"/>
-            <xs:enumeration value="PHOBIUS"/>
-            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
-            <xs:enumeration value="PROSITE_PROFILES"/>
             <xs:enumeration value="COILS"/>
+            <xs:enumeration value="PFAM"/>
+            <xs:enumeration value="TIGRFAM"/>
+            <xs:enumeration value="SUPERFAMILY"/>
+            <xs:enumeration value="HAMAP"/>
+            <xs:enumeration value="MOBIDB"/>
+            <xs:enumeration value="PANTHER"/>
+            <xs:enumeration value="SMART"/>
+            <xs:enumeration value="TMHMM"/>
+            <xs:enumeration value="GENE3D"/>
+            <xs:enumeration value="CDD"/>
+            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
+            <xs:enumeration value="PROSITE_PATTERNS"/>
+            <xs:enumeration value="PHOBIUS"/>
+            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
+            <xs:enumeration value="PRINTS"/>
+            <xs:enumeration value="PROSITE_PROFILES"/>
+            <xs:enumeration value="SIGNALP_EUK"/>
+            <xs:enumeration value="PIRSF"/>
+            <xs:enumeration value="PRODOM"/>
         </xs:restriction>
     </xs:simpleType>
 

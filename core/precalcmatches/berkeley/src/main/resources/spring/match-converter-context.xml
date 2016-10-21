@@ -9,6 +9,7 @@
         <property name="signatureLibraryToMatchConverter">
             <map>
                 <!-- Phobius not in Onion, so no conversion necessary. -->
+                <entry key="MOBIDB" value-ref="mobidbBerkeleyMatchConverter"/>
                 <entry key="CDD" value-ref="rpsblastBerkeleyMatchConverter"/>
                 <entry key="GENE3D" value-ref="hmmer3BerkeleyMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3BerkeleyMatchConverter"/>
@@ -31,6 +32,8 @@
         </property>
     </bean>
 
+    <bean id="mobidbBerkeleyMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.MobiDBBerkeleyMatchConverter"/>
     <bean id="rpsblastBerkeleyMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.RPSBlastBerkeleyMatchConverter"/>
     <bean id="fingerPrintsBerkeleyMatchConverter"

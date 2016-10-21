@@ -31,6 +31,11 @@ public enum MatchDataSource {
             "http://hamap.expasy.org/",
             "http://hamap.expasy.org/profile/$0"),
 
+    MOBIDB("MobiDB",
+            "MobiDB is designed to offer a centralized resource for annotations of intrinsic protein disorder.",
+            "http://mobidb.bio.unipd.it/",
+            "http://mobidb.bio.unipd.it/"),
+
     PANTHER(0,
             "PANTHER HMMs define protein families, and subfamilies modelled on the divergence of function.",
             "http://www.pantherdb.org/",

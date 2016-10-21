@@ -32,6 +32,8 @@ public final class SignatureLibraryLookup {
         // And here add any other mappings, e.g. those used in Onion.
         // ALL SHOULD BE LOWER CASE. (Any queries will be converted to lower case.)
 
+        libraryNameToSignatureLibrary.put("mobidb", SignatureLibrary.MOBIDB);
+
         libraryNameToSignatureLibrary.put("sfld", SignatureLibrary.SFLD);
 
         libraryNameToSignatureLibrary.put("cdd", SignatureLibrary.CDD);
