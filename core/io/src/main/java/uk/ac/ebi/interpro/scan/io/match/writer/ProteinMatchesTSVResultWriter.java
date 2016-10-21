@@ -48,6 +48,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 //            Utilities.verboseLog("sequence mapping: " + proteinAc + " -> " + protein.getId() + "  length: " +  protein.getSequenceLength() ) ;
 
             for (Match match : matches) {
+//                Utilities.verboseLog("print-match: " + match);
                 final Signature signature = match.getSignature();
                 final String signatureAc = signature.getAccession();
                 final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();

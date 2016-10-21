@@ -33,6 +33,7 @@ import java.util.Set;
  *
  * @author Antony Quinn
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
@@ -42,6 +43,7 @@ import java.util.Set;
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
 @XmlSeeAlso(LocationWithSites.class)
 public abstract class Location implements Serializable, Cloneable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
     @TableGenerator(name = "LOCN_IDGEN", table = KeyGen.KEY_GEN_TABLE, pkColumnValue = "location", initialValue = 0, allocationSize = 50)
@@ -157,6 +159,7 @@ public abstract class Location implements Serializable, Cloneable {
             Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> hmmer3LocationWithSites = new LinkedHashSet<>();
             Set<Hmmer2Match.Hmmer2Location> hmmer2Locations = new LinkedHashSet<Hmmer2Match.Hmmer2Location>();
             Set<Hmmer3Match.Hmmer3Location> hmmer3Locations = new LinkedHashSet<Hmmer3Match.Hmmer3Location>();
+            Set<MobiDBMatch.MobiDBLocation> mobiDBLocations = new LinkedHashSet<MobiDBMatch.MobiDBLocation>();
             Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations = new LinkedHashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
             Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations = new LinkedHashSet<FingerPrintsMatch.FingerPrintsLocation>();
             Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations = new LinkedHashSet<BlastProDomMatch.BlastProDomLocation>();
@@ -179,6 +182,8 @@ public abstract class Location implements Serializable, Cloneable {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location) {
                     hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
+                } else if (l instanceof MobiDBMatch.MobiDBLocation) {
+                    mobiDBLocations.add((MobiDBMatch.MobiDBLocation) l);
                 } else if (l instanceof SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) {
                     superFamilyHmmer3Locations.add((SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) l);
                 } else if (l instanceof FingerPrintsMatch.FingerPrintsLocation) {
@@ -203,7 +208,7 @@ public abstract class Location implements Serializable, Cloneable {
                     throw new IllegalArgumentException("Unrecognised Location class: " + l);
                 }
             }
-            return new LocationsType(rpsBlastLocations, hmmer3LocationWithSites, hmmer2Locations, hmmer3Locations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
+            return new LocationsType(rpsBlastLocations, hmmer3LocationWithSites, hmmer2Locations, hmmer3Locations, mobiDBLocations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
                     patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations);
         }
 
@@ -217,6 +222,7 @@ public abstract class Location implements Serializable, Cloneable {
             locations.addAll(locationsType.getHmmer3LocationWithSites());
             locations.addAll(locationsType.getHmmer2Locations());
             locations.addAll(locationsType.getHmmer3Locations());
+            locations.addAll(locationsType.getMobiDBLocations());
             locations.addAll(locationsType.getSuperFamilyHmmer3Locations());
             locations.addAll(locationsType.getFingerPrintsLocations());
             locations.addAll(locationsType.getBlastProDomLocations());
@@ -250,6 +256,9 @@ public abstract class Location implements Serializable, Cloneable {
 
         @XmlElement(name = "hmmer3-location")
         private final Set<Hmmer3Match.Hmmer3Location> hmmer3Locations;
+
+        @XmlElement(name = "mobidb-location")
+        private final Set<MobiDBMatch.MobiDBLocation> mobiDBLocations;
 
         @XmlElement(name = "superfamilyhmmer3-location")
         private final Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations;
@@ -286,6 +295,7 @@ public abstract class Location implements Serializable, Cloneable {
             hmmer3LocationWithSites = null;
             hmmer2Locations = null;
             hmmer3Locations = null;
+            mobiDBLocations = null;
             superFamilyHmmer3Locations = null;
             fingerPrintsLocations = null;
             blastProDomLocations = null;
@@ -302,6 +312,7 @@ public abstract class Location implements Serializable, Cloneable {
                              Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> hmmer3LocationWithSites,
                              Set<Hmmer2Match.Hmmer2Location> hmmer2Locations,
                              Set<Hmmer3Match.Hmmer3Location> hmmer3Locations,
+                             Set<MobiDBMatch.MobiDBLocation> mobiDBLocations,
                              Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> superFamilyHmmer3Locations,
                              Set<FingerPrintsMatch.FingerPrintsLocation> fingerPrintsLocations,
                              Set<BlastProDomMatch.BlastProDomLocation> blastProDomLocations,
@@ -316,6 +327,7 @@ public abstract class Location implements Serializable, Cloneable {
             this.hmmer3LocationWithSites = hmmer3LocationWithSites;
             this.hmmer2Locations = hmmer2Locations;
             this.hmmer3Locations = hmmer3Locations;
+            this.mobiDBLocations = mobiDBLocations;
             this.superFamilyHmmer3Locations = superFamilyHmmer3Locations;
             this.fingerPrintsLocations = fingerPrintsLocations;
             this.blastProDomLocations = blastProDomLocations;
@@ -341,6 +353,10 @@ public abstract class Location implements Serializable, Cloneable {
 
         public Set<Hmmer3Match.Hmmer3Location> getHmmer3Locations() {
             return (hmmer3Locations == null ? Collections.<Hmmer3Match.Hmmer3Location>emptySet() : hmmer3Locations);
+        }
+
+        public Set<MobiDBMatch.MobiDBLocation> getMobiDBLocations() {
+            return (mobiDBLocations == null ? Collections.<MobiDBMatch.MobiDBLocation>emptySet() : mobiDBLocations);
         }
 
         public Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> getSuperFamilyHmmer3Locations() {

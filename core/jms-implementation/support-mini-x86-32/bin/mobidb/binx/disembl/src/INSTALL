@@ -1,0 +1,15 @@
+Quick Install Guide:
+
+1) Install Python 2.2+ from http://www.python.org
+2) Install Biopython.org from http://www/biopython.org
+3) Download and compile the savgol module in TISEAN, http://lists.mpipks-dresden.mpg.de/~tisean/TISEAN_2.1/index.html
+    - just compile the full package and copy the module from TISEAN-2.1/source_c/sav_gol to the DisEMBL directory.
+
+4) Compile disembl's neural network (gcc -O3 disembl.c -o disembl)
+5) Set correct paths to the neural net binary and savgol at the top of the script:
+    from /PATH/DisEMBL-1.x to the correct path
+
+Now you should be able to parse in a sequence file containing multiple fasta entries...
+just do a "./DisEMBL.py 8 8 4 1.2 1.4 1.2 sequence_file" if you want to save the results add " > resultfile.disembl"
+after the command
+
