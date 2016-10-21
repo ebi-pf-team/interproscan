@@ -296,9 +296,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             }
         }
         if (count <= 2){
+            //For now we dont have the code to properly handle the single-seq mode for hmmscan
             //SINGLE_SEQUENCE_MODE
 //            Utilities.setMode("singleseq_pending_changes_to_parsers");
-            Utilities.setMode("singleseq");
+//            Utilities.setMode("singleseq");
 
         }
         if (count > 10000) {

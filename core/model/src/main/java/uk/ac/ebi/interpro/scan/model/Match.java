@@ -167,6 +167,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             Set<Hmmer3MatchWithSites> hmmer3MatchesWithSites = new LinkedHashSet<>();
             Set<Hmmer2Match> hmmer2Matches = new LinkedHashSet<Hmmer2Match>();
             Set<Hmmer3Match> hmmer3Matches = new LinkedHashSet<Hmmer3Match>();
+            Set<MobiDBMatch> mobiDBMatches = new LinkedHashSet<MobiDBMatch>();
             Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches = new LinkedHashSet<SuperFamilyHmmer3Match>();
             Set<FingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FingerPrintsMatch>();
             Set<BlastProDomMatch> proDomMatches = new LinkedHashSet<BlastProDomMatch>();
@@ -186,6 +187,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                     hmmer2Matches.add((Hmmer2Match) m);
                 } else if (m instanceof Hmmer3Match) {
                     hmmer3Matches.add((Hmmer3Match) m);
+                } else if (m instanceof MobiDBMatch) {
+                    mobiDBMatches.add((MobiDBMatch) m);
                 } else if (m instanceof SuperFamilyHmmer3Match) {
                     superFamilyHmmer3Matches.add((SuperFamilyHmmer3Match) m);
                 } else if (m instanceof FingerPrintsMatch) {
@@ -210,7 +213,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                     throw new IllegalArgumentException("Unrecognised Match class: " + m);
                 }
             }
-            return new MatchesType(rpsBlastMatches, hmmer3MatchesWithSites, hmmer2Matches, hmmer3Matches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
+            return new MatchesType(rpsBlastMatches, hmmer3MatchesWithSites, hmmer2Matches, hmmer3Matches, mobiDBMatches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
                     patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches, pantherMatches, signalPMatches, tmhmmPMatches);
         }
 
@@ -226,6 +229,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             matches.addAll(matchTypes.getHmmer3MatchesWithSites());
             matches.addAll(matchTypes.getHmmer2Matches());
             matches.addAll(matchTypes.getHmmer3Matches());
+            matches.addAll(matchTypes.getHmmer3Matches());
+            matches.addAll(matchTypes.getMobiDBMatches());
             matches.addAll(matchTypes.getSuperFamilyHmmer3Matches());
             matches.addAll(matchTypes.getFingerPrintsMatches());
             matches.addAll(matchTypes.getProDomMatches());
@@ -258,6 +263,9 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
         @XmlElement(name = "hmmer3-match")
         private final Set<Hmmer3Match> hmmer3Matches;
+
+        @XmlElement(name = "mobidb-match")
+        private final Set<MobiDBMatch> mobiDBMatches;
 
         @XmlElement(name = "superfamilyhmmer3-match")
         private final Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches;
@@ -295,6 +303,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             hmmer3MatchesWithSites = null;
             hmmer2Matches = null;
             hmmer3Matches = null;
+            mobiDBMatches = null;
             superFamilyHmmer3Matches = null;
             fingerPrintsMatches = null;
             proDomMatches = null;
@@ -311,6 +320,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                            Set<Hmmer3MatchWithSites> hmmer3MatchesWithSites,
                            Set<Hmmer2Match> hmmer2Matches,
                            Set<Hmmer3Match> hmmer3Matches,
+                           Set<MobiDBMatch> mobiDBMatches,
                            Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches,
                            Set<FingerPrintsMatch> fingerPrintsMatches,
                            Set<BlastProDomMatch> proDomMatches,
@@ -325,6 +335,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             this.hmmer3MatchesWithSites = hmmer3MatchesWithSites;
             this.hmmer2Matches = hmmer2Matches;
             this.hmmer3Matches = hmmer3Matches;
+            this.mobiDBMatches = mobiDBMatches;
             this.superFamilyHmmer3Matches = superFamilyHmmer3Matches;
             this.fingerPrintsMatches = fingerPrintsMatches;
             this.proDomMatches = proDomMatches;
@@ -351,6 +362,9 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
         public Set<Hmmer3Match> getHmmer3Matches() {
             return (hmmer3Matches == null ? Collections.<Hmmer3Match>emptySet() : hmmer3Matches);
+        }
+        public Set<MobiDBMatch> getMobiDBMatches() {
+            return (mobiDBMatches == null ? Collections.<MobiDBMatch>emptySet() : mobiDBMatches);
         }
 
         public Set<SuperFamilyHmmer3Match> getSuperFamilyHmmer3Matches() {
