@@ -116,7 +116,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="G3DSA:2.40.50.140" type="domain" name="Nucleic acid-binding proteins">
                         <models>
                             <model ac="1o7iB00" name="1o7iB00" desc="Nucleic acid-binding proteins"/>
@@ -153,7 +153,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="PF00001" name="7tm_2" type="family" desc="7 transmembrane receptor (rhodopsin family)">
                         <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]</abstract>
                         <models>
@@ -207,7 +207,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="PIRSF000743" name="RPO19" type="family" desc="DNA-directed RNA polymerase, RPO19 subunit">
                         <models>
                             <model ac="PIRSF000743" name="RPO19"/>
@@ -244,7 +244,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="SFLDG01017" name="Polyprenyl_Transferase_Like" type="family" desc="7 transmembrane receptor (rhodopsin family)">
                         <abstract>Members of this subgroup represent the chain elongation proteins. [PMID:23493556,PMID:21562622].</abstract>
                         <models>
@@ -282,7 +282,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="SM00323" type="domain" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases">
                         <abstract>All alpha-helical domain that accelerates the GTPase activity of Ras, thereby "switching" it into an "off" position. Improved domain limits from structure.</abstract>
                         <models>
@@ -320,7 +320,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="SSF53098" type="family" name="Ribonuclease H-like">
                         <models>
                             <model ac="0035188"/>
@@ -362,7 +362,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="cd000004" type="domain" name="Sortase" desc="Sortase.">
                         <abstract>Sortases are found in bacteria.</abstract>
                         <models>
@@ -398,7 +398,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="PD001061" type="family" desc="MATRIX VIRAL M1 MEMBRANE RNA-BINDING SPLICING ALTERNATIVE NUCLEAR STRUCTURAL M">
                         <models>
                             <model ac="PD001061"/>
@@ -435,7 +435,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="PS00675" type="domain" name="SIGMA54_INTERACT_1" desc="Sigma-54 interaction domain ATP-binding region A signature.">
                         <abstract>Some bacterial regulatory proteins activate the expression of genes from promoters recognized by core RNA polymerase associated with the alternative sigma-54 factor. These have a conserved domain of about 230 residues involved in the ATP-dependent [1,2] interaction with sigma-54.</abstract>
                         <models>
@@ -473,7 +473,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="PS50042" type="domain" name="CNMP_BINDING_3" desc="cAMP/cGMP binding motif profile">
                         <abstract>Proteins that bind cyclic nucleotides (cAMP or cGMP) share a structural domain of about 120 residues [1,2,3]. The best studied of these proteins is the prokaryotic catabolite gene activator (also known as the cAMP receptor protein) (gene crp) where such a domain is known to be composed of three alpha-helices and a distinctive eight-stranded, antiparallel beta-barrel structure.</abstract>
                         <models>
@@ -526,7 +526,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="PR00579" name="RHODOPSIN" type="family" created="2005-12-25" updated="2010-10-18" md5="5ab17489095dd2836122eec0e91db82d">
                         <abstract>Opsins, the light-absorbing molecules that mediate vision [1,2], are integral membrane proteins that belong to a superfamily of G protein-coupled receptors (GPCRs).</abstract>
                         <comment>RELAXIN is a 6-element fingerprint that provides a signature for the relaxins.</comment>
@@ -577,7 +577,7 @@
                                            xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.4.xsd">
+                                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.0.xsd">
                     <signature ac="SignalP-TM" name="SignalP-TM">
                         <models>
                             <model ac="SignalP-TM"/>

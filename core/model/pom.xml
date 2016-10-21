@@ -160,7 +160,7 @@
                         <configuration>
                             <target>
                                 <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
-                                <property name="latest.interpro.schema.version" value="1.4"/>
+                                <property name="latest.interpro.schema.version" value="2.0"/>
                                 <mkdir dir="${project.build.schema.dir}"/>
                                 <taskdef name="schemagen"
                                          classname="com.sun.tools.jxc.SchemaGenTask"

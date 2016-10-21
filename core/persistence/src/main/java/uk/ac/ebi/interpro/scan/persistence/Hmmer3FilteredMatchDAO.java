@@ -40,7 +40,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Transactional
-    protected void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());

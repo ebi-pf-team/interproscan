@@ -3,21 +3,20 @@ package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
-import uk.ac.ebi.interpro.scan.io.match.MatchParser;
+import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
+import uk.ac.ebi.interpro.scan.io.match.MatchAndSiteParser;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceDomainMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +47,7 @@ import java.util.regex.Pattern;
  * Sites:
  * SFLDS00454 C112
  */
-public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
+public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteParser {
 
     private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParser.class.getName());
 
@@ -66,16 +65,16 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
 
     private static final String DOMAIN_SECTION_START = "Domains:";
 
-    private static final String SITE_SECTION_START = "Sites";
+    private static final String SITE_SECTION_START = "Sites:";
 
     //     Group 1: Uniparc protein accession
 //    private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+)\\s+e-value:\\s+(\\S+)\\s+score:\\s+(\\S+)\\s+bias:\\s+(\\S+).*$");
     private static final Pattern SEQUENCE_SECTION_START_PATTERN = Pattern.compile("^Sequence:\\s+(\\S+).*$");
 
-    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
-    private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
+//    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
+//    private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
-    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)(\\s*,\\s*\\S+)*\\s(\\S).*$");
+    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)$");
     /**
      * This interface has a single method that
      * takes the HmmsearchOutputMethod object, containing sequence
@@ -126,22 +125,54 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
         FINISHED_SEARCHING_RECORD
     }
 
-    public Set<RawProtein<T>> parse(InputStream is) throws IOException {
+    public MatchSiteData parseMatchesAndSites(InputStream is) throws IOException {
 
-        Map<String, RawProtein<T>> rawResults = new HashMap<String, RawProtein<T>>();
-        BufferedReader reader = null;
+        Map<String, RawProtein<SFLDHmmer3RawMatch>> rawProteinMap = new HashMap<>();
+        MatchData matchData = parseFileInput(is);
+        Set<SFLDHmmer3RawMatch> rawMatches = matchData.getMatches();
+
+        for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
+            String sequenceId = rawMatch.getSequenceIdentifier();
+            if (rawProteinMap.containsKey(sequenceId)) {
+                RawProtein<SFLDHmmer3RawMatch> rawProtein = rawProteinMap.get(sequenceId);
+                rawProtein.addMatch(rawMatch);
+            } else {
+                RawProtein<SFLDHmmer3RawMatch> rawProtein = new RawProtein<>(sequenceId);
+                rawProtein.addMatch(rawMatch);
+                rawProteinMap.put(sequenceId, rawProtein);
+            }
+        }
+
+        Map<String, RawProteinSite<SFLDHmmer3RawSite>> rawProteinSiteMap = new HashMap<>();
+        Set<SFLDHmmer3RawSite> rawSites = matchData.getSites();
+        for (SFLDHmmer3RawSite rawSite : rawSites) {
+            String sequenceId = rawSite.getSequenceIdentifier();
+            if (rawProteinSiteMap.containsKey(sequenceId)) {
+                RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = rawProteinSiteMap.get(sequenceId);
+                rawProteinSite.addSite(rawSite);
+            } else {
+                RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = new RawProteinSite<>(sequenceId);
+                rawProteinSite.addSite(rawSite);
+                rawProteinSiteMap.put(sequenceId, rawProteinSite);
+            }
+        }
+        Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
+        return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+    }
+
+    public MatchData parseFileInput(InputStream is) throws IOException {
+        Map<String, RawProtein<T>> rawResults = new HashMap<>();
+        Set<SFLDHmmer3RawMatch> rawMatches = new HashSet<>();
+        Set<SFLDHmmer3RawSite> rawSites = new HashSet<>();
+
         int rawDomainCount = 0;
-        try {
-            reader = new BufferedReader(new InputStreamReader(is));
-            HmmSearchRecord searchRecord = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            HmmSearchRecord searchRecord;
             String currentSequenceIdentifier = null;
 
-            Map<String, DomainMatch> domains = new HashMap<String, DomainMatch>();
-//            Map<String, Site> sites = new HashMap<String, Site>();
+            Map<String, DomainMatch> domains = new HashMap<>();
 
-            StringBuilder alignSeq = new StringBuilder();
-            DomainMatch currentDomain = null;
-            SequenceMatch sequenceMatch = null;
+            SequenceMatch sequenceMatch;
 
             ParsingStage stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
             int lineNumber = 0;
@@ -149,7 +180,9 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 // Example: Sequence: UPI0000054B90
-                LOGGER.debug("line: " + line + "  stage: " + stage.toString());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("line: " + line + "  stage: " + stage.toString());
+                }
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
@@ -164,7 +197,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             stage = ParsingStage.LOOKING_FOR_DOMAIN_SECTION;
                         }
                         if (line.startsWith(END_OF_RECORD)) {
-                            //the end of the record might be at the start of the output			    
+                            //the end of the record might be at the start of the output
                             continue;
                         }
                         break;
@@ -205,46 +238,37 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
                             currentSequenceIdentifier = null;
                         }
                         break;
-                    case LOOKING_FOR_SITE_SECTION:
-                        // Example: Sites:
-                        if (line.startsWith(SEQUENCE_SECTION_START)) {
-//                            sites.clear();
-                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-                        } else if (line.startsWith(SITE_SECTION_START)) {
-                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
-                            LOGGER.debug("Site Section ");
-                        } else {
-                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
-                        }
-                        break;
+//                    case LOOKING_FOR_SITE_SECTION:
+//                        // Example: Sites:
+//                        if (line.startsWith(SEQUENCE_SECTION_START)) {
+////                            sites.clear();
+//                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
+//                        } else if (line.startsWith(SITE_SECTION_START)) {
+//                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
+//                            LOGGER.debug("Site Section ");
+//                        } else {
+//                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
+//                        }
+//                        break;
                     case LOOKING_FOR_SITE_DATA_LINE:
                         Matcher sitesDataLineMatcher = SITES_LINE_PATTERN.matcher(line);
                         if (line.startsWith(END_OF_RECORD)) {
                             stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
                             currentSequenceIdentifier = null;
                         } else if (sitesDataLineMatcher.matches()) {
+                            // E.g. line = "SFLDF00292	C91,C95,C98,Y99,C141	SFLD_Res01"
                             LOGGER.debug("Site line parse");
 
-                            String model = sitesDataLineMatcher.group(1);
-                            String firstSite= sitesDataLineMatcher.group(2);
-                            String otherSites = sitesDataLineMatcher.group(3);
-                            String allSites = firstSite + otherSites;
+                            final String model = sitesDataLineMatcher.group(1);
+                            final String sites = sitesDataLineMatcher.group(2);
+                            final String description = sitesDataLineMatcher.group(3);
 
-                            String description= sitesDataLineMatcher.group(4);
-
-//                            SFLDRawSite rawSite = new SFLDRawSite(currentSequenceIdentifier,
-//                                    description,  allSites, model, signatureLibraryRelease);
-//                            LOGGER.debug(" raw site: " + rawSite);
-//                            sites.add(rawSite);
-
+                            SFLDHmmer3RawSite rawSite = new SFLDHmmer3RawSite(currentSequenceIdentifier, description, sites, model, signatureLibraryRelease);
+                            rawSites.add(rawSite);
                         }
                         break;
 
                 }
-            }
-        } finally {
-            if (reader != null) {
-                reader.close();
             }
         }
         //TODO consider using the utilities methods
@@ -259,7 +283,11 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
         }
         */
 //       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
-        return new HashSet<RawProtein<T>>(rawResults.values());
+
+        for (RawProtein<T> rawProtein : rawResults.values()) {
+            rawMatches.addAll((Collection<? extends SFLDHmmer3RawMatch>) rawProtein.getMatches());
+        }
+        return new MatchData(rawMatches, rawSites);
     }
 
     public int getSequenceMatchCount(HmmSearchRecord searchRecord) {
@@ -268,6 +296,25 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchParser {
             count += sequenceMatch.getDomainMatches().size();
         }
         return count;
+    }
+
+    private class MatchData {
+        final Set<SFLDHmmer3RawMatch> matches;
+        final Set<SFLDHmmer3RawSite> sites;
+
+
+        public MatchData(Set<SFLDHmmer3RawMatch> matches, Set<SFLDHmmer3RawSite> sites) {
+            this.matches = matches;
+            this.sites = sites;
+        }
+
+        public Set<SFLDHmmer3RawMatch> getMatches() {
+            return matches;
+        }
+
+        public Set<SFLDHmmer3RawSite> getSites() {
+            return sites;
+        }
     }
 
     public boolean checkDomainCoordinates(SequenceDomainMatch sequenceDomainMatch){

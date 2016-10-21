@@ -33,6 +33,7 @@
         <property name="archiveSVGOutput" value="${archiveSVGOutput}"/>
         <!--If set to TRUE, the archive will be compressed as well-->
         <property name="compressHtmlAndSVGOutput" value="true"/>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
     </bean>
 
 </beans>

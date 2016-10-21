@@ -45,6 +45,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
      * runnable StepExecutions available.
      */
     protected CleanRunDatabase databaseCleaner;
+    private boolean excludeSites = false;
     private boolean mapToInterPro = false;
     private boolean mapToGO = false;
     private boolean mapToPathway = false;
@@ -162,6 +163,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(StepInstanceCreatingStep.USE_MATCH_LOOKUP_SERVICE, Boolean.toString(useMatchLookupService));
+        params.put(StepInstanceCreatingStep.EXCLUDE_SITES, Boolean.toString(excludeSites));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
@@ -184,12 +186,13 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             }
             for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
                 String extension = outputFormat.getFileExtension();
-                //specify default output formats: TSV, XML and GFF3, but not SVG, HTML, GFF3 partial or XML slim
+                //specify default output formats: TSV, XML and GFF3, but not SVG, HTML, GFF3 partial, XML slim or TSV production
                 if (extension.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.GFF3_PARTIAL.getFileExtension()) ||
-                        extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension())) {
+                        extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.TSV_PRO.getFileExtension())) {
                     // SVG, HTML and RAW formats are not part of the default formats
                     continue;
                 }
@@ -298,6 +301,15 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     @Override
     public void setOutputFormats(String[] outputFormats) {
         this.outputFormats = outputFormats;
+    }
+
+    protected boolean isExcludeSites() {
+        return excludeSites;
+    }
+
+    @Override
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
     }
 
     @Override

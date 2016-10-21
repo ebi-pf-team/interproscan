@@ -88,7 +88,9 @@
                 <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
             </bean>
         </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO"  ref="cddRawMatchDAO"/>
+        <property name="rawSiteDAO"  ref="cddRawSiteDAO"/>
         <property name="serialGroup" value="PARSE_CDD"/>
     </bean>
 
@@ -122,10 +124,12 @@
                 </property>
             </bean>
         </property>
-        <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAO"/>
+        <property name="filteredMatchAndSiteDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl"/>
         </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
+        <property name="rawSiteDAO" ref="cddRawSiteDAO"/>
     </bean>
 
 
@@ -134,6 +138,10 @@
 
     <bean id="cddRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch"/>
+    </bean>
+
+    <bean id="cddRawSiteDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.CDDRawSite"/>
     </bean>
 
     <bean id="signatureLibraryReleaseCDD" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
