@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite;
 
 
 /**
@@ -8,6 +9,6 @@ import uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch;
  *
  */
 
-public class SFLDHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<SFLDHmmer3RawMatch> {
+public class SFLDHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchAndSiteDAO<SFLDHmmer3RawMatch, SFLDHmmer3RawSite> {
 
 }

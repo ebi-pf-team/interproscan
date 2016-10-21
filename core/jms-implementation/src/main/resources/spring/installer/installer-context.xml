@@ -37,6 +37,12 @@
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
 
+                <bean class="uk.ac.ebi.interpro.scan.io.mobidb.MobiDBDummyModelParser">
+                    <property name="signatureLibrary" value="MOBIDB"/>
+                    <property name="releaseVersionNumber" value="${mobidb.signature.library.release}"/>
+                    <property name="analysisJobId" value="jobMobiDB"/>
+                </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="SFLD"/>
                     <property name="releaseVersionNumber" value="${sfld.signature.library.release}"/>
