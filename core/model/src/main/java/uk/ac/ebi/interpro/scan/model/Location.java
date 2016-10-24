@@ -257,7 +257,7 @@ public abstract class Location implements Serializable, Cloneable {
         @XmlElement(name = "hmmer3-location")
         private final Set<Hmmer3Match.Hmmer3Location> hmmer3Locations;
 
-        @XmlElement(name = "mobidb-location")
+        @XmlElement(name = "mobidblite-location")
         private final Set<MobiDBMatch.MobiDBLocation> mobiDBLocations;
 
         @XmlElement(name = "superfamilyhmmer3-location")

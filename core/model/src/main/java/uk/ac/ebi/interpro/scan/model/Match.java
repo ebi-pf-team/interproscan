@@ -264,7 +264,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
         @XmlElement(name = "hmmer3-match")
         private final Set<Hmmer3Match> hmmer3Matches;
 
-        @XmlElement(name = "mobidb-match")
+        @XmlElement(name = "mobidblite-match")
         private final Set<MobiDBMatch> mobiDBMatches;
 
         @XmlElement(name = "superfamilyhmmer3-match")

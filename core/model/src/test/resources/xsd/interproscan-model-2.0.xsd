@@ -129,7 +129,7 @@
             <xs:element name="hmmer2-location" type="tns:Hmmer2LocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-with-sites-location" type="tns:Hmmer3LocationWithSitesType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-location" type="tns:Hmmer3LocationType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="mobidb-location" type="tns:MobiDBLocationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="mobidblite-location" type="tns:MobiDBLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="panther-location" type="tns:PantherLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="patternscan-location" type="tns:PatternScanLocationType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="phobius-location" type="tns:PhobiusLocationType" minOccurs="0" maxOccurs="unbounded"/>
@@ -446,7 +446,7 @@
             <xs:element name="hmmer2-match" type="tns:Hmmer2MatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-match" type="tns:Hmmer3MatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="hmmer3-with-sites-match" type="tns:Hmmer3MatchWithSitesType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="mobidb-match" type="tns:MobiDBMatchType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="mobidblite-match" type="tns:MobiDBMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="panther-match" type="tns:PantherMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="patternscan-match" type="tns:PatternScanMatchType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="phobius-match" type="tns:PhobiusMatchType" minOccurs="0" maxOccurs="unbounded"/>
