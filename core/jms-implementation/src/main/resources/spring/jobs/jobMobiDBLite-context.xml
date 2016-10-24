@@ -7,7 +7,7 @@
     <import resource="../persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: MobiDB ############################  -->
-    <bean id="jobMobiDB" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobMobiDBLite" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="Prediction of disordered domains Regions in Proteins"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseMobiDB"/>
@@ -16,8 +16,8 @@
     </bean>
 
     <bean id="abstractMobiDBStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobMobiDB"/>
-        <property name="maxProteins" value="${analysis.max.sequence.count.MOBIDB}"/>
+        <property name="job" ref="jobMobiDBLite"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.MOBIDB_LITE}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
@@ -93,7 +93,7 @@
     </bean>
 
     <bean id="signatureLibraryReleaseMobiDB" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
-        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="MOBIDB"/>
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="MOBIDB_LITE"/>
         <constructor-arg type="java.lang.String" ref="latestMobiDBSignatureLibraryRelease"/>
     </bean>
 

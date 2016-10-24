@@ -9,7 +9,7 @@
         <property name="signatureLibraryToMatchConverter">
             <map>
                 <!-- Phobius not in Onion, so no conversion necessary. -->
-                <entry key="MOBIDB" value-ref="mobidbBerkeleyMatchConverter"/>
+                <entry key="MOBIDB_LITE" value-ref="mobidbBerkeleyMatchConverter"/>
                 <entry key="CDD" value-ref="rpsblastBerkeleyMatchConverter"/>
                 <entry key="GENE3D" value-ref="hmmer3BerkeleyMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3BerkeleyMatchConverter"/>

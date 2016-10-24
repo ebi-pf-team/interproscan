@@ -60,6 +60,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                             if (signature == null) {
                                 throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                             }
+                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
                             //why not return just signature
                             return modelAccessionToSignatureMap.get(modelAccession);
                         }
