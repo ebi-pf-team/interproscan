@@ -72,9 +72,9 @@ public class MatchDataSourceTest {
 
     @Test
     public void testMobiDB() {
-        final String name = SignatureLibrary.MOBIDB.getName();
+        final String name = SignatureLibrary.MOBIDB_LITE.getName();
         final MatchDataSource m = MatchDataSource.parseName(name);
-        assertEquals(MatchDataSource.MOBIDB, m);
+        assertEquals(MatchDataSource.MOBIDB_LITE, m);
     }
 
 
