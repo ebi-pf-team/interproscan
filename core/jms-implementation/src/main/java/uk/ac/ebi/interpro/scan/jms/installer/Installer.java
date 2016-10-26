@@ -121,7 +121,7 @@ public class Installer implements Runnable {
     private void loadEntries() {
         String releaseVersion = jdbcEntryDAO.getLatestDatabaseReleaseVersion();
         Release interProRelease = releaseDAO.getReleaseByVersion(releaseVersion);
-        LOGGER.warn("Loading InterPro entries - " + releaseVersion + " version number " + interProRelease.getVersion());
+        LOGGER.warn("Loading InterPro entries - " + releaseVersion + " version number " + interProRelease);
         if (interProRelease == null) {
             interProRelease = releaseDAO.insert(new Release(releaseVersion));
         }
