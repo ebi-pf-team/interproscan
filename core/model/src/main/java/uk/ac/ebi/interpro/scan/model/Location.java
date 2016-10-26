@@ -248,7 +248,7 @@ public abstract class Location implements Serializable, Cloneable {
         @XmlElement(name = "rpsblast-location")
         private final Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations;
 
-        @XmlElement(name = "hmmer3-with-sites-location")
+        @XmlElement(name = "hmmer3-location-with-sites")
         private final Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> hmmer3LocationWithSites;
 
         @XmlElement(name = "hmmer2-location")
