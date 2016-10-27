@@ -7,12 +7,19 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.Site;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySite;
 
 import java.io.File;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Creates a Berkeley database of proteins for which matches have been calculated in IPRSCAN.
@@ -29,20 +36,22 @@ public class CreateMatchDBFromIprscan {
     private static final String databaseName = "IPRSCAN";
 
     //These indices go hand by hand with the 'berkley_tmp_tab' table
-    private static final int COL_IDX_MD5 = 1;
-    private static final int COL_IDX_SIG_LIB_NAME = 2;
-    private static final int COL_IDX_SIG_LIB_RELEASE = 3;
-    private static final int COL_IDX_SIG_ACCESSION = 4;
-    private static final int COL_IDX_SCORE = 5;
-    private static final int COL_IDX_SEQ_SCORE = 6;
-    private static final int COL_IDX_SEQ_EVALUE = 7;
-    private static final int COL_IDX_EVALUE = 8;
-    private static final int COL_IDX_SEQ_START = 9;
-    private static final int COL_IDX_SEQ_END = 10;
-    private static final int COL_IDX_HMM_START = 11;
-    private static final int COL_IDX_HMM_END = 12;
+
+    private static final int COL_IDX_MATCH_ID = 1;
+    private static final int COL_IDX_MD5 = 2;
+    private static final int COL_IDX_SIG_LIB_NAME = 3;
+    private static final int COL_IDX_SIG_LIB_RELEASE = 4;
+    private static final int COL_IDX_SIG_ACCESSION = 5;
+    private static final int COL_IDX_SCORE = 6;
+    private static final int COL_IDX_SEQ_SCORE = 7;
+    private static final int COL_IDX_SEQ_EVALUE = 8;
+    private static final int COL_IDX_EVALUE = 9;
+    private static final int COL_IDX_SEQ_START = 10;
+    private static final int COL_IDX_SEQ_END = 11;
+    private static final int COL_IDX_HMM_START = 12;
+    private static final int COL_IDX_HMM_END = 13;
 //    Uncomment because I5 doesn't calculate them at the moment
-    private static final int COL_IDX_HMM_BOUNDS = 13;
+    private static final int COL_IDX_HMM_BOUNDS = 14;
 
     private static final String CREATE_TEMP_TABLE =
             "create global temporary table  berkley_tmp_tab " +
@@ -71,12 +80,24 @@ public class CreateMatchDBFromIprscan {
                     "        AND r.iprscan_sig_lib_rel_id = m.analysis_id " +
                     "        AND r.iprscan_sig_lib_rel_id=l.id";
 
-    private static final String QUERY_TEMPORARY_TABLE =
-            "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
+    private static final String QUERY_MATCH_TEMPORARY_TABLE =
+            "select  /*+ PARALLEL */ ID, PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
                     "       SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
                     "       from  berkley_tmp_tab " +
-                    "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
+                    "       order by  ID, PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       SEQUENCE_SCORE";
+
+    private static final int SITE_COL_IDX_MATCH_ID = 1;
+    private static final int SITE_COL_IDX_NUM_SITES = 2;
+    private static final int SITE_COL_IDX_RESIDUE = 3;
+    private static final int SITE_COL_IDX_RESIDUE_START = 4;
+    private static final int SITE_COL_IDX_RESIDUE_END = 5;
+    private static final int SITE_COL_IDX_DESCRIPTION = 6;
+
+    private static final String QUERY_SITE_TEMPORARY_TABLE =
+            "select  /*+ PARALLEL */ MATCH_ID, NUM_SITES, RESIDUE, RESIDUE_START, RESIDUE_END, DESCRIPTION " +
+                    "       FROM  berkley_site_tmp_tab";
+                 //   "       order by MATCH_ID";
 
     private static final String TRUNCATE_TEMPORARY_TABLE =
             "truncate table berkley_tmp_tab";
@@ -131,16 +152,70 @@ public class CreateMatchDBFromIprscan {
             }
 
             */
-            long now = System.currentTimeMillis();
-            System.out.println((now - startMillis) + " milliseconds to create the temporary table.");
-            startMillis = now;
 
-            PrimaryIndex<Long, BerkeleyMatch> primIDX = null;
+            // get the sites
+            long now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds since connection.");
+            startMillis = now;
 
             PreparedStatement ps = null;
             ResultSet rs = null;
+            int siteCount = 0;
+
+            Map<Long, Set<BerkeleySite>> matchSites = new HashMap<>();
             try {
-                ps = connection.prepareStatement(QUERY_TEMPORARY_TABLE);
+                ps = connection.prepareStatement(QUERY_SITE_TEMPORARY_TABLE);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    final Long matchId = rs.getLong(SITE_COL_IDX_MATCH_ID);
+                    if (rs.wasNull()) continue;
+
+                    final Integer numSites = rs.getInt(SITE_COL_IDX_NUM_SITES);
+                    if (rs.wasNull()) continue;
+
+                    final String residue = rs.getString(SITE_COL_IDX_RESIDUE);
+                    if (rs.wasNull()) continue;
+
+                    final Integer residueStart = rs.getInt(SITE_COL_IDX_RESIDUE_START);
+                    if (rs.wasNull()) continue;
+
+                    final Integer residueEnd = rs.getInt(SITE_COL_IDX_RESIDUE_END);
+                    if (rs.wasNull()) continue;
+
+                    final String description = rs.getString(SITE_COL_IDX_DESCRIPTION);
+                    if (rs.wasNull()) continue;
+
+                    final BerkeleySite site = new BerkeleySite();
+                    site.setResidue(residue);
+                    site.setStart(residueStart);
+                    site.setEnd(residueEnd);
+                    site.setNumSites(numSites);
+                    site.setDescription(description);
+                    Set<BerkeleySite> berkeleySites = matchSites.get(matchId);
+                    if(berkeleySites == null){
+                        berkeleySites = new HashSet<>();
+                    }
+                    berkeleySites.add(site);
+                    matchSites.put(matchId, berkeleySites);
+                    siteCount ++;
+                }
+            } finally {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            }
+            now = System.currentTimeMillis();
+            System.out.println((now - startMillis) + " milliseconds to query the temporary site table and create the site map for "
+                    + siteCount + " sites .");
+            startMillis = now;
+
+            //get the matches
+            PrimaryIndex<Long, BerkeleyMatch> primIDX = null;
+
+            ps = null;
+            rs = null;
+            try {
+                ps = connection.prepareStatement(QUERY_MATCH_TEMPORARY_TABLE);
                 rs = ps.executeQuery();
                 BerkeleyMatch match = null;
 
@@ -186,6 +261,9 @@ public class CreateMatchDBFromIprscan {
                     if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
 
                     // Now collect rest of the data and test for mandatory fields.
+                    final Long berkleyMatchId = rs.getLong(COL_IDX_MATCH_ID);
+                    if (rs.wasNull()) continue;
+
                     final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
                     if (rs.wasNull()) continue;
 
@@ -233,6 +311,18 @@ public class CreateMatchDBFromIprscan {
                     location.seteValue(eValue);
                     location.setScore(locationScore);
                     locationCount++;
+
+                    if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName).equals(SignatureLibrary.CDD)
+                            || SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName).equals(SignatureLibrary.SFLD)) {
+                        //get sites for this match
+
+                        location.setSites(matchSites.get(berkleyMatchId));
+//                        final BerkeleySite site = new BerkeleySite();
+//                        site.setResidue("K");
+//                        site.setStart(25);
+//                        site.setEnd(25);
+//                        location.addSite(site);
+                    }
 
                     if (match != null) {
                         if (

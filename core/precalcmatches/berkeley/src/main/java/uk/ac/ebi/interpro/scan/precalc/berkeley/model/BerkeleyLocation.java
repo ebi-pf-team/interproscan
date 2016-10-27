@@ -2,6 +2,11 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.model;
 
 import com.sleepycat.persist.model.Persistent;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import java.util.Set;
+import java.util.TreeSet;
+
 
 /**
  * Very simple Location implementation for data transfer &
@@ -42,6 +47,8 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
     private String level;
 
     private String cigarAlignment;
+
+    private Set<BerkeleySite> sites = null;
 
     public BerkeleyLocation() {
     }
@@ -148,6 +155,25 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
 
     public void setCigarAlignment(String cigarAlignment) {
         this.cigarAlignment = cigarAlignment;
+    }
+
+    // XmLElementWrapper generates a wrapper element around XML representation
+    @XmlElementWrapper(name = "sites")
+    // XmlElement sets the name of the entities
+    @XmlElement(name = "site")
+    public Set<BerkeleySite> getSites() {
+        return sites;
+    }
+
+    public void setSites(Set<BerkeleySite> sites) {
+        this.sites = sites;
+    }
+
+    public void addSite(BerkeleySite site) {
+        if (this.sites == null) {
+            this.sites = new TreeSet<BerkeleySite>();
+        }
+        sites.add(site);
     }
 
     @Override
