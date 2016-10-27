@@ -458,7 +458,7 @@
             </hmmer3-match>
             <mobidb-match>
                 <signature ac="mobidb-lite" name="mobidb-lite">
-                    <signature-library-release library="MOBIDB" version="2.2"/>
+                    <signature-library-release library="MOBIDB" version="1.0"/>
                 </signature>
                 <locations>
                     <mobidb-location start="1" end="108"/>
