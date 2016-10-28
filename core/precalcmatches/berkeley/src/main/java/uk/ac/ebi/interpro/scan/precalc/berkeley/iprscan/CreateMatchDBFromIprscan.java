@@ -174,11 +174,9 @@ public class CreateMatchDBFromIprscan {
                     final Long matchId = rs.getLong(SITE_COL_IDX_MATCH_ID);
                     ids.add(matchId);
                 }
-                for (BerkeleySite site: getSites(ids.subList(10,12))) {
-                    System.out.println("id = " + site.getMatchId());
-                    for (BerkeleySiteLocation bsl: site.getSiteLocations()) {
-                        System.out.println(bsl.toString());
-                    }
+                for (BerkeleySiteLocation site: getSites(ids.subList(10,12))) {
+                    System.out.println("id = " + " test");
+                        System.out.println(site.toString());
                 }
 
             } finally {
@@ -378,7 +376,7 @@ public class CreateMatchDBFromIprscan {
                         //get sites for this match
                         List<Long> siteMatchIds = new ArrayList<>();
                         siteMatchIds.add(berkleyMatchId);
-                        for (BerkeleySite site: getSites(siteMatchIds)) {
+                        for (BerkeleySiteLocation site: getSites(siteMatchIds)) {
                             location.addSite(site);
                         }
                     }
@@ -397,9 +395,10 @@ public class CreateMatchDBFromIprscan {
                             // Store last match
                             primIDX.put(match);
                             matchCount++;
-                            if (matchCount % 100000 == 0) {
+                            if (matchCount % 200000 == 0) {
                                 System.out.println(Utilities.getTimeNow() +  " "
-                                        + "Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                                        + "Stored " + matchCount + " matches, with a total of " + locationCount + " locations."
+                                        + " - current matchId: " + berkleyMatchId);
                             }
 
                             // Create new match and add location to it
@@ -542,10 +541,10 @@ public class CreateMatchDBFromIprscan {
 
 
 
-    public List<BerkeleySite> getSites(List<Long> matchIds) {
-        System.out.println("ids to check: " + matchIds.toString());
+    public List<BerkeleySiteLocation> getSites(List<Long> matchIds) {
+        //System.out.println("ids to check: " + matchIds.toString());
         Assert.notNull(getMatchIdIndex(), "The MD5 index must not be null.");
-        List<BerkeleySite> sites = new ArrayList<BerkeleySite>();
+        List<BerkeleySiteLocation> sites = new ArrayList<BerkeleySiteLocation>();
 
         for (Long matchId : matchIds) {
             EntityCursor<BerkeleySite> siteCursor = null;
@@ -554,7 +553,7 @@ public class CreateMatchDBFromIprscan {
 
                 BerkeleySite currentSite;
                 while ((currentSite = siteCursor.next()) != null) {
-                    sites.add(currentSite);
+                    sites.addAll(currentSite.getSiteLocations());
                 }
             } finally {
                 if (siteCursor != null) {

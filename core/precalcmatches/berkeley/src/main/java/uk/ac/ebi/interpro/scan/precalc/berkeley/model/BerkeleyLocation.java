@@ -48,7 +48,7 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
 
     private String cigarAlignment;
 
-    private Set<BerkeleySite> sites = null;
+    private Set<BerkeleySiteLocation> sites = null;
 
     public BerkeleyLocation() {
     }
@@ -161,17 +161,17 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
     @XmlElementWrapper(name = "sites")
     // XmlElement sets the name of the entities
     @XmlElement(name = "site")
-    public Set<BerkeleySite> getSites() {
+    public Set<BerkeleySiteLocation> getSites() {
         return sites;
     }
 
-    public void setSites(Set<BerkeleySite> sites) {
+    public void setSites(Set<BerkeleySiteLocation> sites) {
         this.sites = sites;
     }
 
-    public void addSite(BerkeleySite site) {
+    public void addSite(BerkeleySiteLocation site) {
         if (this.sites == null) {
-            this.sites = new TreeSet<BerkeleySite>();
+            this.sites = new TreeSet<BerkeleySiteLocation>();
         }
         sites.add(site);
     }

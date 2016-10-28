@@ -27,10 +27,10 @@ public class Hmmer3WithSitesBerkeleyMatchConverter extends BerkeleyMatchConverte
         final Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations = new HashSet<Hmmer3MatchWithSites.Hmmer3LocationWithSites>(berkeleyMatch.getLocations().size());
 
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
-            Set<BerkeleySite> berkeleySites = location.getSites();
+            Set<BerkeleySiteLocation> berkeleySiteLocations = location.getSites();
             Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> sites = new HashSet<>();
-            for (BerkeleySite berkeleySite: berkeleySites){
-                sites.addAll(convertSite(berkeleySite));
+            for (BerkeleySiteLocation berkeleySiteLocation: berkeleySiteLocations){
+                sites.add(convertSite(berkeleySiteLocation));
             }
 
             final HmmBounds bounds;
@@ -66,8 +66,14 @@ public class Hmmer3WithSitesBerkeleyMatchConverter extends BerkeleyMatchConverte
         );
     }
 
-    public Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> convertSite(BerkeleySite berkeleySite){
+    public Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite convertSite(BerkeleySiteLocation berkeleySiteLocation){
+        Set<SiteLocation> siteLocations = new HashSet<>();
+        siteLocations.add(new SiteLocation(berkeleySiteLocation.getResidue(), berkeleySiteLocation.getStart(), berkeleySiteLocation.getEnd()));
+        Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite hmmer3Site =
+                new Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite(berkeleySiteLocation.getDescription(), siteLocations);
+        return  hmmer3Site;
 
+        /*
         Set< Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> hmmer3Sites = new HashSet<>();
         for (BerkeleySiteLocation bsloc: berkeleySite.getSiteLocations()) {
             Set<SiteLocation> siteLocations = new HashSet<>();
@@ -75,8 +81,8 @@ public class Hmmer3WithSitesBerkeleyMatchConverter extends BerkeleyMatchConverte
             Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite(bsloc.getDescription(), siteLocations);
             hmmer3Sites.add(site);
         }
+        */
 
-        return  hmmer3Sites;
 
     }
 }

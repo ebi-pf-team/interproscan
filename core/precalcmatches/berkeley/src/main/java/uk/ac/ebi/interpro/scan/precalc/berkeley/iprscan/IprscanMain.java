@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
+import uk.ac.ebi.interpro.scan.util.Utilities;
+
 /**
  * @author Phil Jones
  *         Date: 20/05/11
@@ -24,7 +26,7 @@ public class IprscanMain {
         String dbName = args[6].trim();
 
         if ( dbName.equals("site") ) {
-
+            System.out.println(Utilities.getTimeNow() + " Create siteDB");
             CreateSiteDBFromIprscan matchBuilder = new CreateSiteDBFromIprscan();
             matchBuilder.buildDatabase(
                     siteDBPath,
@@ -35,6 +37,7 @@ public class IprscanMain {
         }
 
         if ( dbName.equals("md5") ) {
+            System.out.println(Utilities.getTimeNow() + " Create md5DB");
             CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
             md5Builder.buildDatabase(
                     md5DBPath,
@@ -46,6 +49,7 @@ public class IprscanMain {
 
         }
         if ( dbName.equals("match") ) {
+            System.out.println(Utilities.getTimeNow() + " Create matchDB");
             CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
             matchBuilder.buildDatabase(
                     matchDBPath,
@@ -57,6 +61,7 @@ public class IprscanMain {
 
         }
         if ( dbName.equals("md5_and_match")  ) {
+            System.out.println(Utilities.getTimeNow() + " Create md5DB and matchDB");
             CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
             md5Builder.buildDatabase(
                     md5DBPath,

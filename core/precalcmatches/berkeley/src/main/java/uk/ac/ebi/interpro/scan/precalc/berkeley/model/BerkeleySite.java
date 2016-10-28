@@ -24,9 +24,8 @@ import static com.sleepycat.persist.model.Relationship.MANY_TO_ONE;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-//@Persistent
 @Entity
-public class BerkeleySite {
+public class BerkeleySite implements Comparable<BerkeleySite>{
 
     @PrimaryKey(sequence = "site_unique_index_sequence")
     private Long siteId;
@@ -103,37 +102,28 @@ public class BerkeleySite {
                 ", numSites=" + getSiteLocations().size() +
                 '}';
     }
-//
-//    /**
-//     * Attempts to sort as follows:
-//     * <p/>
-//     * If equal (== or .equals) return 0.
-//     * Sort on start position
-//     * Sort on end position
-//     * Sort on Residue
-//     *
-//     * @param that the object to be compared.
-//     * @return a negative integer, zero, or a positive integer as this object
-//     *         is less than, equal to, or greater than the specified object.
-//     * @throws ClassCastException if the specified object's type prevents it
-//     *                            from being compared to this object.
-//     */
-//    @Override
-//    public int compareTo(BerkeleySite that) {
-//        if (this == that || this.equals(that)) return 0;
-//
-//        if (this.getStart() != null && that.getStart() != null) {
-//            if (this.getStart() < that.getStart()) return -1;
-//            if (this.getStart() > that.getStart()) return 1;
-//        }
-//        if (this.getEnd() != null && that.getEnd() != null) {
-//            if (this.getEnd() < that.getEnd()) return -1;
-//            if (this.getEnd() > that.getEnd()) return 1;
-//        }
-//        if (this.getResidue() != null && that.getResidue() != null) {
-//            if (this.getResidue().compareTo(that.getResidue()) < 0) return -1;
-//            if (this.getResidue().compareTo(that.getResidue()) > 0) return 1;
-//        }
-//        throw new IllegalStateException("Trying to compare a BerkeleySite that has no state.  This: " + this + "\n\nThat: " + that);
-//    }
+
+    /**
+     * Attempts to sort as follows:
+     * <p/>
+     * If equal (== or .equals) return 0.
+     * Sort on match_id
+     *
+     * @param that the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     *         is less than, equal to, or greater than the specified object.
+     * @throws ClassCastException if the specified object's type prevents it
+     *                            from being compared to this object.
+     */
+    @Override
+    public int compareTo(BerkeleySite that) {
+        if (this == that || this.equals(that)) return 0;
+
+        if (this.getMatchId() != null && that.getMatchId() != null) {
+            if (this.getMatchId() < that.getMatchId()) return -1;
+            if (this.getMatchId() > that.getMatchId()) return 1;
+        }
+
+        throw new IllegalStateException("Trying to compare a BerkeleySite that has no state.  This: " + this + "\n\nThat: " + that);
+    }
 }
