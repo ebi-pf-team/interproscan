@@ -3,9 +3,9 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.persist.EntityStore;
-import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.StoreConfig;
+import com.sleepycat.persist.EntityCursor;
+import com.sleepycat.persist.*;
+import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.Site;
@@ -13,13 +13,12 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibrary
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySite;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySiteLocation;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Creates a Berkeley database of proteins for which matches have been calculated in IPRSCAN.
@@ -84,7 +83,7 @@ public class CreateMatchDBFromIprscan {
             "select  /*+ PARALLEL */ ID, PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
                     "       SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
                     "       from  berkley_tmp_tab " +
-                    "       order by  ID, PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
+                    "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       SEQUENCE_SCORE";
 
     private static final int SITE_COL_IDX_MATCH_ID = 1;
@@ -96,8 +95,10 @@ public class CreateMatchDBFromIprscan {
 
     private static final String QUERY_SITE_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ MATCH_ID, NUM_SITES, RESIDUE, RESIDUE_START, RESIDUE_END, DESCRIPTION " +
-                    "       FROM  berkley_site_tmp_tab";
-                 //   "       order by MATCH_ID";
+                    "       FROM  berkley_site_tmp_tab" +
+                    "       order by MATCH_ID";
+//                    "       WHERE  ROWNUM < 1000";
+                 //
 
     private static final String TRUNCATE_TEMPORARY_TABLE =
             "truncate table berkley_tmp_tab";
@@ -105,28 +106,127 @@ public class CreateMatchDBFromIprscan {
     private static final String DROP_TEMPORARY_TABLE =
             "drop  table berkley_tmp_tab";
 
+    Environment siteEnv = null;
+    EntityStore siteStore = null;
+
+    private SecondaryIndex<Long, Long, BerkeleySite> siteDBIDX = null;
+    private PrimaryIndex<Long, BerkeleySite> storeDBPrimIDX = null;
 
     public static void main(String[] args) {
         if (args.length < 4) {
             throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\n" + databaseName + " DB URL (jdbc:oracle:thin:@host:port:SID)\n" + databaseName + " DB username\n" + databaseName + " DB password\nMaximum UPI");
         }
         String directoryPath = args[0];
-        String databaseUrl = args[1];
-        String username = args[2];
-        String password = args[3];
-        String maxUPI = args[4];
+        String siteDBPath = args[1];
+        String databaseUrl = args[2];
+        String username = args[3];
+        String password = args[4];
+
 
         CreateMatchDBFromIprscan instance = new CreateMatchDBFromIprscan();
 
+        instance.testBuildDatabase(directoryPath,
+                siteDBPath,
+                databaseUrl,
+                username,
+                password
+        );
+
+        /*
         instance.buildDatabase(directoryPath,
+                siteDBPath,
                 databaseUrl,
                 username,
                 password,
                 maxUPI
         );
+        */
     }
 
-    void buildDatabase(String directoryPath, String databaseUrl, String username, String password, String maxUPI) {
+    void testBuildDatabase(String directoryPath, String siteDBPath, String databaseUrl, String username, String password) {
+        long startMillis = System.currentTimeMillis();
+
+        Connection connection = null;
+
+        try {
+            // Connect to the database.
+            Class.forName("oracle.jdbc.OracleDriver");
+            connection = DriverManager.getConnection(databaseUrl, username, password);
+
+
+            // prepare the siteDB
+            long now = System.currentTimeMillis();
+            System.out.println(Utilities.getTimeNow() + " Starting to process site data from siteDB.");
+            startMillis = now;
+            int cacheSizeInMegaBytes = 400;
+            Long cacheSizeInBytes = Long.valueOf(cacheSizeInMegaBytes) * 1024 * 1024;
+            initializeSiteDBIndex(siteDBPath, cacheSizeInBytes);
+
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            int siteCount = 0;
+
+            try {
+                ps = connection.prepareStatement(QUERY_SITE_TEMPORARY_TABLE);
+                rs = ps.executeQuery();
+                List<Long> ids = new ArrayList();
+                while (rs.next()) {
+                    final Long matchId = rs.getLong(SITE_COL_IDX_MATCH_ID);
+                    ids.add(matchId);
+                }
+                for (BerkeleySite site: getSites(ids.subList(10,12))) {
+                    System.out.println("id = " + site.getMatchId());
+                    for (BerkeleySiteLocation bsl: site.getSiteLocations()) {
+                        System.out.println(bsl.toString());
+                    }
+                }
+
+            } finally {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            }
+            now = System.currentTimeMillis();
+            System.out.println(Utilities.getTimeNow() + " " + (now - startMillis) + " milliseconds to query the temporary site table and create the site map for "
+                    + siteCount + " sites .");
+            startMillis = now;
+
+
+        } catch (DatabaseException dbe) {
+            throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to load the oracle.jdbc.OracleDriver class", e);
+        } catch (SQLException e) {
+            throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
+        } finally {
+            if (siteStore != null) {
+                try {
+                    siteStore.close();
+                } catch (DatabaseException dbe) {
+                    System.out.println("Unable to close the BerkeleyDB connection.");
+                }
+            }
+
+            if (siteEnv != null) {
+                try {
+                    // Finally, close environment.
+                    siteEnv.close();
+                } catch (DatabaseException dbe) {
+                    System.out.println("Unable to close the BerkeleyDB environment.");
+                }
+            }
+
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println("Unable to close the Onion database connection.");
+                }
+            }
+        }
+    }
+
+    void buildDatabase(String directoryPath, String siteDBPath, String databaseUrl, String username, String password) {
         long startMillis = System.currentTimeMillis();
         Environment myEnv = null;
         EntityStore store = null;
@@ -153,65 +253,26 @@ public class CreateMatchDBFromIprscan {
 
             */
 
-            // get the sites
+            // prepare the siteDB
+
             long now = System.currentTimeMillis();
-            System.out.println((now - startMillis) + " milliseconds since connection.");
+            System.out.println(Utilities.getTimeNow() + " Starting to process site data from siteDB.");
             startMillis = now;
+            int cacheSizeInMegaBytes = 400;
+            Long cacheSizeInBytes = Long.valueOf(cacheSizeInMegaBytes) * 1024 * 1024;
+            initializeSiteDBIndex(siteDBPath, cacheSizeInBytes);
 
             PreparedStatement ps = null;
             ResultSet rs = null;
-            int siteCount = 0;
 
-            Map<Long, Set<BerkeleySite>> matchSites = new HashMap<>();
-            try {
-                ps = connection.prepareStatement(QUERY_SITE_TEMPORARY_TABLE);
-                rs = ps.executeQuery();
-
-                while (rs.next()) {
-                    final Long matchId = rs.getLong(SITE_COL_IDX_MATCH_ID);
-                    if (rs.wasNull()) continue;
-
-                    final Integer numSites = rs.getInt(SITE_COL_IDX_NUM_SITES);
-                    if (rs.wasNull()) continue;
-
-                    final String residue = rs.getString(SITE_COL_IDX_RESIDUE);
-                    if (rs.wasNull()) continue;
-
-                    final Integer residueStart = rs.getInt(SITE_COL_IDX_RESIDUE_START);
-                    if (rs.wasNull()) continue;
-
-                    final Integer residueEnd = rs.getInt(SITE_COL_IDX_RESIDUE_END);
-                    if (rs.wasNull()) continue;
-
-                    final String description = rs.getString(SITE_COL_IDX_DESCRIPTION);
-                    if (rs.wasNull()) continue;
-
-                    final BerkeleySite site = new BerkeleySite();
-                    site.setResidue(residue);
-                    site.setStart(residueStart);
-                    site.setEnd(residueEnd);
-                    site.setNumSites(numSites);
-                    site.setDescription(description);
-                    Set<BerkeleySite> berkeleySites = matchSites.get(matchId);
-                    if(berkeleySites == null){
-                        berkeleySites = new HashSet<>();
-                    }
-                    berkeleySites.add(site);
-                    matchSites.put(matchId, berkeleySites);
-                    siteCount ++;
-                }
-            } finally {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-            }
             now = System.currentTimeMillis();
-            System.out.println((now - startMillis) + " milliseconds to query the temporary site table and create the site map for "
-                    + siteCount + " sites .");
+            System.out.println(Utilities.getTimeNow() +  " " + (now - startMillis) + " milliseconds to initialise site db ");
             startMillis = now;
 
             //get the matches
             PrimaryIndex<Long, BerkeleyMatch> primIDX = null;
 
+            System.out.println(Utilities.getTimeNow() +  " Start building the match_db");
             ps = null;
             rs = null;
             try {
@@ -315,13 +376,11 @@ public class CreateMatchDBFromIprscan {
                     if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName).equals(SignatureLibrary.CDD)
                             || SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName).equals(SignatureLibrary.SFLD)) {
                         //get sites for this match
-
-                        location.setSites(matchSites.get(berkleyMatchId));
-//                        final BerkeleySite site = new BerkeleySite();
-//                        site.setResidue("K");
-//                        site.setStart(25);
-//                        site.setEnd(25);
-//                        location.addSite(site);
+                        List<Long> siteMatchIds = new ArrayList<>();
+                        siteMatchIds.add(berkleyMatchId);
+                        for (BerkeleySite site: getSites(siteMatchIds)) {
+                            location.addSite(site);
+                        }
                     }
 
                     if (match != null) {
@@ -339,7 +398,8 @@ public class CreateMatchDBFromIprscan {
                             primIDX.put(match);
                             matchCount++;
                             if (matchCount % 100000 == 0) {
-                                System.out.println("Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                                System.out.println(Utilities.getTimeNow() +  " "
+                                        + "Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
                             }
 
                             // Create new match and add location to it
@@ -449,5 +509,60 @@ public class CreateMatchDBFromIprscan {
                 }
             }
         }
+    }
+
+    private void initializeSiteDBIndex(String siteDBPath, long cacheSizeInBytes) {
+        EnvironmentConfig myEnvConfig = new EnvironmentConfig();
+        StoreConfig storeConfig = new StoreConfig();
+
+        myEnvConfig.setCacheSize(cacheSizeInBytes);
+        myEnvConfig.setReadOnly(true);
+        myEnvConfig.setAllowCreate(false);
+        myEnvConfig.setLocking(false);
+
+        storeConfig.setReadOnly(true);
+        storeConfig.setAllowCreate(false);
+        storeConfig.setTransactional(false);
+
+        File file = new File(siteDBPath);
+        // Open the environment and entity store
+        siteEnv = new Environment(file, myEnvConfig);
+        siteStore = new EntityStore(siteEnv, "EntityStore", storeConfig);
+
+
+        storeDBPrimIDX = siteStore.getPrimaryIndex(Long.class, BerkeleySite.class);
+        siteDBIDX = siteStore.getSecondaryIndex(storeDBPrimIDX, Long.class, "matchId");
+    }
+
+    SecondaryIndex<Long, Long, BerkeleySite> getMatchIdIndex() {
+
+        //siteDBIDX = siteStore.getSecondaryIndex(storeDBPrimIDX, Long.class, "matchId");
+        return siteDBIDX;
+    }
+
+
+
+    public List<BerkeleySite> getSites(List<Long> matchIds) {
+        System.out.println("ids to check: " + matchIds.toString());
+        Assert.notNull(getMatchIdIndex(), "The MD5 index must not be null.");
+        List<BerkeleySite> sites = new ArrayList<BerkeleySite>();
+
+        for (Long matchId : matchIds) {
+            EntityCursor<BerkeleySite> siteCursor = null;
+            try {
+                siteCursor = getMatchIdIndex().entities(matchId, true, matchId, true);
+
+                BerkeleySite currentSite;
+                while ((currentSite = siteCursor.next()) != null) {
+                    sites.add(currentSite);
+                }
+            } finally {
+                if (siteCursor != null) {
+                    siteCursor.close();
+                }
+            }
+        }
+
+        return sites;
     }
 }

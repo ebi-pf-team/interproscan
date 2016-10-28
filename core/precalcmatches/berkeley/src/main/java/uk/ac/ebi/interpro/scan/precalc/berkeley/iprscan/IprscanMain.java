@@ -17,27 +17,62 @@ public class IprscanMain {
         }
         String matchDBPath = args[0];
         String md5DBPath = args[1];
-        String databaseUrl = args[2];
-        String databaseUsername = args[3];
-        String databasePassword = args[4];
-        String maxUPI = args[5];
+        String siteDBPath = args[2];
+        String databaseUrl = args[3];
+        String databaseUsername = args[4];
+        String databasePassword = args[5];
+        String dbName = args[6].trim();
 
-        CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
-        md5Builder.buildDatabase(
-                md5DBPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI
-        );
+        if ( dbName.equals("site") ) {
 
-        CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
-        matchBuilder.buildDatabase(
-                matchDBPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI
-        );
+            CreateSiteDBFromIprscan matchBuilder = new CreateSiteDBFromIprscan();
+            matchBuilder.buildDatabase(
+                    siteDBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword
+            );
+        }
+
+        if ( dbName.equals("md5") ) {
+            CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
+            md5Builder.buildDatabase(
+                    md5DBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword
+            );
+
+
+        }
+        if ( dbName.equals("match") ) {
+            CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
+            matchBuilder.buildDatabase(
+                    matchDBPath,
+                    siteDBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword
+            );
+
+        }
+        if ( dbName.equals("md5_and_match")  ) {
+            CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
+            md5Builder.buildDatabase(
+                    md5DBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword
+            );
+
+            CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
+            matchBuilder.buildDatabase(
+                    matchDBPath,
+                    siteDBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword
+            );
+        }
     }
 }

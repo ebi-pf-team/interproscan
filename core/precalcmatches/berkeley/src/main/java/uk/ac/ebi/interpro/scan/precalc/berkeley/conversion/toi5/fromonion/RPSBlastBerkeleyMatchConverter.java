@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchCon
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySite;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySiteLocation;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashSet;
@@ -31,9 +32,9 @@ public class RPSBlastBerkeleyMatchConverter extends BerkeleyMatchConverter<RPSBl
 
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
             Set<BerkeleySite> berkeleySites = location.getSites();
-            Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = new HashSet<>(location.getSites().size());
+            Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = new HashSet<>();
             for (BerkeleySite berkeleySite: berkeleySites){
-                sites.add(convertSite(berkeleySite));
+                sites.addAll(convertSite(berkeleySite));
             }
             Utilities.verboseLog("Found sites: " + sites.toString());
             locations.add(new RPSBlastMatch.RPSBlastLocation(
@@ -48,12 +49,16 @@ public class RPSBlastBerkeleyMatchConverter extends BerkeleyMatchConverter<RPSBl
         return new RPSBlastMatch(signature, locations);
     }
 
-    public RPSBlastMatch.RPSBlastLocation.RPSBlastSite convertSite(BerkeleySite berkeleySite){
-        Set<SiteLocation> siteLocations = new HashSet<>();
-        siteLocations.add(new SiteLocation(berkeleySite.getResidue(), berkeleySite.getStart(), berkeleySite.getEnd()));
-        RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(berkeleySite.getDescription(), siteLocations);
+    public Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> convertSite(BerkeleySite berkeleySite){
+        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = new HashSet<>();
+        for (BerkeleySiteLocation bsloc: berkeleySite.getSiteLocations()) {
+            Set<SiteLocation> siteLocations = new HashSet<>();
+            siteLocations.add(new SiteLocation(bsloc.getResidue(), bsloc.getStart(), bsloc.getEnd()));
+            RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(bsloc.getDescription(), siteLocations);
+            rpsBlastSites.add(site);
+        }
 
-        return  site;
+        return  rpsBlastSites;
 
     }
 }

@@ -37,27 +37,26 @@ public class CreateMD5ListFromIprscan {
 
     public static void main(String[] args) {
 
-        if (args.length < 5) {
+        if (args.length < 4) {
             throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\n" + databaseName + " DB URL (jdbc:oracle:thin:@host:port:SID)\n" + databaseName + " DB username\n" + databaseName + " DB password\nMaximum UPI");
         }
         String directoryPath = args[0];
         String databaseUrl = args[1];
         String databaseUsername = args[2];
         String databasePassword = args[3];
-        String maxUPI = args[4];
+//        String maxUPI = args[4];
         CreateMD5ListFromIprscan instance = new CreateMD5ListFromIprscan();
 
         instance.buildDatabase(directoryPath,
                 databaseUrl,
                 databaseUsername,
-                databasePassword,
-                maxUPI
+                databasePassword
         );
 
 
     }
 
-    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword, String maxUPI) {
+    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword) {
         Environment myEnv = null;
         EntityStore store = null;
         Connection connection = null;

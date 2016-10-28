@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchCon
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySite;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleySiteLocation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,9 +28,9 @@ public class Hmmer3WithSitesBerkeleyMatchConverter extends BerkeleyMatchConverte
 
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
             Set<BerkeleySite> berkeleySites = location.getSites();
-            Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> sites = new HashSet<>(location.getSites().size());
+            Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> sites = new HashSet<>();
             for (BerkeleySite berkeleySite: berkeleySites){
-                sites.add(convertSite(berkeleySite));
+                sites.addAll(convertSite(berkeleySite));
             }
 
             final HmmBounds bounds;
@@ -65,12 +66,17 @@ public class Hmmer3WithSitesBerkeleyMatchConverter extends BerkeleyMatchConverte
         );
     }
 
-    public Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite convertSite(BerkeleySite berkeleySite){
-        Set<SiteLocation> siteLocations = new HashSet<>();
-        siteLocations.add(new SiteLocation(berkeleySite.getResidue(), berkeleySite.getStart(), berkeleySite.getEnd()));
-        Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site(berkeleySite.getDescription(), siteLocations);
+    public Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> convertSite(BerkeleySite berkeleySite){
 
-        return  site;
+        Set< Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> hmmer3Sites = new HashSet<>();
+        for (BerkeleySiteLocation bsloc: berkeleySite.getSiteLocations()) {
+            Set<SiteLocation> siteLocations = new HashSet<>();
+            siteLocations.add(new SiteLocation(bsloc.getResidue(), bsloc.getStart(), bsloc.getEnd()));
+            Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite(bsloc.getDescription(), siteLocations);
+            hmmer3Sites.add(site);
+        }
+
+        return  hmmer3Sites;
 
     }
 }
