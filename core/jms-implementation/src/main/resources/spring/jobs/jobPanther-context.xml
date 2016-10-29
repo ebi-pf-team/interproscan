@@ -18,8 +18,7 @@
                 <ref bean="modelDirectory" />
                 <ref bean="perlLibrary" />
                 <ref bean="scriptPath" />
-                <ref bean="blastPath" />
-                <ref bean="hmmerPath" />
+                <ref bean="hmmerBinariesPath" />
             </list>
         </property>
         <property name="mandatoryParameters">
@@ -28,8 +27,7 @@
                 <entry key="binary.panther.perl.lib.dir" value-ref="perlLibrary"/>
                 <entry key="binary.panther.path" value-ref="scriptPath"/>
                 <entry key="panther.models.dir" value-ref="modelDirectory"/>
-                <entry key="binary.blastall.2.2.6.path" value-ref="blastPath"/>
-                <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerPath"/>
+                <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerBinariesPath"/>
             </map>
         </property>
     </bean>
@@ -54,8 +52,8 @@
         <constructor-arg value="${binary.panther.blast.path}"/>
     </bean>
     <!--Add path to (H)mmsearch binary-->
-    <bean id="hmmerPath" class="java.lang.String">
-        <constructor-arg value="${binary.hmmer2.hmmsearch.path}"/>
+    <bean id="hmmerBinariesPath" class="java.lang.String">
+        <constructor-arg value="${binary.hmmer3.path}"/>
     </bean>
 
     <bean id="perlScriptTempDir" class="java.lang.String">
@@ -109,11 +107,13 @@
         <!--Add path to (B)last binary-->
         <property name="blastPath" ref="blastPath"/>
         <!--Add path to (H)mmsearch binary-->
-        <property name="hmmerPath" ref="hmmerPath"/>
+        <property name="hmmerPath" ref="hmmerBinariesPath"/>
         <!--Add additional arguments/parameter-->
         <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
         <property name="binarySwitches" value="${panther.binary.switches} ${panther.binary.cpu.switch}"/>
+        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
         <property name="perlScriptTempDir" ref="perlScriptTempDir"/>
+        <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>

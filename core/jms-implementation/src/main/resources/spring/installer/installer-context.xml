@@ -38,9 +38,9 @@
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.mobidb.MobiDBDummyModelParser">
-                    <property name="signatureLibrary" value="MOBIDB"/>
+                    <property name="signatureLibrary" value="MOBIDB_LITE"/>
                     <property name="releaseVersionNumber" value="${mobidb.signature.library.release}"/>
-                    <property name="analysisJobId" value="jobMobiDB"/>
+                    <property name="analysisJobId" value="jobMobiDBLite"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">

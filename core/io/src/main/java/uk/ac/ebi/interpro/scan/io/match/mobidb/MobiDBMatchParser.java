@@ -133,7 +133,7 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                     int locationEnd = Integer.parseInt(matcher.group(3));
 
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
-                            SignatureLibrary.MOBIDB, signatureLibraryRelease,
+                            SignatureLibrary.MOBIDB_LITE, signatureLibraryRelease,
                             locationStart, locationEnd));
 //                    Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                 }

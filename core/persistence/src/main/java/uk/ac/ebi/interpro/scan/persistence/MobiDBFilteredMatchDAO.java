@@ -126,7 +126,7 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
         final SignatureLibraryRelease release;
         final Query releaseQuery = entityManager.createQuery("select r from SignatureLibraryRelease r where r.version = :coilsVersion and r.library = :coilsSignatureLibrary");
         releaseQuery.setParameter("coilsVersion", mobidbReleaseVersion);
-        releaseQuery.setParameter("coilsSignatureLibrary", SignatureLibrary.MOBIDB);
+        releaseQuery.setParameter("coilsSignatureLibrary", SignatureLibrary.MOBIDB_LITE);
         @SuppressWarnings("unchecked") List<SignatureLibraryRelease> releaseList = releaseQuery.getResultList();
         if (releaseList.size() == 1 && releaseList.get(0) != null) {
             release = releaseList.get(0);
