@@ -12,7 +12,7 @@
     <import resource="jobCoils-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
-    <import resource="jobMobiDB-context.xml"/>
+    <import resource="jobMobiDBLite-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPIRSF-3.01-context.xml"/>
 
@@ -54,7 +54,7 @@
                 <ref bean="jobCoils"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobHAMAP"/>
-                <ref bean="jobMobiDB"/>
+                <ref bean="jobMobiDBLite"/>
                 <ref bean="jobPanther"/>
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
