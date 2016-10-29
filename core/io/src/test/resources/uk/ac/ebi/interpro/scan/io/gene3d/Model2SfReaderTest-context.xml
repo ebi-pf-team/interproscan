@@ -5,7 +5,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="file" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="data/gene3d/model2sf_map.csv"/>
+        <constructor-arg value="data/gene3d/cath-gene3d-names.txt"/>
     </bean>
 
  </beans>

@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.panther;
 
+import com.mchange.v1.util.UIterator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
     private String modelDirectory;
     private String blastPath;
     private String hmmerPath;
+    private boolean forceHmmsearch = false;
     private String fastaFileNameTemplate;
     private String perlCommand;
     private String perlLibrary;
@@ -111,6 +114,10 @@ public final class PantherBinaryStep extends RunBinaryStep {
         this.userDir = userDir;
     }
 
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
+
     /**
      * create an absolute path to the temporary directory file for panther
      *
@@ -173,6 +180,9 @@ public final class PantherBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePath
                 = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
+        final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
+
+
         List<String> command = new ArrayList<String>();
         //Add command
         command.add(this.getPerlCommand());
@@ -188,19 +198,30 @@ public final class PantherBinaryStep extends RunBinaryStep {
         // Arguments
         command.addAll(this.getBinarySwitchesAsList());
         // BLAST
-        command.add("-B");
-        command.add(this.getBlastPath());
+        //command.add("-B");
+        //command.add(this.getBlastPath());
         // HMMER
         command.add("-H");
         command.add(this.getHmmerPath());
+        //if sequences less than 10 use hmmerscan
+
+        if (forceHmmsearch && Utilities.getSequenceCount() > 10) {
+            command.add("-s");
+        }
         // FASTA file
         command.add("-i");
         command.add(fastaFilePath);
+        // output file option
+        if(this.isUsesFileOutputSwitch()){
+            command.add("-o");
+            command.add(outputFilePathName);
+        }
         // Temporary directory
         command.add("-T");
         command.add(getAbsolutePantherTempDirPath(temporaryFileDirectory));
 
         LOGGER.debug("panther command is :" + command.toString());
+        Utilities.verboseLog("panther command is :" + command.toString());
 
         return command;
     }

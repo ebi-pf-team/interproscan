@@ -122,6 +122,14 @@ public final class PantherParseStep extends Step {
                                     + " - matches found : " + matchesFound);
                             break;
                         }
+                        if(Utilities.getSequenceCount() < 100){
+                            //just break as something else might be happening
+                            LOGGER.warn("H2 database problem: failed to verify " + matchCount + " matches in database for "
+                                    + represantiveRawMatch.getSignatureLibrary().getName()
+                                    + " after " + timeTaken + " ms "
+                                    + " - matches found : " + matchesFound);
+                            break;
+                        }
                     }
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + matchCount + " rm: " + represantiveRawMatch);
