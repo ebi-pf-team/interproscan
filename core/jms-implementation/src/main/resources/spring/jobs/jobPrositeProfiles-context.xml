@@ -52,6 +52,7 @@
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${prosite.models.path}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
+        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearch.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
