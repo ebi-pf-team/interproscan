@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.sql.*;
@@ -248,8 +249,8 @@ public class CreateMatchDBFromIprscan {
                             // Store last match
                             primIDX.put(match);
                             matchCount++;
-                            if (matchCount % 100000 == 0) {
-                                System.out.println("Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                            if (matchCount % 400000 == 0) {
+                                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
                             }
 
                             // Create new match and add location to it
