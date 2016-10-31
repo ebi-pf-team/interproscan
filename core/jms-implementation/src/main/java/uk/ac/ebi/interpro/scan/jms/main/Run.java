@@ -144,35 +144,37 @@ public class Run extends AbstractI5Runner {
 
             //create the dot i5 dir/file
             //$USER_HOME/.interproscan-5/interproscan.properties
-            String dotInterproscan5Dir = System.getProperty("user.home") + "/.interproscan-5";
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
-            }
-            String userInterproscan5Properties = dotInterproscan5Dir + "/interproscan.properties";
-            File userInterproscan5PropertiesFile = new File(userInterproscan5Properties);
-            if (!checkPathExistence(dotInterproscan5Dir)) {
+            if(System.getProperty("user.home") != null && ! System.getProperty("user.home").isEmpty()) {
+                String dotInterproscan5Dir = System.getProperty("user.home") + "/.interproscan-5";
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
+                    LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
                 }
-                createDirectory(dotInterproscan5Dir);
-            } else {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Directory $USER_HOME/.interproscan-5/interproscan.properties  - " + dotInterproscan5Dir + " exists");
+                String userInterproscan5Properties = dotInterproscan5Dir + "/interproscan.properties";
+                File userInterproscan5PropertiesFile = new File(userInterproscan5Properties);
+                if (!checkPathExistence(dotInterproscan5Dir)) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
+                    }
+                    createDirectory(dotInterproscan5Dir);
+                } else {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Directory $USER_HOME/.interproscan-5/interproscan.properties  - " + dotInterproscan5Dir + " exists");
+                    }
                 }
-            }
-            //Create file if it doesnot exists
-            if (!userInterproscan5PropertiesFile.exists()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(" Creating the  userInterproscan5Properties file : " + userInterproscan5Properties);
+                //Create file if it doesnot exists
+                if (!userInterproscan5PropertiesFile.exists()) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(" Creating the  userInterproscan5Properties file : " + userInterproscan5Properties);
+                    }
+                    userInterproscan5PropertiesFile.createNewFile();
                 }
-                userInterproscan5PropertiesFile.createNewFile();
-            }
 
-            //Deal with user supplied config file from the command line
-            String systemInterproscanProperties = userInterproscan5Properties;
-            if (System.getProperty("system.interproscan.properties") == null) {
-                LOGGER.debug("USer has not supplied any properties file");
-                System.setProperty("system.interproscan.properties", systemInterproscanProperties);
+                //Deal with user supplied config file from the command line
+                String systemInterproscanProperties = userInterproscan5Properties;
+                if (System.getProperty("system.interproscan.properties") == null) {
+                    LOGGER.debug("USer has not supplied any properties file");
+                    System.setProperty("system.interproscan.properties", systemInterproscanProperties);
+                }
             }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
