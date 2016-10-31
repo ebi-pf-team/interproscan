@@ -175,6 +175,12 @@ public class Run extends AbstractI5Runner {
                     LOGGER.debug("USer has not supplied any properties file");
                     System.setProperty("system.interproscan.properties", systemInterproscanProperties);
                 }
+            }else{
+                //system and interproscan.properties are the same in case the user has not supplied any file
+                if (System.getProperty("system.interproscan.properties") == null) {
+                    LOGGER.debug("USer has not supplied any properties file");
+                    System.setProperty("system.interproscan.properties", "interproscan.properties");
+                }
             }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
