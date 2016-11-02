@@ -104,8 +104,8 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
             //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally
-            if(sigLib.getName().equals(SignatureLibrary.CDD)
-                    || sigLib.getName().equals(SignatureLibrary.SFLD)){
+            if(sigLib.getName().equals(SignatureLibrary.CDD.getName())
+                    || sigLib.getName().equals(SignatureLibrary.SFLD.getName())){
                 continue;
             }
             if(analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
