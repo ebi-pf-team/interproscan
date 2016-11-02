@@ -13,8 +13,6 @@ we would expect! -->
 <svg xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns="http://www.w3.org/2000/svg"
      id="svgProteinView"
-     height="${globalDocumentHeightFormatted}"
-     width="${globalDocumentWidthFormatted}"
      viewBox="0 0 ${globalDocumentWidthFormatted} ${globalDocumentHeightFormatted}"
      version="1.1">
 
