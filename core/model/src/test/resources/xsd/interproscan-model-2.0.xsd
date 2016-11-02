@@ -659,7 +659,7 @@
             <xs:enumeration value="TIGRFAM"/>
             <xs:enumeration value="SUPERFAMILY"/>
             <xs:enumeration value="HAMAP"/>
-            <xs:enumeration value="MOBIDB"/>
+            <xs:enumeration value="MOBIDB_LITE"/>
             <xs:enumeration value="PANTHER"/>
             <xs:enumeration value="SMART"/>
             <xs:enumeration value="TMHMM"/>
