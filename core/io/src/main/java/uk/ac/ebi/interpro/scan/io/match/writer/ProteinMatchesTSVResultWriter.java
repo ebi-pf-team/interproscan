@@ -75,6 +75,8 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         //In other cases we have to take the value from the location
                         if (location instanceof HmmerLocation) {
                             score = Double.toString(((HmmerLocation) location).getEvalue());
+                        } else if (location instanceof HmmerLocationWithSites) {
+                            score = Double.toString(((HmmerLocationWithSites) location).getEvalue());
                         } else if (location instanceof BlastProDomMatch.BlastProDomLocation) {
                             score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getEvalue() );
                         }  else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
