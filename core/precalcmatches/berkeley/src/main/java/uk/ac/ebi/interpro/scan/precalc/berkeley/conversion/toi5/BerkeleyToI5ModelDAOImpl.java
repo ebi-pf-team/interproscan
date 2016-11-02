@@ -72,6 +72,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
                 if (analysisJobName != null) {
                     analysisJob = analysisJobName;
                     versionNumber = analysisJobMap.get(analysisJobName).getVersion();
+
                     debugString = "Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber;
 //                    Utilities.verboseLog(10, debugString);
                     LOGGER.debug(debugString);
@@ -102,6 +103,11 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
             String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
+            //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally
+            if(sigLib.getName().equals(SignatureLibrary.CDD.getName())
+                    || sigLib.getName().equals(SignatureLibrary.SFLD.getName())){
+                continue;
+            }
             if(analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
                 LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
             }
