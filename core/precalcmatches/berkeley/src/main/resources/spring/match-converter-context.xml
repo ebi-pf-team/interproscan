@@ -13,7 +13,7 @@
                 <entry key="CDD" value-ref="rpsblastBerkeleyMatchConverter"/>
                 <entry key="GENE3D" value-ref="hmmer3BerkeleyMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3BerkeleyMatchConverter"/>
-                <entry key="PIRSF" value-ref="hmmer2BerkeleyMatchConverter"/>
+                <entry key="PIRSF" value-ref="hmmer3BerkeleyMatchConverter"/>
                 <entry key="PRINTS" value-ref="fingerPrintsBerkeleyMatchConverter"/>
                 <entry key="TIGRFAM" value-ref="hmmer3BerkeleyMatchConverter"/>
                 <entry key="COILS" value-ref="coilsBerkeleyMatchConverter"/>
