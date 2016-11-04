@@ -42,7 +42,7 @@
         -->
         <property name="dependsUpon" ref="stepSuperFamilyWriteFastaFile-1.75"/>
         <property name="stepDescription" value="Run HMMER3"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.superfamily} ${hmmer3.hmmsearch.cpu.switch.superfamily}"/>
         <property name="fullPathToHmmFile" value="${superfamily.hmm.path.3.0}"/>
         <property name="usesFileOutputSwitch" value="true"/>

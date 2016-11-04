@@ -41,7 +41,7 @@
         <property name="dependsUpon" ref="stepPfamWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pfama} ${hmmer3.hmmsearch.cpu.switch.pfama}"/>
         <property name="fullPathToHmmFile" value="${pfam-a.hmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
