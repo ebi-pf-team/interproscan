@@ -16,6 +16,9 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -79,57 +82,82 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
             is = new FileInputStream(fileName);
             final Set<RawProtein<T>> results = getParser().parse(is);
             RawMatch represantiveRawMatch = null;
-            int count = 0;
+            int matchCount = 0;
+            Collection<T> firstMatchList = new ArrayList();
             for (RawProtein<T> rawProtein : results) {
-                count += rawProtein.getMatches().size();
+                matchCount += rawProtein.getMatches().size();
                 if (represantiveRawMatch == null) {
                     if (rawProtein.getMatches().size() > 0) {
                         represantiveRawMatch = rawProtein.getMatches().iterator().next();
                     }
                 }
+                firstMatchList.addAll(rawProtein.getMatches());
             }
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Parsed out " + results.size() + " proteins with matches from file " + fileName);
-                LOGGER.debug("A total of " + count + " matches from file " + fileName);
+                LOGGER.debug("A total of " + matchCount + " matches from file " + fileName);
             }
             rawMatchDAO.insertProteinMatches(results);
             Long now = System.currentTimeMillis();
-            if (count > 0){
+            long chunkSize =  stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+            if (matchCount > 0){
                 int matchesFound = 0;
-                int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
+                int waitTimeFactor = Utilities.getWaitTimeFactor(matchCount).intValue();
                 if (represantiveRawMatch != null) {
                     Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
                     String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
-                    while (matchesFound < count) {
+                    int retryCount = 0;
+                    Long allowedWaitTime = Long.valueOf(waitTimeFactor) * waitTimeFactor * 100 * 1000;
+                    while (matchesFound < matchCount) {
+                        retryCount ++;
                         Utilities.sleep(waitTimeFactor * 1000);
-                        matchesFound = rawMatchDAO.getActualRawMatchesForProteinIdsInRange(stepInstance.getBottomProtein(),
-                                stepInstance.getTopProtein(), signatureLibraryRelease).size();
-                        if (matchesFound < count) {
-                            LOGGER.warn("Raw matches not yet committed - sleep for 5 seconds , count: " + count);
-                            Utilities.verboseLog("Raw matches not yet committed - sleep for "
-                                    + waitTimeFactor + " seconds, matches found: " + matchesFound
-                                    + " matchesCount expected: " + count);
-                        }
-                        Long timeTaken = System.currentTimeMillis() - now;
-                        if(timeTaken > (waitTimeFactor * waitTimeFactor * 100 * 1000) && matchesFound < count){
-                            LOGGER.warn("H2 database problem: failed to verify " + count + " matches in database for "
-                                    + represantiveRawMatch.getSignatureLibrary().getName()
-                                    + " after " + timeTaken + " ms "
-                                    + " - matches found : " + matchesFound);
-                            break;
-                        }
-                        //TODO remove this break statement after SFLD is completed implemented
-//                        LOGGER.warn("For test purposes: rememeber to remove the break statement ");
-//                        break;
+                        List<T> rawMatchesInDb = rawMatchDAO.getActualRawMatchesForProteinIdsInRange(stepInstance.getBottomProtein(),
+                                stepInstance.getTopProtein(), signatureLibraryRelease);
 
+                        matchesFound = rawMatchesInDb.size();
+
+
+                        if (matchesFound < matchCount) {
+                            Collection secondMatchList = new ArrayList();
+                            secondMatchList.addAll(rawMatchesInDb);
+                            firstMatchList.removeAll(secondMatchList);
+                            int matchCountDifference = matchCount - matchesFound;
+                            int matchesDifference = firstMatchList.size() - secondMatchList.size();
+                            System.out.println("Matches difference: " + matchesDifference
+                                    + " matchCountDifference: " +  matchCountDifference);
+                            if (matchCountDifference > 0) {
+                                // Show the "difference " list
+                                for (T tmpRawMatch: firstMatchList){
+                                    System.out.println("Example tmpRawMatch: " + tmpRawMatch.toString());
+                                    break;
+                                }
+                            }
+
+                            if (retryCount == 1) {
+                                LOGGER.warn("Raw matches may not yet committed - sleep for" + waitTimeFactor + " seconds , count: " + matchCount);
+                            }
+                            Long timeTaken = System.currentTimeMillis() - now;
+                            //we try three times then break
+                            if (matchCountDifference < 2 || chunkSize < 100 || timeTaken > allowedWaitTime || retryCount > 3) {
+                                //just break as something else might be happening
+                                String matchPersistWarning = "Possible database problem: failed to " + retryCount + "x verify " + matchCount + " matches in database for "
+                                        + represantiveRawMatch.getSignatureLibrary().getName()
+                                        + " after " + timeTaken + " ms "
+                                        + " - matches found : " + matchesFound;
+                                LOGGER.warn(matchPersistWarning);
+                                Utilities.verboseLog(matchPersistWarning);
+                                break;
+                            }
+                        }
                     }
                 }else{
-                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    String matchPersistWarning = "Check if Raw matches committed " + matchCount + " repm: " + represantiveRawMatch;
+                    LOGGER.warn(matchPersistWarning);
+                    Utilities.verboseLog(matchPersistWarning);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog("ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
                     + " time taken: " + timeTaken);
             }
         } catch (IOException e) {
@@ -143,5 +171,6 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                 LOGGER.warn("Error closing input stream", e);
             }
         }
+        LOGGER.info("Step with Id " + this.getId() + " finished.");
     }
 }

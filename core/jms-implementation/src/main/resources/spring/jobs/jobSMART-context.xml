@@ -58,7 +58,7 @@
         <property name="dependsUpon" ref="stepSMARTWriteFastaFile"/>
         <property name="stepDescription" value="Run HMM on selected proteins"/>
 
-        <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer2.hmmpfam.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.smart} ${hmmer2.hmmpfam.cpu.switch.smart}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
