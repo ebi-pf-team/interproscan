@@ -46,7 +46,7 @@
         <property name="dependsUpon" ref="stepSFLDWriteFastaFile"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${sfld.hmmsearch.force}"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.sfld} ${hmmer3.hmmsearch.cpu.switch.sfld}"/>
         <property name="fullPathToHmmFile" value="${sfld.hmm.path}"/>
