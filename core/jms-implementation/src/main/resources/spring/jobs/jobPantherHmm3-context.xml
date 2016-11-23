@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: PANTHER ############################  -->
+
+    <bean id="jobPantherHmm3" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence."/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePanther"/>
+        <property name="nonEmptyPaths">
+            <list value-type="java.lang.String">
+                <ref bean="modelDirectory" />
+                <ref bean="perlLibrary" />
+                <ref bean="scriptPath" />
+                <ref bean="hmmerBinariesPath" />
+            </list>
+        </property>
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="perl.command" value-ref="perlCommand"/>
+                <entry key="binary.panther.perl.lib.dir" value-ref="perlLibrary"/>
+                <entry key="binary.panther.path" value-ref="scriptPath"/>
+                <entry key="panther.models.dir" value-ref="modelDirectory"/>
+                <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerBinariesPath"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="perlCommand" class="java.lang.String">
+        <constructor-arg value="${perl.command}"/>
+    </bean>
+    <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
+    <bean id="perlLibrary" class="java.lang.String">
+        <constructor-arg value="${binary.panther.perl.lib.dir}"/>
+    </bean>
+    <!--Panther Perl script-->
+    <bean id="scriptPath" class="java.lang.String">
+        <constructor-arg value="${binary.panther.path}"/>
+    </bean>
+    <!--Add Panther models-->
+    <bean id="modelDirectory" class="java.lang.String">
+        <constructor-arg value="${panther.models.dir}"/>
+    </bean>
+    <!--Add path to (B)last binary-->
+    <bean id="blastPath" class="java.lang.String">
+        <constructor-arg value="${binary.panther.blast.path}"/>
+    </bean>
+    <!--Add path to (H)mmsearch binary-->
+    <bean id="hmmerBinariesPath" class="java.lang.String">
+        <constructor-arg value="${binary.hmmer3.path}"/>
+    </bean>
+
+    <bean id="perlScriptTempDir" class="java.lang.String">
+        <constructor-arg value="${panther.temporary.file.directory}"/>
+    </bean>
+
+    <bean id="abstractPantherHmm3Step" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPantherHmm3"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PANTHER}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1: Write FASTA file -->
+    <bean id="stepPantherHmm3WriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractPantherHmm3Step">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create FASTA file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepPantherRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractPantherHmm3Step">
+        <property name="dependsUpon" ref="stepPantherHmm3WriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
+        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.panther} ${hmmer3.hmmsearch.cpu.switch.panther}"/>
+        <property name="fullPathToHmmFile" value="${panther.hmm.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="useTbloutFormat" value="false"/>
+        <property name="useDomTbloutFormat" value="true"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+
+    <!-- STEP 3: Run binary -->
+    <bean id="stepPantherHMM3RunPantherScore"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherScoreStep"
+          parent="abstractPantherHmm3Step">
+        <!--
+        perl -I data/panther/9.0/lib bin/panther/9.0/pantherScore.pl
+        -l path to the Panther model directory
+        -D I
+        -E 1e-3
+        -B bin/blast/2.2.6/blastall
+        -H bin/hmmer/hmmer2/2.3.2/hmmsearch
+        -T temp/
+        -n
+        -i UPI000000004D.fasta
+        -->
+        <property name="dependsUpon" ref="stepPantherRunHmmer3"/>
+        <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
+        <!--Add Perl command-->
+        <property name="perlCommand" ref="perlCommand"/>
+        <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
+        <property name="perlLibrary" ref="perlLibrary"/>
+        <!--Panther Perl script-->
+        <property name="scriptPath" value="${binary.panther.pantherscore.path}"/>
+        <!--Add Panther models-->
+        <property name="modelDirectory" ref="modelDirectory"/>
+        <!--Add path to (B)last binary-->
+        <property name="blastPath" ref="blastPath"/>
+        <!--Add path to (H)mmsearch binary-->
+        <property name="hmmerPath" ref="hmmerBinariesPath"/>
+        <!--Add additional arguments/parameter-->
+        <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
+        <property name="binarySwitches" value="${panther.binary.switches} ${panther.binary.cpu.switch}"/>
+        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
+        <property name="perlScriptTempDir" ref="perlScriptTempDir"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+
+        <property name="inputFileNameRawOutTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+
+    <!-- STEP 4: Parse and persist raw results -->
+    <bean id="stepPantherHMM3ParseOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherParseStep"
+          parent="abstractPantherHmm3Step">
+        <property name="dependsUpon" ref="stepPantherHMM3RunPantherScore"/>
+        <property name="stepDescription" value="Parse the output from Panther"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
+                <!--TODO: Figure out how to handle signature library release-->
+                <constructor-arg ref="latestPantherSignatureLibraryRelease"/>
+            </bean>
+        </property>
+        <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
+        <property name="serialGroup" value="PARSE_PANTHER"/>
+        <property name="retries" value="3"/>
+    </bean>
+
+    <bean id="stepPantherHMM3DeleteFiles"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPantherHmm3Step">
+        <property name="dependsUpon" ref="stepPantherHMM3ParseOutput"/>
+        <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+            </list>
+        </property>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+    </bean>
+
+    <!-- STEP 5: Filter and persist filtered results -->
+    <bean id="stepPantherHMM3PostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"
+          parent="abstractPantherHmm3Step">
+        <property name="dependsUpon" ref="stepPantherHMM3ParseOutput"/>
+        <property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>
+        <property name="serialGroup" value="PANTHER_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" ref="latestPantherSignatureLibraryRelease"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
+                <!--TODO: Figure out how to handle this cut-off evalue-->
+                <constructor-arg value="1e-11"/>
+            </bean>
+        </property>
+        <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
+        </property>
+        <property name="retries" value="3"/>
+    </bean>
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="pantherRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PantherRawMatchDAOImpl"/>
+
+    <bean id="signatureLibraryReleasePanther" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PANTHER"/>
+        <constructor-arg type="java.lang.String" ref="latestPantherSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="latestPantherSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="${panther.signature.library.release}"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
