@@ -14,7 +14,6 @@
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobMobiDBLite-context.xml"/>
     <import resource="jobPanther-context.xml"/>
-    <!--<import resource="jobPantherHmm3-context.xml"/>-->
     <import resource="jobPIRSF-3.01-context.xml"/>
 
     <import resource="jobPfam-context.xml"/>
@@ -56,7 +55,6 @@
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobMobiDBLite"/>
                 <ref bean="jobPanther"/>
-                <!--<ref bean="jobPantherHmm3"/>-->
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobPRINTS-42.0"/>
