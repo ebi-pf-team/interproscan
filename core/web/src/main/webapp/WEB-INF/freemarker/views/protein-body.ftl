@@ -75,7 +75,7 @@
                                 <#list entry.signatures as signature>
 
                                     <li id="${containerId}" class="signature entry-signatures">
-                                        <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle=title scale=scale entryAc=entry.ac colourClass=colourClass />
+                                        <@signatureMacro.signature proteinAc=proteinAc proteinLength=proteinLength signature=signature entryTypeTitle=title scale=scale entryAc=entry.ac colourClass=colourClass />
                                     </li>
                                 </#list>
                             </ol>
@@ -101,7 +101,7 @@
                     <ol class="signatures">
                         <#list protein.unintegratedSignatures as signature>
                             <li class="signature">
-                                <@signatureMacro.signature proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale entryAc="null" colourClass="uni" />
+                                <@signatureMacro.signature proteinAc=proteinAc proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale entryAc="null" colourClass="uni" />
                             </li>
                         </#list>
                     </ol>

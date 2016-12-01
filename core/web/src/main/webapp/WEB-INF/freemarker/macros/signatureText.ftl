@@ -1,4 +1,4 @@
-<#macro signatureText signature>
+<#macro signatureText signature proteinAc>
 <div class="bot-row-signame"><#-- link to modify -->
 <#--Setup variables ready for displaying signature information,-->
 <#--e.g. could condense "G3DSA:2.40.20.10 (Pept_Ser_Cys)" to "G3DSA:2.40.2... (Pept_S...)".-->
@@ -17,13 +17,25 @@
     <#assign maxNameLength=maxOverallLength?number - maxAcLength?number>
 </#if>
 
+
+    <#assign linkUrl=signature.dataSource.getLinkUrl(signature.ac)>
+    <#if signature.ac?starts_with("mobidb")>
+        <!-- Always link using signature accession except for MobiDB: in InterProScan HTML output show homepage, in web protein page show use protein accession-->
+        <#if standalone>
+            <#assign linkUrl=signature.dataSource.getHomeUrl()>
+        <#else>
+            <#assign linkUrl=signature.dataSource.getLinkUrl(proteinAc)>
+        </#if>
+    </#if>
+
+
 <#-- Now display the signature accession -->
-<#if signature.name?? && signature.ac != signature.name>
+    <#if signature.name?? && signature.ac != signature.name>
 <#--Link text may be abbreviated therefore need to display the full text in the link title-->
-<a href="${signature.dataSource.getLinkUrl(signature.ac)}" title="${signature.ac} (${signature.name})"
+<a href="${linkUrl}" title="${signature.ac} (${signature.name})"
    class="neutral">
 <#else>
-<a href="${signature.dataSource.getLinkUrl(signature.ac)}" title="${signature.ac}"
+<a href="${linkUrl}" title="${signature.ac}"
    class="neutral">
 </#if>
 <#if ((acLength?number) > (maxAcLength?number))>
