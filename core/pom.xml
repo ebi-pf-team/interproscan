@@ -65,7 +65,6 @@
         <!-- Dependency versions -->
         <spring.version>4.2.2.RELEASE</spring.version>
         <spring.security.version>4.0.2.RELEASE</spring.security.version>
-        <spring.oxm.version>4.2.1.RELEASE</spring.oxm.version>
         <hibernate.entity.manager.version>5.0.3.Final</hibernate.entity.manager.version>
         <c3p0.version>0.9.1.2</c3p0.version>
         <groovy.version>2.4.5</groovy.version>
@@ -259,30 +258,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>com.google.code.maven-svn-wagon</groupId>
-                <artifactId>maven-svn-wagon</artifactId>
-                <version>1.4</version>
-            </extension>
-        </extensions>
-        <!--extensions>
-          <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-scm</artifactId>
-            <version>2.2</version>
-          </extension>
-          <extension>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-manager-plexus</artifactId>
-            <version>1.5</version>
-          </extension>
-          <extension>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-provider-svnexe</artifactId>
-            <version>1.5</version>
-          </extension>
-        </extensions-->
     </build>
 
 </project>
