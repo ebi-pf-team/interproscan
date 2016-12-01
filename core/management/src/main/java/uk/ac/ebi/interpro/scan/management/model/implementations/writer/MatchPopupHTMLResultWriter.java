@@ -21,12 +21,16 @@ public class MatchPopupHTMLResultWriter extends PopupHTMLResultWriter {
     private static final Logger LOGGER = Logger.getLogger(MatchPopupHTMLResultWriter.class.getName());
 
     public String write(final String matchPopupId,
+                        final String proteinAc,
                         final SimpleSignature signature,
                         final SimpleLocation location,
                         final String colourClass) throws IOException, TemplateException {
         // Validate inputs
         if (matchPopupId == null || !matchPopupId.contains("popup-")) {
             throw new IllegalArgumentException("Invalid matchPopupId");
+        }
+        if (proteinAc == null) {
+            throw new IllegalStateException("Protein accession cannot be NULL");
         }
         if (signature == null) {
             throw new IllegalArgumentException("Signature cannot be NULL");
@@ -41,6 +45,7 @@ public class MatchPopupHTMLResultWriter extends PopupHTMLResultWriter {
         // Build model for FreeMarker
         final SimpleHash model = buildModelMap();
         model.put("matchPopupId", matchPopupId);
+        model.put("proteinAc", proteinAc); // Used for MobiDB page links instead of signature
         model.put("signature", signature);
         model.put("location", location);
         model.put("colourClass", colourClass);

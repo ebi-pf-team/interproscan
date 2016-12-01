@@ -64,8 +64,6 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
                         writer.flush();
                     } catch (TemplateException e) {
                         e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     } finally {
                         if (writer != null) {
                             writer.close();
