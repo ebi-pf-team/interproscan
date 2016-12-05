@@ -18,7 +18,7 @@
 
 
     <#import "../macros/signature.ftl" as signatureMacro>
-    <#if ! standalone>
+    <#if !standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
 
