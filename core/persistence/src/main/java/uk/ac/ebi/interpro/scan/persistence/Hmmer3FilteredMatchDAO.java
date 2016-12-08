@@ -61,14 +61,14 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                             boolean isLibraryGene3d = signatureLibrary.getName().equals(SignatureLibrary.GENE3D.getName());
                             if (isLibraryGene3d){
                                 String gene3dModelAccession = (modelAccession.split("\\|")[2]).split("/")[0];
-                                Utilities.verboseLog("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
+                                LOGGER.debug("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
+                                //Utilities.verboseLog("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
                                 modelAccession = gene3dModelAccession;
                             }
                             Signature signature = modelAccessionToSignatureMap.get(modelAccession);
                             if (signature == null) {
                                 if (isLibraryGene3d) {
                                     System.out.println("Missing gene3d accession for: " + modelAccession);
-
                                 }else  {
                                     throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                                 }

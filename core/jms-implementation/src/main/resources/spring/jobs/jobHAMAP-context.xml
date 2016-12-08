@@ -39,7 +39,7 @@
           parent="abstractHamapHMMStep">
         <property name="dependsUpon" ref="stepHamapHMMWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER3"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="singleSeqMode" value="false"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.hmmfilter} ${hmmer3.hmmsearch.cpu.switch.hmmfilter}"/>
