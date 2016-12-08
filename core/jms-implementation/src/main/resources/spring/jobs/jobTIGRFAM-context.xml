@@ -46,7 +46,7 @@
         <property name="dependsUpon" ref="stepTIGRFAMWriteFastaFile"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.tigrfam} ${hmmer3.hmmsearch.cpu.switch.tigrfam}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>

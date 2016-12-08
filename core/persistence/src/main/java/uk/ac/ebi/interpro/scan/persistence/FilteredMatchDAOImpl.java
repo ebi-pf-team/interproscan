@@ -172,12 +172,12 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             query.setParameter("version", signatureLibraryRelease);
             @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
 
-            /* 
-	    Utilities.verboseLog("SignatureModel query: "
+            String signatureModelQueryMessage = "SignatureModel query: "
                     + "accession: " + modelIdsSlice.toString()
                     + " signatureLibrary: " + signatureLibrary
-                    + " version: " + signatureLibraryRelease);
-            */
+                    + " version: " + signatureLibraryRelease;
+            LOGGER.debug(signatureModelQueryMessage);
+//            Utilities.verboseLog(signatureModelQueryMessage);
             for (Signature s : signatures) {
                 for (Model m : s.getModels().values()) {
                     result.put(m.getAccession(), s);

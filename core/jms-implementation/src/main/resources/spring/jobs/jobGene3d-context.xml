@@ -37,7 +37,7 @@
         <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.gene3d} ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path}"/>
         <property name="usesFileOutputSwitch" value="true"/>
@@ -45,6 +45,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
     </bean>
 
     <bean id="stepGene3dDeleteFastaFile"

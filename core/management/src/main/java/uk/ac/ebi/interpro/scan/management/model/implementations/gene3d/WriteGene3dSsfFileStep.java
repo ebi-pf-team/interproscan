@@ -120,7 +120,11 @@ public class WriteGene3dSsfFileStep extends Step {
             }
         }
         Long timeTaken = System.currentTimeMillis() - now;
-        while (count == 0) {
+        int retryCount = 0;
+        Long allowedWaitTime = Long.valueOf(waitTimeFactor)  * 10 * 1000;
+        long chunkSize =  stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+        while (count == 0 && chunkSize > 10) {
+            retryCount ++;
             int matchesFound = 0;
             int countForWaitTime = proteinCount.intValue() * 200;
             waitTimeFactor = Utilities.getWaitTimeFactor(countForWaitTime).intValue();
@@ -136,29 +140,27 @@ public class WriteGene3dSsfFileStep extends Step {
                     count += rawProtein.getMatches().size();
                 }
             }
-            Utilities.verboseLog("Raw matches not found (1st check): raw proteins: " + rawProteins.size()
-                    + " protein-range : " + stepInstance.getBottomProtein() + " - "
-                    + stepInstance.getTopProtein()
-                    + " signature : " +  getSignatureLibraryRelease()
-                    + " matchesCount (2nd check): " + count);
-
-            timeTaken = System.currentTimeMillis() - now;
-            long chunkSize =  stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-            if (timeTaken > (waitTimeFactor * 10 * 1000)) {
-                if(chunkSize > 100 && ! Utilities.isRunningInSingleSeqMode()) {
-                    LOGGER.warn("Possible H2 database problem: failed to  get Gene3d matches for the domain finder raw proteins: "
-                            + rawProteins.size()
-                            + " protein-range : " + stepInstance.getBottomProtein() + " - "
-                            + stepInstance.getTopProtein()
-                            + " signature : " + getSignatureLibraryRelease()
-                            + " matchesCount: " + count);
+            if (count == 0){
+                String matchPersistWarning = "Possible db problem: failed to  get Gene3d matches for the domain finder:  proteins ("
+                        + rawProteins.size()
+                        + ") protein-range : " + stepInstance.getBottomProtein() + " - "
+                        + stepInstance.getTopProtein()
+                        + " library : " + getSignatureLibraryRelease()
+                        + " matchesCount: " + count;
+                if (retryCount == 1) {
+                    LOGGER.debug(matchPersistWarning);
                 }
-                break;
+                timeTaken = System.currentTimeMillis() - now;
+                //we try three times then break
+                if (chunkSize < 100 || timeTaken > allowedWaitTime || retryCount > 3) {
+                    LOGGER.warn(matchPersistWarning);
+                    Utilities.verboseLog(matchPersistWarning);
+                    break;
+                }
             }
-
         }
 
-        Utilities.verboseLog("Raw proteins: " + rawProteins.size() + " matches: " + count + " timeTaken: " + timeTaken);
+        Utilities.verboseLog("Raw proteins: " + rawProteins.size() + ", matches: " + count + ", timeTaken: " + timeTaken);
 
         // Check we have correct data
         if (LOGGER.isDebugEnabled()) {
