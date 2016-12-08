@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Set;
 
@@ -76,6 +77,10 @@ public class PantherPostProcessingStep extends Step {
         Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
         LOGGER.info("Finally persisting filtered raw matches.");
         filteredMatchDAO.persist(filteredMatches);
+        Utilities.verboseLog("PostProcess panther matches: protein-range : "
+                + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein()
+                + " rawMatches count:  " + rawMatches.size());
         LOGGER.info("Step with Id " + this.getId() + " finished.");
+
     }
 }

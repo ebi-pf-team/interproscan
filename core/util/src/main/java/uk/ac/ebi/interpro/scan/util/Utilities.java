@@ -30,6 +30,9 @@ public class Utilities {
 
     public static int sequenceCount = 0;
 
+    public static volatile Boolean useHmmsearch;
+    public static final Object useHmmsearchLock = new Object();
+
     public static int logBase = 10;
 
     public static String createUniqueJobName(int jobNameLength) {
@@ -100,6 +103,18 @@ public class Utilities {
 
     public static int getSequenceCount(){
         return sequenceCount;
+    }
+
+    public static Boolean getUseHmmsearch() {
+        return useHmmsearch;
+    }
+
+    public static void setUseHmmsearch(Boolean useHmmsearch) {
+        synchronized (useHmmsearchLock) {
+            if (Utilities.useHmmsearch == null) {
+                Utilities.useHmmsearch = useHmmsearch;
+            }
+        }
     }
 
     /**
