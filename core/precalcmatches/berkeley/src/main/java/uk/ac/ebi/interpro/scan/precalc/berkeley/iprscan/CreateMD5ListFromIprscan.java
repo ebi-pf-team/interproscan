@@ -7,6 +7,7 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.sql.*;
@@ -112,8 +113,8 @@ public class CreateMD5ListFromIprscan {
                 // Store last protein
                 primIDX.put(protein);
                 proteinCount++;
-                if (proteinCount % 100000 == 0) {
-                    System.out.println("Stored " + proteinCount + " considered proteins.");
+                if (proteinCount % 400000 == 0) {
+                    System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
                 }
             }
         } catch (DatabaseException dbe) {

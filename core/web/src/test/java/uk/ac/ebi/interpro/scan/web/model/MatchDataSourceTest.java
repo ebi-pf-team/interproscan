@@ -70,5 +70,12 @@ public class MatchDataSourceTest {
         assertTrue(linkUrl.endsWith("/family/00288"));
     }
 
+    @Test
+    public void testMobiDB() {
+        final String name = SignatureLibrary.MOBIDB_LITE.getName();
+        final MatchDataSource m = MatchDataSource.parseName(name);
+        assertEquals(MatchDataSource.MOBIDB_LITE, m);
+    }
+
 
 }

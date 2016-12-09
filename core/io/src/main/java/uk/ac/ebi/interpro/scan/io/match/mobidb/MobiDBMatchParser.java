@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Parser for the Coils output format:
+ * Parser for the MobiDB output format:
  * <p>
  * >UNIPARC:UPI00000000FC status=active
  * 165 186
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * //
  *
  * @author Gift Nuka
- * @version $Id: CoilsMatchParser.java,v 1.1 2009/11/25 14:01:17 pjones Exp $
+ * @version $Id: MobiDBMatchParser.java,v 5.20 2016/10/21 14:01:17 nuka Exp $
  * @since 1.0-SNAPSHOT
  */
 public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
@@ -45,7 +45,6 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
     private static final String END_OF_RECORD_MARKER = "//";
 
     private static final char PROTEIN_ID_LINE_START = '>';
-
 
     private  SignatureLibrary signatureLibrary;
     private  String signatureLibraryRelease;
@@ -132,8 +131,9 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                     int locationStart = Integer.parseInt(matcher.group(2));
                     int locationEnd = Integer.parseInt(matcher.group(3));
 
+                    //TODO hardcoded accession should be removed
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
-                            SignatureLibrary.MOBIDB, signatureLibraryRelease,
+                            SignatureLibrary.MOBIDB_LITE, signatureLibraryRelease,
                             locationStart, locationEnd));
 //                    Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                 }

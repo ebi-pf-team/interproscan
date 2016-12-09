@@ -33,7 +33,7 @@ public class EntryHierarchyDataResourceReaderTest {
     public void testRead() throws IOException {
         Map<String, EntryHierarchyData> result = reader.read(resource);
         assertNotNull(result);
-        assertEquals(8801, result.size());
+        assertEquals(8863, result.size());
 
         EntryHierarchyData ipr000014 = result.get("IPR000014");
         EntryHierarchyData ipr013655 = result.get("IPR013655");

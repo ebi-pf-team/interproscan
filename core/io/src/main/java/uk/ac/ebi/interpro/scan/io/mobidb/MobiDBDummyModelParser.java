@@ -12,7 +12,11 @@ import java.io.IOException;
  */
 public class MobiDBDummyModelParser extends AbstractModelFileParser {
 
-    private static final String MOBIDB_SIGNATURE_NAME = "mobidb-lite";
+    private static final String MOBIDB_SIGNATURE_ACCESSION = "mobidb-lite";
+
+    private static final String MOBIDB_SIGNATURE_NAME = "disorder_prediction";
+
+    private static final String MOBIDB_SIGNATURE_DESC = "consensus disorder prediction";
 
     /**
      * This is rather badly named as there is nothing to parse...
@@ -29,8 +33,11 @@ public class MobiDBDummyModelParser extends AbstractModelFileParser {
                 this.getSignatureLibrary(),
                 this.getReleaseVersionNumber());
 
-        final Signature.Builder builder = new Signature.Builder(MOBIDB_SIGNATURE_NAME);
-        final Signature signature = builder.name(MOBIDB_SIGNATURE_NAME).signatureLibraryRelease(release).build();
+        final Signature.Builder builder = new Signature.Builder(MOBIDB_SIGNATURE_ACCESSION);
+        final Signature signature = builder.name(MOBIDB_SIGNATURE_NAME)
+                .description(MOBIDB_SIGNATURE_DESC)
+                .signatureLibraryRelease(release).build();
+
         release.addSignature(signature);
         return release;
     }

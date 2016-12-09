@@ -1,10 +1,10 @@
 <#import "matchLocation.ftl" as matchLocationMacro>
 <#import "signatureText.ftl" as signatureTextMacro>
-<#macro signature proteinLength signature entryTypeTitle scale entryAc colourClass>
+<#macro signature proteinAc proteinLength signature entryTypeTitle scale entryAc colourClass>
     <#global locationId=0>
 
 <#-- the order of the divs is important , first right column fixed-->
-<@signatureTextMacro.signatureText signature=signature/>
+<@signatureTextMacro.signatureText signature=signature proteinAc=proteinAc/>
 <div class="bot-row-line">
     <div class="matches">
 
@@ -16,7 +16,7 @@
         ${signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
         </#assign>
             <#assign dbClass=dbClass?trim>
-            <@matchLocationMacro.matchLocation matchId=locationId proteinLength=proteinLength signature=signature location=location entryAc=entryAc colourClass=dbClass+" "+colourClass/>
+            <@matchLocationMacro.matchLocation matchId=locationId proteinAc=proteinAc proteinLength=proteinLength signature=signature location=location entryAc=entryAc colourClass=dbClass+" "+colourClass/>
         </#list>
 
 
