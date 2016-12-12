@@ -45,7 +45,7 @@
           /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.113/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.113/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile"/>
         <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
-        <property name="binarySwitches" value="-s -m -o gff"/>
+        <property name="binarySwitches" value="${psscan.prositeprofiles.binary.switches}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -53,6 +53,7 @@
         <property name="modelFile" value="${prosite.models.path}"/>
         <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
         <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearch.path}"/>
+        <property name="usePfsearch" value="${psscan.prositeprofiles.usepfsearch}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 

@@ -29,6 +29,8 @@ public class RunPsScanStep extends RunBinaryStep {
 
     private String fullPathToConfirmatoryProfiles;
 
+    private Boolean usePfsearch = false;
+
     private String modelFile;
 
     public String getFullPathToPsScanPerlScript() {
@@ -86,6 +88,10 @@ public class RunPsScanStep extends RunBinaryStep {
         this.fullPathToConfirmatoryProfiles = fullPathToConfirmatoryProfiles;
     }
 
+    public void setUsePfsearch(Boolean usePfsearch) {
+        this.usePfsearch = usePfsearch;
+    }
+
     /**
      * current command lines from Onion:
      * <p/>
@@ -105,7 +111,7 @@ public class RunPsScanStep extends RunBinaryStep {
         command.add(this.getFullPathToPsScanPerlScript());
         command.add("-d");
         command.add(this.getModelFile());
-        if (this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
+        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
           command.add("-w");
           command.add(this.getFullPathToPfsearchBinary());
         }else{
