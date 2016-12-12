@@ -5,12 +5,10 @@ import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,7 +52,6 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 signature = new Signature(signatureAc);
                 signatureMap.put(signatureAc, signature);
             }
-            Utilities.verboseLog(" signatureAc : " + signatureAc + "modelAc: " + modelAc );
             signature.addModel(new Model(modelAc));
         }
 
@@ -65,20 +62,14 @@ public final class Model2SfReader extends AbstractModelFileParser {
     public Map<String, String> parseFileToMap() throws IOException {
         final Map<String, String> records = new HashMap<String, String>();
 
-        String lastModelNameLine = "";
         for (Resource modelFile : modelFiles) {
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("#")){
-                        continue;
-                    }                    
-                    String[] splitLine = line.split("\t");
-                    lastModelNameLine = Arrays.toString(splitLine);
-                    Utilities.verboseLog(lastModelNameLine);
-                    records.put(splitLine[0], prefix + splitLine[1]);  // changed back to  model - signature
+                    String[] splitLine = line.split(",");
+                    records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
                 }
             }
             finally {

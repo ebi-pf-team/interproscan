@@ -48,7 +48,6 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
             }
-            boolean modeltoSignatureMapFailed = false;
 //            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
             // Convert raw matches to filtered matches
             Collection<Hmmer3Match> filteredMatches =
@@ -57,22 +56,11 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                         public Signature getSignature(String modelAccession,
                                                       SignatureLibrary signatureLibrary,
                                                       String signatureLibraryRelease) {
-
-                            boolean isLibraryGene3d = signatureLibrary.getName().equals(SignatureLibrary.GENE3D.getName());
-                            if (isLibraryGene3d){
-                                String gene3dModelAccession = (modelAccession.split("\\|")[2]).split("/")[0];
-                                LOGGER.debug("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
-                                //Utilities.verboseLog("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
-                                modelAccession = gene3dModelAccession;
-                            }
                             Signature signature = modelAccessionToSignatureMap.get(modelAccession);
                             if (signature == null) {
-                                if (isLibraryGene3d) {
-                                    System.out.println("Missing gene3d accession for: " + modelAccession);
-                                }else  {
-                                    throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
-                                }
+                                throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                             }
+                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
                             //why not return just signature
                             return modelAccessionToSignatureMap.get(modelAccession);
                         }
