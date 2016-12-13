@@ -54,26 +54,7 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
         if (domainMatch.getAlignment() == null || domainMatch.getAlignment().trim().length() == 0) {
             throw new IllegalStateException("Attempting to create a Gene3D match that has no alignment data.");
         }
-//        Utilities.verboseLog(99, "match: " +
-//                sequenceMatch.getSequenceIdentifier() + " " +
-//                hmmSearchRecord.getModelAccession()+ " " +
-//                signatureLibraryRelease + " " +
-//                sequenceMatch.getEValue() + " " +
-//                sequenceMatch.getScore() + " " +
-//                sequenceMatch.getBias() + " " +
-//                domainMatch.getHmmfrom() + " " +
-//                domainMatch.getHmmto() + " " +
-//                domainMatch.getHmmBounds() + " " +
-//                domainMatch.getScore() + " " +
-//                domainMatch.getEnvFrom() + " " +
-//                domainMatch.getEnvTo() + " " +
-//                domainMatch.getAliFrom() + " " +
-//                domainMatch.getAliTo() + " " +
-//                domainMatch.getAcc() + " " +
-//                domainMatch.getCEvalue() + " " +
-//                domainMatch.getIEvalue() + " " +
-//                domainMatch.getBias()
-//        );
+
         return new Gene3dHmmer3RawMatch(
                 sequenceMatch.getSequenceIdentifier(),
                 hmmSearchRecord.getModelAccession(),
