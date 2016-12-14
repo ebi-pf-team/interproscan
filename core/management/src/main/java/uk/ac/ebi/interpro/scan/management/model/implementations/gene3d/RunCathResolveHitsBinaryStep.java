@@ -9,30 +9,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: pjones
- * Date: 08/09/11
- * Time: 14:10
+ * @author Gift Nuka
+ *
  */
 public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
 
     private static final Logger LOGGER = Logger.getLogger(RunCathResolveHitsBinaryStep.class.getName());
 
 
-    private String ssfInputFileTemplate;
+    private String crhInputFileTemplate;
 
-    private String ssfOutputFileTemplate;
+    private String crhOutputFileTemplate;
 
     private String fullPathToBinary;
 
     @Required
-    public void setSsfInputFileTemplate(String ssfInputFileTemplate) {
-        this.ssfInputFileTemplate = ssfInputFileTemplate;
+    public void setCrhInputFileTemplate(String crhInputFileTemplate) {
+        this.crhInputFileTemplate = crhInputFileTemplate;
     }
 
     @Required
-    public void setSsfOutputFileTemplate(String ssfOutputFileTemplate) {
-        this.ssfOutputFileTemplate = ssfOutputFileTemplate;
+    public void setCrhOutputFileTemplate(String ssfOutputFileTemplate) {
+        this.crhOutputFileTemplate = ssfOutputFileTemplate;
     }
 
     @Required
@@ -40,12 +38,12 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
         this.fullPathToBinary = fullPathToBinary;
     }
 
-    public String getSsfInputFileTemplate() {
-        return ssfInputFileTemplate;
+    public String getCrhInputFileTemplate() {
+        return crhInputFileTemplate;
     }
 
-    public String getSsfOutputFileTemplate() {
-        return ssfOutputFileTemplate;
+    public String getCrhOutputFileTemplate() {
+        return crhOutputFileTemplate;
     }
 
     public String getFullPathToBinary() {
@@ -63,13 +61,15 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
      */
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
-        final String inputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getSsfInputFileTemplate());
-        final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getSsfOutputFileTemplate());
+        final String inputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getCrhInputFileTemplate());
+        final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getCrhOutputFileTemplate());
 
         List<String> command = new ArrayList<String>();
         command.add(this.getFullPathToBinary());
-        //command.addAll(this.getBinarySwitchesAsList());
-        command.add("--input-format=hmmer_domtmblout");
+        command.addAll(this.getBinarySwitchesAsList());
+//        command.add("--input-format=hmmer_domtmblout");
+//        command.add("--worst-permissible-evalue 0.001");
+
         command.add("--output-file");
         command.add(outputFilePath);
         command.add(inputFilePath);
