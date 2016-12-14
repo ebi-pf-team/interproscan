@@ -48,7 +48,7 @@ public class CathResolveHitsOutputParser {
                 reader.close();
             }
         }
-        Utilities.verboseLog(10, " domtbl domain count : " + cathResolverRecordMap.values().size());
+        Utilities.verboseLog(10, "CathResolverRecord count : " + cathResolverRecordMap.values().size());
         LOGGER.debug(" domtbl domain count : " + cathResolverRecordMap.values().size());
 
         return cathResolverRecordMap;

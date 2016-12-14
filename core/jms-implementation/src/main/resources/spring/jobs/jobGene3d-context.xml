@@ -58,7 +58,7 @@
         <property name="stepDescription" value="Run DomainFinder3"/>
         <property name="ssfInputFileTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="fullPathToBinary" value="${cath.resolve.hits.path}"/>
-        <property name="binarySwitches" value="${domainfinder3.switches.gene3d}"/>
+        <property name="binarySwitches" value="${cath.resolve.hits.switches.gene3d}"/>
         <property name="ssfOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
