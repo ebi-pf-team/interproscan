@@ -27,7 +27,7 @@
                 <entry key="binary.panther.perl.lib.dir" value-ref="perlLibrary"/>
                 <entry key="binary.panther.path" value-ref="scriptPath"/>
                 <entry key="panther.models.dir" value-ref="modelDirectory"/>
-                <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerBinariesPath"/>
+                <entry key="binary.hmmer3.hmmsearch.path" value-ref="hmmerBinariesPath"/>
             </map>
         </property>
     </bean>
