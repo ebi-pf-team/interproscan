@@ -43,9 +43,6 @@ def get_queryName(hmma):
   return hmmId
 
 
-#domfile = '/home/nuka/projects/git/github/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/nuka-d90_20161102_140800110_eocm//jobPantherHmm3/000000000001_000000000003.raw.domtblout.out'
-#panther_outputfile = '/home/nuka/projects/git/github/interproscan/core/jms-implementation/target/interproscan-5-dist/temp/nuka-d90_20161102_140800110_eocm//jobPantherHmm3/000000000001_000000000003.filtered.out'
-
 if  len(sys.argv) == 3:
   domfile = sys.argv[1]
   panther_outputfile = sys.argv[2]
