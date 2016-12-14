@@ -11,45 +11,75 @@
     <packaging>pom</packaging>
     <name>InterProScan</name>
     <url>http://www.ebi.ac.uk/interpro/</url>
+    <description>InterProScan is the software package that allows sequences (protein and nucleic) to be scanned against
+        InterPro's signatures.
+    </description>
 
     <organization>
         <name>European Bioinformatics Institute</name>
         <url>http://www.ebi.ac.uk/</url>
     </organization>
 
-     <distributionManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh_snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
-            <id>i5.repo</id>
-            <name>InterProScan 5 maven repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
+            <id>ossrh_staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+
+        <!--<snapshotRepository>-->
+        <!--<id>localhost-nexus-snapshots</id>-->
+        <!--<name>Local Nexus snapshot repository</name>-->
+        <!--<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>-->
+        <!--</snapshotRepository>-->
+        <!--<repository>-->
+        <!--<id>localhost-nexus-staging</id>-->
+        <!--<name>Local Nexus release repository</name>-->
+        <!--<url>http://localhost:8081/nexus/content/repositories/releases/</url>-->
+        <!--</repository>-->
+
     </distributionManagement>
 
-    <repositories>
+    <scm>
+        <connection>
+            scm:git:https://github.com/ebi-pf-team/interproscan
+        </connection>
+        <developerConnection>
+            scm:git:https://github.com/ebi-pf-team/interproscan
+        </developerConnection>
+        <url>
+            https://github.com/ebi-pf-team/interproscan.git
+        </url>
+    </scm>
 
-        <repository>
-            <id>apache-maven-snapshots</id>
-            <name>Apache snapshot repository</name>
-            <url>http://repository.apache.org/snapshots/</url>
-            <layout>default</layout>
-        </repository>
+    <!--<repositories>-->
 
-        <repository>
-            <id>JBoss</id>
-            <name>JBoss releases</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </repository>
+    <!--<repository>-->
+    <!--<id>apache-maven-snapshots</id>-->
+    <!--<name>Apache snapshot repository</name>-->
+    <!--<url>http://repository.apache.org/snapshots/</url>-->
+    <!--<layout>default</layout>-->
+    <!--</repository>-->
 
-        <!-- Required for sleepycat (BerkelyDB) -->
-        <repository>
-            <id>oracleReleases</id>
-            <name>Oracle Released Java Packages</name>
-            <url>http://download.oracle.com/maven</url>
-            <layout>default</layout>
-        </repository>
+    <!--<repository>-->
+    <!--<id>JBoss</id>-->
+    <!--<name>JBoss releases</name>-->
+    <!--<url>http://repository.jboss.org/nexus/content/groups/public</url>-->
+    <!--</repository>-->
 
-    </repositories>
+    <!--&lt;!&ndash; Required for sleepycat (BerkelyDB) &ndash;&gt;-->
+    <!--<repository>-->
+    <!--<id>oracleReleases</id>-->
+    <!--<name>Oracle Released Java Packages</name>-->
+    <!--<url>http://download.oracle.com/maven</url>-->
+    <!--<layout>default</layout>-->
+    <!--</repository>-->
+
+    <!--</repositories>-->
 
     <licenses>
         <license>
@@ -202,62 +232,108 @@
                 <version>2.10.3</version>
                 <configuration>
                     <overview/>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
+                <executions>
+                </executions>
             </plugin>
             <!-- Create JAR of source files (source:jar, source:test-jar) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
+                <executions>
+                    <!--<execution>-->
+                    <!--<id>attach-sources</id>-->
+                    <!--<goals>-->
+                    <!--<goal>jar</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
+                </executions>
                 <!--configuration>
                     <finalName>filename-of-generated-jar-file</finalName>
                     <attach>false</attach>
                     </configuration-->
             </plugin>
-            <!-- Tell maven to deploy artifacts to a temporary staging location inside your target directory-->
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <altDeploymentRepository>i5.repo::default::file://${user.dir}/target/mvn-repo</altDeploymentRepository>
-                </configuration>
-            </plugin>
-            <!-- Configure the site-maven-plugin to upload from your temporary staging i5.repo to your mvn-repo branch on github-->
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
-                <configuration>
-                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-                    <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                    <outputDirectory>${user.dir}/target/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
-                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
-                    <excludes>
-                        <exclude>**/*dist*</exclude>
-                    </excludes>
-                    <repositoryName>interproscan</repositoryName>      <!-- github repo name -->
-                    <repositoryOwner>ebi-pf-team</repositoryOwner>     <!-- github username  -->
-                    <!--<dryRun>true</dryRun> -->          <!-- display creates/updates but don't actually perform any operations on the target GitHub repo -->
-                </configuration>
-                <executions>
-                    <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <escapeString>\</escapeString>
+                    <serverId>ossrh_staging</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <stagingProfileId>17571ea8a23397</stagingProfileId>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <developers>
+        <developer>
+            <id>gnuka</id>
+            <name>Gift Nuka</name>
+            <email>nuka@ebi.ac.uk</email>
+            <organization>EMBL-EBI</organization>
+        </developer>
+        <developer>
+            <id>mfraser</id>
+            <name>Matthew Fraser</name>
+            <email>matthew@ebi.ac.uk</email>
+            <organization>EMBL-EBI</organization>
+        </developer>
+    </developers>
+    <contributors>
+    </contributors>
 
 </project>
