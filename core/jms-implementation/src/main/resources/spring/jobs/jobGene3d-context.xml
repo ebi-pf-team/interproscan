@@ -56,40 +56,12 @@
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription" value="Run DomainFinder3"/>
-        <property name="ssfInputFileTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="fullPathToBinary" value="${cath.resolve.hits.path}"/>
         <property name="binarySwitches" value="${cath.resolve.hits.switches.gene3d}"/>
-        <property name="ssfOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="crhOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
-
-
-    <!--<bean id="stepGene3dParseHmmerOutput"-->
-    <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3ParseStep"-->
-    <!--parent="abstractGene3dStep">-->
-    <!--<property name="dependsUpon" ref="stepGene3dRunHmmer3"/>-->
-    <!--<property name="stepDescription" value="Parse output from HMMER3"/>-->
-    <!--<property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>-->
-    <!---->
-    <!--<property name="serialGroup" value="PARSE_GENE3D"/>-->
-    <!--<property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>-->
-    <!--<property name="parser">-->
-    <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">-->
-    <!--<property name="parserSupport">-->
-    <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">-->
-    <!--&lt;!&ndash;TODO: We need to pass in or look up release number&ndash;&gt;-->
-    <!--<property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>-->
-    <!--<property name="alignmentEncoder">-->
-    <!--<bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>-->
-    <!--</property>-->
-    <!--<property name="hmmKey" value="NAME"/>-->
-    <!--</bean>-->
-    <!--</property>-->
-    <!--</bean>-->
-    <!--</property>-->
-    <!--<property name="retries" value="3"/>-->
-    <!--</bean>-->
-
 
     <bean id="stepGene3dParseOutputs"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DParseAndPersistOutputStep"
@@ -133,25 +105,6 @@
         <property name="retries" value="3"/>
         
     </bean>
-
-
-    <!--<bean id="stepGene3dPostProcessingStep"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DPostProcessingStep"-->
-          <!--parent="abstractGene3dStep">-->
-        <!--<property name="dependsUpon" ref="stepRunCathResolveHitsStep"/>-->
-        <!--<property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
-        <!--<property name="stepDescription" value="Performs Gene3D Post Processing"/>-->
-        <!--<property name="ssfOutputFileTemplate" value="rawAnalaysisOutputDomTbloutFileTemplate"/>-->
-        <!--<property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>-->
-        <!--<property name="filteredMatchDAO">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>-->
-        <!--</property>-->
-        <!--<property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>-->
-        <!--<property name="postProcessor">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.business.postprocessing.gene3d.Gene3DPostProcessing"/>-->
-        <!--</property>-->
-        <!--<property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>-->
-    <!--</bean>-->
 
     <bean id="stepGene3dRelatedTmpFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"

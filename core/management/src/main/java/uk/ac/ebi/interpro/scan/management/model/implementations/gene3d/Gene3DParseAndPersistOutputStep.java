@@ -147,7 +147,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                         DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher);
                         String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
                         CathResolverRecord cathResolverRecord = cathResolverRecordMap.get(domainLineKey);
-                        if (cathResolverRecord != null) {
+                        if (cathResolverRecord != null && domTblDomainMatch.getSequenceEValue() < 0.001 ) {
 
                             //Utilities.verboseLog(cathResolverRecord.toString());
                             //DomTblDomainMatch domTblDomainMatch = domainTblLineMatchMap.get(cathResolverRecord.getRecordKey());
