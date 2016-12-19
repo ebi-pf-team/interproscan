@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.panther;
 
-import com.mchange.v1.util.UIterator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -193,7 +192,7 @@ public final class PantherNewBinaryStep extends RunBinaryStep {
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
         final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
 
-        List<String> command = new ArrayList<String>();
+        List<String> command = new ArrayList<>();
         //Add command
         command.add(this.getPerlCommand());
         //Add Perl parameter

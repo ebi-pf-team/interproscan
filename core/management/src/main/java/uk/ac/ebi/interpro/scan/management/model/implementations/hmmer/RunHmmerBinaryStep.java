@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer;
 
 import org.apache.log4j.Logger;
-import org.apache.taglibs.standard.tag.common.core.Util;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;

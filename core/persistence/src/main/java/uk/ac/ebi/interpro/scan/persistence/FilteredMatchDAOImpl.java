@@ -5,9 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.util.*;

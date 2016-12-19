@@ -125,7 +125,6 @@ public class WriteGene3dSsfFileStep extends Step {
         long chunkSize =  stepInstance.getTopProtein() - stepInstance.getBottomProtein();
         while (count == 0 && chunkSize > 10) {
             retryCount ++;
-            int matchesFound = 0;
             int countForWaitTime = proteinCount.intValue() * 200;
             waitTimeFactor = Utilities.getWaitTimeFactor(countForWaitTime).intValue();
             Utilities.sleep(waitTimeFactor * 1000);
