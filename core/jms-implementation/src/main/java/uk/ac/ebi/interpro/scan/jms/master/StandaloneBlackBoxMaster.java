@@ -117,6 +117,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         controlledLogging = false;
                     }
                 }
+                //Utilities.verboseLog("runStatus:" + runStatus);
                 //check what is not completed
                 long totalStepInstances = stepInstanceDAO.count();
                 int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
