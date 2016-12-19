@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer;
 
 import org.apache.log4j.Logger;
+import org.apache.taglibs.standard.tag.common.core.Util;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -21,7 +22,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
     private static final Logger LOGGER = Logger.getLogger(RunHmmerBinaryStep.class.getName());
 
-    private String fullPathToBinary;
+    private String fullPathToHmmsearchBinary;
 
     private String fullPathToHmmScanBinary;
 
@@ -43,13 +44,13 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
     private boolean forceHmmsearch = true;
 
-    public String getFullPathToBinary() {
-        return fullPathToBinary;
+    public String getFullPathToHmmsearchBinary() {
+        return fullPathToHmmsearchBinary;
     }
 
     @Required
-    public void setFullPathToBinary(String fullPathToBinary) {
-        this.fullPathToBinary = fullPathToBinary;
+    public void setFullPathToHmmsearchBinary(String fullPathToHmmsearchBinary) {
+        this.fullPathToHmmsearchBinary = fullPathToHmmsearchBinary;
     }
 
     public String getFullPathToHmmScanBinary() {
@@ -146,7 +147,8 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
         List<String> command = new ArrayList<String>();
-
+         
+        /*
 //        if (isSingleSeqMode()){
         forceHmmsearch = true;  // we will use hmmsearch until parsing for hmmscan output is implemenetd
         if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
@@ -154,6 +156,18 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
             command.add(this.getFullPathToHmmScanBinary());
         }else{
             command.add(this.getFullPathToBinary());
+        }
+        */
+        //for panther only in the first place
+        if ((Utilities.getUseHmmsearch() != null && Utilities.getUseHmmsearch() ) ||
+                forceHmmsearch || Utilities.getSequenceCount() > 10){
+            Utilities.setUseHmmsearch(true);
+            Utilities.verboseLog("Use Hmmsearch  " + getFullPathToHmmsearchBinary());
+            command.add(this.getFullPathToHmmsearchBinary());
+        }else{
+            Utilities.setUseHmmsearch(false);
+            Utilities.verboseLog("Use hmmscan  " + getFullPathToHmmScanBinary());
+            command.add(this.getFullPathToHmmScanBinary());
         }
         command.addAll(this.getBinarySwitchesAsList());
         // output file option

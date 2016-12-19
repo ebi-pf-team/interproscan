@@ -21,7 +21,7 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
-import uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherBinaryStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherNewBinaryStep;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
@@ -324,8 +324,9 @@ public class Run extends AbstractI5Runner {
 
                 }
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
-                    //deal with panther
-                    final PantherBinaryStep stepPantherRunBinary = (PantherBinaryStep) ctx.getBean("stepPantherRunBinary");
+                    //deal with panther  stepPantherHMM3RunPantherScore
+                    final PantherNewBinaryStep stepPantherRunBinary = (PantherNewBinaryStep) ctx.getBean("stepPantherRunBinary");
+//                    final PantherScoreStep stepPantherRunBinary = (PantherScoreStep) ctx.getBean("stepPantherHMM3RunPantherScore");
                     stepPantherRunBinary.setUserDir(parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()).trim());
                 }
                 String operatingSystem = System.getProperty("os.name");

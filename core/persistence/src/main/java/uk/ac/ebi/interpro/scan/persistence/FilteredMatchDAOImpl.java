@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -124,6 +125,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         List<String> modelIDs = new ArrayList<String>();
         for (RawProtein<T> rawProtein : rawProteins) {
             for (RawMatch rawMatch : rawProtein.getMatches()) {
+
                 modelIDs.add(rawMatch.getModelId());
             }
         }
@@ -170,10 +172,17 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             query.setParameter("version", signatureLibraryRelease);
             @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
 
+            String signatureModelQueryMessage = "SignatureModel query: "
+                    + "accession: " + modelIdsSlice.toString()
+                    + " signatureLibrary: " + signatureLibrary
+                    + " version: " + signatureLibraryRelease;
+            LOGGER.debug(signatureModelQueryMessage);
+//            Utilities.verboseLog(signatureModelQueryMessage);
             for (Signature s : signatures) {
                 for (Model m : s.getModels().values()) {
                     result.put(m.getAccession(), s);
                     LOGGER.debug("accession: " + m.getAccession() + " signature: " + s);
+                    //Utilities.verboseLog("accession: " + m.getAccession() + " signature: " + s);
                 }
             }
         }

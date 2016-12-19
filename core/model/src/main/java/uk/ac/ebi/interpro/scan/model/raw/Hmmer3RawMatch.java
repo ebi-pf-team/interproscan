@@ -154,7 +154,13 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         // Find the location(s) for each match and create a Match instance
         for (String key : matchesByModel.keySet()) {
             Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
-            matches.add(getMatch(signature, key, matchesByModel));
+            if (signature != null) {
+                //TODO when gene3d model 2signaturemap is resolved remove this condition
+                matches.add(getMatch(signature, key, matchesByModel));
+            }else{
+                //TODO
+                // display warning
+            }
         }
         // Next step would be to link this with protein...
         return matches;

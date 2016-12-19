@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.ReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignatureLibraryReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.installer.JdbcEntryDao;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -83,6 +84,9 @@ public class Installer implements Runnable {
             LOGGER.info("Running installer in mode " + mode);
         }
         // By Magic!
+          
+        Utilities.verboseLog = true;
+        Utilities.verboseLogLevel = 44;
 
         if (mode.equals(InstallerMode.LOAD_NONE)) {
             LOGGER.info("No signatures or entries will be loaded (empty database).");

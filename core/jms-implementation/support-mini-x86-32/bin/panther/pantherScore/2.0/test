@@ -1,0 +1,46 @@
+
+pantherScore2.0.pl - a script to score protein sequences against the
+hmmer3 PANTHER HMM library using  hmmer3 programs
+
+
+Usage:
+    pantherScore2.0.pl -l <PANTHER library> -D B -V 
+                    -i <fasta file> -o <output file>
+
+Example:
+
+
+use hmmscan:
+./pantherScore2.0.pl -l PANTHER11.1 -D B -V -H ./hmmer-3.1b2/binaries/ -i homo_sapiens.fasta -o homo_sapiens.out -n
+
+use hmmsearch:
+./pantherScore2.0.pl -l PANTHER11.1 -D B -V -H ./hmmer-3.1b2/binaries/ -i homo_sapiens.fasta -o homo_sapiens.out -n -s
+
+Where args are:
+	-h for help (this message)
+	-l PANTER (l)ibrary with HMMs when using hmmsearch, binary PANTHER HMM model when using hmmscan
+	-D display type for results
+		options: I (interproscan), B (best hit), A (all hits)
+	-E user defined hmm (E)value cutoff to over ride default
+	-s to use hmmsearch instead of hmmscan for scoring sequence againt hmm library 
+	-H user defined path to direcgtory contating hmmer3 binary executables (including hmmscan or hmmsearch)
+		default: hmmer3 binary in $PATH
+	-z user defined path to gun(z)ip path
+		default: gunzip binary in $PATH
+	-n to display family and subfamily names in the output
+	-T user defined path for tmp directory
+		default: /tmp/
+	-o (o)utput file (redirect STDOUT)
+	-i (i)nput fasta file to score
+	-t for entry (t)ype
+	-n to display family and subfamily names in the output
+	-P P=1 to for (P)roduction format of lib; P=0 for build version
+		default: 1
+	-c for number of (c)pu on machine to use for blast/hmmsearch
+		default: 1
+	-e (e)rror file (redirect STDERR)
+	-v (v)erbose (debug info to STDERR)
+	-V (V)ery verbose (debug info to STDERR)
+Error: Cannot find library ../../data/PANTHER11.1.
+
+
