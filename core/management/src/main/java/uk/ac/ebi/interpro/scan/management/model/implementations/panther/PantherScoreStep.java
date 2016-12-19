@@ -196,7 +196,7 @@ public final class PantherScoreStep extends RunBinaryStep {
         final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
 
 
-        List<String> command = new ArrayList<String>();
+        List<String> command = new ArrayList<>();
         //Add command
         command.add(this.getFullPathToPython());
         // Panther script
