@@ -27,7 +27,6 @@
     <import resource="jobSignalP_GRAM_POSITIVE-context.xml"/>
     <import resource="jobSignalP_GRAM_NEGATIVE-context.xml"/>
     <import resource="jobSMART-context.xml"/>
-    <import resource="jobSMART-6.2-context.xml"/>
     <import resource="jobTIGRFAM-context.xml"/>
 
     <import resource="jobSuperFamily-1.75-context.xml"/>
@@ -67,7 +66,6 @@
                 <ref bean="jobSignalP_GRAM_POSITIVE"/>
                 <ref bean="jobSignalP_GRAM_NEGATIVE"/>
                 <ref bean="jobSMART"/>
-                <ref bean="jobSMART-6.2"/>
                 <ref bean="jobTIGRFAM"/>
                 <ref bean="jobPIRSF-3.01" />
                 <ref bean="jobSuperFamily-1.75"/>

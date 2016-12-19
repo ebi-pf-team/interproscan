@@ -18,8 +18,7 @@
                 <ref bean="modelDirectory" />
                 <ref bean="perlLibrary" />
                 <ref bean="scriptPath" />
-                <ref bean="blastPath" />
-                <ref bean="hmmerPath" />
+                <ref bean="hmmerBinariesPath" />
             </list>
         </property>
         <property name="mandatoryParameters">
@@ -28,8 +27,7 @@
                 <entry key="binary.panther.perl.lib.dir" value-ref="perlLibrary"/>
                 <entry key="binary.panther.path" value-ref="scriptPath"/>
                 <entry key="panther.models.dir" value-ref="modelDirectory"/>
-                <entry key="binary.blastall.2.2.6.path" value-ref="blastPath"/>
-                <entry key="binary.hmmer2.hmmsearch.path" value-ref="hmmerPath"/>
+                <entry key="binary.hmmer3.hmmsearch.path" value-ref="hmmerBinariesPath"/>
             </map>
         </property>
     </bean>
@@ -54,8 +52,8 @@
         <constructor-arg value="${binary.panther.blast.path}"/>
     </bean>
     <!--Add path to (H)mmsearch binary-->
-    <bean id="hmmerPath" class="java.lang.String">
-        <constructor-arg value="${binary.hmmer2.hmmsearch.path}"/>
+    <bean id="hmmerBinariesPath" class="java.lang.String">
+        <constructor-arg value="${binary.hmmer3.path}"/>
     </bean>
 
     <bean id="perlScriptTempDir" class="java.lang.String">
@@ -81,9 +79,30 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
+    <!-- STEP 2 -->
+    <bean id="stepPantherRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractPantherStep">
+        <property name="dependsUpon" ref="stepPantherWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
+        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.panther} ${hmmer3.hmmsearch.cpu.switch.panther}"/>
+        <property name="fullPathToHmmFile" value="${panther.hmm.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="useTbloutFormat" value="false"/>
+        <property name="useDomTbloutFormat" value="true"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
     <!-- STEP 2: Run binary -->
     <bean id="stepPantherRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherBinaryStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherNewBinaryStep"
           parent="abstractPantherStep">
         <!--
         perl -I data/panther/9.0/lib bin/panther/9.0/pantherScore.pl
@@ -96,7 +115,7 @@
         -n
         -i UPI000000004D.fasta
         -->
-        <property name="dependsUpon" ref="stepPantherWriteFastaFile"/>
+        <property name="dependsUpon" ref="stepPantherRunHmmer3"/>
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
         <!--Add Perl command-->
         <property name="perlCommand" ref="perlCommand"/>
@@ -109,12 +128,15 @@
         <!--Add path to (B)last binary-->
         <property name="blastPath" ref="blastPath"/>
         <!--Add path to (H)mmsearch binary-->
-        <property name="hmmerPath" ref="hmmerPath"/>
+        <property name="hmmerPath" ref="hmmerBinariesPath"/>
         <!--Add additional arguments/parameter-->
         <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
         <property name="binarySwitches" value="${panther.binary.switches} ${panther.binary.cpu.switch}"/>
+        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
         <property name="perlScriptTempDir" ref="perlScriptTempDir"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -134,6 +156,7 @@
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherRunBinary"/>
         <property name="stepDescription" value="Parse the output from Panther"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
                 <!--TODO: Figure out how to handle signature library release-->
@@ -143,8 +166,6 @@
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_PANTHER"/>
         <property name="retries" value="3"/>
-        <property name="signatureLibraryRelease" ref="latestPantherSignatureLibraryRelease"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPantherDeleteRawOutput"

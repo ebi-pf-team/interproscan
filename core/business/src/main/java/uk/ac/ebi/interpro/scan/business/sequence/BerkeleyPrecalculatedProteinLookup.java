@@ -125,6 +125,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (berkeleyMatchXML != null) {
                 berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobMap);
             }
+
             return protein;
         } catch (Exception e) {
             displayLookupError(e);
@@ -202,6 +203,13 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 Utilities.verboseLog(10, "Analysis versions NOT Consistent" );
                 return null;
             }
+            timetaken = System.nanoTime() - startTime;
+            lookupTimeMillis = 0;
+            if (timetaken > 0) {
+                lookupTimeMillis = timetaken / 1000000;
+            }
+            Utilities.verboseLog(10, "Time to convert to i5 matches " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+
             timetaken = System.nanoTime() - startTime;
             lookupTimeMillis = 0;
             if (timetaken > 0) {

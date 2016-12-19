@@ -45,7 +45,7 @@
           /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.105/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.105/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositePatternWriteFastaFile"/>
         <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
-        <property name="binarySwitches" value="-r -s -o ipro"/>
+        <property name="binarySwitches" value="${psscan.prositepatterns.binary.switches}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
