@@ -1,0 +1,42 @@
+SFLD search/post-processing
+===========================
+
+Building
+--------
+
+Example makefile - note that you will have to install the easel library to compile this
+
+$> wget http://eddylab.org/software/hmmer3/3.1b2/hmmer-3.1b2.tar.gz
+$> tar xf hmmer-3.1b2.tar.gz
+$> cd hmmer-3.1b2
+$> ./configure
+$> make
+$> make check
+$> cd ..
+$> make sfld_preprocess
+In the Makefile replace the path in EASEL_DIR with the 'easel' subdir of the hmmer
+distribution (e.g. /path/to/hmmer-3.1b2/easel). Then run
+$> make sfld_postprocess
+
+Running
+-------
+
+1) Pre-process alignments to build HMM and extract site-level annotation
+
+$> sfld_preprocess -a SFLD.sto -m SFLD.hmm -s SFLD.annot
+
+2) Run the search
+
+$> hmmsearch --cut_ga -o all.out --domtblout all.dom -A all.aln DIR/FAMILY.hmm DB/TARGETDB
+
+3) Post process
+
+$> sfld_postprocess -d all.dom -s SFLD.annot -a all.aln -O all.out
+
+Notes/Issues
+------------
+
+- the options to hmmbuild/hmmsearch are hardcoded
+- optional env variables: HMMER_PATH (dir of hmmer binaries), SFLD_LIB_DIR (SFLD HMM dir), SFLD_OUTPUT (dir with output files)
+
+Copyright © EMBL-EBI 2016.
