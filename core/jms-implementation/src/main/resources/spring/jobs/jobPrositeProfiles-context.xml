@@ -34,88 +34,55 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2 -->
     <bean id="stepPrositeProfilesRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPrositePfsearchStep"
           parent="abstractPrositeProfileStep">
-        <!-- In example command line below, replace _ with -
-          Prosite Profiles:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.113/prosite.dat _-pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
-          Prosite Patterns:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.113/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.113/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile"/>
-        <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
-        <property name="binarySwitches" value="${psscan.prositeprofiles.binary.switches}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="stepDescription" value="Run pfsearch for selected proteins"/>
+        <property name="binarySwitches" value="${pfsearch.prositeprofiles.binary.switches}"/>
+        <!--<property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>-->
+        <!--<property name="fastaFileNameTemplate" ref="filteredFastaInputFileNameTemplate"/>-->
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="outputFileNameTbloutTemplate" ref="rawAnalaysisOutputTbloutFileTemplate"/>
+        <property name="statsFileNameTemplate" ref="statsFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${prosite.models.path}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearch.path}"/>
-        <property name="usePfsearch" value="${psscan.prositeprofiles.usepfsearch}"/>
+        <property name="fullPathToPFsearch" value="${binary.prosite.pfsearch.path}"/>
+        <property name="fullPathToPfsearchWrapper" value="${binary.prositeprofiles.pfsearch.wrapperpath}"/>
+        <property name="fullPathToPython" value="${binary.prosite.python.path}"/>
+        <property name="modelDir" value="${prositeprofiles.models.dir}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
+
+    <bean id="stepPrositeProfilesParseAndStoreFilteredMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParseAndPersistPrositeProfiles"
+          parent="abstractPrositeProfileStep">
+        <property name="dependsUpon" ref="stepPrositeProfilesRunBinary"/>
+        <property name="stepDescription" value="Parse the PrositeProfile binary output and store as Filtered matches."/>
+
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
+        </property>
+
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfilePfsearchMatchParser">
+                <constructor-arg ref="prositeProfilesSignatureLibraryReleaseVersion"/>
+                <property name="cigarEncoder">
+                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
+                </property>                
+            </bean>
+        </property>
+        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
+    </bean>
+
 
     <bean id="stepPrositeProfilesDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrositeProfileStep">
-        <property name="dependsUpon" ref="stepPrositeProfilesRunBinary"/>
-        <property name="stepDescription" value="Delete the fasta file following successful run of Prosite Profiles."/>
+        <property name="dependsUpon" ref="stepPrositeProfilesParseAndStoreFilteredMatches"/>
+        <property name="stepDescription" value="Delete the fasta file "/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
-    </bean>
-
-    <!-- STEP 3 -->
-    <bean id="stepPrositeProfilesParseRawOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParsePrositeGffOutputStep"
-          parent="abstractPrositeProfileStep">
-        <property name="dependsUpon" ref="stepPrositeProfilesRunBinary"/>
-        <property name="stepDescription" value="Parse the output from the Prosite binary"/>
-        <property name="serialGroup" value="PARSE_PROSITE_PROFILES"/>
-        <property name="retries" value="3"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
-        <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfileMatchParser">
-                <constructor-arg ref="prositeProfilesSignatureLibraryReleaseVersion"/>
-                <property name="cigarEncoder">
-                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="stepPrositeProfilesDeleteRawOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPrositeProfileStep">
-        <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput"/>
-        <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-    </bean>
-
-    <bean id="stepPrositeProfilesPostProcessing"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.PrositeProfilesPostProcessingStep"
-          parent="abstractPrositeProfileStep">
-
-        <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput"/>
-        <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
-        <property name="stepDescription" value="Filter Prosite Profiles matches and persist filtered results"/>
-        <property name="signatureLibraryRelease" ref="prositeProfilesSignatureLibraryReleaseVersion"/>
-        <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing">
-                <property name="passLevels">
-                    <list>
-                        <value>ONE</value>
-                        <value>ZERO</value>
-                        <value>MINUS_ONE</value>
-                    </list>
-                </property>
-            </bean>
-        </property>
-        <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
-        </property>
-        <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PrositeProfiles !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
