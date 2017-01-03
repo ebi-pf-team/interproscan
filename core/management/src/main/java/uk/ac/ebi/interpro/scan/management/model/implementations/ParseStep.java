@@ -91,7 +91,17 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                         represantiveRawMatch = rawProtein.getMatches().iterator().next();
                     }
                 }
-                firstMatchList.addAll(rawProtein.getMatches());
+                if (LOGGER.isDebugEnabled()) {
+                    if (represantiveRawMatch.getSignatureLibrary().getName().contains("PANTHER") ||
+                            represantiveRawMatch.getSignatureLibrary().getName().contains("ProSitePatterns")) {
+                        int rmCount = 0;
+                        for (RawMatch rawMatch : rawProtein.getMatches()) {
+                            rmCount++;
+                            Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + " " + rmCount + " "
+                                    + rawMatch.toString());
+                        }
+                    }
+                }
             }
 
             if (LOGGER.isDebugEnabled()) {
@@ -101,12 +111,36 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
             rawMatchDAO.insertProteinMatches(results);
             Long now = System.currentTimeMillis();
             long chunkSize =  stepInstance.getTopProtein() - stepInstance.getBottomProtein();
+
             if (matchCount > 0){
                 int matchesFound = 0;
                 int waitTimeFactor = Utilities.getWaitTimeFactor(matchCount).intValue();
                 if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
                     String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
+                    Long queryStartTime = System.currentTimeMillis();
+                    Set<RawProtein<T>> rawProteins = rawMatchDAO.getProteinsByIdRange(stepInstance.getBottomProtein(),
+                            stepInstance.getTopProtein(), signatureLibraryRelease);
+                    Long queryTime = System.currentTimeMillis() - queryStartTime;
+
+                    for (RawProtein<T> rawProtein : rawProteins) {
+                        matchesFound += rawProtein.getMatches().size();
+                        if (LOGGER.isDebugEnabled()) {
+                            Utilities.verboseLog("Considering ... " + represantiveRawMatch.getSignatureLibrary().getName());
+                            if (represantiveRawMatch.getSignatureLibrary().getName().contains("PANTHER") ||
+                                    represantiveRawMatch.getSignatureLibrary().getName().contains("ProSitePatterns")) {
+                                int rmCount = 0;
+                                for (RawMatch rawMatch : rawProtein.getMatches()) {
+                                    rmCount++;
+                                    Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + "_R2 " + rmCount + " "
+                                            + rawMatch.toString());
+                                }
+                            }
+                        }
+                    }
+
+                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + " matchesFound: " + matchesFound + " matchCount: " + matchCount
+                            + " queryTime: " + queryTime);
                     int retryCount = 0;
                     Long allowedWaitTime = Long.valueOf(waitTimeFactor) * waitTimeFactor * 100 * 1000;
                     while (matchesFound < matchCount) {
@@ -116,23 +150,11 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                                 stepInstance.getTopProtein(), signatureLibraryRelease);
 
                         matchesFound = rawMatchesInDb.size();
-
+                        Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + " matchesFound-2: " +matchesFound + " matchCount: " + matchCount);
 
                         if (matchesFound < matchCount) {
-                            Collection secondMatchList = new ArrayList();
-                            secondMatchList.addAll(rawMatchesInDb);
-                            firstMatchList.removeAll(secondMatchList);
                             int matchCountDifference = matchCount - matchesFound;
-                            int matchesDifference = firstMatchList.size() - secondMatchList.size();
-                            System.out.println("Matches difference: " + matchesDifference
-                                    + " matchCountDifference: " +  matchCountDifference);
-                            if (matchCountDifference > 0) {
-                                // Show the "difference " list
-                                for (T tmpRawMatch: firstMatchList){
-                                    System.out.println("Example tmpRawMatch: " + tmpRawMatch.toString());
-                                    break;
-                                }
-                            }
+
 
                             if (retryCount == 1) {
                                 LOGGER.warn("Raw matches may not yet committed - sleep for" + waitTimeFactor + " seconds , count: " + matchCount);
@@ -140,7 +162,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                             Long timeTaken = System.currentTimeMillis() - now;
                             //we try three times then break
                             if (matchCountDifference < 2 || chunkSize < 100 || timeTaken > allowedWaitTime || retryCount > 3) {
-                                //just break as something else might be happening
+                                //just break as something else might be happening, need to investigate
                                 String matchPersistWarning = "Possible database problem: failed to " + retryCount + "x verify " + matchCount + " matches in database for "
                                         + represantiveRawMatch.getSignatureLibrary().getName()
                                         + " after " + timeTaken + " ms "

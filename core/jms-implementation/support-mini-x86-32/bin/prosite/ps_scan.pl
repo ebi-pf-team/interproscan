@@ -888,7 +888,7 @@ if ( $opt_pfsearch ) {
 
 if (!$prosite_files_dir) {
    $prosite_files_dir = "data/prosite/20.132/prosite_models";
-   print "not defined $prosite_files_dir";
+   print STDERR "not defined $prosite_files_dir";
 }
 
 
