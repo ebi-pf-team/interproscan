@@ -384,7 +384,7 @@ sub parseHmmsearch2 {
   my $domtbl= $inFile;
   #my $hmmsearch_run = "$hmmsearch --domtblout $domtbl $hmmModel $inFile > /dev/null";
 
-  print "running parseHmmsearch2";
+  print STDERR "running parseHmmsearch2";
   #system("$hmmsearch_run");
   open TB, "$domtbl" or die $!;
   	while (<TB>){
