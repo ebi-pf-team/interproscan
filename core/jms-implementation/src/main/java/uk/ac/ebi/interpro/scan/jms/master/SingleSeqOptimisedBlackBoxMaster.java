@@ -91,6 +91,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     if(! runningFirstStep){
                         for (StepInstance stepInstance : unfinishedStepInstances) {
                             runStatus = 45;
+                            Utilities.verboseLog("Single Seq mode: considering :" + stepInstance.getStepId());
                             if (isHighPriorityStep(stepInstance.getStep(jobs))){
                                 stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
                                 controlledLogging = false;
@@ -277,9 +278,11 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         if(step.getId().toLowerCase().contains("stepLoadFromFasta".toLowerCase())
                 || step.getId().toLowerCase().contains("panther".toLowerCase())
                 || step.getId().toLowerCase().contains("prositeprofiles".toLowerCase())
+                || step.getId().toLowerCase().contains("pfam".toLowerCase())
                 ){
+            Utilities.verboseLog(" panther/prositeprofiles/pfam job: " + step.getId() + " Should have high priority");
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(" panther/prositeprofiles job: " + step.getId() + " Should have high priority");
+                LOGGER.debug(" panther/prositeprofiles/pfam job: " + step.getId() + " Should have high priority");
             }
             return true;
         }
