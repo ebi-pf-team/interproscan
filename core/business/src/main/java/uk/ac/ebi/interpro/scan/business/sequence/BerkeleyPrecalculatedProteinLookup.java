@@ -43,7 +43,9 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     private String interproscanVersion;
 
+    private Long timeLookupError = null;
 
+    private Long timeLookupSynchronisationError = null;
 
     public BerkeleyPrecalculatedProteinLookup() {
 
@@ -289,9 +291,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     private void displayLookupError(Exception e) {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
 
-        LOGGER.warn(e);
+        if (timeLookupError != null){
+          if (! fixedTimeLapsed(timeLookupError)){
+                return;
+          }
+        }
+
+        timeLookupError = System.currentTimeMillis();
+
+//        LOGGER.warn(e);
         e.printStackTrace();
-        LOGGER.warn(e.toString());
+//        LOGGER.warn(e.toString());
 
         LOGGER.warn("\n\n" +
                 "The following problem was encountered by the pre-calculated match lookup service:\n" +
@@ -319,6 +329,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     private void displayLookupSynchronisationError(String clientVersion, String serverVersion) {
 
+        if (timeLookupSynchronisationError != null){
+            if (! fixedTimeLapsed(timeLookupSynchronisationError)){
+                return;
+            }
+        }
+
+        timeLookupSynchronisationError = System.currentTimeMillis();
+
         if (! Utilities.lookupMatchVersionProblemMessageDisplayed) {
             LOGGER.warn(
                     "\n\nThe version of InterProScan you are using is " + clientVersion + "\n" +
@@ -335,5 +353,20 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
             Utilities.lookupMatchVersionProblemMessageDisplayed = true;
         }
+    }
+
+    private Boolean fixedTimeLapsed(Long previousTime){
+        Long fixedTimeBetweenDisplays = 10L;
+        Long hoursSince = null;
+        Long timeLapse = System.currentTimeMillis() - previousTime;
+        if (timeLapse > 0){
+            hoursSince = timeLapse / (60 * 60 * 1000);
+            //default is display error message every 10 hours
+            if (hoursSince > fixedTimeBetweenDisplays) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
