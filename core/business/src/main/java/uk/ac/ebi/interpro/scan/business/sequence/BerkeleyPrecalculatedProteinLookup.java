@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
 import org.hibernate.procedure.internal.Util;
+import org.omg.PortableInterceptor.LOCATION_FORWARD;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -15,6 +16,7 @@ import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -34,7 +36,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * from the EBI, but can also be easily installed locally.
      * (Runs from a BerkeleyDB on Jetty, so can be run from a single
      * command).
-     * <p/>
+     * <p>
      * Essentially, the client will be used if it is available.
      */
     private MatchHttpClient preCalcMatchClient;
@@ -69,7 +71,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * from the EBI, but can also be easily installed locally.
      * (Runs from a BerkeleyDB on Jetty, so can be run from a single
      * command).
-     * <p/>
+     * <p>
      * Essentially, the client will be used if it is available.
      */
     @Required
@@ -91,13 +93,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         }
 
         // Check if the MD5 needs to be reanalyzed
-
+        String lookupMessageStatus = "Checking lookup client and server are in sync";
         try {
             // Only proceed if the lookup client and server are in sync
             if (!isSynchronised()) {
                 return null;
             }
             final String upperMD5 = protein.getMd5().toUpperCase();
+
+            lookupMessageStatus = "Check MD5s of proteins analysed previously";
 
             if (!preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(upperMD5).contains(upperMD5)) {
                 if (LOGGER.isDebugEnabled()) {
@@ -110,6 +114,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (LOGGER.isDebugEnabled()) {
                 startTime = System.nanoTime();
             }
+            lookupMessageStatus = "Get matches of proteins analysed previously";
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
 
             long timetaken = System.nanoTime() - startTime;
@@ -118,7 +123,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 lookupTimeMillis = timetaken / 1000000;
             }
 
-            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: "  + lookupTimeMillis + " millis");
+            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
 
@@ -130,7 +135,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
             return protein;
         } catch (Exception e) {
-            displayLookupError(e);
+            hostAvailabilityCheck(preCalcMatchClient.getUrl());
+            displayLookupError(e, lookupMessageStatus);
             return null;
         }
 
@@ -143,6 +149,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             return null;
         }
 
+        String lookupMessageStatus = "Checking lookup client and server are in sync";
         try {
             // Only proceed if the lookup client and server are in sync
             if (!isSynchronised()) {
@@ -158,6 +165,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 md5ToProteinMap.put(protein.getMd5().toUpperCase(), protein);
                 md5s[i++] = protein.getMd5().toUpperCase();
             }
+            lookupMessageStatus = "Check MD5s of proteins analysed previously";
             final List<String> analysedMd5s = preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(md5s);
 
             // Check if NONE have been pre-calculated - if so, return empty set.
@@ -180,6 +188,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             Long startTime = null;
             startTime = System.nanoTime();
 
+            lookupMessageStatus = "Get matches of proteins analysed previously";
             final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(md5s);
 //            Utilities.verboseLog(10, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
 
@@ -192,17 +201,17 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
-               LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
             }
             startTime = System.nanoTime();
             // Check if the analysis versions are consistent and then proceed
-            if(isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
+            if (isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
 //                Utilities.verboseLog(10, "Analysis versions ARE Consistent" );
                 berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap);
-            }else{
+            } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
-                Utilities.verboseLog(10, "Analysis versions NOT Consistent" );
+                Utilities.verboseLog(10, "Analysis versions NOT Consistent");
                 return null;
             }
             timetaken = System.nanoTime() - startTime;
@@ -222,7 +231,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             return precalculatedProteins;
 
         } catch (Exception e) {
-            displayLookupError(e);
+            hostAvailabilityCheck(preCalcMatchClient.getUrl());
+            displayLookupError(e, lookupMessageStatus);
             return null;
         }
 
@@ -238,8 +248,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     }
 
     /**
-     *   If the client and the server are based on the same version of interproscan
-     *   return true, otherwise return false
+     * If the client and the server are based on the same version of interproscan
+     * return true, otherwise return false
      */
     public boolean isSynchronised() throws IOException {
         // checks if the interpro data version is the same
@@ -266,7 +276,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * @param analysisJobMap
      * @return
      */
-    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap){
+    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Collection of BerkeleyMatches of different kinds.
         Map<String, String> lookupAnalysesMap = new HashMap<String, String>();
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
@@ -275,11 +285,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             lookupAnalysesMap.put(sigLib.getName().toUpperCase(), signatureLibraryReleaseVersion);
         }
         for (String analysisJobName : analysisJobMap.keySet()) {
-            if(lookupAnalysesMap.containsKey(analysisJobName.toUpperCase())){
+            if (lookupAnalysesMap.containsKey(analysisJobName.toUpperCase())) {
                 String lookUpMatchAnalaysVersion = lookupAnalysesMap.get(analysisJobName.toUpperCase());
                 LOGGER.debug("analysis: " + analysisJobName + " lookUpMatchAnalaysiVersion: "
                         + lookUpMatchAnalaysVersion + " analysisJobName: " + analysisJobName + " analysisJobVersion: " + analysisJobMap.get(analysisJobName).getVersion());
-                if (! lookUpMatchAnalaysVersion.equals(analysisJobMap.get(analysisJobName).getVersion())){
+                if (!lookUpMatchAnalaysVersion.equals(analysisJobMap.get(analysisJobName).getVersion())) {
                     LOGGER.debug("Different versions of  " + analysisJobName + " running ");
                     return false;
                 }
@@ -288,20 +298,21 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         return true;
     }
 
-    private void displayLookupError(Exception e) {
+    private void displayLookupError(Exception e, String lookupMessageStatus) {
         /* Barf out - the user wants pre-calculated, but this is not available - tell them what action to take. */
 
-        if (timeLookupError != null){
-          if (! fixedTimeLapsed(timeLookupError)){
+        if (timeLookupError != null) {
+            if (!fixedTimeLapsed(timeLookupError)) {
                 return;
-          }
+            }
         }
 
         timeLookupError = System.currentTimeMillis();
 
 //        LOGGER.warn(e);
-        e.printStackTrace();
+//        e.printStackTrace();
 //        LOGGER.warn(e.toString());
+        LOGGER.warn("Problem with lookup service while on the step: " + lookupMessageStatus);
 
         LOGGER.warn("\n\n" +
                 "The following problem was encountered by the pre-calculated match lookup service:\n" +
@@ -309,8 +320,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 "Pre-calculated match lookup service failed - analysis proceeding to run locally\n" +
                 "============================================================\n\n" +
                 "The pre-calculated match lookup service has been configured in the interproscan.properties file.  \n" +
-                "  precalculated match lookup service url : " +  preCalcMatchClient.getUrl() + "\n" +
-                "  precalculated match lookup service proxy host : " + preCalcMatchClient.getProxyHost() + "  proxy port : " +  preCalcMatchClient.getProxyPort() + "\n\n" +
+                "  precalculated match lookup service url : " + preCalcMatchClient.getUrl() + "\n" +
+                "  precalculated match lookup service proxy host : " + preCalcMatchClient.getProxyHost() + "  proxy port : " + preCalcMatchClient.getProxyPort() + "\n\n" +
                 "Unfortunately the web service has failed. Check the configuration of this service\n" +
                 "in the interproscan.properties file and, if necessary, set the following property to look like this:\n\n" +
                 "precalculated.match.lookup.service.url=\n\n" +
@@ -323,21 +334,19 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 "In the meantime, the analysis will continue to run locally.\n\n");
 
 
-
-
     }
 
     private void displayLookupSynchronisationError(String clientVersion, String serverVersion) {
 
-        if (timeLookupSynchronisationError != null){
-            if (! fixedTimeLapsed(timeLookupSynchronisationError)){
+        if (timeLookupSynchronisationError != null) {
+            if (!fixedTimeLapsed(timeLookupSynchronisationError)) {
                 return;
             }
         }
 
         timeLookupSynchronisationError = System.currentTimeMillis();
 
-        if (! Utilities.lookupMatchVersionProblemMessageDisplayed) {
+        if (!Utilities.lookupMatchVersionProblemMessageDisplayed) {
             LOGGER.warn(
                     "\n\nThe version of InterProScan you are using is " + clientVersion + "\n" +
                             "The version of the lookup service you are using is " + serverVersion + "\n" +
@@ -355,11 +364,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         }
     }
 
-    private Boolean fixedTimeLapsed(Long previousTime){
+    private Boolean fixedTimeLapsed(Long previousTime) {
         Long fixedTimeBetweenDisplays = 10L;
         Long hoursSince = null;
         Long timeLapse = System.currentTimeMillis() - previousTime;
-        if (timeLapse > 0){
+        if (timeLapse > 0) {
             hoursSince = timeLapse / (60 * 60 * 1000);
             //default is display error message every 10 hours
             if (hoursSince > fixedTimeBetweenDisplays) {
@@ -369,4 +378,70 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         return false;
     }
+
+    public boolean hostAvailabilityCheck(String SERVER_ADDRESS) {
+        boolean available = true;
+        String hostAvailabilityMessage = "";
+        Boolean usingProxy = false;
+        URL url = null;
+        HttpURLConnection httpConn = null;
+        try {
+            url = new URL(SERVER_ADDRESS);
+            try {
+                httpConn = (HttpURLConnection) url.openConnection();
+                httpConn.setInstanceFollowRedirects(false);
+                httpConn.setRequestMethod("HEAD");
+                usingProxy = httpConn.usingProxy();
+                httpConn.connect();
+                hostAvailabilityMessage = "lookupUp service is accessible - code: " + httpConn.getResponseCode();
+            }catch (NoRouteToHostException){
+                available = false;
+                hostAvailabilityMessage = "lookupUp service is not avaliable, NoRouteToHostException : " + e.getMessage();
+            } catch (java.net.ConnectException e) {
+                available = false;
+                hostAvailabilityMessage = "lookupUp service is not avaliable, ConnectException : " + e.getMessage();
+            } catch (IOException e) { // io exception, service probably not running
+                available = false;
+                hostAvailabilityMessage = "lookupUp service is not avaliable, IOException : " + e.getMessage();
+            } catch (Exception e) { // exception, service probably not running
+                available = false;
+                hostAvailabilityMessage = "lookupUp service is not avaliable, Exception : " + e.getMessage();
+            } finally {
+                if (httpConn != null) {
+                    httpConn.disconnect();
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        hostAvailabilityMessage = SERVER_ADDRESS + ": " + hostAvailabilityMessage + " using proxy: " + usingProxy;
+
+        LOGGER.warn(hostAvailabilityMessage);
+        return available;
+    }
+
+    public boolean hostAvailabilityCheck2(String SERVER_ADDRESS, int TCP_SERVER_PORT) {
+        boolean available = true;
+        String hostAvailabilityMessage = "";
+        try {
+            Socket lookupSocket = new Socket(SERVER_ADDRESS, TCP_SERVER_PORT);
+            if (lookupSocket.isConnected()) {
+                lookupSocket.close();
+                hostAvailabilityMessage = "lookupUp service is available and accessible";
+            }
+        } catch (UnknownHostException e) { // unknown host
+            available = false;
+            hostAvailabilityMessage = "lookupUp service is not avaliable, UnknownHostException : " + e.getMessage();
+        } catch (IOException e) { // io exception, service probably not running
+            available = false;
+            hostAvailabilityMessage = "lookupUp service is not avaliable, IOException : " + e.getMessage();
+        } catch (NullPointerException e) {
+            available = false;
+            hostAvailabilityMessage = "lookupUp service is not avaliable, NullPointerException : " + e.getMessage();
+        }
+
+        return available;
+    }
+
 }
