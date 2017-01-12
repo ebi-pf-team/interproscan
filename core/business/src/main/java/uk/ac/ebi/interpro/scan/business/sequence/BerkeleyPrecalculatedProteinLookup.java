@@ -393,29 +393,30 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 httpConn.setRequestMethod("HEAD");
                 usingProxy = httpConn.usingProxy();
                 httpConn.connect();
-                hostAvailabilityMessage = "lookupUp service is accessible - code: " + httpConn.getResponseCode();
-            }catch (NoRouteToHostException){
+                hostAvailabilityMessage = "accessible - code: " + httpConn.getResponseCode();
+            }catch (NoRouteToHostException e){
                 available = false;
-                hostAvailabilityMessage = "lookupUp service is not avaliable, NoRouteToHostException : " + e.getMessage();
+                hostAvailabilityMessage = "not avaliable, NoRouteToHostException : " + e.getMessage();
             } catch (java.net.ConnectException e) {
                 available = false;
-                hostAvailabilityMessage = "lookupUp service is not avaliable, ConnectException : " + e.getMessage();
+                hostAvailabilityMessage = "not avaliable, ConnectException : " + e.getMessage();
             } catch (IOException e) { // io exception, service probably not running
                 available = false;
-                hostAvailabilityMessage = "lookupUp service is not avaliable, IOException : " + e.getMessage();
+                hostAvailabilityMessage = "not avaliable, IOException : " + e.getMessage();
             } catch (Exception e) { // exception, service probably not running
                 available = false;
-                hostAvailabilityMessage = "lookupUp service is not avaliable, Exception : " + e.getMessage();
+                hostAvailabilityMessage = "not avaliable, Exception : " + e.getMessage();
             } finally {
                 if (httpConn != null) {
                     httpConn.disconnect();
                 }
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            available = false;
+            hostAvailabilityMessage =  " not avaliable, MalformedURLException : " + e.getMessage();
         }
 
-        hostAvailabilityMessage = SERVER_ADDRESS + ": " + hostAvailabilityMessage + " using proxy: " + usingProxy;
+        hostAvailabilityMessage = "lookupUp service at " + SERVER_ADDRESS + " is " + hostAvailabilityMessage + ",  using proxy: " + usingProxy;
 
         LOGGER.warn(hostAvailabilityMessage);
         return available;
