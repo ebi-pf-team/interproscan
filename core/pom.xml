@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.21-60.0</version>
+    <version>5.22-61.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -106,7 +106,7 @@
         <mvn.war.version>2.1.1</mvn.war.version>
         <javax.servlet.api.version>3.1.0</javax.servlet.api.version>
         <h2.database.version>1.4.189</h2.database.version>
-        <i5.svn.revision>5.21-60.0</i5.svn.revision>
+        <i5.svn.revision>5.22-61.0</i5.svn.revision>
         <i5.version>${project.version}</i5.version>
         <oracle.jdbc.version>10.2.0.2</oracle.jdbc.version>
         <!-- github server corresponds to entry in ~/.m2/settings.xml -->
