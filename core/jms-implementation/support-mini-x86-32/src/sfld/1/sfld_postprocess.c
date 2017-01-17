@@ -13,7 +13,7 @@
 // where SFLD.annot is the output of sfld_preprocess. It is expected that the three input files were
 // all generated from the same search. Other cases will to fail: this is NOT checked for.
 //
-// Copyright © EMBL-EBI 2016.
+// Copyright (c) EMBL-EBI 2016.
 
 int main(int argc, char **argv)
 {

@@ -3,7 +3,7 @@
 // Pre-process SFLD alignment/HMM and produce annotation of active sites
 // sfld_preprocess -a SFLD.sto -m SFLD.hmm -s SFLD.annot
 //
-// Copyright © EMBL-EBI 2016.
+// Copyright (c) EMBL-EBI 2016.
 
 int main(int argc, char **argv)
 {
