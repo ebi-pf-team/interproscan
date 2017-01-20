@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -77,6 +78,7 @@ public class Model implements Serializable {
     private String description;
 
     @ManyToOne(optional = true)
+    @JsonBackReference
     private Signature signature;
 
     /**

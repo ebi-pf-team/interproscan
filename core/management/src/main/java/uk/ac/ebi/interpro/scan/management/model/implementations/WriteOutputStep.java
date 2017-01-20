@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -203,6 +205,12 @@ public class WriteOutputStep extends Step {
                     case XML_SLIM:
                         outputToXML(outputPath, stepInstance, sequenceType, proteins, true);
                         break;
+                    case JSON:
+                        outputToJSON(outputPath, stepInstance, sequenceType, proteins, false);
+                        break;
+                    case JSON_SLIM:
+                        outputToJSON(outputPath, stepInstance, sequenceType, proteins, true);
+                        break;
                     case GFF3:
                         outputToGFF(outputPath, stepInstance, sequenceType, proteins);
                         break;
@@ -359,6 +367,46 @@ public class WriteOutputStep extends Step {
         }
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
         xmlWriter.writeMatches(outputPath, matchesHolder);
+    }
+
+    private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+        IMatchesHolder matchesHolder;
+        if (sequenceType.equalsIgnoreCase("n")) {
+            matchesHolder = new NucleicAcidMatchesHolder();
+        } else {
+            matchesHolder = new ProteinMatchesHolder();
+        }
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
+
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
+        xmlWriter.setExcludeSites(excludeSites);
+        if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
+            removeSites(proteins, true);
+        }
+        else if (isSlimOutput) {
+            removeSites(proteins, false);
+        }
+
+        if (isSlimOutput) {
+            // Only include a protein in the output if it has at least one match
+            for (Protein protein : proteins) {
+                Set<Match> matches = protein.getMatches();
+                if (matches != null && matches.size() > 0) {
+                    matchesHolder.addProtein(protein);
+                }
+            }
+        } else {
+            // Include all proteins in the output, whether they have any matches or not
+            matchesHolder.addProteins(proteins);
+        }
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false); // E.g. matches for un-integrated signatures have no InterPro entry assigned
+        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(matchesHolder);
+        System.out.println(json);
+//        xmlWriter.writeMatches(outputPath, matchesHolder);
     }
 
     private void outputToTSV(final Path path,
