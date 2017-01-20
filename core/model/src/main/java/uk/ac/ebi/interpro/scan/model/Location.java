@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -58,6 +59,7 @@ public abstract class Location implements Serializable, Cloneable {
     private int end;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JsonBackReference
     private Match match;
 
     /**
