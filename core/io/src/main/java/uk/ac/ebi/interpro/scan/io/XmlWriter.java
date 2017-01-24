@@ -1,20 +1,14 @@
 package uk.ac.ebi.interpro.scan.io;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import org.apache.log4j.Logger;
-
-import org.dom4j.io.XMLResult;
-import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
