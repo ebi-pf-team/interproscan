@@ -23,12 +23,6 @@ public class XmlWriter {
 
     private Jaxb2Marshaller marshaller;
 
-    protected boolean excludeSites;
-
-    public void setExcludeSites(boolean excludeSites) {
-        this.excludeSites = excludeSites;
-    }
-
     @Required
     public void setMarshaller(Jaxb2Marshaller marshaller) {
         this.marshaller = marshaller;

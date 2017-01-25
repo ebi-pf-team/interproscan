@@ -48,9 +48,7 @@ public class WriteOutputStep extends Step {
 
     //Output writer
     private XmlWriter xmlWriter;
-
     private ProteinMatchesHTMLResultWriter htmlResultWriter;
-
     private ProteinMatchesSVGResultWriter svgResultWriter;
 
     //Misc
@@ -345,7 +343,6 @@ public class WriteOutputStep extends Step {
 
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
-        xmlWriter.setExcludeSites(excludeSites);
         if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
             removeSites(proteins, true);
         }
@@ -370,17 +367,11 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
-        IMatchesHolder matchesHolder;
-        if (sequenceType.equalsIgnoreCase("n")) {
-            matchesHolder = new NucleicAcidMatchesHolder();
-        } else {
-            matchesHolder = new ProteinMatchesHolder();
-        }
+        Set<Protein> proteinsToOutput = new HashSet<>();
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
 
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
-        xmlWriter.setExcludeSites(excludeSites);
         if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
             removeSites(proteins, true);
         }
@@ -393,20 +384,18 @@ public class WriteOutputStep extends Step {
             for (Protein protein : proteins) {
                 Set<Match> matches = protein.getMatches();
                 if (matches != null && matches.size() > 0) {
-                    matchesHolder.addProtein(protein);
+                    proteinsToOutput.add(protein);
                 }
             }
         } else {
             // Include all proteins in the output, whether they have any matches or not
-            matchesHolder.addProteins(proteins);
+            proteinsToOutput.addAll(proteins);
         }
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false); // E.g. matches for un-integrated signatures have no InterPro entry assigned
-        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(matchesHolder);
-        System.out.println(json);
-//        xmlWriter.writeMatches(outputPath, matchesHolder);
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath)) {
+            writer.write(proteinsToOutput, isSlimOutput);
+        }
     }
 
     private void outputToTSV(final Path path,
