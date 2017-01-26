@@ -4,7 +4,7 @@ SFLD search/post-processing
 Building
 --------
 
-Example makefile - note that you will have to install the easel library to compile this
+Example build instructions - note that you will have to install the easel library to compile this
 
 $> wget http://eddylab.org/software/hmmer3/3.1b2/hmmer-3.1b2.tar.gz
 $> tar xf hmmer-3.1b2.tar.gz
@@ -12,7 +12,8 @@ $> cd hmmer-3.1b2
 $> ./configure
 $> make
 $> make check
-$> cd ..
+
+$> cd .../path/to/src/sfld/1
 $> make sfld_preprocess
 In the Makefile replace the path in EASEL_DIR with the 'easel' subdir of the hmmer
 distribution (e.g. /path/to/hmmer-3.1b2/easel). Then run
