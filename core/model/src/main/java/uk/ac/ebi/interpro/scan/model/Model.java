@@ -17,6 +17,7 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -44,6 +45,7 @@ import java.util.List;
         @Index(name = "MODEL_NAME_IDX", columnList = "MODEL_NAME"),
         @Index(name = "MODEL_MD5_IDX", columnList = "MD5")
 })
+@JsonIgnoreProperties({"definition", "md5"}) // IBU-4703: "definition" and "md5" are never populated
 public class Model implements Serializable {
 
     @Transient

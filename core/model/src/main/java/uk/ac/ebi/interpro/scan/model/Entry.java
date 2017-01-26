@@ -30,7 +30,7 @@ import java.util.*;
         @Index(name = "ENTRY_TYPE_IDX", columnList = "TYPE")
 
 })
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "created", "updated", "releases"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "created", "updated", "releases", "id", "abstract"}) // IBU-4703: "abstract" is never populated
 public class Entry implements Serializable {
 
     @Transient
