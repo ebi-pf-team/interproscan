@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -24,6 +25,7 @@ import java.util.*;
 //@XmlRootElement(name = "site")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "SiteType")
+@JsonIgnoreProperties({"id"})
 public abstract class Site implements Serializable, Cloneable {
 
     /**

@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name = "protein")
 @XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "superMatches", "matches"})
-@JsonIgnoreProperties({"superMatches", "orfs"})
+@JsonIgnoreProperties({"id", "superMatches", "orfs"})
 public class Protein implements Serializable {
 
     @Transient

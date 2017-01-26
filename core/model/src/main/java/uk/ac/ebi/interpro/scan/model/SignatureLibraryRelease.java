@@ -47,7 +47,7 @@ import java.util.Set;
 @UniqueConstraint(columnNames = {"library", "version"}))
 @XmlRootElement(name = "signature-library-release")
 @XmlType(name = "SignatureLibraryReleaseType")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "id"})
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
