@@ -377,11 +377,16 @@ public class WriteOutputStep extends Step {
             writeProteinMatches(writer, stepInstance, proteins);
         }
         //write the site tsv production output
-        Path tsvProSitesPath =  Paths.get(path.toString() + ".sites");
-        Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
-        try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
+        //only for CDD and SFLD
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
+        if (! excludeSites) {
+            Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
+            Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
+            try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
 
-            writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
+                writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
+            }
         }
     }
 

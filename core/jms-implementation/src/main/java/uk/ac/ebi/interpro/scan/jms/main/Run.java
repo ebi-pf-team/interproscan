@@ -536,7 +536,7 @@ public class Run extends AbstractI5Runner {
             }
 
             // Exclude sites from output?
-            final boolean excludeSites = parsedCommandLine.hasOption(I5Option.NOSITES.getLongOpt());
+            final boolean excludeSites = parsedCommandLine.hasOption(I5Option.DISABLE_RESIDUE_ANNOT.getLongOpt());
             bbMaster.setExcludeSites(excludeSites);
 
             // GO terms and/or pathways will also imply IPR lookup

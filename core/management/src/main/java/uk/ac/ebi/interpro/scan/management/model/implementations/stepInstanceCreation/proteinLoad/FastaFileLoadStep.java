@@ -100,7 +100,9 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
             String fastaFileInputStatusMessage;
             try {
                 Path path = Paths.get(providedPath); // E.g. "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
-                System.out.println(getTimeNow() + " Loading file " + providedPath);
+                if (Utilities.verboseLog || ! Utilities.isRunningInSingleSeqMode()) {
+                    System.out.println(getTimeNow() + " Loading file " + providedPath);
+                }
                 if (Files.exists(path)) {
                     fastaFileInputStatusMessage = " - fasta file exists";
                     if (Files.isReadable(path)) {
