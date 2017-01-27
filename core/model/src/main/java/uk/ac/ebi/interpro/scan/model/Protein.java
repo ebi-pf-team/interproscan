@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name = "protein")
 @XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "superMatches", "matches"})
-@JsonIgnoreProperties({"id", "superMatches", "orfs"})
+@JsonIgnoreProperties({"id", "superMatches", "openReadingFrames"})
 public class Protein implements Serializable {
 
     @Transient
@@ -111,6 +111,8 @@ public class Protein implements Serializable {
     @BatchSize(size=4000)
     // TODO: This should not be here (so TODO comments on getCrossReferences)
     @JsonManagedReference
+    @JsonProperty("identifiers")
+    @JsonUnwrapped
     private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
