@@ -379,9 +379,18 @@ public class WriteOutputStep extends Step {
             removeSites(proteins, false);
         }
 
-        // Include all proteins in the output, whether they have any matches or not (for both JSON and JSON-slim)
-        proteinsToOutput.addAll(proteins);
-
+        if (isSlimOutput) {
+            // Only include a protein in the output if it has at least one match
+            for (Protein protein : proteins) {
+                Set<Match> matches = protein.getMatches();
+                if (matches != null && matches.size() > 0) {
+                    proteinsToOutput.add(protein);
+                }
+            }
+        } else {
+            // Include all proteins in the output, whether they have any matches or not
+            proteinsToOutput.addAll(proteins);
+        }
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
 
         try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath)) {
