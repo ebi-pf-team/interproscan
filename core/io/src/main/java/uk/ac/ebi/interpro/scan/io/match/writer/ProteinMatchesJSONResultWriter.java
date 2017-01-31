@@ -40,9 +40,27 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
     public void write(final Set<Protein> proteins, final boolean isSlimOutput) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false); // E.g. matches for un-integrated signatures have no InterPro entry assigned
+//        if (isSlimOutput) {
+//            // TODO Exclude null values from slim output? This doesn't work anyway!
+//            mapper.configOverride(Protein.class).setInclude(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, null));
+//            mapper.configOverride(Entry.class).setInclude(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, null));
+//            mapper.configOverride(Signature.class).setInclude(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, null));
+//        }
         ObjectWriter objectWriter = (isSlimOutput ? mapper.writer() : mapper.writerWithDefaultPrettyPrinter());
-        String json = objectWriter.writeValueAsString(proteins);
-        fileWriter.write(json);
+        fileWriter.write("[");
+        if (proteins != null && proteins.size() > 0) {
+            final int len = proteins.size();
+            int i = 0;
+            for (Protein protein : proteins) {
+                String json = objectWriter.writeValueAsString(protein);
+                fileWriter.write(json);
+                i++;
+                if (i < len) {
+                    fileWriter.write(","); // More proteins to follow
+                }
+            }
+        }
+        fileWriter.write("]");
     }
 
     public void close() throws IOException {
