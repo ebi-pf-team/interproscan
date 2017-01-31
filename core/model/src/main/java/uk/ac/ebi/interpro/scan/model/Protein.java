@@ -112,7 +112,6 @@ public class Protein implements Serializable {
     // TODO: This should not be here (so TODO comments on getCrossReferences)
     @JsonManagedReference
     @JsonProperty("identifiers")
-    @JsonUnwrapped
     private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
