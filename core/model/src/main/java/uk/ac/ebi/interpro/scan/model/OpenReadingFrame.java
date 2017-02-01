@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -35,6 +37,7 @@ import java.io.Serializable;
 @XmlType(name = "OrfType")
 @Entity
 @Table(name = "open_reading_frame")
+@JsonIgnoreProperties({"id", "nucleotideSequence"})
 public class OpenReadingFrame implements Serializable {
 
     @Id
@@ -53,6 +56,7 @@ public class OpenReadingFrame implements Serializable {
     private NucleotideSequenceStrand strand;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JsonBackReference
     private Protein protein;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
