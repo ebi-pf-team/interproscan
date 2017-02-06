@@ -1,11 +1,14 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
+import uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -67,37 +70,58 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         //Default seq score
                         String seqScore = "-";
 
-                        // To maintain compatibility, we output the same value for the score column as I4
-                        // In some cases we have to take the value from the match
-                        if (match instanceof SuperFamilyHmmer3Match) {
-                            score = Double.toString( ((SuperFamilyHmmer3Match) match).getEvalue());
-                        } else if (match instanceof PantherMatch) {
-                            score = Double.toString( ((PantherMatch) match).getEvalue());
+
+                        if (match instanceof PantherMatch) {
+                            seqScore = Double.toString( ((PantherMatch) match).getScore());
                         } else if (match instanceof FingerPrintsMatch) {
-                            score = Double.toString(((FingerPrintsMatch) match).getEvalue());
+                            seqScore = Double.toString(((FingerPrintsMatch) match).getEvalue());
+                        } else if (match instanceof Hmmer3Match) {
+                            seqScore = Double.toString( ((Hmmer3Match) match).getScore());
+                        } else if (match instanceof Hmmer2Match) {
+                            seqScore = Double.toString(((Hmmer2Match) match).getScore());
                         }
+
+
+                        //get the seqEvalue
+
+
+                        // get the score
+
+
                         //In other cases we have to take the value from the location
                         if (location instanceof HmmerLocation) {
-                            score = Double.toString(((HmmerLocation) location).getEvalue());
+                            score = Double.toString(((HmmerLocation) location).getScore());
                         } else if (location instanceof BlastProDomMatch.BlastProDomLocation) {
-                            score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getEvalue() );
+                            score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getScore() );
                         }  else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
                             score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
                         } else if (location instanceof RPSBlastMatch.RPSBlastLocation) {
-                            score = Double.toString( ((RPSBlastMatch.RPSBlastLocation) location).getEvalue() );
+                            score = Double.toString( ((RPSBlastMatch.RPSBlastLocation) location).getScore() );
+                        } else if (location instanceof FingerPrintsMatch.FingerPrintsLocation) {
+                            score = Double.toString( ((FingerPrintsMatch.FingerPrintsLocation) location).getScore() );
+                        } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {
+                            score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore());
+                        } else if (location instanceof TMHMMMatch.TMHMMLocation) {
+                            score = Double.toString( ((TMHMMMatch.TMHMMLocation) location).getScore() );
+//                        } else if (location instanceof PatternScanMatch.PatternScanLocation) {
+//                            score = Double.toString( ((PatternScanMatch.PatternScanLocation) location).getLevel(). );
+                        } else if (location instanceof SignalPMatch.SignalPLocation) {
+                            score = Double.toString( ((SignalPMatch.SignalPLocation) location).getScore() );
                         }
 
+
+                        //how do we deal with duplicates, as we dont want duplicates
                         final List<String> mappingFields = new ArrayList<>();
+                        mappingFields.add(analysis);
+                        mappingFields.add(getReleaseMajorMinor(version)[0]);
+                        mappingFields.add(getReleaseMajorMinor(version)[1]);
                         mappingFields.add(proteinAc);
-                        mappingFields.add(md5);
-                        mappingFields.add(Integer.toString(length));
-                        mappingFields.add(analysis + "-" + version);
+//                        mappingFields.add(md5);
+//                        mappingFields.add(Integer.toString(length));
                         mappingFields.add(signatureAc);
                         mappingFields.add(Integer.toString(location.getStart()));
                         mappingFields.add(Integer.toString(location.getEnd()));
                         mappingFields.add(seqScore);
-                        mappingFields.add(score);
-                        mappingFields.add(date);
 
                         this.tsvWriter.write(mappingFields);
                     }
@@ -105,6 +129,24 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
             }
         }
         return locationCount;
+    }
+
+    /**
+     * get major release and minor release numbers from version
+     * @param version
+     * @return
+     */
+    private String[] getReleaseMajorMinor(String version){
+        String releaseMajor = version;
+        String releaseMinor = "0";
+        Pattern pattern = Pattern.compile("\\. *");
+        Matcher matcher = pattern.matcher(version);
+        if (matcher.find()) {
+            releaseMajor = version.substring(0, matcher.start());
+            releaseMinor = version.substring(matcher.end());
+        }
+
+        return new String[] {releaseMajor, releaseMinor};
     }
 }
 
