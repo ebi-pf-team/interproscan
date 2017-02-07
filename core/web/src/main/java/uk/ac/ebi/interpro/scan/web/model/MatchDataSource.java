@@ -107,8 +107,8 @@ public enum MatchDataSource {
                     "The library is based on the SCOP classification of proteins. Models correspond to SCOP domains at the " +
                     "superfamily level and a hybrid method subsequently sub-classifies domains at the family level. SUPERFAMILY " +
                     "provides its structural assignments at both levels to all completely sequenced genomes.",
-            "http://supfam.cs.bris.ac.uk/SUPERFAMILY/",
-            "http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/scop.cgi?ipid=$0"),
+            "http://supfam.org/SUPERFAMILY/",
+            "http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=$0"),
 
     TIGRFAMS("TIGRFAMs",
             "TIGRFAMs is a collection of protein families.",
