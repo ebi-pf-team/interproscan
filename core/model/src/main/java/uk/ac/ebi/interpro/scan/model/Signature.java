@@ -29,7 +29,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Signature, for example SSF53098 [http://supfam.mrc-lmb.cam.ac.uk/SUPERFAMILY/cgi-bin/models_list.cgi?sf=53098]
+ * Signature, for example SSF53098 [http://supfam.org/SUPERFAMILY/cgi-bin/models_list.cgi?sf=53098]
  *
  * @author Antony Quinn
  * @author Phil Jones
