@@ -472,6 +472,7 @@ public class Protein implements Serializable {
     }
 
     @XmlTransient
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public Set<OpenReadingFrame> getOpenReadingFrames() {
         return orfs;
     }
