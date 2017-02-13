@@ -46,8 +46,8 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name = "protein")
 @XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "superMatches", "matches"})
-@JsonIgnoreProperties({"id", "superMatches", "orfs"})
-public class Protein implements Serializable {
+@JsonIgnoreProperties({"id", "superMatches", "orfs", "openReadingFrames"})
+public class Protein implements OutputListElement, Serializable {
 
     @Transient
     private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
@@ -115,7 +115,6 @@ public class Protein implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
     @BatchSize(size=4000)
-    @JsonManagedReference
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
     @Transient
@@ -472,7 +471,6 @@ public class Protein implements Serializable {
     }
 
     @XmlTransient
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public Set<OpenReadingFrame> getOpenReadingFrames() {
         return orfs;
     }
