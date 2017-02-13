@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 @XmlRootElement(name = "nucleotide-sequence")
 @XmlType(name = "NucleotideType", propOrder = {"sequenceObject", "crossReferences", "openReadingFrames"})
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-public class NucleotideSequence implements Serializable {
+public class NucleotideSequence implements OutputListElement, Serializable {
 
     // TODO: Refactor code that can be shared with Protein class
 

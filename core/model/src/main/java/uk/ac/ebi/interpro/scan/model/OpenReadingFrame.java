@@ -16,7 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -57,7 +56,6 @@ public class OpenReadingFrame implements Serializable {
     private NucleotideSequenceStrand strand;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JsonBackReference
     private Protein protein;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)

@@ -1,7 +1,5 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -333,13 +331,30 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
+
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
+        xmlWriter.writeMatches(outputPath, matchesHolder);
+    }
+
+    private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
+
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath)) {
+            writer.write(matchesHolder, sequenceType, isSlimOutput);
+        }
+    }
+
+    private IMatchesHolder getMatchesHolder(StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
 
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
@@ -362,40 +377,7 @@ public class WriteOutputStep extends Step {
             // Include all proteins in the output, whether they have any matches or not
             matchesHolder.addProteins(proteins);
         }
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
-        xmlWriter.writeMatches(outputPath, matchesHolder);
-    }
-
-    private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
-        Set<Protein> proteinsToOutput = new HashSet<>();
-        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
-
-        final Map<String, String> parameters = stepInstance.getParameters();
-        final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
-        if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
-            removeSites(proteins, true);
-        }
-        else if (isSlimOutput) {
-            removeSites(proteins, false);
-        }
-
-        if (isSlimOutput) {
-            // Only include a protein in the output if it has at least one match
-            for (Protein protein : proteins) {
-                Set<Match> matches = protein.getMatches();
-                if (matches != null && matches.size() > 0) {
-                    proteinsToOutput.add(protein);
-                }
-            }
-        } else {
-            // Include all proteins in the output, whether they have any matches or not
-            proteinsToOutput.addAll(proteins);
-        }
-        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
-
-        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath)) {
-            writer.write(proteinsToOutput, isSlimOutput);
-        }
+        return matchesHolder;
     }
 
     private void outputToTSV(final Path path,
