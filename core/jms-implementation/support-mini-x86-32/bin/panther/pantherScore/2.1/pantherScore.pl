@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 # Copyright (C)) 2005 Applied Biosystems.
 # This file may be copied and redistributed freely, without advance permission,
