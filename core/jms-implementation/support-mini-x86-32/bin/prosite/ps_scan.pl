@@ -798,6 +798,9 @@ my $opt_shuffle;
 my $opt_no_postprocessing;
 my $opt_tmpdir;
 
+#prosite_profiles dir
+my $prosite_files_dir;
+
 # list of prosite 'dat' files to be scanned
 my @prosite_files;
 # !can contain a list of user pattern (and/or)
@@ -841,6 +844,7 @@ GetOptions (
     "x=i" => \$opt_max_x,
     "l=i" => \$opt_level,
     "o=s" => \$opt_format,
+    "y=s" => \$prosite_files_dir,
     "d=s" => \@prosite_files,
     "p=s" => \@motifAC_or_userpattern,
     "e=s" => \@entries,
@@ -881,6 +885,13 @@ if ( $opt_pfsearch ) {
     # integer cutoff forces raw scores
     $opt_raw = $1 if defined($opt_cutoff) and $opt_cutoff=~ /^(\d+)$/mg;
 }
+
+if (!$prosite_files_dir) {
+   $prosite_files_dir = "data/prosite/20.132/prosite_models";
+   print STDERR "not defined $prosite_files_dir";
+}
+
+
 my $use_pfsearchV3 = index( $opt_pfsearch, 'pfsearchV3') != -1 ? 1 : 0;
 
 
@@ -975,6 +986,7 @@ if ( !@prosite_files && !@userpat ) {
         die "prosite.dat file not found, please use the -d option";
     }
 }
+
 
 # -b option with no pathname specified: find default evaluator.dat
 if ( defined($opt_miniprofiles) && !$opt_miniprofiles ) {
@@ -1944,6 +1956,7 @@ sub do_profile_scan {
         }
         my $cmd = "@pre_command $seqfile @post_command > $PFSCAN_TMP";
         # launch pftool scan command
+        #print "cmd to run: $cmd";
         system $cmd and die "Could not execute $cmd";
         unlink $seqfile unless defined $seqfile_to_scan;
         my $pfscan_fh = new IO::File($PFSCAN_TMP)
@@ -2242,16 +2255,20 @@ sub processMotif {
             # if $opt_pfsearch: save data to tmp profile
             if (!$last_profile_tmp_filename || $opt_pfsearch) {
                 # open new profile temp
-                close PROFILE_TMP if ($last_profile_tmp_filename);
+                my $profile_model_name = $prosite_files_dir."/".$ac.".prf";
+                #close PROFILE_TMP if ($last_profile_tmp_filename);
                 # close previous one
-                $last_profile_tmp_filename=tmpnam();
+                $last_profile_tmp_filename=$profile_model_name;
+                #$last_profile_tmp_filename=tmpnam();
+
                 # get new temp file name
-                open PROFILE_TMP, ">$last_profile_tmp_filename"
-                    or die "Cannot open $last_profile_tmp_filename: $!";
+                #open PROFILE_TMP, ">$last_profile_tmp_filename"
+                #    or die "Cannot open $last_profile_tmp_filename: $!";
             }
             # save profile to temp file
-            print PROFILE_TMP $ps_entry
-                or die "can't print to $last_profile_tmp_filename: $!\n";
+            # not for now
+            #print PROFILE_TMP $ps_entry
+            #    or die "can't print to $last_profile_tmp_filename: $!\n";
         }
         push @MotifInfo,
             [$ac, $id, $type, $de, undef, $skip, $cutoffs,
@@ -2364,6 +2381,8 @@ sub main {
     }
     # delete profile temp file(s)
     foreach my $tmp_prf ( map { $_->[7] } @MotifInfo ) {
-        unlink $tmp_prf if $tmp_prf;
+        #dont do anything for now
+        #print $tmp_prf
+        #unlink $tmp_prf if $tmp_prf;
     }
 }
