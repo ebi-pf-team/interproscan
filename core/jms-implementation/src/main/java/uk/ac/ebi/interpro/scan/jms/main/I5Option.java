@@ -16,6 +16,8 @@ import java.util.EnumSet;
  * @since 1.0-SNAPSHOT
  */
 public enum I5Option {
+    VERSION("version", "version", false, "Optional, display version number", null, false, Mode.SET_OF_STANDARD_MODES),
+    HELP("help", "help", false, "Optional, display help information", null, false, Mode.SET_OF_STANDARD_MODES),
     MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false, Mode.SET_OF_NO_MODES),
     INPUT("input", "i", false, "Optional, path to fasta file that should be loaded on Master startup. Alternatively, in CONVERT mode, the InterProScan 5 XML file to convert.", "INPUT-FILE-PATH", false, Mode.SET_OF_ALL_MODES),
     OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3, HTML and SVG. Default for protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3 and XML.", "OUTPUT-FORMATS", true, Mode.SET_OF_ALL_MODES),
