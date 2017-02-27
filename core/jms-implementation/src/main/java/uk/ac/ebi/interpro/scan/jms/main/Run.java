@@ -16,6 +16,7 @@ import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.exception.InvalidInputException;
 import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
+import uk.ac.ebi.interpro.scan.jms.stats.SystemInfo;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
@@ -133,7 +134,20 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-5.21-60.0");
+
+            ArrayList<String> analysesHelpInformation = new ArrayList<>();
+
+            String i5Version = "5.21-60.0";
+            String i5BuildType = "64-Bit";
+            //32bitMessage:i5BuildType = "32-Bit";
+
+            //print version and exit
+            if (parsedCommandLine.hasOption(I5Option.VERSION.getLongOpt())) {
+                printVersion(i5Version, i5BuildType);
+                System.exit(0);
+            }
+
+            System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-" + i5Version);
             //32bitMessage:System.out.println(Utilities.getTimeNow() + " You are running the 32-bit version");
 
             //String config = System.getProperty("config");
@@ -204,22 +218,30 @@ public class Run extends AbstractI5Runner {
 
                 if (isInvalid(mode, parsedCommandLine)) {
                     printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
-                    System.out.println("Available analyses:");    // LEAVE as System.out
+                    analysesHelpInformation.add("Available analyses:\n");    // LEAVE as System.out
                     for (Job job : jobs.getActiveAnalysisJobs().getJobList()) {
                         // Print out available jobs
                         SignatureLibraryRelease slr = job.getLibraryRelease();
-                        System.out.printf("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription()); // LEAVE as System.out
+                        analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription())); // LEAVE as System.out
                     }
                     if (deactivatedJobs.size() > 0) {
-                        System.out.println("\nDeactivated analyses:");
+                        analysesHelpInformation.add("\nDeactivated analyses:\n");
                     }
                     for (Job deactivatedJob : deactivatedJobs.keySet()) {
                         JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
                         // Print out deactivated jobs
                         SignatureLibraryRelease slr = deactivatedJob.getLibraryRelease();
-                        System.out.printf("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), jobStatusWrapper.getWarning());
+                        analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), jobStatusWrapper.getWarning()));
                     }
+                    printStringList(analysesHelpInformation);
                     System.exit(1);
+                }
+
+                //print help and exit
+                if (parsedCommandLine.hasOption(I5Option.HELP.getLongOpt())) {
+                    printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
+                    printStringList(analysesHelpInformation);
+                    System.exit(0);
                 }
 
                 try {
