@@ -56,31 +56,33 @@ public class ProteinSiteMatchesTSVResultWriter extends ProteinMatchesResultWrite
                 final String analysis = signatureLibrary.getName();
                 final String version = signature.getSignatureLibraryRelease().getVersion();
 
-                Set<LocationWithSites> locations = match.getLocations();
-                if (locations != null) {
-                    locationCount += locations.size();
-                    for (LocationWithSites location : locations) {
+                if ((match instanceof Hmmer3MatchWithSites) || (match instanceof RPSBlastMatch) ) {
+                    Set<LocationWithSites> locations = match.getLocations();
+                    if (locations != null) {
+                        locationCount += locations.size();
+                        for (LocationWithSites location : locations) {
 
-                        Set<Site> sites = location.getSites();
-                        if (sites != null) {
-                            for (Site site : sites) {
-                                for (SiteLocation siteLocation : site.getSiteLocations()) {
-                                    final List<String> mappingFields = new ArrayList<>();
-                                    mappingFields.add(proteinAc);
-                                    mappingFields.add(md5);
-                                    mappingFields.add(Integer.toString(length));
-                                    mappingFields.add(analysis + "-" + version);
-                                    mappingFields.add(signatureAc);
-                                    mappingFields.add(Integer.toString(location.getStart()));
-                                    mappingFields.add(Integer.toString(location.getEnd()));
-                                    mappingFields.add(Integer.toString(site.getNumLocations()));
-                                    mappingFields.add(siteLocation.getResidue());
-                                    mappingFields.add(Integer.toString(siteLocation.getStart()));
-                                    mappingFields.add(Integer.toString(siteLocation.getEnd()));
-                                    mappingFields.add((site.getDescription() == null ? "" : site.getDescription()));
+                            Set<Site> sites = location.getSites();
+                            if (sites != null) {
+                                for (Site site : sites) {
+                                    for (SiteLocation siteLocation : site.getSiteLocations()) {
+                                        final List<String> mappingFields = new ArrayList<>();
+                                        mappingFields.add(proteinAc);
+                                        mappingFields.add(md5);
+                                        mappingFields.add(Integer.toString(length));
+                                        mappingFields.add(analysis + "-" + version);
+                                        mappingFields.add(signatureAc);
+                                        mappingFields.add(Integer.toString(location.getStart()));
+                                        mappingFields.add(Integer.toString(location.getEnd()));
+                                        mappingFields.add(Integer.toString(site.getNumLocations()));
+                                        mappingFields.add(siteLocation.getResidue());
+                                        mappingFields.add(Integer.toString(siteLocation.getStart()));
+                                        mappingFields.add(Integer.toString(siteLocation.getEnd()));
+                                        mappingFields.add((site.getDescription() == null ? "" : site.getDescription()));
 
-                                    this.tsvWriter.write(mappingFields);
+                                        this.tsvWriter.write(mappingFields);
 //                                Utilities.verboseLog(mappingFields.toString());
+                                    }
                                 }
                             }
                         }
