@@ -16,6 +16,9 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -43,6 +46,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "MatchType", propOrder = {"signature", "locations"})
+@JsonIgnoreProperties({"id"})
 public abstract class Match<T extends Location> implements Serializable, Cloneable {
 
     @Id
@@ -52,6 +56,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "PROTEIN_ID", referencedColumnName = "ID")
+    @JsonBackReference
     private Protein protein;
 
     @ManyToOne(optional = false)
@@ -60,6 +65,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class, mappedBy = "match")
     @BatchSize(size=4000)
+    @JsonManagedReference
     protected Set<T> locations = new LinkedHashSet<T>();
 
     protected Match() {

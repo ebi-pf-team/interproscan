@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -42,6 +43,7 @@ public abstract class LocationWithSites<T extends Site> extends Location {
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
     @BatchSize(size=4000)
+    @JsonManagedReference
     protected Set<T> sites = new HashSet<T>();
 
     /**

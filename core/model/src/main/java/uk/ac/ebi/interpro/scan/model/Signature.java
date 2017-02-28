@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -44,6 +46,7 @@ import java.util.*;
         @Index(name = "SIGNATURE_TYPE_IDX", columnList = "TYPE"),
         @Index(name = "SIGNATURE_MD5_IDX", columnList = "MD5")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "updated", "created", "id", "crossReferences", "abstract", "comment", "md5", "deprecatedAccessions"}) // IBU-4703: "abstract", "comment" and "md5" are never populated
 public class Signature implements Serializable {
 
     @Transient
@@ -111,6 +114,7 @@ public class Signature implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     // TODO: This needs to be ManyToMany so that a Signature can be re-used across releases.
     @BatchSize(size=4000)
+    @JsonManagedReference
     private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
@@ -120,12 +124,14 @@ public class Signature implements Serializable {
 //    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "accession")
     @BatchSize(size=4000)
+    @JsonManagedReference
     private Map<String, Model> models = new HashMap<String, Model>();
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
     @BatchSize(size=4000)
+    @JsonManagedReference
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
     @ElementCollection
@@ -140,6 +146,7 @@ public class Signature implements Serializable {
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
 //    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    @JsonManagedReference
     private Entry entry;
 
     /**

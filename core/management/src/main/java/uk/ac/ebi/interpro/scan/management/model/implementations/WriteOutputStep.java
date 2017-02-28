@@ -46,9 +46,7 @@ public class WriteOutputStep extends Step {
 
     //Output writer
     private XmlWriter xmlWriter;
-
     private ProteinMatchesHTMLResultWriter htmlResultWriter;
-
     private ProteinMatchesSVGResultWriter svgResultWriter;
 
     //Misc
@@ -203,6 +201,12 @@ public class WriteOutputStep extends Step {
                     case XML_SLIM:
                         outputToXML(outputPath, stepInstance, sequenceType, proteins, true);
                         break;
+                    case JSON:
+                        outputToJSON(outputPath, stepInstance, sequenceType, proteins, false);
+                        break;
+                    case JSON_SLIM:
+                        outputToJSON(outputPath, stepInstance, sequenceType, proteins, true);
+                        break;
                     case GFF3:
                         outputToGFF(outputPath, stepInstance, sequenceType, proteins);
                         break;
@@ -327,17 +331,33 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
+
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
+        xmlWriter.writeMatches(outputPath, matchesHolder);
+    }
+
+    private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
+
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath)) {
+            writer.write(matchesHolder, sequenceType, isSlimOutput);
+        }
+    }
+
+    private IMatchesHolder getMatchesHolder(StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder();
         } else {
             matchesHolder = new ProteinMatchesHolder();
         }
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
 
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
-        xmlWriter.setExcludeSites(excludeSites);
         if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
             removeSites(proteins, true);
         }
@@ -357,8 +377,7 @@ public class WriteOutputStep extends Step {
             // Include all proteins in the output, whether they have any matches or not
             matchesHolder.addProteins(proteins);
         }
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
-        xmlWriter.writeMatches(outputPath, matchesHolder);
+        return matchesHolder;
     }
 
     private void outputToTSV(final Path path,

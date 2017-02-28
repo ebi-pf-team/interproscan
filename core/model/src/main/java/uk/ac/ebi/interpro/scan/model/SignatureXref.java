@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -40,6 +41,7 @@ import java.io.Serializable;
 public class SignatureXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
+    @JsonBackReference
     private Signature signature;
 
     /**

@@ -13,14 +13,14 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public enum FileOutputFormat {
-    TSV("tsv"), XML("xml"), GFF3("gff3"), HTML("html"), SVG("svg"), RAW("raw"),
+    TSV("tsv"), XML("xml"), JSON("json"), GFF3("gff3"), HTML("html"), SVG("svg"), RAW("raw"),
     // GFF3 partial format is an internal format used for the MG pipeline only
     // It allows gff3 files to be concatenated together (impossible to do with normal gff3 format)
     // This output format is NOT to be mentioned in the documentation!
     GFF3_PARTIAL("gff3-partial"),
     // XML_SLIM is an internal format, the same as XML output but proteins with no matches are not included at all in
     // the file
-    XML_SLIM("xml-slim"),
+    XML_SLIM("xml-slim"), JSON_SLIM("json-slim"),
     //TSV_PRO is the format for production purposes in InterPro
     TSV_PRO("tsv-pro");
 
@@ -66,6 +66,10 @@ public enum FileOutputFormat {
             return XML;
         } else if (outputFormat.equalsIgnoreCase(XML_SLIM.getFileExtension())) {
             return XML_SLIM;
+        } else if (outputFormat.equalsIgnoreCase(JSON.getFileExtension())) {
+            return JSON;
+        } else if (outputFormat.equalsIgnoreCase(JSON_SLIM.getFileExtension())) {
+            return JSON_SLIM;
         } else if (outputFormat.equalsIgnoreCase(GFF3.getFileExtension()) || outputFormat.equalsIgnoreCase("gff")) {
             return GFF3;
         } else if (outputFormat.equalsIgnoreCase(GFF3_PARTIAL.getFileExtension())) {
@@ -97,6 +101,10 @@ public enum FileOutputFormat {
                 fileOutputFormats.add(XML);
             }  else if (format.equalsIgnoreCase(XML_SLIM.getFileExtension())) {
                 fileOutputFormats.add(XML_SLIM);
+            } else if (format.equalsIgnoreCase(JSON.getFileExtension())) {
+                fileOutputFormats.add(JSON);
+            }  else if (format.equalsIgnoreCase(JSON_SLIM.getFileExtension())) {
+                fileOutputFormats.add(JSON_SLIM);
             } else if (format.equalsIgnoreCase(GFF3.getFileExtension()) || format.equalsIgnoreCase("gff")) {
                 fileOutputFormats.add(GFF3);
             }  else if (format.equalsIgnoreCase(GFF3_PARTIAL.getFileExtension())) {

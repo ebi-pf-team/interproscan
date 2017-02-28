@@ -1,5 +1,8 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -22,6 +25,7 @@ import java.util.*;
 //@XmlRootElement(name = "site")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "SiteType")
+@JsonIgnoreProperties({"id"})
 public abstract class Site implements Serializable, Cloneable {
 
     /**
@@ -42,9 +46,11 @@ public abstract class Site implements Serializable, Cloneable {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, targetEntity = SiteLocation.class, mappedBy = "site")
 //    @MapKey(name = "id")
     @BatchSize(size=4000)
+    @JsonManagedReference
     private Set<SiteLocation> siteLocations = new LinkedHashSet<>();
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JsonBackReference
     private LocationWithSites location;
 
     /**
