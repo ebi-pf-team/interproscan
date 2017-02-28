@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -29,6 +30,7 @@ public class PathwayXref extends Xref implements Serializable {
 
     @ManyToMany(mappedBy = "pathwayXRefs",
             targetEntity = Entry.class)
+    @JsonBackReference
     private Set<Entry> entries = new HashSet<Entry>();
 
     /**

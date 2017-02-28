@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -45,7 +46,8 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name = "protein")
 @XmlType(name = "ProteinType", propOrder = {"sequenceObject", "crossReferences", "superMatches", "matches"})
-public class Protein implements Serializable {
+@JsonIgnoreProperties({"id", "superMatches", "orfs", "openReadingFrames"})
+public class Protein implements OutputListElement, Serializable {
 
     @Transient
     private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
@@ -97,6 +99,7 @@ public class Protein implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
     @BatchSize(size=4000)
+    @JsonManagedReference
     private Set<Match> matches = new HashSet<Match>();
 
     @Transient
@@ -107,11 +110,11 @@ public class Protein implements Serializable {
     @XmlElement(name = "xref")
     @BatchSize(size=4000)
     // TODO: This should not be here (so TODO comments on getCrossReferences)
+    @JsonManagedReference
     private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
     @BatchSize(size=4000)
-//    @XmlElement(name = "orfs", required = true)
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
     @Transient

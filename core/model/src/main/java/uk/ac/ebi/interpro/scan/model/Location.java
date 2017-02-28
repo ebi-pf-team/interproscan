@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -42,6 +44,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationType", propOrder = {"start", "end"})
 @XmlSeeAlso(LocationWithSites.class)
+@JsonIgnoreProperties({"id"})
 public abstract class Location implements Serializable, Cloneable {
 
     @Id
@@ -58,6 +61,7 @@ public abstract class Location implements Serializable, Cloneable {
     private int end;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JsonBackReference
     private Match match;
 
     /**

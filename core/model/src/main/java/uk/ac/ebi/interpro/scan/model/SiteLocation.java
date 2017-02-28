@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -36,6 +38,7 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ResidueLocationType", propOrder = {"residue", "start", "end"})
 @Table(name = "residue_location")
+@JsonIgnoreProperties({"id"})
 public class SiteLocation implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RESIDUE_LOCN_IDGEN")
@@ -54,6 +57,7 @@ public class SiteLocation implements Serializable, Cloneable {
     private String residue;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JsonBackReference
     private Site site;
 
     /**

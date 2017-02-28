@@ -16,6 +16,9 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -36,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
+//@JsonIgnoreProperties({"hmmBounds", "hmmLength"}) // hmmBounds and  hmmLength is not output i the json
 public abstract class HmmerLocation extends Location {
 
     @Column(nullable = false, name = "hmm_start")

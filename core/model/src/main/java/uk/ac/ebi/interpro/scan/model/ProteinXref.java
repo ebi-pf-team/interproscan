@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -34,9 +36,11 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ProteinXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
+@JsonIgnoreProperties({"id"})
 public class ProteinXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
+    @JsonBackReference
     private Protein protein;
 
     @Column(nullable = true)

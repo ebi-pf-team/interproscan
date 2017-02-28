@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -45,6 +47,7 @@ import java.util.Set;
 @UniqueConstraint(columnNames = {"library", "version"}))
 @XmlRootElement(name = "signature-library-release")
 @XmlType(name = "SignatureLibraryReleaseType")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "id"})
 public class SignatureLibraryRelease implements Serializable {
 
     @Id
@@ -64,6 +67,7 @@ public class SignatureLibraryRelease implements Serializable {
     // TODO - so don't worry too much about getting this in place.
     @OneToMany(mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
     @XmlElement(name = "signature")
+    @JsonBackReference
     protected Set<Signature> signatures = new HashSet<Signature>();
 
     /**

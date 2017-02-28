@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -36,6 +37,7 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "XrefType")
+@JsonIgnoreProperties({"id"})
 abstract class Xref implements Serializable {
 
     @Id
