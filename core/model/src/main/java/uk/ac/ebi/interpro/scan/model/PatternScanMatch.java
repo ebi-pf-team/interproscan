@@ -156,6 +156,14 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
                 return tag;
             }
 
+            public String getTagNumber(){
+                if (tag.equals("(0)")){
+                    return "0";
+                }else if (tag.equals("(-1)")){
+                    return "-1";
+                }
+                return null;
+            }
             public String getSymbol() {
                 return symbol;
             }
