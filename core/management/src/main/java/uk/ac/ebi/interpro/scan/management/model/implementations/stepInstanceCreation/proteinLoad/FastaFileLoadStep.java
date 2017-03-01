@@ -103,6 +103,8 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 if (Utilities.verboseLog || ! Utilities.isRunningInSingleSeqMode()) {
                     System.out.println(getTimeNow() + " Loading file " + providedPath);
                 }
+//                System.out.println(getTimeNow() + " Loading file " + providedPath);
+
                 if (Files.exists(path)) {
                     fastaFileInputStatusMessage = " - fasta file exists";
                     if (Files.isReadable(path)) {
@@ -224,7 +226,11 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 //                StringBuilder analysesToDisplay = new StringBuilder();
                 StringJoiner analysesToDisplay = new StringJoiner(",");
 
-                for (String key: analysisJobMap.keySet()){
+                 //sort the keys
+                List<String> analysisJobMapKeySet = new ArrayList(analysisJobMap.keySet());
+                Collections.sort(analysisJobMapKeySet);
+
+                for (String key: analysisJobMapKeySet){
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
                     analysesToDisplay.add(String.join("-", analysisJobMap.get(key).getLibrary().getName(),
                             analysisJobMap.get(key).getVersion()));
