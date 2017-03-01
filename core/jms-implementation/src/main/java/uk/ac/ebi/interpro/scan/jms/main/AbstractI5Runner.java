@@ -2,12 +2,15 @@ package uk.ac.ebi.interpro.scan.jms.main;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 /**
  * Abstract class containing common code used by I5 when running in all it's various modes.
@@ -38,6 +41,16 @@ public class AbstractI5Runner {
         HELP_FORMATTER.printHelp(HELP_MESSAGE_TITLE, HEADER, commandLineOptionsForHelp, FOOTER);
     }
 
+    protected static void printVersion(String version, String buildType) {
+        System.out.println("InterProScan version " + version);
+        System.out.println("InterProScan " + buildType + " build " + " (requires  Java 1.8)");
+    }
+
+    protected static void printStringList(ArrayList<String> infoList) {
+        for (String helpInfo: infoList){
+            System.out.print(helpInfo);
+        }
+    }
 
     /**
      * Create any directory/directories required in the supplied path
