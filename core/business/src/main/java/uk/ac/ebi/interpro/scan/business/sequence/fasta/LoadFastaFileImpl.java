@@ -94,7 +94,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                                 //check if we are running nucleotides
                                if (parsedMolecules.iterator().next() instanceof NucleotideSequence){
                                     LOGGER.info("You are analysing more than 1000 nucleotide sequences. " +
-                                            " Chunk the input and then send the chunks to InterProScan. Refer to " +
+                                            " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
                                             " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
                                 }
                                 throw new IllegalStateException("Input error - nucleotide sequence  count : " + sequencesParsed);
