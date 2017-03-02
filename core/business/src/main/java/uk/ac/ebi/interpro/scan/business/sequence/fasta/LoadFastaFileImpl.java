@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
+import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -89,6 +90,16 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                                 addToMoleculeCollection(seq, currentId, parsedMolecules);
                                 sequencesParsed++;
                             }
+                            if (sequencesParsed == 1000 ) {
+                                //check if we are running nucleotides
+                               if (parsedMolecules.iterator().next() instanceof NucleotideSequence){
+                                    LOGGER.info("You are analysing more than 1000 nucleotide sequences. " +
+                                            " Chunk the input and then send the chunks to InterProScan. Refer to " +
+                                            " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
+                                }
+                                throw new IllegalStateException("Input error - nucleotide sequence  count : " + sequencesParsed);
+                            }
+
                             currentSequence.delete(0, currentSequence.length());
                             if (sequencesParsed % 4000 == 0) {
                                 if (sequencesParsed % 16000 == 0) {
