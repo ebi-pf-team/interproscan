@@ -28,6 +28,7 @@ public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Lo
      */
     public NucleotideSequence retrieveByXrefName(String name);
 
+
     /**
      * Inserts new Sequences.
      * If there are NucleotideSequence objects with the same MD5 / sequence in the database,
