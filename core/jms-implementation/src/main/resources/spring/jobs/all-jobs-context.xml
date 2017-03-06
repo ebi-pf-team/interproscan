@@ -252,6 +252,7 @@
                         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
                         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
                         <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
+                        <property name="proteinInsertBatchSizeNoLookup" value="400"/>
                     </bean>
                 </property>
             </bean>
