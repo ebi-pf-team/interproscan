@@ -69,7 +69,7 @@ def get_hamap_profile(profiles_list_filename):
                        profiles[profile] = [profile_path, seq_id]
                        #print profiles[profile]
                 else:
-                    print 'something wrong', line
+                    print ('something wrong ' + line)
                     sys.stderr.write('something wrong ' + line)
                     hit_line = 'not ok - ' + line
                 #append_to_file(temp_err_file, hit_line+'\n') 
@@ -107,7 +107,7 @@ def get_sequences_for_profile(key_list, seqs_dict):
                 sequences += '\n'
 	    #print 'ok', sequences
         else:
-            print "key not found : ", key
+            print ("key not found : " + key)
 
     #print 'ok', sequences
     return sequences

@@ -199,10 +199,14 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
+            Utilities.verboseLog("Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
             if (isGetOrfOutput) {
+                Utilities.verboseLog("Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
                 createAndPersistNewORFs(persistedProteins);
+                Utilities.verboseLog("Completed Persisting  getOrfOutput ");
             }
             proteinsAwaitingPersistence.clear();
+
         }
     }
 
