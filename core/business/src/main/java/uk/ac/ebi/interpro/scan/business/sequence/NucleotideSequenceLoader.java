@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -83,9 +84,11 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + sequencesAwaitingInsertion.size() + " nucleotide sequences");
             }
+            Utilities.verboseLog("Persisting " + sequencesAwaitingInsertion.size()  + " nucleotide sequences");
             nucleotideSequenceDAO.insertNewNucleotideSequences(sequencesAwaitingInsertion);
             sequencesAwaitingInsertion.clear();
         }
+
     }
 
     /**

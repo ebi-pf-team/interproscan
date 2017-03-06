@@ -71,13 +71,13 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                         // Store previous record, if it exists.
                         if (currentId != null) {
                             if (LOGGER.isDebugEnabled()) {
-                                if (sequencesParsed % 500 == 0) {
-                                    LOGGER.debug("Stored " + sequencesParsed + " sequences.");
-                                    if (LOGGER.isTraceEnabled()) {
-                                        LOGGER.trace("Current id: " + currentId);
-                                        LOGGER.trace("Current sequence: '" + currentSequence + "'");
-                                    }
-                                }
+//                                if (sequencesParsed % 500 == 0) {
+//                                    LOGGER.debug("Stored " + sequencesParsed + " sequences.");
+//                                    if (LOGGER.isTraceEnabled()) {
+//                                        LOGGER.trace("Current id: " + currentId);
+//                                        LOGGER.trace("Current sequence: '" + currentSequence + "'");
+//                                    }
+//                                }
                                 if (LOGGER.isTraceEnabled()) {
                                     Matcher seqCheckMatcher = Protein.AMINO_ACID_PATTERN.matcher(currentSequence);
                                     if (!seqCheckMatcher.matches()) {
@@ -90,15 +90,15 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                                 addToMoleculeCollection(seq, currentId, parsedMolecules);
                                 sequencesParsed++;
                             }
-                            if (sequencesParsed == 1000 ) {
-                                //check if we are running nucleotides
-                               if (parsedMolecules.iterator().next() instanceof NucleotideSequence){
-                                    LOGGER.info("You are analysing more than 1000 nucleotide sequences. " +
-                                            " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
-                                            " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
-                                }
-                                throw new IllegalStateException("Input error - nucleotide sequence  count : " + sequencesParsed);
-                            }
+//                            if (sequencesParsed == 1000 ) {
+//                                //check if we are running nucleotides
+//                               if (parsedMolecules.iterator().next() instanceof NucleotideSequence){
+//                                    LOGGER.info("You are analysing more than 1000 nucleotide sequences. " +
+//                                            " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
+//                                            " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
+//                                }
+//                                throw new IllegalStateException("Input error - nucleotide sequence  count : " + sequencesParsed);
+//                            }
 
                             currentSequence.delete(0, currentSequence.length());
                             if (sequencesParsed % 4000 == 0) {
