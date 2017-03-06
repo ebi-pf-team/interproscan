@@ -219,7 +219,7 @@ def matMorphology(seq, rmax=3):
 	try:
 		rmax = int(rmax)
 	except:
-		print "Wrong Matematical Morphology length parameter:", rmax
+		print ("Wrong Matematical Morphology length parameter: " + str(rmax))
 		sys.exit(1)
 
 	# Disorder expansion
@@ -272,7 +272,7 @@ def filterRegions(regions,cutoff):
 	try:
 		cutoff = int(cutoff)
 	except:
-		print "Wrong Disorder region length cutoff:", cutoff
+		print ("Wrong Disorder region length cutoff: " + str(cutoff))
 		sys.exit(1)
 		
 	filteredRegions = []
@@ -457,10 +457,10 @@ if __name__ == "__main__":
 							if args.outFile:
 								fout.write(out + "\n")
 							else:
-								print out
+								print (out)
 						else:
 							if args.verbose:
-								print "{0}\tWARNING: Disorder regions not found".format(acc)
+								print ("{0}\tWARNING: Disorder regions not found".format(acc))
 						
 											
 					acc = line.split()[0][1:]
@@ -475,11 +475,11 @@ if __name__ == "__main__":
 			fout.write(out + "\n")
 			fout.close()
 		else:
-			print out
+			print (out)
 	else:
 		if args.verbose:
 			if args.verbose:
-				print "{0}\tWARNING: Disorder regions not found".format(acc)
+				print ("{0}\tWARNING: Disorder regions not found".format(acc))
 
 
 	

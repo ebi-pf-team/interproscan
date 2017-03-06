@@ -85,6 +85,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
                 LOGGER.debug("Persisting " + sequencesAwaitingInsertion.size() + " nucleotide sequences");
             }
             Utilities.verboseLog("Persisting " + sequencesAwaitingInsertion.size()  + " nucleotide sequences");
+
             nucleotideSequenceDAO.insertNewNucleotideSequences(sequencesAwaitingInsertion);
             sequencesAwaitingInsertion.clear();
         }
@@ -127,6 +128,12 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
      * @param analysisJobMa for analysisJobNames          to be included in analysis.
      */
     public void storeAll(Set<NucleotideSequence> parsedNucleotideSequences, Map<String, SignatureLibraryRelease> analysisJobMa) {
+        if (parsedNucleotideSequences.size() > 2000){
+            LOGGER.warn("You are analysing more than 2000 nucleotide sequences. " +
+                    " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
+                    " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
+        }
+
         for (NucleotideSequence nucleotideSequence : parsedNucleotideSequences) {
             sequencesAwaitingInsertion.add(nucleotideSequence);
             if (sequencesAwaitingInsertion.size() > sequenceInsertBatchSize) {
