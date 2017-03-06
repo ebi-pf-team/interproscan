@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -78,9 +79,11 @@ public class NucleotideSequence implements OutputListElement, Serializable {
     private String md5;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotideSequence")
+    @BatchSize(size=4000)
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sequence")
+    @BatchSize(size=4000)
     private final Set<NucleotideSequenceXref> xrefs = new HashSet<NucleotideSequenceXref>();
 
     /**
