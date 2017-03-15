@@ -14,7 +14,7 @@
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobMobiDBLite-context.xml"/>
     <import resource="jobPanther-context.xml"/>
-    <import resource="jobPIRSF-3.01-context.xml"/>
+    <import resource="jobPIRSF-context.xml"/>
 
     <import resource="jobPfam-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
@@ -57,6 +57,7 @@
                 <ref bean="jobPanther"/>
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
+                <ref bean="jobPIRSF" />
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles"/>
@@ -67,7 +68,7 @@
                 <ref bean="jobSignalP_GRAM_NEGATIVE"/>
                 <ref bean="jobSMART"/>
                 <ref bean="jobTIGRFAM"/>
-                <ref bean="jobPIRSF-3.01" />
+
                 <ref bean="jobSuperFamily-1.75"/>
                 <ref bean="jobTMHMM"/>
             </list>
