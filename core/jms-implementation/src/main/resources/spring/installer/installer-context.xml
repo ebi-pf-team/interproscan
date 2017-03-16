@@ -114,10 +114,10 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="3.01"/>
-                    <property name="modelFiles" value="file:${pirsf.sfhmm.path.3.01}"/>
+                    <property name="releaseVersionNumber" value="${pirsf.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${pirsf.sfhmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-3.01"/>
+                    <property name="analysisJobId" value="jobPIRSF"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
