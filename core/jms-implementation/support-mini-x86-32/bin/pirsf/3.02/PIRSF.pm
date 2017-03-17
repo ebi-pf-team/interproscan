@@ -107,7 +107,7 @@ sub run_hmmer {
 
   #Run HMM search for full-length models and get information
   # we run this outside this script and just get the domtblout
-  my @sf_out=` $path $cpu --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
+  #my @sf_out=` $path $cpu --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
 
   my @results;
   open(T, '<', "$domtblout_file") or die "Failed to open table\n";
