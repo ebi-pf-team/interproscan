@@ -32,7 +32,31 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2: Runs pirsf.pl perl script and writes the raw result to the specified output file-->
+    <!-- STEP 2 -->
+    <bean id="stepPIRSFRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractPIRSFStep">
+        <!-- In example command line below, replace _ with -
+
+        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  HMM.LIB  -->
+        <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
+        <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
+        <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pirsf} ${hmmer3.hmmsearch.cpu.switch.pirsf}"/>
+        <property name="fullPathToHmmFile" value="${pirsf.sfhmm.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="useTbloutFormat" value="false"/>
+        <property name="useDomTbloutFormat" value="true"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 3: Runs pirsf.pl perl script and writes the raw result to the specified output file-->
     <bean id="stepPIRSFRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfBinaryStep"
           parent="abstractPIRSFStep">
@@ -40,7 +64,7 @@
         perl ./bin/pirsf/3.01/pirsf.pl _-fasta ../src/test/resources/data/pirsf/3.01/test_pirsf_hmmer3.fasta -path bin/hmmer/hmmer3/3.1b1/ _-hmmlib data/pirsf/3.01/sf_hmm_all -dat data/pirsf/3.01/pirsf.dat _-outfmt i5 -cpu 4
         -->
         <!--General step properties-->
-        <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
+        <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
         <property name="stepDescription" value="Run pirsf.pl binary for selected proteins"/>
         <property name="retries" value="3"/>
         <!--More specific properties-->
@@ -50,17 +74,10 @@
         <property name="sfHmmAllPath" value="${pirsf.sfhmm.path}"/>
         <property name="pirsfDatPath" value="${pirsf.dat.path}"/>
         <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
-    </bean>
-
-    <bean id="stepPirsfDeleteFastaFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPIRSFStep">
-        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
-        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
-        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
     <bean id="stepPirsfStoreRawMatches"
@@ -70,7 +87,7 @@
         <property name="stepDescription" value="Parse the PIRSF binary output and store as raw matches."/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
         <property name="retries" value="3"/>
-        <property name="pirsfBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="pirsfBinaryOutputFileName" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer3.PirsfHmmer3RawMatchParser">
                 <constructor-arg ref="latestPIRSFSignatureLibraryRelease"/>
@@ -81,14 +98,23 @@
         </property>
     </bean>
 
-    <bean id="stepPirsfDeleteRawOutput"
+    <bean id="stepPirsfDeleteFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPIRSFStep">
         <property name="dependsUpon" ref="stepPirsfStoreRawMatches"/>
         <property name="stepDescription"
-                  value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+                  value="Delete the raw output files following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalaysisOutputDomTbloutFileTemplate"/>
+                <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+            </list>
+        </property>
+
     </bean>
+
 
     <bean id="stepPirsfPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfPostProcessAndPersistStep"
