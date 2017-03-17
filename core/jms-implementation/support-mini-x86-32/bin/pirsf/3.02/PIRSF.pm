@@ -88,10 +88,10 @@ sub read_fasta {
 }
 
 sub run_hmmer {
-  my ($infile, $sf_hmm, $pirsf_data, $matches, $children, $path, $cpu, $hmmer) = @_;
+  my ($infile, $domtblout_file, $sf_hmm, $pirsf_data, $matches, $children, $path, $cpu, $hmmer, $i5_tmpdir) = @_;
   #Change to using table output.
   #system("$hmmscan --domtblout table -E 0.01 --acc $sf_hmm $infile")
-  my $dir  = tempdir( CLEANUP => 1 );  
+  my $dir  = tempdir( CLEANUP => 1 , DIR=> $i5_tmpdir);
   if($path and $path =~ /\S+/){
     $path.='/' if($path !~ /\/^/);
   }
@@ -106,10 +106,11 @@ sub run_hmmer {
 
 
   #Run HMM search for full-length models and get information
+  # we run this outside this script and just get the domtblout
   my @sf_out=` $path $cpu --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
 
   my @results;
-  open(T, '<', "$dir/table") or die "Failed to open table\n";
+  open(T, '<', "$domtblout_file") or die "Failed to open table\n";
   while(<T>){
     next if( substr($_, 0, 1) eq '#');
     chomp;
