@@ -79,23 +79,6 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
 
 
     /**
-     * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
-     *
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public NucleotideSequence retrieveAll() {
-        final Query query =
-                entityManager.createQuery(
-                        "SELECT s FROM NucleotideSequence s ");
-        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
-        if (list != null && !list.isEmpty()) {
-            return list.get(0);
-        }
-        return null;
-    }
-
-    /**
      * Inserts new Sequences.
      * If there are NucleotideSequence objects with the same MD5 / sequence in the database,
      * this method updates these, rather than inserting the new ones.
