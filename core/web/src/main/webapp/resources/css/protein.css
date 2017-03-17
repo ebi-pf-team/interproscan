@@ -222,11 +222,11 @@ a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_o
 .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-sites fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
 .menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
 .menu-filter .menu-filter-sites label  {border:0px green solid;padding-left:2px;padding-top:5px; }
-.menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-type label.site {background:url(../images/ico_type_site.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.site {background:url(../images/ico_type_site.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 4px;}
 .menu-filter .menu-filter-colour { font-size:80%;}
 .menu-filter .menu-filter-colour legend { font-size:110%;font-weight:bold;}
 .menu-filter .menu-filter-colour .filter-colour-head {overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;}
