@@ -6,7 +6,13 @@
 
 USER_DIR=$PWD
 
-cd $(dirname "$0")
+INSTALL_DIR="${BASH_SOURCE[0]}"
+while [ -h "$INSTALL_DIR" ]; do
+  cd "$(dirname "$INSTALL_DIR")"
+  INSTALL_DIR="$(readlink "$(basename "$INSTALL_DIR")")"
+done
+cd "$(dirname "$INSTALL_DIR")"
+INSTALL_DIR="$(pwd)/"
 
 # set environment variables for getorf
 export EMBOSS_ACDROOT=bin/nucleotide
