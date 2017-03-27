@@ -12,6 +12,8 @@ import java.util.*;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
+ *
  *         Date: 21/06/11
  *         Time: 16:43
  */
@@ -76,7 +78,7 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
         return null;
     }
 
-/**
+    /**
      * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
      *
      * @return
@@ -92,7 +94,6 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
         }
         return null;
     }
-
 
     /**
      * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
