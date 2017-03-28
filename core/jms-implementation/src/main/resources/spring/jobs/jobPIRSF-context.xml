@@ -37,8 +37,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSFStep">
         <!-- In example command line below, replace _ with -
-
-        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  HMM.LIB  -->
+        /bin/hmmsearch -Z 4023 _-cut_tc  HMM.LIB  -->
         <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
@@ -61,7 +60,6 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfBinaryStep"
           parent="abstractPIRSFStep">
         <!-- In example command line below, replace _ with -
-        perl ./bin/pirsf/3.01/pirsf.pl _-fasta ../src/test/resources/data/pirsf/3.01/test_pirsf_hmmer3.fasta -path bin/hmmer/hmmer3/3.1b1/ _-hmmlib data/pirsf/3.01/sf_hmm_all -dat data/pirsf/3.01/pirsf.dat _-outfmt i5 -cpu 4
         -->
         <!--General step properties-->
         <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
