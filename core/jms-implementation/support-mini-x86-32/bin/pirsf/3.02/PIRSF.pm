@@ -167,8 +167,8 @@ sub process_hit {
   }
 
   #Overall length
-  my $ovl = ($seq_end - $seq_start + 1)/$seq_leng;
-  my $r   = ($hmm_end - $hmm_start)/ ($seq_end - $seq_start); #Ratio over coverage of sequence and profile HMM.   
+  my $ovl = (($seq_end - $seq_start) + 1)/$seq_leng;
+  my $r   = (($hmm_end - $hmm_start) + 1)/ (($seq_end - $seq_start) + 1); #Ratio over coverage of sequence and profile HMM.
   if(! defined($store->{$seq_acc})){
     $store = {};
     $store->{$seq_acc}={};
