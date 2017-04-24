@@ -205,7 +205,9 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         final Set<StepInstance> stepInstances = new HashSet<StepInstance>();
         for (Step step : stepToStepInstances.keySet()) {
             stepInstances.addAll(stepToStepInstances.get(step));
+            LOGGER.debug(step.toString());
         }
+
         this.insert(stepInstances);
     }
 

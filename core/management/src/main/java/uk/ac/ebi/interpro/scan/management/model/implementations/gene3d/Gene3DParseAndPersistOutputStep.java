@@ -191,6 +191,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
             //now persists the rawmatches
             Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(matchData.values());
+            Utilities.verboseLog("rawProteins # :" + rawProteins.size());
             int count = 0;
             RawMatch represantiveRawMatch = null;
             for (RawProtein<Gene3dHmmer3RawMatch> rawProtein : rawProteins) {
@@ -201,6 +202,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                     }
                 }
             }
+
 
             if (rawProteins != null && rawProteins.size() > 0) {
                 filteredMatchDAO.persist(rawProteins);

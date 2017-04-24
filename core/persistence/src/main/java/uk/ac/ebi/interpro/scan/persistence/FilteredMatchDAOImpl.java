@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -59,6 +60,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         for (RawProtein<T> rawProtein : filteredProteins) {
             for (T rawMatch : rawProtein.getMatches()) {
                 rawMatchCount++;
+                LOGGER.debug("rawMatch :" + rawMatch.toString());
                 if (signatureLibraryRelease == null) {
                     signatureLibraryRelease = rawMatch.getSignatureLibraryRelease();
                     if (signatureLibraryRelease == null) {
@@ -85,7 +87,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             return;
         }
 
+        LOGGER.debug("getProteinIdToProteinMap: " );
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
+        LOGGER.debug("getModelAccessionToSignatureMap: " );
         final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
 
         LOGGER.debug("signatureLibrary: " +  signatureLibrary
@@ -99,7 +103,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             signatureList.append(signature.getModels().toString());
         }
 
-
+        LOGGER.debug("now persists the filtered proteins: " );
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
 
     }

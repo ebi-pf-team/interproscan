@@ -51,13 +51,13 @@
     <!--<level value="debug" />-->
     <!--</logger>-->
 
-     <!--<logger name="uk.ac.ebi.interpro.scan">-->
-         <!--<level value="debug" />-->
-     <!--</logger>-->
+     <logger name="uk.ac.ebi.interpro.scan">
+         <level value="debug" />
+     </logger>
 
-    <logger name="uk.ac.ebi.interpro.scan">
-    <level value="warn" />
-    </logger>
+    <!--<logger name="uk.ac.ebi.interpro.scan">-->
+    <!--<level value="warn" />-->
+    <!--</logger>-->
 
 
     <!-- Root Logger -->

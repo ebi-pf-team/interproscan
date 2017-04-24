@@ -45,6 +45,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
+            LOGGER.debug("persist protein: " + protein.getId() + " md5:" + protein.getMd5() );
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
