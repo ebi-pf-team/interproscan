@@ -76,14 +76,15 @@ my $matches = {};
 PIRSF::read_fasta($input, $matches) if($verbose);
 
 #Now run the search.
-PIRSF::run_hmmer($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $i5_tmpdir);
+my $matches_found = PIRSF::run_hmmer($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $i5_tmpdir);
 
-#Now determine the best matches and subfamily matches.
-my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
+if ($matches_found == 0){
+    #Now determine the best matches and subfamily matches.
+    my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
 
-#ASCII output - but we will want to directly load ingto the database.
-PIRSF::print_output($bestMatches, $pirsf_data, $output);
-
+    #ASCII output - but we will want to directly load ingto the database.
+    PIRSF::print_output($bestMatches, $pirsf_data, $output);
+}
 exit;
 
 #------------------------------------------------------------------------------

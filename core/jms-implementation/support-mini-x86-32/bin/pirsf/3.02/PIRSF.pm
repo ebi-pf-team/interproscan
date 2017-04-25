@@ -118,6 +118,11 @@ sub run_hmmer {
   }
   close(T);
 
+  # deal with the case of no hits
+  if ($#results <= 0) {
+    return 0;
+  }
+
   my ($pirsf_acc, $seq_acc, @keep_row);
   ROW:
   for (my $i = 0; $i <= $#results; $i++){
@@ -147,8 +152,8 @@ sub run_hmmer {
     $pirsf_acc = $row[1]; # 
     $seq_acc = $row[3];
     push(@keep_row, \@row);
-   }
-   process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
+  }
+  process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
 }
 
 sub process_hit {
