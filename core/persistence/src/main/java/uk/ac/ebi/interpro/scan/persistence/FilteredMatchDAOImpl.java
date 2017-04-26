@@ -60,7 +60,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         for (RawProtein<T> rawProtein : filteredProteins) {
             for (T rawMatch : rawProtein.getMatches()) {
                 rawMatchCount++;
-                LOGGER.debug("rawMatch :" + rawMatch.toString());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rawMatch :" + rawMatch.toString());
+                }
                 if (signatureLibraryRelease == null) {
                     signatureLibraryRelease = rawMatch.getSignatureLibraryRelease();
                     if (signatureLibraryRelease == null) {
