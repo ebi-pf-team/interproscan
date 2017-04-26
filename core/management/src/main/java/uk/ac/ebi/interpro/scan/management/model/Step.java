@@ -247,9 +247,8 @@ public abstract class Step implements BeanNameAware {
 
         Step step = (Step) o;
 
-        if (!id.equals(step.id)) return false;
+        return id.equals(step.id);
 
-        return true;
     }
 
     @Override
