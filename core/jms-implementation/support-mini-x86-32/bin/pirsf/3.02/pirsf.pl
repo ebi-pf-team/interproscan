@@ -78,7 +78,7 @@ PIRSF::read_fasta($input, $matches) if($verbose);
 #Now run the search.
 my $matches_found = PIRSF::run_hmmer($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $i5_tmpdir);
 
-if ($matches_found == 0){
+if (!$matches_found == 0){
     #Now determine the best matches and subfamily matches.
     my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
 

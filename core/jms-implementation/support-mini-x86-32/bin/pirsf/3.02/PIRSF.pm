@@ -154,6 +154,7 @@ sub run_hmmer {
     push(@keep_row, \@row);
   }
   process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
+  return 1;
 }
 
 sub process_hit {
