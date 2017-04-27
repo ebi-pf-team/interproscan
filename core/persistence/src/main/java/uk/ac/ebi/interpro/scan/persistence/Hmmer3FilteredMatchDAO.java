@@ -45,6 +45,9 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("persist protein: " + protein.getId() + " md5:" + protein.getMd5());
+            }
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
@@ -62,7 +65,9 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                                 throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                             }
 //                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
-                            LOGGER.debug("signature: " + signature + " from - " + modelAccession );
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("signature: " + signature + " from - " + modelAccession);
+                            }
                             //why not return just signature
                             return modelAccessionToSignatureMap.get(modelAccession);
                         }

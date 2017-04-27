@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -19,6 +20,8 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private static final Logger LOGGER = Logger.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
 
+    private DefaultMessageListenerContainer workerQueueJmsContainer;
+
     private StatsUtil statsUtil;
 
     private String runId;
@@ -33,6 +36,10 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
     int binaryStepCount = 0;
     int nonBinaryStepCount = 0;
+
+    public SingleSeqOptimisedBlackBoxMaster(DefaultMessageListenerContainer workerQueueJmsContainer) {
+        this.workerQueueJmsContainer = workerQueueJmsContainer;
+    }
 
     @Override
     public void run() {
@@ -53,6 +60,14 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             //display initial memory usage
         }
 
+        Utilities.verboseLog("Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+
+        //set new consumer values
+        workerQueueJmsContainer.setConcurrentConsumers(12);
+        workerQueueJmsContainer.setMaxConcurrentConsumers(10);
+        //workerQueueJmsContainer.setConcurrency("2-10"); this or the above
+
+        Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         try {
             loadInMemoryDatabase();
