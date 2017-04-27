@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -42,6 +43,8 @@ abstract public class RunBinaryStep extends Step {
     private boolean usesFileOutputSwitch = false;
 
     private boolean singleSeqMode = false;
+
+    final private String ANALYSIS_TEMP_DIR_SUFFIX = "tmp_files";
 
     public void setUsesFileOutputSwitch(boolean usesFileOutputSwitch) {
         this.usesFileOutputSwitch = usesFileOutputSwitch;
@@ -91,6 +94,35 @@ abstract public class RunBinaryStep extends Step {
 
     public final List<String> getBinarySwitchesAsList() {
         return binarySwitchesInList;
+    }
+
+
+
+    /**
+     * create an absolute path to the temporary directory file for this analysis
+     *
+     * @param temporaryFileDirectory
+     * @return
+     */
+    public String getAbsoluteAnalysisTempDirPath(String temporaryFileDirectory, String fileNameTemplate){
+        String absoluteTempDirPath =  temporaryFileDirectory
+                + File.separator
+                + fileNameTemplate
+                + "_"
+                + ANALYSIS_TEMP_DIR_SUFFIX;
+
+
+        File dir = new File(absoluteTempDirPath);
+        try {
+            boolean dirCreated = dir.mkdirs();
+            LOGGER.debug("The directory (-" + absoluteTempDirPath + " is created");
+        } catch (SecurityException e) {
+            LOGGER.error("Directory creation . Cannot create the specified directory !\n" +
+                    "Specified directory path (absolute): " + dir.getAbsolutePath(), e);
+            throw new IllegalStateException("The directory (-" + absoluteTempDirPath + ")  you specified cannot be written to:", e);
+        }
+        LOGGER.debug(" TempDir - after update: " + absoluteTempDirPath);
+        return absoluteTempDirPath;
     }
 
 

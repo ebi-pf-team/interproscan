@@ -12,6 +12,8 @@ import java.util.*;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
+ *
  *         Date: 21/06/11
  *         Time: 16:43
  */
@@ -76,7 +78,40 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
         return null;
     }
 
+    /**
+     * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<NucleotideSequence> retrieveAll() {
+        final Query query =
+                entityManager.createQuery(
+                        "SELECT s FROM NucleotideSequence s ");
+        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
+        if (list != null && !list.isEmpty()) {
+            return list;
+        }
+        return null;
+    }
 
+    /**
+     * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
+     *      but select first item
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public NucleotideSequence retrieveOne() {
+        final Query query =
+                entityManager.createQuery(
+                        "SELECT s FROM NucleotideSequence s ");
+        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
 
     /**
      * Inserts new Sequences.

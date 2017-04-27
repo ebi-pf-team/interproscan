@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: PIRSF version 3.01 ############################  -->
+    <bean id="jobPIRSF" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="The PIRSF concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePirsf"/>
+    </bean>
+
+    <bean id="abstractPIRSFStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobPIRSF"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.PIRSF}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1: Writes target protein sequences to a FASTA file with new sequence IDs-->
+    <bean id="stepPIRSFWriteFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractPIRSFStep">
+        <property name="stepDescription"
+                  value="Creates a FASTA file of target sequences which is necessary for the next steps."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepPIRSFRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractPIRSFStep">
+        <!-- In example command line below, replace _ with -
+        /bin/hmmsearch -Z 4023 _-cut_tc  HMM.LIB  -->
+        <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
+        <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
+        <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pirsf} ${hmmer3.hmmsearch.cpu.switch.pirsf}"/>
+        <property name="fullPathToHmmFile" value="${pirsf.sfhmm.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="useTbloutFormat" value="false"/>
+        <property name="useDomTbloutFormat" value="true"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP 3: Runs pirsf.pl perl script and writes the raw result to the specified output file-->
+    <bean id="stepPIRSFRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfBinaryStep"
+          parent="abstractPIRSFStep">
+        <!-- In example command line below, replace _ with -
+        -->
+        <!--General step properties-->
+        <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
+        <property name="stepDescription" value="Run pirsf.pl binary for selected proteins"/>
+        <property name="retries" value="3"/>
+        <!--More specific properties-->
+        <property name="perlCommand" value="${perl.command}"/>
+        <property name="scriptPath" value="${binary.pirsf.pl.path}"/>
+        <property name="hmmerPath" value="${binary.hmmer3.path}"/>
+        <property name="sfHmmAllPath" value="${pirsf.sfhmm.path}"/>
+        <property name="pirsfDatPath" value="${pirsf.dat.path}"/>
+        <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepPirsfStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.ParsePirsfOutputStep"
+          parent="abstractPIRSFStep">
+        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
+        <property name="stepDescription" value="Parse the PIRSF binary output and store as raw matches."/>
+        <property name="serialGroup" value="PARSE_PIRSF"/>
+        <property name="retries" value="3"/>
+        <property name="pirsfBinaryOutputFileName" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer3.PirsfHmmer3RawMatchParser">
+                <constructor-arg ref="latestPIRSFSignatureLibraryRelease"/>
+            </bean>
+        </property>
+        <property name="rawMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAOImpl"/>
+        </property>
+    </bean>
+
+    <bean id="stepPirsfDeleteFiles"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPIRSFStep">
+        <property name="dependsUpon" ref="stepPirsfStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output files following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalaysisOutputDomTbloutFileTemplate"/>
+                <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+            </list>
+        </property>
+
+    </bean>
+
+
+    <bean id="stepPirsfPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfPostProcessAndPersistStep"
+          parent="abstractPIRSFStep">
+        <property name="dependsUpon" ref="stepPirsfStoreRawMatches"/>
+        <property name="stepDescription" value="Performs post processing and match persistence on PIRSF data"/>
+        <property name="postProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3.PirsfPostProcessor"/>
+        </property>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="signatureLibraryRelease" ref="latestPIRSFSignatureLibraryRelease"/>
+        <property name="rawMatchDAO" ref="pirsfRawMatchDAO"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer3FilteredMatchDAOImpl"/>
+        </property>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSF !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+
+    <bean id="latestPIRSFSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="${pirsf.signature.library.release}"/>
+    </bean>
+
+    <bean id="pirsfRawMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAOImpl">
+    </bean>
+
+    <bean id="signatureLibraryReleasePirsf" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSF"/>
+        <constructor-arg type="java.lang.String" ref="latestPIRSFSignatureLibraryRelease"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
