@@ -94,10 +94,12 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         LOGGER.debug("getModelAccessionToSignatureMap: " );
         final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
 
-        LOGGER.debug("signatureLibrary: " +  signatureLibrary
-                + " signatureLibraryRelease: "     + signatureLibraryRelease
-                + " filteredProteins: " + filteredProteins.size()
-                + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("signatureLibrary: " + signatureLibrary
+                    + " signatureLibraryRelease: " + signatureLibraryRelease
+                    + " filteredProteins: " + filteredProteins.size()
+                    + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+        }
 
 
         StringBuilder signatureList = new StringBuilder();
