@@ -568,6 +568,18 @@ public class Run extends AbstractI5Runner {
 //                    resourceMonitor.setRunId(runId);
                 }
             }
+            //deal with cpu cores specified by user
+            if (bbMaster instanceof StandaloneBlackBoxMaster ) {
+                //deal with cpu cores
+                if (parsedCommandLine.hasOption(I5Option.CPU.getLongOpt())) {
+                    int numberOfCPUCores = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.CPU.getLongOpt()));
+                    if (numberOfCPUCores == 0){
+                        numberOfCPUCores = 1;
+                    }
+                    ((StandaloneBlackBoxMaster) master).setMaxConcurrentInVmWorkerCount(numberOfCPUCores);
+                }
+            }
+
 
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 bbMaster.setSequenceType(sequenceType);
