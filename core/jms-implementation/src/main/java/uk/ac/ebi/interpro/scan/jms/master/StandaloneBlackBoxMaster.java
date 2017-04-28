@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
@@ -29,6 +30,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private StatsUtil statsUtil;
 
+    private DefaultMessageListenerContainer workerQueueJmsContainer;
+
+    public StandaloneBlackBoxMaster(DefaultMessageListenerContainer workerQueueJmsContainer) {
+        this.workerQueueJmsContainer = workerQueueJmsContainer;
+    }
+
     @Override
     public void run() {
         final long now = System.currentTimeMillis();
@@ -43,6 +50,43 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());
         }
+
+        Utilities.verboseLog("Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+
+        //if user has specified CPU value
+        if (! (getMaxConcurrentInVmWorkerCount() == workerQueueJmsContainer.getMaxConcurrentConsumers())){
+            int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
+            if (getMaxConcurrentInVmWorkerCount() > 4){
+                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
+            }
+            if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
+                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
+            }
+            workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
+            workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
+            Utilities.verboseLog("minNumberOfCPUCores: " + minNumberOfCPUCores
+                    + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
+        }else{
+            //set the minconsumercount to value given by user in the properties file
+            //TODO check if this is necessary as the container should handle dynamic scaling
+            int minNumberOfCPUCores = getConcurrentInVmWorkerCount();
+            if (getMaxConcurrentInVmWorkerCount() > 4){
+                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
+                workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
+            }
+
+
+        }
+//        //set new consumer values
+//        if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
+//            workerQueueJmsContainer.setConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
+//
+//        }else{
+//            workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
+//        }
+
+        Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+
         long nowAfterLoadingDatabase = now;
         try {
             loadInMemoryDatabase();
@@ -150,6 +194,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                     controlledLogging = true;
                 }
+                Utilities.verboseLog("Total StepInstances: " + totalStepInstances +
+                        ", left to run: " + totalUnfinishedStepInstances);
+                Utilities.verboseLog("MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+                        +  " ActiveConsumerCount: " + workerQueueJmsContainer.getActiveConsumerCount()
+                         +  " ScheduledConsumerCount: " + workerQueueJmsContainer.getScheduledConsumerCount());
+
                 //report progress
                 statsUtil.setTotalJobs(totalStepInstances);
                 statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
