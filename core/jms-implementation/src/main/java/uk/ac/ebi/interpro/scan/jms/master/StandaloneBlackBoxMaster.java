@@ -74,16 +74,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
                 workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             }
-
-
         }
-//        //set new consumer values
-//        if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
-//            workerQueueJmsContainer.setConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
-//
-//        }else{
-//            workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
-//        }
 
         Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
