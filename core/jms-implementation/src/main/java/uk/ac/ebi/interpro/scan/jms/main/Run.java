@@ -574,6 +574,7 @@ public class Run extends AbstractI5Runner {
                 if (parsedCommandLine.hasOption(I5Option.CPU.getLongOpt())) {
                     int numberOfCPUCores = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.CPU.getLongOpt()));
                     if (numberOfCPUCores == 0){
+                        LOGGER.warn("--cpu 0 is not allowed, updated to --cpu 1");
                         numberOfCPUCores = 1;
                     }
                     ((StandaloneBlackBoxMaster) master).setMaxConcurrentInVmWorkerCount(numberOfCPUCores);
