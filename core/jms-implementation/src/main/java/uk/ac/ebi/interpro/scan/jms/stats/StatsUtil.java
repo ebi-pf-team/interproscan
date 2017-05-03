@@ -622,8 +622,10 @@ public class StatsUtil {
             }
             if(displayProgress){
                 progressReportTime = System.currentTimeMillis();
+                // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
                 actualProgress = Math.floor(progress * 100);
-                System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
+                System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
+
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
                 String debugProgressString = " #:t" + masterTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
