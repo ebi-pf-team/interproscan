@@ -31,7 +31,7 @@ public class EntryHierarchyTest {
     public void testGetEntryColoursMap() {
         Map<String, Integer> entryColoursMap = entryHierarchy.getEntryColourMap();
         assertNotNull(entryColoursMap);
-        assertEquals(9405, entryColoursMap.size());
+        assertEquals(9630, entryColoursMap.size());
         assertFalse(entryColoursMap.containsKey("invalid"));
         entryColoursMap.put("IPR999999", 1);
     }
@@ -48,6 +48,6 @@ public class EntryHierarchyTest {
     public void testGetEntryHierarchyDataMap() {
         Map<String, EntryHierarchyData> data = entryHierarchy.getEntryHierarchyDataMap();
         assertNotNull(data);
-        assertEquals(8826, data.size());
+        assertEquals(9250, data.size());
     }
 }
