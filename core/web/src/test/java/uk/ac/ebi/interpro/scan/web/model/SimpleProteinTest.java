@@ -208,7 +208,7 @@ public class SimpleProteinTest {
         }
 
         //Test simple signature locations
-        SimpleSignature simpleSignature = simpleEntry.getSignaturesMap().get("PTHR13763");
+        SimpleSignature simpleSignature = simpleEntry.getSignaturesMap().get("PTHR13763-PANTHER");
         Assert.assertNotNull(simpleSignature);
         Assert.assertNotNull(simpleSignature.getLocations());
         Assert.assertEquals(2, simpleSignature.getLocations().size());
