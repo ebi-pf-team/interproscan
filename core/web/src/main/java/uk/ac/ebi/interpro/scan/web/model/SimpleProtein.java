@@ -448,11 +448,14 @@ public final class SimpleProtein implements Serializable {
                 simpleProtein.getAllEntries().add(simpleEntry);
             }
 
+            // Need library name, e.g. we could get "SignalP-noTM" signatureAc from both SignalP_EUK and SIGNALP_GRAM_NEGATIVE
+            final String signatureKey = signatureAc + "-" + signatureLibraryName;
+
             // If SimpleSignature entry already exists, get it
-            if (simpleEntry.getSignaturesMap().containsKey(signatureAc)) {
-                simpleSignature = simpleEntry.getSignaturesMap().get(signatureAc);
+            if (simpleEntry.getSignaturesMap().containsKey(signatureKey)) {
+                simpleSignature = simpleEntry.getSignaturesMap().get(signatureKey);
             } else {
-                simpleEntry.getSignaturesMap().put(signatureAc, simpleSignature);
+                simpleEntry.getSignaturesMap().put(signatureKey, simpleSignature);
             }
 
             //Iterate over match locations
