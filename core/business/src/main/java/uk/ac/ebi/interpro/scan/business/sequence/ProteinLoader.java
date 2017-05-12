@@ -306,10 +306,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 //            Utilities.setMode("singleseq");
 
         }
-        if (count > 10000) {
-            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
+        if (count > 12000) {
+            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " unique sequences for analysis");
         }
-        Utilities.verboseLog(10, " Uploaded/Stored " + count + " sequences for analysis");
+        Utilities.verboseLog(10, " Uploaded/Stored " + count + " unique sequences for analysis");
 
         if(LOGGER.isInfoEnabled()) {
             LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");

@@ -594,7 +594,7 @@ public class StatsUtil {
             Double progress = (double)(masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
             boolean displayProgress = false;
-            double actualProgress;
+            Double actualProgress;
             if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
                 displayProgress = true;
                 progressCounter = 1;
@@ -625,6 +625,7 @@ public class StatsUtil {
                 // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
                 actualProgress = Math.floor(progress * 100);
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
+
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
                 String debugProgressString = " #:t" + masterTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
