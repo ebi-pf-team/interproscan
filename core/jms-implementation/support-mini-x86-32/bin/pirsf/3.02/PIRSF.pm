@@ -119,7 +119,7 @@ sub run_hmmer {
   close(T);
 
   # deal with the case of no hits
-  if ($#results <= 0) {
+  if (@results <= 0) {
     return 0;
   }
 
