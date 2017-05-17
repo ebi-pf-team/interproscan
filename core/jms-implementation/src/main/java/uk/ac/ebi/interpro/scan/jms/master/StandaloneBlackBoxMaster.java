@@ -54,6 +54,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLog("Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         //if user has specified CPU value
+        /*
+        //need more testing
+    
         if (! (getMaxConcurrentInVmWorkerCount() == workerQueueJmsContainer.getMaxConcurrentConsumers())){
             int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
             if (getMaxConcurrentInVmWorkerCount() > 4){
@@ -75,6 +78,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             }
         }
+
+         */
 
         Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
