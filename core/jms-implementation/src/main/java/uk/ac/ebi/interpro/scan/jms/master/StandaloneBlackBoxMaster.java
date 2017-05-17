@@ -51,20 +51,20 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());
         }
 
-        Utilities.verboseLog("Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+        Utilities.verboseLog("Old values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         //if user has specified CPU value
-        /*
+
         //need more testing
-    
+
         if (! (getMaxConcurrentInVmWorkerCount() == workerQueueJmsContainer.getMaxConcurrentConsumers())){
             int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
-            if (getMaxConcurrentInVmWorkerCount() > 4){
-                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
-            }
-            if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
-                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
-            }
+//            if (getMaxConcurrentInVmWorkerCount() > 4){
+//                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
+//            }
+//            if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
+//                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
+//            }
             workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog("minNumberOfCPUCores: " + minNumberOfCPUCores
@@ -72,16 +72,24 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         }else{
             //set the minconsumercount to value given by user in the properties file
             //TODO check if this is necessary as the container should handle dynamic scaling
+            //workerQueueJmsContainer.setConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
+
+            /*
+            //the following doesnt work as expected so we will just set max = min
             int minNumberOfCPUCores = getConcurrentInVmWorkerCount();
             if (getMaxConcurrentInVmWorkerCount() > 4){
                 minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
                 workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             }
+            */
         }
 
-         */
 
-        Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+
+        Utilities.verboseLog("New values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
+                + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+                + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
+                + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
 
         long nowAfterLoadingDatabase = now;
         try {
@@ -190,11 +198,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                     controlledLogging = true;
                 }
-//                Utilities.verboseLog("Total StepInstances: " + totalStepInstances +
-//                        ", left to run: " + totalUnfinishedStepInstances);
-//                Utilities.verboseLog("MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
-//                        +  " ActiveConsumerCount: " + workerQueueJmsContainer.getActiveConsumerCount()
-//                         +  " ScheduledConsumerCount: " + workerQueueJmsContainer.getScheduledConsumerCount());
+                Utilities.verboseLog("Total StepInstances: " + totalStepInstances +
+                        ", left to run: " + totalUnfinishedStepInstances);
+                Utilities.verboseLog("MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+                       + " min ConsumerCount: " + workerQueueJmsContainer.getConcurrentConsumers()
+                        +  " ActiveConsumerCount: " + workerQueueJmsContainer.getActiveConsumerCount()
+                         +  " ScheduledConsumerCount: " + workerQueueJmsContainer.getScheduledConsumerCount());
 
                 //report progress
                 statsUtil.setTotalJobs(totalStepInstances);
