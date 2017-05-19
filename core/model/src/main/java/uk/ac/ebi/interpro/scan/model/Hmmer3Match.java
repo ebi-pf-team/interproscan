@@ -84,7 +84,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
     @Entity
     @Table(name = "hmmer3_location")
     @XmlType(name = "Hmmer3LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-    public static class Hmmer3Location extends HmmerLocation {
+    public static class Hmmer3Location extends HmmerLocation<Hmmer3Location.Hmmer3LocationFragment> {
 
         @Column(name = "envelope_start", nullable = false)
         private int envelopeStart;
@@ -102,7 +102,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, HmmBounds hmmBounds,
                               int envelopeStart, int envelopeEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
+            super(new Hmmer3LocationFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
         }
@@ -110,7 +110,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength,
                               int envelopeStart, int envelopeEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength);
+            super(new Hmmer3LocationFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmLength);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
         }
@@ -164,6 +164,45 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             clone.setHmmLength(this.getHmmLength());
             return clone;
         }
+
+        /**
+         * Location fragment of a HMMER3 match on a protein sequence
+         */
+        @Entity
+        @Table(name = "hmmer3_location_fragment")
+        @XmlType(name = "Hmmer3LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class Hmmer3LocationFragment extends LocationFragment {
+
+            protected Hmmer3LocationFragment() {
+            }
+
+            public Hmmer3LocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof Hmmer3LocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(139, 159)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new Hmmer3LocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
     }
 }

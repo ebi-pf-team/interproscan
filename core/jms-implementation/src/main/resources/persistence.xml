@@ -7,6 +7,7 @@
     <!-- JPA Persistence unit for HSQLDB - current in-memory database, but may change. -->
     <persistence-unit name="persistenceJms" transaction-type="RESOURCE_LOCAL">
         <!-- Interfaces -->
+        <class>uk.ac.ebi.interpro.scan.model.LocationFragment</class>
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.LocationWithSites</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>

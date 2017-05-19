@@ -72,7 +72,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     @Table(name = "rpsblast_location")
     @XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     //@XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = { "start", "end", "score", "evalue"})
-    public static class RPSBlastLocation extends LocationWithSites<RPSBlastLocation.RPSBlastSite> {
+    public static class RPSBlastLocation extends LocationWithSites<RPSBlastLocation.RPSBlastSite, LocationFragment> {
 
         @Column(nullable = false, name = "evalue")
         private double evalue;
@@ -84,7 +84,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         }
 
         public RPSBlastLocation(int start, int end, double score, double evalue, Set<RPSBlastSite> sites) {
-            super(start, end, sites);
+            super(new FingerPrintsMatch.FingerPrintsLocation.FingerPrintsLocationFragment(start, end), sites);
             setScore(score);
             setEvalue(evalue);
         }
@@ -132,6 +132,45 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
             }
             return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), clonedSites);
         }
+
+        /**
+         * Location fragment of a RPSBlast match on a protein sequence
+         */
+        @Entity
+        @Table(name = "rpsblast_location_fragment")
+        @XmlType(name = "RPSBlastLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class RPSBlastLocationFragment extends LocationFragment {
+
+            protected RPSBlastLocationFragment() {
+            }
+
+            public RPSBlastLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof RPSBlastLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(141, 159)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new RPSBlastLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
         @Entity
         @Table(name = "rpsblast_site")

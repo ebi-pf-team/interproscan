@@ -109,27 +109,52 @@ public class ProteinMatchesGFFResultWriterTest {
         };
         matches.add(match);
 
-        match.addLocation(new Location(1, 16) {
+        match.addLocation(new Location(new LocationFragment(1, 16) {
+            @Override
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
+        }) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
             }
         });
-        match.addLocation(new Location(1, 17) {
+        match.addLocation(new Location(new LocationFragment(1, 17) {
+            @Override
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
+        }) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
             }
         });
-        match.addLocation(new Location(1, 15) {
+        match.addLocation(new Location(new LocationFragment(1, 15) {
+            @Override
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
+        }) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
             }
         });
-        match.addLocation(new Location(14, 15) {
+        match.addLocation(new Location(new LocationFragment(14, 15) {
+            @Override
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
+        }) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
             }
         });
-        match.addLocation(new Location(14, 17) {
+        match.addLocation(new Location(new LocationFragment(14, 17) {
+            @Override
+            public Object clone() throws CloneNotSupportedException {
+                return null;
+            }
+        }) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
             }

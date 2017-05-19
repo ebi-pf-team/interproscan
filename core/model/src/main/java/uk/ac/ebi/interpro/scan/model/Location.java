@@ -18,17 +18,18 @@ package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Location of match on protein sequence.
@@ -42,10 +43,10 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "LocationType", propOrder = {"start", "end"})
+@XmlType(name = "LocationType", propOrder = {"start", "end", "locationFragments"})
 @XmlSeeAlso(LocationWithSites.class)
 @JsonIgnoreProperties({"id"})
-public abstract class Location implements Serializable, Cloneable {
+public abstract class Location<T extends LocationFragment> implements Serializable, Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_IDGEN")
@@ -64,15 +65,32 @@ public abstract class Location implements Serializable, Cloneable {
     @JsonBackReference
     private Match match;
 
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = LocationFragment.class, mappedBy = "location")
+    @BatchSize(size=4000)
+    @JsonManagedReference
+    private Set<T> locationFragments = new LinkedHashSet<>();
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
     protected Location() {
     }
 
-    public Location(int start, int end) {
-        setStart(start);
-        setEnd(end);
+    public Location(T locationFragment) {
+        this.start = locationFragment.getStart();
+        this.end = locationFragment.getEnd();
+        Set<T> locationFragments = new HashSet<>();
+        locationFragments.add(locationFragment);
+        setLocationFragments(locationFragments);
+    }
+
+    public Location(Set<T> locationFragments) {
+        if (locationFragments != null && locationFragments.size() > 0) {
+            T fragment = locationFragments.iterator().next();
+            this.start = fragment.getStart();
+            this.end = fragment.getEnd();
+            setLocationFragments(locationFragments);
+        }
     }
 
     /**
@@ -146,6 +164,36 @@ public abstract class Location implements Serializable, Cloneable {
         return match;
     }
 
+    @Transient
+    @XmlJavaTypeAdapter(LocationFragment.LocationFragmentAdapter.class)
+    public Set<T> getLocationFragments() {
+//        return Collections.unmodifiableSet(locationFragments);
+        return locationFragments;
+    }
+
+    // Private so can only be set by JAXB, Hibernate ...etc via reflection
+
+    protected void setLocationFragments(final Set<T> locationFragments) {
+        if (locationFragments != null) {
+            for (T locationFragment : locationFragments) {
+                addLocationFragment(locationFragment);
+            }
+        }
+    }
+
+    @Transient
+    public void addLocationFragment(T locationFragment) {
+        locationFragment.setLocation(this);
+        this.locationFragments.add(locationFragment);
+        int start = locationFragment.getStart();
+        int end = locationFragment.getEnd();
+        if (start < this.start) {
+            this.start = start;
+        }
+        if (end > this.end) {
+            this.end = end;
+        }
+    }
     /**
      * Ensure sub-classes of AbstractLocation are represented correctly in XML.
      *

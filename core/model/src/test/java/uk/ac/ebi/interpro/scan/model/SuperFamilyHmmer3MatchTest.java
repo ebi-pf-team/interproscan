@@ -25,8 +25,8 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
         SuperFamilyHmmer3Match original = new SuperFamilyHmmer3Match(
                 new Signature("PF02310", "B12-binding"),
                 3.7e-9,
-                new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>(Arrays.asList(
-                        new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107)
+                new HashSet<>(Arrays.asList(
+                        new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(3, 107))
                 ))
         );
         SuperFamilyHmmer3Match copy = (SuperFamilyHmmer3Match)SerializationUtils.clone(original);
@@ -34,12 +34,12 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
         assertEquals("Original and copy should be equal", original, copy);
         @SuppressWarnings("unchecked") Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locationsCopy =
                 (Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>) SerializationUtils.
-                        clone(new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>(original.getLocations()));
+                        clone(new HashSet<>(original.getLocations()));
         SuperFamilyHmmer3Match badCopy = new SuperFamilyHmmer3Match(new Signature("1", "A"), 1, locationsCopy);
         assertFalse("Original and copy should not be equal", original.equals(badCopy));
         // Test sets
-        Set<Match> originalSet = new HashSet<Match>();
-        Set<Match> copySet     = new HashSet<Match>();
+        Set<Match> originalSet = new HashSet<>();
+        Set<Match> copySet     = new HashSet<>();
         originalSet.add(original);
         copySet.add(copy);
         assertEquals("Original set should equal itself", originalSet, originalSet);
@@ -52,11 +52,11 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
     @Test
     public void testLocationEquals() {
         SuperFamilyHmmer3Match.SuperFamilyHmmer3Location original =
-                new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107);
+                new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(3, 107));
         SuperFamilyHmmer3Match.SuperFamilyHmmer3Location copy = (SuperFamilyHmmer3Match.SuperFamilyHmmer3Location)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
-        copy = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 2);
+        copy = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(1, 2));
         assertFalse("Original and copy should not be equal", original.equals(copy));
     }
 }

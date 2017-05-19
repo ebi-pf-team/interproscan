@@ -88,8 +88,12 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
         protected SuperFamilyHmmer3Location() {
         }
 
-        public SuperFamilyHmmer3Location(int start, int end) {
-            super(start, end);
+        public SuperFamilyHmmer3Location(SuperFamilyHmmer3LocationFragment fragment) {
+            super(fragment);
+        }
+
+        public SuperFamilyHmmer3Location(Set<SuperFamilyHmmer3LocationFragment> fragments) {
+            super(fragments);
         }
 
         @Override
@@ -111,8 +115,48 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
         }
 
         public Object clone() throws CloneNotSupportedException {
-            return new SuperFamilyHmmer3Location(this.getStart(), this.getEnd());
+            return new SuperFamilyHmmer3Location(this.getLocationFragments());
         }
+
+
+        /**
+         * Location fragment of a SuperFamily match on a protein sequence
+         */
+        @Entity
+        @Table(name = "superfamilyhmmer3_location_fragment")
+        @XmlType(name = "SuperFamilyHmmer3LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class SuperFamilyHmmer3LocationFragment extends LocationFragment {
+
+            protected SuperFamilyHmmer3LocationFragment() {
+            }
+
+            public SuperFamilyHmmer3LocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof SuperFamilyHmmer3LocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(129, 153)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new SuperFamilyHmmer3LocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
     }
 
 }
