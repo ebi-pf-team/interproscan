@@ -198,12 +198,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                     controlledLogging = true;
                 }
-                Utilities.verboseLog("Total StepInstances: " + totalStepInstances +
-                        ", left to run: " + totalUnfinishedStepInstances);
-                Utilities.verboseLog("MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
-                       + " min ConsumerCount: " + workerQueueJmsContainer.getConcurrentConsumers()
-                        +  " ActiveConsumerCount: " + workerQueueJmsContainer.getActiveConsumerCount()
-                         +  " ScheduledConsumerCount: " + workerQueueJmsContainer.getScheduledConsumerCount());
+//                Utilities.verboseLog("Total StepInstances: " + totalStepInstances +
+//                        ", left to run: " + totalUnfinishedStepInstances);
+//                Utilities.verboseLog("MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+//                       + " min ConsumerCount: " + workerQueueJmsContainer.getConcurrentConsumers()
+//                        +  " ActiveConsumerCount: " + workerQueueJmsContainer.getActiveConsumerCount()
+//                         +  " ScheduledConsumerCount: " + workerQueueJmsContainer.getScheduledConsumerCount());
 
                 //report progress
                 statsUtil.setTotalJobs(totalStepInstances);
