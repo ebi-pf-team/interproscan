@@ -123,7 +123,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
          * Location fragment of a SuperFamily match on a protein sequence
          */
         @Entity
-        @Table(name = "superfamilyhmmer3_location_fragment")
+        @Table(name = "superfam_location_fragment")
         @XmlType(name = "SuperFamilyHmmer3LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
         public static class SuperFamilyHmmer3LocationFragment extends LocationFragment {
 

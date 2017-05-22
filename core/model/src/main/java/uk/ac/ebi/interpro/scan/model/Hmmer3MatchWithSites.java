@@ -170,7 +170,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
          * Location fragment of a HMMER3 match on a protein sequence
          */
         @Entity
-        @Table(name = "hmmer3_location_fragment_with_sites")
+        @Table(name = "hmmer3_locn_frag_with_sites")
         @XmlType(name = "Hmmer3LocationFragmentWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
         public static class Hmmer3LocationWithSitesFragment extends LocationFragment {
 
