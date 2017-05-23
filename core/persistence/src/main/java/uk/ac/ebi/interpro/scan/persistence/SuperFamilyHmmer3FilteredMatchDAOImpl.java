@@ -57,9 +57,10 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Protein: " + protein);
             }
-            // We never have more than one location against a Superfamily match, but a location could have multiple
-            // location fragments (if they are in the same split group). Each Superfamily raw match represents a
-            // Superfamily location fragment.
+            // Each line in the Superfamily ass3.pl Perl script output represents a Superfamily match for a given sequence
+            // and model with e-value. We'd never have more than one location against a Superfamily match, but a location
+            // could have multiple location fragments (so are in the same split group). Each Superfamily raw match
+            // represents a Superfamily location fragment.
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
 

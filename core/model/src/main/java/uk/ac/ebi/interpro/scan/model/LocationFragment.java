@@ -175,7 +175,11 @@ public abstract class LocationFragment implements Serializable, Cloneable {
             Set<TMHMMMatch.TMHMMLocation.TMHMMLocationFragment> tmhmmLocationFragments = new LinkedHashSet<>();
             for (LocationFragment l : locations) {
                 // LocationFragments that extend "LocationFragment"
-                if (l instanceof Hmmer2Match.Hmmer2Location.Hmmer2LocationFragment) {
+                if (l instanceof RPSBlastMatch.RPSBlastLocation.RPSBlastLocationFragment) {
+                    rpsBlastLocationFragments.add((RPSBlastMatch.RPSBlastLocation.RPSBlastLocationFragment) l);
+                } else if (l instanceof Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3LocationWithSitesFragment) {
+                    hmmer3LocationFragmentsWithSites.add((Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3LocationWithSitesFragment) l);
+                } else if (l instanceof Hmmer2Match.Hmmer2Location.Hmmer2LocationFragment) {
                     hmmer2LocationFragments.add((Hmmer2Match.Hmmer2Location.Hmmer2LocationFragment) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment) {
                     hmmer3LocationFragments.add((Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment) l);

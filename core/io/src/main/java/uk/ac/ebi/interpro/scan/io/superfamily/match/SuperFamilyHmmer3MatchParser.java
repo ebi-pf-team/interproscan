@@ -85,7 +85,7 @@ public class SuperFamilyHmmer3MatchParser {
             }
         }
 
-        return new HashSet<RawProtein<SuperFamilyHmmer3RawMatch>>(data.values());
+        return new HashSet<>(data.values());
     }
 
 
