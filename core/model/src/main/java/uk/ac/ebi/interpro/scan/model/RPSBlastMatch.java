@@ -84,7 +84,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         }
 
         public RPSBlastLocation(int start, int end, double score, double evalue, Set<RPSBlastSite> sites) {
-            super(new FingerPrintsMatch.FingerPrintsLocation.FingerPrintsLocationFragment(start, end), sites);
+            super(new RPSBlastLocationFragment(start, end), sites);
             setScore(score);
             setEvalue(evalue);
         }
