@@ -62,9 +62,20 @@ def parseHmmscan(domtblout, hmmer_mode):
             else:
                 hmma, acc2, qlen, seqid, acc1, tlen, eVal, score, bias, num, num_t, cEval, iEval, dscore, dbias, hmm_f, hmm_t, ali_f, ali_t, env_f, env_t, accuracy, desc = line.split()
 
+            #my ($target, $acc1, $tlen, $seq, $acc2, $qlen, $eVal, $score, $bias, $num, $num_t, $cEval, $iEval, $dscore, $dbias, $hmm_f, $hmm_t, $ali_f, $ali_t, $env_f, $env_t, @else) = split (/\s+/, $_);
             hmmId = get_queryName(hmma)
+
             hmmHit = {'eval': eVal, 'score': score, 'ali_f': ali_f, 'ali_t': ali_t}
             all_scores[seqid][hmmId] = hmmHit
+
+        $seq =~ s/^\s+|\s+$//g;
+ 		$eVal =~ s/^\s+|\s+$//g;
+ 		$score =~ s/^\s+|\s+$//g;
+ 		#$allScores->{$seq}{$hmmId}{$num}{'eval'} = $eVal;
+ 		#$allScores->{$seq}{$hmmId}{$num}{'score'} = $score;
+ 		#$allScores->{$seq}{$hmmId}{$num}{'seqRange'} = "$ali_t\-$ali_f";
+ 		#print "$target\t$seq\t$eVal\t$score\t$ali_f\-$ali_t\n";
+ 		$allScores->{$seq}{$eVal}{$score}{$hmmId}{"$ali_f\-$ali_t"}=1;
 
             # $allScores->{$seq}{$eVal}{$score}{$hmmId}{"$ali_f\-$ali_t"} = 1
             """
