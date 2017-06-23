@@ -164,51 +164,6 @@ if (! $usehmmsearch){
 	$allScores = &parseHmmsearch($inFile,$hmmModel,$allScores);
 }
 
-my $forceUsehmmsearch = 0;
-if ($forceUsehmmsearch) {
-	my $hmmsearch_help = "$hmmsearch -h > $tmpDir/hmmsearch_help";
-    system("$hmmsearch_help");
-    open (HH, "$tmpDir/hmmsearch_help");
-    my $l1 = <HH>;
-    my $line2 = <HH>;
-    print STDERR "HMMER3 hmmsearch binary executable is not found, HMMER2 program does not work for this script.\n" and exit unless ($line2 =~ m/^#\sHMMER\s3/);
-	my $ff = new FastaFile($inFile);
-	$ff->open();
-	my @books = $flb->bookNames();
-	# loop over all models in the library
-	foreach my $fam (@books) {
-	  my $fle = $flb->getLibEntry($fam,$type);
-
-	  #maybe should check that hmm file exits
-	  my $hmmFile = $fle->hmmFile($wtType,"hmmer");
-	  my @seqsForFam = $ff->getIds();
-	  my $numSeqsForFam = @seqsForFam;
-
-	  print STDERR "RUNNING $numSeqsForFam on $fam\n" if ($verbose);
-
-	  #score seqs aginast family HMM, and store scores in our hash
-	  $allScores = &runHmmsearch($inFile,$hmmFile,$allScores,$fam);
-
-	  #if there is only one subfamiliy, only scoe against the family
-	  my @sfs = $fle->hmmerSfHmmFiles();
-	  my $numSfs = @sfs;
-	  next if ($numSfs == 1);
-
-	  #now score against all SFs
-	  my @sfHmmFiles = $fle->sfHmmFiles("hmmer");
-	  my @sfIDs = map {/\/(SF\d+)\//} @sfHmmFiles;
-	  foreach my $sfId (@sfIDs) {
-		my @seqsForSf = $ff->getIds();
-		my $numSeqsForSf = @seqsForSf;
-		print STDERR "RUNNING $numSeqsForSf on $fam:$sfId\n" if ($verbose);
-
-		my $sfHmmFile = $fle->hmmFile($sfId,"hmmer");
-
-		$allScores = &runHmmsearch($inFile,$sfHmmFile,$allScores,"$fam:$sfId");
-	  }
-	}
-}
-
 
 #now deterimine best hit, and print out scores
 # foreach my $seqId (keys %$allScores) {
