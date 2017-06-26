@@ -13,19 +13,19 @@
 # WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. APPLIED
 # BIOSYSTEMS MAKES NO WARRANTY THAT ITS DATA DOES NOT CONTAIN ERRORS.
 
-##### 
+#####
 #####
 ##
-## pantherHmmScoreBlast.pl - a script to score protein sequences against 
-##                   the PANTHER HMM library. First, uses blast to prefilter 
+## pantherHmmScoreBlast.pl - a script to score protein sequences against
+##                   the PANTHER HMM library. First, uses blast to prefilter
 ##                   results and determine which HMMs to score against
 ##
 ## v1.0 - Anish Kejariwal 11/1/04
-## v1.01 - added the option for combining sequences alignments together if 
+## v1.01 - added the option for combining sequences alignments together if
 ## breaks < 15 AA apart by default  use -J 0 to remove this option.
 ##                                         -- Rozina Loo 01/12/05
 ##v2.0 - modified to use hmmer3 program for scoring. added the option to choose hmmscan or hmmsearch
-##       need to provide the path to the directory containing hmmer3 binary executables or put the 
+##       need to provide the path to the directory containing hmmer3 binary executables or put the
 ##       executables in the system path.
 ##                             --Xiaosong Huang 08/24/2016
 ##
@@ -65,7 +65,7 @@ my $usehmmsearch = 0;
 # get command-line arguments
 use Getopt::Long;
 $Getopt::Long::ignorecase=0; #case sensitive
-&GetOptions 
+&GetOptions
 (
  "h" => sub {&usage()},     # -h for help
  "l=s" => \$library,        # -l for panther (l)ibrary of HMMs
@@ -157,7 +157,7 @@ if (! $usehmmsearch){
     print STDERR "RUNNING parseHmmscan\n";
 
     my $hmmModel = $flb->binHmm;
-	$allScores = &parseHmmscan($inFile,$hmmModel,$allScores); 
+	$allScores = &parseHmmscan($inFile,$hmmModel,$allScores);
 }
 else{
     print STDERR "RUNNING parseHmmsearch2\n";
@@ -214,7 +214,7 @@ if ($forceUsehmmsearch) {
 #now deterimine best hit, and print out scores
 foreach my $seqId (keys %$allScores) {
   if ($allHits) {
-    foreach my $hmm (keys %{$allScores->{$seqId}}) { 
+    foreach my $hmm (keys %{$allScores->{$seqId}}) {
       my $eval = $allScores->{$seqId}{$hmm}{'eval'};
       next if ($eval > $hmmEvalCut);
       &printRes($seqId,$hmm,$eval,$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$hmm});
@@ -223,17 +223,17 @@ foreach my $seqId (keys %$allScores) {
   } elsif ($pantherBestHit) {
     my $hmm = &getBestHit($allScores,$seqId,$hmmEvalCut);
     next unless ($hmm);
-    &printRes($seqId,$hmm,$allScores->{$seqId}{$hmm}{'eval'},$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$hmm}); 
+    &printRes($seqId,$hmm,$allScores->{$seqId}{$hmm}{'eval'},$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$hmm});
 
-  } elsif ($iprScanBestHit) {  
+  } elsif ($iprScanBestHit) {
     my $hmm = &getBestHit($allScores,$seqId,$hmmEvalCut);
     next unless ($hmm);
-    &printRes($seqId,$hmm,$allScores->{$seqId}{$hmm}{'eval'},$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$hmm},1); 
+    &printRes($seqId,$hmm,$allScores->{$seqId}{$hmm}{'eval'},$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$hmm},1);
     my ($fam,$sf) = split(/:/,$hmm);
     if ($sf) {
       #if doing ipr scan and have SF hit, get fam info (if fam meet threshold)
       #get sf score info, and use sf seq range
-      &printRes($seqId,$fam,$allScores->{$seqId}{$hmm}{'eval'},$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$fam},1); 
+      &printRes($seqId,$fam,$allScores->{$seqId}{$hmm}{'eval'},$allScores->{$seqId}{$hmm}{'score'},$allScores->{$seqId}{$hmm}{'seqRange'},$hmmNames->{$fam},1);
     }
   }
 }
@@ -265,9 +265,9 @@ sub printRes {
       print $outStr . "\t$range\n";
     }
   } else {
-    print $outStr . "\t$seqRange\n"; 
+    print $outStr . "\t$seqRange\n";
   }
-} 
+}
 
 
 sub getHmmNames {
@@ -301,7 +301,7 @@ sub getBestHit {
   foreach my $hmm (keys %{$allScores->{$seqId}}) {
     my $eval = $allScores->{$seqId}{$hmm}{'eval'};
     my $score = $allScores->{$seqId}{$hmm}{'score'};
-    next if ($eval > $cutoff);  
+    next if ($eval > $cutoff);
 
     #define best hit, if: 1st time; this is the best eval; this eval equal
     #to best eval, AND this score is better define as best hit
@@ -323,9 +323,9 @@ sub runHmmsearch {
   my $allScores = shift;
   my $hmmId = shift;
   my $domtbl="$tmpDir/$hmmId\.domtblout";
-  
+
   my $hmmsearch_run = "$hmmsearch --domtblout $domtbl $hmmFile $inFile > /dev/null";
-  
+
   system("$hmmsearch_run");
   open TB, "$domtbl" or die $!;
 	while (<TB>){
@@ -337,8 +337,8 @@ sub runHmmsearch {
 		$allScores->{$seq}{$hmmId}{'eval'} = $eVal;
 		$allScores->{$seq}{$hmmId}{'score'} = $score;
 		$allScores->{$seq}{$hmmId}{'seqRange'} = "$ali_f-$ali_t"; # need to figure out
-		
-		
+
+
 	}
 	close TB;
 	unlink $domtbl;
@@ -414,7 +414,7 @@ sub parseHmmscan {
   my $allScores = shift;
   my $domtbl=$inFile;
   #my $hmmscan_run = "$hmmscan --domtblout $domtbl $hmmModel $inFile > /dev/null";
-  
+
   #system("$hmmscan_run");
   open TB, "$domtbl" or die $!;
 	while (<TB>){
@@ -430,8 +430,8 @@ sub parseHmmscan {
 		$allScores->{$seq}{$hmmId}{'eval'} = $eVal;
 		$allScores->{$seq}{$hmmId}{'score'} = $score;
 		$allScores->{$seq}{$hmmId}{'seqRange'} = "$ali_f-$ali_t"; # need to figure out
-		
-		
+
+
 	}
 	close TB;
 	#unlink $domtbl;
@@ -448,7 +448,7 @@ sub runHmmscan {
   my $allScores = shift;
   my $domtbl="$tmpDir/temp\.domtblout";
   my $hmmscan_run = "$hmmscan --domtblout $domtbl $hmmModel $inFile > /dev/null";
-  
+
   system("$hmmscan_run");
   open TB, "$domtbl" or die $!;
 	while (<TB>){
@@ -464,8 +464,8 @@ sub runHmmscan {
 		$allScores->{$seq}{$hmmId}{'eval'} = $eVal;
 		$allScores->{$seq}{$hmmId}{'score'} = $score;
 		$allScores->{$seq}{$hmmId}{'seqRange'} = "$ali_f-$ali_t"; # need to figure out
-		
-		
+
+
 	}
 	close TB;
 	unlink $domtbl;
@@ -513,7 +513,7 @@ hmmer3 PANTHER HMM library using  hmmer3 programs
 
 
 Usage:
-    pantherScore2.0.pl -l <PANTHER library> -D B -V 
+    pantherScore2.0.pl -l <PANTHER library> -D B -V
                     -i <fasta file> -o <output file>
 
 Example:
@@ -531,7 +531,7 @@ Where args are:
 \t-D display type for results
 \t\toptions: I (interproscan), B (best hit), A (all hits)
 \t-E user defined hmm (E)value cutoff to over ride default
-\t-s to use hmmsearch instead of hmmscan for scoring sequence againt hmm library 
+\t-s to use hmmsearch instead of hmmscan for scoring sequence againt hmm library
 \t-H user defined path to direcgtory contating hmmer3 binary executables (including hmmscan or hmmsearch)
 \t\tdefault: hmmer3 binary in \$PATH
 \t-z user defined path to gun(z)ip path
