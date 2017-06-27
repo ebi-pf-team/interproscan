@@ -104,7 +104,8 @@ void output_dom_sites_by_target(struct hmmer_dom *dom_hits, int n_dom_hits, stru
     qsort(dom_hits, n_dom_hits, sizeof(struct hmmer_dom), cmp_dom_target_model);
 
     // Skip the matches without accessions - these were the ones filtered out earlier
-    while (strlen(dom_hits[h].target_ac) == 0 && strlen(dom_hits[h].model_ac) == 0)
+    //while (strlen(dom_hits[h].target_ac) == 0 && strlen(dom_hits[h].model_ac) == 0)
+    while (h < n_dom_hits && strlen(dom_hits[h].target_ac) == 0 && strlen(dom_hits[h].model_ac) == 0) 
         h++;
 
     // Interleave the domain and site hits
