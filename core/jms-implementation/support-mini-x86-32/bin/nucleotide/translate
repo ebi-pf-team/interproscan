@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# This is InterProScan v5. Welcome.
+# Edit this script to suit your installation needs.
+#
+
+while [[ $# -gt 1 ]]
+do
+key="$1"
+
+case $key in
+    -i|--input)
+    INPUTPATH="$2"
+    shift # past argument
+    ;;
+    -o|--output)
+    OUTPUTPATH="$2"
+    shift # past argument
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+#echo INPUTPATH  = "${INPUTPATH}"
+#echo OUTPUTPATH     = "${OUTPUTPATH}"
+
+input_file=`realpath ${INPUTPATH}`
+output_file=`realpath ${OUTPUTPATH}`
+
+if [ -f $input_file ]
+  then 
+  #echo "input is $input_file";
+  timenow=`date +"%T"`
+  echo "start translate at $timenow";
+else
+  echo "input file not found: $input_file ";
+  exit 
+fi
+
+#echo "output is $output_file"
+
+USER_DIR=$PWD
+
+INSTALL_DIR="${BASH_SOURCE[0]}"
+while [ -h "$INSTALL_DIR" ]; do
+  cd "$(dirname "$INSTALL_DIR")"
+  INSTALL_DIR="$(readlink "$(basename "$INSTALL_DIR")")"
+done
+cd "$(dirname "$INSTALL_DIR")"
+INSTALL_DIR="$(pwd)/"
+
+# set environment variables for getorf
+export EMBOSS_ACDROOT=${INSTALL_DIR}
+export EMBOSS_DATA=${INSTALL_DIR}
+
+${INSTALL_DIR}/getorf -sf pearson -sequence $input_file -outseq $output_file -minsize 75
+
+count=`grep -c '>' $output_file`
+echo "$count ORFs in $output_file"
