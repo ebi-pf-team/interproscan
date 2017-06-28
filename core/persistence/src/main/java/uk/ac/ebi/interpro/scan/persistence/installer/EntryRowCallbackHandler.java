@@ -141,6 +141,9 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     private void insertEntries() {
         // Batch insert into DB
         int numEntries = entries.size();
+        if (entryDAO == null) {
+            throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+        }
         entries = (HashSet<Entry>) entryDAO.insert(entries);
         if (log.isInfoEnabled()) {
             log.info(numEntries + " entries persisted.");
@@ -156,6 +159,9 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     private void addSignatures(Set<Entry> entries) {
         log.info("Adding signatures to entries...");
+        if (signatureDAO == null) {
+            throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+        }
         Collection<Signature> batchOfSignatures = new HashSet<Signature>();
         for (Entry entry : entries) {
             // Prepare entry signatures
@@ -186,14 +192,6 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         log.info("Finished adding of signatures.");
     }
 
-    private boolean checkIfDAOAreUsable() {
-        if (entryDAO == null || signatureDAO == null || releaseDAO == null
-                || entry2GoDAO == null || entry2PathwayDAO == null || entry2SignaturesDAO == null) {
-            throw new IllegalStateException("One or some DAOs are not initialised successfully!");
-        }
-        return true;
-    }
-
     private Entry buildEntry(String entryAc, String name, EntryType type, String description,
                              Set<GoXref> goXrefs, Set<PathwayXref> pathwayXrefs) {
         return new Entry.Builder(entryAc)
@@ -222,6 +220,9 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Release getInterProRelease() {
         if (interProRelease == null && interProReleaseId != null) {
+            if (releaseDAO == null) {
+                throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+            }
 //            interProRelease = releaseDAO.readDeep(interProReleaseId, "entries");
             interProRelease = releaseDAO.read(interProReleaseId);
         }
@@ -230,17 +231,20 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Map<String, Collection<String>> getEntry2SignaturesMap() {
         if (entry2SignaturesMap == null) {
-            if (checkIfDAOAreUsable()) {
+            if (entry2SignaturesDAO == null) {
+                throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+            }
+            else {
                 log.info("Loading entry to signature mappings...");
                 entry2SignaturesMap = entry2SignaturesDAO.getAllSignatures();
+                if (entry2SignaturesMap == null) {
+                    throw new RuntimeException("Could not load any entry to signature mappings from external database!");
+                }
+                if (log.isInfoEnabled()) {
+                    log.info(entry2SignaturesMap.size() + " mappings loaded.");
+                }
+                printMemory();
             }
-            if (entry2SignaturesMap == null) {
-                throw new RuntimeException("Could not load any entry to signature mappings from external database!");
-            }
-            if (log.isInfoEnabled()) {
-                log.info(entry2SignaturesMap.size() + " mappings loaded.");
-            }
-            printMemory();
         }
         return entry2SignaturesMap;
     }
@@ -248,7 +252,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
         if (entry2GoXrefsMap == null) {
-            if (checkIfDAOAreUsable()) {
+            if (entry2GoDAO == null) {
+                throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+            }
+            else {
                 log.info("Loading entry to go xrefs...");
                 entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
                 if (entry2GoXrefsMap == null) {
@@ -265,7 +272,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
         if (entry2PathwayXrefsMap == null) {
-            if (checkIfDAOAreUsable()) {
+            if (entry2PathwayDAO == null) {
+                throw new IllegalStateException("One or some DAOs are not initialised successfully!");
+            }
+            else {
                 log.info("Loading entry to pathway xrefs...");
                 entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
                 if (entry2PathwayXrefsMap == null) {
