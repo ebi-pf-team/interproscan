@@ -603,7 +603,9 @@ public class Run extends AbstractI5Runner {
             bbMaster.setMapToGOAnnotations(mapToGo);
             final boolean mapToPathway = parsedCommandLine.hasOption(I5Option.PATHWAY_LOOKUP.getLongOpt());
             bbMaster.setMapToPathway(mapToPathway);
-            final boolean mapToIPR = parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt());
+            //scwitch iprlookup up on by default
+//            final boolean mapToIPR = parsedCommandLine.hasOption(I5Option.IPRLOOKUP.getLongOpt());
+            final boolean mapToIPR = true;
             bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || mapToIPR);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());

@@ -1,7 +1,9 @@
 #!/bin/bash
 #
-# This is InterProScan v5. Welcome.
-# Edit this script to suit your installation needs.
+# This is a utility as part of the InterProScan v5 installation
+# get nucleotide input and generate ORFs using EMBOSS getorf
+#
+#usage: translate -i <input_file> -o <output_file>
 #
 
 while [[ $# -gt 1 ]]
@@ -36,13 +38,11 @@ if [ -f $input_file ]
   then 
   #echo "input is $input_file";
   timenow=`date +"%T"`
-  echo "start translate at $timenow";
+  echo "started translate at $timenow";
 else
   echo "input file not found: $input_file ";
   exit 
 fi
-
-#echo "output is $output_file"
 
 USER_DIR=$PWD
 
