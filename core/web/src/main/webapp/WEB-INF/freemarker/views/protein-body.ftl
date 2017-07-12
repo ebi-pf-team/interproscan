@@ -181,7 +181,7 @@
 
             <#assign hasGo=false/>
             <p><#list protein.processGoTerms as goTerm>
-            <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+            <a href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
@@ -196,7 +196,7 @@
 
             <#assign hasGo=false/>
         <p><#list protein.functionGoTerms as goTerm>
-              <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+              <a href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
@@ -211,7 +211,7 @@
 
             <#assign hasGo=false/>
         <p><#list protein.componentGoTerms as goTerm>
-                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                <a href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
