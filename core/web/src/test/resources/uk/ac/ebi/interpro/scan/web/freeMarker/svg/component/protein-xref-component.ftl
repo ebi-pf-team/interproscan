@@ -21,7 +21,7 @@
                 <#list protein.processGoTerms as goTerm>
                     <tspan x="10px" dy="${tspanDyValue}"
                            style="text-decoration:underline;stroke:none;fill:#0072FE;"><a
-                            xlink:href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                            xlink:href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                             target="_top">${goTerm.accession}</a></tspan>
                     <tspan style="stroke:none;fill:#525252;">${goTerm.termName}</tspan>
                     <#assign hasGo=true/>
@@ -42,7 +42,7 @@
                 <#list protein.functionGoTerms as goTerm>
                     <tspan x="436px" dy="${tspanDyValue}"
                            style="text-decoration:underline;stroke:none;fill:#0072FE;"><a
-                            xlink:href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                            xlink:href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                             target="_top">${goTerm.accession}</a></tspan>
                     <tspan style="stroke:none;fill:#525252;">${goTerm.termName}</tspan>
                     <#assign hasGo=true/>
@@ -63,7 +63,7 @@
                 <#list protein.componentGoTerms as goTerm>
                     <tspan x="862px" dy="${tspanDyValue}"
                            style="text-decoration:underline;stroke:none;fill:#0072FE;"><a
-                            xlink:href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                            xlink:href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                             target="_top">${goTerm.accession}</a></tspan>
                     <tspan style="stroke:none;fill:#525252;">${goTerm.termName}</tspan>
                     <#assign hasGo=true/>
