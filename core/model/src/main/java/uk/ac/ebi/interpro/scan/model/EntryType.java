@@ -74,6 +74,11 @@ public enum EntryType {
             "Group of evolutionarily related proteins that may share one or more features in common, " +
             "which in InterPro are defined by a member database signature with no adjacent signatures."),
 
+    /** Homologous superfamily */
+    H_SUPERFAMILY('H',
+            "Homologous superfamily",
+            "TODO"),
+
     /** Post-translational modification */
     PTM('P',
             "PTM",
@@ -100,7 +105,7 @@ public enum EntryType {
     private final String name;
     private final String description;
 
-    private EntryType(char code, String name, String description) {
+    EntryType(char code, String name, String description) {
         this.code        = code;
         this.name        = name;
         this.description = description;

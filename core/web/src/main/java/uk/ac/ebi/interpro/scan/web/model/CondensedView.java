@@ -21,7 +21,7 @@ public class CondensedView implements Serializable {
     private List<SimpleEntry> entries;
     private int proteinLength = 0;
 
-    private static final List<EntryType> INCLUDED_TYPES = Arrays.asList(EntryType.DOMAIN, EntryType.REPEAT);
+    private List<EntryType> entryTypes = Arrays.asList(EntryType.DOMAIN, EntryType.REPEAT);
 
     // The CondensedLines in this Set are ordered by their lineNumber,
     // 0 indexed.
@@ -29,14 +29,30 @@ public class CondensedView implements Serializable {
 
     private int numSuperMatchBlobs = 0;
 
-    public CondensedView(final List<SimpleEntry> entries, int proteinLength) {
+    /**
+     * Create a condensed view restricted to only the InterPro entry types supplied
+     * @param entries
+     * @param proteinLength
+     * @param entryTypes
+     */
+    public CondensedView(final List<SimpleEntry> entries, int proteinLength, List<EntryType> entryTypes) {
         this.entries = entries;
         this.proteinLength = proteinLength;
+        this.entryTypes = entryTypes; // Example1: domains and repeats, example2: homologous superfamilies
 
-        // First of all, need to build SuperMatches.
+        // Build super matches
         final List<SimpleSuperMatch> superMatches = buildSuperMatchList();
 
         prepareBuckets(superMatches);
+    }
+
+    /**
+     * Create a condensed view using the default entry types (domains and repeats)
+     * @param entries
+     * @param proteinLength
+     */
+    public CondensedView(final List<SimpleEntry> entries, int proteinLength) {
+        this(entries, proteinLength, Arrays.asList(EntryType.DOMAIN, EntryType.REPEAT));
     }
 
     public CondensedView(int proteinLength, List<SimpleSuperMatch> superMatches) {
@@ -60,7 +76,7 @@ public class CondensedView implements Serializable {
      * objects - however at this point they are not Supermatches - that is the job
      * of the next method (buildBuckets).
      * <p/>
-     * Note - only includes features of the types allowed in the INCLUDED_TYPES list.
+     * Note - only includes features of the types allowed in the entryTypes list.
      *
      * @return a List of SimpleSuperMatch objects, one for each Entry / location.
      */
@@ -68,7 +84,7 @@ public class CondensedView implements Serializable {
         final List<SimpleSuperMatch> superMatchList = new ArrayList<SimpleSuperMatch>();
         // Initially the SimpleSuperMatches are just matches - the merging occurs in the next method call.
         for (final SimpleEntry entry : entries) {
-            if (INCLUDED_TYPES.contains(entry.getType())) {
+            if (entryTypes.contains(entry.getType())) {
                 for (SimpleSignature simpleSignature : entry.getSignatures()) {
                     for (final SimpleLocation location : simpleSignature.getLocations()) {
                         superMatchList.add(new SimpleSuperMatch(entry, location));

@@ -14,12 +14,13 @@ public enum EntryType {
     // Note: protein page orders matches according to order of enums here!
     FAMILY("Family"),
     DOMAIN("Domain"),
+    H_SUPERFAMILY("Homologous_superfamily"),
     REPEAT("Repeat"),
     SITE("Active_site", "Binding_site", "Conserved_site", "PTM"),
     UNKNOWN("Unknown");
 
     private final String name;
-    private final List<String> alternativeNames = new ArrayList<String>();
+    private final List<String> alternativeNames = new ArrayList<>();
 
     private static final Map<String, EntryType> TYPE_NAME_TO_TYPE = new HashMap<String, EntryType>();
 
@@ -62,6 +63,9 @@ public enum EntryType {
 
             case FAMILY:
                 return FAMILY;
+
+            case H_SUPERFAMILY:
+                return H_SUPERFAMILY;
 
             case REPEAT:
                 return REPEAT;

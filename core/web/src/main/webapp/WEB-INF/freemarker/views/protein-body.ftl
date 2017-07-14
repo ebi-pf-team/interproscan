@@ -26,6 +26,10 @@
 
     <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
 
+    <h3>Homologous superfamilies</h3>
+
+    <@condensedViewMacro.condensedView condensedView=condensedHSView scale=scale entryColours=entryColours/>
+
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
     <h3>Detailed signature matches</h3>
 
