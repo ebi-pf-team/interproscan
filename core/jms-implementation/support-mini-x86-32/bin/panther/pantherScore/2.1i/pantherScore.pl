@@ -312,7 +312,7 @@ sub getBestHit {
 	my $cutoff = shift;
 	my @evals = sort {$a<=>$b} keys %{$allScores->{$seqId}};
 	my $bestEval = shift (@evals);
-	my @scores = sort {$a<=>$b} keys %{$allScores->{$seqId}{$bestEval}};
+	my @scores = sort {$b<=>$a} keys %{$allScores->{$seqId}{$bestEval}};
 	my $bestScore = shift (@scores);
 	my @bestHmm = keys %{$allScores->{$seqId}{$bestEval}{$bestScore}};
 	next if ($bestEval > $cutoff);  
