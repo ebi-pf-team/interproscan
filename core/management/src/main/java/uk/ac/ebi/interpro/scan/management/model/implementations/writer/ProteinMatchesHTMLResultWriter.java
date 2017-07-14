@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.EntryType;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
@@ -17,6 +18,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -149,6 +151,7 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
 
             model.put("protein", p);
             model.put("condensedView", new CondensedView(entries, proteinLength));
+            model.put("condensedHSView", new CondensedView(entries, proteinLength, Arrays.asList(EntryType.H_SUPERFAMILY)));
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("standalone", standalone);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
