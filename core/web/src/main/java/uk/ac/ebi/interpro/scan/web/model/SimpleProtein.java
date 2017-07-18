@@ -368,10 +368,7 @@ public final class SimpleProtein implements Serializable {
      * @return true if one or more sites are present, otherwise false
      */
     public boolean hasSites() {
-        if (this.sites == null || this.sites.size() < 1) {
-            return false;
-        }
-        return true;
+        return !(this.sites == null || this.sites.size() < 1);
     }
 
     /**
