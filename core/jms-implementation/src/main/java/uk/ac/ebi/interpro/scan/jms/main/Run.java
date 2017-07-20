@@ -364,9 +364,11 @@ public class Run extends AbstractI5Runner {
                 }
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
                     //deal with panther  stepPantherHMM3RunPantherScore
-                    final PantherNewBinaryStep stepPantherRunBinary = (PantherNewBinaryStep) ctx.getBean("stepPantherRunBinary");
+                    //this maynot be necessary anymore
+                    //TODO maybe remove
+                    //final PantherNewBinaryStep stepPantherRunBinary = (PantherNewBinaryStep) ctx.getBean("stepPantherRunBinary");
 //                    final PantherScoreStep stepPantherRunBinary = (PantherScoreStep) ctx.getBean("stepPantherHMM3RunPantherScore");
-                    stepPantherRunBinary.setUserDir(parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()).trim());
+                    //stepPantherRunBinary.setUserDir(parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()).trim());
                 }
                 String operatingSystem = System.getProperty("os.name");
                 System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode... on " + operatingSystem );
