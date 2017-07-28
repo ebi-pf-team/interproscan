@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -22,9 +23,15 @@ import java.util.Set;
 @XmlType(name = "nucleicAcidMatchesType")
 public final class NucleicAcidMatchesHolder implements IMatchesHolder, Serializable {
 
+    private final String interProScanVersion = "5.25-64.0";
     private final Set<NucleotideSequence> nucleotideSequences = new HashSet<NucleotideSequence>();
 
     public NucleicAcidMatchesHolder() {
+    }
+
+    @XmlAttribute(name = "interproscan-version")
+    public String getInterProScanVersion() {
+        return interProScanVersion;
     }
 
     public void addProteins(Collection<Protein> proteins) {
@@ -58,6 +65,7 @@ public final class NucleicAcidMatchesHolder implements IMatchesHolder, Serializa
             return false;
         final NucleicAcidMatchesHolder s = (NucleicAcidMatchesHolder) o;
         return new EqualsBuilder()
+                .append(interProScanVersion, s.interProScanVersion)
                 .append(nucleotideSequences, s.nucleotideSequences)
                 .isEquals();
     }
@@ -65,6 +73,7 @@ public final class NucleicAcidMatchesHolder implements IMatchesHolder, Serializa
     @Override
     public int hashCode() {
         return new HashCodeBuilder(71, 53)
+                .append(interProScanVersion)
                 .append(nucleotideSequences)
                 .toHashCode();
     }
