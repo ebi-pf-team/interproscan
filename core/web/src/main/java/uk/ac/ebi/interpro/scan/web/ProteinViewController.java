@@ -141,6 +141,7 @@ public class ProteinViewController {
     private Map<String, Object> buildModelMap(SimpleProtein p, boolean standalone) {
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("standalone", standalone);
+        m.put("version", "5.25-64.0");
         if (p != null) {
             final int proteinLength = p.getLength();
             final List<SimpleEntry> entries = p.getAllEntries();
