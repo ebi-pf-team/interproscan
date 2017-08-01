@@ -62,7 +62,7 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
 //            mapper.configOverride(Signature.class).setInclude(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, null));
 //        }
         ObjectWriter objectWriter = (isSlimOutput ? mapper.writer() : mapper.writerWithDefaultPrettyPrinter());
-        fileWriter.write("{ \"version\": \"" + version + "\",\n");
+        fileWriter.write("{ \"interproscan-version\": \"" + version + "\",\n");
         fileWriter.write("\"results\": [ ");
         if (list != null && list.size() > 0) {
             final int len = list.size();

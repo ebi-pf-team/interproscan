@@ -23,10 +23,13 @@ import java.util.Set;
 @XmlType(name = "nucleicAcidMatchesType")
 public final class NucleicAcidMatchesHolder implements IMatchesHolder, Serializable {
 
-    private final String interProScanVersion = "5.25-64.0";
-    private final Set<NucleotideSequence> nucleotideSequences = new HashSet<NucleotideSequence>();
+    private String interProScanVersion = "Unknown";
+    private final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
 
-    public NucleicAcidMatchesHolder() {
+    public NucleicAcidMatchesHolder() {}
+
+    public NucleicAcidMatchesHolder(String interProScanVersion) {
+        this.interProScanVersion = interProScanVersion;
     }
 
     @XmlAttribute(name = "interproscan-version")

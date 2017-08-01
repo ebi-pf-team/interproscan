@@ -80,7 +80,7 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
         signature.setSignatureLibraryRelease(release);
         // Create holder
-        ProteinMatchesHolder holder = new ProteinMatchesHolder();
+        ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
         holder.addProtein(p);
         return holder;
     }

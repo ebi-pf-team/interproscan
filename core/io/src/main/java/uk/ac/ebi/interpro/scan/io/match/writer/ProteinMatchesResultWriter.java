@@ -29,6 +29,7 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
     protected boolean mapToInterProEntries;
     protected boolean mapToGO;
     protected boolean mapToPathway;
+    protected String interProScanVersion = "5.25-54.0";
 
     protected DateFormat dmyFormat;
 
@@ -70,16 +71,20 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
 
     }
 
+    public String getInterProScanVersion() {
+        return interProScanVersion;
+    }
 
     public void setMapToInterProEntries(boolean mapToInterProEntries) {
         this.mapToInterProEntries = mapToInterProEntries;
     }
 
-    public void setMapToGo(boolean mapToGO) {
+    public void setMapToGO(boolean mapToGO) {
         this.mapToGO = mapToGO;
     }
 
     public void setMapToPathway(boolean mapToPathway) {
         this.mapToPathway = mapToPathway;
     }
+
 }

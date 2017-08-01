@@ -60,6 +60,8 @@ public class WriteOutputStep extends Step {
 
     private boolean excludeSites;
 
+    private String interProScanVersion;
+
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
@@ -111,6 +113,11 @@ public class WriteOutputStep extends Step {
     @Required
     public void setExcludeSites(boolean excludeSites) {
         this.excludeSites = excludeSites;
+    }
+
+    @Required
+    public void setInterProScanVersion(String interProScanVersion) {
+        this.interProScanVersion = interProScanVersion;
     }
 
     /**
@@ -351,9 +358,9 @@ public class WriteOutputStep extends Step {
     private IMatchesHolder getMatchesHolder(StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
-            matchesHolder = new NucleicAcidMatchesHolder();
+            matchesHolder = new NucleicAcidMatchesHolder(interProScanVersion);
         } else {
-            matchesHolder = new ProteinMatchesHolder();
+            matchesHolder = new ProteinMatchesHolder(interProScanVersion);
         }
 
         final Map<String, String> parameters = stepInstance.getParameters();
@@ -534,7 +541,7 @@ public class WriteOutputStep extends Step {
         final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
         final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
         writer.setMapToInterProEntries(mapToInterProEntries);
-        writer.setMapToGo(mapToGO);
+        writer.setMapToGO(mapToGO);
         writer.setMapToPathway(mapToPathway);
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {
