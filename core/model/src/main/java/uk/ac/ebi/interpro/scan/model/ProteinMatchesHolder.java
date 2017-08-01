@@ -26,10 +26,13 @@ import java.util.Set;
 @XmlType(name = "proteinMatchesType")
 public final class ProteinMatchesHolder implements IMatchesHolder, Serializable {
 
-    private final String interProScanVersion = "5.25-64.0";
+    private String interProScanVersion = "Unknown";
     private final Set<Protein> proteins = new HashSet<Protein>();
 
-    public ProteinMatchesHolder() {
+    public ProteinMatchesHolder() {}
+
+    public ProteinMatchesHolder(String interProScanVersion) {
+        this.interProScanVersion = interProScanVersion;
     }
 
     @XmlAttribute(name = "interproscan-version")

@@ -93,7 +93,7 @@
                 p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
 
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -153,7 +153,7 @@
                 p.addMatch(new Hmmer3Match(signature, 206.7, 3.7E-67, locations));
 
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -211,7 +211,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SMART, "5.1");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -265,7 +265,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.75");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -322,7 +322,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -398,7 +398,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRODOM, "2006.1");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -461,7 +461,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PATTERNS, "20.35");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -524,7 +524,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
 
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -590,7 +590,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.0");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;

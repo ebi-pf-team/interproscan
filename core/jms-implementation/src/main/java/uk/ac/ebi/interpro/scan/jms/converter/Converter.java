@@ -103,7 +103,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     public String[] getOutputFormats() {
         if (outputFormats == null) {
-            // By default, if no output formats are supplied then return in all formats (except RAW)
+            // If no output formats are supplied then return default formats
             return new String[]{
                     FileOutputFormat.TSV.getFileExtension(),
                     FileOutputFormat.GFF3.getFileExtension()
@@ -432,7 +432,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 //        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
 //        final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
         writer.setMapToInterProEntries(true);
-        writer.setMapToGo(true);
+        writer.setMapToGO(true);
         writer.setMapToPathway(true);
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {
@@ -447,7 +447,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
     private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,
                                      final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
         writer.setMapToInterProEntries(true);
-        writer.setMapToGo(true);
+        writer.setMapToGO(true);
         writer.setMapToPathway(true);
         if (nucleotideSequences != null) {
             if (LOGGER.isInfoEnabled()) {

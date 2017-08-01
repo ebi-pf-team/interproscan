@@ -62,6 +62,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             //##feature-ontology URI
             //This directive indicates that the GFF3 file uses the ontology of feature types located at the indicated URI or URL.
             this.gffWriter.write("##feature-ontology http://song.cvs.sourceforge.net/viewvc/song/ontology/sofa.obo?revision=1.269");
+            this.gffWriter.write("##interproscan-version " + this.getInterProScanVersion());
         }
     }
 
