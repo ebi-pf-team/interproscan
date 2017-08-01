@@ -121,7 +121,7 @@ if __name__ == "__main__":
         elif option in ("-e", "--evalue-cutoff"):
             evalue_cutoff = float(arg_value)
         elif option in ("-o", "--output"):
-            output_file = float(arg_value)
+            output_file = arg_value
         else:
             assert False, "unhandled option"
 
