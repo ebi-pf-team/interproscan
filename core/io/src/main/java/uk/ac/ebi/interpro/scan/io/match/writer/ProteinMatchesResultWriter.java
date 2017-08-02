@@ -29,7 +29,7 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
     protected boolean mapToInterProEntries;
     protected boolean mapToGO;
     protected boolean mapToPathway;
-    protected String interProScanVersion = "5.25-54.0";
+    protected String interProScanVersion = "Unknown";
 
     protected DateFormat dmyFormat;
 
@@ -43,6 +43,11 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
         //this.fileWriter = new BufferedWriter(new FileWriter(file), bufferSize);
         this.fileWriter = Files.newBufferedWriter(path, characterSet);
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
+    }
+
+    public ProteinMatchesResultWriter(Path path, String interProScanVersion) throws IOException {
+        this(path);
+        this.interProScanVersion = interProScanVersion;
     }
 
     public void close() throws IOException {
