@@ -43,8 +43,6 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false); // E.g. matches for un-integrated signatures have no InterPro entry assigned
 
-        String version = matchesHolder.getInterProScanVersion();
-
         Set<? extends OutputListElement> list = null;
         if (sequenceType.equalsIgnoreCase("n") && matchesHolder instanceof NucleicAcidMatchesHolder) {
             list = ((NucleicAcidMatchesHolder) matchesHolder).getNucleotideSequences();
@@ -62,7 +60,7 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
 //            mapper.configOverride(Signature.class).setInclude(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, null));
 //        }
         ObjectWriter objectWriter = (isSlimOutput ? mapper.writer() : mapper.writerWithDefaultPrettyPrinter());
-        fileWriter.write("{ \"interproscan-version\": \"" + version + "\",\n");
+        fileWriter.write("{ \"interproscan-version\": \"" + matchesHolder.getInterProScanVersion() + "\",\n");
         fileWriter.write("\"results\": [ ");
         if (list != null && list.size() > 0) {
             final int len = list.size();

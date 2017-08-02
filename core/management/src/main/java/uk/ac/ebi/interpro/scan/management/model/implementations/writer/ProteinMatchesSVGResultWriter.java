@@ -87,6 +87,7 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
             model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
+            model.put("interproscanVersion", interproscanVersion);
         }
         return model;
     }

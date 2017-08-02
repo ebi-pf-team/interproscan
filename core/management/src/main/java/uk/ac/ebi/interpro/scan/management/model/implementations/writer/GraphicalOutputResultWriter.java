@@ -48,6 +48,14 @@ public abstract class GraphicalOutputResultWriter {
 
     protected String tempDirectory;
 
+    protected String interproscanVersion;
+
+    @Required
+    public void setInterproscanVersion(String interproscanVersion) {
+        this.interproscanVersion = interproscanVersion;
+    }
+
+
     @Required
     public void setEntryHierarchyBeanId(String entryHierarchyBeanId) {
         this.entryHierarchyBeanId = entryHierarchyBeanId;
