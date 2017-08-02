@@ -34,8 +34,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         super();
     }
 
-    public GFFResultWriterForNucSeqs(Path path) throws IOException {
-        super(path);
+    public GFFResultWriterForNucSeqs(Path path, String interProScanVersion) throws IOException {
+        super(path, interProScanVersion);
     }
 
     private String getNucleotideId() {

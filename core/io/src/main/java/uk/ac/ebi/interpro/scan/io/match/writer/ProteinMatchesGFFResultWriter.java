@@ -49,12 +49,12 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         this.matchCounter = 0;
     }
 
-    public ProteinMatchesGFFResultWriter(Path path) throws IOException {
-         this(path, true);
+    public ProteinMatchesGFFResultWriter(Path path, String interProScanVersion) throws IOException {
+         this(path, interProScanVersion, true);
     }
 
-    public ProteinMatchesGFFResultWriter(Path path, boolean writeFullGFF) throws IOException {
-        super(path);
+    public ProteinMatchesGFFResultWriter(Path path, String interProScanVersion, boolean writeFullGFF) throws IOException {
+        super(path, interProScanVersion);
         this.gffWriter = new GFFWriter(super.fileWriter);
         if (writeFullGFF) {
             //Write first line of file - always the same
