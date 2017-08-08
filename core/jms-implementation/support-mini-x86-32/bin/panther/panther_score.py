@@ -1,10 +1,33 @@
+#!/usr/bin/env python
+
+__author__ = "Gift Nuka"
+__copyright__ = "Copyright 2017, EMBL-EBI"
+__license__ = "Apache"
+__version__ = "2.0"
+__maintainer__ = "Gift Nuka"
+__email__ = ""
+__status__ = "production"
+
+"""
+this program takes hmmer3 domtablout and selects the best hit for Panther based on  e-value and bit scores.
+ the hit with the smalles evalue and the highest score is selected.
+ 
+ if two or more hits have the same evalue and score they all all selected.
+ 
+ if subfamily has a hit the parent family is promoted.
+ usage: python panther_score.py -d domtbl.out -m hmmscan|hmmsearch -n names.tab -e 0.001
+ 
+ this program is ported from PantherScore.pl from pantherdb.org
+"""
+
 import sys
 import getopt
 
-"""
-get the panther family name from the query target
-"""
+
 def get_query_name(hmma):
+    """
+      get the panther family name from the query target
+    """
     hmma_list = hmma.split ('.')
     if len(hmma_list) > 2:
         hmm_fam  = hmma_list[0]
@@ -39,11 +62,12 @@ def append_to_match_list(all_scores, seq_id, item):
         updated_raw_matches = [item]
     return updated_raw_matches
 
-"""
-get the best hit: one with smallest evalue and highest score.
-if at least two hits have same evalue and score, report them all
-"""
+
 def get_best_hits(matches, evalue_cutoff):
+    """
+      get the best hit: one with smallest evalue and highest score.
+      if at least two hits have same evalue and score, report them all
+    """
     best_hits = []
     evalue_sorted = sorted(matches, key=lambda x: x[2])
     best_evalue = evalue_sorted[0][2]
