@@ -14,7 +14,7 @@ public enum EntryType {
     // Note: protein page orders matches according to order of enums here!
     FAMILY("Family"),
     DOMAIN("Domain"),
-    H_SUPERFAMILY("Homologous_superfamily"),
+    HOMOLOGOUS_SUPERFAMILY("Homologous_superfamily"),
     REPEAT("Repeat"),
     SITE("Active_site", "Binding_site", "Conserved_site", "PTM"),
     UNKNOWN("Unknown");
@@ -64,8 +64,8 @@ public enum EntryType {
             case FAMILY:
                 return FAMILY;
 
-            case H_SUPERFAMILY:
-                return H_SUPERFAMILY;
+            case HOMOLOGOUS_SUPERFAMILY:
+                return HOMOLOGOUS_SUPERFAMILY;
 
             case REPEAT:
                 return REPEAT;

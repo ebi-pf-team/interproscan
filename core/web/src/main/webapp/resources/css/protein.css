@@ -222,7 +222,7 @@ a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_o
 .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-sites fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
 .menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
 .menu-filter .menu-filter-sites label  {border:0px green solid;padding-left:2px;padding-top:5px; }
-.menu-filter .menu-filter-type label.h-superfamily {background: url(../images/ico_type_h_superfamily.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.homologous-superfamily {background: url(../images/ico_type_homologous_superfamily.png) no-repeat 0 4px;}
 .menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 4px;}
 .menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 4px;}
 .menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 4px;}

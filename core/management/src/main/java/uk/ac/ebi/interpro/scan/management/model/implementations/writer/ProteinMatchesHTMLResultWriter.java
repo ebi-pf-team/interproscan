@@ -151,7 +151,7 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
 
             model.put("protein", p);
             model.put("condensedView", new CondensedView(entries, proteinLength));
-            model.put("condensedHSView", new CondensedView(entries, proteinLength, Arrays.asList(EntryType.H_SUPERFAMILY)));
+            model.put("condensedHSView", new CondensedView(entries, proteinLength, Arrays.asList(EntryType.HOMOLOGOUS_SUPERFAMILY)));
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("standalone", standalone);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));

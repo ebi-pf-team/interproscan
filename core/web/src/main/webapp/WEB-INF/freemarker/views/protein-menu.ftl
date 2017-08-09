@@ -13,10 +13,10 @@
         <div class="menu-filter-type"><h1>Entry type</h1>
 
             <fieldset>
-                <div ${protein.disabledStyleIfNoMatches("H_SUPERFAMILY")}>
-                    <input type="checkbox" class="type" id="check-1" value="H-Superfamily-row"
-                           checked="checked" ${protein.disableIfNoMatches("H_SUPERFAMILY")}/>
-                    <label for="check-1" class="h-superfamily">Homologous superfamily</label>
+                <div ${protein.disabledStyleIfNoMatches("HOMOLOGOUS_SUPERFAMILY")}>
+                    <input type="checkbox" class="type" id="check-1" value="Homologous_superfamily-row"
+                           checked="checked" ${protein.disableIfNoMatches("HOMOLOGOUS_SUPERFAMILY")}/>
+                    <label for="check-1" class="homologous-superfamily">Homologous superfamily</label>
                 </div>
                 <div ${protein.disabledStyleIfNoMatches("FAMILY")}>
                     <input type="checkbox" class="type" id="check-2" value="Family-row"
