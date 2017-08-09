@@ -70,7 +70,7 @@ public enum EntryType {
                     "which in InterPro are defined by a member database signature with no adjacent signatures."),
 
     /** Homologous superfamily */
-    H_SUPERFAMILY('H',
+    HOMOLOGOUS_SUPERFAMILY('H',
             "Homologous superfamily",
             "A homologous superfamily is a group of proteins that share a common evolutionary origin, reflected by " +
                     "similarity in their structure. Since superfamily members often display very low similarity at " +
