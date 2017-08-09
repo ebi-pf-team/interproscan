@@ -55,7 +55,9 @@ def append_to_match_list(all_scores, seq_id, item):
     if seq_id in all_scores:
         raw_matches = all_scores[seq_id]
         if  not raw_matches:
-            print_error ('some problem, ...')
+            #wwe expect hits for each seqid
+            print_error ('some problem with the hmmer output, ...')
+            sys.exit(4)
         raw_matches.append(item)
         updated_raw_matches = raw_matches
     else:
