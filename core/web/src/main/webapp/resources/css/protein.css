@@ -346,8 +346,9 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 
 .ui-tooltip-content ul {margin:0; padding:0; list-style:none;}
 .ui-tooltip-content ul li {list-style-type: none; padding-left: 26px;/* padding-bottom: 2px;add space to make the shadow of the tree icon appear correctly*/}
-.ui-tooltip-content ul li {background: url(../images/ico_tree_d.png) no-repeat 0 0;} /*temp fix as Domain is added randomly to list element - code needs to be checked*/
+.ui-tooltip-content ul li {background: url(../images/ico_tree_domain.png) no-repeat 0 0;} /*temp fix as Domain is added randomly to list element - code needs to be checked*/
 .ui-tooltip-content ul li.Repeat {background: url(../images/ico_tree_repeat.png) no-repeat 0 0;}
+.ui-tooltip-content ul li.Homologous_superfamily {background: url(../images/ico_tree_homologous_superfamily.png) no-repeat 0 0;}
 
 .ui-tooltip .popup_topl {padding-bottom:4px; font-weight:bold;font-size:88%;}
 .ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 4px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}
