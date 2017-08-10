@@ -12,10 +12,12 @@ import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.EntryType;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,12 +105,14 @@ public class SVGFreeMarkerTest {
             final int proteinLength = p.getLength();
             final List<SimpleEntry> entries = p.getAllEntries();
             final CondensedView condensedView = new CondensedView(entries, proteinLength);
+            final CondensedView condensedHSView = new CondensedView(entries, proteinLength, Arrays.asList(EntryType.HOMOLOGOUS_SUPERFAMILY));
 
             model.put("protein", p);
             model.put("condensedView", condensedView);
+            model.put("condensedHSView", condensedHSView);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
+            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, condensedHSView, 30, 180, 18, 19, 30));
         } // Else no protein data was found therefore nothing to display
         return model;
     }

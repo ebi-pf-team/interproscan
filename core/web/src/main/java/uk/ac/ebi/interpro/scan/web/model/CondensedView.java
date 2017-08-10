@@ -151,7 +151,7 @@ public class CondensedView implements Serializable {
 
         }
         // Sort them when finished building, by placing into a TreeSet.
-        lines = new TreeSet<CondensedLine>(unsortedLines);
+        lines = new TreeSet<>(unsortedLines);
     }
 
     public Set<CondensedLine> getLines() {
@@ -216,7 +216,9 @@ public class CondensedView implements Serializable {
                 result.append("<text x=\"15px\" y=\"10.5px\"");
                 result.append(" ");
                 result.append("style=\"font-family:Verdana,Helvetica,sans-serif;font-size:11px;stroke:none;fill:#525252;\">");
-                if (entryType.equals(EntryType.DOMAIN)) {
+                if (entryType.equals(EntryType.HOMOLOGOUS_SUPERFAMILY)) {
+                    result.append(EntryType.HOMOLOGOUS_SUPERFAMILY.toString().replaceAll("_", " "));
+                } else if (entryType.equals(EntryType.DOMAIN)) {
                     result.append(EntryType.DOMAIN.toString());
                 } else {
                     result.append(EntryType.REPEAT.toString());
