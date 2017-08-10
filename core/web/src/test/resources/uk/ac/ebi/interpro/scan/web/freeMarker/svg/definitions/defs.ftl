@@ -3,6 +3,38 @@
     <polygon id="blackArrowComponent" points="0,2  8,6  0,10"
              style="stroke:#660000; fill:black;"/>
 <#--<rect id="blackSquare" x="1px" y="7px" height="6px" width="6px" style="fill:393939"/>-->
+
+    <#--Blue homologous superfamily icon-->
+    <svg id="ico_type_homologous_superfamily_small" width="11" height="11" viewBox="0 0 72 72">
+        <defs>
+            <linearGradient id="h-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#6caed4" />
+                <stop offset="100%" style="stop-color:#379ec7" />
+            </linearGradient>
+        </defs>
+        <rect
+                x="4" y="4"
+                width="60" height="60"
+                stroke-width="2"
+                stroke="#0886c0"
+                fill="url(#h-gradient)"
+                rx="10"
+                ry="10"
+        />
+        <text
+                x="50%" y="50%"
+                text-anchor="middle"
+                dx="-1px" dy="20px"
+                style="
+               fill: white;
+               font-size: 60px;
+               font-weight:bold;
+               font-family:Arial;
+               ">
+            H
+        </text>
+    </svg>
+
 <#--Red protein family icon-->
     <svg id="ico_type_family_small" width="11" height="11" viewBox="0 0 100 106">
         <g>
