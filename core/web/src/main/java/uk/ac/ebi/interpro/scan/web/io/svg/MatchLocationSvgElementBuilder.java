@@ -65,7 +65,8 @@ public class MatchLocationSvgElementBuilder {
                                    final String entryAccession) {
         if (entryType != null) {
             result.append("class=\"");
-            if (entryType.equalsIgnoreCase(EntryType.DOMAIN.toString())
+            if (entryType.equalsIgnoreCase(EntryType.HOMOLOGOUS_SUPERFAMILY.toString())
+                    || entryType.equalsIgnoreCase(EntryType.DOMAIN.toString())
                     || entryType.equalsIgnoreCase(EntryType.REPEAT.toString())) {
                 final Integer colourCode = entryColourMap.get(entryAccession);
                 if (colourCode != null) {
