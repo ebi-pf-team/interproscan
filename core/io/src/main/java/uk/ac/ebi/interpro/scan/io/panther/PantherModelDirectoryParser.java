@@ -66,7 +66,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
 
                 File booksDir = new File(modelFile.getFile().getPath() + "/books");
-                if (booksDir.exists() && booksDir.getAbsoluteFile() != null) {
+                if (booksDir.exists()) {
                     //TODO: Implement a file filter for a more save memory implementation
                     String[] children = booksDir.getAbsoluteFile().list();
                     if (children != null) {
@@ -95,7 +95,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                                            SignatureLibraryRelease release) throws IOException {
         for (Resource modelFile : modelFiles) {
             File subFamilyDir = new File(modelFile.getFile().getPath() + "/books/" + dirName);
-            if (subFamilyDir.exists() && subFamilyDir.getAbsoluteFile() != null) {
+            if (subFamilyDir.exists()) {
                 //TODO: Implement a file filter for a more memory save implementation
                 String[] children = subFamilyDir.getAbsoluteFile().list(new DirectoryFilenameFilter());
                 if (children != null) {
@@ -157,7 +157,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 lineNumber++;
                 if (line.length() > 0 && line.startsWith("PTHR")) {
                     String[] columns = line.split("\t");
-                    if (columns != null && columns.length == 2) {
+                    if (columns.length == 2) {
                         String familyId = columns[0];
                         familyId = familyId.replace(".mod", "");
                         //family Id is a super family
@@ -171,8 +171,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                         String familyName = columns[1];
                         result.put(familyId, familyName);
                     } else {
-                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " +
-                                (columns == null ? 0 : columns.length) + "columns!");
+                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + "columns!");
                     }
                 } else {
                     LOGGER.warn("Unexpected start of line: " + line);
@@ -189,8 +188,10 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 }
             }
         }
-        LOGGER.info(lineNumber + " lines parsed.");
-        LOGGER.info(result.size() + " entries created in the map.");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(lineNumber + " lines parsed.");
+            LOGGER.info(result.size() + " entries created in the map.");
+        }
         return result;
     }
 
