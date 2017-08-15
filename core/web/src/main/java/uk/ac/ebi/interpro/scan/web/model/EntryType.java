@@ -12,9 +12,9 @@ import java.util.*;
 public enum EntryType {
 
     // Note: protein page orders matches according to order of enums here!
+    HOMOLOGOUS_SUPERFAMILY("Homologous_superfamily"),
     FAMILY("Family"),
     DOMAIN("Domain"),
-    HOMOLOGOUS_SUPERFAMILY("Homologous_superfamily"),
     REPEAT("Repeat"),
     SITE("Active_site", "Binding_site", "Conserved_site", "PTM"),
     UNKNOWN("Unknown");
