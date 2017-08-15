@@ -52,19 +52,19 @@ we would expect! -->
 <#assign yPosition=yPosition+proteinInfoComponentHeight/>
 <#include "component/protein-family-component.ftl"/>
 
-<#--Protein summary view component (domains and repeats)-->
-<#global summaryViewComponentHeight=0/>
-<#assign yPosition=yPosition+familyComponentHeight/>
-<#include "component/protein-summary-view-component.ftl"/>
-
 <#--Protein homologous superfamilies summary view component-->
 <#global summaryHSViewComponentHeight=0/>
-<#assign yPosition=yPosition+summaryViewComponentHeight/>
+<#assign yPosition=yPosition+familyComponentHeight/>
 <#include "component/protein-hs-summary-view-component.ftl"/>
+
+<#--Protein summary view component (domains and repeats)-->
+<#global summaryViewComponentHeight=0/>
+<#assign yPosition=yPosition+summaryHSViewComponentHeight/>
+<#include "component/protein-summary-view-component.ftl"/>
 
 <#--Protein features component-->
 <#global proteinFeaturesComponentHeight=0/>
-<#assign yPosition=yPosition+summaryHSViewComponentHeight/>
+<#assign yPosition=yPosition+summaryViewComponentHeight/>
 <#include "component/protein-features-component.ftl"/>
 
 <#--Protein GO terms component-->
