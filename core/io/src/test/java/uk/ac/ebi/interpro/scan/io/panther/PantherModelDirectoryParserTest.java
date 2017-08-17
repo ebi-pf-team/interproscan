@@ -31,8 +31,8 @@ public class PantherModelDirectoryParserTest {
         parser = new PantherModelDirectoryParser();
     }
 
-    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/7.0/model";
-    private static final String PANTHER_TEST_VERSION = "7.0";
+    private static final String PANTHER_TEST_MODEL_DIR = "data/panther";
+    private static final String PANTHER_TEST_VERSION = "12.0";
     private static final String PANTHER_TEST_NAMES_TAB_FILE = "names.tab";
 
 
