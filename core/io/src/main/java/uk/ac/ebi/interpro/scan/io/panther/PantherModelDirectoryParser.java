@@ -59,6 +59,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
+<<<<<<< HEAD
         Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames();
 
         LOGGER.debug(familyIdFamilyNameMap);
@@ -144,7 +145,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 lineNumber++;
                 if (line.length() > 0 && line.startsWith("PTHR")) {
                     String[] columns = line.split("\t");
-                    if (columns != null && columns.length == 2) {
+                    if (columns.length == 2) {
                         String familyId = columns[0];
                         familyId = familyId.replace(".mod", "");
                         //family Id is a super family
@@ -158,8 +159,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                         String familyName = columns[1];
                         result.put(familyId, familyName);
                     } else {
-                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " +
-                                (columns == null ? 0 : columns.length) + "columns!");
+                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + "columns!");
                     }
                 } else {
                     LOGGER.warn("Unexpected start of line: " + line);
@@ -176,8 +176,10 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 }
             }
         }
-        LOGGER.info(lineNumber + " lines parsed.");
-        LOGGER.info(result.size() + " entries created in the map.");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(lineNumber + " lines parsed.");
+            LOGGER.info(result.size() + " entries created in the map.");
+        }
         return result;
     }
 

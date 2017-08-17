@@ -15,49 +15,19 @@
         <property name="libraryRelease" ref="signatureLibraryReleasePanther"/>
         <property name="nonEmptyPaths">
             <list value-type="java.lang.String">
-                <!--<ref bean="modelDirectory" />-->
-                <!--<ref bean="perlLibrary" />-->
-                <!--<ref bean="scriptPath" />-->
                 <ref bean="hmmerBinariesPath" />
             </list>
         </property>
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
-                <!--<entry key="perl.command" value-ref="perlCommand"/>-->
-                <!--<entry key="binary.panther.perl.lib.dir" value-ref="perlLibrary"/>-->
-                <!--<entry key="binary.panther.path" value-ref="scriptPath"/>-->
-                <!--<entry key="panther.models.dir" value-ref="modelDirectory"/>-->
                 <entry key="binary.hmmer3.hmmsearch.path" value-ref="hmmerBinariesPath"/>
             </map>
         </property>
     </bean>
 
-    <bean id="perlCommand" class="java.lang.String">
-        <constructor-arg value="${perl.command}"/>
-    </bean>
-    <!--Path to a Perl library directory (in this case a Perl library provided by Panther which is necessary to run the script)-->
-    <bean id="perlLibrary" class="java.lang.String">
-        <constructor-arg value="${binary.panther.perl.lib.dir}"/>
-    </bean>
-    <!--Panther Perl script-->
-    <bean id="scriptPath" class="java.lang.String">
-        <constructor-arg value="${binary.panther.path}"/>
-    </bean>
-    <!--Add Panther models-->
-    <bean id="modelDirectory" class="java.lang.String">
-        <constructor-arg value="${panther.models.dir}"/>
-    </bean>
-    <!--Add path to (B)last binary-->
-    <bean id="blastPath" class="java.lang.String">
-        <constructor-arg value="${binary.panther.blast.path}"/>
-    </bean>
     <!--Add path to (H)mmsearch binary-->
     <bean id="hmmerBinariesPath" class="java.lang.String">
         <constructor-arg value="${binary.hmmer3.path}"/>
-    </bean>
-
-    <bean id="perlScriptTempDir" class="java.lang.String">
-        <constructor-arg value="${panther.temporary.file.directory}"/>
     </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
