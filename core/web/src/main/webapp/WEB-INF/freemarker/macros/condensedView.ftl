@@ -30,10 +30,10 @@
                 <#list line.superMatchList as superMatch>
                     <#global superMatchId=superMatchId + 1>
                     <#--This check ensures that the entry is in the colour mapping file.  If not, uses a default class.-->
-                    <#if entryColours[superMatch.firstEntry.ac]??>
+                    <#if entryColours?has_content && entryColours[superMatch.firstEntry.ac]??>
                     <@supermatchLocationMacro.supermatchLocation supermatchId=idPrefix+"-"+superMatchId proteinLength=proteinLength supermatch=superMatch colourClass="c"+entryColours[superMatch.firstEntry.ac]+" "+type />
                 <#else>
-                    <@supermatchLocationMacro.supermatchLocation supermatchId=idPrefix+"-"+superMatchId proteinLength=proteinLength supermatch=superMatch colourClass="c1 "+type />
+                    <@supermatchLocationMacro.supermatchLocation supermatchId=idPrefix+"-"+superMatchId proteinLength=proteinLength supermatch=superMatch colourClass=type />
                 </#if>
                 </#list>
 

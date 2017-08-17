@@ -1,7 +1,8 @@
 /*  TYPE Family , site, unintegrated */
 
+.Homologous_superfamily {background-color: #399fc7;}
 .Family {background-color: #ffffff;}
-.Active_site, .Binding_site, .Conserved_site, .PTM, .SITE { background-color: #000000;}
+.Active_site, .Binding_site, .Conserved_site, .PTM, .SITE {background-color: #000000;}
 .uni {background-color: #a5a5a5;}
 
 /*  TYPE domain & repeat */
