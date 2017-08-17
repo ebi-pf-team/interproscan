@@ -90,6 +90,10 @@ public enum EntryType {
         // http://www.ebi.ac.uk/interpro/entry/IPR001438
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
         return name;

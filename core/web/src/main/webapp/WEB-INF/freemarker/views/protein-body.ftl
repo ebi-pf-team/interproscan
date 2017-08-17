@@ -24,7 +24,8 @@
 
     <h3>Homologous superfamilies</h3>
 
-    <@condensedViewMacro.condensedView condensedView=condensedHSView scale=scale entryColours=entryColours idPrefix="h"/>
+    <#--<@condensedViewMacro.condensedView condensedView=condensedHSView scale=scale entryColours=entryColours idPrefix="h"/>-->
+    <@condensedViewMacro.condensedView condensedView=condensedHSView scale=scale entryColours="" idPrefix="h"/>
 
     <h3>Domains and repeats</h3>
 
@@ -51,7 +52,8 @@
                     <#assign title=entry.type?replace("_"," ")>
                     <#assign colourClass>
                     <#--For cases where the entry colour file is out of sync, we need to check that entryColours[entry.ac] exists -->
-                        <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("homologous") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
+                    <#--No "entry.type?lower_case?starts_with("homologous") ||" for now-->
+                        <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
                             c${entryColours[entry.ac]} ${entry.type}
                         <#else>
                             ${entry.type}

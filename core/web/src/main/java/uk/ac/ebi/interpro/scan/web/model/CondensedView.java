@@ -196,7 +196,7 @@ public class CondensedView implements Serializable {
                         }
                         result.append("<rect");
                         result.append(" ");
-                        appendColourClass(result, entryType.toString(), entryColourMap, entryAccession);
+                        appendColourClass(result, entryType.getName(), entryColourMap, entryAccession);
                         result.append("x=\"" + scaledLocationStart + "px\" y=\"" + 5 + "px\" width=\"" + (scaledRectangleWidth == 0 ? 1 : scaledRectangleWidth) + "px\" height=\"" + 7 + "px\"");
                         result.append(" ");
                         result.append("rx=\"3.984848\" ry=\"5.6705141\"");
@@ -242,12 +242,21 @@ public class CondensedView implements Serializable {
      * @param entryAccession
      */
     private void appendColourClass(final StringBuilder result, final String entryType,
-                                   final Map<String, Integer> entryColourMap,
+                                   Map<String, Integer> entryColourMap,
                                    final String entryAccession) {
+        if (entryColourMap == null) {
+            // Don't use the entry colour map when assigning colour (therefore just use entry type)
+            entryColourMap = new HashMap<>();
+        }
         final Integer colourCode = entryColourMap.get(entryAccession);
-        if (entryType != null && colourCode != null) {
+        if (entryType != null || colourCode != null) {
             result.append("class=\"");
-            result.append("c" + colourCode + " " + entryType);
+            if (colourCode != null) {
+                result.append("c" + colourCode + " ");
+            }
+            if (entryType != null) {
+                result.append(entryType);
+            }
             result.append("\" ");
         }
     }

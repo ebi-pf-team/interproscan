@@ -9,6 +9,7 @@
     </#if>
     </text>
 <#if condensedHSView??>
-${condensedHSView.getCondensedViewForSVG(entryColours,scale)}
+<#--${condensedHSView.getCondensedViewForSVG(entryColours,scale)}-->
+${condensedHSView.getCondensedViewForSVG(null,scale)}
 </#if>
 </svg>
