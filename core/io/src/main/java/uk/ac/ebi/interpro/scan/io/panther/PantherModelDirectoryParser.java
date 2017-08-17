@@ -7,11 +7,10 @@ import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class to parse PANTHER model directory, so that Signatures / Models can be loaded into I5.
@@ -60,82 +59,70 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
+        Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames();
 
-        for (Resource modelFile : modelFiles) {
-            if (modelFile.exists() && modelFile.getFile() != null) {
-                Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
-
-                File booksDir = new File(modelFile.getFile().getPath() + "/books");
-                if (booksDir.exists() && booksDir.getAbsoluteFile() != null) {
-                    //TODO: Implement a file filter for a more save memory implementation
-                    String[] children = booksDir.getAbsoluteFile().list();
-                    if (children != null) {
-                        for (String signatureAcc : children) {
-                            String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                            //Create super family signatures
-                            release.addSignature(createSignature(signatureAcc, signatureName, release));
-                            //Create sub family signatures
-                            createSubFamilySignatures(signatureAcc, familyIdFamilyNameMap, release);
-                        }
-                    } else {
-                        LOGGER.debug("Either dir does not exist or is not a directory.");
-                    }
-                }
+        LOGGER.debug(familyIdFamilyNameMap);
+        LOGGER.warn("number of panther families: " + familyIdFamilyNameMap.keySet().size());
+        Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
+        for (String parent : pantherParentChildMap.keySet()) {
+            String signatureAcc = parent;
+            String signatureName = familyIdFamilyNameMap.get(signatureAcc);
+            release.addSignature(createSignature(signatureAcc, signatureName, release));
+            List<String> children = pantherParentChildMap.get(parent);
+            for (String childSignatureAcc : children) {
+                String childSignatureName = familyIdFamilyNameMap.get(childSignatureAcc);
+                release.addSignature(createSignature(childSignatureAcc, childSignatureName, release));
             }
         }
         return release;
     }
 
-    /**
-     * Creates sub family signatures.
-     *
-     * @throws IOException
-     */
-    private void createSubFamilySignatures(String dirName, Map<String, String> familyIdFamilyNameMap,
-                                           SignatureLibraryRelease release) throws IOException {
-        for (Resource modelFile : modelFiles) {
-            File subFamilyDir = new File(modelFile.getFile().getPath() + "/books/" + dirName);
-            if (subFamilyDir.exists() && subFamilyDir.getAbsoluteFile() != null) {
-                //TODO: Implement a file filter for a more memory save implementation
-                String[] children = subFamilyDir.getAbsoluteFile().list(new DirectoryFilenameFilter());
-                if (children != null) {
-                    for (String signatureAcc : children) {
-                        signatureAcc = dirName + ":" + signatureAcc;
-                        String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                        //Create super family signatures
-                        release.addSignature(createSignature(signatureAcc, signatureName, release));
-                    }
-                } else {
-                    LOGGER.debug("Either dir does not exist or is not a directory.");
-                }
+
+    private Map<String, List<String>> getPantherParentChildMap(Set<String> pantherFamilyNames){
+        String book = "";
+        Map<String, List<String>> parentChildFamilyMap = new HashMap<>();
+
+        for (String family: pantherFamilyNames) {
+            String parent = null;
+            if (! family.contains(":SF")) {
+                //this is a parent
+                parent = family;
+            }else {
+                //this is a child
+                parent = family.split(":")[0];
             }
+
+            List<String> parentChildren = parentChildFamilyMap.get(parent);
+            if (parentChildren == null ){
+                parentChildren = new ArrayList<>();
+            }
+            if (family.contains(":SF")) {
+                // add this child to the parent
+                parentChildren.add(family);
+            }
+            parentChildFamilyMap.put(parent, parentChildren);
         }
+
+        return parentChildFamilyMap;
     }
 
-    /**
-     * This filter only returns directories
-     */
-    class DirectoryFilenameFilter implements FilenameFilter {
 
-        public boolean accept(File dir, String name) {
-            return name.startsWith("SF");
-        }
-    }
 
     /**
      * Handles parsing process of the specified file resource.
      *
-     * @param modelFile Tab separated file resource with 2 columns (headers: accession, names).
+     * param namesTabPath Tab separated file resource with 2 columns (headers: accession, names).
      * @return A map of signature accessions and names.
      * @throws IOException
      */
-    private Map<String, String> readInPantherFamilyNames(Resource modelFile) throws IOException {
+    private Map<String, String> readInPantherFamilyNames() throws IOException {
         Map<String, String> result = null;
-        File globalsDir = new File(modelFile.getFile().getPath() + "/globals");
-        if (globalsDir.exists()) {
-            File namesTabFile = new File(globalsDir.getPath() + "/" + namesTabFileStr);
+        String namesTabPath = modelFiles + File.pathSeparator + namesTabFileStr;
+        File namesTabFile = new File(namesTabPath);
+        if (namesTabFile.exists()) {
             result = parseTabFile(namesTabFile);
         }
+        LOGGER.debug(namesTabPath);
         return result;
     }
 
