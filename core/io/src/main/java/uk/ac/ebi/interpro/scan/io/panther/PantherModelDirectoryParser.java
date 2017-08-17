@@ -15,23 +15,11 @@ import java.util.*;
 /**
  * Class to parse PANTHER model directory, so that Signatures / Models can be loaded into I5.
  * <p/>
- * The directory is structured like this:
+ * the models are loaded from names.tab
  * <p/>
- * ../model/books
- * ../model/books/PTHR10000/
- * ../model/books/PTHR10000/SF0
- * ../model/books/PTHR10003/
- * ../model/books/PTHR10003/SF10
- * ../model/books/PTHR10003/SF11
- * ../model/books/PTHR10003/SF27
- * ../model/books/PTHR10004/SF0
- * etc.
- * ../model/globals/
- * <p/>
- * So each model signature / Panther family has its own directory and even the sub families have their own directory,
- * which contains the HMMER model..
  *
  * @author Maxim Scheremetjew
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -59,26 +47,33 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
-<<<<<<< HEAD
-        Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames();
 
-        LOGGER.debug(familyIdFamilyNameMap);
-        LOGGER.warn("number of panther families: " + familyIdFamilyNameMap.keySet().size());
-        Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
-        for (String parent : pantherParentChildMap.keySet()) {
-            String signatureAcc = parent;
-            String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-            release.addSignature(createSignature(signatureAcc, signatureName, release));
-            List<String> children = pantherParentChildMap.get(parent);
-            for (String childSignatureAcc : children) {
-                String childSignatureName = familyIdFamilyNameMap.get(childSignatureAcc);
-                release.addSignature(createSignature(childSignatureAcc, childSignatureName, release));
+        for (Resource modelFile : modelFiles) {
+            if (modelFile.exists() && modelFile.getFile() != null) {
+                Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
+
+                LOGGER.debug("number of panther families: " + familyIdFamilyNameMap.keySet().size());
+                Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
+                for (String parent : pantherParentChildMap.keySet()) {
+                    String signatureAcc = parent;
+                    String signatureName = familyIdFamilyNameMap.get(signatureAcc);
+                    release.addSignature(createSignature(signatureAcc, signatureName, release));
+                    List<String> children = pantherParentChildMap.get(parent);
+                    for (String childSignatureAcc : children) {
+                        String childSignatureName = familyIdFamilyNameMap.get(childSignatureAcc);
+                        release.addSignature(createSignature(childSignatureAcc, childSignatureName, release));
+                    }
+                }
             }
         }
         return release;
     }
 
-
+    /**
+     * get the subfamilies and map them to their parents
+     * @param pantherFamilyNames
+     * @return
+     */
     private Map<String, List<String>> getPantherParentChildMap(Set<String> pantherFamilyNames){
         String book = "";
         Map<String, List<String>> parentChildFamilyMap = new HashMap<>();
@@ -92,7 +87,6 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 //this is a child
                 parent = family.split(":")[0];
             }
-
             List<String> parentChildren = parentChildFamilyMap.get(parent);
             if (parentChildren == null ){
                 parentChildren = new ArrayList<>();
@@ -103,7 +97,6 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             }
             parentChildFamilyMap.put(parent, parentChildren);
         }
-
         return parentChildFamilyMap;
     }
 
@@ -116,14 +109,24 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
      * @return A map of signature accessions and names.
      * @throws IOException
      */
-    private Map<String, String> readInPantherFamilyNames() throws IOException {
+    private Map<String, String> readInPantherFamilyNames(Resource modelFile) throws IOException {
         Map<String, String> result = null;
-        String namesTabPath = modelFiles + File.pathSeparator + namesTabFileStr;
-        File namesTabFile = new File(namesTabPath);
-        if (namesTabFile.exists()) {
-            result = parseTabFile(namesTabFile);
+        try {
+            File modelFileAsFile = modelFile.getFile();
+            String namesTabPath = modelFile.getFile().getPath() + "/" + namesTabFileStr;
+            File namesTabFile = new File(namesTabPath);
+            if (namesTabFile.exists()) {
+                result = parseTabFile(namesTabFile);
+            } else {
+                LOGGER.error("names tab file not found");
+                throw new IOException("names tab file not found");
+            }
+            LOGGER.debug(namesTabPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("names tab file not found ...");
         }
-        LOGGER.debug(namesTabPath);
+
         return result;
     }
 
@@ -137,6 +140,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         Map<String, String> result = new HashMap<String, String>();
         BufferedReader reader = null;
         int lineNumber = 0;
+        System.out.println("names tab is: " + namesTabFile.getAbsolutePath());
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(namesTabFile)));
             String line;
@@ -180,6 +184,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             LOGGER.info(lineNumber + " lines parsed.");
             LOGGER.info(result.size() + " entries created in the map.");
         }
+        System.out.println(result);
         return result;
     }
 
