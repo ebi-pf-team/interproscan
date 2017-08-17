@@ -204,7 +204,7 @@ a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_o
 .Family_tab, .Domain_tab, .Site_tab, .Conserved_site_tab, .Active_site_tab, .Binding_site_tab, .Repeat_tab, .PTM_tab, .Region_tab, .sign_uni_tab {font-size: 137%; padding-left: 22px; margin: 9px 0 0 9px;}
 .Protein_tab {font-size: 137%; margin: 9px 0 0 4px;}
 
-.Protein_tab {color: #1897e9;}
+.Protein_tab {color: #2e5882;}
 /*.Protein_tab {color: #1897e9; background: url(../images/ico_type_protein.png) no-repeat 0 5px;}*/
 
 .main-box {border: 1px solid #e4e4e4; float: left; width: 98%; /* this is a mystery to correct*/ } /*to remove when possible*/
