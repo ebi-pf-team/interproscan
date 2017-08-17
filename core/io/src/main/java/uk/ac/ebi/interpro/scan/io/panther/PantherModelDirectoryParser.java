@@ -79,14 +79,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         Map<String, List<String>> parentChildFamilyMap = new HashMap<>();
 
         for (String family: pantherFamilyNames) {
-            String parent = null;
-            if (! family.contains(":SF")) {
-                //this is a parent
-                parent = family;
-            }else {
-                //this is a child
-                parent = family.split(":")[0];
-            }
+            String parent = getparentFamilyId(family);
             List<String> parentChildren = parentChildFamilyMap.get(parent);
             if (parentChildren == null ){
                 parentChildren = new ArrayList<>();
@@ -100,7 +93,22 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         return parentChildFamilyMap;
     }
 
-
+    /**
+     * get parent Family ID from the familyId
+     * @param familyId
+     * @return
+     */
+    private String getparentFamilyId(String familyId){
+        String parent = null;
+        if (! familyId.contains(":SF")) {
+            //this is a parent
+            parent = familyId;
+        }else {
+            //this is a child
+            parent = familyId.split(":")[0];
+        }
+        return parent;
+    }
 
     /**
      * Handles parsing process of the specified file resource.
@@ -138,9 +146,10 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
      */
     private Map<String, String> parseTabFile(File namesTabFile) {
         Map<String, String> result = new HashMap<String, String>();
+
         BufferedReader reader = null;
         int lineNumber = 0;
-        System.out.println("names tab is: " + namesTabFile.getAbsolutePath());
+//        System.out.println("names tab is: " + namesTabFile.getAbsolutePath());
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(namesTabFile)));
             String line;
@@ -184,7 +193,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             LOGGER.info(lineNumber + " lines parsed.");
             LOGGER.info(result.size() + " entries created in the map.");
         }
-        System.out.println(result);
+       
         return result;
     }
 
