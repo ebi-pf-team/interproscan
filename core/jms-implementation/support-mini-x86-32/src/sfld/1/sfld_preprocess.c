@@ -84,11 +84,8 @@ void show_help(char *progname)
 {
    printf("Pre-process SFLD alignments/HMMs\n");
    printf("Usage %s: options:\n", progname);
-   printf("\t--hmmerpath   | -p PATH    path to hmm* binaries (overrides $HMMER_PATH)\n");
-   printf("\t--hmm         | -m FILE    HMM file (input)\n");
    printf("\t--sites       | -s FILE    sites file (output)\n");
    printf("\t--alignments  | -a FILE    alignments file (input)\n");
-   printf("\t--hmm_dir     | -d DIR     SFLD HMM directory (overrides $SFLD_LIB_DIR)\n");
    printf("\n");
 }
 
