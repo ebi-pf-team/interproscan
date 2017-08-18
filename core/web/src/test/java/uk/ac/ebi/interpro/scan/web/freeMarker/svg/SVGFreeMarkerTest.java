@@ -108,7 +108,8 @@ public class SVGFreeMarkerTest {
             model.put("condensedView", condensedView);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
+            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 50));
+            model.put("interproscanVersion", "5.15-64.0");
         } // Else no protein data was found therefore nothing to display
         return model;
     }

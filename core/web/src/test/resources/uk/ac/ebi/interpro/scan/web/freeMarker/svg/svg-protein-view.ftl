@@ -63,7 +63,18 @@ we would expect! -->
 <#include "component/protein-features-component.ftl"/>
 
 <#--Protein GO terms component-->
+<#global proteinXrefComponentHeight=0/>
 <#assign yPosition=yPosition+proteinFeaturesComponentHeight/>
 <#include "component/protein-xref-component.ftl"/>
+
+    <#--Display InterProScan version number-->
+    <g id="versionSection">
+    <#assign yPosition=yPosition+proteinXrefComponentHeight+80/>
+        <svg x="1050" y="${yPosition?string("0")}" width="1200" height="50" viewBox="0 0 1200 50">
+            <text font-size="11px" y="11px" font-family="Verdana, Helvetica, sans-serif" style="fill:#525252;stroke:none;">
+                Generated with InterProScan ${interproscanVersion}
+            </text>
+        </svg>
+    </g>
 
 </svg>
