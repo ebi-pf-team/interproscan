@@ -193,7 +193,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             LOGGER.info(lineNumber + " lines parsed.");
             LOGGER.info(result.size() + " entries created in the map.");
         }
-       
+
         return result;
     }
 
