@@ -75,6 +75,7 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
             }
         }
         fileWriter.write(" ]");
+        fileWriter.write("}");
     }
 
     public void close() throws IOException {
