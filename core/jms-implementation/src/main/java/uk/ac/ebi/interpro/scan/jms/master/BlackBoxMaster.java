@@ -65,4 +65,12 @@ public interface BlackBoxMaster extends SimpleBlackBoxMaster {
 
     void setUserDir(String userDir);
 
+    /**
+     * Boolean switch which includes the TSV version output file.
+     *
+     * @param inclTSVVersion Default is FALSE (not activated)
+     */
+
+    void setInclTSVVersion(boolean inclTSVVersion);
+
 }
