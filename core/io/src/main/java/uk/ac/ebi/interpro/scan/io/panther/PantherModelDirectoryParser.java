@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
@@ -15,7 +14,7 @@ import java.util.*;
 /**
  * Class to parse PANTHER model directory, so that Signatures / Models can be loaded into I5.
  * <p/>
- * the models are loaded from names.tab
+ * The models are loaded from names.tab
  * <p/>
  *
  * @author Maxim Scheremetjew
@@ -52,7 +51,9 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             if (modelFile.exists() && modelFile.getFile() != null) {
                 Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
 
-                LOGGER.debug("number of panther families: " + familyIdFamilyNameMap.keySet().size());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("number of panther families: " + familyIdFamilyNameMap.keySet().size());
+                }
                 Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
                 for (String parent : pantherParentChildMap.keySet()) {
                     String signatureAcc = parent;
@@ -75,7 +76,6 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
      * @return
      */
     private Map<String, List<String>> getPantherParentChildMap(Set<String> pantherFamilyNames){
-        String book = "";
         Map<String, List<String>> parentChildFamilyMap = new HashMap<>();
 
         for (String family: pantherFamilyNames) {
@@ -120,7 +120,6 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     private Map<String, String> readInPantherFamilyNames(Resource modelFile) throws IOException {
         Map<String, String> result = null;
         try {
-            File modelFileAsFile = modelFile.getFile();
             String namesTabPath = modelFile.getFile().getPath() + "/" + namesTabFileStr;
             File namesTabFile = new File(namesTabPath);
             if (namesTabFile.exists()) {
