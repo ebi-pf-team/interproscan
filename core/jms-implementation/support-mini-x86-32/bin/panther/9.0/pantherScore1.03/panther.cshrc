@@ -1,1 +1,0 @@
-setenv PERL5LIB lib
