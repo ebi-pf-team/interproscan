@@ -60,7 +60,7 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
 //            mapper.configOverride(Signature.class).setInclude(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, null));
 //        }
         ObjectWriter objectWriter = (isSlimOutput ? mapper.writer() : mapper.writerWithDefaultPrettyPrinter());
-        fileWriter.write("{ \"interproscan-version\": \"" + matchesHolder.getInterProScanVersion() + "\",\n");
+        fileWriter.write("{\n \"interproscan-version\": \"" + matchesHolder.getInterProScanVersion() + "\",\n");
         fileWriter.write("\"results\": [ ");
         if (list != null && list.size() > 0) {
             final int len = list.size();
@@ -74,8 +74,8 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
                 }
             }
         }
-        fileWriter.write(" ]");
-        fileWriter.write("}");
+        fileWriter.write(" ]\n");
+        fileWriter.write("}\n");
     }
 
     public void close() throws IOException {
