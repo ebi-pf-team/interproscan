@@ -16,7 +16,7 @@
                     <signature-library-release library="SMART" version="7.1"/>
                 </signature>
                 <locations>
-                    <hmmer2-location score="228.9" evalue="4.3E-64" hmm-start="1" hmm-end="291" hmm-length="0" start="21" end="237"/>
+                    <hmmer2-location score="228.9" evalue="4.3E-64" hmm-start="1" hmm-end="291" start="21" end="237"/>
                 </locations>
             </hmmer2-match>
             <hmmer3-match evalue="1.3E-111" score="370.3">
@@ -33,7 +33,7 @@
                     <signature-library-release library="TIGRFAM" version="15.0"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-end="262" env-start="4" score="370.1" evalue="1.5E-111" hmm-start="1" hmm-end="253" hmm-length="0" start="4" end="260"/>
+                    <hmmer3-location env-end="262" env-start="4" score="370.1" evalue="1.5E-111" hmm-start="1" hmm-end="253" start="4" end="260"/>
                 </locations>
             </hmmer3-match>
             <hmmer3-match evalue="3.0E-94" score="302.7">
@@ -48,7 +48,7 @@
                     <signature-library-release library="PIRSF" version="3.01"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-end="265" env-start="1" score="302.6" evalue="3.3E-94" hmm-start="2" hmm-end="262" hmm-length="0" start="1" end="265"/>
+                    <hmmer3-location env-end="265" env-start="1" score="302.6" evalue="3.3E-94" hmm-start="2" hmm-end="262" start="1" end="265"/>
                 </locations>
             </hmmer3-match>
             <profilescan-match>
@@ -177,7 +177,7 @@
                     <signature-library-release library="TIGRFAM" version="15.0"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-end="365" env-start="4" score="446.0" evalue="2.5E-134" hmm-start="1" hmm-end="359" hmm-length="0" start="4" end="361"/>
+                    <hmmer3-location env-end="365" env-start="4" score="446.0" evalue="2.5E-134" hmm-start="1" hmm-end="359" start="4" end="361"/>
                 </locations>
             </hmmer3-match>
             <panther-match evalue="6.6E-105" familyName="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" score="359.4">
@@ -362,8 +362,8 @@
                     <signature-library-release library="PFAM" version="30.0"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-end="72" env-start="28" score="32.9" evalue="5.8E-8" hmm-start="1" hmm-end="46" hmm-length="0" start="28" end="72"/>
-                    <hmmer3-location env-end="126" env-start="82" score="39.3" evalue="5.8E-10" hmm-start="1" hmm-end="46" hmm-length="0" start="82" end="126"/>
+                    <hmmer3-location env-end="72" env-start="28" score="32.9" evalue="5.8E-8" hmm-start="1" hmm-end="46" start="28" end="72"/>
+                    <hmmer3-location env-end="126" env-start="82" score="39.3" evalue="5.8E-10" hmm-start="1" hmm-end="46" start="82" end="126"/>
                 </locations>
             </hmmer3-match>
             <panther-match evalue="5.5E-73" familyName="ANTILEUKOPROTEINASE" score="253.3">
@@ -434,12 +434,12 @@
                     <signature-library-release library="SMART" version="7.1"/>
                 </signature>
                 <locations>
-                    <hmmer2-location score="25.4" evalue="0.0082" hmm-start="1" hmm-end="39" hmm-length="0" start="164" end="199"/>
-                    <hmmer2-location score="28.3" evalue="0.0011" hmm-start="1" hmm-end="39" hmm-length="0" start="200" end="235"/>
-                    <hmmer2-location score="26.2" evalue="0.0045" hmm-start="1" hmm-end="39" hmm-length="0" start="349" end="384"/>
-                    <hmmer2-location score="22.1" evalue="0.079" hmm-start="1" hmm-end="39" hmm-length="0" start="423" end="459"/>
-                    <hmmer2-location score="12.8" evalue="10.0" hmm-start="1" hmm-end="39" hmm-length="0" start="385" end="421"/>
-                    <hmmer2-location score="16.0" evalue="3.9" hmm-start="1" hmm-end="39" hmm-length="0" start="236" end="272"/>
+                    <hmmer2-location score="25.4" evalue="0.0082" hmm-start="1" hmm-end="39" start="164" end="199"/>
+                    <hmmer2-location score="28.3" evalue="0.0011" hmm-start="1" hmm-end="39" start="200" end="235"/>
+                    <hmmer2-location score="26.2" evalue="0.0045" hmm-start="1" hmm-end="39" start="349" end="384"/>
+                    <hmmer2-location score="22.1" evalue="0.079" hmm-start="1" hmm-end="39" start="423" end="459"/>
+                    <hmmer2-location score="12.8" evalue="10.0" hmm-start="1" hmm-end="39" start="385" end="421"/>
+                    <hmmer2-location score="16.0" evalue="3.9" hmm-start="1" hmm-end="39" start="236" end="272"/>
                 </locations>
             </hmmer2-match>
             <hmmer3-match evalue="5.0E-53" score="179.2">
@@ -453,7 +453,7 @@
                     <signature-library-release library="PFAM" version="30.0"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-end="573" env-start="433" score="172.7" evalue="5.0E-51" hmm-start="1" hmm-end="141" hmm-length="0" start="433" end="571"/>
+                    <hmmer3-location env-end="573" env-start="433" score="172.7" evalue="5.0E-51" hmm-start="1" hmm-end="141" start="433" end="571"/>
                 </locations>
             </hmmer3-match>
             <mobidb-match>
