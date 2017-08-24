@@ -105,9 +105,9 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         }
 
         public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, int hmmLength,
+                              int hmmStart, int hmmEnd,
                               int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, sites);
+            super(start, end, score, evalue, hmmStart, hmmEnd, sites);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
         }
@@ -162,7 +162,6 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
                 clonedSites.add((HmmerSite) site.clone());
             }
             final Hmmer3LocationWithSites clone = new Hmmer3LocationWithSites(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), clonedSites);
-            clone.setHmmLength(this.getHmmLength());
             return clone;
         }
 

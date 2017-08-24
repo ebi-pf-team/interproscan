@@ -95,8 +95,8 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         }
 
         public Hmmer2Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, int hmmLength) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength);
+                              int hmmStart, int hmmEnd) {
+            super(start, end, score, evalue, hmmStart, hmmEnd);
         }
 
         @Override
@@ -120,7 +120,6 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
 
         public Object clone() throws CloneNotSupportedException {
             final Hmmer2Location clone = new Hmmer2Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds());
-            clone.setHmmLength(this.getHmmLength());
             return clone;
         }
     }
