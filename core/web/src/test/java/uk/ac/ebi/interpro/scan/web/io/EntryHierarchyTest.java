@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@Ignore
 public class EntryHierarchyTest {
 
     @Resource
@@ -33,15 +31,15 @@ public class EntryHierarchyTest {
     public void testGetEntryColoursMap() {
         Map<String, Integer> entryColoursMap = entryHierarchy.getEntryColourMap();
         assertNotNull(entryColoursMap);
-        assertEquals(9925, entryColoursMap.size());
+        assertEquals(2, entryColoursMap.size());
         assertFalse(entryColoursMap.containsKey("invalid"));
         entryColoursMap.put("IPR999999", 1);
     }
 
     @Test
     public void testGetEntryColour() {
-        assertEquals(21, entryHierarchy.getEntryColour("IPR011987"));
-        assertEquals(20, entryHierarchy.getEntryColour("IPR011986"));
+        assertEquals(45, entryHierarchy.getEntryColour("IPR011987"));
+        assertEquals(44, entryHierarchy.getEntryColour("IPR011986"));
         assertEquals(-1, entryHierarchy.getEntryColour("invalid"));
         assertEquals(-1, entryHierarchy.getEntryColour("doesnotexist"));
     }
@@ -50,6 +48,6 @@ public class EntryHierarchyTest {
     public void testGetEntryHierarchyDataMap() {
         Map<String, EntryHierarchyData> data = entryHierarchy.getEntryHierarchyDataMap();
         assertNotNull(data);
-        assertEquals(8527, data.size());
+        assertEquals(25, data.size());
     }
 }

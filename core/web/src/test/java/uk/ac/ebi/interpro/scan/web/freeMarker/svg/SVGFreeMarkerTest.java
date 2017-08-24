@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.web.freeMarker.svg;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;
@@ -42,6 +43,7 @@ public class SVGFreeMarkerTest {
     private CreateSimpleProteinFromMatchData matchData;
 
     @Test
+    @Ignore
     public void testSVGFileCreation() throws IOException, TemplateException {
         //Set FreeMarker template loading directory using Springs class path resource
         String directoryForTemplateLoading = "uk/ac/ebi/interpro/scan/web/freeMarker/svg";
@@ -52,7 +54,7 @@ public class SVGFreeMarkerTest {
         Configuration cfg = new Configuration();
         FileTemplateLoader loader = new FileTemplateLoader(resource.getFile());
         cfg.setTemplateLoader(loader);
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
         //Good protein test examples: Q97R95, A2T929, A0JM20 (none), P15385, A2ARV4, P01308, P22298, A2VDN9, A2YIW7
         String proteinAccession = "Q97R95";
