@@ -10,6 +10,10 @@
         // Make the menu visible - Javascript is enabled.
         $('#menu').css('display', 'block');
 
+    <#if protein.hasMatches("HOMOLOGOUS_SUPERFAMILY")>
+        $("#homologous-superfamily-filter").removeClass("disabled");
+        $("#check-1").attr("disabled", false);
+    </#if>
     <#if protein.hasMatches("FAMILY")>
         $("#family-filter").removeClass("disabled");
         $("#check-2").attr("disabled", false);

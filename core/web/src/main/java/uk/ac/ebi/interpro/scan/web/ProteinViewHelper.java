@@ -86,11 +86,13 @@ public class ProteinViewHelper {
      * @return
      */
     public static int calculateSVGDocumentHeight(final SimpleProtein protein, final CondensedView condensedView,
+                                                 final CondensedView condensedHSView,
                                                  final int svgHeaderHeight, final int proteinInfoComponentHeight,
                                                  final int entryInfoHeight, final int outerSpaceHeight,
                                                  final int svgFooterHeight) {
         final int familyComponentHeight = protein.getFamilyComponentHeight(14, 50);
         final int summaryViewComponentHeight = condensedView.getCondensedViewComponentHeightForSVG(17, 70);
+        final int summaryHSViewComponentHeight = condensedHSView.getCondensedViewComponentHeightForSVG(17, 70);
         final int proteinFeaturesComponentHeight = getProteinFeaturesComponentHeight(protein, 30, entryInfoHeight, outerSpaceHeight);
         final int proteinXrefComponentHeight = protein.getProteinXrefComponentHeightForSVG(20, 70);
 
@@ -98,6 +100,7 @@ public class ProteinViewHelper {
                 + proteinInfoComponentHeight
                 + familyComponentHeight
                 + summaryViewComponentHeight
+                + summaryHSViewComponentHeight
                 + proteinFeaturesComponentHeight
                 + proteinXrefComponentHeight
                 + svgFooterHeight;

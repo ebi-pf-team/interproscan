@@ -2,7 +2,7 @@
 
 <#if condensedView?has_content>
 
-    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours />
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours idPrefix="dr" />
 
 <script type="text/javascript">
     $(document).ready(function () {

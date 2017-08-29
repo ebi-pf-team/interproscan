@@ -13,6 +13,11 @@
         <div class="menu-filter-type"><h1>Entry type</h1>
 
             <fieldset>
+                <div ${protein.disabledStyleIfNoMatches("HOMOLOGOUS_SUPERFAMILY")}>
+                    <input type="checkbox" class="type" id="check-1" value="Homologous_superfamily-row"
+                           checked="checked" ${protein.disableIfNoMatches("HOMOLOGOUS_SUPERFAMILY")}/>
+                    <label for="check-1" class="homologous-superfamily">Homologous superfamily</label>
+                </div>
                 <div ${protein.disabledStyleIfNoMatches("FAMILY")}>
                     <input type="checkbox" class="type" id="check-2" value="Family-row"
                            checked="checked" ${protein.disableIfNoMatches("FAMILY")}/>
@@ -87,7 +92,7 @@
 // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
 
             // Retrieve existing cookies and set checkbox states accordingly
-            var checkBoxIDs = ["#check-2", "#check-3", "#check-4", "#check-5", "#check-6", "#check-7"];
+            var checkBoxIDs = ["#check-1", "#check-2", "#check-3", "#check-4", "#check-5", "#check-6", "#check-7"];
             for (i = 0; i < checkBoxIDs.length; i++) {
                 var checkBoxId = checkBoxIDs[i];
                 var cookieVal = $.cookie(checkBoxId);
