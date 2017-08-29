@@ -37,8 +37,10 @@ we would expect! -->
           x="30px" y="30px" width="${(globalDocumentWidth-60)?string("0")}"
           height="${(globalDocumentHeight - 35)?string("0")}"
           style="fill: white; stroke: lightGrey; stroke-width: 1;"></rect>
-    <use x="30px" y="4px" xlink:href="#ico_type_protein"/>
-    <text x="55px" y="20px" style="fill:#1897E9;font-family:Verdana,Helvetica,sans-serif;
+    <#--<use x="30px" y="4px" xlink:href="#ico_type_protein"/>-->
+    <#--<text x="55px" y="20px" style="fill:#1897E9;font-family:Verdana,Helvetica,sans-serif;-->
+                             <#--font-size:20">Protein-->
+        <text x="30px" y="20px" style="fill:#1897E9;font-family:Verdana,Helvetica,sans-serif;
                              font-size:20">Protein
     </text>
 
@@ -52,9 +54,14 @@ we would expect! -->
 <#assign yPosition=yPosition+proteinInfoComponentHeight/>
 <#include "component/protein-family-component.ftl"/>
 
-<#--Protein summary view component-->
-<#global summaryViewComponentHeight=0/>
+<#--Protein homologous superfamilies summary view component-->
+<#global summaryHSViewComponentHeight=0/>
 <#assign yPosition=yPosition+familyComponentHeight/>
+<#include "component/protein-hs-summary-view-component.ftl"/>
+
+<#--Protein summary view component (domains and repeats)-->
+<#global summaryViewComponentHeight=0/>
+<#assign yPosition=yPosition+summaryHSViewComponentHeight/>
 <#include "component/protein-summary-view-component.ftl"/>
 
 <#--Protein features component-->

@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.web.freeMarker.svg;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;
@@ -12,10 +13,12 @@ import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.EntryType;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,7 @@ public class SVGFreeMarkerTest {
     private CreateSimpleProteinFromMatchData matchData;
 
     @Test
+    @Ignore
     public void testSVGFileCreation() throws IOException, TemplateException {
         //Set FreeMarker template loading directory using Springs class path resource
         String directoryForTemplateLoading = "uk/ac/ebi/interpro/scan/web/freeMarker/svg";
@@ -50,7 +54,7 @@ public class SVGFreeMarkerTest {
         Configuration cfg = new Configuration();
         FileTemplateLoader loader = new FileTemplateLoader(resource.getFile());
         cfg.setTemplateLoader(loader);
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
         //Good protein test examples: Q97R95, A2T929, A0JM20 (none), P15385, A2ARV4, P01308, P22298, A2VDN9, A2YIW7
         String proteinAccession = "Q97R95";
@@ -103,12 +107,14 @@ public class SVGFreeMarkerTest {
             final int proteinLength = p.getLength();
             final List<SimpleEntry> entries = p.getAllEntries();
             final CondensedView condensedView = new CondensedView(entries, proteinLength);
+            final CondensedView condensedHSView = new CondensedView(entries, proteinLength, Arrays.asList(EntryType.HOMOLOGOUS_SUPERFAMILY));
 
             model.put("protein", p);
             model.put("condensedView", condensedView);
+            model.put("condensedHSView", condensedHSView);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
+            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, condensedHSView, 30, 180, 18, 19, 30));
         } // Else no protein data was found therefore nothing to display
         return model;
     }
