@@ -10,7 +10,6 @@ int main(int argc, char **argv)
     struct feature *features = NULL;
     char *align_fn, *features_fn;
     int i;
-    int no_search = 0;
 
     features_fn = align_fn = NULL;
 
