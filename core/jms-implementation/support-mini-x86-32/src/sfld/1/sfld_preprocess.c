@@ -33,9 +33,7 @@ void get_options_pre(int argc, char **argv, char **alignments, char **sites)
     static struct option long_options[] =
     {
         {"help",         no_argument,       0,  'h' },
-        {"hmmerpath",    required_argument, 0,  'p' }, // path to hmm* binaries (overrides $HMMER_PATH)
         {"alignments",   required_argument, 0,  'a' }, // SFLD alignments (prefixed with $SFLD_OUTPUT if set)
-        {"hmm",          required_argument, 0,  'm' }, // SFLD alignments (prefixed with $SFLD_OUTPUT if set)
         {"sites",        required_argument, 0,  's' }, // SFLD alignments (prefixed with $SFLD_OUTPUT if set)
         {0,              0,                 0,   0  }
     };
