@@ -549,7 +549,7 @@ public class Run extends AbstractI5Runner {
                         try {
                             throw new IOException("Unable to create " + dir.getAbsolutePath());
                         } catch (IOException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            e.printStackTrace();
                         }
                     }
                     String logDir = ((DistributedBlackBoxMaster) bbMaster).getLogDir() + File.separator + projectId.replaceAll("\\s+", "");
@@ -612,6 +612,11 @@ public class Run extends AbstractI5Runner {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());
             }
+
+            // Include version file with TSV output?
+            final boolean inclTSVVersion = parsedCommandLine.hasOption(I5Option.TSV_VERSION_OUTPUT.getLongOpt());
+            bbMaster.setInclTSVVersion(inclTSVVersion);
+
         }
     }
 
@@ -858,7 +863,7 @@ public class Run extends AbstractI5Runner {
                     try {
                         throw new IOException("Unable to create " + dir.getAbsolutePath());
                     } catch (IOException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     }
                 }
                 String logDir = worker.getLogDir() + File.separator + projectId.replaceAll("\\s+", "");

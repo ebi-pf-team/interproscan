@@ -89,7 +89,7 @@ public class ProteinMatchesGFFResultWriterTest {
      */
     @Test
     public void testProcessMatches() throws IOException {
-        ProteinMatchesGFFResultWriter writer = new ProteinMatchesGFFResultWriter(Paths.get("./target/test.gff")) {
+        ProteinMatchesGFFResultWriter writer = new ProteinMatchesGFFResultWriter(Paths.get("./target/test.gff"), "5.15-64.0") {
             @Override
             public int write(Protein protein) throws IOException {
                 // no implementation - this method is not being tested here.

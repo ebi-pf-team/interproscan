@@ -155,6 +155,7 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("standalone", standalone);
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
+            model.put("interproscanVersion", interproscanVersion);
         }
         return model;
     }

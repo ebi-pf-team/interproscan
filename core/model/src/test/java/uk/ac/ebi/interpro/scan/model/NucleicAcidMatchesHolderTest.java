@@ -86,7 +86,7 @@ public class NucleicAcidMatchesHolderTest extends AbstractTest<NucleicAcidMatche
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
         signature.setSignatureLibraryRelease(release);
         // Create holder
-        NucleicAcidMatchesHolder holder = new NucleicAcidMatchesHolder();
+        NucleicAcidMatchesHolder holder = new NucleicAcidMatchesHolder("5.15-54.0");
         holder.addProtein(protein);
         return holder;
     }

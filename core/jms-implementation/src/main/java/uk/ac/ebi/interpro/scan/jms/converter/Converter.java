@@ -68,6 +68,12 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
     /* Default value, if no output format is specified */
     private String[] outputFormats;
 
+    private String interproscanVersion;
+
+    @Required
+    public void setInterproscanVersion(String interproscanVersion) {
+        this.interproscanVersion = interproscanVersion;
+    }
 
     @Required
     public void setMarshaller(Jaxb2Marshaller marshaller) {
@@ -103,7 +109,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     public String[] getOutputFormats() {
         if (outputFormats == null) {
-            // By default, if no output formats are supplied then return in all formats (except RAW)
+            // If no output formats are supplied then return default formats
             return new String[]{
                     FileOutputFormat.TSV.getFileExtension(),
                     FileOutputFormat.GFF3.getFileExtension()
@@ -393,7 +399,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private void outputProteinsToGFF(final Path path,
                                      final Collection<Protein> proteins) throws IOException {
-        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path)) {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interproscanVersion)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, proteins);
             //This step writes FASTA sequence at the end of the GFF file
@@ -403,7 +409,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private void outputNucleotideSequencesToGFF(final Path path,
                                                 final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
-        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path)) {
+        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path, interproscanVersion)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, nucleotideSequences);
             //This step writes FASTA sequence at the end of the GFF file
@@ -432,7 +438,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 //        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
 //        final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
         writer.setMapToInterProEntries(true);
-        writer.setMapToGo(true);
+        writer.setMapToGO(true);
         writer.setMapToPathway(true);
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {
@@ -447,7 +453,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
     private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,
                                      final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
         writer.setMapToInterProEntries(true);
-        writer.setMapToGo(true);
+        writer.setMapToGO(true);
         writer.setMapToPathway(true);
         if (nucleotideSequences != null) {
             if (LOGGER.isInfoEnabled()) {
