@@ -115,7 +115,6 @@ public class MatchCloneTest {
                 Assert.assertTrue(pfamLocation.getEnvelopeStart() == clonedLocation.getEnvelopeStart());
                 Assert.assertTrue(pfamLocation.getEnvelopeEnd() == clonedLocation.getEnvelopeEnd());
                 Assert.assertEquals(pfamLocation.getHmmBounds(), clonedLocation.getHmmBounds());
-                Assert.assertTrue(pfamLocation.getHmmLength() == clonedLocation.getHmmLength());
                 Assert.assertTrue(pfamLocation.getEvalue() == clonedLocation.getEvalue());
                 Assert.assertTrue(pfamLocation.getHmmStart() == clonedLocation.getHmmStart());
                 Assert.assertTrue(pfamLocation.getHmmEnd() == clonedLocation.getHmmEnd());
