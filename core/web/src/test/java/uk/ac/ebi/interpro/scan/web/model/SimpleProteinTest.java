@@ -116,10 +116,8 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleSignature.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
         //Test simple entry
@@ -138,10 +136,8 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleEntry.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
         Assert.assertEquals(1, simpleEntry.getSignaturesMap().size());
@@ -200,10 +196,8 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleEntry.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
 
@@ -215,10 +209,8 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleSignature.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
     }

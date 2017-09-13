@@ -65,7 +65,7 @@
                     <signature-library-release version="6.2" library="SMART"/>
                 </signature>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="86" hmm-start="1" evalue="1.1E-6" score="38.2" end="347" start="276"/>
+                    <hmmer2-location hmm-end="86" hmm-start="1" evalue="1.1E-6" score="38.2" end="347" start="276"/>
                 </locations>
             </hmmer2-match>
             <hmmer2-match score="614.2" evalue="1.2E-184">
@@ -84,7 +84,7 @@
                     <signature-library-release version="2.84" library="PIRSF"/>
                 </signature>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="389" hmm-start="1" evalue="1.2E-184" score="614.2" end="368" start="1"/>
+                    <hmmer2-location hmm-end="389" hmm-start="1" evalue="1.2E-184" score="614.2" end="368" start="1"/>
                 </locations>
             </hmmer2-match>
             <hmmer3-match score="446.2" evalue="1.9E-134">
@@ -103,7 +103,7 @@
                     <signature-library-release version="13.0" library="TIGRFAM"/>
                 </signature>
                 <locations>
-                    <hmmer3-location env-start="4" env-end="365" hmm-length="0" hmm-end="359" hmm-start="1" evalue="2.2E-134" score="446.0" end="361" start="4"/>
+                    <hmmer3-location env-start="4" env-end="365" hmm-end="359" hmm-start="1" evalue="2.2E-134" score="446.0" end="361" start="4"/>
                 </locations>
             </hmmer3-match>
             <panther-match score="444.6" familyName="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" evalue="1.4E-130">
@@ -218,7 +218,7 @@
                     <signature-library-release version="2.84" library="PIRSF"/>
                 </signature>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="108" hmm-start="1" evalue="5.0E-30" score="100.5" end="113" start="4"/>
+                    <hmmer2-location hmm-end="108" hmm-start="1" evalue="5.0E-30" score="100.5" end="113" start="4"/>
                 </locations>
             </hmmer2-match>
             <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
