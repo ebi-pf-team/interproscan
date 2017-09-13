@@ -619,6 +619,7 @@
         <xs:sequence>
             <xs:element ref="tns:protein" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:attribute name="interproscan-version" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="ReleaseType">

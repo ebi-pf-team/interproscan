@@ -18,8 +18,10 @@ import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,10 +62,13 @@ public class WriteOutputStep extends Step {
 
     private boolean excludeSites;
 
+    private String interProScanVersion;
+
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
     public static final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
+    public static final String INCL_TSV_VERSION = "INCL_TSV_VERSION";
     public static final String MAP_TO_INTERPRO_ENTRIES = "MAP_TO_INTERPRO_ENTRIES";
     public static final String MAP_TO_GO = "MAP_TO_GO";
     public static final String MAP_TO_PATHWAY = "MAP_TO_PATHWAY";
@@ -111,6 +116,11 @@ public class WriteOutputStep extends Step {
     @Required
     public void setExcludeSites(boolean excludeSites) {
         this.excludeSites = excludeSites;
+    }
+
+    @Required
+    public void setInterProScanVersion(String interProScanVersion) {
+        this.interProScanVersion = interProScanVersion;
     }
 
     /**
@@ -351,9 +361,9 @@ public class WriteOutputStep extends Step {
     private IMatchesHolder getMatchesHolder(StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) {
         IMatchesHolder matchesHolder;
         if (sequenceType.equalsIgnoreCase("n")) {
-            matchesHolder = new NucleicAcidMatchesHolder();
+            matchesHolder = new NucleicAcidMatchesHolder(interProScanVersion);
         } else {
-            matchesHolder = new ProteinMatchesHolder();
+            matchesHolder = new ProteinMatchesHolder(interProScanVersion);
         }
 
         final Map<String, String> parameters = stepInstance.getParameters();
@@ -385,6 +395,26 @@ public class WriteOutputStep extends Step {
                              final List<Protein> proteins) throws IOException {
         try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
+        }
+
+        // Include accompanying TSV version file? If filename already exists it will get replaced
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean inclTSVVersion = Boolean.TRUE.toString().equals(parameters.get(INCL_TSV_VERSION));
+        if (inclTSVVersion) {
+            final String tsvVersionFilename = path.toString() + ".version";
+            final Path tsvVersionPath = Paths.get(tsvVersionFilename);
+            if (Files.exists(tsvVersionPath)) {
+                System.out.println("Warning: Overwriting existing TSV version output file " + tsvVersionFilename);
+            }
+            try (BufferedWriter v = Files.newBufferedWriter(tsvVersionPath, Charset.defaultCharset())) {
+                v.write(interProScanVersion);
+            }
+            catch (Exception e) {
+                // If we fail to write the TSV version file just report the issue and continue - not worth stopping execution for that!
+                System.out.println("Unable to write TSV version file " + tsvVersionFilename + " due to exception: ");
+                e.printStackTrace();
+
+            }
         }
     }
 
@@ -418,10 +448,10 @@ public class WriteOutputStep extends Step {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
-                writer = new GFFResultWriterForNucSeqs(path);
+                writer = new GFFResultWriterForNucSeqs(path, interProScanVersion);
             }//Default tsvWriter for proteins
             else {
-                writer = new GFFResultWriterForProtSeqs(path);
+                writer = new GFFResultWriterForProtSeqs(path, interProScanVersion);
             }
 
             //This step writes features (protein matches) into the GFF file
@@ -436,7 +466,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToGFFPartial(Path path, StepInstance stepInstance, List<Protein> proteins) throws IOException {
-        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, false)) {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false)) {
             writeProteinMatches(writer, stepInstance, proteins);
         }
 
@@ -534,7 +564,7 @@ public class WriteOutputStep extends Step {
         final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
         final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
         writer.setMapToInterProEntries(mapToInterProEntries);
-        writer.setMapToGo(mapToGO);
+        writer.setMapToGO(mapToGO);
         writer.setMapToPathway(mapToPathway);
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {

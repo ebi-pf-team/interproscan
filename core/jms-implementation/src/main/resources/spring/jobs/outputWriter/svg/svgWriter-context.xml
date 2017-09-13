@@ -13,6 +13,7 @@
         <property name="freeMarkerTemplate" value="svg-protein-view.ftl"/>
         <property name="entryHierarchyBeanId" value="entryHierarchy"/>
         <property name="tempDirectory" value="temp/"/>
+        <property name="interproscanVersion" value="${i5.version}"/>
     </bean>
 
     <bean id="defaultWrapperSvgWriter" class="freemarker.template.DefaultObjectWrapper"/>

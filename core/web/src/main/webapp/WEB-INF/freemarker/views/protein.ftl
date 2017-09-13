@@ -70,6 +70,9 @@
         </p>
 </#if>
 
+    <#if standalone>
+        <p><i>Generated with InterProScan ${interproscanVersion}</i></p>
+    </#if>
 </div>
 </div>
 </body>
