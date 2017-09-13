@@ -71,7 +71,7 @@
 </#if>
 
     <#if standalone>
-        <p><i>Generated with InterProScan ${interproscanVersion}</i></p>
+        <div><i>Generated with InterProScan ${interproscanVersion}</i></div>
     </#if>
 </div>
 </div>
