@@ -13,7 +13,7 @@
     <#elseif entry.type?lower_case?starts_with("repeat")>
         c${entryColours[entry.ac]} ${entry.type}
     <#elseif entry.type?lower_case?starts_with("homologous")>
-        c${entryColours[entry.ac]} ${entry.type?replace("_", "-")}
+        ${entry.type?replace("_", "-")}
     <#else>
         ${entry.type}
     </#if>
