@@ -8,6 +8,10 @@
     <!-- Configures View resolver -->
     <import resource="freemarker-config.xml"/>
 
+    <bean name="i5Version" class="java.lang.String">
+        <constructor-arg value="${i5.version}"/>
+    </bean>
+
     <!-- Entry hierarchy properties files (locations set in Maven properties for profile)-->
     <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
           scope="singleton" lazy-init="false">
