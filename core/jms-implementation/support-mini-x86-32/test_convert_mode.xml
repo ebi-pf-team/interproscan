@@ -456,14 +456,14 @@
                     <hmmer3-location env-end="573" env-start="433" score="172.7" evalue="5.0E-51" hmm-start="1" hmm-end="141" start="433" end="571"/>
                 </locations>
             </hmmer3-match>
-            <mobidb-match>
+            <mobidblite-match>
                 <signature ac="mobidb-lite" name="mobidb-lite">
-                    <signature-library-release library="MOBIDB" version="1.0"/>
+                    <signature-library-release library="MOBIDB_LITE" version="1.0"/>
                 </signature>
                 <locations>
-                    <mobidb-location start="1" end="108"/>
+                    <mobidblite-location start="1" end="108"/>
                 </locations>
-            </mobidb-match>
+            </mobidblite-match>
             <panther-match evalue="0.0" familyName="UNCHARACTERIZED" score="1033.3">
                 <signature ac="PTHR13389" name="UNCHARACTERIZED">
                     <models>
