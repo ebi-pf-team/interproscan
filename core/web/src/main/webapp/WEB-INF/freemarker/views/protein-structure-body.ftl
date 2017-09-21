@@ -9,7 +9,7 @@
 
 <h3>Domains and repeats</h3>
 
-    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours idPrefix="s"/>
 
     <#if (protein.structuralFeatures?has_content || protein.structuralPredictions?has_content)>
         <#global locationId=0>
