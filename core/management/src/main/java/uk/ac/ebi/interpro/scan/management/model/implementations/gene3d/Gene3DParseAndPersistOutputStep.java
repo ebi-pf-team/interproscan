@@ -147,13 +147,15 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                         DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher);
                         String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
                         CathResolverRecord cathResolverRecord = cathResolverRecordMap.get(domainLineKey);
+                        //the cutoff should be in te properties file
                         if (cathResolverRecord != null && domTblDomainMatch.getSequenceEValue() < 0.001 ) {
 
                             //Utilities.verboseLog(cathResolverRecord.toString());
                             //DomTblDomainMatch domTblDomainMatch = domainTblLineMatchMap.get(cathResolverRecord.getRecordKey());
                             //Utilities.verboseLog(domTblDomainMatch.toString());
                             String modelAccession = domTblDomainMatch.getQueryName();
-                            String gene3dModelAccession = (modelAccession.split("\\|")[2]).split("/")[0];
+//                            String gene3dModelAccession = (modelAccession.split("\\|")[2]).split("/")[0];
+                            String gene3dModelAccession = modelAccession.split("\\-")[0];
                             LOGGER.debug("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession);
                             //Utilities.verboseLog("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
                             modelAccession = gene3dModelAccession;
