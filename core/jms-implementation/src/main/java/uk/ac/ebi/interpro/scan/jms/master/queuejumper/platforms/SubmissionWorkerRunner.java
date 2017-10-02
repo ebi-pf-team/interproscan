@@ -467,6 +467,10 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         interproscanCommandArguments.append(" --mastermaxlife=")
                 .append(currentMasterClockTime + ":" + lifeSpanRemaining);
 
+        interproscanCommandArguments.append(" --sequencecount=")
+                .append(Utilities.sequenceCount);
+
+
         return interproscanCommandArguments;
     }
 

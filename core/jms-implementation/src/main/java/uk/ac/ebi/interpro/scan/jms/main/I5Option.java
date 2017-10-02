@@ -35,6 +35,8 @@ public enum I5Option {
     MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, Mode.SET_OF_NO_MODES),
     MASTER_MAXLIFE("mastermaxlife", "mastermaxlife", false, "The maximum lifetime of the Master.", "MASTER-MAXLIFE", false, Mode.SET_OF_NO_MODES),
     SEQUENCE_TYPE("seqtype", "t", false, "Optional, the type of the input sequences (dna/rna (n) or protein (p)).  The default sequence type is protein.", "SEQUENCE-TYPE", false, Mode.SET_OF_STANDARD_MODES),
+    SEQUENCE_COUNT("sequencecount", "sct", false, "The total number of input sequences in master.", "SEQUENCE_COUNT", false, Mode.SET_OF_NO_MODES),
+
     MIN_SIZE("minsize", "ms", false, "Optional, minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
             "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, Mode.SET_OF_STANDARD_MODES),
     TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Optional, used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, Mode.SET_OF_NO_MODES),
