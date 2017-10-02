@@ -899,6 +899,7 @@ public class Run extends AbstractI5Runner {
                 }
                 int sequenceCount = Integer.parseInt(sequenceCountStr);
                 worker.setSequenceCount(sequenceCount);
+                Utilities.sequenceCount = sequenceCount;
             }
 
             if (LOGGER.isDebugEnabled()) {
