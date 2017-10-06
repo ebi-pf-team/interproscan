@@ -30,6 +30,7 @@ public class RunPantherScoreStep extends RunBinaryStep {
 
     private String inputFilePantherFamilyNames;
 
+    private boolean forceHmmsearch = true;
 
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
@@ -62,6 +63,14 @@ public class RunPantherScoreStep extends RunBinaryStep {
         this.fullPathToPython = fullPathToPython;
     }
 
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
+
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
@@ -78,7 +87,7 @@ public class RunPantherScoreStep extends RunBinaryStep {
         command.add("-d");
         command.add(inputFileNameDomTblout);
         command.add("-m");
-        if (Utilities.getUseHmmsearch() ) {
+        if (forceHmmsearch || Utilities.getSequenceCount() > 10) {
             command.add("hmmsearch");
         }else{
             command.add("hmmscan");

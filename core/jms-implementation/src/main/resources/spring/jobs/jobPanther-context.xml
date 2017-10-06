@@ -76,6 +76,7 @@
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherRunHmmer3"/>
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
+        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
         <!--Add Perl command-->
         <property name="fullPathToPython" value="${python.command}"/>
         <!--PantherScore python script-->

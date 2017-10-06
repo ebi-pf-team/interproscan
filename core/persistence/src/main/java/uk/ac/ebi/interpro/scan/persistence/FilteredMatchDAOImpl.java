@@ -101,13 +101,14 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
         }
 
-
-        StringBuilder signatureList = new StringBuilder();
-        for (Signature signature:   modelIdToSignatureMap.values()){
-            signatureList.append(signature.getModels().toString());
-        }
+        //why do we need the signatureList
+//        StringBuilder signatureList = new StringBuilder();
+//        for (Signature signature:   modelIdToSignatureMap.values()){
+//            signatureList.append(signature.getModels().toString());
+//        }
 
         LOGGER.debug("now persists the filtered proteins: " );
+        Utilities.verboseLog("now persists the filtered proteins: ...");
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
 
     }
@@ -191,6 +192,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     //Utilities.verboseLog("accession: " + m.getAccession() + " signature: " + s);
                 }
             }
+            Utilities.verboseLog("Signature results #: " + result.keySet().size());
         }
         return result;
     }

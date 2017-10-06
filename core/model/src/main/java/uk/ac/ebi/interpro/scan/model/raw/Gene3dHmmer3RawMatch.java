@@ -34,6 +34,9 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
     @Transient
     public static final String TABLE_NAME = "GENE3D_HMMER3_RAW_MATCH";
 
+//    @Column(nullable = false, length = 4000)
+//    private String alignedRegions;
+
     @Column(nullable = false, length = 4000)
     private String cigarAlignment;
 
@@ -49,20 +52,30 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
                                 int envelopeStart, int envelopeEnd,
                                 double expectedAccuracy, double fullSequenceBias,
                                 double domainCeValue, double domainIeValue, double domainBias,
-                                String cigarAlignment) {
+                                String alignedRegions) {
         super(sequenceIdentifier, model, SignatureLibrary.GENE3D, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
                 fullSequenceBias, domainCeValue, domainIeValue, domainBias);
-        setCigarAlignment(cigarAlignment);
+        setAlignedRegions(alignedRegions);
     }
 
-    private void setCigarAlignment(String cigarAlignment) {
-        this.cigarAlignment = cigarAlignment;
-    }
-
-    public String getCigarAlignment() {
+    public String getAlignedRegions() {
         return cigarAlignment;
+//        return alignedRegions;
     }
+
+    public void setAlignedRegions(String alignedRegions) {
+        this.cigarAlignment = alignedRegions;
+//        this.alignedRegions = alignedRegions;
+    }
+
+//    private void setCigarAlignment(String cigarAlignment) {
+//        this.cigarAlignment = cigarAlignment;
+//    }
+
+//    public String getCigarAlignment() {
+//        return cigarAlignment;
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -73,7 +86,7 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
         final Gene3dHmmer3RawMatch m = (Gene3dHmmer3RawMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(getCigarAlignment(), m.getCigarAlignment())
+                .append(getAlignedRegions(), m.getAlignedRegions())
                 .isEquals();
     }
 
@@ -81,7 +94,7 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
     public int hashCode() {
         return new HashCodeBuilder(53, 61)
                 .appendSuper(super.hashCode())
-                .append(getCigarAlignment())
+                .append(getAlignedRegions())
                 .toHashCode();
     }
 

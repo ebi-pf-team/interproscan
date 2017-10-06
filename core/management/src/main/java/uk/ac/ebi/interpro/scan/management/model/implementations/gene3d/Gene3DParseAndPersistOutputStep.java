@@ -58,6 +58,9 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
     private String outputFileNameDomTbloutTemplate;
 
+    private boolean forceHmmsearch = true;
+
+
     @Required
     public void setCathResolveHitsOutputFileNameTemplate(String cathResolveHitsOutputFileNameTemplate) {
         this.cathResolveHitsOutputFileNameTemplate = cathResolveHitsOutputFileNameTemplate;
@@ -88,6 +91,14 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
     }
 
     /**
@@ -138,13 +149,24 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 int lineNumber = 0;
                 int domtblMatchCount = 0;
                 String line;
+                String mode = "hmmsearch";
+                if (forceHmmsearch || Utilities.getSequenceCount() > 10){
+                    //use hmmsearch domtblout
+                    mode = "hmmsearch";
+                }else{
+                    //use hmmscan output
+                    mode = "hmmscan";
+                }
                 while ((line = reader.readLine()) != null) {
                     lineNumber++;
                     // Look for a domain data line.
-                    Matcher domainDataLineMatcher = DomTblDomainMatch.DOMAIN_LINE_PATTERN.matcher(line);
+                    Matcher domainDataLineMatcher = DomTblDomainMatch.getDomainDataLineMatcher(line, mode);
+//                    Utilities.verboseLog(mode + ":" + line);
+//                    Utilities.verboseLog("line split:" + line.split("\\s+"));
                     if (domainDataLineMatcher.matches()) {
                         domtblMatchCount ++;
-                        DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher);
+                        DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher, mode);
+//                        Utilities.verboseLog(domTblDomainMatch.toString());
                         String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
                         CathResolverRecord cathResolverRecord = cathResolverRecordMap.get(domainLineKey);
                         //the cutoff should be in te properties file
@@ -205,8 +227,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 }
             }
 
-
             if (rawProteins != null && rawProteins.size() > 0) {
+                Utilities.verboseLog("Persis Gene3D rawProteins # :");
                 filteredMatchDAO.persist(rawProteins);
                 Long now = System.currentTimeMillis();
                 if (count > 0) {
