@@ -77,7 +77,8 @@ def get_filtered_best_hits(best_hits):
         base_el_location = el[4]
         overlaps = False
         if ":SF" in el[0]:
-            #do nothing for now
+            #do nothing for now, we dont expect subfamilies to overlap in theory
+            do_nothing = 0
         else:
             for other_el in best_hits:
                 if el == other_el:
@@ -87,7 +88,8 @@ def get_filtered_best_hits(best_hits):
                     overlaps = True
         if overlaps:
             # deal with this, skip this hit
-            print("overlaps.. so skip")
+            #print("overlaps.. so skip")
+            overlaps_print_error = False
         else:
             #add to to filtered best hits
             filtered_best_hits.append(el)
@@ -201,6 +203,6 @@ if __name__ == "__main__":
             matches = all_scores[seq_key]
             best_hits = get_best_hits(matches,  evalue_cutoff)
             filtered_best_hits = get_filtered_best_hits(best_hits)
-            out_str_list = print_list(seq_key, best_hits)
+            out_str_list = print_list(seq_key, filtered_best_hits)
             for out_str in out_str_list:
                 outf.write(out_str + '\n')
