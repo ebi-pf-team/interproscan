@@ -33,7 +33,7 @@ public final class CathResolverRecord {
     private static final String COLUMN_SEP = "\\s+";
 
     private static final int QUERY_PROTEIN_ID_POS = 0;
-    private static final int MATCHL_ID_POS = 1;
+    private static final int MATCH_ID_POS = 1;
     private static final int SCORE_POS = 2;
     private static final int STARTS_STOPS_POS = 3;
     private static final int RESOLVED_STARTS_STOPS_POS = 4;
@@ -112,7 +112,7 @@ public final class CathResolverRecord {
 
 
         String queryProteinId = columns[QUERY_PROTEIN_ID_POS];
-        String matchId = columns[MATCHL_ID_POS];
+        String matchId = columns[MATCH_ID_POS];
         Double score = Double.parseDouble(columns[SCORE_POS]);
 
         String startsStopsPosition = columns[STARTS_STOPS_POS];
@@ -127,7 +127,7 @@ public final class CathResolverRecord {
     public static String toLine(CathResolverRecord record) {
         String[] columns = new String[LAST_POS + 1];
         columns[QUERY_PROTEIN_ID_POS] = record.queryProteinId;
-        columns[MATCHL_ID_POS] = record.matchId;
+        columns[MATCH_ID_POS] = record.matchId;
         columns[SCORE_POS] = String.valueOf(record.score);
         columns[STARTS_STOPS_POS] = record.startsStopsPosition;
         columns[RESOLVED_STARTS_STOPS_POS] = record.resolvedStartsStopsPosition;

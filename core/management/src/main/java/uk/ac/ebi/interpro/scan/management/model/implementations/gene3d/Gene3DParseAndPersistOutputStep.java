@@ -166,9 +166,14 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                     if (domainDataLineMatcher.matches()) {
                         domtblMatchCount ++;
                         DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher, mode);
+                        if (domTblDomainMatch.getQueryName().startsWith("dc_")){
+                            //for now let us ignore these discontinuous domains, until we figure how best to deal with them
+                            continue;
+                        }
 //                        Utilities.verboseLog(domTblDomainMatch.toString());
                         String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
                         CathResolverRecord cathResolverRecord = cathResolverRecordMap.get(domainLineKey);
+
                         //the cutoff should be in te properties file
                         if (cathResolverRecord != null && domTblDomainMatch.getSequenceEValue() < 0.001 ) {
 

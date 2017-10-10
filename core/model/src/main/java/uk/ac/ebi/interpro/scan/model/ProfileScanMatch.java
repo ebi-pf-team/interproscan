@@ -47,8 +47,8 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     protected ProfileScanMatch() {
     }
 
-    public ProfileScanMatch(Signature signature, Set<ProfileScanLocation> locations) {
-        super(signature, locations);
+    public ProfileScanMatch(Signature signature, String signatureModels, Set<ProfileScanLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -56,7 +56,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         for (ProfileScanLocation location : this.getLocations()) {
             clonedLocations.add((ProfileScanLocation) location.clone());
         }
-        return new ProfileScanMatch(this.getSignature(), clonedLocations);
+        return new ProfileScanMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     /**

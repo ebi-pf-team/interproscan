@@ -43,8 +43,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
     protected Hmmer3Match() {
     }
 
-    public Hmmer3Match(Signature signature, double score, double evalue, Set<Hmmer3Match.Hmmer3Location> locations) {
-        super(signature, score, evalue, locations);
+    public Hmmer3Match(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer3Match.Hmmer3Location> locations) {
+        super(signature, signatureModels,score, evalue, locations);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         for (Hmmer3Location location : this.getLocations()) {
             clonedLocations.add((Hmmer3Location) location.clone());
         }
-        return new Hmmer3Match(this.getSignature(), this.getScore(), this.getEvalue(), clonedLocations);
+        return new Hmmer3Match(this.getSignature(), this.getSignatureModels(), this.getScore(), this.getEvalue(), clonedLocations);
     }
 
     /**

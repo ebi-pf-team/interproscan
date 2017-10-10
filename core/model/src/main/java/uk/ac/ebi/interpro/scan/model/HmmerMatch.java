@@ -50,8 +50,8 @@ abstract class HmmerMatch<T extends HmmerLocation> extends Match<T> implements S
     protected HmmerMatch() {
     }
 
-    public HmmerMatch(Signature signature, double score, double evalue, Set<T> locations) {
-        super(signature, locations);
+    public HmmerMatch(Signature signature,  String signatureModels, double score, double evalue, Set<T> locations) {
+        super(signature, signatureModels, locations);
         setScore(score);
         setEvalue(evalue);
     }

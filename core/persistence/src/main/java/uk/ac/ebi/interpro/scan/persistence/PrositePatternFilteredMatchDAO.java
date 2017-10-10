@@ -52,6 +52,6 @@ public class PrositePatternFilteredMatchDAO
                 rawMatch.getLocationEnd(),
                 rawMatch.getPatternLevel(),
                 rawMatch.getCigarAlignment());
-        return new PatternScanMatch(signature, Collections.singleton(location));
+        return new PatternScanMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 }

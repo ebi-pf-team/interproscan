@@ -84,7 +84,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
                                 rawMatch.getdScore()
                         )
                 );
-                SignalPMatch match = new SignalPMatch(signature, organismType, locations);
+                SignalPMatch match = new SignalPMatch(signature, rawMatch.getModelId(), organismType, locations);
                 protein.addMatch(match);
                 entityManager.persist(match);
             }

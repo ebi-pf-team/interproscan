@@ -72,7 +72,7 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
         MobiDBMatch.MobiDBLocation location = new MobiDBMatch.MobiDBLocation(
                 rawMatch.getLocationStart(),
                 rawMatch.getLocationEnd());
-        return new MobiDBMatch(signature, Collections.singleton(location));
+        return new MobiDBMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 
     /**

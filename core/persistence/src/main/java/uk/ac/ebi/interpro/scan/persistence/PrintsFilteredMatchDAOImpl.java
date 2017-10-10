@@ -72,7 +72,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
                         if (match != null) {
                             entityManager.persist(match); // Persist the previous one...
                         }
-                        match = new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
+                        match = new FingerPrintsMatch(currentSignature, rawMatch.getModelId(), lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
                         protein.addMatch(match);   // Sets the protein on the match.
                     }
                     // Reset everything
@@ -96,7 +96,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                match = new FingerPrintsMatch(currentSignature, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
+                match = new FingerPrintsMatch(currentSignature, lastRawMatch.getModelId(), lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
                 protein.addMatch(match);   // Sets the protein on the match.
                 entityManager.persist(match);
             }

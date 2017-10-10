@@ -119,8 +119,10 @@ public class Signature implements Serializable {
     @JsonManagedReference
     private SignatureLibraryRelease signatureLibraryRelease;
 
-    @Column(nullable = true)
-    private String modelsString;
+//    @Column(nullable = true)
+//    @JsonManagedReference
+//    @JsonIgnore
+//    private String modelsString;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
     // TODO: Use ConcurrentHashMap if need concurrent modification of signatures
@@ -227,7 +229,7 @@ public class Signature implements Serializable {
             signature.setUpdated(updated);
             signature.setMd5(md5);
             signature.setComment(comment);
-            signature.setModelsString(modelsString);
+//            signature.setModelsString(modelsString);
             if (models != null) {
                 signature.setModels(models);
             }
@@ -493,33 +495,38 @@ public class Signature implements Serializable {
         deprecatedAccessions.remove(ac);
     }
 
-    // add the modelString variable for handling mode string list
-    @XmlElement (name = "models")
-    @JsonProperty("models")
-    public String getModelsString() {
-        return modelsString;
-    }
+//    // add the modelString variable for handling mode string list
+//    //@XmlElement (name = "models")
+//    @JsonProperty("models")
+//    @XmlTransient
+//    @JsonManagedReference
+//    @JsonIgnore
+//    public String getModelsString() {
+//        return modelsString;
+//    }
+//
+//    public void addModelString(String modelsString) {
+//        if (this.modelsString == null){
+//            setModelsString(modelsString);
+//        }else {
+//            for(String elem: this.modelsString.split(",")){
+//                if (modelsString.equals(elem)){
+//                    System.out.println("Model already in list: " + elem);
+//                    return;
+//                }
+//            }
+//            this.modelsString = this.modelsString + ","  + modelsString;
+//        }
+//    }
 
-    public void addModelString(String modelsString) {
-        if (this.modelsString == null){
-            setModelsString(modelsString);
-        }else {
-            for(String elem: this.modelsString.split(",")){
-                if (modelsString.equals(elem)){
-                    System.out.println("Model already in list: " + elem);
-                    return;
-                }
-            }
-            this.modelsString = this.modelsString + ","  + modelsString;
-        }
-    }
-
-    public void setModelsString(String modelsString) {
-        this.modelsString = modelsString;
-    }
+//    public void setModelsString(String modelsString) {
+//        this.modelsString = modelsString;
+//    }
 
 //    @XmlJavaTypeAdapter(ModelAdapter.class)
     @XmlTransient
+    @JsonManagedReference
+    @JsonIgnore
     public Map<String, Model> getModels() {
 //        return (models == null ? null : Collections.unmodifiableMap(models));
         return models;
@@ -671,6 +678,19 @@ public class Signature implements Serializable {
         return (md5 == null ? "" : md5.toLowerCase());
     }
 
+    public Signature getSignatureWithModels(String modelString){
+        final Signature.Builder builder = new Signature.Builder(this.getAccession());
+        final Signature signature = builder
+                .name(this.getName())
+                .type(this.getType())
+                .description(this.getDescription())
+                .signatureLibraryRelease(this.getSignatureLibraryRelease())
+                .modelsString(modelString)
+                .build();
+
+        return signature;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -731,7 +751,7 @@ public class Signature implements Serializable {
                 .append("md5", getSafeMd5(md5))
                 .append("comment", comment)
                 .append("signatureLibraryRelease",getSignatureLibraryRelease())
-                .append("modelsString", getModelsString())
+//                .append("modelsString", getModelsString())
 //                .append("XRefs", getCrossReferences())
 //                .append("description", getDescription())
 //                .append("abstract", getAbstract())

@@ -40,8 +40,8 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
     protected Hmmer2Match() {
     }
 
-    public Hmmer2Match(Signature signature, double score, double evalue, Set<Hmmer2Match.Hmmer2Location> locations) {
-        super(signature, score, evalue, locations);
+    public Hmmer2Match(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer2Match.Hmmer2Location> locations) {
+        super(signature, signatureModels, score, evalue, locations);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         for (Hmmer2Location location : this.getLocations()) {
             clonedLocations.add((Hmmer2Location) location.clone());
         }
-        return new Hmmer2Match(this.getSignature(),
+        return new Hmmer2Match(this.getSignature(), this.getSignatureModels(),
                 this.getScore(), this.getEvalue(), clonedLocations);
     }
 

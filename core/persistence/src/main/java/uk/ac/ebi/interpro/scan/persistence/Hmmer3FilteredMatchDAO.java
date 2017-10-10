@@ -62,15 +62,19 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                                                       String signatureLibraryRelease) {
                             Signature signature = modelAccessionToSignatureMap.get(modelAccession);
                             if (signature == null) {
-                                throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
+                                //TODO remove this hack
+                                Map.Entry<String, Signature> tempEntry = modelAccessionToSignatureMap.entrySet().iterator().next();
+                                signature = tempEntry.getValue();
+                                //throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                             }
 //                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("signature: " + signature + " from - " + modelAccession);
                             }
-                            signature.addModelString(modelAccession);
-                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
+//                            signature.addModelString(modelAccession);
+//                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
                             //why not return just signature
+//                            return signature.getSignatureWithModels(modelAccession);
                             return signature;
 //                            return modelAccessionToSignatureMap.get(modelAccession);
                         }

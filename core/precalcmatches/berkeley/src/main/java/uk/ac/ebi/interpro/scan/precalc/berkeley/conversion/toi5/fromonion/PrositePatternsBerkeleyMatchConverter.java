@@ -29,7 +29,7 @@ public class PrositePatternsBerkeleyMatchConverter extends BerkeleyMatchConverte
             ));
         }
 
-        return new PatternScanMatch(signature, locations);
+        return new PatternScanMatch(signature, berkeleyMatch.getSignatureModels(), locations);
     }
 
 }

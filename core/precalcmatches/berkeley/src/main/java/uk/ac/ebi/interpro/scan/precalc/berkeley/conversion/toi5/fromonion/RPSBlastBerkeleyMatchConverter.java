@@ -36,7 +36,7 @@ public class RPSBlastBerkeleyMatchConverter extends BerkeleyMatchConverter<RPSBl
             ));
         }
 
-        return new RPSBlastMatch(signature, locations);
+        return new RPSBlastMatch(signature, berkeleyMatch.getSignatureModels(), locations);
     }
 
 }

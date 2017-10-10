@@ -50,8 +50,8 @@ abstract class HmmerMatchWithSites<T extends HmmerLocationWithSites> extends Mat
     protected HmmerMatchWithSites() {
     }
 
-    public HmmerMatchWithSites(Signature signature, double score, double evalue, Set<T> locations) {
-        super(signature, locations);
+    public HmmerMatchWithSites(Signature signature, String signatureModels, double score, double evalue, Set<T> locations) {
+        super(signature, signatureModels, locations);
         setScore(score);
         setEvalue(evalue);
     }

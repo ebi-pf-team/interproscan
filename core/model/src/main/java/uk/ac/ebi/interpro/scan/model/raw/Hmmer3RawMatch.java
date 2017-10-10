@@ -175,8 +175,16 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
             score = m.getScore();
             evalue = m.getEvalue();
             locations.add(getLocation(m));
+//            System.out.println("Sequence: " + m.getSequenceIdentifier() + "_" + m.getNumericSequenceId()
+//                    + " Signature accesion: "  + signature.getAccession()
+//                    + " modelString: " + signature.getModelsString()
+//                    + " model: " + modelId);
         }
-        return new Hmmer3Match(signature, score, evalue, locations);
+
+        //signature.addModelString(modelId);
+        //Signature newSignature = signature.getSignatureWithModels(modelId);
+
+        return new Hmmer3Match(signature, modelId, score, evalue, locations);
     }
 
     private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m) {

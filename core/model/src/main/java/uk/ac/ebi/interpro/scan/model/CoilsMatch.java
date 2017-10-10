@@ -24,8 +24,8 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
     protected CoilsMatch() {
     }
 
-    public CoilsMatch(Signature signature, Set<CoilsLocation> locations) {
-        super(signature, locations);
+    public CoilsMatch(Signature signature, String signatureModels, Set<CoilsLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
         for (CoilsLocation location : this.getLocations()) {
             clonedLocations.add((CoilsLocation) location.clone());
         }
-        return new CoilsMatch(this.getSignature(), clonedLocations);
+        return new CoilsMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     /**

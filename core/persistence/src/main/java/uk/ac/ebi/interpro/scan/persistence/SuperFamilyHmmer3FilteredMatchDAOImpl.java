@@ -67,10 +67,14 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     }
                     match = new SuperFamilyHmmer3Match(
                             currentSignature,
+                            rawMatch.getModelId(),
                             rawMatch.getEvalue(),
                             null);
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
+                }else{
+                    match.addSignatureModel(rawMatch.getModelId());
                 }
+
                 match.addLocation(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
                         rawMatch.getLocationStart(),
                         rawMatch.getLocationEnd()

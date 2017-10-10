@@ -42,7 +42,7 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             for (T rawMatch : rawProtein.getMatches()) {
                 Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
-                ProfileScanMatch match = buildMatch(signature, rawMatch);
+                ProfileScanMatch match = buildMatch(signature,  rawMatch);
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
@@ -55,6 +55,6 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
                 rawMatch.getLocationEnd(),
                 rawMatch.getScore(),
                 rawMatch.getCigarAlignment());
-        return new ProfileScanMatch(signature, Collections.singleton(location));
+        return new ProfileScanMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 }

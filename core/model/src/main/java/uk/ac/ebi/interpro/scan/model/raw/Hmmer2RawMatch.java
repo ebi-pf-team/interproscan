@@ -120,7 +120,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
             evalue = m.getEvalue();
             locations.add(getLocation(m));
         }
-        return new Hmmer2Match(signature, score, evalue, locations);
+        return new Hmmer2Match(signature, modelId, score, evalue, locations);
     }
 
     private static Hmmer2Match.Hmmer2Location getLocation(Hmmer2RawMatch m) {

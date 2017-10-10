@@ -51,6 +51,7 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
 
         return new Hmmer3Match(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 valueOrZero(berkeleyMatch.getSequenceScore()),
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 locations
