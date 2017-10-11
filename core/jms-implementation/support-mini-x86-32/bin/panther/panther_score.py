@@ -64,6 +64,39 @@ def append_to_match_list(all_scores, seq_id, item):
         updated_raw_matches = [item]
     return updated_raw_matches
 
+#return true if two int ranges overlap
+def location_overlaps(location1, location2):
+    start_1,end_1 = map(int, location1.split("-"))
+    start_2,end_2 = map(int,location2.split("-"))
+    return max(start_1,start_2) <= min(end_1,end_2)
+
+def get_filtered_best_hits(best_hits):
+    # hmm_hit = [hmm_id, description, float(eVal), float(score), location]
+    filtered_best_hits = []
+    for el in best_hits:
+        base_el_location = el[4]
+        overlaps = False
+        if ":SF" in el[0]:
+            #do nothing for now, we dont expect subfamilies to overlap in theory
+            do_nothing = 0
+        else:
+            for other_el in best_hits:
+                if el == other_el:
+                    continue
+                if location_overlaps(base_el_location, other_el[4]):
+                    #deal with case where overlaps are present
+                    overlaps = True
+        if overlaps:
+            # deal with this, skip this hit
+            #print("overlaps.. so skip")
+            overlaps_print_error = False
+        else:
+            #add to to filtered best hits
+            filtered_best_hits.append(el)
+
+    return filtered_best_hits
+
+
 
 def get_best_hits(matches, evalue_cutoff):
     """
@@ -169,6 +202,7 @@ if __name__ == "__main__":
         for seq_key in all_scores:
             matches = all_scores[seq_key]
             best_hits = get_best_hits(matches,  evalue_cutoff)
-            out_str_list = print_list(seq_key, best_hits)
+            filtered_best_hits = get_filtered_best_hits(best_hits)
+            out_str_list = print_list(seq_key, filtered_best_hits)
             for out_str in out_str_list:
                 outf.write(out_str + '\n')
