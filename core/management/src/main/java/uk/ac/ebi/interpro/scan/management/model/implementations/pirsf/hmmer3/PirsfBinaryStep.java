@@ -22,6 +22,8 @@ public class PirsfBinaryStep extends RunBinaryStep {
     private String pirsfDatPath;
     private String perlCommand;
 
+    private boolean forceHmmsearch = true;
+
     public String getScriptPath() {
         return scriptPath;
     }
@@ -76,6 +78,13 @@ public class PirsfBinaryStep extends RunBinaryStep {
         this.inputFileNameDomTbloutTemplate = inputFileNameDomTbloutTemplate;
     }
 
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
 
     /**
      * Returns command line for running the PIRSF Perl script.
@@ -129,7 +138,7 @@ public class PirsfBinaryStep extends RunBinaryStep {
         command.add(tempdir);
         Utilities.verboseLog("tempdir for PIRSF : " + tempdir);
         command.add("--mode");
-        if (Utilities.getUseHmmsearch() ) {
+        if (forceHmmsearch || Utilities.getSequenceCount() > 10 ) {
             command.add("hmmsearch");
             Utilities.verboseLog("PIRSF postprocess use hmmsearch output");
         }else{
