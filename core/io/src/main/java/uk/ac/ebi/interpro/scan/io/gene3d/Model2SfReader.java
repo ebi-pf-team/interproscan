@@ -76,18 +76,18 @@ public final class Model2SfReader extends AbstractModelFileParser {
                     String[] splitLine = line.split(",");
                     String model = splitLine[0];
                     if (model != null && model.startsWith("\\") && model.endsWith("\\")) {
-                        model = model.substring(1, model.lastIndexOf("\\"));
+                        model = model.substring(1, model.lastIndexOf("\\") - 1);
                     }
                     else {
-                        throw new IllegalStateException("Model in unexpected format on line: " + line);
+                        throw new IllegalStateException("Model in unexpected format on line: " + line + " (" + model + ")");
                     }
 
                     String signature = splitLine[1];
                     if (signature != null && signature.startsWith("\\") && signature.endsWith("\\")) {
-                        signature = signature.substring(1, signature.lastIndexOf("\\"));
+                        signature = signature.substring(1, signature.lastIndexOf("\\") - 1);
                     }
                     else {
-                        throw new IllegalStateException("Signature in unexpected format on line: " + line);
+                        throw new IllegalStateException("Signature in unexpected format on line: " + line + "  (" + signature + ")");
                     }
 
                     records.put(model, prefix + signature);  // model - signature
