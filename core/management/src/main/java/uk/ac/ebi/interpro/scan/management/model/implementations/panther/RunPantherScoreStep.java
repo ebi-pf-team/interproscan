@@ -25,7 +25,6 @@ public class RunPantherScoreStep extends RunBinaryStep {
 
     private String fullPathToPython;
 
-
     private String inputFileNameDomTbloutTemplate;
 
     private String inputFilePantherFamilyNames;
