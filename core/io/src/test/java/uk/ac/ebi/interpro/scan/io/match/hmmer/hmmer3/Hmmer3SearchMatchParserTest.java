@@ -65,7 +65,7 @@ public class Hmmer3SearchMatchParserTest {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, gene3dFile.getInputStream());
         for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
             for (Gene3dHmmer3RawMatch m : p.getMatches()) {
-                actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                actual.add(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
             }
         }
         assertEquals("Expected matches not found", expected, actual);
@@ -104,9 +104,9 @@ public class Hmmer3SearchMatchParserTest {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, emptyAlignmentLineFile.getInputStream());
         for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
             for (Gene3dHmmer3RawMatch m : p.getMatches()) {
-                actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                actual.add(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                    LOGGER.debug(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
                 }
             }
         }
