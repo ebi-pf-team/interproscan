@@ -36,6 +36,9 @@ public class CathResolveHitsOutputParser {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
+                if (line.startsWith("#")){
+                    continue;
+                }
                 // Look for a domain data line.
                 CathResolverRecord cathRecord = CathResolverRecord.valueOf(line);
                 if (cathRecord != null) {

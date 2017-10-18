@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
     private String crhOutputFileTemplate;
 
     private String fullPathToBinary;
+
+    private boolean forceHmmsearch = true;
 
     @Required
     public void setCrhInputFileTemplate(String crhInputFileTemplate) {
@@ -50,6 +53,14 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
         return fullPathToBinary;
     }
 
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
+
     /**
      * Implementations of this method should return a List<String> containing all the components of the command line to be called
      * including any arguments. The StepInstance and temporary file are provided to allow parameters to be built. Use
@@ -70,6 +81,15 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
 //        command.add("--input-format=hmmer_domtmblout");
 //        command.add("--worst-permissible-evalue 0.001");
 
+        if (forceHmmsearch || Utilities.getSequenceCount() > 10){
+            //use hmmsearch output
+            Utilities.verboseLog("Use Hmmsearch  ");
+            command.add("--input-format=hmmsearch_out");
+        }else{
+            //use hmmscan output
+            Utilities.verboseLog("Use hmmscan  ");
+            command.add("--input-format=hmmscan_out");
+        }
         command.add("--output-file");
         command.add(outputFilePath);
         command.add(inputFilePath);

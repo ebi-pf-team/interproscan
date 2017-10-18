@@ -56,7 +56,8 @@
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription" value="Run CathResolveHits"/>
-        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fullPathToBinary" value="${cath.resolve.hits.path}"/>
         <property name="binarySwitches" value="${cath.resolve.hits.switches.gene3d}"/>
         <property name="crhOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
@@ -73,6 +74,7 @@
                 </list>
         </property>
         <property name="stepDescription" value="Parse output from HMMER3 and CathResolveHits"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
         <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
 

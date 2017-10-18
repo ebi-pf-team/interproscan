@@ -29,21 +29,25 @@ import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 public final class CathResolverRecord {
     public static final String SEGMENT_BOUNDARY_SEPARATOR = ":";
 
+    //#FIELDS query-id match-id score boundaries resolved aligned-regions cond-evalue indp-evalue
     private static final String COLUMN_SEP = "\\s+";
 
     private static final int QUERY_PROTEIN_ID_POS = 0;
-    private static final int MATCHL_ID_POS = 1;
+    private static final int MATCH_ID_POS = 1;
     private static final int SCORE_POS = 2;
     private static final int STARTS_STOPS_POS = 3;
     private static final int RESOLVED_STARTS_STOPS_POS = 4;
+    private static final int ALIGNED_REGIONS = 5;
 
-    private static final int LAST_POS = RESOLVED_STARTS_STOPS_POS;
+    private static final int LAST_POS = ALIGNED_REGIONS;
+
 
     private final String queryProteinId;
     private final String matchId;
     private final Double score;
     private final String startsStopsPosition;
     private final String resolvedStartsStopsPosition;
+    private final String alignedRegions;
 
 
     private CathResolverRecord() {
@@ -52,17 +56,21 @@ public final class CathResolverRecord {
         this.score = null;
         this.startsStopsPosition = null;
         this.resolvedStartsStopsPosition = null;
+        this.alignedRegions = null;
     }
 
     public CathResolverRecord(String queryProteinId, String matchId,
                               Double score, String startsStopsPosition,
-                              String resolvedStartsStopsPosition) {
+                              String resolvedStartsStopsPosition,
+                              String alignedRegions
+                            ) {
 
         this.queryProteinId = queryProteinId;
         this.matchId = matchId;
         this.score = score;
         this.startsStopsPosition = startsStopsPosition;
         this.resolvedStartsStopsPosition = resolvedStartsStopsPosition;
+        this.alignedRegions = alignedRegions;
     }
 
     public String getQueryProteinId() {
@@ -85,6 +93,7 @@ public final class CathResolverRecord {
         return resolvedStartsStopsPosition;
     }
 
+
     public static CathResolverRecord valueOf(Gene3dHmmer3RawMatch rawMatch) {
         if (rawMatch == null) {
             throw new NullPointerException("RawMatch object is null");
@@ -92,7 +101,8 @@ public final class CathResolverRecord {
         return new CathResolverRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModelId(),
                 rawMatch.getLocationScore(),
                 rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd(),
-                rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd()
+                rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd(),
+                rawMatch.getAlignedRegions()
         );
 
     }
@@ -102,24 +112,26 @@ public final class CathResolverRecord {
 
 
         String queryProteinId = columns[QUERY_PROTEIN_ID_POS];
-        String matchId = columns[MATCHL_ID_POS];
+        String matchId = columns[MATCH_ID_POS];
         Double score = Double.parseDouble(columns[SCORE_POS]);
 
         String startsStopsPosition = columns[STARTS_STOPS_POS];
         String resolvedStartsStopsPosition = columns[RESOLVED_STARTS_STOPS_POS];
+        String alignedRegions = columns[ALIGNED_REGIONS];
 
         return new CathResolverRecord(queryProteinId, matchId,
                 score, startsStopsPosition,
-                resolvedStartsStopsPosition);
+                resolvedStartsStopsPosition, alignedRegions);
     }
 
     public static String toLine(CathResolverRecord record) {
         String[] columns = new String[LAST_POS + 1];
         columns[QUERY_PROTEIN_ID_POS] = record.queryProteinId;
-        columns[MATCHL_ID_POS] = record.matchId;
+        columns[MATCH_ID_POS] = record.matchId;
         columns[SCORE_POS] = String.valueOf(record.score);
         columns[STARTS_STOPS_POS] = record.startsStopsPosition;
         columns[RESOLVED_STARTS_STOPS_POS] = record.resolvedStartsStopsPosition;
+        columns[ALIGNED_REGIONS] = record.alignedRegions;
 
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < columns.length; i++) {

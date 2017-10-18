@@ -56,11 +56,16 @@ public final class Model2SfReader extends AbstractModelFileParser {
         }
 
         // Create release
-        return new SignatureLibraryRelease(library, releaseVersion, new HashSet<Signature>(signatureMap.values()));
+        return new SignatureLibraryRelease(library, releaseVersion, new HashSet<>(signatureMap.values()));
     }
 
     public Map<String, String> parseFileToMap() throws IOException {
-        final Map<String, String> records = new HashMap<String, String>();
+        final Map<String, String> records = new HashMap<>();
+
+        // Some example lines to parse:
+        // "1q14A01-i1","3.40.50.1220","TPP-binding domain","1q14A01"
+        // "1vhnA02-i1","1.10.1200.80","Putative flavin oxidoreducatase; domain 2","1vhnA02"
+
 
         for (Resource modelFile : modelFiles) {
             BufferedReader reader = null;
@@ -69,7 +74,23 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] splitLine = line.split(",");
-                    records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
+                    String model = splitLine[0];
+                    if (model != null && model.startsWith("\"") && model.endsWith("\"")) {
+                        model = model.substring(1, model.lastIndexOf("\""));
+                    }
+                    else {
+                        throw new IllegalStateException("Model in unexpected format on line: " + line + " (" + model + ")");
+                    }
+
+                    String signature = splitLine[1];
+                    if (signature != null && signature.startsWith("\"") && signature.endsWith("\"")) {
+                        signature = signature.substring(1, signature.lastIndexOf("\""));
+                    }
+                    else {
+                        throw new IllegalStateException("Signature in unexpected format on line: " + line + "  (" + signature + ")");
+                    }
+
+                    records.put(model, prefix + signature);  // model - signature
                 }
             }
             finally {

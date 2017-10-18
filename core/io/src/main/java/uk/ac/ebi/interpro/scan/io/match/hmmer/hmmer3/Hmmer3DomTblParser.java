@@ -34,7 +34,7 @@ public class Hmmer3DomTblParser {
      * easily be put back to use the inclusion threshold.
      */
 
-    public Map<String, DomTblDomainMatch> parse(InputStream is) throws IOException {
+    public Map<String, DomTblDomainMatch> parse(InputStream is, String mode) throws IOException {
 
         Map<String, DomTblDomainMatch> domainTblLineMap = new HashMap ();
         BufferedReader reader = null;
@@ -46,9 +46,10 @@ public class Hmmer3DomTblParser {
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 // Look for a domain data line.
-                Matcher domainDataLineMatcher = DomTblDomainMatch.DOMAIN_LINE_PATTERN.matcher(line);
+                Matcher domainDataLineMatcher = DomTblDomainMatch.getDomainDataLineMatcher(line, mode);
+//                Matcher domainDataLineMatcher = DomTblDomainMatch.DOMAIN_LINE_PATTERN.matcher(line);
                 if (domainDataLineMatcher.matches()) {
-                    DomTblDomainMatch domainMatch = new DomTblDomainMatch(domainDataLineMatcher);
+                    DomTblDomainMatch domainMatch = new DomTblDomainMatch(domainDataLineMatcher, mode);
                     String key = domainMatch.getDomTblDominLineKey();
                     domainTblLineMap.put(key, domainMatch);
                 }

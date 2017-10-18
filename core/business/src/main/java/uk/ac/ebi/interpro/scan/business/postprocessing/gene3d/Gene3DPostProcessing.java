@@ -157,7 +157,7 @@ public class Gene3DPostProcessing implements Serializable {
                                         m.getDomainCeValue(),
                                         m.getDomainIeValue(),
                                         m.getDomainBias(),
-                                        m.getCigarAlignment());
+                                        m.getAlignedRegions());
                                 // Add match
                                 filteredProtein.addMatch(match);
                                 matchKeys.add(matchKey);
