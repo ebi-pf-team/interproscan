@@ -1075,10 +1075,10 @@ public class Run extends AbstractI5Runner {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), applVersion);
-                    }else if (applName.equalsIgnoreCase("Hamap")) {
-			System.out.println(Utilities.getTimeNow() + " Check hamap analysis:" + applName + " " + 
-			applVersion + " fullname: " + parsedAnalysis);
-		    }
+//                    }else if (applName.equalsIgnoreCase("Hamap")) {
+//			            System.out.println(Utilities.getTimeNow() + " Check hamap analysis:" + applName + " " +
+//			                applVersion + " fullname: " + parsedAnalysis);
+		            }
                     else {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
                     }
