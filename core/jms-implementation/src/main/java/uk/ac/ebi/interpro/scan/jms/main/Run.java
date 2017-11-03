@@ -1049,7 +1049,7 @@ public class Run extends AbstractI5Runner {
             // Check the input matches the expected regex and build a user entered member database -> version number map
             Map<String, String> userAnalysesMap = new HashMap<String, String>();
             final Pattern applNameRegex = Pattern.compile("^[a-zA-Z0-9_-]+"); // E.g. "PIRSF", "Gene3d", "SignalP-GRAM_NEGATIVE"
-            final Pattern applVersionRegex = Pattern.compile("\\d[0-9a-zA-Z.]+$"); // E.g. "3.01", "2.0c"
+            final Pattern applVersionRegex = Pattern.compile("\\d[0-9a-zA-Z._]*$"); // E.g. "3.01", "2.0c"
 
             for (int i = 0; i < parsedAnalyses.length; i++) {
                 final String parsedAnalysis = parsedAnalyses[i]; // E.g. "PIRSF", "PIRSF-3.01"
@@ -1075,29 +1075,13 @@ public class Run extends AbstractI5Runner {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), applVersion);
-                    }else if (applName.equalsIgnoreCase("Hamap")) {
-			System.out.println(Utilities.getTimeNow() + " Check hamap analysis:" + applName + " " + 
-			applVersion + " fullname: " + parsedAnalysis);
-		    }
+                    }
                     else {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
                     }
                 }
                 else {
-                    //System.out.println(Utilities.getTimeNow() + " something not right: :" + applName + " " +
-                    //    applVersion + " fullname: " + parsedAnalysis); 
-                    if (m1.matches() && applName.equalsIgnoreCase("Hamap")){
-                        //System.out.println(Utilities.getTimeNow() + " try add manually");
-                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.HAMAP.getName(), applVersion);
-                    }else if (m1.matches() && applName.equalsIgnoreCase("prositeprofiles")){
-                       	addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.PROSITE_PROFILES.getName(), applVersion);
-		    }else if (m1.matches() && applName.equalsIgnoreCase("prositepatterns")){
-                       	addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.PROSITE_PATTERNS.getName(), applVersion);
-		    }else if (m1.matches() && applName.equalsIgnoreCase("SFLD")){
-                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SFLD.getName(), applVersion);
-                    }else {
-                        inputErrorMessages.add(parsedAnalysis + " not a valid input.");
-                    }
+                    inputErrorMessages.add(parsedAnalysis + " not a valid input.");
                 }
             }
             if (inputErrorMessages.size() > 0) {
