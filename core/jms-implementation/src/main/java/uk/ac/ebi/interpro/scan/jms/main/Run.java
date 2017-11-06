@@ -1049,7 +1049,7 @@ public class Run extends AbstractI5Runner {
             // Check the input matches the expected regex and build a user entered member database -> version number map
             Map<String, String> userAnalysesMap = new HashMap<String, String>();
             final Pattern applNameRegex = Pattern.compile("^[a-zA-Z0-9_-]+"); // E.g. "PIRSF", "Gene3d", "SignalP-GRAM_NEGATIVE"
-            final Pattern applVersionRegex = Pattern.compile("\\d[0-9a-zA-Z._]*$"); // E.g. "3.01", "2.0c"
+            final Pattern applVersionRegex = Pattern.compile("\\d[0-9a-zA-Z._]*$"); // E.g. "3.01", "2.0c", "3", "2017_10"
 
             for (int i = 0; i < parsedAnalyses.length; i++) {
                 final String parsedAnalysis = parsedAnalyses[i]; // E.g. "PIRSF", "PIRSF-3.01"
