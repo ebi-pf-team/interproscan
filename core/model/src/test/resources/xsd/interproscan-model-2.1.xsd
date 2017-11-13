@@ -537,6 +537,7 @@
         <xs:sequence>
             <xs:element ref="tns:nucleotide-sequence" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:attribute name="interproscan-version" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="NucleotideType">
@@ -631,48 +632,49 @@
 
     <xs:simpleType name="GoCategoryType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="MOLECULAR_FUNCTION"/>
             <xs:enumeration value="BIOLOGICAL_PROCESS"/>
             <xs:enumeration value="CELLULAR_COMPONENT"/>
+            <xs:enumeration value="MOLECULAR_FUNCTION"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="EntryTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="UNKNOWN"/>
             <xs:enumeration value="ACTIVE_SITE"/>
-            <xs:enumeration value="DOMAIN"/>
-            <xs:enumeration value="PTM"/>
-            <xs:enumeration value="BINDING_SITE"/>
             <xs:enumeration value="FAMILY"/>
             <xs:enumeration value="REPEAT"/>
+            <xs:enumeration value="DOMAIN"/>
+            <xs:enumeration value="PTM"/>
+            <xs:enumeration value="UNKNOWN"/>
             <xs:enumeration value="CONSERVED_SITE"/>
+            <xs:enumeration value="HOMOLOGOUS_SUPERFAMILY"/>
+            <xs:enumeration value="BINDING_SITE"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="SignatureLibraryType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="SFLD"/>
-            <xs:enumeration value="COILS"/>
-            <xs:enumeration value="PFAM"/>
-            <xs:enumeration value="TIGRFAM"/>
-            <xs:enumeration value="SUPERFAMILY"/>
-            <xs:enumeration value="HAMAP"/>
-            <xs:enumeration value="MOBIDB_LITE"/>
-            <xs:enumeration value="PANTHER"/>
-            <xs:enumeration value="SMART"/>
-            <xs:enumeration value="TMHMM"/>
-            <xs:enumeration value="GENE3D"/>
-            <xs:enumeration value="CDD"/>
-            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
-            <xs:enumeration value="PROSITE_PATTERNS"/>
-            <xs:enumeration value="PHOBIUS"/>
-            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
-            <xs:enumeration value="PRINTS"/>
-            <xs:enumeration value="PROSITE_PROFILES"/>
             <xs:enumeration value="SIGNALP_EUK"/>
-            <xs:enumeration value="PIRSF"/>
+            <xs:enumeration value="HAMAP"/>
+            <xs:enumeration value="CDD"/>
+            <xs:enumeration value="PROSITE_PROFILES"/>
+            <xs:enumeration value="SMART"/>
+            <xs:enumeration value="PANTHER"/>
+            <xs:enumeration value="TMHMM"/>
+            <xs:enumeration value="PFAM"/>
+            <xs:enumeration value="MOBIDB_LITE"/>
+            <xs:enumeration value="TIGRFAM"/>
             <xs:enumeration value="PRODOM"/>
+            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
+            <xs:enumeration value="SFLD"/>
+            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
+            <xs:enumeration value="PRINTS"/>
+            <xs:enumeration value="COILS"/>
+            <xs:enumeration value="PHOBIUS"/>
+            <xs:enumeration value="SUPERFAMILY"/>
+            <xs:enumeration value="PIRSF"/>
+            <xs:enumeration value="PROSITE_PATTERNS"/>
+            <xs:enumeration value="GENE3D"/>
         </xs:restriction>
     </xs:simpleType>
 
