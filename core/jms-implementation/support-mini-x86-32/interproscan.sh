@@ -22,8 +22,7 @@ export EMBOSS_DATA=bin/nucleotide
 
 JAVA=$(type -p java)
 if [[ "$JAVA" == "" ]]; then
-    printf 'Java not found. Please install Java 1.8 or above\n'
-    printf 'and place it on your path,\n'
+    printf 'Java not found. Please install Java 1.8 and place it on your path,\n'
     printf 'or edit the interproscan.sh script to refer to your Java installation.\n'.
     exit 1
 fi
@@ -34,9 +33,9 @@ JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | { read X; printf '%s' "${
 JAVA_MAJOR_VERSION=${JAVA_VERSION%%.*}
 JAVA_MINOR_VERSION=${JAVA_VERSION#*.}
 JAVA_MINOR_VERSION=${JAVA_MINOR_VERSION%%.*}
-if [[ "${JAVA_MAJOR_VERSION}" == "1" && "${JAVA_MINOR_VERSION}" -lt "8" ]];
+if [[ "${JAVA_MAJOR_VERSION}" -ne "1" || "${JAVA_MINOR_VERSION}" -ne "8" ]];
 then
-    printf 'Java version 1.8 or above is required to run InterProScan.\n'
+    printf 'Java version 1.8 is required to run InterProScan.\n'
     printf 'Detected version %s.%s\n' "${JAVA_MAJOR_VERSION}" "${JAVA_MINOR_VERSION}"
     printf 'Please install the correct version.\n'
     exit 1
