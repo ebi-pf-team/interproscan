@@ -34,16 +34,26 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
     @Transient
     public static final String TABLE_NAME = "GENE3D_HMMER3_RAW_MATCH";
 
+    @Column(nullable = false, length = 4000)
+    private String cathFamilyId;
+
+    @Column(nullable = false, length = 4000)
+    private String hitModelName;
+
 //    @Column(nullable = false, length = 4000)
 //    private String alignedRegions;
 
     @Column(nullable = false, length = 4000)
     private String cigarAlignment;
 
+    @Column(nullable = false, length = 4000)
+    private String regionComment;
+
     protected Gene3dHmmer3RawMatch() {
     }
 
     public Gene3dHmmer3RawMatch(String sequenceIdentifier, String model,
+                                String cathFamilyId, String hitModelName,
                                 String signatureLibraryRelease,
                                 int locationStart, int locationEnd,
                                 double evalue, double score,
@@ -52,11 +62,14 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
                                 int envelopeStart, int envelopeEnd,
                                 double expectedAccuracy, double fullSequenceBias,
                                 double domainCeValue, double domainIeValue, double domainBias,
-                                String alignedRegions) {
+                                String alignedRegions, String regionComment) {
         super(sequenceIdentifier, model, SignatureLibrary.GENE3D, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
                 fullSequenceBias, domainCeValue, domainIeValue, domainBias);
+        setCathFamilyId(cathFamilyId);
+        setHitModelName(hitModelName);
         setAlignedRegions(alignedRegions);
+        setRegionComment(regionComment);
     }
 
     public String getAlignedRegions() {
@@ -69,7 +82,31 @@ public class Gene3dHmmer3RawMatch extends Hmmer3RawMatch {
 //        this.alignedRegions = alignedRegions;
     }
 
-//    private void setCigarAlignment(String cigarAlignment) {
+    public String getCathFamilyId() {
+        return this.cathFamilyId;
+    }
+
+    public void setCathFamilyId(String cathFamilyId) {
+        this.cathFamilyId = cathFamilyId;
+    }
+
+    public String getHitModelName() {
+        return hitModelName;
+    }
+
+    public void setHitModelName(String hitModelName) {
+        this.hitModelName = hitModelName;
+    }
+
+    public String getRegionComment() {
+        return regionComment;
+    }
+
+    public void setRegionComment(String regionComment) {
+        this.regionComment = regionComment;
+    }
+
+    //    private void setCigarAlignment(String cigarAlignment) {
 //        this.cigarAlignment = cigarAlignment;
 //    }
 

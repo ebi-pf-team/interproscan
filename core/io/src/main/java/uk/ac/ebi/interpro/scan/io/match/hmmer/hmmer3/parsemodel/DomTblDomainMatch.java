@@ -219,6 +219,16 @@ public class DomTblDomainMatch implements Serializable {
                 +  domainEnvTo;
     }
 
+    public String getGene3DDomTblDominLineKey(String mode) {
+        String gene3DQueryName = queryName.split("\\-")[0];
+
+        return targetIdentifier
+                +  gene3DQueryName
+                +  domainEnvFrom
+                + "-"
+                +  domainEnvTo;
+    }
+
     public static Matcher getDomainDataLineMatcher(String line, String mode){
         if (mode.equals("hmmsearch")) {
             return DomTblDomainMatch.HMMSEARCH_DOMAIN_LINE_PATTERN.matcher(line);

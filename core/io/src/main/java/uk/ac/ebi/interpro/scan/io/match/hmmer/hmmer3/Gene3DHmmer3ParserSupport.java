@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.gene3d.CathResolverRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.HmmSearchRecord;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.SequenceMatch;
@@ -45,6 +46,43 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
         this.alignmentEncoder = alignmentEncoder;
     }
 
+    protected Gene3dHmmer3RawMatch createRawMatch(final String signatureLibraryRelease,
+                                               final HmmSearchRecord hmmSearchRecord,
+                                               final CathResolverRecord cathResolverRecord,
+                                               final SequenceMatch sequenceMatch,
+                                               final DomainMatch domainMatch) {
+        // TODO: Store model length? (required by DF3) -- see HmmSearchRecord.getModelLength()
+        if (domainMatch.getAlignment() == null || domainMatch.getAlignment().trim().length() == 0) {
+            throw new IllegalStateException("Attempting to create a Gene3D match that has no alignment data.");
+        }
+
+        return new Gene3dHmmer3RawMatch(
+                sequenceMatch.getSequenceIdentifier(),
+                hmmSearchRecord.getModelAccession(),
+                cathResolverRecord.getCathFamilyId(),
+                cathResolverRecord.getMatchModelName(),
+                signatureLibraryRelease,
+                domainMatch.getAliFrom(),
+                domainMatch.getAliTo(),
+                sequenceMatch.getEValue(),
+                sequenceMatch.getScore(),
+                domainMatch.getHmmfrom(),
+                domainMatch.getHmmto(),
+                domainMatch.getHmmBounds(),
+                domainMatch.getScore(),
+                domainMatch.getEnvFrom(),
+                domainMatch.getEnvTo(),
+                domainMatch.getAcc(),
+                sequenceMatch.getBias(),
+                cathResolverRecord.getCondEvalue(),
+                cathResolverRecord.getIndpEvalue(),
+                domainMatch.getBias(),
+                cathResolverRecord.getAlignedRegions(),
+                cathResolverRecord.getRegionComment()
+        );
+    }
+
+
     @Override
     protected Gene3dHmmer3RawMatch createMatch(final String signatureLibraryRelease,
                                                final HmmSearchRecord hmmSearchRecord,
@@ -58,6 +96,8 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
         return new Gene3dHmmer3RawMatch(
                 sequenceMatch.getSequenceIdentifier(),
                 hmmSearchRecord.getModelAccession(),
+                "",
+                "",
                 signatureLibraryRelease,
                 domainMatch.getAliFrom(),
                 domainMatch.getAliTo(),
@@ -74,7 +114,8 @@ public class Gene3DHmmer3ParserSupport extends AbstractHmmer3ParserSupport<Gene3
                 domainMatch.getCEvalue(),
                 domainMatch.getIEvalue(),
                 domainMatch.getBias(),
-                alignmentEncoder.encode(domainMatch.getAlignment())
+                "",
+                ""
         );
     }
 

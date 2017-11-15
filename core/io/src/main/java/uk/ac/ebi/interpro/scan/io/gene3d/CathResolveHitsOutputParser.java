@@ -44,6 +44,8 @@ public class CathResolveHitsOutputParser {
                 if (cathRecord != null) {
                     String key = cathRecord.getRecordKey();
                     cathResolverRecordMap.put(key, cathRecord);
+                    Utilities.verboseLog(cathRecord.toString() + " key : " + cathRecord.getRecordKey());
+
                 }
             }
         } finally {

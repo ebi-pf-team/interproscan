@@ -168,12 +168,17 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                         DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher, mode);
                         if (domTblDomainMatch.getQueryName().startsWith("dc_")){
                             //for now let us ignore these discontinuous domains, until we figure how best to deal with them
-                            continue;
+//                            continue;
+                            Utilities.verboseLog(domTblDomainMatch.getQueryName());
                         }
 //                        Utilities.verboseLog(domTblDomainMatch.toString());
                         String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
+                        domainLineKey = domTblDomainMatch.getGene3DDomTblDominLineKey(mode);
                         CathResolverRecord cathResolverRecord = cathResolverRecordMap.get(domainLineKey);
-
+                        Utilities.verboseLog("domainLineKey: " + domainLineKey + "\n"
+                                + "domTblDomainMatch: " + domTblDomainMatch + "\n"
+                                + "cathResolverRecord: " + cathResolverRecord + "\n"
+                                + "mode : " +  "\n");
                         //the cutoff should be in te properties file
                         if (cathResolverRecord != null && domTblDomainMatch.getSequenceEValue() < 0.001 ) {
 
@@ -184,27 +189,38 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 //                            String gene3dModelAccession = (modelAccession.split("\\|")[2]).split("/")[0];
                             String gene3dModelAccession = modelAccession.split("\\-")[0];
                             LOGGER.debug("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession);
-                            //Utilities.verboseLog("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
+                            Utilities.verboseLog("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession );
+
+                            //get modelId from the Cathresolveoutput
+                            gene3dModelAccession = cathResolverRecord.getModelId().split("\\-")[0];
                             modelAccession = gene3dModelAccession;
-                            String[] locations = cathResolverRecord.getResolvedStartsStopsPosition().split("-");
-                            int locationStart = Integer.parseInt(locations[0]);
-                            int locationEnd = Integer.parseInt(locations[1]);
 
-                            Gene3dHmmer3RawMatch gene3dHmmer3RawMatch = createMatch(signatureLibraryRelease, domTblDomainMatch, modelAccession, locationStart, locationEnd);
-                            String sequenceIdentifier = gene3dHmmer3RawMatch.getSequenceIdentifier();
+                            //we dont deal with discontinuous domains currently
+                            String[] domainRegions = cathResolverRecord.getResolvedStartsStopsPosition().split(",");
+                            Utilities.verboseLog("domainRegions :" + domainRegions.toString());
+                            for (String domainRegion:domainRegions){
+                                Utilities.verboseLog("domainRegion :" + domainRegion);
+                                String[] locations = domainRegion.split("-");
+                                int locationStart = Integer.parseInt(locations[0]);
+                                int locationEnd = Integer.parseInt(locations[1]);
 
-                            if (matchData.containsKey(sequenceIdentifier)) {
-                                RawProtein<Gene3dHmmer3RawMatch> rawProtein = matchData.get(sequenceIdentifier);
-                                rawProtein.addMatch(gene3dHmmer3RawMatch);
-                            } else {
-                                RawProtein<Gene3dHmmer3RawMatch> rawProtein = new RawProtein<Gene3dHmmer3RawMatch>(sequenceIdentifier);
-                                rawProtein.addMatch(gene3dHmmer3RawMatch);
-                                matchData.put(sequenceIdentifier, rawProtein);
+                                Gene3dHmmer3RawMatch gene3dHmmer3RawMatch = createRawMatch(signatureLibraryRelease, domTblDomainMatch, cathResolverRecord, modelAccession, locationStart, locationEnd);
+                                String sequenceIdentifier = gene3dHmmer3RawMatch.getSequenceIdentifier();
+                                Utilities.verboseLog(gene3dHmmer3RawMatch.toString());
+                                if (matchData.containsKey(sequenceIdentifier)) {
+                                    RawProtein<Gene3dHmmer3RawMatch> rawProtein = matchData.get(sequenceIdentifier);
+                                    rawProtein.addMatch(gene3dHmmer3RawMatch);
+                                } else {
+                                    RawProtein<Gene3dHmmer3RawMatch> rawProtein = new RawProtein<Gene3dHmmer3RawMatch>(sequenceIdentifier);
+                                    rawProtein.addMatch(gene3dHmmer3RawMatch);
+                                    matchData.put(sequenceIdentifier, rawProtein);
+                                }
                             }
                         }
                     }
                 }
                 Utilities.verboseLog(10, "DomTblDomainMatch count : " + domtblMatchCount);
+                Utilities.verboseLog(10, "matchData protein count : " + matchData.values().size());
             } catch (IOException e) {
                 throw new IllegalStateException("IOException thrown when attempting to parse " + domTblOutputFileName);
             } finally {
@@ -259,8 +275,9 @@ public class Gene3DParseAndPersistOutputStep extends Step {
     }
 
 
-    protected Gene3dHmmer3RawMatch createMatch(final String signatureLibraryRelease,
+    protected Gene3dHmmer3RawMatch createRawMatch(final String signatureLibraryRelease,
                                                final DomTblDomainMatch domTblDomainMatch,
+                                               final CathResolverRecord cathResolverRecord,
                                                String modelAccession,
                                                int locationStart,
                                                int locationEnd
@@ -268,6 +285,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
         return new Gene3dHmmer3RawMatch(
                 domTblDomainMatch.getTargetIdentifier(),
                 modelAccession,
+                cathResolverRecord.getCathFamilyId(),
+                cathResolverRecord.getMatchModelName(),
                 signatureLibraryRelease,
                 locationStart,
                 locationEnd,
@@ -281,10 +300,11 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 locationEnd,
                 domTblDomainMatch.getDomainAccuracy(),
                 domTblDomainMatch.getSequenceBias(),
-                domTblDomainMatch.getDomainCEvalue(),
-                domTblDomainMatch.getDomainIEvalue(),
+                cathResolverRecord.getCondEvalue(),
+                cathResolverRecord.getIndpEvalue(),
                 domTblDomainMatch.getDomainBias(),
-                ""
+                cathResolverRecord.getAlignedRegions(),
+                cathResolverRecord.getRegionComment()
         );
     }
 
