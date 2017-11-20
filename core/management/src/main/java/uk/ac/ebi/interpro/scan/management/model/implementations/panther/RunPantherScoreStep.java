@@ -62,6 +62,7 @@ public class RunPantherScoreStep extends RunBinaryStep {
         this.fullPathToPython = fullPathToPython;
     }
 
+
     public boolean isForceHmmsearch() {
         return forceHmmsearch;
     }
@@ -69,6 +70,7 @@ public class RunPantherScoreStep extends RunBinaryStep {
     public void setForceHmmsearch(boolean forceHmmsearch) {
         this.forceHmmsearch = forceHmmsearch;
     }
+
 
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {

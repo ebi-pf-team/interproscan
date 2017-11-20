@@ -163,7 +163,6 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
             Utilities.verboseLog("Use Hmmsearch  " + getFullPathToHmmsearchBinary());
             command.add(this.getFullPathToHmmsearchBinary());
         }else{
-            Utilities.setUseHmmsearch(false);
             Utilities.verboseLog("Use hmmscan  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }

@@ -148,6 +148,8 @@ public class PirsfBinaryStep extends RunBinaryStep {
 
         // Arguments
         command.addAll(this.getBinarySwitchesAsList());
+
+        Utilities.verboseLog("PIRSF binary cmd to run: " + command.toString());
         return command;
     }
 }

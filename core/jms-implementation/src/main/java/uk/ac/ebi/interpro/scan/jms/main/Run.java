@@ -892,6 +892,16 @@ public class Run extends AbstractI5Runner {
                 //want to change the remoteFactory
             }
 
+            if (parsedCommandLine.hasOption(I5Option.SEQUENCE_COUNT.getLongOpt())) {
+                final String sequenceCountStr = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_COUNT.getLongOpt());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.info("setSequenceCount : " + sequenceCountStr);
+                }
+                int sequenceCount = Integer.parseInt(sequenceCountStr);
+                worker.setSequenceCount(sequenceCount);
+                Utilities.sequenceCount = sequenceCount;
+            }
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("parsedCommandLine: " + parsedCommandLine.toString());
             }

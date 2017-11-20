@@ -16,11 +16,15 @@
         <property name="nonEmptyPaths">
             <list value-type="java.lang.String">
                 <ref bean="hmmerBinariesPath" />
+                <ref bean="pantherHMMPath" />
+                <ref bean="pantherNamesTab" />
             </list>
         </property>
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
                 <entry key="binary.hmmer3.hmmsearch.path" value-ref="hmmerBinariesPath"/>
+                <entry key="panther.hmm.path" value-ref="pantherHMMPath"/>
+                <entry key="panther.names.tab" value-ref="pantherNamesTab"/>
             </map>
         </property>
     </bean>
@@ -28,6 +32,12 @@
     <!--Add path to (H)mmsearch binary-->
     <bean id="hmmerBinariesPath" class="java.lang.String">
         <constructor-arg value="${binary.hmmer3.path}"/>
+    </bean>
+    <bean id="pantherHMMPath" class="java.lang.String">
+        <constructor-arg value="${panther.hmm.path}"/>
+    </bean>
+    <bean id="pantherNamesTab" class="java.lang.String">
+        <constructor-arg value="${panther.names.tab}"/>
     </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
