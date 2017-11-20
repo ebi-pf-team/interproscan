@@ -7,7 +7,7 @@ OBJ = ncoilsd.o ncoils.o logging.o sockets.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 ncoils: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 	
 clean: 
 	rm -fr *.o

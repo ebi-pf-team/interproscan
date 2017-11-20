@@ -64,6 +64,7 @@
         <!--General step properties-->
         <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
         <property name="stepDescription" value="Run pirsf.pl binary for selected proteins"/>
+        <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
         <property name="retries" value="3"/>
         <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
         <!--More specific properties-->

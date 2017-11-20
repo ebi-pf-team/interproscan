@@ -33,6 +33,12 @@
     <bean id="hmmerBinariesPath" class="java.lang.String">
         <constructor-arg value="${binary.hmmer3.path}"/>
     </bean>
+    <bean id="pantherHMMPath" class="java.lang.String">
+        <constructor-arg value="${panther.hmm.path}"/>
+    </bean>
+    <bean id="pantherNamesTab" class="java.lang.String">
+        <constructor-arg value="${panther.names.tab}"/>
+    </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobPanther"/>
@@ -163,11 +169,4 @@
         <constructor-arg value="${panther.signature.library.release}"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
-
-    <bean id="pantherHMMPath" class="java.lang.String">
-        <constructor-arg value="${panther.hmm.path}"/>
-    </bean>
-    <bean id="pantherNamesTab" class="java.lang.String">
-        <constructor-arg value="${panther.names.tab}"/>
-    </bean>
 </beans>

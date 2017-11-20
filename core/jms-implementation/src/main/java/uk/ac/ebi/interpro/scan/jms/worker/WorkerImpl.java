@@ -167,6 +167,8 @@ public class WorkerImpl implements Worker {
 
     private int queuePrefetchLimit = 0;
 
+    public int sequenceCount = 0;
+
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
      *
@@ -564,6 +566,14 @@ public class WorkerImpl implements Worker {
 
     public void setGridCheckInterval(int gridCheckInterval) {
         this.gridCheckInterval = gridCheckInterval;
+    }
+
+    public int getSequenceCount() {
+        return sequenceCount;
+    }
+
+    public void setSequenceCount(int sequenceCount) {
+        this.sequenceCount = sequenceCount;
     }
 
     public void jobStarted(String jmsMessageId) {
