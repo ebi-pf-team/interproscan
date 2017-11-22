@@ -231,7 +231,7 @@ if __name__ == "__main__":
         #get the profiles
         profiles =  get_hamap_profile(profiles_list_filename)
 
-        if len(profiles) > 1:
+        if len(profiles) >= 1:
             #get the protein sequences
             seqs_dict = get_sequences(fasta_file)
 
