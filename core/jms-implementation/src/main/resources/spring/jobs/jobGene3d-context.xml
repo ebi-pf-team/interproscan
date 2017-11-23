@@ -106,6 +106,7 @@
             <bean class="uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser"/>
         </property>
         <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
+        <property name="gene3dEvalueCutoff" value="${gene3d.evalue.cutoff}"/>
         <!--<property name="parser">-->
             <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser">-->
                 <!--<property name="parserSupport">-->
@@ -121,7 +122,7 @@
             <!--</bean>-->
         <!--</property>-->
         <property name="retries" value="3"/>
-        
+
     </bean>
 
     <bean id="stepGene3dRelatedTmpFiles"

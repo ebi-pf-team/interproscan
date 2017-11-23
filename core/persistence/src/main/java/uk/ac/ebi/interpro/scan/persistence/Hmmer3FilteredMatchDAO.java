@@ -61,15 +61,19 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                                                       SignatureLibrary signatureLibrary,
                                                       String signatureLibraryRelease) {
                             Signature signature = modelAccessionToSignatureMap.get(modelAccession);
+
                             if (signature == null) {
+//                                TODO remove this temp check when gene3d  4.3.0 is stable
+                                LOGGER.error("this accession doesnt have a family or Signature acc:  " + modelAccession );
                                 throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
                             }
-//                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
+                            //  Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("signature: " + signature + " from - " + modelAccession);
                             }
-                            //why not return just signature
-                            return modelAccessionToSignatureMap.get(modelAccession);
+                            //why not return just signature, changed this tor eturn the signature
+                            return signature;
+//                            return modelAccessionToSignatureMap.get(modelAccession);
                         }
                     }
                     );

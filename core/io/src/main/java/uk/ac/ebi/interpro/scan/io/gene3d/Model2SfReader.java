@@ -73,14 +73,15 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] splitLine = line.split("^\\\"|\\\"$|\\\",\\\"");
-                    if (splitLine.length != 5) {
-                        // 0th index is empty
-                        throw new IllegalStateException("Unexpected format on line: " + line);
-                    }
+//                    String[] splitLine = line.split("^\\\"|\\\"$|\\\",\\\"");
+//                    if (splitLine.length != 5) {
+//                        // 0th index is empty
+//                        throw new IllegalStateException("Unexpected format on line: " + line);
+//                    }
+                    String[] splitLine = line.split("\\s+");
 
-                    String model = splitLine[4];
-                    String signature = splitLine[2];
+                    String model = splitLine[0];
+                    String signature = splitLine[1];
 
                     records.put(model, prefix + signature);  // model - signature
                 }

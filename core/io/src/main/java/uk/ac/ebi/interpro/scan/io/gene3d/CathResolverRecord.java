@@ -221,10 +221,12 @@ public final class CathResolverRecord {
         String modelIdKey = modelId;
         if (matchModelName.startsWith("dc_")){
             modelIdKey = matchModelName.replace("_" + modelId, "");
+//            modelIdKey = matchModelName.replace("_" + modelId, "_" + modelId);
         }
         return queryProteinId
                 +  modelIdKey
                 +  startsStopsPosition;
+//                +  resolvedStartsStopsPosition;
     }
 
 
