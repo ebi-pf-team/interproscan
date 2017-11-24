@@ -90,7 +90,7 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
             Utilities.verboseLog("Use hmmscan  ");
             command.add("--input-format=hmmscan_out");
         }
-        command.add("--output-file");
+        command.add("--hits-text-to-file");
         command.add(outputFilePath);
         command.add(inputFilePath);
 
