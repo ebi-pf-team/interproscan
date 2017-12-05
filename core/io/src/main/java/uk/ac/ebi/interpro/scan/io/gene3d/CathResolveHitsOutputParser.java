@@ -30,7 +30,7 @@ public class CathResolveHitsOutputParser {
     public Map<String, Set<CathResolverRecord>> parse(InputStream is) throws IOException {
         //We may have discontinuous domains having the same cathRecord.getRecordKey() whichis the one in the domtblout
         // so we keep the matches in a set, slightly expensive
-        Map<String, Set<CathResolverRecord>> cathResolverRecordMap = new HashMap ();
+        Map<String, Set<CathResolverRecord>> cathResolverRecordMap = new HashMap<>();
         BufferedReader reader = null;
         int rawDomainCount = 0;
         int recordCount = 0;
@@ -50,11 +50,11 @@ public class CathResolveHitsOutputParser {
                 if (cathRecord == null) {
                     LOGGER.error("Bad cathRecord, cathRecord is null line is : " + line);
                     throw new IllegalStateException("Failed to create cathRecord for line  " + line);
-                }else if (cathRecord != null) {
+                } else {
                     String key = cathRecord.getRecordKey();
                     Set<CathResolverRecord> cathRecordSet = cathResolverRecordMap.get(key);
                     if (cathRecordSet == null) {
-                        cathRecordSet = new HashSet();
+                        cathRecordSet = new HashSet<>();
                         cathResolverRecordMap.put(key, cathRecordSet);
                     }
                     cathRecordSet.add(cathRecord);

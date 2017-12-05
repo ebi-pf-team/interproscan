@@ -127,9 +127,9 @@ public final class Gene3dRawMatchFilterTest {
                 double accuracy = 0;
                 double bias = 0;
                 double domBias = 0;
-                return new Gene3dHmmer3RawMatch(seqId, modelId, release, locStart, locEnd, evalue, score,
+                return new Gene3dHmmer3RawMatch(seqId, modelId, "", "", release, locStart, locEnd, evalue, score,
                         hmmStart, hmmEnd, hmmBounds, locScore, envStart, envEnd, accuracy, bias,
-                        domCevalue, domIevalue, domBias, cigar);
+                        domCevalue, domIevalue, domBias, cigar, "");
             }
             catch (InputMismatchException e) {
                 LOGGER.error("Error reading line: " + line);
