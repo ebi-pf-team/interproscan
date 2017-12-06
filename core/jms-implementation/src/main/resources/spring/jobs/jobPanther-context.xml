@@ -15,9 +15,9 @@
         <property name="libraryRelease" ref="signatureLibraryReleasePanther"/>
         <property name="nonEmptyPaths">
             <list value-type="java.lang.String">
-                <ref bean="hmmerBinariesPath" />
-                <ref bean="pantherHMMPath" />
-                <ref bean="pantherNamesTab" />
+                <ref bean="hmmerBinariesPath"/>
+                <ref bean="pantherHMMPath"/>
+                <ref bean="pantherNamesTab"/>
             </list>
         </property>
         <property name="mandatoryParameters">
