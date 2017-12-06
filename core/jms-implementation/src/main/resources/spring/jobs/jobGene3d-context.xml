@@ -56,10 +56,27 @@
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription" value="Run CathResolveHits"/>
-        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fullPathToBinary" value="${cath.resolve.hits.path}"/>
         <property name="binarySwitches" value="${cath.resolve.hits.switches.gene3d}"/>
         <property name="crhOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepRunAssignCathFamiliesStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunAssignCathFamilyBinaryStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepRunCathResolveHitsStep"/>
+        <property name="stepDescription" value="Run AssignCathFamilyStep"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="inputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="domainToFamilyMapFile" value="${gene3d.model2sf_map.path}"/>
+        <property name="discontinuousRegionsFile" value="${gene3d.discontinuous_regs.path}"/>
+        <property name="fullPathToPython" value="${binary.prosite.python.path}"/>
+        <property name="fullPathToBinary" value="${assign.cath.superfamilies.path}"/>
+        <property name="binarySwitches" value="${assign.cath.superfamilies.switches.gene3d}"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
@@ -69,11 +86,12 @@
         <property name="dependsUpon" >
                 <list>
                     <!--<ref bean="stepGene3dRunHmmer3"/>-->
-                    <ref bean="stepRunCathResolveHitsStep"/>
+                    <ref bean="stepRunAssignCathFamiliesStep"/>
                 </list>
         </property>
         <property name="stepDescription" value="Parse output from HMMER3 and CathResolveHits"/>
-        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>
         <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
 
         <property name="serialGroup" value="PARSE_GENE3D"/>
@@ -88,6 +106,7 @@
             <bean class="uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser"/>
         </property>
         <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
+        <property name="gene3dEvalueCutoff" value="${gene3d.evalue.cutoff}"/>
         <!--<property name="parser">-->
             <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser">-->
                 <!--<property name="parserSupport">-->
@@ -103,7 +122,7 @@
             <!--</bean>-->
         <!--</property>-->
         <property name="retries" value="3"/>
-        
+
     </bean>
 
     <bean id="stepGene3dRelatedTmpFiles"

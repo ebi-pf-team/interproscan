@@ -56,11 +56,16 @@ public final class Model2SfReader extends AbstractModelFileParser {
         }
 
         // Create release
-        return new SignatureLibraryRelease(library, releaseVersion, new HashSet<Signature>(signatureMap.values()));
+        return new SignatureLibraryRelease(library, releaseVersion, new HashSet<>(signatureMap.values()));
     }
 
     public Map<String, String> parseFileToMap() throws IOException {
-        final Map<String, String> records = new HashMap<String, String>();
+        final Map<String, String> records = new HashMap<>();
+
+        // Some example lines to parse:
+        // "1q14A01-i1","3.40.50.1220","TPP-binding domain","1q14A01"
+        // "1vhnA02-i1","1.10.1200.80","Putative flavin oxidoreducatase; domain 2","1vhnA02"
+
 
         for (Resource modelFile : modelFiles) {
             BufferedReader reader = null;
@@ -68,8 +73,17 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] splitLine = line.split(",");
-                    records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
+//                    String[] splitLine = line.split("^\\\"|\\\"$|\\\",\\\"");
+//                    if (splitLine.length != 5) {
+//                        // 0th index is empty
+//                        throw new IllegalStateException("Unexpected format on line: " + line);
+//                    }
+                    String[] splitLine = line.split("\\s+");
+
+                    String model = splitLine[0];
+                    String signature = splitLine[1];
+
+                    records.put(model, prefix + signature);  // model - signature
                 }
             }
             finally {

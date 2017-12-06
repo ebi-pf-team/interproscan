@@ -141,6 +141,8 @@ public class Gene3DPostProcessing implements Serializable {
                                 Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
                                         mSeqId,
                                         mModelId,
+                                        "",
+                                        "",
                                         m.getSignatureLibraryRelease(),
                                         splitDomainStart,
                                         number,
@@ -157,7 +159,9 @@ public class Gene3DPostProcessing implements Serializable {
                                         m.getDomainCeValue(),
                                         m.getDomainIeValue(),
                                         m.getDomainBias(),
-                                        m.getCigarAlignment());
+                                        m.getAlignedRegions(),
+                                        ""
+                                );
                                 // Add match
                                 filteredProtein.addMatch(match);
                                 matchKeys.add(matchKey);

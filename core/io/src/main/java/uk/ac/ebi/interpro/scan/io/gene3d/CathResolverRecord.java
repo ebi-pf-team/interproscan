@@ -29,40 +29,76 @@ import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 public final class CathResolverRecord {
     public static final String SEGMENT_BOUNDARY_SEPARATOR = ":";
 
-    private static final String COLUMN_SEP = "\\s+";
+    //#FIELDS query-id match-id score boundaries resolved aligned-regions cond-evalue indp-evalue
+    private static final String COLUMN_SEP = "\\s+"; // ","; //"\\s+";
 
-    private static final int QUERY_PROTEIN_ID_POS = 0;
-    private static final int MATCHL_ID_POS = 1;
-    private static final int SCORE_POS = 2;
-    private static final int STARTS_STOPS_POS = 3;
-    private static final int RESOLVED_STARTS_STOPS_POS = 4;
+    private static final int MODEL_ID_POS = 0;
+    private static final int CATH_FAMILY_ID_POS = 1;
+    private static final int QUERY_PROTEIN_ID_POS = 2;
+    private static final int MATCH_MODEL_NAME_POS = 3;
+    private static final int SCORE_POS = 4;
+    private static final int STARTS_STOPS_POS = 5;
+    private static final int RESOLVED_STARTS_STOPS_POS = 6;
+    private static final int ALIGNED_REGIONS = 7;
+    private static final int COND_EVALUE_POS = 8;
+    private static final int IND_EVALUE_POS = 9;
+    private static final int REGION_COMMENT_POS = 10;
+    private static final int LAST_POS = REGION_COMMENT_POS;
 
-    private static final int LAST_POS = RESOLVED_STARTS_STOPS_POS;
 
+    private final String modelId;
+    private final String cathFamilyId;
     private final String queryProteinId;
+    private final String matchModelName;
     private final String matchId;
     private final Double score;
     private final String startsStopsPosition;
     private final String resolvedStartsStopsPosition;
+    private final String alignedRegions;
+    private final Double condEvalue;
+    private final Double indpEvalue;
+    private final String regionComment;
 
 
     private CathResolverRecord() {
+        this.modelId = null;
+        this.cathFamilyId = null;
         this.queryProteinId = null;
+        this.matchModelName = null;
         this.matchId = null;
         this.score = null;
         this.startsStopsPosition = null;
         this.resolvedStartsStopsPosition = null;
+        this.alignedRegions = null;
+        this.condEvalue = null;
+        this.indpEvalue = null;
+        this.regionComment = null;
     }
 
-    public CathResolverRecord(String queryProteinId, String matchId,
+    public CathResolverRecord(String modelId,String cathFamilyId,
+                              String queryProteinId, String matchModelName,
                               Double score, String startsStopsPosition,
-                              String resolvedStartsStopsPosition) {
+                              String resolvedStartsStopsPosition,
+                              String alignedRegions,   Double condEvalue,
+                              Double indpEvalue, String regionComment
+                            ) {
 
+        this.modelId = modelId;
+        this.cathFamilyId = cathFamilyId;
         this.queryProteinId = queryProteinId;
-        this.matchId = matchId;
+        this.matchModelName = matchModelName;
+        this.matchId = null;
         this.score = score;
         this.startsStopsPosition = startsStopsPosition;
         this.resolvedStartsStopsPosition = resolvedStartsStopsPosition;
+        this.alignedRegions = alignedRegions;
+        this.condEvalue = condEvalue;
+        this.indpEvalue = indpEvalue;
+        this.regionComment = regionComment;
+    }
+
+    public String getModelId() {
+        return modelId;
     }
 
     public String getQueryProteinId() {
@@ -85,14 +121,47 @@ public final class CathResolverRecord {
         return resolvedStartsStopsPosition;
     }
 
+    public static String getSegmentBoundarySeparator() {
+        return SEGMENT_BOUNDARY_SEPARATOR;
+    }
+
+    public String getCathFamilyId() {
+        return cathFamilyId;
+    }
+
+    public String getMatchModelName() {
+        return matchModelName;
+    }
+
+    public Double getCondEvalue() {
+        return condEvalue;
+    }
+
+    public Double getIndpEvalue() {
+        return indpEvalue;
+    }
+
+    public String getAlignedRegions() {
+        return alignedRegions;
+    }
+
+    public String getRegionComment() {
+        return regionComment;
+    }
+
     public static CathResolverRecord valueOf(Gene3dHmmer3RawMatch rawMatch) {
         if (rawMatch == null) {
             throw new NullPointerException("RawMatch object is null");
         }
-        return new CathResolverRecord(rawMatch.getSequenceIdentifier(), rawMatch.getModelId(),
+        return new CathResolverRecord(rawMatch.getModelId(), rawMatch.getCathFamilyId(),
+                rawMatch.getSequenceIdentifier(),
+                rawMatch.getHitModelName(),
                 rawMatch.getLocationScore(),
                 rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd(),
-                rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd()
+                rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd(),
+                rawMatch.getAlignedRegions(),
+                rawMatch.getDomainCeValue(), rawMatch.getDomainIeValue(),
+                rawMatch.getRegionComment()
         );
 
     }
@@ -100,26 +169,39 @@ public final class CathResolverRecord {
     public static CathResolverRecord valueOf(String line) {
         String[] columns = line.split(COLUMN_SEP);
 
-
+        String modelId = columns[MODEL_ID_POS];
+        String cathFamilyId = columns[CATH_FAMILY_ID_POS];
         String queryProteinId = columns[QUERY_PROTEIN_ID_POS];
-        String matchId = columns[MATCHL_ID_POS];
+        String matchModelName = columns[MATCH_MODEL_NAME_POS];
+        //String matchId = columns[MATCH_ID_POS];
         Double score = Double.parseDouble(columns[SCORE_POS]);
 
-        String startsStopsPosition = columns[STARTS_STOPS_POS];
-        String resolvedStartsStopsPosition = columns[RESOLVED_STARTS_STOPS_POS];
+        String startsStopsPosition = stripString(columns[STARTS_STOPS_POS]);
+        String resolvedStartsStopsPosition = stripString(columns[RESOLVED_STARTS_STOPS_POS]);
+        String alignedRegions = stripString(columns[ALIGNED_REGIONS]);
+        Double condEvalue = Double.parseDouble(columns[COND_EVALUE_POS]);
+        Double indpEvalue = Double.parseDouble(columns[IND_EVALUE_POS]);
+        String regionComment = null;
+        if ((columns.length - 1) ==  LAST_POS) {
+            regionComment = columns[REGION_COMMENT_POS];
+        }
 
-        return new CathResolverRecord(queryProteinId, matchId,
+        return new CathResolverRecord(modelId,cathFamilyId, queryProteinId, matchModelName,
                 score, startsStopsPosition,
-                resolvedStartsStopsPosition);
+                resolvedStartsStopsPosition, alignedRegions,
+                condEvalue, indpEvalue, regionComment);
     }
 
     public static String toLine(CathResolverRecord record) {
         String[] columns = new String[LAST_POS + 1];
+        columns[MODEL_ID_POS] = record.modelId;
+        columns[CATH_FAMILY_ID_POS] =  record.cathFamilyId;
         columns[QUERY_PROTEIN_ID_POS] = record.queryProteinId;
-        columns[MATCHL_ID_POS] = record.matchId;
+        columns[MATCH_MODEL_NAME_POS] = record.matchModelName;
         columns[SCORE_POS] = String.valueOf(record.score);
         columns[STARTS_STOPS_POS] = record.startsStopsPosition;
         columns[RESOLVED_STARTS_STOPS_POS] = record.resolvedStartsStopsPosition;
+        columns[ALIGNED_REGIONS] = record.alignedRegions;
 
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < columns.length; i++) {
@@ -131,11 +213,20 @@ public final class CathResolverRecord {
         return builder.toString();
     }
 
+    public static String stripString(String targetString){
+        return targetString.replace("\"","");
+    }
 
     public String getRecordKey() {
+        String modelIdKey = modelId;
+        if (matchModelName.startsWith("dc_")){
+            modelIdKey = matchModelName.replace("_" + modelId, "");
+//            modelIdKey = matchModelName.replace("_" + modelId, "_" + modelId);
+        }
         return queryProteinId
-                +  matchId
+                +  modelIdKey
                 +  startsStopsPosition;
+//                +  resolvedStartsStopsPosition;
     }
 
 

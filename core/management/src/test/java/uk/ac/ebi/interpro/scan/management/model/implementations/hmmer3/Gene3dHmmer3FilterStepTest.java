@@ -43,11 +43,11 @@ public final class Gene3dHmmer3FilterStepTest {
     private static final String ALIGNMENT   = "24M2I9M1D9";
 
     private static final Gene3dHmmer3RawMatch match =
-              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.3.0",
+              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "", "", "3.3.0",
                                        SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                                        MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                                        ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,
-                                       DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT);
+                                       DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT, "");
     
 //    @Resource
 //    Gene3dHmmer3FilterStep step;

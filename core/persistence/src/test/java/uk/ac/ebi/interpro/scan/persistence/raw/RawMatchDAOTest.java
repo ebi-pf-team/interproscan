@@ -25,8 +25,10 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class RawMatchDAOTest {
 
-    private static final String MODEL_ID = "2hxsA00";
     private static final Long SEQ_ID = 1l;
+    private static final String MODEL_ID = "2hxsA00";
+    private static final String HIT_MODEL_NAME = "2hxsA00-i1";
+    private static final String CATH_FAMILY_ID = "3.30.300.20";
     private static final double SEQ_EVALUE = 2.6e-21;
     private static final double SEQ_SCORE = 79.0;
     private static final double SEQ_BIAS = 0.1;
@@ -43,7 +45,8 @@ public class RawMatchDAOTest {
     private static final int ENV_END = 171;
     private static final double EXPECTED_ACCURACY = 0.83;
     private static final String ALIGNMENT = "24M2I9M1D9";
-    private static final String DB_RELEASE = "3.3.0";
+    private static final String DB_RELEASE = "4.2.0";
+    private static final String REGION = "";
 
     @Resource
     RawMatchDAO<Gene3dHmmer3RawMatch> dao;
@@ -75,11 +78,11 @@ public class RawMatchDAOTest {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>();
         RawProtein<Gene3dHmmer3RawMatch> p = new RawProtein<Gene3dHmmer3RawMatch>(SEQ_ID.toString());
         Gene3dHmmer3RawMatch match =
-                new Gene3dHmmer3RawMatch(SEQ_ID.toString(), MODEL_ID, DB_RELEASE,
+                new Gene3dHmmer3RawMatch(SEQ_ID.toString(), MODEL_ID, CATH_FAMILY_ID, HIT_MODEL_NAME, DB_RELEASE,
                         SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                         MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                         ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,
-                        DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT);
+                        DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT, REGION);
         p.addMatch(match);
         proteins.add(p);
         return proteins;

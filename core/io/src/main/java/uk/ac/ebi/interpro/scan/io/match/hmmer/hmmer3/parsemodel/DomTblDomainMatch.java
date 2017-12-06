@@ -30,6 +30,9 @@ public class DomTblDomainMatch implements Serializable {
     //public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+[!?]\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
 
     public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+) \\s+(\\S+)\\s+(\\S+)\\s+(\\S+) \\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
+    public static final Pattern HMMSEARCH_DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+) \\s+(\\S+)\\s+(\\S+)\\s+(\\S+) \\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
+
+    public static final Pattern HMMSCAN_DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+) \\s+(\\S+)\\s+(\\S+)\\s+(\\S+) \\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)(\\s+).*$");
 
     public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\s+.*$");
 
@@ -86,9 +89,14 @@ public class DomTblDomainMatch implements Serializable {
 
     //private String alignment;
 
-    public DomTblDomainMatch(Matcher domainLineMatcher) {
-        targetIdentifier = domainLineMatcher.group(1);
-        queryName = domainLineMatcher.group(4);
+    public DomTblDomainMatch(Matcher domainLineMatcher, String mode) {
+        if (mode.equals("hmmsearch")) {
+            targetIdentifier = domainLineMatcher.group(1);
+            queryName = domainLineMatcher.group(4);
+        }else{
+            targetIdentifier = domainLineMatcher.group(4);
+            queryName = domainLineMatcher.group(1);
+        }
         //signatureLibraryRelease,
         sequenceEValue = Double.parseDouble(domainLineMatcher.group(7));
         sequenceScore = Double.parseDouble(domainLineMatcher.group(8));
@@ -211,7 +219,24 @@ public class DomTblDomainMatch implements Serializable {
                 +  domainEnvTo;
     }
 
+    public String getGene3DDomTblDominLineKey(String mode) {
+        String gene3DQueryName = queryName.split("\\-")[0];
 
+        return targetIdentifier
+                +  gene3DQueryName
+                +  domainEnvFrom
+                + "-"
+                +  domainEnvTo;
+    }
+
+    public static Matcher getDomainDataLineMatcher(String line, String mode){
+        if (mode.equals("hmmsearch")) {
+            return DomTblDomainMatch.HMMSEARCH_DOMAIN_LINE_PATTERN.matcher(line);
+        }else{
+            return DomTblDomainMatch.HMMSCAN_DOMAIN_LINE_PATTERN.matcher(line);
+        }
+
+    }
     /*
     public String getAlignment() {
         return alignment;
