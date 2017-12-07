@@ -94,10 +94,10 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
             super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
         }
 
-        public Hmmer2Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd);
-        }
+//        public Hmmer2Location(int start, int end, double score, double evalue,
+//                              int hmmStart, int hmmEnd) {
+//            super(start, end, score, evalue, hmmStart, hmmEnd);
+//        }
 
         @Override
         public boolean equals(Object o) {

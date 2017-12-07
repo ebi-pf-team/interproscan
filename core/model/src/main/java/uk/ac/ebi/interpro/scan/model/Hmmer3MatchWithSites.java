@@ -95,7 +95,6 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         protected Hmmer3LocationWithSites() {
         }
 
-        // TODO: Remove HMM Bounds?
         public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, HmmBounds hmmBounds,
                               int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
@@ -104,13 +103,13 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
             setEnvelopeEnd(envelopeEnd);
         }
 
-        public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd,
-                              int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, sites);
-            setEnvelopeStart(envelopeStart);
-            setEnvelopeEnd(envelopeEnd);
-        }
+//        public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
+//                              int hmmStart, int hmmEnd,
+//                              int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
+//            super(start, end, score, evalue, hmmStart, hmmEnd, sites);
+//            setEnvelopeStart(envelopeStart);
+//            setEnvelopeEnd(envelopeEnd);
+//        }
 
         @XmlAttribute(name = "env-start", required = true)
         public int getEnvelopeStart() {
