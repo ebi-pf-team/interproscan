@@ -118,6 +118,7 @@ public class MatchCloneTest {
                 Assert.assertTrue(pfamLocation.getEvalue() == clonedLocation.getEvalue());
                 Assert.assertTrue(pfamLocation.getHmmStart() == clonedLocation.getHmmStart());
                 Assert.assertTrue(pfamLocation.getHmmEnd() == clonedLocation.getHmmEnd());
+                Assert.assertTrue(pfamLocation.getHmmLength() == clonedLocation.getHmmLength());
             } else if (match instanceof CoilsMatch) {
                 foundCoils = true;
                 Assert.assertFalse(coilsMatch == match);
