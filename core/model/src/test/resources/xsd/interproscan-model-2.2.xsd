@@ -111,6 +111,7 @@
         <xs:attribute name="desc" type="xs:string"/>
         <xs:attribute name="md5" type="xs:string"/>
         <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="length" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="SignatureLibraryReleaseType">

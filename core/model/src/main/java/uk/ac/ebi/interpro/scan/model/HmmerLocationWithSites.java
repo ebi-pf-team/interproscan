@@ -74,11 +74,11 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
 
     // Don't use Builder pattern because all fields are required
     public HmmerLocationWithSites(int start, int end, double score, double evalue,
-                                  int hmmStart, int hmmEnd, HmmBounds hmmBounds, Set<HmmerSite> sites) {
+                                  int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds, Set<HmmerSite> sites) {
         super(start, end, sites);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
-        setHmmLength(hmmEnd - hmmStart);
+        setHmmLength(hmmLength);
         setHmmBounds(hmmBounds);
         setEvalue(evalue);
         setScore(score);

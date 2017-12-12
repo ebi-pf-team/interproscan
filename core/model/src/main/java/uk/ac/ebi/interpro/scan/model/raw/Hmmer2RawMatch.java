@@ -131,6 +131,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
                 m.getLocationEvalue(),
                 m.getHmmStart(),
                 m.getHmmEnd(),
+                0,//TODO hmmLength
                 HmmBounds.parseSymbol(m.getHmmBounds())
         );
     }

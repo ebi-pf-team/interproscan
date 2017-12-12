@@ -71,7 +71,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("signature: " + signature + " from - " + modelAccession);
                             }
-                            //why not return just signature, changed this tor eturn the signature
+                            //why not return just signature, changed this to return the signature
                             return signature;
 //                            return modelAccessionToSignatureMap.get(modelAccession);
                         }

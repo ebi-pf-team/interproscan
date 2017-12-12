@@ -119,7 +119,7 @@ public class ProteinTest extends AbstractTest<Protein> {
         assertEquals(original, copy);
         // Try with locations
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104,HmmBounds.N_TERMINAL_COMPLETE));
         Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
         assertFalse("Original and copy should not be equal", original.equals(copy));
         copy.addMatch((Hmmer2Match) SerializationUtils.clone(match));
@@ -141,7 +141,7 @@ public class ProteinTest extends AbstractTest<Protein> {
         original.addCrossReference(new ProteinXref("A0A000_9ACTO"));
 
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE));
         original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
 
         Set<ProfileScanMatch.ProfileScanLocation> l = new HashSet<ProfileScanMatch.ProfileScanLocation>();
@@ -179,7 +179,7 @@ public class ProteinTest extends AbstractTest<Protein> {
     public void testRemoveMatch() {
         Protein protein = new Protein(GOOD);
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE));
         Match match = protein.addMatch(new Hmmer2Match(new Signature("PF00155"), 0.035, 4.3e-61, locations));
         assertEquals("Protein should have one match", 1, protein.getMatches().size());
         protein.removeMatch(match);

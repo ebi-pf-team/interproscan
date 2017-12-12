@@ -131,8 +131,10 @@ def parse_domtblout(domtblout, panther_families, run_mode):
                     print_error ("error: run_mode is invalid: " + run_mode)
                 hmm_id = get_query_name(hmma)
                 description = panther_families[hmm_id]
-                location = str(ali_f) + '-' + str(ali_t)
-                hmm_hit = [hmm_id, description, float(eVal), float(score), location]
+                hmm_location = str(hmm_f) + '-' + str(hmm_t)
+                ali_location = str(ali_f) + '-' + str(ali_t)
+                env_location = str(env_f) + '-' + str(env_t)
+                hmm_hit = [hmm_id, description, float(eVal), float(score), hmm_location, ali_location, env_location]
                 matches = append_to_match_list(all_scores, seqid, hmm_hit)
                 all_scores[seqid] = matches
     return all_scores

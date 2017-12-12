@@ -68,7 +68,7 @@ public class SignatureLibraryRelease implements Serializable {
     @OneToMany(mappedBy = "signatureLibraryRelease", cascade = CascadeType.ALL)
     @XmlElement(name = "signature")
     @JsonBackReference
-    protected Set<Signature> signatures = new HashSet<Signature>();
+    protected Set<Signature> signatures = new HashSet<>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.

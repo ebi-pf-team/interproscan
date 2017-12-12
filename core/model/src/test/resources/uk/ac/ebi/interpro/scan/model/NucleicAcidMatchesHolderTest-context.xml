@@ -89,7 +89,7 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
                 signature.setSignatureLibraryRelease(release);
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, HmmBounds.INCOMPLETE, 73, 94));
+                locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, 19, HmmBounds.INCOMPLETE, 73, 94));
                 p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
 
                 // Create holder
@@ -146,7 +146,7 @@
                         "SAVHETEEIHRFVDALDGIWSELGAARRV");
                 p.addCrossReference(new ProteinXref("UniProt", "A0A000", "A0A000_9ACTO"));
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, HmmBounds.INCOMPLETE,  41, 381));
+                locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, 357, HmmBounds.INCOMPLETE,  41, 381));
                 Signature signature = new Signature("PF00155", "Aminotran_1_2");
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
@@ -204,8 +204,8 @@
                 Protein p = new Protein("MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK");
                 p.addCrossReference(new ProteinXref("UniProt", "Q8MLZ5", "GAP2_CAEEL"));
                 Signature signature = new Signature("SM00323", "RasGAP_2");
-                Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer2Match.Hmmer2Location(512, 857, 543.4, 2.7e-164, 1, 390, HmmBounds.INCOMPLETE));
+                Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+                locations.add(new Hmmer2Match.Hmmer2Location(512, 857, 543.4, 2.7e-164, 1, 390, 390, HmmBounds.INCOMPLETE));
                 p.addMatch(new Hmmer2Match(signature, 543.4, 2.7e-164, locations));
 
                 // Create release
@@ -522,7 +522,7 @@
                 p.addMatch(new ProfileScanMatch(new Signature("PS50206", "RHODANESE_3"), locations));
 
                 // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
+                //SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
 
                 // Create holder
                 ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");

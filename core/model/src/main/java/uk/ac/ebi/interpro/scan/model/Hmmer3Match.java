@@ -99,9 +99,9 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Hmmer3Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, HmmBounds hmmBounds,
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
                               int envelopeStart, int envelopeEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
+            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
         }
@@ -159,7 +159,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
+            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
             return clone;
         }
 

@@ -88,10 +88,9 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         protected Hmmer2Location() {
         }
 
-        // TODO: Remove HMM Bounds?
         public Hmmer2Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds) {
+            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
         }
 
 //        public Hmmer2Location(int start, int end, double score, double evalue,
@@ -119,7 +118,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer2Location clone = new Hmmer2Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds());
+            final Hmmer2Location clone = new Hmmer2Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds());
             return clone;
         }
     }

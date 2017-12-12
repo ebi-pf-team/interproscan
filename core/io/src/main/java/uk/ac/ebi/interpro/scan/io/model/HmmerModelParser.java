@@ -43,6 +43,9 @@ public class HmmerModelParser extends AbstractModelFileParser {
      * Group 1: Accession with the version stripped off. (TODO - Is this the correct behaviour for all member databases?)
      */
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^ACC\\s+([A-Z0-9]+)\\.?.*$");
+
+    private static final Pattern LENGTH_LINE = Pattern.compile("^LENG\\s+([0-9]+)$");
+
     private static final String END_OF_RECORD = "//";
 
 
@@ -55,6 +58,7 @@ public class HmmerModelParser extends AbstractModelFileParser {
             BufferedReader reader = null;
             try {
                 String accession = null, name = null, description = null;
+                Integer length = null;
                 StringBuffer modelBuf = new StringBuffer();
 
                 reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
@@ -78,11 +82,12 @@ public class HmmerModelParser extends AbstractModelFileParser {
                                 // Looks like an end of record marker - just to check:
                                 if (END_OF_RECORD.equals(line.trim())) {
                                     if (accession != null) {
-                                        release.addSignature(createSignature(accession, name, description, release, modelBuf));
+                                        release.addSignature(createSignature(accession, name, description, length, release, modelBuf));
                                     }
                                     accession = null;
                                     name = null;
                                     description = null;
+                                    length = null;
                                 }
                                 break;
                             case 'A':
@@ -100,13 +105,18 @@ public class HmmerModelParser extends AbstractModelFileParser {
                                     name = extractValue(NAME_LINE, line, 1);
                                 }
                                 break;
+                            case 'L':
+                                if (length == null) {
+                                    length = Integer.parseInt(extractValue(LENGTH_LINE, line, 1));
+                                }
+                                break;
                         }
                     }
                 }
                 // Dont forget the last one, just in case that final end of record
                 // marker is missing!
                 if (accession != null) {
-                    release.addSignature(createSignature(accession, name, description, release, modelBuf));
+                    release.addSignature(createSignature(accession, name, description, length, release, modelBuf));
                 }
             }
             finally {
@@ -125,9 +135,9 @@ public class HmmerModelParser extends AbstractModelFileParser {
                 : null;
     }
 
-    protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release, StringBuffer modelBuf) {
+    protected Signature createSignature(String accession, String name, String description, int length, SignatureLibraryRelease release, StringBuffer modelBuf) {
 //        Model model = new Model(accession, name, description, modelBuf.toString());
-        Model model = new Model(accession, name, description, null);
+        Model model = new Model(accession, name, description, length);
         modelBuf.delete(0, modelBuf.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }

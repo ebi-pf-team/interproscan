@@ -103,7 +103,7 @@
                                 .name("Nucleic acid-binding proteins")
                                 .type("domain")
                                 .build())
-                signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins"))
+                signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins", 265))
                 return release
             ]]>
         </lang:inline-script>
@@ -119,7 +119,7 @@
                                                                http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.2.xsd">
                     <signature ac="G3DSA:2.40.50.140" type="domain" name="Nucleic acid-binding proteins">
                         <models>
-                            <model ac="1o7iB00" name="1o7iB00" desc="Nucleic acid-binding proteins"/>
+                            <model ac="1o7iB00" name="1o7iB00" desc="Nucleic acid-binding proteins" length="265"/>
                         </models>
                     </signature>
                 </signature-library-release>
@@ -140,7 +140,7 @@
                                 .description("7 transmembrane receptor (rhodopsin family)")
                                 .abstractText("This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]")
                                 .build())
-                signature.addModel(new Model("PF00001", "7tm_2", "7 transmembrane receptor (rhodopsin family)"))
+                signature.addModel(new Model("PF00001", "7tm_2", "7 transmembrane receptor (rhodopsin family)", 265))
                 return release
             ]]>
         </lang:inline-script>
@@ -157,7 +157,7 @@
                     <signature ac="PF00001" name="7tm_2" type="family" desc="7 transmembrane receptor (rhodopsin family)">
                         <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), members of the opsin family, which have been considered to be typical members of the rhodopsin superfamily. They share several motifs, mainly the seven transmembrane helices, GPCRs of the rhodopsin superfamily. All opsins bind a chromophore, such as 11-cis-retinal. The function of most opsins other than the photoisomerases is split into two steps: light absorption and G-protein activation. Photoisomerases, on the other hand, are not coupled to G-proteins - they are thought to generate and supply the chromophore that is used by visual opsins [pubmed:15774036]</abstract>
                         <models>
-                            <model ac="PF00001" name="7tm_2" desc="7 transmembrane receptor (rhodopsin family)"/>
+                            <model ac="PF00001" name="7tm_2" desc="7 transmembrane receptor (rhodopsin family)" length="265"/>
                         </models>
                     </signature>
                 </signature-library-release>
@@ -231,7 +231,7 @@
                                 .description("Polyprenyl Transferase Like")
                                 .abstractText("Members of this subgroup represent the chain elongation proteins. [PMID:23493556,PMID:21562622].")
                                 .build())
-                signature.addModel(new Model("SFLDG01017", "Polyprenyl_Transferase_Like", "Polyprenyl Transferase Like"))
+                signature.addModel(new Model("SFLDG01017", "Polyprenyl_Transferase_Like", "Polyprenyl Transferase Like", 265))
                 return release
             ]]>
         </lang:inline-script>
@@ -248,7 +248,7 @@
                     <signature ac="SFLDG01017" name="Polyprenyl_Transferase_Like" type="family" desc="7 transmembrane receptor (rhodopsin family)">
                         <abstract>Members of this subgroup represent the chain elongation proteins. [PMID:23493556,PMID:21562622].</abstract>
                         <models>
-                            <model ac="SFLDG01017" name="Polyprenyl_Transferase_Like" desc="Polyprenyl Transferase Like"/>
+                            <model ac="SFLDG01017" name="Polyprenyl_Transferase_Like" desc="Polyprenyl Transferase Like" length="265"/>
                         </models>
                     </signature>
                 </signature-library-release>
@@ -269,7 +269,7 @@
                                 .description("GTPase-activator protein for Ras-like GTPases")
                                 .abstractText("All alpha-helical domain that accelerates the GTPase activity of Ras, thereby \"switching\" it into an \"off\" position. Improved domain limits from structure.")
                                 .build())
-                signature.addModel(new Model("SM00323", "RasGAP_2", "GTPase-activator protein for Ras-like GTPases"))
+                signature.addModel(new Model("SM00323", "RasGAP_2", "GTPase-activator protein for Ras-like GTPases", 265))
                 return release
             ]]>
         </lang:inline-script>
@@ -286,7 +286,7 @@
                     <signature ac="SM00323" type="domain" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases">
                         <abstract>All alpha-helical domain that accelerates the GTPase activity of Ras, thereby "switching" it into an "off" position. Improved domain limits from structure.</abstract>
                         <models>
-                            <model ac="SM00323" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases" />
+                            <model ac="SM00323" name="RasGAP_2" desc="GTPase-activator protein for Ras-like GTPases" length="265" />
                         </models>
                     </signature>
                 </signature-library-release>
@@ -305,9 +305,9 @@
                                 .name("Ribonuclease H-like")
                                 .type("family")
                                 .build())
-                signature.addModel(new Model("0035188"))
-                signature.addModel(new Model("0035416"))
-                signature.addModel(new Model("0035463"))
+                signature.addModel(new Model.Builder("0035188").length(265).build())
+                signature.addModel(new Model.Builder("0035416").length(265).build())
+                signature.addModel(new Model.Builder("0035463").length(265).build())
                 return release
             ]]>
         </lang:inline-script>
@@ -323,9 +323,9 @@
                                                                http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.2.xsd">
                     <signature ac="SSF53098" type="family" name="Ribonuclease H-like">
                         <models>
-                            <model ac="0035188"/>
-                            <model ac="0035416"/>
-                            <model ac="0035463"/>
+                            <model ac="0035188" length="265"/>
+                            <model ac="0035416" length="265"/>
+                            <model ac="0035463" length="265"/>
                         </models>
                     </signature>
                 </signature-library-release>

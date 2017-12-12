@@ -120,7 +120,7 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
         p.addSuperMatch(sm);
         // Matches;
         Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<>();
-        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.INCOMPLETE, 2, 108));
+        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.INCOMPLETE, 2, 108));
         p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
         return p;
     }

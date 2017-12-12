@@ -187,6 +187,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 m.getDomainIeValue(),
                 m.getHmmStart(),
                 m.getHmmEnd(),
+                0,//TODO hmmLength
                 HmmBounds.parseSymbol(m.getHmmBounds()),
                 m.getEnvelopeStart(),
                 m.getEnvelopeEnd()

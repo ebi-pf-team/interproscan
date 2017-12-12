@@ -132,7 +132,7 @@ public class PrositeDatFileParser extends AbstractModelFileParser {
     }
 
     private Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release) {
-        Model model = new Model(accession, name, description, null);
+        Model model = new Model(accession, name, description);
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }
 }

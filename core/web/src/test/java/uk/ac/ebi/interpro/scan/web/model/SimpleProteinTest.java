@@ -53,8 +53,8 @@ public class SimpleProteinTest {
         this.testProteinXref = this.testProtein.addCrossReference(new ProteinXref(proteinXrefIdentifier));
 
         //Instantiate match with locations
-        this.hmmer2Location1 = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE);
-        this.hmmer2Location2 = new Hmmer2Match.Hmmer2Location(120, 310, 3.0, 3.7e-9, 1, 104, HmmBounds.C_TERMINAL_COMPLETE);
+        this.hmmer2Location1 = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE);
+        this.hmmer2Location2 = new Hmmer2Match.Hmmer2Location(120, 310, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.C_TERMINAL_COMPLETE);
         this.locations.add(hmmer2Location1);
         this.locations.add(hmmer2Location2);
 
