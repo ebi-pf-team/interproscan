@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.PantherMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -81,7 +82,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         protein.addMatch(match);
                     }
                     // Reset everything
-                    locations = new HashSet<PantherMatch.PantherLocation>();
+                    locations = new HashSet<>();
                     currentSignatureAc = rawMatch.getModelId();
                     holder = modelIdToSignatureMap.get(currentSignatureAc);
                     currentSignature = holder.getSignature();
@@ -101,7 +102,11 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                             + " protein length = " + protein.getSequenceLength()
                             + " raw match : " + rawMatch.toString());
                 }
-                locations.add(new PantherMatch.PantherLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd()));
+                Model model = holder.getModel();
+                int hmmLength = model == null ? 0 : model.getLength();
+                locations.add(new PantherMatch.PantherLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
+                        rawMatch.getHmmStart(), rawMatch.getHmmEnd(), hmmLength, rawMatch.getHmmBounds(),
+                        rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
                 lastRawMatch = rawMatch;
             }
             // Don't forget the last one!

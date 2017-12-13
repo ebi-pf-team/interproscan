@@ -25,10 +25,12 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
         if (berkeleyMatch == null || signature == null) {
             return null;
         }
-        Set<PantherMatch.PantherLocation> locations = new HashSet<PantherMatch.PantherLocation>(berkeleyMatch.getLocations().size());
+        Set<PantherMatch.PantherLocation> locations = new HashSet<>(berkeleyMatch.getLocations().size());
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
             locations.add(new PantherMatch.PantherLocation(
-                    berkeleyLocation.getStart(), berkeleyLocation.getEnd()
+                    berkeleyLocation.getStart(), berkeleyLocation.getEnd(),
+                    berkeleyLocation.getHmmStart(), berkeleyLocation.getHmmEnd(), berkeleyLocation.getHmmLength(),
+                    berkeleyLocation.getHmmBounds(), berkeleyLocation.getEnvelopeStart(), berkeleyLocation.getEnvelopeEnd()
             ));
         }
 
