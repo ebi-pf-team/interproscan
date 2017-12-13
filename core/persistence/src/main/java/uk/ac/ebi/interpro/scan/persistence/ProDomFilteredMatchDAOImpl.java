@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,7 +47,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Transactional
-    public void persist(Collection<RawProtein<ProDomRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<ProDomRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<ProDomRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -55,6 +56,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             }
             Set<BlastProDomMatch.BlastProDomLocation> locations = null;
             String currentModelId = null;
+            SignatureModelHolder holder = null;
             Signature currentSignature = null;
             ProDomRawMatch lastRawMatch = null;
             BlastProDomMatch match = null;
@@ -77,7 +79,8 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                     // Reset everything
                     locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
                     currentModelId = rawMatch.getModelId();
-                    currentSignature = modelIdToSignatureMap.get(currentModelId);
+                    holder = modelIdToSignatureMap.get(currentModelId);
+                    currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find ProDom model " + currentModelId + " in the database.");
                     }

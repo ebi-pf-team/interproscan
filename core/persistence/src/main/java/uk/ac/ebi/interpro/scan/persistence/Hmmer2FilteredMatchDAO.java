@@ -9,11 +9,9 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -29,7 +27,7 @@ abstract class Hmmer2FilteredMatchDAO<T extends Hmmer2RawMatch>
 
     @Override
     @Transactional
-    public void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, SignatureModelHolder> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
@@ -40,15 +38,7 @@ abstract class Hmmer2FilteredMatchDAO<T extends Hmmer2RawMatch>
             }
             // Convert raw matches to filtered matches
             Collection<Hmmer2Match> filteredMatches =
-                    Hmmer2RawMatch.getMatches(rp.getMatches(), new RawMatch.Listener() {
-                        @Override
-                        public Signature getSignature(String modelAccession,
-                                                      SignatureLibrary signatureLibrary,
-                                                      String signatureLibraryRelease) {
-                            return modelAccessionToSignatureMap.get(modelAccession);
-                        }
-                    }
-                    );
+                    Hmmer2RawMatch.getMatches(rp.getMatches(), modelAccessionToSignatureMap);
             // Add matches to protein
             for (Hmmer2Match m : filteredMatches) {
                 protein.addMatch(m);  // Adds protein to match (yes, I know it doesn't look that way!)

@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.*;
 
@@ -43,7 +44,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
      */
     @Override
     @Transactional
-    public void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<PrintsRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
         for (RawProtein<PrintsRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
@@ -53,6 +54,7 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             }
             Set<FingerPrintsMatch.FingerPrintsLocation> locations = null;
             String currentSignatureAc = null;
+            SignatureModelHolder holder = null;
             Signature currentSignature = null;
             PrintsRawMatch lastRawMatch = null;
 
@@ -78,7 +80,8 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
                     // Reset everything
                     locations = new HashSet<FingerPrintsMatch.FingerPrintsLocation>();
                     currentSignatureAc = rawMatch.getModelId();
-                    currentSignature = modelIdToSignatureMap.get(currentSignatureAc);
+                    holder = modelIdToSignatureMap.get(currentSignatureAc);
+                    currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find PRINTS signature " + currentSignatureAc + " in the database.");
                     }

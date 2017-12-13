@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Transactional
-    public void persist(Collection<RawProtein<SuperFamilyHmmer3RawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<SuperFamilyHmmer3RawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
             final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<UUID, SuperFamilyHmmer3Match>();
 
@@ -57,11 +58,14 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
-            LOGGER.debug("Protein: " + protein);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Protein: " + protein);
+            }
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
                 if (match == null) {
-                    final Signature currentSignature = modelIdToSignatureMap.get(rawMatch.getModelId());
+                    final SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
+                    final Signature currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find model " + rawMatch.getModelId() + " in the database.");
                     }
@@ -78,8 +82,10 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
             }
 
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
-                LOGGER.debug("superfamily match: " + match);
-                LOGGER.debug("Protein with match: " + protein);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("superfamily match: " + match);
+                    LOGGER.debug("Protein with match: " + protein);
+                }
                 protein.addMatch(match);
                 entityManager.persist(match);
             }

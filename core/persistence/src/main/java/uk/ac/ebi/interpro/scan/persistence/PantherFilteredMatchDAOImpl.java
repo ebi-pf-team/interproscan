@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import org.apache.log4j.Logger;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,7 +47,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Override
-    public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<PantherRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -55,6 +56,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             }
             Set<PantherMatch.PantherLocation> locations = null;
             String currentSignatureAc = null;
+            SignatureModelHolder holder = null;
             Signature currentSignature = null;
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
@@ -81,13 +83,16 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     // Reset everything
                     locations = new HashSet<PantherMatch.PantherLocation>();
                     currentSignatureAc = rawMatch.getModelId();
-                    currentSignature = modelIdToSignatureMap.get(currentSignatureAc);
+                    holder = modelIdToSignatureMap.get(currentSignatureAc);
+                    currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find PANTHER signature " + currentSignatureAc + " in the database.");
                     }
                 }
-                LOGGER.debug(" protein length = " + protein.getSequenceLength()
-                        + " start location of raw match : " + rawMatch.getLocationStart() + " end location of raw match : " + rawMatch.getLocationEnd());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(" protein length = " + protein.getSequenceLength()
+                            + " start location of raw match : " + rawMatch.getLocationStart() + " end location of raw match : " + rawMatch.getLocationEnd());
+                }
                 if (!pantherLocationWithinRange(protein, rawMatch)) {
                     LOGGER.error("PANTHER match is out of range: "
                             + " protein length = " + protein.getSequenceLength()

@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,12 +36,13 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
      */
     @Override
     @Transactional
-    public void persist(Collection<RawProtein<T>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             for (T rawMatch : rawProtein.getMatches()) {
-                Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                Signature signature = holder.getSignature();
                 ProfileScanMatch match = buildMatch(signature, rawMatch);
                 protein.addMatch(match);
                 entityManager.persist(match);
