@@ -29,7 +29,7 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
             locations.add(new PantherMatch.PantherLocation(
                     berkeleyLocation.getStart(), berkeleyLocation.getEnd(),
-                    berkeleyLocation.getHmmStart(), berkeleyLocation.getHmmEnd(), berkeleyLocation.getHmmLength(),
+                    berkeleyLocation.getHmmStart(), berkeleyLocation.getHmmEnd(), valueOrZero(berkeleyLocation.getHmmLength()),
                     berkeleyLocation.getHmmBounds(), berkeleyLocation.getEnvelopeStart(), berkeleyLocation.getEnvelopeEnd()
             ));
         }

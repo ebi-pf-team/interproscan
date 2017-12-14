@@ -32,7 +32,7 @@ public class Hmmer2BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer2M
                 bounds = HmmBounds.parseSymbol(location.getHmmBounds());
             }
 
-            int hmmLength = signature.getModels().get(0).getLength();//TODO hmmLength
+            Integer hmmLength = signature.getModels().get(0).getLength();//TODO hmmLength
 
             locations.add(new Hmmer2Match.Hmmer2Location(
                     valueOrZero(location.getStart()),
