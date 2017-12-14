@@ -175,17 +175,14 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
             // Score and evalue should be the same (repeated for each location)
             score = m.getScore();
             evalue = m.getEvalue();
-            Integer hmmLength = model.getLength();
+            int hmmLength = model.getLength();
             locations.add(getLocation(m, hmmLength));
         }
 
         return new Hmmer3Match(signature, score, evalue, locations);
     }
 
-    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, Integer hmmLength) {
-        if (hmmLength == null) {
-            hmmLength=0; // TODO Remove when all HMMER3 analyses have hmmLength not nullable
-        }
+    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength) {
         return new Hmmer3Match.Hmmer3Location(
                 m.getLocationStart(),
                 m.getLocationEnd(),

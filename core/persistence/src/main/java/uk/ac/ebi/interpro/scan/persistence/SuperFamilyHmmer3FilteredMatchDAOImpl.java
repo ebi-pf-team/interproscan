@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
@@ -62,9 +63,9 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 LOGGER.debug("Protein: " + protein);
             }
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
+                final SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
                 if (match == null) {
-                    final SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
                     final Signature currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find model " + rawMatch.getModelId() + " in the database.");
@@ -75,9 +76,12 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                             null);
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
                 }
+                Model model = holder.getModel();
+                int hmmLength = model == null ? 0 : model.getLength();
                 match.addLocation(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
                         rawMatch.getLocationStart(),
-                        rawMatch.getLocationEnd()
+                        rawMatch.getLocationEnd(),
+                        hmmLength
                 ));
             }
 

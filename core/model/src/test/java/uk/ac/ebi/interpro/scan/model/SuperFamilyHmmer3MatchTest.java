@@ -26,7 +26,7 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
                 new Signature("PF02310", "B12-binding"),
                 3.7e-9,
                 new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>(Arrays.asList(
-                        new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107)
+                        new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107, 107)
                 ))
         );
         SuperFamilyHmmer3Match copy = (SuperFamilyHmmer3Match)SerializationUtils.clone(original);
@@ -52,11 +52,11 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
     @Test
     public void testLocationEquals() {
         SuperFamilyHmmer3Match.SuperFamilyHmmer3Location original =
-                new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107);
+                new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107, 100);
         SuperFamilyHmmer3Match.SuperFamilyHmmer3Location copy = (SuperFamilyHmmer3Match.SuperFamilyHmmer3Location)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
-        copy = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 2);
+        copy = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 2, 5);
         assertFalse("Original and copy should not be equal", original.equals(copy));
     }
 }

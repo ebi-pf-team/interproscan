@@ -259,7 +259,7 @@
                 p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
                 Signature signature = new Signature("SSF53098", "Ribonuclease H-like");
                 Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
-                locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 237));
+                locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 237, 237));
                 p.addMatch(new SuperFamilyHmmer3Match(signature, 2.4e-32, locations));
 
                 // Create release
@@ -290,7 +290,7 @@
                                     <signature-library-release library="SUPERFAMILY" version="1.75" />
                                 </signature>
                                 <locations>
-                                    <superfamilyhmmer3-location start="1" end="237"/>
+                                    <superfamilyhmmer3-location start="1" end="237" hmm-length="237"/>
                                 </locations>
                             </superfamilyhmmer3-match>
                         </matches>

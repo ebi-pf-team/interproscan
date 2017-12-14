@@ -364,6 +364,7 @@
         <xs:complexContent>
             <xs:extension base="tns:LocationType">
                 <xs:sequence/>
+                <xs:attribute name="hmm-length" type="xs:int" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

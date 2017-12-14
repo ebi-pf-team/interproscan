@@ -85,33 +85,47 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
     @XmlType(name = "SuperFamilyHmmer3LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class SuperFamilyHmmer3Location extends Location {
 
+        @Column(nullable = false, name = "hmm_length")
+        private int hmmLength;
+
         protected SuperFamilyHmmer3Location() {
         }
 
-        public SuperFamilyHmmer3Location(int start, int end) {
+        public SuperFamilyHmmer3Location(int start, int end, int hmmLength) {
             super(start, end);
+            setHmmLength(hmmLength);
+        }
+
+        @XmlAttribute(name = "hmm-length", required = true)
+        public int getHmmLength() {
+            return hmmLength;
+        }
+
+        private void setHmmLength(int hmmLength) {
+            this.hmmLength = hmmLength;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (!(o instanceof SuperFamilyHmmer3Location))
-                return false;
-            return new EqualsBuilder()
-                    .appendSuper(super.equals(o))
-                    .isEquals();
+            if (this == o) return true;
+            if (!(o instanceof SuperFamilyHmmer3Location)) return false;
+            if (!super.equals(o)) return false;
+
+            SuperFamilyHmmer3Location that = (SuperFamilyHmmer3Location) o;
+
+            return hmmLength == that.hmmLength;
+
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(29, 53)
-                    .appendSuper(super.hashCode())
-                    .toHashCode();
+            int result = super.hashCode();
+            result = 31 * result + hmmLength;
+            return result;
         }
 
         public Object clone() throws CloneNotSupportedException {
-            return new SuperFamilyHmmer3Location(this.getStart(), this.getEnd());
+            return new SuperFamilyHmmer3Location(this.getStart(), this.getEnd(), this.getHmmLength());
         }
     }
 

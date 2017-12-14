@@ -52,7 +52,7 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 signature = new Signature(signatureAc);
                 signatureMap.put(signatureAc, signature);
             }
-            signature.addModel(new Model(modelAc));
+            signature.addModel(new Model(modelAc, null, null, 0)); //TODO hmmLength (default to 0 for now)
         }
 
         // Create release
