@@ -307,6 +307,12 @@
         <xs:complexContent>
             <xs:extension base="tns:LocationType">
                 <xs:sequence/>
+                <xs:attribute name="env-end" type="xs:int" use="required"/>
+                <xs:attribute name="env-start" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-bounds" type="xs:string" use="required"/>
+                <xs:attribute name="hmm-end" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-length" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-start" type="xs:int" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
