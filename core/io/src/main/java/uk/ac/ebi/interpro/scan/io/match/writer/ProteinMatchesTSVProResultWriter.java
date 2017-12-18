@@ -54,6 +54,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
             for (Match match : matches) {
                 final Signature signature = match.getSignature();
                 final String signatureAc = signature.getAccession();
+                final String signatureModels = match.getSignatureModels();
                 final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
                 final String analysis = signatureLibrary.getName();
                 final String version = signature.getSignatureLibraryRelease().getVersion();
@@ -70,6 +71,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         mappingFields.add(getReleaseMajorMinor(version)[1]);
                         mappingFields.add(proteinAc);
                         mappingFields.add(signatureAc);
+                        mappingFields.add(signatureModels);
                         mappingFields.add(Integer.toString(location.getStart()));
                         mappingFields.add(Integer.toString(location.getEnd()));
                         //Default seq score
@@ -94,8 +96,12 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
 
                         if (location instanceof Hmmer3Match.Hmmer3Location) {
                             Hmmer3Match.Hmmer3Location hmmer3Location = (Hmmer3Match.Hmmer3Location) location;
+                            mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeEnd()));
+                            mappingFields.add(hmmer3Location.getHmmBounds().getSymbol());
                             mappingFields.add(Integer.toString(hmmer3Location.getHmmStart()));
                             mappingFields.add(Integer.toString(hmmer3Location.getHmmEnd()));
+                            mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeStart()));
+                            mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeEnd()));
                             mappingFields.add(Double.toString(hmmer3Location.getScore()));
                             mappingFields.add(Double.toString(hmmer3Location.getEvalue()));
                         }
@@ -106,14 +112,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmerLocation.getScore()));
                             mappingFields.add(Double.toString(hmmerLocation.getEvalue()));
                         }
-                        //the following is not necessary
-                        /*
-                        if (location instanceof Hmmer3Match.Hmmer3Location) {
-                            Hmmer3Match.Hmmer3Location hmmer3Location = (Hmmer3Match.Hmmer3Location) location;
-                            mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeStart()));
-                            mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeEnd()));
-                        }
-                        */
+
 
                         this.tsvWriter.write(mappingFields);
                     }
