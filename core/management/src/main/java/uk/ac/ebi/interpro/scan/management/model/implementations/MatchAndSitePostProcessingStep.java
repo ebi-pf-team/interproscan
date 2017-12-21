@@ -138,6 +138,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
         Set<C> rawSites = new HashSet<>();
+        C represantiveRawSite = null;
         if (!excludeSites) { // Check command line argument
             if (!this.excludeSites) { // No command line argument, so check properties file configuration
                 rawSites = rawSiteDAO.getSitesByProteinIdRange(
@@ -145,11 +146,12 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                         stepInstance.getTopProtein(),
                         signatureLibraryRelease
                 );
-                for (C repRawSite:rawSites) {
-                    Utilities.verboseLog("rep filtered site: " +repRawSite );
-                    break;
+                if (represantiveRawSite == null && rawSites.size() > 0) {
+                    represantiveRawSite = rawSites.iterator().next();
+                    Utilities.verboseLog("represantiveRawSite: " + represantiveRawSite );
                 }
             }
+
         }
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 

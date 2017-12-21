@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
+import com.google.common.io.Closeables;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -14,9 +15,16 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
+
+import org.iq80.leveldb.DB;
+import org.iq80.leveldb.DBIterator;
+import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
+import org.iq80.leveldb.Options;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,6 +53,8 @@ public class WriteOutputStep extends Step {
     private ProteinDAO proteinDAO;
 
     private ProteinXrefDAO proteinXrefDAO;
+
+//    private FilteredMatchDAO matchDAO;
 
     //Output writer
     private XmlWriter xmlWriter;
@@ -180,17 +190,81 @@ public class WriteOutputStep extends Step {
         Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
 
         Long timeNow = System.currentTimeMillis();
-        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+//        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
+
+//        timeNow = System.currentTimeMillis();
+//
+//        List<ProteinXref> proteinsXrefs = proteinXrefDAO.getAllXrefs();
+//
+//        Utilities.verboseLog(10, " WriteOutputStep - proteinsXrefs to writeout: " + proteinsXrefs.size()
+//                + " time taken to get proteinsXrefs: "
+//                + (System.currentTimeMillis() - timeNow)
+//                + " millis");
+//
+//        timeNow = System.currentTimeMillis();
+
+        List<Match> matches = proteinDAO.getMatches();
+
+        Utilities.verboseLog(10, " WriteOutputStep - matches to writeout: " + matches.size()
+                + " time taken to get matches: "
+                + (System.currentTimeMillis() - timeNow)
+                + " millis");
+
+        if (matches.size() > 0) {
+            /*
+            Protein repProtein  = proteins.get(0);
+            Match repMatch = null;
+            Match altRepMatch = null;
+            ProteinXref repXref = null;
+            Utilities.verboseLog(repProtein.toString());
+            for (ProteinXref xref: proteinsXrefs){
+                if (xref.getProtein().getId() == repProtein.getId()){
+                    repXref = xref;
+                }
+            }
+            Utilities.verboseLog(repXref.toString());
+            for (Match m: matches){
+                if (m.getProtein().getId() == repProtein.getId()){
+                    repMatch = m;
+                    break;
+                }
+            }
+            if (repMatch != null) {
+                Utilities.verboseLog(repMatch.toString());
+            }
+
+            Utilities.verboseLog("Alt out ---- oooo ---");
+
+            altRepMatch = matches.get(0);
+            repProtein = altRepMatch.getProtein();
+            ProteinXref altXepXref = repProtein.getCrossReferences().iterator().next();
+
+            Utilities.verboseLog(repProtein.toString());
+            Utilities.verboseLog(altRepMatch.toString());
+            Utilities.verboseLog(altXepXref.toString());
+
+            return;
+            */
+        }
+
+        timeNow = System.currentTimeMillis();
+
+        List<Protein> proteins = proteinDAO.getProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
                 + " time taken to get proteins: "
                 + (System.currentTimeMillis() - timeNow)
                 + " millis");
+
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
             LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
             setUniqueXrefs();
         }
+
+        String levelDBStoreRoot = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, "dbstore");
+        writeToLevelDB(proteins, levelDBStoreRoot);
 
         for (FileOutputFormat outputFormat : outputFormats) {
             Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
@@ -613,4 +687,67 @@ public class WriteOutputStep extends Step {
         }
 
     }
+
+    public void   writeToLevelDB(List<Protein> proteins, String levelDBStoreRoot){
+        int proteinCount =  proteins.size();
+
+        String levelDBStoreName = levelDBStoreRoot + "/leveldb/outstore";
+        Utilities.verboseLog("Create LevelDB  : " + levelDBStoreName);
+        DB levelDBStore = getLevelDBStore(levelDBStoreName);
+        Long timeNow = System.currentTimeMillis();
+        Utilities.verboseLog("Start outputting proteins to DB : " + levelDBStoreName);
+        for (Protein protein : proteins) {
+            byte[] keyInBytes = SerializationUtils.serialize(protein.getMd5());
+            byte[] data = SerializationUtils.serialize(protein);
+            levelDBStore.put(keyInBytes,data);
+        }
+
+        Long timeTaken = System.currentTimeMillis() - timeNow;
+        Long timeTakenSecs = timeTaken / 1000;
+        Long timeTakenMins = timeTakenSecs / 60;
+
+        Utilities.verboseLog("Completed outputting proteins to LevelDB in " + timeTakenSecs + " seconds ("
+                + timeTakenMins + " minutes)");
+
+        //Now Read from the DB
+        timeNow = System.currentTimeMillis();
+        DBIterator iterator = levelDBStore.iterator();
+        int i = 0;
+        long bytes = 0l;
+        try {
+            for (i = 0; iterator.hasNext(); i++) {
+                Map.Entry<byte[], byte[]> entry = iterator.next();
+                bytes += entry.getKey().length + entry.getValue().length;
+            }
+            iterator.close();
+            levelDBStore.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        timeTaken = System.currentTimeMillis() - timeNow;
+        timeTakenSecs = timeTaken / 1000;
+        timeTakenMins = timeTakenSecs / 60;
+        Utilities.verboseLog("Time taken to read " + i + " entries from levelDb : " + timeTakenSecs + " seconds ("
+                + timeTakenMins + " minutes)");
+
+
+    }
+
+
+    public DB getLevelDBStore(String dbStore) {
+        DB levelDBStore;
+        Options options = new Options();
+        try {
+            levelDBStore = factory.open(new File(dbStore), options);
+            return levelDBStore;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+
 }

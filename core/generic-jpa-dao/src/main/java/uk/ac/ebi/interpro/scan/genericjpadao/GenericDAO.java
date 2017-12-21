@@ -42,7 +42,7 @@ public interface GenericDAO<T, PK extends Serializable> extends Serializable {
      * it's own devices, so need to consider this when building
      * potentially unrestricted in-clauses.
      */
-    int MAXIMUM_IN_CLAUSE_SIZE = 100;
+    int MAXIMUM_IN_CLAUSE_SIZE = 500;
 
 
     /**

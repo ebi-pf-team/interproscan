@@ -130,6 +130,23 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         return (List<Protein>) query.getResultList();
     }
 
+
+    /**
+     * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
+     * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
+     *
+     * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public List<Protein> getProteins(long bottom, long top) {
+        Query query = entityManager.createQuery("select p from Protein p");
+//        query.setParameter("bottom", bottom);
+//        query.setParameter("top", top);
+        return (List<Protein>) query.getResultList();
+    }
+
+
     @Transactional(readOnly = true)
     public List<Protein> getProteinsByIds(Set<Long> proteinIds) {
         List<Protein> proteins = new ArrayList<Protein>();
@@ -140,6 +157,18 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         }
         return proteins;
     }
+
+
+
+    @Transactional(readOnly = true)
+    public List<Match> getMatches() {
+        List<Match> matches = new ArrayList<>();
+        Query query = entityManager.createQuery("select m from Match m");
+        matches = query.getResultList();
+
+        return matches;
+    }
+
 
     /**
      * Insert a new Protein instance.

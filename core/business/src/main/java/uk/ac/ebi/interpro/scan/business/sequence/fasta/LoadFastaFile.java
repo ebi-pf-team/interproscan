@@ -28,6 +28,8 @@ public interface LoadFastaFile extends Serializable {
     @Required
     void setSequenceLoader(SequenceLoader sequenceLoader);
 
+    void setLevelDBStoreRoot(String levelDBStoreRoot);
+
     /**
      * Load the sequences into the database.  Optionally, the caller
      * can specify if an available match lookup service should be used

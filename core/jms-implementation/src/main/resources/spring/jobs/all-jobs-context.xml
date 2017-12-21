@@ -124,9 +124,29 @@
 
 
     <!-- STEP 1 -->
-    <bean id="stepLoadFromFasta"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+    <bean id="stepLoadFromFasta2DB"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoad2DBStep"
+          >
         <property name="job" ref="jobLoadFromFasta"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+
+        <property name="stepDescription"
+                  value="Load proteins from a fasta file and load into DB before creating required JobInstance objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="2"/>
+        <property name="serialGroup" value="LOAD_PROTEINS"/>
+        <property name="fastaFileLoader" ref="proteinFastaFileLoader2DB"/>
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+
+    <bean id="stepLoadFromFasta"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep"
+          >
+        <property name="job" ref="jobLoadFromFasta"/>
+        <property name="dependsUpon" ref="stepLoadFromFasta2DB"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription"
                   value="Load proteins from a fasta file and create required JobInstance objects"/>
@@ -302,6 +322,10 @@
 
     <bean id="getOrfDescriptionLineParser"
           class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
+
+    <bean id="proteinFastaFileLoader2DB" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile2DBImpl">
+        <property name="sequenceLoader" ref="proteinLoader"/>
+    </bean>
 
     <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
         <property name="sequenceLoader" ref="proteinLoader"/>

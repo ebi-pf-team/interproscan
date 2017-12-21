@@ -36,6 +36,8 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     private SequenceLoader<T> sequenceLoader;
 
+    String levelDBStoreRoot;
+
     protected static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
 
 
@@ -45,6 +47,10 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         this.sequenceLoader = sequenceLoader;
     }
 
+    @Override
+    public void setLevelDBStoreRoot(String levelDBStoreRoot) {
+        this.levelDBStoreRoot = levelDBStoreRoot;
+    }
 
     @Override
     @Transactional

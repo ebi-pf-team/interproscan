@@ -108,7 +108,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 //        }
 
         LOGGER.debug("now persists the filtered proteins: " );
-        Utilities.verboseLog("now persists the filtered proteins: ...");
+        Utilities.verboseLog("now persists the filtered proteins: ...  filteredProteins#: " + filteredProteins.size()
+                + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
 
     }
@@ -192,7 +193,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     //Utilities.verboseLog("accession: " + m.getAccession() + " signature: " + s);
                 }
             }
-            Utilities.verboseLog("Signature results #: " + result.keySet().size());
+            Utilities.verboseLog("Signature results #: " + result.keySet().size()
+                    + "  for " + modelIdsSlice.size() + " models");
         }
         return result;
     }
