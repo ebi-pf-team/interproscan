@@ -191,6 +191,7 @@ public class WriteOutputStep extends Step {
 
         Long timeNow = System.currentTimeMillis();
 //        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+//        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
 
 //        timeNow = System.currentTimeMillis();
@@ -250,12 +251,30 @@ public class WriteOutputStep extends Step {
 
         timeNow = System.currentTimeMillis();
 
+        List<ProteinXref> proteinsXrefs = proteinXrefDAO.getAllXrefs();
+
+        Utilities.verboseLog(10, " WriteOutputStep - proteinsXrefs to writeout: " + proteinsXrefs.size()
+                + " time taken to get proteinsXrefs: "
+                + (System.currentTimeMillis() - timeNow)
+	          + " millis");
+
+        timeNow = System.currentTimeMillis();
+
         List<Protein> proteins = proteinDAO.getProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
                 + " time taken to get proteins: "
                 + (System.currentTimeMillis() - timeNow)
                 + " millis");
+
+       int matchCount = 0;
+       for (Protein prot: proteins){
+	  int count = prot.getMatches().size();
+          matchCount += count;
+       }
+       Utilities.verboseLog("Initial matches from " + proteins.size() + " proteins : " + matchCount);
+
+       proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
@@ -648,13 +667,17 @@ public class WriteOutputStep extends Step {
             }
             Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + "Loaded " + proteins.size() + " proteins.");
             int count = 0;
+            int matchCount = 0;
             for (Protein protein : proteins) {
                 writer.write(protein);
                 count++;
                 if (count % 40000 == 0) {
-                    Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins");
+                    Utilities.verboseLog(10, " WriteOutout - write out matches for " + count + " proteins");
                 }
+                int tmpCount = protein.getMatches().size();
+                matchCount += tmpCount;
             }
+            Utilities.verboseLog(10, " WriteOutout - write out matches for " + count + " proteins and " + matchCount + " matches");
         }
     }
 
