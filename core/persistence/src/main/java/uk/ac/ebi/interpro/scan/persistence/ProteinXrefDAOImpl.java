@@ -68,6 +68,14 @@ public class ProteinXrefDAOImpl extends GenericDAOImpl<ProteinXref, Long> implem
     }
 
     @Transactional(readOnly = true)
+    public List<ProteinXref> getAllXrefs() {
+        Query query = entityManager.createQuery(
+                "select x from ProteinXref x"
+        );
+        return query.getResultList();
+    }
+
+    @Transactional(readOnly = true)
     public List<ProteinXref> getXrefAndProteinByProteinXrefIdentifier(String identifier) {
         Query query = entityManager.createQuery("select x from ProteinXref x left outer join fetch x.protein p where x.identifier = :identifier order by p.id asc");
         query.setParameter("identifier", identifier);

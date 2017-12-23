@@ -33,6 +33,7 @@ public interface ProteinXrefDAO extends GenericDAO<ProteinXref, Long> {
      */
     public List<String> getNonUniqueXrefs();
 
+    public List<ProteinXref> getAllXrefs();
 
     /**
      * Returns a List of protein xrefs and their attached protein ordered by protein Id.

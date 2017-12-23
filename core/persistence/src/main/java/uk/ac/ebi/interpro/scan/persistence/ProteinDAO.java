@@ -18,6 +18,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
+import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 
 import java.util.Collection;
@@ -55,6 +56,9 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
     @Transactional(readOnly = true)
     List<Protein> getProteinsBetweenIds(long bottom, long top);
 
+    @Transactional(readOnly = true)
+    List<Protein> getProteins(long bottom, long top);
+
     /**
      * Queries a list of proteins by the specified protein identifiers. For further information please have a look at
      * method with name getProteinsBetweenIds().
@@ -64,6 +68,16 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      */
     @Transactional(readOnly = true)
     List<Protein> getProteinsByIds(Set<Long> proteinIds);
+
+
+    /**
+     * TODO testing
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    List<Match> getMatches();
+
 
     /**
      * Inserts new Proteins.
