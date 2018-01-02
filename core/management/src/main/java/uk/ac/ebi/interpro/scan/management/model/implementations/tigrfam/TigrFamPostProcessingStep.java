@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 
 import java.util.Set;
 
@@ -28,6 +29,8 @@ public class TigrFamPostProcessingStep extends Step {
 
     private FilteredMatchDAO<TigrFamHmmer2RawMatch, Hmmer2Match> filteredMatchDAO;
 
+    private LevelDBStore levelDBStore;
+
     @Required
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
@@ -41,6 +44,10 @@ public class TigrFamPostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO<TigrFamHmmer2RawMatch, Hmmer2Match> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    public void setLevelDBStore(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
     }
 
     /**

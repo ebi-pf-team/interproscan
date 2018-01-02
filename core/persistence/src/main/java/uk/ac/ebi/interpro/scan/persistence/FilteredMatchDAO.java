@@ -44,7 +44,7 @@ public interface FilteredMatchDAO<T extends RawMatch, U extends Match> extends G
         throw new UnsupportedOperationException();
     }
 
-
+    void setLevelDBStore(LevelDBStore levelDBStore);
 
 
 }

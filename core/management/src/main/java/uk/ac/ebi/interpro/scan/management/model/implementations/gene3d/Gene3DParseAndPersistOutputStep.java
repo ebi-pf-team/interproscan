@@ -17,6 +17,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.BufferedReader;
@@ -62,6 +63,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
     private boolean forceHmmsearch = true;
 
+    private LevelDBStore levelDBStore;
 
     @Required
     public void setCathResolveHitsOutputFileNameTemplate(String cathResolveHitsOutputFileNameTemplate) {
@@ -110,6 +112,11 @@ public class Gene3DParseAndPersistOutputStep extends Step {
     public void setForceHmmsearch(boolean forceHmmsearch) {
         this.forceHmmsearch = forceHmmsearch;
     }
+
+    public void setLevelDBStore(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
+    }
+
 
     /**
      * Parse the output file from the SuperFamily binary and persist the results in the database.
@@ -249,6 +256,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
             if (rawProteins != null && rawProteins.size() > 0) {
                 Utilities.verboseLog("Persist Gene3D rawProteins # :" + rawProteins.size());
+                filteredMatchDAO.setLevelDBStore(levelDBStore);
                 filteredMatchDAO.persist(rawProteins);
                 Long now = System.currentTimeMillis();
                 if (count > 0) {

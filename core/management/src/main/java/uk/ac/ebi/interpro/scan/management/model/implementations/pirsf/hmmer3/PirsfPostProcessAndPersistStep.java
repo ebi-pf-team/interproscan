@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 
 import java.io.IOException;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class PirsfPostProcessAndPersistStep extends Step {
 
     private FilteredMatchDAO<PirsfHmmer3RawMatch, Hmmer3Match> filteredMatchDAO;
 
+    private LevelDBStore levelDBStore;
 
     @Required
     public void setPostProcessor(PirsfPostProcessor postProcessor) {
@@ -51,6 +53,9 @@ public class PirsfPostProcessAndPersistStep extends Step {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
+    public void setLevelDBStore(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
+    }
 
     /**
      * This method is called to execute the action that the StepInstance must perform.

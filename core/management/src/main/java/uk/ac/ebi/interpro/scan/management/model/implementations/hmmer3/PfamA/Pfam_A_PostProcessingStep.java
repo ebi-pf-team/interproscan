@@ -8,7 +8,9 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -38,6 +40,8 @@ public class Pfam_A_PostProcessingStep extends Step {
     private PfamHmmer3RawMatchDAO rawMatchDAO;
 
     private FilteredMatchDAO filteredMatchDAO;
+    //private PfamFilteredMatchDAOImpl filteredMatchDAO;
+    LevelDBStore levelDBStore;
 
     @Required
     public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
@@ -72,8 +76,13 @@ public class Pfam_A_PostProcessingStep extends Step {
     }
 
     @Required
-    public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
+    public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) { //PfamFilteredMatchDAOImpl filteredMatchDAO) { //FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    @Required
+    public void setLevelDBStore(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
     }
 
     /**
@@ -92,6 +101,7 @@ public class Pfam_A_PostProcessingStep extends Step {
                 getSignatureLibraryRelease()
         );
         Utilities.verboseLog(10, "Pfam_A_PostProcessingStep : stepinstance:" + stepInstance.toString());
+        
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
@@ -141,6 +151,7 @@ public class Pfam_A_PostProcessingStep extends Step {
                 //}
                 LOGGER.debug("PfamA: A total of " + matchCount + " matches PASSED.");
             }
+            filteredMatchDAO.setLevelDBStore(levelDBStore);
             filteredMatchDAO.persist(filteredMatches.values());
             Utilities.verboseLog(10,  " PfamA: filteredMatches persisted");
         } catch (IOException e) {

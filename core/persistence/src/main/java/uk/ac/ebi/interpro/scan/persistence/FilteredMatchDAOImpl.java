@@ -27,6 +27,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 
     private static final Logger LOGGER = Logger.getLogger(FilteredMatchDAOImpl.class.getName());
 
+    protected LevelDBStore levelDBStore;
+
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
@@ -255,5 +257,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         return true;
     }
 
+
+    public void setLevelDBStore(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
+    }
 
 }

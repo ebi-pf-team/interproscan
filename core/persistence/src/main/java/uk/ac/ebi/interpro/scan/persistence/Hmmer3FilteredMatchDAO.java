@@ -13,6 +13,8 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * HMMER3 filtered match data access object.
@@ -28,10 +30,22 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
 
     private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchDAO.class.getName());
 
+    LevelDBStore levelDBStore;
+    
     public Hmmer3FilteredMatchDAO() {
         super(Hmmer3Match.class);
     }
 
+/*    public Hmmer3FilteredMatchDAO(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
+        super(Hmmer3Match.class);
+    }
+*/
+
+    public void setLevelDBStore(LevelDBStore levelDBStore) {
+        this.levelDBStore = levelDBStore;
+    }
+    
     /**
      * This is the method that should be implemented by specific FilteredMatchDAOImpl's to
      * persist filtered matches.
@@ -43,6 +57,9 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
     @Transactional
     public void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
         // Add matches to protein
+        List<Protein> completeProteins = new ArrayList();
+
+        int matchLocationCount = 0;
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
             if (LOGGER.isDebugEnabled()) {
@@ -78,7 +95,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     }
                     );
 
-            int matchLocationCount = 0;
+            matchLocationCount = 0;
             for (Hmmer3Match match : filteredMatches) {
                 for (T rawMatch: rp.getMatches()){
                     if (! isLocationWithinRange(protein, rawMatch)){
@@ -91,9 +108,25 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
+                completeProteins.add(protein);
             }
             //TODO use a different utitlity function
             //System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }
+        //Utilities.verbose("Start persist to leveldb: " + completeProteins.size() + " proteins and " + matchLocationCount);
+        System.out.println("Start persist to leveldb: " + completeProteins.size() + " proteins and " + matchLocationCount);
+	Long timeNow = System.currentTimeMillis();
+        for (Protein protein:completeProteins) {
+            String key = String.valueOf(protein.getId());
+            byte[] data = levelDBStore.serialize(protein);
+	    levelDBStore.put(key, data);	   
+	}
+        Long   timeTaken = System.currentTimeMillis() - timeNow;
+        Long    timeTakenSecs = timeTaken / 1000;
+        Long    timeTakenMins = timeTakenSecs / 60;
+        System.out.println("Time taken to persist to  levelDb : " + timeTakenSecs + " seconds ("
+                    + timeTakenMins + " minutes)");
     }
+
+
 }

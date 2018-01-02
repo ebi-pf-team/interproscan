@@ -352,6 +352,11 @@
         </constructor-arg>
     </bean>
 
+
+    <bean id="kvStore"
+          class="uk.ac.ebi.interpro.scan.persistence.LevelDBStore">
+    </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
 </beans>

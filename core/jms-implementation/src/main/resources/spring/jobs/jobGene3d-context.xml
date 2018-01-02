@@ -107,6 +107,7 @@
         </property>
         <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
         <property name="gene3dEvalueCutoff" value="${gene3d.evalue.cutoff}"/>
+        <property name="levelDBStore" ref="kvStore"/>
         <!--<property name="parser">-->
             <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser">-->
                 <!--<property name="parserSupport">-->

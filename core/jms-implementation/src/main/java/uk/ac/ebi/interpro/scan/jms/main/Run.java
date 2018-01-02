@@ -26,6 +26,8 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherN
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
+import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
+
 import java.io.File;
 import java.io.FilePermission;
 import java.io.IOException;
@@ -112,6 +114,7 @@ public class Run extends AbstractI5Runner {
 
         String temporaryDirectory = null;
         boolean deleteWorkingDirectoryOnCompletion = true;
+        LevelDBStore levelDBStore;
 
         try {
             //change Loglevel
@@ -362,6 +365,11 @@ public class Run extends AbstractI5Runner {
 
 
                 }
+
+		String kvStoreName = workingTemporaryDirectory + "/kvstore";
+                levelDBStore = (LevelDBStore) ctx.getBean("kvStore");
+                levelDBStore.setLevelDBStore(kvStoreName);
+
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
                     //deal with panther  stepPantherHMM3RunPantherScore
                     //this maynot be necessary anymore
@@ -404,6 +412,7 @@ public class Run extends AbstractI5Runner {
             if (temporaryDirectory != null ){
                 //deleteWorkingDirectory(true, temporaryDirectory);
 //                System.out.println(Utilities.getTimeNow() + " Please clean up the TEMP files in ... " + temporaryDirectory);
+                //if (levelDBStore != null){   levelDBStore.close();		}
                 cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
 
             }

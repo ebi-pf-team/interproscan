@@ -102,6 +102,7 @@
         <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
         <property name="signatureLibraryRelease" ref="tigrfamSignatureLibraryReleaseVersion"/>
         <property name="stepDescription" value="Stores raw matches as filtered matches."/>
+        <!-- property name="levelDBStore" ref="kvStore"/ -->
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer3FilteredMatchDAOImpl"/>
         </property>
