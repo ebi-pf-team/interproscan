@@ -50,7 +50,7 @@ public final class Model2SfReader extends AbstractModelFileParser {
             }
             String modelAc = model[0];
             int hmmLength = Integer.parseInt(model[1]);
-            String signatureAc = records.get(modelAc);
+            String signatureAc = records.get(modelData);
             Signature signature;
             if (signatureMap.containsKey(signatureAc)) {
                 signature = signatureMap.get(signatureAc);
