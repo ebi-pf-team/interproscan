@@ -25,7 +25,7 @@ public class PantherMatchParserTest extends TestCase {
     @Test
     public void testCreateMatch() {
         //Test of real Panther raw match line
-        String rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR10024:SF2\tGB DEF: HYPOTHETICAL PROTEIN FLJ45597\t2.3e-141\t480.5\t1-341\t1-341\t1-341";
+        String rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR10024:SF2\tGB DEF: HYPOTHETICAL PROTEIN FLJ45597\t2.3e-141\t480.5\t1-341\t1-341\t1-341\t341";
         PantherRawMatch result = instance.createMatch(rawMatchLine);
         assertNotNull("CreateMatch method returned a NULL value!", result);
         assertEquals("tr|Q6ZSE3|Q6ZSE3_HUMAN", result.getSequenceIdentifier());
@@ -35,6 +35,7 @@ public class PantherMatchParserTest extends TestCase {
         assertEquals(new Double("480.5"), result.getScore());
         assertEquals(1, result.getHmmStart());
         assertEquals(341, result.getHmmEnd());
+        assertEquals(341, result.getHmmLength());
         assertEquals(1, result.getLocationStart());
         assertEquals(341, result.getLocationEnd());
         assertEquals(1, result.getEnvelopeStart());
