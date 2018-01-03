@@ -200,7 +200,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
      * Creates and returns an instance of signature.
      */
     private Signature createSignature(String accession, String name, SignatureLibraryRelease release) {
-        Model model = new Model(accession, name, null, 0); //TODO hmmLength (default to 0 for now)
+        Model model = new Model(accession, name, null); //TODO Also populate hmmLength from the panther.hmm now? Maybe for PANTHER 13.0+
         return new Signature(accession, name, null, null, null, release, Collections.singleton(model));
     }
 }

@@ -102,10 +102,13 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                             + " protein length = " + protein.getSequenceLength()
                             + " raw match : " + rawMatch.toString());
                 }
-                Model model = holder.getModel();
-                int hmmLength = model == null ? 0 : model.getLength();
+
+                // TODO Get hmmLength from model instead?
+                //Model model = holder.getModel();
+                //int hmmLength = model == null ? 0 : model.getLength();
+
                 locations.add(new PantherMatch.PantherLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
-                        rawMatch.getHmmStart(), rawMatch.getHmmEnd(), hmmLength, rawMatch.getHmmBounds(),
+                        rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmLength(), rawMatch.getHmmBounds(),
                         rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
                 lastRawMatch = rawMatch;
             }

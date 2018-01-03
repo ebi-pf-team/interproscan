@@ -99,9 +99,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     + " signatureLibraryRelease: " + signatureLibraryRelease
                     + " filteredProteins: " + filteredProteins.size()
                     + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+            LOGGER.debug("now persists the filtered proteins: " );
         }
 
-        LOGGER.debug("now persists the filtered proteins: " );
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
 
     }

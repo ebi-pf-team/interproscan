@@ -43,6 +43,9 @@ public class PantherRawMatch extends RawMatch {
     @Column(nullable = false)
     private int hmmEnd;
 
+    @Column(nullable = false)
+    private int hmmLength;
+
     @Column(length = 2)
     private String hmmBounds;
 
@@ -65,13 +68,14 @@ public class PantherRawMatch extends RawMatch {
                            String signatureLibraryRelease,
                            int locationStart, int locationEnd,
                            double evalue, double score, String familyName,
-                           int hmmStart, int hmmEnd, String hmmBounds, int envelopeStart, int envelopeEnd) {
+                           int hmmStart, int hmmEnd, int hmmLength, String hmmBounds, int envelopeStart, int envelopeEnd) {
         super(sequenceIdentifier, model, SignatureLibrary.PANTHER, signatureLibraryRelease, locationStart, locationEnd);
         setEvalue(evalue);
         this.score = score;
         this.familyName = familyName;
         this.hmmStart = hmmStart;
         this.hmmEnd = hmmEnd;
+        this.hmmLength = hmmLength;
         this.hmmBounds = hmmBounds;
         this.envelopeStart = envelopeStart;
         this.envelopeEnd = envelopeEnd;
@@ -115,6 +119,14 @@ public class PantherRawMatch extends RawMatch {
 
     public void setHmmEnd(int hmmEnd) {
         this.hmmEnd = hmmEnd;
+    }
+
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    public void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
     }
 
     public String getHmmBounds() {

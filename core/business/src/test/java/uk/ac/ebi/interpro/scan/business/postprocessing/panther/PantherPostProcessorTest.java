@@ -61,6 +61,6 @@ public class PantherPostProcessorTest {
     }
 
     private PantherRawMatch getDefaultPantherRawMatchObj(String sequenceIdentifier) {
-        return new PantherRawMatch(sequenceIdentifier, "model", "signatureLibraryRelease", 0, 0, 0.0d, 0.0d, "familyName",0,0,"[]",0,0);
+        return new PantherRawMatch(sequenceIdentifier, "model", "signatureLibraryRelease", 0, 0, 0.0d, 0.0d, "familyName", 0, 0, 0,"[]",0,0);
     }
 }

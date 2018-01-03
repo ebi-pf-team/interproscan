@@ -50,7 +50,7 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        if (splitLine.length == 8) {
+        if (splitLine.length == 9) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();
             //Parse Panther family ID
@@ -67,6 +67,8 @@ public final class PantherMatchParser
             final String aliLocationStartEnd = splitLine[6].trim();
             //Hit envelope start and end
             final String envLocationStartEnd = splitLine[7].trim();
+            // HMM length
+            final String hmmLengthString = splitLine[8].trim();
 
             //Transform raw parsed values
             double score = 0.0d;
@@ -74,12 +76,16 @@ public final class PantherMatchParser
             int[] hmmLocation = parseLocation(hmmLocationStartEnd);
             int[] aliLocation = parseLocation(aliLocationStartEnd);
             int[] envLocation = parseLocation(envLocationStartEnd);
+            int hmmLength = 0;
 
             if (scoreString.length() > 0 && !".".equals(scoreString)) {
                 score = Double.parseDouble(scoreString);
             }
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
                 evalue = Double.parseDouble(eValueString);
+            }
+            if (hmmLengthString.length() > 0) {
+                hmmLength = Integer.parseInt(hmmLengthString);
             }
 
             return new PantherRawMatch(
@@ -93,6 +99,7 @@ public final class PantherMatchParser
                     familyName,
                     hmmLocation[0],
                     hmmLocation[1],
+                    hmmLength,
                     calculateHmmBounds(envLocation[0], envLocation[1], aliLocation[0], aliLocation[1]),
                     envLocation[0],
                     envLocation[1]);
