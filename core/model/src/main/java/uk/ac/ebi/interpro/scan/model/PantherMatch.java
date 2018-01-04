@@ -153,12 +153,12 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         protected PantherLocation() {
         }
 
-        public PantherLocation(int start, int end, int hmmStart, int hmmEnd, int hmmLength, String hmmBounds, int envelopeStart, int envelopeEnd) {
+        public PantherLocation(int start, int end, int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds, int envelopeStart, int envelopeEnd) {
             super(start, end);
             this.hmmStart = hmmStart;
             this.hmmEnd = hmmEnd;
             this.hmmLength = hmmLength;
-            this.hmmBounds = hmmBounds;
+            setHmmBounds(hmmBounds);
             this.envelopeStart = envelopeStart;
             this.envelopeEnd = envelopeEnd;
         }
@@ -191,12 +191,12 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         }
 
         @XmlAttribute(name="hmm-bounds", required=true)
-        public String getHmmBounds() {
-            return hmmBounds;
+        public HmmBounds getHmmBounds() {
+            return HmmBounds.parseSymbol(hmmBounds);
         }
 
-        private void setHmmBounds(String hmmBounds) {
-            this.hmmBounds = hmmBounds;
+        private void setHmmBounds(HmmBounds hmmBounds) {
+            this.hmmBounds = hmmBounds.getSymbol();
         }
 
         @XmlAttribute(name = "env-start", required = true)
@@ -219,19 +219,20 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof PantherLocation)) return false;
-            if (!super.equals(o)) return false;
-
+            if (this == o)
+                return true;
+            if (!(o instanceof PantherLocation))
+                return false;
             PantherLocation that = (PantherLocation) o;
-
-            if (hmmStart != that.hmmStart) return false;
-            if (hmmEnd != that.hmmEnd) return false;
-            if (hmmLength != that.hmmLength) return false;
-            if (envelopeStart != that.envelopeStart) return false;
-            if (envelopeEnd != that.envelopeEnd) return false;
-            return hmmBounds != null ? hmmBounds.equals(that.hmmBounds) : that.hmmBounds == null;
-
+            return new EqualsBuilder()
+                    .appendSuper(super.equals(o))
+                    .append(hmmStart, that.hmmStart)
+                    .append(hmmEnd, that.hmmEnd)
+                    .append(hmmLength, that.hmmLength)
+                    .append(hmmBounds, that.hmmBounds)
+                    .append(envelopeStart, that.envelopeStart)
+                    .append(envelopeEnd, that.envelopeEnd)
+                    .isEquals();
         }
 
         @Override

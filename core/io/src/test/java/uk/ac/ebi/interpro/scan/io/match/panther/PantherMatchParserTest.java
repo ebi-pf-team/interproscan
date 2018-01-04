@@ -36,6 +36,7 @@ public class PantherMatchParserTest extends TestCase {
         assertEquals(1, result.getHmmStart());
         assertEquals(341, result.getHmmEnd());
         assertEquals(341, result.getHmmLength());
+        assertEquals("[]", result.getHmmBounds());
         assertEquals(1, result.getLocationStart());
         assertEquals(341, result.getLocationEnd());
         assertEquals(1, result.getEnvelopeStart());

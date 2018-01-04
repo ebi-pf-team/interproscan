@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.PantherMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
@@ -27,10 +28,18 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
         }
         Set<PantherMatch.PantherLocation> locations = new HashSet<>(berkeleyMatch.getLocations().size());
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
+
+            final HmmBounds bounds;
+            if (berkeleyLocation.getHmmBounds() == null || berkeleyLocation.getHmmBounds().isEmpty()) {
+                bounds = HmmBounds.COMPLETE;   // FUDGE!  HmmBounds cannot be null...
+            } else {
+                bounds = HmmBounds.parseSymbol(berkeleyLocation.getHmmBounds());
+            }
+
             locations.add(new PantherMatch.PantherLocation(
                     berkeleyLocation.getStart(), berkeleyLocation.getEnd(),
                     berkeleyLocation.getHmmStart(), berkeleyLocation.getHmmEnd(), valueOrZero(berkeleyLocation.getHmmLength()),
-                    berkeleyLocation.getHmmBounds(), berkeleyLocation.getEnvelopeStart(), berkeleyLocation.getEnvelopeEnd()
+                    bounds, berkeleyLocation.getEnvelopeStart(), berkeleyLocation.getEnvelopeEnd()
             ));
         }
 
