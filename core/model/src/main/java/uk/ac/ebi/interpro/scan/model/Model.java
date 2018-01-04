@@ -45,7 +45,7 @@ import java.util.List;
         @Index(name = "MODEL_NAME_IDX", columnList = "MODEL_NAME"),
         @Index(name = "MODEL_MD5_IDX", columnList = "MD5")
 })
-@JsonIgnoreProperties({"definition", "md5"}) // IBU-4703: "definition" and "md5" are never populated
+@JsonIgnoreProperties({"definition", "md5", "length"}) // IBU-4703: "definition" and "md5" are never populated
 public class Model implements Serializable {
 
     @Transient
