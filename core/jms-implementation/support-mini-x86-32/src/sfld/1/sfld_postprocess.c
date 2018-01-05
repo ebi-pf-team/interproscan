@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     get_options_post(argc, argv, &only_matches, &hmmer_path, &hmmerout_fn, &output_fn, &tblout_fn, &alignments_fn, &site_info_fn, &format);
 
-    if (! alignments_fn || ! hmmerout_fn || ! &tblout_fn || ! site_info_fn) {
+    if (! alignments_fn || ! hmmerout_fn || ! tblout_fn || ! site_info_fn) {
         show_help(argv[0]);
         return 0;
     }
