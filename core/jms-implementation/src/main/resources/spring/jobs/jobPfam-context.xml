@@ -121,7 +121,7 @@
         <property name="signatureLibraryRelease" ref="pfamSignatureLibraryReleaseVersion"/>
         <property name="signatureLibrary" value="PFAM"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
-        <property name="levelDBStore" ref="kvStore"/>
+        <property name="levelDBStore" ref="kvStoreMatches"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl" >
              <!-- constructor-arg type="uk.ac.ebi.interpro.scan.persistence.LevelDBStore" ref="kvStore"/ -->

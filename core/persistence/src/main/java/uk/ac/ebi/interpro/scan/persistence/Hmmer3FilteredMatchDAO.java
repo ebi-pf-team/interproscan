@@ -59,6 +59,9 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
         // Add matches to protein
         List<Protein> completeProteins = new ArrayList();
 
+        Hmmer3Match repMatch = null;
+        Hmmer3Match theMatch = null;
+
         int matchLocationCount = 0;
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
@@ -105,16 +108,26 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                         rawMatch.toString() + "\n" + protein.toString());
                     }
                 }
+                if (repMatch == null) {
+                    repMatch = match;
+                    Utilities.verboseLog("repMatch: " + repMatch);
+                }
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
                 completeProteins.add(protein);
+                if (theMatch == null) {
+                    theMatch = match;
+                }
             }
             //TODO use a different utitlity function
             //System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }
+
+        Utilities.verboseLog("theMatch:" + theMatch);
         //Utilities.verbose("Start persist to leveldb: " + completeProteins.size() + " proteins and " + matchLocationCount);
         System.out.println("Start persist to leveldb: " + completeProteins.size() + " proteins and " + matchLocationCount);
+
 	Long timeNow = System.currentTimeMillis();
         for (Protein protein:completeProteins) {
             String key = String.valueOf(protein.getId());

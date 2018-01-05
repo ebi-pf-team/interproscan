@@ -353,7 +353,11 @@
     </bean>
 
 
-    <bean id="kvStore"
+    <bean id="kvStoreProteins"
+          class="uk.ac.ebi.interpro.scan.persistence.LevelDBStore">
+    </bean>
+
+    <bean id="kvStoreMatches"
           class="uk.ac.ebi.interpro.scan.persistence.LevelDBStore">
     </bean>
 

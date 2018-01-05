@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.CoilsMatchKVDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
@@ -21,6 +22,7 @@ import java.util.Set;
  * (as filtered results - there is currently no second filtering step.)
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
@@ -33,6 +35,8 @@ public class ParseCoilsOutputStep extends Step {
     private CoilsMatchParser parser;
 
     private CoilsFilteredMatchDAO matchDAO;
+    private CoilsMatchKVDAO matchKVDAO;
+
 
     @Required
     public void setCoilsOutputFileNameTemplate(String coilsOutputFileNameTemplate) {
@@ -47,6 +51,10 @@ public class ParseCoilsOutputStep extends Step {
     @Required
     public void setMatchDAO(CoilsFilteredMatchDAO matchDAO) {
         this.matchDAO = matchDAO;
+    }
+
+    public void setMatchKVDAO(CoilsMatchKVDAO matchKVDAO) {
+        this.matchKVDAO = matchKVDAO;
     }
 
     /**
@@ -64,33 +72,34 @@ public class ParseCoilsOutputStep extends Step {
         delayForNfs();
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, coilsOutputFileNameTemplate);
         InputStream is = null;
-        ParseCoilsMatch represantiveRawMatch = null;
+        ParseCoilsMatch representiveRawMatch = null;
         int count = 0;
         try {
             is = new FileInputStream(fileName);
             Set<ParseCoilsMatch> matches = parser.parse(is, fileName);
             for (ParseCoilsMatch parseCoilsMatch : matches) {
                 count += 1;
-                if (represantiveRawMatch == null) {
-                        represantiveRawMatch = parseCoilsMatch;
+                if (representiveRawMatch == null) {
+                    representiveRawMatch = parseCoilsMatch;
                 }
             }
 
             matchDAO.persist(matches);
+            matchKVDAO.persist(matches);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0){
                 int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
-                if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                if (representiveRawMatch != null) {
+                    Utilities.verboseLog("representiveRawMatch :" + representiveRawMatch.toString());
                     Utilities.sleep(waitTimeFactor * 1000);
                     //ignore the usual check until refactoring of the parse step
                 }else{
-                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + representiveRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + representiveRawMatch);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + representiveRawMatch.toString()
                         + " time taken: " + timeTaken);
             }
         }

@@ -4,8 +4,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.io.match.coils.ParseCoilsMatch;
 import uk.ac.ebi.interpro.scan.model.*;
-
 import uk.ac.ebi.interpro.scan.util.Utilities;
+
+import org.apache.commons.lang3.SerializationUtils;
+
 
 import javax.persistence.Query;
 import java.util.*;
@@ -13,11 +15,11 @@ import java.util.*;
 /**
  * Implements the persistence method for Coils matches (as filtered matches).
  *
- * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
-public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> implements CoilsFilteredMatchDAO {
+public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> implements CoilsMatchKVDAO {
 
     private String coilsReleaseVersion;
 
@@ -30,7 +32,7 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
      * Model class specific sub-classes should define a no-argument constructor
      * that calls this constructor with the appropriate class.
      */
-    public CoilsFilteredMatchDAOImpl(String version) {
+    public CoilsMatchKVDAOImpl(String version) {
         super(CoilsMatch.class);
         this.coilsReleaseVersion = version;
     }
@@ -47,6 +49,7 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
         CoilsMatch theMatch = null;
         Signature coilsSignature = loadPersistedSignature();
         Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(coilsMatches);
+        Map<String, Set<CoilsMatch>> keyToMatchMap = new HashMap<>();
         for (ParseCoilsMatch parseCoilsMatch : coilsMatches) {
             final Protein persistentProtein = proteinIdToProteinMap.get(parseCoilsMatch.getProteinDatabaseIdentifier());
             if (persistentProtein == null) {
@@ -58,15 +61,23 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
             CoilsMatch match = new CoilsMatch(coilsSignature, locations);
             if (repMatch == null) {
                 repMatch = match;
-                Utilities.verboseLog("repMatch: " + repMatch.toString());
+//                Utilities.verboseLog("repMatch: " + repMatch.toString());
             }
-            persistentProtein.addMatch(match);
-            if (theMatch == null) {
-                theMatch = match;
-                Utilities.verboseLog("theMatch: " + theMatch.toString());
+            String key =  parseCoilsMatch.getProteinDatabaseIdentifier() + SignatureLibrary.COILS;
+            byte[] byteKey = SerializationUtils.serialize(key);
+            byte[] byteMatch = SerializationUtils.serialize(match);
+            Set<CoilsMatch> matchesForThisKey = keyToMatchMap.get(key);
+            if (matchesForThisKey == null){
+                matchesForThisKey = new HashSet<>();
             }
-            entityManager.persist(match);
+            matchesForThisKey.add(match);
+            keyToMatchMap.put(key, matchesForThisKey);
+
+            //persist(key,match);
+            persist(byteKey,byteMatch);
         }
+        for ()
+        //persist(keyToMatchMap);
 
     }
 

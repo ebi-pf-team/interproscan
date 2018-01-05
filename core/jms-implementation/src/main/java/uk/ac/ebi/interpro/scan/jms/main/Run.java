@@ -114,7 +114,7 @@ public class Run extends AbstractI5Runner {
 
         String temporaryDirectory = null;
         boolean deleteWorkingDirectoryOnCompletion = true;
-        LevelDBStore levelDBStore;
+        //LevelDBStore levelDBStore;
 
         try {
             //change Loglevel
@@ -366,9 +366,16 @@ public class Run extends AbstractI5Runner {
 
                 }
 
-		String kvStoreName = workingTemporaryDirectory + "/kvstore";
-                levelDBStore = (LevelDBStore) ctx.getBean("kvStore");
-                levelDBStore.setLevelDBStore(kvStoreName);
+                //deal with kvStores
+		        String kvStoreRootName = workingTemporaryDirectory + "/kvstore";
+                String kvStoreProteinsName = kvStoreRootName + "/proteins";
+
+                LevelDBStore proteinsKVStore = (LevelDBStore) ctx.getBean("kvStoreProteins");
+                proteinsKVStore.setLevelDBStore(kvStoreProteinsName);
+
+                String kvStoreMatchesName = kvStoreRootName + "/matches";
+                LevelDBStore matchesKVStore = (LevelDBStore) ctx.getBean("kvStoreMatches");
+                matchesKVStore.setLevelDBStore(kvStoreMatchesName);
 
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
                     //deal with panther  stepPantherHMM3RunPantherScore

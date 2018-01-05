@@ -126,7 +126,7 @@
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" ref="latestPIRSFSignatureLibraryRelease"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO"/>
-        <property name="levelDBStore" ref="kvStore"/>
+        <property name="levelDBStore" ref="kvStoreMatches"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer3FilteredMatchDAOImpl"/>
         </property>

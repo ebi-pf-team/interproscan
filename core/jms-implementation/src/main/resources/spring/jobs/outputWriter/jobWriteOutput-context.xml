@@ -35,6 +35,20 @@
         <!--If set to TRUE, the archive will be compressed as well-->
         <property name="compressHtmlAndSVGOutput" value="true"/>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <!--<property name="proteinKVDAO">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.ProteinKVDAOImpl">-->
+                <!--<constructor-arg ref="latestCoilsSignatureLibraryRelease"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <property name="matchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.WriteOutputMatchDAOImpl">
+                <!--<constructor-arg ref="kvStoreProteins"/>-->
+                <!--<constructor-arg ref="kvStoreMatches"/>-->
+                <property name="proteinKVStore" ref="kvStoreProteins"/>
+                <property name="matchKVStore" ref="kvStoreMatches"/>
+                <property name="proteinDAO" ref="proteinDAO"/>
+            </bean>
+        </property>
     </bean>
 
 </beans>

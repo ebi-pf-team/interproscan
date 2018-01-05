@@ -15,7 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -53,6 +53,8 @@ public class WriteOutputStep extends Step {
     private ProteinDAO proteinDAO;
 
     private ProteinXrefDAO proteinXrefDAO;
+
+    private FilteredMatchKVDAO matchKVDAO;
 
 //    private FilteredMatchDAO matchDAO;
 
@@ -125,6 +127,12 @@ public class WriteOutputStep extends Step {
     public void setXrefDao(ProteinXrefDAO proteinXrefDAO) {
         this.proteinXrefDAO = proteinXrefDAO;
     }
+
+    @Required
+    public void setMatchKVDAO(FilteredMatchKVDAO matchKVDAO) {
+        this.matchKVDAO = matchKVDAO;
+    }
+
 
     @Required
     public void setExcludeSites(boolean excludeSites) {
@@ -264,6 +272,9 @@ public class WriteOutputStep extends Step {
 	          + " millis");
 	*/
 
+        //List<Match> proteins = matchKVDAO.g.
+
+
         timeNow = System.currentTimeMillis();
 
         List<Protein> proteins = proteinDAO.getProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
@@ -345,6 +356,8 @@ public class WriteOutputStep extends Step {
                 throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan to path: " + p, ioe);
             }
         }
+
+        matchKVDAO.closeDB();
 
         cleanUpWorkingDir(temporaryFileDirectory);
         if (LOGGER.isInfoEnabled()) {
