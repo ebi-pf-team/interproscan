@@ -1,5 +1,5 @@
-SFLD search/post-processing
-===========================
+SFLD pre/post-processing
+========================
 
 Building
 --------
@@ -14,10 +14,9 @@ $> make
 $> make check
 
 $> cd .../path/to/src/sfld/1
-$> make sfld_preprocess
 In the Makefile replace the path in EASEL_DIR with the 'easel' subdir of the hmmer
 distribution (e.g. /path/to/hmmer-3.1b2/easel). Then run
-$> make sfld_postprocess
+$> make
 
 License
 -------
