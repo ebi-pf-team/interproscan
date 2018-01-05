@@ -49,7 +49,8 @@ public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> impl
         CoilsMatch theMatch = null;
         Signature coilsSignature = loadPersistedSignature();
         Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(coilsMatches);
-        Map<String, Set<CoilsMatch>> keyToMatchMap = new HashMap<>();
+        Map<String, HashSet<CoilsMatch>> keyToMatchMap = new HashMap<>();
+        Long timeNow = System.currentTimeMillis();
         for (ParseCoilsMatch parseCoilsMatch : coilsMatches) {
             final Protein persistentProtein = proteinIdToProteinMap.get(parseCoilsMatch.getProteinDatabaseIdentifier());
             if (persistentProtein == null) {
@@ -63,10 +64,10 @@ public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> impl
                 repMatch = match;
 //                Utilities.verboseLog("repMatch: " + repMatch.toString());
             }
-            String key =  parseCoilsMatch.getProteinDatabaseIdentifier() + SignatureLibrary.COILS;
+            String key =  parseCoilsMatch.getProteinDatabaseIdentifier() + SignatureLibrary.COILS.getName();
             byte[] byteKey = SerializationUtils.serialize(key);
             byte[] byteMatch = SerializationUtils.serialize(match);
-            Set<CoilsMatch> matchesForThisKey = keyToMatchMap.get(key);
+            HashSet<CoilsMatch> matchesForThisKey = keyToMatchMap.get(key);
             if (matchesForThisKey == null){
                 matchesForThisKey = new HashSet<>();
             }
@@ -74,10 +75,31 @@ public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> impl
             keyToMatchMap.put(key, matchesForThisKey);
 
             //persist(key,match);
+            //persist(byteKey,byteMatch);
+        }
+        Long timeTaken = System.currentTimeMillis() - timeNow;
+        Long timeTakenSecs = timeTaken / 1000;
+        Long timeTakenMins = timeTakenSecs / 60;
+        Utilities.verboseLog("Time taken to process " + coilsMatches.size() +  " complete Coils Matches and persist to kvStore : "
+                + timeTakenSecs + " seconds ("
+                + timeTakenMins + " minutes)");
+
+        Map<byte[], byte[]> byteKeyToMatchMap = new HashMap<>();
+
+        Iterator it = keyToMatchMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String key = ((String) pair.getKey()).replace(SignatureLibrary.COILS.getName(), "").trim();
+            byte[] byteKey = SerializationUtils.serialize(key);
+            byte[] byteMatch = SerializationUtils.serialize((HashSet<CoilsMatch>) pair.getValue());
+            byteKeyToMatchMap.put(byteKey,byteMatch);
             persist(byteKey,byteMatch);
         }
-        for ()
-        //persist(keyToMatchMap);
+        Utilities.verboseLog("Completed processing byteKeyToMatchMap ");
+        //persist(byteKeyToMatchMap);
+
+
+
 
     }
 

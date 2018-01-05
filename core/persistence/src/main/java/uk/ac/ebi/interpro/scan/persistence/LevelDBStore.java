@@ -12,6 +12,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * level DB store
@@ -62,6 +63,16 @@ public class LevelDBStore {
 
     public byte[] serialize(Match match) {
         byte[] data = SerializationUtils.serialize(match);
+        return data;
+    }
+
+    public static HashSet<Match> asDeserializedMatchSet(byte[] byteMatchSet) {
+        HashSet<Match> data = (HashSet<Match>) SerializationUtils.deserialize(byteMatchSet);
+        return data;
+    }
+
+    public static Match asDeserializedMatch(byte[] byteMatch) {
+        Match data = (Match) SerializationUtils.deserialize(byteMatch);
         return data;
     }
 

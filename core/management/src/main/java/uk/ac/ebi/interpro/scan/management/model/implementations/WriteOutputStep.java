@@ -15,14 +15,16 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
+import uk.ac.ebi.interpro.scan.persistence.WriteOutputMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
+
 import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
+
 import org.iq80.leveldb.Options;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -54,7 +56,7 @@ public class WriteOutputStep extends Step {
 
     private ProteinXrefDAO proteinXrefDAO;
 
-    private FilteredMatchKVDAO matchKVDAO;
+    private WriteOutputMatchDAO writeOutputMatchDAO;
 
 //    private FilteredMatchDAO matchDAO;
 
@@ -129,10 +131,9 @@ public class WriteOutputStep extends Step {
     }
 
     @Required
-    public void setMatchKVDAO(FilteredMatchKVDAO matchKVDAO) {
-        this.matchKVDAO = matchKVDAO;
+    public void setWriteOutputMatchDAO(WriteOutputMatchDAO writeOutputMatchDAO) {
+        this.writeOutputMatchDAO = writeOutputMatchDAO;
     }
-
 
     @Required
     public void setExcludeSites(boolean excludeSites) {
@@ -193,7 +194,7 @@ public class WriteOutputStep extends Step {
 
 
         int waitTimeFactor = 1;  //check what is the average time it takes to get raw results
-        if (! Utilities.isRunningInSingleSeqMode()) {
+        if (!Utilities.isRunningInSingleSeqMode()) {
             //use loge to get wait time
             waitTimeFactor = Utilities.getWaitTimeFactorLogE(20 * Utilities.getSequenceCount()).intValue();
         }
@@ -272,26 +273,41 @@ public class WriteOutputStep extends Step {
 	          + " millis");
 	*/
 
-        //List<Match> proteins = matchKVDAO.g.
+        timeNow = System.currentTimeMillis();
 
+        //List<Match> matches = writeOutputMatchDAO.getMatches();
+        List<HashSet<Match>> matcheSets = writeOutputMatchDAO.getMatchSets();
+        List<Protein> completeProteins = writeOutputMatchDAO.getProteins();
+
+        Utilities.verboseLog(10, " WriteOutputStep - KVStore access Stats:"
+                + " matches retrieved : " + matcheSets.size()
+                + " complete proteins retrieved : " + completeProteins.size()
+                + " time taken : "
+                + (System.currentTimeMillis() - timeNow)
+                + " millis");
 
         timeNow = System.currentTimeMillis();
 
         List<Protein> proteins = proteinDAO.getProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
 
         Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
                 + " time taken to get proteins: "
                 + (System.currentTimeMillis() - timeNow)
                 + " millis");
 
-       int matchCount = 0;
-       for (Protein prot: proteins){
-	  int count = prot.getMatches().size();
-          matchCount += count;
-       }
-       Utilities.verboseLog("Initial matches from " + proteins.size() + " proteins : " + matchCount);
+        //completeProteins = writeOutputMatchDAO.getCompleteProteins(proteins);
 
-       //proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        int matchCount = 0;
+        for (Protein prot : proteins) {
+            int count = prot.getMatches().size();
+            matchCount += count;
+        }
+
+
+        Utilities.verboseLog("Initial matches from " + proteins.size() + " proteins : " + matchCount);
+
+        //proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
@@ -357,7 +373,7 @@ public class WriteOutputStep extends Step {
             }
         }
 
-        matchKVDAO.closeDB();
+        writeOutputMatchDAO.closeDB();
 
         cleanUpWorkingDir(temporaryFileDirectory);
         if (LOGGER.isInfoEnabled()) {
@@ -431,8 +447,7 @@ public class WriteOutputStep extends Step {
                         // Start creating the empty output file now, while the path is still available
                         if (outputFormat.equals(FileOutputFormat.SVG) && !archiveSVGOutput) {
                             outputPath = Files.createDirectories(outputPath);
-                        }
-                        else {
+                        } else {
                             outputPath = Files.createFile(outputPath);
                         }
                     } catch (IOException e) {
@@ -454,7 +469,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
+        Utilities.verboseLog(10, " WriteOutputStep - outputToXML ");
         IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
 
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
@@ -462,7 +477,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
-        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
+        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON ");
         IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
 
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
@@ -483,8 +498,7 @@ public class WriteOutputStep extends Step {
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
         if (excludeSites || this.excludeSites) { // Command line argument takes preference over proprties file config
             removeSites(proteins, true);
-        }
-        else if (isSlimOutput) {
+        } else if (isSlimOutput) {
             removeSites(proteins, false);
         }
 
@@ -522,8 +536,7 @@ public class WriteOutputStep extends Step {
             }
             try (BufferedWriter v = Files.newBufferedWriter(tsvVersionPath, Charset.defaultCharset())) {
                 v.write(interProScanVersion);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // If we fail to write the TSV version file just report the issue and continue - not worth stopping execution for that!
                 System.out.println("Unable to write TSV version file " + tsvVersionFilename + " due to exception: ");
                 e.printStackTrace();
@@ -533,8 +546,8 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSVPRO(final Path path,
-                             final StepInstance stepInstance,
-                             final List<Protein> proteins) throws IOException {
+                                final StepInstance stepInstance,
+                                final List<Protein> proteins) throws IOException {
         //first write the tsv production output
         try (ProteinMatchesTSVProResultWriter writer = new ProteinMatchesTSVProResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
@@ -690,16 +703,16 @@ public class WriteOutputStep extends Step {
             for (Protein protein : proteins) {
                 writer.write(protein);
                 count++;
-                if (! matchesCounted){
-                  if (count % 40000 == 0) {
-                    Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins with " + totalMatchCount + " matches");
-                  }
-                  int tmpCount = protein.getMatches().size();
-                  totalMatchCount += tmpCount;
+                if (!matchesCounted) {
+                    if (count % 40000 == 0) {
+                        Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins with " + totalMatchCount + " matches");
+                    }
+                    int tmpCount = protein.getMatches().size();
+                    totalMatchCount += tmpCount;
                 }
 
             }
-            if (totalMatchCount > 0 && ! matchesCounted){
+            if (totalMatchCount > 0 && !matchesCounted) {
                 matchesCounted = true;
                 Utilities.verboseLog(10, " WriteOutputStep : " + "Loaded " + proteins.size() + " proteins with totalMatchCount :" + totalMatchCount + " matches");
             }
@@ -708,8 +721,9 @@ public class WriteOutputStep extends Step {
 
     /**
      * Remove sites from any protein match locations (make sites NULL so they don't appear at all in the XML output)
+     *
      * @param proteins The proteins
-     * @param all Remove all site data (not just empty sites)?
+     * @param all      Remove all site data (not just empty sites)?
      */
     private void removeSites(List<Protein> proteins, boolean all) {
         for (Protein protein : proteins) {
@@ -736,8 +750,8 @@ public class WriteOutputStep extends Step {
 
     }
 
-    public void   writeToLevelDB(List<Protein> proteins, String levelDBStoreRoot){
-        int proteinCount =  proteins.size();
+    public void writeToLevelDB(List<Protein> proteins, String levelDBStoreRoot) {
+        int proteinCount = proteins.size();
 
         String levelDBStoreName = levelDBStoreRoot + "/leveldb/outstore";
         Utilities.verboseLog("Create LevelDB  : " + levelDBStoreName);
@@ -747,7 +761,7 @@ public class WriteOutputStep extends Step {
         for (Protein protein : proteins) {
             byte[] keyInBytes = SerializationUtils.serialize(protein.getMd5());
             byte[] data = SerializationUtils.serialize(protein);
-            levelDBStore.put(keyInBytes,data);
+            levelDBStore.put(keyInBytes, data);
         }
 
         Long timeTaken = System.currentTimeMillis() - timeNow;

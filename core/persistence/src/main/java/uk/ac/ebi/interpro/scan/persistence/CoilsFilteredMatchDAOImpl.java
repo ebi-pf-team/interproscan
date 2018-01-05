@@ -63,7 +63,7 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
             persistentProtein.addMatch(match);
             if (theMatch == null) {
                 theMatch = match;
-                Utilities.verboseLog("theMatch: " + theMatch.toString());
+//                Utilities.verboseLog("theMatch: " + theMatch.toString());
             }
             entityManager.persist(match);
         }

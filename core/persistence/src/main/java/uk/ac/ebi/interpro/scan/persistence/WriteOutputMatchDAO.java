@@ -4,7 +4,9 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.match.coils.ParseCoilsMatch;
 import uk.ac.ebi.interpro.scan.model.Match;
+import uk.ac.ebi.interpro.scan.model.Protein;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +20,16 @@ public interface WriteOutputMatchDAO extends GenericDAO<Match, Long> {
      *
      */
     @Transactional
+    List<HashSet<Match>> getMatchSets();
+
+    @Transactional
     List<Match> getMatches();
+
+    @Transactional
+    List<Protein> getProteins();
+
+    @Transactional
+    List<Protein>  getCompleteProteins(List<Protein> proteins);
 
     void closeDB();
 }

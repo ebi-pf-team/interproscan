@@ -40,7 +40,7 @@
                 <!--<constructor-arg ref="latestCoilsSignatureLibraryRelease"/>-->
             <!--</bean>-->
         <!--</property>-->
-        <property name="matchKVDAO">
+        <property name="writeOutputMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.WriteOutputMatchDAOImpl">
                 <!--<constructor-arg ref="kvStoreProteins"/>-->
                 <!--<constructor-arg ref="kvStoreMatches"/>-->
