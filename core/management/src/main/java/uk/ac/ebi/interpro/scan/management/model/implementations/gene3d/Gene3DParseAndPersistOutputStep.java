@@ -16,6 +16,8 @@ import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.*;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
+
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -52,6 +54,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
     private RawMatchDAO<Gene3dHmmer3RawMatch> rawMatchDAO;
 
     private FilteredMatchDAO<Gene3dHmmer3RawMatch, Hmmer3Match> filteredMatchDAO;
+    
+    private FilteredMatchKVDAO<Hmmer3Match, Gene3dHmmer3RawMatch> filteredMatchKVDAO;
 
     private String signatureLibraryRelease;
 
@@ -84,6 +88,12 @@ public class Gene3DParseAndPersistOutputStep extends Step {
     public void setFilteredMatchDAO(FilteredMatchDAO<Gene3dHmmer3RawMatch, Hmmer3Match> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
+
+    @Required
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<Hmmer3Match, Gene3dHmmer3RawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
+    }
+
 
     public void setHmmer3DomTblParser(Hmmer3DomTblParser hmmer3DomTblParser) {
         this.hmmer3DomTblParser = hmmer3DomTblParser;
@@ -256,8 +266,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
             if (rawProteins != null && rawProteins.size() > 0) {
                 Utilities.verboseLog("Persist Gene3D rawProteins # :" + rawProteins.size());
-                filteredMatchDAO.setLevelDBStore(levelDBStore);
-                filteredMatchDAO.persist(rawProteins);
+                //filteredMatchDAO.setLevelDBStore(levelDBStore);
+                filteredMatchKVDAO.persist(rawProteins);
                 Long now = System.currentTimeMillis();
                 if (count > 0) {
                     int matchesFound = 0;

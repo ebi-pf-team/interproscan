@@ -99,6 +99,11 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchKVDAOImpl">
+                <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
         <property name="hmmer3DomTblParser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser"/>
         </property>

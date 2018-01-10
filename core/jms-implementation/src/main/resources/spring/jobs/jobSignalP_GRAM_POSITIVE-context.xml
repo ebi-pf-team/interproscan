@@ -113,6 +113,12 @@
                 <constructor-arg ref="latestSignalPGramPositiveSignatureLibraryRelease"/>
             </bean>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SignalPFilteredMatchKVDAOImpl">
+                <constructor-arg ref="latestSignalPEukSignatureLibraryRelease"/>
+                <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.signalp.match.SignalPMatchParser">
                 <constructor-arg value="gram+"/>

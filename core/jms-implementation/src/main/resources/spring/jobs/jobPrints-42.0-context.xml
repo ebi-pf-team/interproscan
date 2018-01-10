@@ -102,6 +102,11 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl"/>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchKVDAOImpl" >
+                <property name="levelDBStore" ref="kvStoreMatches" />
+            </bean>
+        </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 

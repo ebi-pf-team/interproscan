@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -32,7 +35,9 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
     private SuperFamilyHmmer3MatchParser parser;
 
-    private SuperFamilyHmmer3FilteredMatchDAO filteredMatchDAO;
+    private FilteredMatchDAO filteredMatchDAO;
+
+    private FilteredMatchKVDAO<SuperFamilyHmmer3Match, SuperFamilyHmmer3RawMatch> filteredMatchKVDAO;
 
     @Required
     public void setSuperFamilyBinaryOutputFileName(String superFamilyBinaryOutputFileName) {
@@ -45,10 +50,14 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
     }
 
     @Required
-    public void setFilteredMatchDAO(SuperFamilyHmmer3FilteredMatchDAO filteredMatchDAO) {
+    public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
+    @Required
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<SuperFamilyHmmer3Match, SuperFamilyHmmer3RawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
+    }
     /**
      * Parse the output file from the SuperFamily binary and persist the results in the database.
      *
@@ -98,7 +107,7 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
-            filteredMatchDAO.persist(rawProteins);
+            filteredMatchKVDAO.persist(rawProteins);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0){

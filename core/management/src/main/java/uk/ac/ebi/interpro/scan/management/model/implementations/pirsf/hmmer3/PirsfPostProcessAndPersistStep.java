@@ -9,8 +9,8 @@ import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,7 +31,8 @@ public class PirsfPostProcessAndPersistStep extends Step {
 
     private FilteredMatchDAO<PirsfHmmer3RawMatch, Hmmer3Match> filteredMatchDAO;
 
-    private LevelDBStore levelDBStore;
+    private FilteredMatchKVDAO<Hmmer3Match, PirsfHmmer3RawMatch> filteredMatchKVDAO;
+
 
     @Required
     public void setPostProcessor(PirsfPostProcessor postProcessor) {
@@ -53,9 +54,11 @@ public class PirsfPostProcessAndPersistStep extends Step {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
-    public void setLevelDBStore(LevelDBStore levelDBStore) {
-        this.levelDBStore = levelDBStore;
+    @Required
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
+
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -79,7 +82,8 @@ public class PirsfPostProcessAndPersistStep extends Step {
         // Post process
         try {
             Map<String, RawProtein<PirsfHmmer3RawMatch>> filteredMatches = postProcessor.process(rawMatches);
-            filteredMatchDAO.persist(filteredMatches.values());
+            //filteredMatchDAO.persist(filteredMatches.values());
+            filteredMatchKVDAO.persist(filteredMatches.values());
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PIRSF matches.", e);
         }

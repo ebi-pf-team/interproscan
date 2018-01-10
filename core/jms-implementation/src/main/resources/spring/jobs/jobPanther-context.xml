@@ -144,6 +144,11 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchKVDAO" >
+                <property name="levelDBStore" ref="kvStoreMatches" />
+            </bean>
+        </property>
         <property name="retries" value="3"/>
     </bean>
 

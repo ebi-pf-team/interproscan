@@ -92,6 +92,12 @@
                 <constructor-arg value="1.75"/>
             </bean>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchKVDAOImpl">
+                <constructor-arg value="1.75"/>
+                <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser"/>
         </property>

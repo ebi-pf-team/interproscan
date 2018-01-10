@@ -98,6 +98,12 @@
                 <constructor-arg ref="latestPhobiusSignatureLibraryRelease"/>
             </bean>
         </property>
+        <property name="phobiusMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchKVDAOImpl">
+                <constructor-arg ref="latestPhobiusSignatureLibraryRelease"/>
+                <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser"/>
         </property>

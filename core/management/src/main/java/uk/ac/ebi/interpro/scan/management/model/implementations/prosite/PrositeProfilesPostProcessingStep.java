@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.util.HashMap;
@@ -33,6 +34,9 @@ public class PrositeProfilesPostProcessingStep extends Step {
 
     private FilteredMatchDAO<ProSiteProfileRawMatch, ProfileScanMatch> filteredMatchDAO;
 
+    private FilteredMatchKVDAO<ProfileScanMatch, ProSiteProfileRawMatch> filteredMatchKVDAO;
+
+
     @Required
     public void setPostProcessor(ProfilePostProcessing<ProSiteProfileRawMatch> postProcessor) {
         this.postProcessor = postProcessor;
@@ -51,6 +55,10 @@ public class PrositeProfilesPostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO<ProSiteProfileRawMatch, ProfileScanMatch> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<ProfileScanMatch, ProSiteProfileRawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     /**
@@ -80,6 +88,6 @@ public class PrositeProfilesPostProcessingStep extends Step {
             proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
         }
         Map<String, RawProtein<ProSiteProfileRawMatch>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
-        filteredMatchDAO.persist(filteredMatches.values());
+        filteredMatchKVDAO.persist(filteredMatches.values());
     }
 }

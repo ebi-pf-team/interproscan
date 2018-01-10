@@ -16,10 +16,12 @@ import java.util.UUID;
 /**
  * SuperFamily filtered match data access object.
  *
+ * @author Gift Nuka
  * @author Matthew Fraser
  * @version $Id$
  */
-public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<SuperFamilyHmmer3RawMatch, SuperFamilyHmmer3Match> implements SuperFamilyHmmer3FilteredMatchDAO {
+public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<SuperFamilyHmmer3RawMatch, SuperFamilyHmmer3Match>
+        implements FilteredMatchDAO<SuperFamilyHmmer3RawMatch, SuperFamilyHmmer3Match> {
 
     private static final Logger LOGGER = Logger.getLogger(SuperFamilyHmmer3FilteredMatchDAOImpl.class.getName());
 

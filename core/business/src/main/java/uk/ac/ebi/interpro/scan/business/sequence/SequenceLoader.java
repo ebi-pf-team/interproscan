@@ -38,4 +38,7 @@ public interface SequenceLoader<T> extends Serializable {
      * @param analysisJobMap for analysisJobNames to be included in analysis.
      */
     void storeAll(Set<T> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap);
+
+    void storeAll2KV(Set<T> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap);
+
 }

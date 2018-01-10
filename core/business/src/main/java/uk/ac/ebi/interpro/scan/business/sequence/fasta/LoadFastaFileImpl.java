@@ -143,12 +143,18 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
             }
 
             Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
-
+	
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
             sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
             Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
             sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
+            
+            Long timeNow = System.currentTimeMillis();
+            sequenceLoader.storeAll2KV(parsedMolecules, analysisJobMap);
+            Long timeTaken = System.currentTimeMillis() - timeNow;
+            Utilities.verboseLog("Stored Proteins (sequences) to KV Store in " + timeTaken + " millis");
+
             LOGGER.info( "Store and persist the sequences ...  completed");
             Utilities.verboseLog("Store and persist the sequences ...  completed");
         } catch (IOException e) {

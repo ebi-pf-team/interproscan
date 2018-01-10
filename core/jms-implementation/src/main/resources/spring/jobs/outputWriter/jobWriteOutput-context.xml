@@ -46,7 +46,7 @@
                 <!--<constructor-arg ref="kvStoreMatches"/>-->
                 <property name="proteinKVStore" ref="kvStoreProteins"/>
                 <property name="matchKVStore" ref="kvStoreMatches"/>
-                <property name="proteinDAO" ref="proteinDAO"/>
+                <property name="proteinKVDAO" ref="proteinKVDAO"/>
             </bean>
         </property>
     </bean>

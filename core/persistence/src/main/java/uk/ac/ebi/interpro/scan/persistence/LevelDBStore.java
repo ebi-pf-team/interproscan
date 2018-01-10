@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.DBIterator;
 import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
 import org.iq80.leveldb.Options;
 
@@ -13,6 +14,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * level DB store
@@ -22,8 +26,10 @@ public class LevelDBStore {
     DB levelDBStore;
     String dbName ;
 
+    Set<String> signatureLibraryNames;
+   
     public LevelDBStore() {
-
+        signatureLibraryNames = new HashSet<>();
     }
 
     public void setLevelDBStore(String dbStore) {
@@ -66,6 +72,17 @@ public class LevelDBStore {
         return data;
     }
 
+    public static String asString(byte[] byteKey) {
+        String key = (String) SerializationUtils.deserialize(byteKey );
+        return key;
+    }
+
+   public static String asDeserializedString(byte[] byteKey) {
+        String key = (String) SerializationUtils.deserialize(byteKey );
+        return key;
+    }
+
+
     public static HashSet<Match> asDeserializedMatchSet(byte[] byteMatchSet) {
         HashSet<Match> data = (HashSet<Match>) SerializationUtils.deserialize(byteMatchSet);
         return data;
@@ -76,9 +93,30 @@ public class LevelDBStore {
         return data;
     }
 
+   public static Protein asProtein(byte[] byteProtein) {
+        Protein protein = (Protein) SerializationUtils.deserialize(byteProtein);
+        return protein;
+    }
+
     public byte[] serialize(String value) {
         byte[] data = SerializationUtils.serialize(value);
         return data;
+    }
+
+    public Map<byte[], byte[]> getAllElements() {
+        Map<byte[], byte[]> allElements = new HashMap<>();
+        DBIterator iterator = levelDBStore.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<byte[], byte[]> entry = iterator.next();
+            allElements.put(entry.getKey(), entry.getValue());
+        }
+	//Utilities.verboseLog(" Number of elements " + count);
+        try {
+            iterator.close();
+        } catch (Exception e) {
+            new IOException(e).printStackTrace();
+        }
+	return allElements;
     }
 
     public Protein getProtein(String key){
@@ -112,8 +150,9 @@ public class LevelDBStore {
             throw new RuntimeException(e);
         }
     }
-
-    public static String asString(byte[] value) {
+    
+    /*
+    public static String asNewString(byte[] value) {
         if (value == null) {
             return null;
         }
@@ -123,6 +162,17 @@ public class LevelDBStore {
             throw new RuntimeException(e);
         }
     }
+    */
+
+   public void addSignatureLibraryName(String signatureLibraryName){
+        //System.out.println("addSignatureLibraryName: " + signatureLibraryName);
+        signatureLibraryNames.add(signatureLibraryName);
+        //System.out.println(signatureLibraryNames);
+    }
+
+   public Set<String> getSignatureLibraryNames(){
+        return signatureLibraryNames;
+   }
 
     public void close(){
 	try {
@@ -135,5 +185,7 @@ public class LevelDBStore {
     public String getDbName() {
         return dbName;
     }
+
+    
 }
 

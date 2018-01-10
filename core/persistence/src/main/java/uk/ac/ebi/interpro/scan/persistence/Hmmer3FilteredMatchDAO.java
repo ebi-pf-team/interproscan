@@ -141,5 +141,4 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     + timeTakenMins + " minutes)");
     }
 
-
 }

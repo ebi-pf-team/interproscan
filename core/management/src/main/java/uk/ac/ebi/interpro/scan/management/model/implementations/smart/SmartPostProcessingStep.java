@@ -14,6 +14,7 @@ import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.SmartHmmer2RawMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -34,6 +35,7 @@ public class SmartPostProcessingStep extends Step {
 
     private FilteredMatchDAO<SmartRawMatch, Hmmer2Match> filteredMatchDAO;
 
+    private FilteredMatchKVDAO<Hmmer2Match, SmartRawMatch> filteredMatchKVDAO;
 
     @Required
     public void setPostProcessor(SmartPostProcessing postProcessor) {
@@ -55,6 +57,9 @@ public class SmartPostProcessingStep extends Step {
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<Hmmer2Match, SmartRawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
+    }
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -104,7 +109,7 @@ public class SmartPostProcessingStep extends Step {
             Utilities.verboseLog(10, " SMART: Retrieved " + rawMatches.size() + " proteins to post-process with " + matchCount + " raw matches.");
 
             Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
-            filteredMatchDAO.persist(filteredMatches.values());
+            filteredMatchKVDAO.persist(filteredMatches.values());
 
             matchCount = 0;
             for (final RawProtein rawProtein : filteredMatches.values()) {

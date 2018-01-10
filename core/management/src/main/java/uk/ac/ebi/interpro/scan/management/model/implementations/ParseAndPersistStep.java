@@ -13,6 +13,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -38,6 +39,8 @@ public class ParseAndPersistStep<T extends RawMatch, U extends Match> extends St
 
     private FilteredMatchDAO<T, U> filteredMatchDAO;
 
+    private FilteredMatchKVDAO<U, T> filteredMatchKVDAO;
+
     @Required
     public void setParser(MatchParser<T> parser) {
         this.parser = parser;
@@ -57,6 +60,9 @@ public class ParseAndPersistStep<T extends RawMatch, U extends Match> extends St
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<U, T> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
+    }
 
     /**
      * Parse the output file from the SuperFamily binary and persist the results in the database.
@@ -107,7 +113,7 @@ public class ParseAndPersistStep<T extends RawMatch, U extends Match> extends St
 
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
-            filteredMatchDAO.persist(rawProteins);
+            filteredMatchKVDAO.persist(rawProteins);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0){

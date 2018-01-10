@@ -23,6 +23,10 @@
     <!-- Common DAO Beans (where possible, make them more local to where they are required) -->
     <bean id="proteinDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+    <bean id="proteinKVDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinKVDAOImpl">
+        <property name="levelDBStore" ref="kvStoreProteins"/>
+    </bean>
 
     <bean id="signatureDAO"
           class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">

@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawSite;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchAndSiteDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchAndSiteKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawSiteDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -41,6 +42,8 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
 
     protected FilteredMatchAndSiteDAO<A, B, C, D> filteredMatchAndSiteDAO;
 
+    protected FilteredMatchAndSiteKVDAO<A, B, C, D> filteredMatchAndSiteKVDAO;
+
     protected boolean excludeSites;
 
     public void setPostProcessor(PostProcessor<A> postProcessor) {
@@ -65,6 +68,12 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
     public void setFilteredMatchAndSiteDAO(FilteredMatchAndSiteDAO<A, B, C, D> filteredMatchAndSiteDAO) {
         this.filteredMatchAndSiteDAO = filteredMatchAndSiteDAO;
     }
+
+    @Required
+    public void setFilteredMatchAndSiteKVDAO(FilteredMatchAndSiteKVDAO<A, B, C, D> filteredMatchAndSiteKVDAO) {
+        this.filteredMatchAndSiteKVDAO = filteredMatchAndSiteKVDAO;
+    }
+
 
     @Required
     public void setExcludeSites(boolean excludeSites) {
@@ -151,7 +160,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                 }
             }
         }
-        filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
+        filteredMatchAndSiteKVDAO.persist(filteredMatches.values(), rawSites);
 
         matchCount = 0;
         for (final RawProtein rawProtein : filteredMatches.values()) {

@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -23,10 +25,11 @@ import javax.swing.*;
  * @version $Id$
  * @since 1.0
  */
-public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match> implements WriteOutputMatchDAO {
+public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match, RawMatch> implements WriteOutputMatchDAO {
 
     //Other DAOs
-    private ProteinDAO proteinDAO;
+    //private ProteinKVDAO proteinKVDAO;
+    private ProteinKVDAO proteinKVDAO;
 
     private ProteinXrefDAO proteinXrefDAO;
 
@@ -47,8 +50,9 @@ public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match> imple
         super(Match.class);
     }
 
-    public void setProteinDAO(ProteinDAO proteinDAO) {
-        this.proteinDAO = proteinDAO;
+    @Required
+    public void setProteinKVDAO(ProteinKVDAO proteinKVDAO) {
+        this.proteinKVDAO = proteinKVDAO;
     }
 
     public void setProteinXrefDAO(ProteinXrefDAO proteinXrefDAO) {
@@ -62,6 +66,29 @@ public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match> imple
     public void setMatchKVStore(LevelDBStore matchKVStore) {
         //this.matchKVStore = matchKVStore;
         setLevelDBStore(matchKVStore);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, HashSet<Match>> getKeyToMatchMap() {
+        Map<String, HashSet<Match>> keyToMatchMap = new HashMap<>();
+        DBIterator iterator = levelDBStore.getLevelDBStore().iterator();
+        int count = 0;
+        while (iterator.hasNext()) {
+            Map.Entry<byte[], byte[]> entry = iterator.next();
+            byte[] byteKey = (byte[]) entry.getKey();
+            byte[] byteData = (byte[]) entry.getValue();
+            String key = LevelDBStore.asDeserializedString(byteKey);
+            HashSet<Match> matches = LevelDBStore.asDeserializedMatchSet(byteData);
+            keyToMatchMap.put(key, matches);
+            count++;
+        }
+	Utilities.verboseLog(" Number of match sets " + count);//
+        try {
+            iterator.close();
+        } catch (Exception e) {
+            new IOException(e).printStackTrace();
+        }
+        return keyToMatchMap;
     }
 
     @Transactional(readOnly = true)
@@ -121,16 +148,75 @@ public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match> imple
             new IOException(e).printStackTrace();
         }
         return allMatches;
-
-
     }
 
+    @Transactional(readOnly = true)
+    public HashSet<Match> getMatchSet(String key) {
+        byte[] byteMatchSet = levelDBStore.get(key);
+        if (byteMatchSet != null){
+            return LevelDBStore.asDeserializedMatchSet(byteMatchSet);
+        }
+	return null;
+    }
+
+
     @Transactional
-    public List<Protein>  getCompleteProteins(List<Protein> proteins){
-        List<Match> allMatches = getMatches();
+    public List<Protein>  getCompleteProteins(){
+        //Map<String, HashSet<Match>> keyToMatchMap = getKeyToMatchMap();
 
-        return proteins;
+        Set<String> signatureLibraryNames = getSignatureLibraryNames();
+        Utilities.verboseLog("SignatureLibrary names:" + signatureLibraryNames.toString());        
+	Map<String, Protein>  completeProteins = new HashMap<>();
+        Map<String, Protein> keyToProteinMap = proteinKVDAO.getKeyToProteinMap();
+        Iterator it = keyToProteinMap.keySet().iterator();
+        int count = 0;
+        while (it.hasNext()) {
+           String key = (String) it.next();
+           Protein protein = keyToProteinMap.get(key);
+           for(String signatureLibraryName: signatureLibraryNames){
+             String matchKey = key + signatureLibraryName;
+             //Utilities.verboseLog("Get matches for key: " + key + " matchKey: " + matchKey);
+             HashSet<Match> matches = getMatchSet(matchKey);
+             if (matches != null){
+                 for(Match match: matches){
+               	    protein.addMatch(match);
+                    count ++;
+                 }
+	     }
+           }
+           keyToProteinMap.put(key, protein);
+        }
+        Utilities.verboseLog("Total number of matches: " + count  );      	
+        return new ArrayList(keyToProteinMap.values());
 
+        /*
+	Iterator it = keyToMatchMap.entrySet().iterator();
+        Protein rep = null;
+        int count = 0;
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            String key = (String) pair.getKey();
+            HashSet<Match> matches = (HashSet<Match>) pair.getValue();
+            Protein protein = completeProteins.get(key);
+            if (protein == null){
+		//Utilities.verboseLog("get Protein for key: " + key);                
+		protein = proteinKVDAO.getProtein(key);                                
+	    }
+            for(Match match: matches){
+        	protein.addMatch(match);
+                count ++;
+	    }
+            if (rep == null){
+                rep = protein;
+            }
+            completeProteins.put(key, protein);  
+	}
+        Utilities.verboseLog("rep protein: " + rep.toString());
+       
+        Utilities.verboseLog("Total number of matches: " + count  );
+        
+        return new ArrayList(completeProteins.values());
+        */
     }
 
     @Transactional(readOnly = true)

@@ -276,11 +276,11 @@ public class WriteOutputStep extends Step {
         timeNow = System.currentTimeMillis();
 
         //List<Match> matches = writeOutputMatchDAO.getMatches();
-        List<HashSet<Match>> matcheSets = writeOutputMatchDAO.getMatchSets();
-        List<Protein> completeProteins = writeOutputMatchDAO.getProteins();
+        //List<HashSet<Match>> matcheSets = writeOutputMatchDAO.getMatchSets();
+        List<Protein> completeProteins = writeOutputMatchDAO.getCompleteProteins();
 
         Utilities.verboseLog(10, " WriteOutputStep - KVStore access Stats:"
-                + " matches retrieved : " + matcheSets.size()
+                + " matches retrieved :  + matcheSets.size() " 
                 + " complete proteins retrieved : " + completeProteins.size()
                 + " time taken : "
                 + (System.currentTimeMillis() - timeNow)
@@ -295,28 +295,47 @@ public class WriteOutputStep extends Step {
                 + " time taken to get proteins: "
                 + (System.currentTimeMillis() - timeNow)
                 + " millis");
+        /*
+        completeProteins = writeOutputMatchDAO.getCompleteProteins(proteins);
 
-        //completeProteins = writeOutputMatchDAO.getCompleteProteins(proteins);
-
+        
         int matchCount = 0;
-        for (Protein prot : proteins) {
+        for (Protein prot : completeProteins) {
             int count = prot.getMatches().size();
             matchCount += count;
         }
 
+        Utilities.verboseLog("Initial matches from completeProteins " + completeProteins.size() + " proteins : " + matchCount);
 
-        Utilities.verboseLog("Initial matches from " + proteins.size() + " proteins : " + matchCount);
+        matchCount = 0;
+        for (Protein prot : proteins) {
+            int count = prot.getMatches().size();
+            matchCount += count;
+        }
+	Utilities.verboseLog("Matches from the Usual proteins " + proteins.size() + " proteins : " + matchCount);
 
+        */
+
+        //timeNow = System.currentTimeMillis();
+        //List<ProteinXref> proteinsXrefs = proteinXrefDAO.getAllXrefs();
+        //Utilities.verboseLog(10, " WriteOutputStep - proteinsXrefs to writeout: " + proteinsXrefs.size()
+        //        + " time taken to get proteinsXrefs: "
+        //        + (System.currentTimeMillis() - timeNow)
+        //        + " millis");
+
+        //swap the proteins
+        proteins = completeProteins; //try now
         //proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
+        
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
             LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
             setUniqueXrefs();
         }
 
-        String levelDBStoreRoot = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, "dbstore");
-        writeToLevelDB(proteins, levelDBStoreRoot);
+        //String levelDBStoreRoot = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, "dbstore");
+        //writeToLevelDB(proteins, levelDBStoreRoot);
 
         for (FileOutputFormat outputFormat : outputFormats) {
             Path outputPath = getPathName(explicitPath, filePathName, outputFormat);

@@ -115,6 +115,11 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchKVDAOImpl">
+                <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
         <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
     </bean>
 

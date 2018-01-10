@@ -119,6 +119,7 @@
         <property name="stepDescription" value="Parse the output from TMHMM binary"/>
         <property name="parser" ref="tmhmmParser"/>
         <property name="filteredMatchDAO" ref="tmhmmFilteredMatchDAO"/>
+        <property name="filteredMatchKVDAO" ref="filteredMatchKVDAO" />
         <property name="serialGroup" value="PARSE_TMHMM"/>
         <property name="retries" value="3"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
@@ -144,6 +145,10 @@
 
     <bean id="tmhmmFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImpl">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM"/>
+    </bean>
+    <bean id="filteredMatchKVDAO" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchKVDAOImpl">
+        <constructor-arg ref="signatureLibraryReleaseTMHMM"/>
+        <property name="levelDBStore" ref="kvStoreMatches"/>
     </bean>
 
     <bean id="tmhmmSignatureLibraryReleaseVersion" class="java.lang.String">

@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.PhobiusMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.SimpleProteinFilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
@@ -34,6 +35,8 @@ public class ParsePhobiusOutputStep extends Step {
 
     private PhobiusFilteredMatchDAO phobiusMatchDAO;
 
+    private SimpleProteinFilteredMatchKVDAO<PhobiusProtein, PhobiusMatch>  phobiusMatchKVDAO;
+
     private PhobiusMatchParser parser;
 
     @Required
@@ -44,6 +47,10 @@ public class ParsePhobiusOutputStep extends Step {
     @Required
     public void setPhobiusMatchDAO(PhobiusFilteredMatchDAO phobiusMatchDAO) {
         this.phobiusMatchDAO = phobiusMatchDAO;
+    }
+
+    public void setPhobiusMatchKVDAO(SimpleProteinFilteredMatchKVDAO<PhobiusProtein, PhobiusMatch> phobiusMatchKVDAO) {
+        this.phobiusMatchKVDAO = phobiusMatchKVDAO;
     }
 
     @Required
@@ -84,7 +91,7 @@ public class ParsePhobiusOutputStep extends Step {
 //                PhobiusMatch match = new PhobiusMatch(signature, locations);
                 }
             }
-            phobiusMatchDAO.persist(phobiusProteins);
+            phobiusMatchKVDAO.persist(phobiusProteins);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0) {

@@ -10,7 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.LevelDBStore;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
-import uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PfamHmmer3RawMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -40,7 +40,8 @@ public class Pfam_A_PostProcessingStep extends Step {
     private PfamHmmer3RawMatchDAO rawMatchDAO;
 
     private FilteredMatchDAO filteredMatchDAO;
-    //private PfamFilteredMatchDAOImpl filteredMatchDAO;
+    //private PfamFilteredMatchKVDAOImpl filteredMatchKVDAO;
+    private FilteredMatchKVDAO filteredMatchKVDAO;
     LevelDBStore levelDBStore;
 
     @Required
@@ -78,6 +79,11 @@ public class Pfam_A_PostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) { //PfamFilteredMatchDAOImpl filteredMatchDAO) { //FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    @Required
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO filteredMatchKVDAO) { 
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     @Required
@@ -151,8 +157,8 @@ public class Pfam_A_PostProcessingStep extends Step {
                 //}
                 LOGGER.debug("PfamA: A total of " + matchCount + " matches PASSED.");
             }
-            filteredMatchDAO.setLevelDBStore(levelDBStore);
-            filteredMatchDAO.persist(filteredMatches.values());
+            //filteredMatchDAO.setLevelDBStore(levelDBStore);
+            filteredMatchKVDAO.persist(filteredMatches.values());
             Utilities.verboseLog(10,  " PfamA: filteredMatches persisted");
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered matches.", e);

@@ -4,8 +4,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,6 +51,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
     public void persist(Collection<RawProtein<ProDomRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<ProDomRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
@@ -95,9 +98,11 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             // Don't forget the last one!
             if (lastRawMatch != null) {
                 match = new BlastProDomMatch(currentSignature, locations);
+
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
         }
+
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.io.match.coils.ParseCoilsMatch;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -19,7 +20,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.0
  */
-public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> implements CoilsMatchKVDAO {
+public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch, RawMatch> implements CoilsMatchKVDAO {
 
     private String coilsReleaseVersion;
 
@@ -68,7 +69,7 @@ public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> impl
             byte[] byteKey = SerializationUtils.serialize(key);
             byte[] byteMatch = SerializationUtils.serialize(match);
             HashSet<CoilsMatch> matchesForThisKey = keyToMatchMap.get(key);
-            if (matchesForThisKey == null){
+            if (matchesForThisKey == null) {
                 matchesForThisKey = new HashSet<>();
             }
             matchesForThisKey.add(match);
@@ -80,7 +81,7 @@ public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> impl
         Long timeTaken = System.currentTimeMillis() - timeNow;
         Long timeTakenSecs = timeTaken / 1000;
         Long timeTakenMins = timeTakenSecs / 60;
-        Utilities.verboseLog("Time taken to process " + coilsMatches.size() +  " complete Coils Matches and persist to kvStore : "
+        Utilities.verboseLog("Time taken to process " + coilsMatches.size() + " complete Coils Matches and persist to kvStore : "
                 + timeTakenSecs + " seconds ("
                 + timeTakenMins + " minutes)");
 
@@ -88,17 +89,20 @@ public class CoilsMatchKVDAOImpl extends FilteredMatchKVDAOImpl<CoilsMatch> impl
 
         Iterator it = keyToMatchMap.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            String key = ((String) pair.getKey()).replace(SignatureLibrary.COILS.getName(), "").trim();
+            Map.Entry pair = (Map.Entry) it.next();
+            String key = (String) pair.getKey(); //).replace(SignatureLibrary.COILS.getName(), "").trim();
             byte[] byteKey = SerializationUtils.serialize(key);
             byte[] byteMatch = SerializationUtils.serialize((HashSet<CoilsMatch>) pair.getValue());
-            byteKeyToMatchMap.put(byteKey,byteMatch);
-            persist(byteKey,byteMatch);
+            byteKeyToMatchMap.put(byteKey, byteMatch);
+            persist(byteKey, byteMatch);
         }
         Utilities.verboseLog("Completed processing byteKeyToMatchMap ");
         //persist(byteKeyToMatchMap);
 
-
+        if (coilsMatches.size() > 0) {
+            //Utilities.verboseLog("addSignatureLibraryName : " + SignatureLibrary.COILS.getName());
+            addSignatureLibraryName(SignatureLibrary.COILS.getName());
+        }
 
 
     }

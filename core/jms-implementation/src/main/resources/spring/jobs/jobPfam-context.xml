@@ -125,6 +125,12 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl" >
              <!-- constructor-arg type="uk.ac.ebi.interpro.scan.persistence.LevelDBStore" ref="kvStore"/ -->
+             </bean>
+        </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PfamHmmer3FilteredMatchKVDAOImpl" >
+             <!-- constructor-arg type="uk.ac.ebi.interpro.scan.persistence.LevelDBStore" ref="kvStore"/ -->
+             <property name="levelDBStore" ref="kvStoreMatches" />
 	     </bean>
         </property>
     </bean>

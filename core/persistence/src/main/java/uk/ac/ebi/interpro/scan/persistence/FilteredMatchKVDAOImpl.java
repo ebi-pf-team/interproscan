@@ -5,11 +5,13 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import org.iq80.leveldb.WriteBatch;
 import org.iq80.leveldb.DBException;
 
 import org.apache.commons.lang3.SerializationUtils;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 
@@ -28,11 +30,13 @@ import java.util.*;
  * @since 1.0
  */
 
-public class FilteredMatchKVDAOImpl <T extends Match>  extends GenericDAOImpl<T, Long> implements FilteredMatchKVDAO<T> {
+public class FilteredMatchKVDAOImpl <U extends Match, T extends RawMatch>  extends GenericDAOImpl<U, Long> implements FilteredMatchKVDAO<U, T> {
 
     private static final Logger LOGGER = Logger.getLogger(FilteredMatchKVDAOImpl.class.getName());
 
     protected LevelDBStore levelDBStore;
+
+    //static Set<String> signatureLibraryNames;
 
     /**
      * Sets the class of the model that the DOA instance handles.
@@ -61,9 +65,76 @@ public class FilteredMatchKVDAOImpl <T extends Match>  extends GenericDAOImpl<T,
      *
      * @param modelClass the model that the DOA instance handles.
      */
-    public FilteredMatchKVDAOImpl(Class<T> modelClass) {
+    public FilteredMatchKVDAOImpl(Class<U> modelClass) {
         super(modelClass);
+        //signatureLibraryNames = new HashSet<>();
     }
+
+
+ /**
+     * Persists filtered protein matches.
+     *
+     * @param filteredProteins Filtered protein matches.
+     */
+    @Transactional
+    public void persist(Collection<RawProtein<T>> filteredProteins) {
+        if (filteredProteins == null || filteredProteins.size() == 0) {
+            LOGGER.debug("No RawProtein objects have been passed into the persistFilteredMatches method, so exiting.");
+            return;
+        }
+
+        String signatureLibraryRelease = null;
+        SignatureLibrary signatureLibrary = null;
+        int rawMatchCount = 0;
+        for (RawProtein<T> rawProtein : filteredProteins) {
+            for (T rawMatch : rawProtein.getMatches()) {
+                rawMatchCount++;
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rawMatch :" + rawMatch.toString());
+                }
+                if (signatureLibraryRelease == null) {
+                    signatureLibraryRelease = rawMatch.getSignatureLibraryRelease();
+                    if (signatureLibraryRelease == null) {
+                        throw new IllegalStateException("Found a raw match record that does not include the release version");
+                    }
+                } else if (!signatureLibraryRelease.equals(rawMatch.getSignatureLibraryRelease())) {
+                    throw new IllegalStateException("Attempting to persist a collection of filtered matches for more than one SignatureLibraryRelease.   Not implemented.");
+                }
+                if (signatureLibrary == null) {
+                    signatureLibrary = rawMatch.getSignatureLibrary();
+                    if (signatureLibrary == null) {
+                        throw new IllegalStateException("Found a raw match record that does not include the SignatureLibrary.");
+                    }
+                } else if (signatureLibrary != (rawMatch.getSignatureLibrary())) {
+                    throw new IllegalStateException("Attempting to persist a Collection of filtered matches for more than one SignatureLibrary.");
+                }
+            }
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(rawMatchCount + " filtered matches have been passed in to the persistFilteredMatches method");
+        }
+        if (signatureLibraryRelease == null) {
+            LOGGER.debug("There are no raw matches to filter.");
+            return;
+        }
+
+        LOGGER.debug("getProteinIdToProteinMap: " );
+        final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
+        LOGGER.debug("getModelAccessionToSignatureMap: " );
+        final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("signatureLibrary: " + signatureLibrary
+                    + " signatureLibraryRelease: " + signatureLibraryRelease
+                    + " filteredProteins: " + filteredProteins.size()
+                    + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+        }
+
+        LOGGER.debug("now persists the filtered proteins: " );
+        persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
+
+    }
+
 
     /**
      * Persists filtered protein matches.
@@ -71,13 +142,13 @@ public class FilteredMatchKVDAOImpl <T extends Match>  extends GenericDAOImpl<T,
      * @param keyToMatchMap Filtered protein matches.
      */
     @Transactional
-    public void persist(final Map<String, T> keyToMatchMap) {
+    public void persist(final Map<String, U> keyToMatchMap) {
         try {
             WriteBatch batch = levelDBStore.getLevelDBStore().createWriteBatch();
             try {
-                for (Map.Entry<String, T> entry : keyToMatchMap.entrySet()) {
+                for (Map.Entry<String, U> entry : keyToMatchMap.entrySet()) {
                     String key = entry.getKey();
-                    T value = entry.getValue();
+                    U value = entry.getValue();
                     byte[] byteKey = levelDBStore.serialize(key);
                     byte[] data = serialize(value);
                     batch.put(byteKey, data);
@@ -106,7 +177,7 @@ public class FilteredMatchKVDAOImpl <T extends Match>  extends GenericDAOImpl<T,
 
 
     @Transactional
-    public void persist(String key,  T match) {
+    public void persist(String key,  U match) {
         ///byte[] keyInBytes = levelDBStore.serialize(key);
         LOGGER.warn("storing data for seq: " + key + "match: " + match.getId()
                 + "  to kv db ...." + levelDBStore.getDbName());
@@ -121,12 +192,153 @@ public class FilteredMatchKVDAOImpl <T extends Match>  extends GenericDAOImpl<T,
     @Transactional
     public void persist(byte[] key,  byte[] match) {
         if (key == null || match == null){
-            LOGGER.error("match or key has problems:  " );
+            LOGGER.error("Match(es) or key has problems:  "  );
+            LOGGER.error("Problem - key: " + SerializationUtils.deserialize(key)
+                    + " math or matchSet " + SerializationUtils.deserialize(match).toString());
+        }else {
+            //Utilities.verboseLog("Try1 key: " + (String) SerializationUtils.deserialize( key));
+            //Utilities.verboseLog("Try1 match: " + ((HashSet<Match>) SerializationUtils.deserialize( match)));
+            levelDBStore.put(key, match);
         }
-        levelDBStore.put(key, match);
     }
 
-    public byte[] serialize(T match) {
+
+    /**
+     * Helper method to retrieve a Map for lookup of Signature
+     * objects by signature accession.
+     *
+     * @param signatureLibrary        being the SignatureLibrary in this analysis.
+     * @param signatureLibraryRelease the current version of the signature library in this analysis.
+     * @return
+     */
+    @Transactional(readOnly = true)
+    protected Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+                                                                   Collection<RawProtein<T>> rawProteins) {
+        //Model accession to signatures map
+        LOGGER.info("Creating model accession to signature map...");
+        final Map<String, Signature> result = new HashMap<String, Signature>();
+
+        List<String> modelIDs = new ArrayList<String>();
+        for (RawProtein<T> rawProtein : rawProteins) {
+            for (RawMatch rawMatch : rawProtein.getMatches()) {
+
+                modelIDs.add(rawMatch.getModelId());
+            }
+        }
+
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("... for " + modelIDs.size() + " model IDs.");
+        }
+
+        for (int index = 0; index < modelIDs.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
+            int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
+            if (endIndex > modelIDs.size()) {
+                endIndex = modelIDs.size();
+            }
+            //Signature accession slice
+            final List<String> modelIdsSlice = modelIDs.subList(index, endIndex);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Querying a batch of " + modelIdsSlice.size() + " model IDs.");
+            }
+//            final Query query =
+//                    entityManager.createQuery(
+//                            "select s from Signature s, SignatureLibraryRelease r " +
+//                                    "where s.accession in (:accession) " +
+//                                    "and r.version = :version " +
+//                                    "and r.library = :signatureLibrary");
+//            final Query query =
+//                    entityManager.createQuery(
+//                            "select s from Signature s " +
+//                                    "where s.accession in (:accession) " +
+//                                    "and s.signatureLibraryRelease.version = :version " +
+//                                    "and s.signatureLibraryRelease.library = :signatureLibrary");
+//            query.setParameter("accession", sigAccSlice);
+//            query.setParameter("signatureLibrary", signatureLibrary);
+//            query.setParameter("version", signatureLibraryRelease);
+            //Inner join
+            final Query query =
+                    entityManager.createQuery(
+                            "select s from Signature s, Model m " +
+                                    "where s.id = m.signature.id " +
+                                    "and m.accession in (:accession) " +
+                                    "and s.signatureLibraryRelease.version = :version " +
+                                    "and s.signatureLibraryRelease.library = :signatureLibrary");
+            query.setParameter("accession", modelIdsSlice);
+            query.setParameter("signatureLibrary", signatureLibrary);
+            query.setParameter("version", signatureLibraryRelease);
+            @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
+
+            String signatureModelQueryMessage = "SignatureModel query: "
+                    + "accession: " + modelIdsSlice.toString()
+                    + " signatureLibrary: " + signatureLibrary
+                    + " version: " + signatureLibraryRelease;
+            LOGGER.debug(signatureModelQueryMessage);
+//            Utilities.verboseLog(signatureModelQueryMessage);
+            for (Signature s : signatures) {
+                for (Model m : s.getModels().values()) {
+                    result.put(m.getAccession(), s);
+                    LOGGER.debug("accession: " + m.getAccession() + " signature: " + s);
+                    //Utilities.verboseLog("accession: " + m.getAccession() + " signature: " + s);
+                }
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * Helper method that converts a List of Protein objects retrieved from a JQL query
+     * into a Map of protein IDs to Protein objects.
+     *
+     * @param rawProteins being the Set of PhobiusProteins containing the IDs of the Protein objects
+     *                    required.
+     * @return a Map of protein IDs to Protein objects.
+     */
+    @Transactional(readOnly = true)
+    protected Map<String, Protein> getProteinIdToProteinMap
+    (Collection<RawProtein<T>> rawProteins) {
+        final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(rawProteins.size());
+
+        final List<Long> proteinIds = new ArrayList<Long>(rawProteins.size());
+        for (RawProtein<T> rawProtein : rawProteins) {
+            String proteinIdAsString = rawProtein.getProteinIdentifier();
+            proteinIds.add(new Long(proteinIdAsString));
+        }
+
+        for (int index = 0; index < proteinIds.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
+            int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
+            if (endIndex > proteinIds.size()) {
+                endIndex = proteinIds.size();
+            }
+            final List<Long> proteinIdSlice = proteinIds.subList(index, endIndex);
+            final Query proteinQuery = entityManager.createQuery(
+                    "select p from Protein p where p.id in (:proteinId)"
+            );
+            proteinQuery.setParameter("proteinId", proteinIdSlice);
+            @SuppressWarnings("unchecked") List<Protein> proteins = proteinQuery.getResultList();
+            for (Protein protein : proteins) {
+                proteinIdToProteinMap.put(protein.getId().toString(), protein);
+            }
+        }
+        return proteinIdToProteinMap;
+    }
+
+    /**
+     * Some algorithms may return an end coordinate that is off the end of the sequence. (PRINTS is one known case).
+     * This method returns the stop coordinate of the match or the coordinate of the last residue on the protein,
+     * whichever is smallest.
+     *
+     * @param protein  that the match is on
+     * @param rawMatch for which a sensible end location is required.
+     * @return the stop coordinate of the match or the coordinate of the last residue on the protein,
+     *         whichever is smallest.
+     */
+    protected int boundedLocationEnd(Protein protein, RawMatch rawMatch) {
+        return (rawMatch.getLocationEnd() > protein.getSequenceLength()) ? protein.getSequenceLength() : rawMatch.getLocationEnd();
+    }
+
+
+    public byte[] serialize(U match) {
         byte[] data = null;
         data = SerializationUtils.serialize((Hmmer3Match) match);
 //        if (match instanceof  Hmmer3Match) {
@@ -135,6 +347,16 @@ public class FilteredMatchKVDAOImpl <T extends Match>  extends GenericDAOImpl<T,
         return data;
     }
 
+
+    public void addSignatureLibraryName(String signatureLibraryName){
+        //System.out.println("addSignatureLibraryName: " +signatureLibraryName);        
+	levelDBStore.addSignatureLibraryName(signatureLibraryName);	
+        //System.out.println(getSignatureLibraryNames());
+    }
+
+   public Set<String> getSignatureLibraryNames(){
+   	return levelDBStore.getSignatureLibraryNames();
+   }
 
     public void setLevelDBStore(LevelDBStore levelDBStore) {
         this.levelDBStore = levelDBStore;

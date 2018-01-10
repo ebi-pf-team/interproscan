@@ -142,4 +142,8 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
         }
     }
 
+    public void storeAll2KV(Set<NucleotideSequence> parsedNucleotideSequences, Map<String, SignatureLibraryRelease> analysisJobMa) {
+
+    }
+
 }

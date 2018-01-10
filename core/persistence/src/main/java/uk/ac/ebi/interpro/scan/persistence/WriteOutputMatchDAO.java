@@ -29,7 +29,7 @@ public interface WriteOutputMatchDAO extends GenericDAO<Match, Long> {
     List<Protein> getProteins();
 
     @Transactional
-    List<Protein>  getCompleteProteins(List<Protein> proteins);
+    List<Protein>  getCompleteProteins();
 
     void closeDB();
 }

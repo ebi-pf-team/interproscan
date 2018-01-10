@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.signalp.match.SignalPMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.model.SignalPMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SignalPRawMatch;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignalPFilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -34,6 +36,8 @@ public class ParseAndPersistBinaryOutputStep extends Step {
 
     private SignalPFilteredMatchDAO rawMatchDAO;
 
+    private FilteredMatchKVDAO<SignalPMatch, SignalPRawMatch> filteredMatchKVDAO;
+
     @Required
     public void setSignalPBinaryOutputFileName(String signalPBinaryOutputFileName) {
         this.signalPBinaryOutputFileName = signalPBinaryOutputFileName;
@@ -47,6 +51,10 @@ public class ParseAndPersistBinaryOutputStep extends Step {
     @Required
     public void setRawMatchDAO(SignalPFilteredMatchDAO rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
+    }
+
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<SignalPMatch, SignalPRawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     /**
@@ -96,7 +104,8 @@ public class ParseAndPersistBinaryOutputStep extends Step {
 
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
-            rawMatchDAO.persist(rawProteins);
+            //rawMatchDAO.persist(rawProteins);
+            filteredMatchKVDAO.persist(rawProteins);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0) {

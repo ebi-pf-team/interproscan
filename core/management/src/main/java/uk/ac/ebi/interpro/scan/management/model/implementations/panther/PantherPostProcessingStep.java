@@ -9,9 +9,11 @@ import uk.ac.ebi.interpro.scan.model.PantherMatch;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -34,6 +36,8 @@ public class PantherPostProcessingStep extends Step {
 
     private FilteredMatchDAO<PantherRawMatch, PantherMatch> filteredMatchDAO;
 
+    private FilteredMatchKVDAO<PantherMatch, PantherRawMatch> filteredMatchKVDAO;
+
     @Required
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
@@ -42,6 +46,11 @@ public class PantherPostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    @Required
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<PantherMatch, PantherRawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     @Required
@@ -76,7 +85,7 @@ public class PantherPostProcessingStep extends Step {
         // Post process
         Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
         LOGGER.info("Finally persisting filtered raw matches.");
-        filteredMatchDAO.persist(filteredMatches);
+        filteredMatchKVDAO.persist(filteredMatches);
         Utilities.verboseLog("PostProcess panther matches: protein-range : "
                 + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein()
                 + " rawMatches count:  " + rawMatches.size());

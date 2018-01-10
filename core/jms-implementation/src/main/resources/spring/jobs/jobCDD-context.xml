@@ -127,6 +127,11 @@
         <property name="filteredMatchAndSiteDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl"/>
         </property>
+        <property name="filteredMatchAndSiteKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchKVDAOImpl">
+              <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="cddRawMatchDAO"/>
         <property name="rawSiteDAO" ref="cddRawSiteDAO"/>

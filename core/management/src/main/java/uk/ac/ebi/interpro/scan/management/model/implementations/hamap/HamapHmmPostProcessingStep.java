@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -35,6 +36,8 @@ public class HamapHmmPostProcessingStep extends Step {
 
     private FilteredMatchDAO<HamapRawMatch, ProfileScanMatch> filteredMatchDAO;
 
+    private FilteredMatchKVDAO<ProfileScanMatch, HamapRawMatch> filteredMatchKVDAO;
+
     @Required
     public void setPostProcessor(ProfilePostProcessing<HamapRawMatch> postProcessor) {
         this.postProcessor = postProcessor;
@@ -53,6 +56,11 @@ public class HamapHmmPostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO<HamapRawMatch, ProfileScanMatch> filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    @Required
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<ProfileScanMatch,HamapRawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     /**
@@ -103,17 +111,11 @@ public class HamapHmmPostProcessingStep extends Step {
         LOGGER.debug("print the raw matches");
         for (RawProtein<HamapRawMatch> rawMatch: rawMatches ) {
             LOGGER.debug(rawMatch);
+            break;
         }
-        //do we need to run the post processor? maybe for now no???
-        matchCount = 0;
-        for (final RawProtein rawProtein : rawMatches) {
-            matchCount += rawProtein.getMatches().size();
-        }
-        Utilities.verboseLog(10,  " HAMAP: " + rawMatches.size() + " proteins passed through post processing.");
-        Utilities.verboseLog(10,  " HAMAP: A total of " + matchCount + " matches PASSED.");
 
         //we now persist the raw matches
-        filteredMatchDAO.persist(rawMatches);
+        filteredMatchKVDAO.persist(rawMatches);
         Utilities.verboseLog(10,  " HAMAP: filteredMatches persisted");
 
         //maybe we dont need the following for now

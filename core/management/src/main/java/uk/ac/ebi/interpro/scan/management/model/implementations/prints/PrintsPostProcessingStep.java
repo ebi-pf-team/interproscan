@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAO;
 
 import java.io.IOException;
@@ -32,6 +33,8 @@ public class PrintsPostProcessingStep extends Step {
 
     private FilteredMatchDAO<PrintsRawMatch, FingerPrintsMatch> filteredMatchDAO;
 
+    private FilteredMatchKVDAO<FingerPrintsMatch, PrintsRawMatch> filteredMatchKVDAO;
+
     @Required
     public void setPostProcessor(PrintsPostProcessing postProcessor) {
         this.postProcessor = postProcessor;
@@ -50,6 +53,10 @@ public class PrintsPostProcessingStep extends Step {
     @Required
     public void setFilteredMatchDAO(FilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO<FingerPrintsMatch, PrintsRawMatch> filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     /**
@@ -74,7 +81,7 @@ public class PrintsPostProcessingStep extends Step {
         // Post process
         try {
             Map<String, RawProtein<PrintsRawMatch>> filteredMatches = postProcessor.process(rawMatches);
-            filteredMatchDAO.persist(filteredMatches.values());
+            filteredMatchKVDAO.persist(filteredMatches.values());
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PRINTS matches.", e);
         }

@@ -8,6 +8,8 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -36,6 +38,8 @@ public class ParseAndPersistProDomOutputStep extends Step {
 
     private ProDomFilteredMatchDAO rawMatchDAO;
 
+    private FilteredMatchKVDAO filteredMatchKVDAO;
+
     @Required
     public void setProDomBinaryOutputFileName(String proDomBinaryOutputFileName) {
         this.proDomBinaryOutputFileName = proDomBinaryOutputFileName;
@@ -49,6 +53,10 @@ public class ParseAndPersistProDomOutputStep extends Step {
     @Required
     public void setRawMatchDAO(ProDomFilteredMatchDAO rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
+    }
+
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     /**
@@ -99,7 +107,8 @@ public class ParseAndPersistProDomOutputStep extends Step {
 
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
-            rawMatchDAO.persist(rawProteins);
+            //rawMatchDAO.persist(rawProteins);
+            filteredMatchKVDAO.persist(rawProteins);
             Long now = System.currentTimeMillis();
             if (count > 0){
                 int matchesFound = 0;

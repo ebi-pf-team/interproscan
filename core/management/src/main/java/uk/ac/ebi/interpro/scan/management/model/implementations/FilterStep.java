@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.util.Set;
@@ -26,6 +27,7 @@ public abstract class FilterStep<T extends RawMatch, U extends Match> extends St
     private RawMatchFilter<T> filter;
     private RawMatchDAO<T> rawMatchDAO;
     private FilteredMatchDAO<T, U> filteredMatchDAO;
+    private FilteredMatchKVDAO<U, T> filteredMatchKVDAO;
 
     @Required
     public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
@@ -64,6 +66,10 @@ public abstract class FilterStep<T extends RawMatch, U extends Match> extends St
         this.filteredMatchDAO = filteredMatchDAO;
     }
 
+    public void setFilteredMatchKVDAO(FilteredMatchKVDAO filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
+    }
+
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Get raw matches
@@ -75,7 +81,8 @@ public abstract class FilterStep<T extends RawMatch, U extends Match> extends St
         // Filter
         Set<RawProtein<T>> filteredProteins = getFilter().filter(rawProteins);
         // Persist
-        filteredMatchDAO.persist(filteredProteins);
+        //filteredMatchDAO.persist(filteredProteins);
+        filteredMatchKVDAO.persist(filteredProteins);
     }
 
 }

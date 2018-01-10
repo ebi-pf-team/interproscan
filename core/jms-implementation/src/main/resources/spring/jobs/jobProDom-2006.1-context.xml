@@ -70,6 +70,12 @@
                 <constructor-arg value="2006.1"/>
             </bean>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchKVDAOImpl" >
+                <constructor-arg value="2006.1"/>
+                <property name="levelDBStore" ref="kvStoreMatches" />
+            </bean>
+        </property>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.prodom.match.BlastProDomMatchParser">
                 <constructor-arg value="2006.1"/>

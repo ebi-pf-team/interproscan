@@ -80,6 +80,13 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         return (Protein) query.getSingleResult();
     }
 
+    @Transactional(readOnly = true)
+    public List<Protein> getProteinAndCrossReferences() {
+        Query query = entityManager.createQuery("select p from Protein p left outer join fetch p.crossReferences");
+        List<Protein> matchingProteins = (List<Protein>) query.getResultList();
+	return matchingProteins;
+    }
+
     /**
      * Retrieves all Proteins, cross references and matches for a range
      *

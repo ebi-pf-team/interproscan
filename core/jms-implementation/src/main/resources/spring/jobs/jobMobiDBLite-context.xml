@@ -62,6 +62,7 @@
 
         <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="filteredMatchDAO" ref="mobidbFilteredMatchDAO"/>
+        <property name="filteredMatchKVDAO" ref="mobidbFilteredMatchKVDAO"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.mobidb.MobiDBMatchParser">
                 <property name="signatureLibraryRelease" ref="latestMobiDBSignatureLibraryRelease"/>
@@ -90,6 +91,11 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="mobidbFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.MobiDBFilteredMatchDAO">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseMobiDB"/>
+    </bean>
+
+    <bean id="mobidbFilteredMatchKVDAO" class="uk.ac.ebi.interpro.scan.persistence.MobiDBFilteredMatchKVDAO">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseMobiDB"/>
+        <property name="levelDBStore" ref="kvStoreMatches" />
     </bean>
 
     <bean id="signatureLibraryReleaseMobiDB" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">

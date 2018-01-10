@@ -332,6 +332,7 @@
         <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
         <property name="proteinInsertBatchSizeNoLookup" value="${precalculated.match.protein.insert.batch.size.nolookup}"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="proteinKVDAO" ref="proteinKVDAO"/>
         <property name="proteinLookup" ref="precalculatedLookup"/>
         <property name="getOrfOutput" value="false"/>
     </bean>

@@ -8,7 +8,9 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
+import uk.ac.ebi.interpro.scan.persistence.FilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchKVDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
@@ -29,6 +31,7 @@ public final class TMHMMParseStep extends Step {
     //    private RawMatchDAO<TMHMMRawMatch> rawMatchDAO;
     private TMHMMRawResultParser parser;
     private TMHMMFilteredMatchDAO filteredMatchDAO;
+    private TMHMMFilteredMatchKVDAO filteredMatchKVDAO;
 
     @Required
     public void setOutputFileNameTemplate(String TMHMMOutputFileNameTemplate) {
@@ -43,6 +46,11 @@ public final class TMHMMParseStep extends Step {
     @Required
     public void setFilteredMatchDAO(TMHMMFilteredMatchDAO filteredMatchDAO) {
         this.filteredMatchDAO = filteredMatchDAO;
+    }
+
+    @Required
+    public void setFilteredMatchKVDAO(TMHMMFilteredMatchKVDAO filteredMatchKVDAO) {
+        this.filteredMatchKVDAO = filteredMatchKVDAO;
     }
 
     /**
@@ -84,7 +92,7 @@ public final class TMHMMParseStep extends Step {
             int count = locationCount;
             // Persist parsed matches
             LOGGER.info("Persisting parsed matches...");
-            filteredMatchDAO.persist(proteins);
+            filteredMatchKVDAO.persist(proteins);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0){

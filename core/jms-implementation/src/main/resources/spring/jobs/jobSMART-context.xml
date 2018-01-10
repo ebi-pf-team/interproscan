@@ -135,6 +135,11 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchDAOImpl"/>
         </property>
+        <property name="filteredMatchKVDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchKVDAOImpl">
+                <property name="levelDBStore" ref="kvStoreMatches"/>
+            </bean>
+        </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SMART !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
