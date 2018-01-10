@@ -56,6 +56,6 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
                 rawMatch.getLocationEnd(),
                 rawMatch.getScore(),
                 rawMatch.getCigarAlignment());
-        return new ProfileScanMatch(signature, Collections.singleton(location));
+        return new ProfileScanMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 }

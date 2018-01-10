@@ -34,7 +34,7 @@ public class MobiDBBerkeleyMatchConverter extends BerkeleyMatchConverter<MobiDBM
             ));
         }
 
-        return new MobiDBMatch(signature, locations);
+        return new MobiDBMatch(signature, berkeleyMatch.getSignatureModels(), locations);
     }
 
 }

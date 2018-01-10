@@ -24,8 +24,8 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
     protected MobiDBMatch() {
     }
 
-    public MobiDBMatch(Signature signature,  Set<MobiDBLocation> locations) {
-        super(signature, locations);
+    public MobiDBMatch(Signature signature, String signatureModels, Set<MobiDBLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -33,7 +33,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
         for (MobiDBLocation location : this.getLocations()) {
             clonedLocations.add((MobiDBLocation) location.clone());
         }
-        return new MobiDBMatch(this.getSignature(),  clonedLocations);
+        return new MobiDBMatch(this.getSignature(), this.getSignatureModels(),  clonedLocations);
     }
 
 

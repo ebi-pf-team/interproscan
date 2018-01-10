@@ -72,7 +72,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                         if (match != null) {
                             entityManager.persist(match); // Persist the previous one...
                         }
-                        match = new BlastProDomMatch(currentSignature, locations);
+                        match = new BlastProDomMatch(currentSignature, currentModelId, locations);
                         // Not the first...
                         protein.addMatch(match);
                     }
@@ -97,7 +97,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                match = new BlastProDomMatch(currentSignature, locations);
+                match = new BlastProDomMatch(currentSignature, lastRawMatch.getModelId(), locations);
                 protein.addMatch(match);
                 entityManager.persist(match);
             }

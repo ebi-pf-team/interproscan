@@ -111,6 +111,7 @@ public class Protein implements OutputListElement, Serializable {
     @BatchSize(size=4000)
     // TODO: This should not be here (so TODO comments on getCrossReferences)
     @JsonManagedReference
+    @JsonProperty("xref")
     private Set<ProteinXref> crossReferences = new HashSet<ProteinXref>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "protein")
@@ -119,6 +120,8 @@ public class Protein implements OutputListElement, Serializable {
 
     @Transient
     @XmlTransient
+    @JsonManagedReference
+    @JsonIgnore
     private int sequenceLength = 0;
 
     /**
@@ -160,6 +163,8 @@ public class Protein implements OutputListElement, Serializable {
      *
      * @return The length
      */
+    @JsonManagedReference
+    @JsonIgnore
     public int getSequenceLength() {
         if (sequenceLength == 0) {
             final String seq = getSequence();

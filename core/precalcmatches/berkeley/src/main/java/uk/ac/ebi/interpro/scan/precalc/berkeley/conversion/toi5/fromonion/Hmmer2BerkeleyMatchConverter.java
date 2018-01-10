@@ -48,6 +48,7 @@ public class Hmmer2BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer2M
 
         return new Hmmer2Match(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 valueOrZero(berkeleyMatch.getSequenceScore()),
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 locations

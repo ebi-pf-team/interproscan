@@ -45,6 +45,7 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
 
         return new PantherMatch(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 locations,
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 "Not available",

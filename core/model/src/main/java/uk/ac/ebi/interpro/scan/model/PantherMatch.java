@@ -50,8 +50,8 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     protected PantherMatch() {
     }
 
-    public PantherMatch(Signature signature, Set<PantherLocation> locations, double evalue, String familyName, double score) {
-        super(signature, locations);
+    public PantherMatch(Signature signature, String signatureModels, Set<PantherLocation> locations, double evalue, String familyName, double score) {
+        super(signature, signatureModels, locations);
         setEvalue(evalue);
         this.familyName = familyName;
         this.score = score;
@@ -62,7 +62,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         for (PantherLocation location : this.getLocations()) {
             clonedLocations.add((PantherLocation) location.clone());
         }
-        return new PantherMatch(this.getSignature(), clonedLocations, this.getEvalue(), this.getFamilyName(), this.getScore());
+        return new PantherMatch(this.getSignature(), this.getSignatureModels(), clonedLocations, this.getEvalue(), this.getFamilyName(), this.getScore());
     }
 
     @XmlAttribute(required = true)

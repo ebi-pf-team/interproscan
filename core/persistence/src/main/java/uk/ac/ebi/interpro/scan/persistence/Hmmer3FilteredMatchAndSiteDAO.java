@@ -125,7 +125,7 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
             int hmmLength = model.getLength();
             locations.add(getLocation(m, rawSites, hmmLength));
         }
-        return new Hmmer3MatchWithSites(signature, score, evalue, locations);
+        return new Hmmer3MatchWithSites(signature, modelId, score, evalue, locations);
     }
 
     private Hmmer3MatchWithSites.Hmmer3LocationWithSites getLocation(T m, List<E> rawSites, int hmmLength) {

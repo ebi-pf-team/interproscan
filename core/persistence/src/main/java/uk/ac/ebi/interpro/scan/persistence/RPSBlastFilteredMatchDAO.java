@@ -120,7 +120,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         )
                 );
 
-                RPSBlastMatch match = new RPSBlastMatch(signature, locations);
+                RPSBlastMatch match = new RPSBlastMatch(signature, rawMatch.getModelId(), locations);
 
 
                 if (LOGGER.isDebugEnabled()) {

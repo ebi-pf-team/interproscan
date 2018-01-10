@@ -25,8 +25,8 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
     protected TMHMMMatch() {
     }
 
-    public TMHMMMatch(Signature signature, Set<TMHMMLocation> locations) {
-        super(signature, locations);
+    public TMHMMMatch(Signature signature, String signatureModels, Set<TMHMMLocation> locations) {
+        super(signature, signatureModels, locations);
         if (!TMHMMSignature.isValidSignature(signature)) {
             throw new IllegalArgumentException("The Signature object being used for this TMHMM does not appear to be a valid TMHMM signature.");
         }
@@ -37,7 +37,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
         for (TMHMMLocation location : this.getLocations()) {
             clonedLocations.add((TMHMMLocation) location.clone());
         }
-        return new TMHMMMatch(this.getSignature(), clonedLocations);
+        return new TMHMMMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     @Override

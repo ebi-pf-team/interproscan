@@ -36,6 +36,7 @@ public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamil
 
         return new SuperFamilyHmmer3Match(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 locations
         );

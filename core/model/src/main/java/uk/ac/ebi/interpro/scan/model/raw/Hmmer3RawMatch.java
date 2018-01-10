@@ -179,7 +179,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
             locations.add(getLocation(m, hmmLength));
         }
 
-        return new Hmmer3Match(signature, score, evalue, locations);
+        return new Hmmer3Match(signature, modelId, score, evalue, locations);
     }
 
     private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength) {

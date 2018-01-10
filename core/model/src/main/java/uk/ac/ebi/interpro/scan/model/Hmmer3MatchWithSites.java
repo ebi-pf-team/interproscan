@@ -40,8 +40,8 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
     protected Hmmer3MatchWithSites() {
     }
 
-    public Hmmer3MatchWithSites(Signature signature, double score, double evalue, Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations) {
-        super(signature, score, evalue, locations);
+    public Hmmer3MatchWithSites(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations) {
+        super(signature, signatureModels, score, evalue, locations);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         for (Hmmer3LocationWithSites location : this.getLocations()) {
             clonedLocations.add((Hmmer3LocationWithSites) location.clone());
         }
-        return new Hmmer3MatchWithSites(this.getSignature(), this.getScore(), this.getEvalue(), clonedLocations);
+        return new Hmmer3MatchWithSites(this.getSignature(), this.getSignatureModels(), this.getScore(), this.getEvalue(), clonedLocations);
     }
 
     /**

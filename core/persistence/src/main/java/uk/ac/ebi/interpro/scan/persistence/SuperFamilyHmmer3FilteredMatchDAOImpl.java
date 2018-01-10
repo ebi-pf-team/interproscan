@@ -72,9 +72,13 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     }
                     match = new SuperFamilyHmmer3Match(
                             currentSignature,
+                            rawMatch.getModelId(),
                             rawMatch.getEvalue(),
                             null);
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
+                }
+                else{
+                    match.addSignatureModel(rawMatch.getModelId());
                 }
                 Model model = holder.getModel();
                 int hmmLength = model == null ? 0 : model.getLength();

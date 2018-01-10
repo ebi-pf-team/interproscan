@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -125,6 +126,7 @@ public class Signature implements Serializable {
     @MapKey(name = "accession")
     @BatchSize(size=4000)
     @JsonManagedReference
+    @JsonIgnore
     private Map<String, Model> models = new HashMap<String, Model>();
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
@@ -479,7 +481,10 @@ public class Signature implements Serializable {
         deprecatedAccessions.remove(ac);
     }
 
-    @XmlJavaTypeAdapter(ModelAdapter.class)
+//    @XmlJavaTypeAdapter(ModelAdapter.class)
+    @XmlTransient
+    @JsonManagedReference
+    @JsonIgnore
     public Map<String, Model> getModels() {
 //        return (models == null ? null : Collections.unmodifiableMap(models));
         return models;
@@ -549,7 +554,7 @@ public class Signature implements Serializable {
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class ModelsType {
 
-        @XmlElement(name = "model")
+        @XmlElement(name = "old-model-elm")
         private final Set<Model> models;
 
         private ModelsType() {

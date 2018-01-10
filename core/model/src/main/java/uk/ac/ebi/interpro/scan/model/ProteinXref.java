@@ -17,7 +17,9 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -36,7 +38,7 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ProteinXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"identifier", "databaseName", "name"})
 public class ProteinXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
@@ -66,6 +68,8 @@ public class ProteinXref extends Xref implements Serializable {
     }
 
     @XmlAttribute(name = "desc", required = false)
+    @JsonManagedReference
+    @JsonIgnore
     public String getDescription() {
         return description;
     }

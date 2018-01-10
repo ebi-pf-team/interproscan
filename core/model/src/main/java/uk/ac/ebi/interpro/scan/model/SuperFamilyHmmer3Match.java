@@ -29,8 +29,8 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
     protected SuperFamilyHmmer3Match() {
     }
 
-    public SuperFamilyHmmer3Match(Signature signature, double evalue, Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations) {
-        super(signature, locations);
+    public SuperFamilyHmmer3Match(Signature signature, String signatureModels, double evalue, Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations) {
+        super(signature, signatureModels, locations);
         setEvalue(evalue);
     }
 
@@ -39,7 +39,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
         for (SuperFamilyHmmer3Location location : this.getLocations()) {
             clonedLocations.add((SuperFamilyHmmer3Location) location.clone());
         }
-        return new SuperFamilyHmmer3Match(this.getSignature(), this.getEvalue(), clonedLocations);
+        return new SuperFamilyHmmer3Match(this.getSignature(), this.getSignatureModels(), this.getEvalue(), clonedLocations);
     }
 
     @XmlAttribute(required = true)
