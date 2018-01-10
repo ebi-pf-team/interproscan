@@ -39,7 +39,8 @@ public class MatchCloneTest {
         final Set<Match> matches = new HashSet<Match>();
 
         final PhobiusMatch.PhobiusLocation phob1Location = new PhobiusMatch.PhobiusLocation(20, 40);
-        final Match phob1Match = new PhobiusMatch(release.getSignatures().iterator().next(), Collections.singleton(phob1Location));
+        final Signature phobiusSig = release.getSignatures().iterator().next();
+        final Match phob1Match = new PhobiusMatch(phobiusSig, Collections.singleton(phob1Location));
         matches.add(phob1Match);
 
         final CoilsMatch.CoilsLocation coilsLocation = new CoilsMatch.CoilsLocation(30, 50);

@@ -73,7 +73,6 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         }
 
         public PhobiusLocation(int start, int end) {
-
             super(start, end);
         }
 
