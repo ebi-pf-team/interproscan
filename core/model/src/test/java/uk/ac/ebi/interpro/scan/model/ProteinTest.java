@@ -120,7 +120,7 @@ public class ProteinTest extends AbstractTest<Protein> {
         // Try with locations
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
         locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104,HmmBounds.N_TERMINAL_COMPLETE));
-        Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), "PF02310", 0.035, 3.7e-9, locations));
         assertFalse("Original and copy should not be equal", original.equals(copy));
         copy.addMatch((Hmmer2Match) SerializationUtils.clone(match));
         assertEquals(original, copy);
@@ -142,12 +142,12 @@ public class ProteinTest extends AbstractTest<Protein> {
 
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
         locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE));
-        original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), "PF02310",0.035, 3.7e-9, locations));
 
         Set<ProfileScanMatch.ProfileScanLocation> l = new HashSet<ProfileScanMatch.ProfileScanLocation>();
         // Sequence is 60 chars, so make up a CIGAR string that adds up to 60 (10+10+30):
         l.add(new ProfileScanMatch.ProfileScanLocation(1, 60, 15.158, "10M10D10I30M"));
-        original.addMatch(new ProfileScanMatch(new Signature("PS50206"), l));
+        original.addMatch(new ProfileScanMatch(new Signature("PS50206"), "PS50206", l));
 
         byte[] data = SerializationUtils.serialize(original);
         String originalXML = marshal(original);
@@ -180,7 +180,7 @@ public class ProteinTest extends AbstractTest<Protein> {
         Protein protein = new Protein(GOOD);
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
         locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE));
-        Match match = protein.addMatch(new Hmmer2Match(new Signature("PF00155"), 0.035, 4.3e-61, locations));
+        Match match = protein.addMatch(new Hmmer2Match(new Signature("PF00155"), "PF00155", 0.035, 4.3e-61, locations));
         assertEquals("Protein should have one match", 1, protein.getMatches().size());
         protein.removeMatch(match);
         assertEquals("Protein should have no matches", 0, protein.getMatches().size());

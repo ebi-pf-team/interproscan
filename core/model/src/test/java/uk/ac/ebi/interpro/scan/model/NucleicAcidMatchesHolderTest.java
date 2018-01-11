@@ -81,7 +81,7 @@ public class NucleicAcidMatchesHolderTest extends AbstractTest<NucleicAcidMatche
         //Create matches
         Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
         locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.INCOMPLETE, 2, 108));
-        protein.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
+        protein.addMatch(new Hmmer3Match(signature, "PF02310", 0.035, 3.7e-9, locations));
         // Create release
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
         signature.setSignatureLibraryRelease(release);

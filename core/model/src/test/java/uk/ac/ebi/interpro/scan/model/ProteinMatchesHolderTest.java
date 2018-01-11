@@ -75,7 +75,7 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         p.addCrossReference(new ProteinXref("A0A000_9ACTO"));
         Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
         locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.INCOMPLETE, 2, 108));
-        p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
+        p.addMatch(new Hmmer3Match(signature, "PF02310", 0.035, 3.7e-9, locations));
         // Create release
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
         signature.setSignatureLibraryRelease(release);

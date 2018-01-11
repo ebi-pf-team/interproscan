@@ -53,7 +53,7 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
         originalLocation = 
                 new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2);
         originalMatch = new Hmmer3Match(
-                new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9,
+                new Signature("PF02310", "B12-binding"), "PF02310", 0.035, 3.7e-9,
                 new HashSet<Hmmer3Match.Hmmer3Location>(Arrays.asList(
                         new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2)
                 ))
@@ -81,7 +81,7 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
         @SuppressWarnings("unchecked") Set<Hmmer3Match.Hmmer3Location> locationsCopy =
                 (Set<Hmmer3Match.Hmmer3Location>) SerializationUtils.
                         clone(new HashSet<Hmmer3Match.Hmmer3Location>(original.getLocations()));
-        Hmmer3Match badCopy = new Hmmer3Match(new Signature("1", "A"), 1, 2, locationsCopy);
+        Hmmer3Match badCopy = new Hmmer3Match(new Signature("1", "A"), "1", 1, 2, locationsCopy);
         assertFalse("Original and copy should not be equal", original.equals(badCopy));
         // Test sets
         Set<Match> originalSet = new HashSet<Match>();

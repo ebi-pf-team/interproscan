@@ -38,7 +38,7 @@
                 Signature signature = new Signature("PIRSF000743", "RPO19");
                 Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
                 locations.add(new Hmmer2Match.Hmmer2Location(7, 172, 294.5, 6.3E-86, 1, 186, 186, HmmBounds.INCOMPLETE));
-                p.addMatch(new Hmmer2Match(signature, 294.5, 6.3E-86, locations));
+                p.addMatch(new Hmmer2Match(signature, "PIRSF000743", 294.5, 6.3E-86, locations));
                 return p;
             ]]>
         </lang:inline-script>

@@ -111,7 +111,7 @@ public class ProteinViewControllerTest {
                                 .type(EntryType.DOMAIN)
                                 .build())
                         .build(),
-                -8.9, 0.28, l1));
+                "2wltA02", -8.9, 0.28, l1));
 
 
         Entry entry = new Entry.Builder("IPR016027")
@@ -126,14 +126,14 @@ public class ProteinViewControllerTest {
                         .signatureLibraryRelease(release)
                         .entry(entry)
                         .build(),
-                -8.9, 0.28, l2));
+                "2wltA02", -8.9, 0.28, l2));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50250")
                         .name("Made up name")
                         .signatureLibraryRelease(release)
                         .entry(entry)
                         .build(),
-                -8.9, 0.28, l2));
+                "2wltA02", -8.9, 0.28, l2));
 
         return p;
 

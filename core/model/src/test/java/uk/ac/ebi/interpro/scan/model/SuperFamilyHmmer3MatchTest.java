@@ -24,6 +24,7 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
     public void testMatchEquals() {
         SuperFamilyHmmer3Match original = new SuperFamilyHmmer3Match(
                 new Signature("PF02310", "B12-binding"),
+                "PF02310",
                 3.7e-9,
                 new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>(Arrays.asList(
                         new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(3, 107, 107)
@@ -35,7 +36,7 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
         @SuppressWarnings("unchecked") Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locationsCopy =
                 (Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>) SerializationUtils.
                         clone(new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>(original.getLocations()));
-        SuperFamilyHmmer3Match badCopy = new SuperFamilyHmmer3Match(new Signature("1", "A"), 1, locationsCopy);
+        SuperFamilyHmmer3Match badCopy = new SuperFamilyHmmer3Match(new Signature("1", "A"), "1", 1, locationsCopy);
         assertFalse("Original and copy should not be equal", original.equals(badCopy));
         // Test sets
         Set<Match> originalSet = new HashSet<Match>();

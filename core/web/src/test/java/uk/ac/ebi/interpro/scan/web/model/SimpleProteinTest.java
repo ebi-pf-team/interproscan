@@ -70,7 +70,7 @@ public class SimpleProteinTest {
     @Test
     public void testValueOfMethodForUnintegratedSignature() {
         //Add protein match
-        testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), 0.035, 3.7e-9, locations));
+        testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), signatureAccession, 0.035, 3.7e-9, locations));
 
         //Simple sanity checks
         Assert.assertNotNull(testMatch.getSignature());
@@ -154,7 +154,7 @@ public class SimpleProteinTest {
         entry.addSignature(pirsfSignature);
 
         //Add protein match
-        testMatch = testProtein.addMatch(new Hmmer2Match(pantherSignature, 0.035, 3.7e-9, locations));
+        testMatch = testProtein.addMatch(new Hmmer2Match(pantherSignature, "PTHR13763", 0.035, 3.7e-9, locations));
 
         //Finally, test the valueOf method
         SimpleProtein simpleProtein = SimpleProtein.valueOf(testProtein, testProteinXref, entryHierarchy);
