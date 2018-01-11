@@ -110,8 +110,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
     }
 
     // add the signatureModels variable for handling model string list
-    @XmlElement (name = "signature-models")
-    @JsonProperty("signature-models")
+    @XmlElement (name = "model-ac")
+    @JsonProperty("model-ac")
     public String getSignatureModels() {
         return signatureModels;
     }
