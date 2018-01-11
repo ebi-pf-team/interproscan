@@ -58,10 +58,6 @@ public class ProfileFilteredMatchKVDAO<T extends ProfileScanRawMatch>
                 String key = Long.toString(protein.getId()) + signatureLibraryRep.getName();
                 byte[] byteKey = SerializationUtils.serialize(key);
                 byte[] byteMatches = SerializationUtils.serialize((HashSet<ProfileScanMatch>) filteredMatches);
-                Utilities.verboseLog("To persist key: " + key + " matches: " + filteredMatches.toString());
-                if(byteMatches ==  null){
-                    Utilities.verboseLog("Something is wrong here ... ");
-                }
                 persist(byteKey, byteMatches);
             }
         }

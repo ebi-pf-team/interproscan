@@ -161,12 +161,12 @@ public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match, RawMa
 
 
     @Transactional
-    public List<Protein>  getCompleteProteins(){
+    public List<Protein>  getCompleteProteins(long bottom, long top){
         //Map<String, HashSet<Match>> keyToMatchMap = getKeyToMatchMap();
 
         Set<String> signatureLibraryNames = getSignatureLibraryNames();
         Utilities.verboseLog("SignatureLibrary names:" + signatureLibraryNames.toString());        
-	Map<String, Protein>  completeProteins = new HashMap<>();
+	    Map<String, Protein>  completeProteins = new HashMap<>();
         Map<String, Protein> keyToProteinMap = proteinKVDAO.getKeyToProteinMap();
         Iterator it = keyToProteinMap.keySet().iterator();
         int count = 0;
@@ -220,8 +220,31 @@ public class WriteOutputMatchDAOImpl extends FilteredMatchKVDAOImpl<Match, RawMa
     }
 
     @Transactional(readOnly = true)
-    public List<Protein> getProteins() {
+    public List<Protein> getProteins(long bottom, long top) {
         List<Protein> proteins = new ArrayList<>();
+        Set<String> signatureLibraryNames = getSignatureLibraryNames();
+        Utilities.verboseLog("SignatureLibrary names:" + signatureLibraryNames.toString());
+
+        int matchCount = 0;
+        int locationsCount = 0;
+        for (long index = bottom; index <= top; index ++) {
+            String proteinId = Long.toString(index);
+            Protein protein = proteinKVDAO.getProtein(proteinId);
+            for(String signatureLibraryName: signatureLibraryNames){
+                String matchKey = proteinId + signatureLibraryName;
+                //Utilities.verboseLog("Get matches for key: " + key + " matchKey: " + matchKey);
+                HashSet<Match> matches = getMatchSet(matchKey);
+                if (matches != null){
+                    for(Match match: matches){
+                        protein.addMatch(match);
+                        locationsCount += match.getLocations().size();
+                        matchCount ++;
+                    }
+                }
+            }
+            proteins.add(protein);
+        }
+        Utilities.verboseLog("Total number of matches: " + matchCount  + " with " + locationsCount + " locations") ;
         return proteins;
     }
 

@@ -111,14 +111,8 @@ public class PrintsFilteredMatchKVDAOImpl extends FilteredMatchKVDAOImpl<FingerP
             }
             String key =  Long.toString(protein.getId()) + SignatureLibrary.PRINTS.getName();
             byte[] byteKey = SerializationUtils.serialize(key);
-
             byte[] byteMatches = SerializationUtils.serialize((HashSet<FingerPrintsMatch>) filteredMatches);
-            Utilities.verboseLog("To persist key: " + key + " matches: " + filteredMatches.toString());
-            if(byteMatches ==  null){
-                Utilities.verboseLog("Something is wrong here ... ");
-            }
        	    persist(byteKey,byteMatches);
-
         }
         if (filteredProteins.size() > 0) {
             Utilities.verboseLog("SignatureLibrary: " + SignatureLibrary.PRINTS.getName());

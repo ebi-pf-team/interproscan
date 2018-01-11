@@ -277,7 +277,10 @@ public class WriteOutputStep extends Step {
 
         //List<Match> matches = writeOutputMatchDAO.getMatches();
         //List<HashSet<Match>> matcheSets = writeOutputMatchDAO.getMatchSets();
-        List<Protein> completeProteins = writeOutputMatchDAO.getCompleteProteins();
+        List<Protein> completeProteins = writeOutputMatchDAO.getProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
+//        List<Protein> completeProteins = writeOutputMatchDAO.getCompleteProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
 
         Utilities.verboseLog(10, " WriteOutputStep - KVStore access Stats:"
                 + " matches retrieved :  + matcheSets.size() " 
@@ -288,6 +291,7 @@ public class WriteOutputStep extends Step {
 
         timeNow = System.currentTimeMillis();
 
+        /*
         List<Protein> proteins = proteinDAO.getProteins(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
 
@@ -295,7 +299,7 @@ public class WriteOutputStep extends Step {
                 + " time taken to get proteins: "
                 + (System.currentTimeMillis() - timeNow)
                 + " millis");
-        /*
+
         completeProteins = writeOutputMatchDAO.getCompleteProteins(proteins);
 
         
@@ -314,17 +318,19 @@ public class WriteOutputStep extends Step {
         }
 	Utilities.verboseLog("Matches from the Usual proteins " + proteins.size() + " proteins : " + matchCount);
 
-        */
 
-        //timeNow = System.currentTimeMillis();
-        //List<ProteinXref> proteinsXrefs = proteinXrefDAO.getAllXrefs();
-        //Utilities.verboseLog(10, " WriteOutputStep - proteinsXrefs to writeout: " + proteinsXrefs.size()
-        //        + " time taken to get proteinsXrefs: "
-        //        + (System.currentTimeMillis() - timeNow)
-        //        + " millis");
 
+        timeNow = System.currentTimeMillis();
+        List<ProteinXref> proteinsXrefs = proteinXrefDAO.getAllXrefs();
+        Utilities.verboseLog(10, " WriteOutputStep - proteinsXrefs to writeout: " + proteinsXrefs.size()
+                + " time taken to get proteinsXrefs: "
+                + (System.currentTimeMillis() - timeNow)
+                + " millis");
+*/
         //swap the proteins
-        proteins = completeProteins; //try now
+        List<Protein>  proteins = completeProteins; //try now
+        //
+        // not need getting all the proteins again
         //proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
 
         

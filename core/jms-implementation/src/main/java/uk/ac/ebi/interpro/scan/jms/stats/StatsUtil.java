@@ -607,15 +607,19 @@ public class StatsUtil {
             }else if  (progress > 0.9 && progressCounter < 4){
                 displayProgress = true;
                 progressCounter = 4;
-            }else if  (progress > 0.9 && progressCounter  >= 4){
+            }else if  (progress > 0.95 && progressCounter < 5){
+               	displayProgress = true;
+                progressCounter = 5;
+            }else if  (progress > 0.95 && progressCounter  >= 5){
                 Long now = System.currentTimeMillis();
                 Long timeSinceLastReport = now - progressReportTime;
                 int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                
                 if(timeSinceLastReport > 1800000 && changeSinceLastReport > 0){
                     displayProgress = true;
                     previousUnfinishedJobs = unfinishedJobs;
                     progressCounter ++;
-                }
+		}
             }
             if (forceDisplayProgress){
                 displayProgress = true;
@@ -630,6 +634,9 @@ public class StatsUtil {
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
                 String debugProgressString = " #:t" + masterTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
 //                LOGGER.debug(statsMessageListener.getStats());
+                displayMemoryAndRunningJobs();
+                displayQueueStatistics();
+                System.out.println(Utilities.getTimeNow() + " Progress: " + debugProgressString);
             }
         }
     }
