@@ -46,7 +46,7 @@ import java.util.*;
         @Index(name = "SIGNATURE_TYPE_IDX", columnList = "TYPE"),
         @Index(name = "SIGNATURE_MD5_IDX", columnList = "MD5")
 })
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "updated", "created", "id", "crossReferences", "abstract", "comment", "md5", "deprecatedAccessions"}) // IBU-4703: "abstract", "comment" and "md5" are never populated
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "updated", "created", "id", "models", "crossReferences", "abstract", "comment", "md5", "deprecatedAccessions"}) // IBU-4703: "abstract", "comment" and "md5" are never populated
 public class Signature implements Serializable {
 
     @Transient
@@ -123,11 +123,12 @@ public class Signature implements Serializable {
     @OneToMany(mappedBy = "signature", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 //    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "accession")
+//    @XmlTransient
     @BatchSize(size=4000)
     @JsonManagedReference
     private Map<String, Model> models = new HashMap<String, Model>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
     @BatchSize(size=4000)
@@ -139,6 +140,7 @@ public class Signature implements Serializable {
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
     @BatchSize(size=4000)
+    @XmlTransient
     private Set<String> deprecatedAccessions = new HashSet<String>();
 
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
@@ -450,7 +452,8 @@ public class Signature implements Serializable {
     }
 
     //    @XmlElementWrapper(name = "history")
-    @XmlElement(name = "deprecated-ac")
+    //@XmlElement(name = "deprecated-ac")
+    @XmlTransient
     public Set<String> getDeprecatedAccessions() {
         return deprecatedAccessions;
     }
@@ -479,7 +482,8 @@ public class Signature implements Serializable {
         deprecatedAccessions.remove(ac);
     }
 
-    @XmlJavaTypeAdapter(ModelAdapter.class)
+//    @XmlJavaTypeAdapter(ModelAdapter.class)  // IMPORTANT that this remains commented out if you dont want models in XML
+    @XmlTransient
     public Map<String, Model> getModels() {
 //        return (models == null ? null : Collections.unmodifiableMap(models));
         return models;
@@ -517,7 +521,7 @@ public class Signature implements Serializable {
     /**
      * Map models to and from XML representation
      */
-    @XmlTransient
+//    @XmlTransient
     private static class ModelAdapter extends XmlAdapter<ModelsType, Map<String, Model>> {
 
         /**
@@ -547,6 +551,7 @@ public class Signature implements Serializable {
      */
     @XmlType(name = "modelsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+//    @XmlTransient
     private final static class ModelsType {
 
         @XmlElement(name = "model")
@@ -571,6 +576,7 @@ public class Signature implements Serializable {
      *
      * @return cross-references
      */
+//    @XmlTransient
     public Set<SignatureXref> getCrossReferences() {
         // TODO: Had to move @XmlElement annotation to field otherwise received message below - this is
         // TODO: bad because setCrossReferences() will not be used by JAXB (access field directly):
