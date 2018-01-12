@@ -614,11 +614,9 @@
                         <matches>
                             <signalp-match>
                                 <signature name="SignalP-noTM" ac="SignalP-noTM">
-                                    <models>
-                                        <model name="SignalP-noTM" ac="SignalP-noTM"/>
-                                    </models>
                                     <signature-library-release version="4.0" library="SIGNALP_EUK"/>
                                 </signature>
+                                <model-ac>SignalP-noTM</model-ac>
                                 <locations>
                                     <signalp-location score="0.903" end="22" start="1"/>
                                 </locations>

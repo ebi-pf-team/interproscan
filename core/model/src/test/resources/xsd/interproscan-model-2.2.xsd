@@ -30,6 +30,7 @@
     <xs:complexType name="MatchType" abstract="true">
         <xs:sequence>
             <xs:element ref="tns:signature"/>
+            <xs:element name="model-ac" type="xs:string" minOccurs="0"/>
             <xs:element name="locations" type="tns:locationsType" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
@@ -41,7 +42,6 @@
             <xs:element name="xref" type="tns:SignatureXrefType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="deprecated-ac" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element ref="tns:entry" minOccurs="0"/>
-            <xs:element name="models" type="tns:modelsType" minOccurs="0"/>
             <xs:element ref="tns:signature-library-release" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="ac" type="xs:string" use="required"/>
@@ -97,21 +97,6 @@
                 <xs:sequence/>
             </xs:extension>
         </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="modelsType" final="extension restriction">
-        <xs:sequence>
-            <xs:element name="model" type="tns:ModelType" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="ModelType">
-        <xs:sequence/>
-        <xs:attribute name="ac" type="xs:string" use="required"/>
-        <xs:attribute name="desc" type="xs:string"/>
-        <xs:attribute name="md5" type="xs:string"/>
-        <xs:attribute name="name" type="xs:string"/>
-        <xs:attribute name="length" type="xs:integer"/>
     </xs:complexType>
 
     <xs:complexType name="SignatureLibraryReleaseType">
@@ -279,8 +264,8 @@
                 <xs:attribute name="evalue" type="xs:double" use="required"/>
                 <xs:attribute name="hmm-start" type="xs:int" use="required"/>
                 <xs:attribute name="hmm-end" type="xs:int" use="required"/>
-                <xs:attribute name="hmm-length" type="xs:int" use="required"/>
                 <xs:attribute name="hmm-bounds" type="tns:HmmBoundsType" use="required"/>
+                <xs:attribute name="hmm-length" type="xs:int" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -307,12 +292,12 @@
         <xs:complexContent>
             <xs:extension base="tns:LocationType">
                 <xs:sequence/>
-                <xs:attribute name="env-end" type="xs:int" use="required"/>
                 <xs:attribute name="env-start" type="xs:int" use="required"/>
-                <xs:attribute name="hmm-bounds" type="xs:string" use="required"/>
+                <xs:attribute name="env-end" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-start" type="xs:int" use="required"/>
                 <xs:attribute name="hmm-end" type="xs:int" use="required"/>
                 <xs:attribute name="hmm-length" type="xs:int" use="required"/>
-                <xs:attribute name="hmm-start" type="xs:int" use="required"/>
+                <xs:attribute name="hmm-bounds" type="tns:HmmBoundsType" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -545,6 +530,15 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="ModelType">
+        <xs:sequence/>
+        <xs:attribute name="ac" type="xs:string" use="required"/>
+        <xs:attribute name="desc" type="xs:string"/>
+        <xs:attribute name="length" type="xs:int"/>
+        <xs:attribute name="md5" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
     <xs:complexType name="nucleicAcidMatchesType" final="extension restriction">
         <xs:sequence>
             <xs:element ref="tns:nucleotide-sequence" minOccurs="0" maxOccurs="unbounded"/>
@@ -642,6 +636,12 @@
         <xs:attribute name="version" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="modelsType" final="extension restriction">
+        <xs:sequence>
+            <xs:element name="old-model-elm" type="tns:ModelType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:simpleType name="GoCategoryType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="BIOLOGICAL_PROCESS"/>
@@ -652,65 +652,65 @@
 
     <xs:simpleType name="EntryTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="ACTIVE_SITE"/>
             <xs:enumeration value="FAMILY"/>
-            <xs:enumeration value="REPEAT"/>
             <xs:enumeration value="DOMAIN"/>
+            <xs:enumeration value="ACTIVE_SITE"/>
             <xs:enumeration value="PTM"/>
-            <xs:enumeration value="UNKNOWN"/>
+            <xs:enumeration value="REPEAT"/>
             <xs:enumeration value="CONSERVED_SITE"/>
-            <xs:enumeration value="HOMOLOGOUS_SUPERFAMILY"/>
             <xs:enumeration value="BINDING_SITE"/>
+            <xs:enumeration value="HOMOLOGOUS_SUPERFAMILY"/>
+            <xs:enumeration value="UNKNOWN"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="SignatureLibraryType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="SIGNALP_EUK"/>
-            <xs:enumeration value="HAMAP"/>
-            <xs:enumeration value="CDD"/>
-            <xs:enumeration value="PROSITE_PROFILES"/>
-            <xs:enumeration value="SMART"/>
-            <xs:enumeration value="PANTHER"/>
             <xs:enumeration value="TMHMM"/>
-            <xs:enumeration value="PFAM"/>
-            <xs:enumeration value="MOBIDB_LITE"/>
-            <xs:enumeration value="TIGRFAM"/>
-            <xs:enumeration value="PRODOM"/>
-            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
-            <xs:enumeration value="SFLD"/>
-            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
-            <xs:enumeration value="PRINTS"/>
-            <xs:enumeration value="COILS"/>
-            <xs:enumeration value="PHOBIUS"/>
             <xs:enumeration value="SUPERFAMILY"/>
+            <xs:enumeration value="TIGRFAM"/>
+            <xs:enumeration value="MOBIDB_LITE"/>
+            <xs:enumeration value="PHOBIUS"/>
+            <xs:enumeration value="SFLD"/>
+            <xs:enumeration value="PRODOM"/>
+            <xs:enumeration value="PROSITE_PROFILES"/>
+            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
+            <xs:enumeration value="COILS"/>
+            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
+            <xs:enumeration value="SMART"/>
+            <xs:enumeration value="HAMAP"/>
             <xs:enumeration value="PIRSF"/>
             <xs:enumeration value="PROSITE_PATTERNS"/>
+            <xs:enumeration value="PRINTS"/>
+            <xs:enumeration value="CDD"/>
             <xs:enumeration value="GENE3D"/>
+            <xs:enumeration value="PANTHER"/>
+            <xs:enumeration value="PFAM"/>
+            <xs:enumeration value="SIGNALP_EUK"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="HmmBoundsType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="C_TERMINAL_COMPLETE"/>
             <xs:enumeration value="INCOMPLETE"/>
-            <xs:enumeration value="COMPLETE"/>
+            <xs:enumeration value="C_TERMINAL_COMPLETE"/>
             <xs:enumeration value="N_TERMINAL_COMPLETE"/>
+            <xs:enumeration value="COMPLETE"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="LevelType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="STRONG"/>
-            <xs:enumeration value="WEAK"/>
             <xs:enumeration value="NONE"/>
+            <xs:enumeration value="WEAK"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="NucleotideSequenceStrandType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="SENSE"/>
             <xs:enumeration value="ANTISENSE"/>
+            <xs:enumeration value="SENSE"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
