@@ -89,17 +89,27 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {
 //                            mappingFields.add (Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore()));
 //                            mappingFields.add (((ProfileScanMatch.ProfileScanLocation) location).getAlignment());
-                        }else if (location instanceof PatternScanMatch.PatternScanLocation) {
-                            mappingFields.add (((PatternScanMatch.PatternScanLocation) location).getLevel().getTagNumber());
+                        } else if (location instanceof PatternScanMatch.PatternScanLocation) {
+                            mappingFields.add(((PatternScanMatch.PatternScanLocation) location).getLevel().getTagNumber());
 //                            mappingFields.add (((PatternScanMatch.PatternScanLocation) location).getAlignment());
+                        } else if (location instanceof PantherMatch.PantherLocation) {
+                            PantherMatch.PantherLocation pantherLocation = (PantherMatch.PantherLocation) location;
+                            mappingFields.add(pantherLocation.getHmmBounds().getSymbol());
+                            mappingFields.add(Integer.toString(pantherLocation.getHmmStart()));
+                            mappingFields.add(Integer.toString(pantherLocation.getHmmEnd()));
+                            mappingFields.add(Integer.toString(pantherLocation.getHmmLength()));
+                            mappingFields.add(Integer.toString(pantherLocation.getEnvelopeStart()));
+                            mappingFields.add(Integer.toString(pantherLocation.getEnvelopeEnd()));
+                        } else if (location instanceof SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) {
+                            mappingFields.add(Integer.toString(((SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) location).getHmmLength()));
                         }
 
                         if (location instanceof Hmmer3Match.Hmmer3Location) {
                             Hmmer3Match.Hmmer3Location hmmer3Location = (Hmmer3Match.Hmmer3Location) location;
-                            mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeEnd()));
                             mappingFields.add(hmmer3Location.getHmmBounds().getSymbol());
                             mappingFields.add(Integer.toString(hmmer3Location.getHmmStart()));
                             mappingFields.add(Integer.toString(hmmer3Location.getHmmEnd()));
+                            mappingFields.add(Integer.toString(hmmer3Location.getHmmLength()));
                             mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeStart()));
                             mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeEnd()));
                             mappingFields.add(Double.toString(hmmer3Location.getScore()));
@@ -107,8 +117,10 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         }
                         if (location instanceof Hmmer2Match.Hmmer2Location) {
                             Hmmer2Match.Hmmer2Location hmmerLocation = (Hmmer2Match.Hmmer2Location) location;
+                            mappingFields.add(hmmerLocation.getHmmBounds().getSymbol());
                             mappingFields.add(Integer.toString(hmmerLocation.getHmmStart()));
                             mappingFields.add(Integer.toString(hmmerLocation.getHmmEnd()));
+                            mappingFields.add(Integer.toString(hmmerLocation.getHmmLength()));
                             mappingFields.add(Double.toString(hmmerLocation.getScore()));
                             mappingFields.add(Double.toString(hmmerLocation.getEvalue()));
                         }
