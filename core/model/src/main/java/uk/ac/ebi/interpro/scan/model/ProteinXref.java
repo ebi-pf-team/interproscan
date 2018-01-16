@@ -46,6 +46,9 @@ public class ProteinXref extends Xref implements Serializable {
     @Column(nullable = true)
     private String description;
 
+//    @Column(nullable = false)
+//    private String originalHeaderName;
+
     /**
      * Zero arguments constructor just for Hibernate.
      */
