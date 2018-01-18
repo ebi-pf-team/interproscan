@@ -201,6 +201,7 @@
                         <property name="nucleotideSequenceXrefDAO" ref="nucleotideSequenceXrefDAO"/>
                     </bean>
                 </property>
+                <property name="inputType" value="NucleotideSequence"/>
             </bean>
         </property>
         <!-- Don't need the following two properties, that have been copied from load Protein fasta file above.-->
@@ -261,6 +262,7 @@
 
                     </bean>
                 </property>
+                <property name="inputType" value="Protein"/>
             </bean>
         </property>
         <property name="overridingFastaFileName" ref="getOrfResultFile"/>
@@ -309,6 +311,7 @@
 
     <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
         <property name="sequenceLoader" ref="proteinLoader"/>
+        <property name="inputType" value="Protein"/>
     </bean>
 
     <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">

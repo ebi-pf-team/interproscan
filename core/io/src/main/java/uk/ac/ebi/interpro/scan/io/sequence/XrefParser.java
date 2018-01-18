@@ -124,18 +124,19 @@ public class XrefParser {
             String originalHeaderName = crossReference.trim();
 
             if (matcher.find()) {
-                Utilities.verboseLog("MATCHES GETORF_HEADER_PATTERN");
-                Utilities.verboseLog("originalHeaderName: " + originalHeaderName + " and now xref-id : " + matcher.group(1));
+                //Utilities.verboseLog("MATCHES GETORF_HEADER_PATTERN");
+                //Utilities.verboseLog("originalHeaderName: " + originalHeaderName + " and now xref-id : " + matcher.group(1));
                 return new ProteinXref(null, matcher.group(1), originalHeaderName, matcher.group(2));
             }
 
-	    // this eventually should be the only way to parse the header
+	        // this eventually should be the only way to parse the header
             if (originalHeaderName.length() > 1) {
                 //Test using the header
-                Utilities.verboseLog("originalHeaderName: " + originalHeaderName);
+                //Utilities.verboseLog("originalHeaderName: " + originalHeaderName);
                 return stripUniqueIdentifierAndTrimForProteinSeqDefault(originalHeaderName);
             }
 
+            //The rest of the code below will be ignored
 
             if (matcher.find()) {
                 if (LOGGER.isDebugEnabled()) LOGGER.debug("MATCHES");

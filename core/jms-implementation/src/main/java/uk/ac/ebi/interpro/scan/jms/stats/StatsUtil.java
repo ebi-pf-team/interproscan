@@ -28,7 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * This util has several functions useful for the monitoring of the queues.
  * Its not thread safe, but should only be used in one thread
- *
  */
 public class StatsUtil {
 
@@ -74,7 +73,7 @@ public class StatsUtil {
 
     private final List<String> runningJobs = Collections.synchronizedList(new ArrayList<String>());
 
-    private final ConcurrentMap<Integer, String> submittedStepInstances = new ConcurrentHashMap<Integer, String> ();
+    private final ConcurrentMap<Integer, String> submittedStepInstances = new ConcurrentHashMap<Integer, String>();
 
     ConcurrentMap<UUID, WorkerState> workerStateMap = new ConcurrentHashMap<UUID, WorkerState>();
 
@@ -85,7 +84,7 @@ public class StatsUtil {
 
     private long timeOfLastMemoryDisplay = System.currentTimeMillis();
 
-    private  long startUpTime;
+    private long startUpTime;
     private long maximumLifeMillis;
 
     private long currentMasterClockTime;
@@ -137,7 +136,7 @@ public class StatsUtil {
         return tier;
     }
 
-    public synchronized  void setTier(int tier) {
+    public synchronized void setTier(int tier) {
         StatsUtil.tier = tier;
     }
 
@@ -181,7 +180,7 @@ public class StatsUtil {
         return statsMessageListener;
     }
 
-    public synchronized  Long getTotalJobs() {
+    public synchronized Long getTotalJobs() {
         return totalJobs;
     }
 
@@ -269,48 +268,48 @@ public class StatsUtil {
         return submittedStepInstances;
     }
 
-    public int getSubmittedStepInstancesCount(){
+    public int getSubmittedStepInstancesCount() {
         return submittedStepInstances.size();
     }
 
-    public void addToSubmittedStepInstances(StepInstance stepInstance){
+    public void addToSubmittedStepInstances(StepInstance stepInstance) {
         Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
         submittedStepInstances.put(key, stepInstance.toString());
     }
 
-    public void updateSubmittedStepInstances(StepInstance stepInstance){
+    public void updateSubmittedStepInstances(StepInstance stepInstance) {
 
         Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
-        Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() +")");
+        Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() + ")");
         submittedStepInstances.replace(key, "Done " + stepInstance.toString());
-        if(Utilities.verboseLogLevel > 2 && ! submittedStepInstances.containsKey(key)){
+        if (Utilities.verboseLogLevel > 2 && !submittedStepInstances.containsKey(key)) {
             Utilities.verboseLog("stepInstance key  not found in submitted stepInstances: "
                     + stepInstance.getId() + " -  " + stepInstance.getStepId());
         }
     }
 
-    public void removeFromSubmittedStepInstances(StepInstance stepInstance){
+    public void removeFromSubmittedStepInstances(StepInstance stepInstance) {
         submittedStepInstances.remove(stepInstance.getId());
     }
 
-    public Integer getKey(Long id, String name){
+    public Integer getKey(Long id, String name) {
         String keyString = name + id.toString();
         return keyString.hashCode();
     }
 
-    public void printSubmittedStepInstances(){
+    public void printSubmittedStepInstances() {
         Utilities.verboseLog(" submittedStepInstances:");
         Set ids = submittedStepInstances.keySet();
         Utilities.verboseLog(" submittedStepInstances:" + ids.size());
         //Collections.sort((List<Comparable>) ids);
 
-        for(Object stepInstanceId:ids){
+        for (Object stepInstanceId : ids) {
             Long id = (Long) stepInstanceId;
             System.out.println(id + ":" + submittedStepInstances.get(id));
         }
     }
 
-    public void printNonAcknowledgedSubmittedStepInstances(){
+    public void printNonAcknowledgedSubmittedStepInstances() {
         Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
         Set ids = submittedStepInstances.entrySet();
         Utilities.verboseLog(" submittedStepInstances:" + ids.size()
@@ -318,20 +317,20 @@ public class StatsUtil {
         //Collections.sort((List<Comparable>) ids);
 
         for (Object entry : submittedStepInstances.entrySet()) {
-            if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
+            if (!((Map.Entry<Integer, String>) entry).getValue().contains("Done")) {
                 System.out.println(((Map.Entry<Integer, String>) entry).getKey() + ":" + ((Map.Entry<Integer, String>) entry).getValue());
             }
         }
     }
 
-    public Set<String> getNonAcknowledgedSubmittedStepInstances(){
+    public Set<String> getNonAcknowledgedSubmittedStepInstances() {
         Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
         Set ids = submittedStepInstances.entrySet();
         Set<String> nonAcknowledgedStepInstances = new TreeSet<String>();
         Utilities.verboseLog(" submittedStepInstances:" + ids.size());
 
-        for (Object entry : submittedStepInstances.entrySet()){
-            if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
+        for (Object entry : submittedStepInstances.entrySet()) {
+            if (!((Map.Entry<Integer, String>) entry).getValue().contains("Done")) {
                 nonAcknowledgedStepInstances.add(((Map.Entry<Integer, String>) entry).getValue());
             }
         }
@@ -342,7 +341,7 @@ public class StatsUtil {
     /**
      * Time last message was received
      */
-    public void updateLastMessageReceivedTime(){
+    public void updateLastMessageReceivedTime() {
         lastMessageReceivedTime = System.currentTimeMillis();
     }
 
@@ -368,15 +367,15 @@ public class StatsUtil {
     }
 
     //
-    public void displayMemoryAndRunningJobs(){
+    public void displayMemoryAndRunningJobs() {
         Long now = System.currentTimeMillis();
         Long timeSinceLastMemoryDisplay = now - timeOfLastMemoryDisplay;
-        if(timeSinceLastMemoryDisplay > 5 * 1000){
+        if (timeSinceLastMemoryDisplay > 5 * 1000) {
             displayMemInfo();
 
-            System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
-            List <String> currentRunningJobs =  getRunningJobs();
-            for(String runningJob:currentRunningJobs){
+            System.out.println(Utilities.getTimeNow() + " Current active Jobs");
+            List<String> currentRunningJobs = getRunningJobs();
+            for (String runningJob : currentRunningJobs) {
                 System.out.println(runningJob);
             }
             timeOfLastMemoryDisplay = System.currentTimeMillis();
@@ -384,16 +383,18 @@ public class StatsUtil {
 
     }
 
-    public void displayRunningJobs(){
-        Utilities.verboseLog("Current active Jobs" );
-        List <String> currentRunningJobs =  getRunningJobs();
-        for(String runningJob:currentRunningJobs){
-            Utilities.verboseLog(String.format("%" + 26 + "s", runningJob));
+    public void displayRunningJobs() {
+        if(Utilities.verboseLog) {
+            Utilities.verboseLog("Current active Jobs");
+            List<String> currentRunningJobs = getRunningJobs();
+            for (String runningJob : currentRunningJobs) {
+                System.out.println(String.format("%15s %s", "", runningJob));
+            }
         }
     }
 
     public List<String> getRunningJobs() {
-        synchronized(runningJobs){
+        synchronized (runningJobs) {
             return Collections.unmodifiableList(new ArrayList<String>(runningJobs));
         }
     }
@@ -404,10 +405,11 @@ public class StatsUtil {
 
     /**
      * insert or replace worker state
+     *
      * @param workerState
      */
-    public void updateWorkerStateMap(WorkerState workerState){
-        if(workerStateMap.replace(workerState.getWorkerIdentification(), workerState) == null){
+    public void updateWorkerStateMap(WorkerState workerState) {
+        if (workerStateMap.replace(workerState.getWorkerIdentification(), workerState) == null) {
             workerStateMap.putIfAbsent(workerState.getWorkerIdentification(), workerState);
 
         }
@@ -415,50 +417,51 @@ public class StatsUtil {
 
     /**
      * poll  the statistics broker plugin
+     *
      * @param queue
      * @return
      */
 
-    private synchronized  boolean  pollStatsBroker(Destination queue){
+    private synchronized boolean pollStatsBroker(Destination queue) {
         statsMessageListener.setDestination(queue);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        LOGGER.debug("Setting the destination to "+getQueueName(queue) +" at " +timestamp);
-        jmsTemplate.execute(STATS_BROKER_DESTINATION +  getQueueName(queue), new ProducerCallbackImpl(statsQueue));
+        LOGGER.debug("Setting the destination to " + getQueueName(queue) + " at " + timestamp);
+        jmsTemplate.execute(STATS_BROKER_DESTINATION + getQueueName(queue), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {
-            Thread.sleep(3*1000);
+            Thread.sleep(3 * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return  statsMessageListener.getStats()!=null;
+        return statsMessageListener.getStats() != null;
     }
 
-    public boolean  pollStatsBrokerJobQueue(){
+    public boolean pollStatsBrokerJobQueue() {
 
-        return  pollStatsBroker(jobRequestQueue);
+        return pollStatsBroker(jobRequestQueue);
     }
 
-    public boolean  pollStatsBrokerHighMemJobQueue(){
-        return  pollStatsBroker(highMemJobRequestQueue);
+    public boolean pollStatsBrokerHighMemJobQueue() {
+        return pollStatsBroker(highMemJobRequestQueue);
     }
 
-    public boolean  pollStatsBrokerResponseQueue(){
-        return  pollStatsBroker(jobResponseQueue);
+    public boolean pollStatsBrokerResponseQueue() {
+        return pollStatsBroker(jobResponseQueue);
     }
 
-    public boolean  pollStatsBrokerTopic(){
-        return  pollStatsBroker(workerManagerTopicQueue);
+    public boolean pollStatsBrokerTopic() {
+        return pollStatsBroker(workerManagerTopicQueue);
     }
 
     public String getQueueName(Destination queue) {
         try {
-            if(queue!=null){
+            if (queue != null) {
                 return ((Queue) queue).getQueueName();
             }
         } catch (JMSException e) {
             e.printStackTrace();
-            if(LOGGER.isDebugEnabled()){
-                LOGGER.debug("There is a problem with the queue name "+queue.toString());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("There is a problem with the queue name " + queue.toString());
             }
         }
         return "*";
@@ -466,18 +469,19 @@ public class StatsUtil {
 
     public String getTopicName(Destination topic) {
         try {
-            if(topic!=null){
+            if (topic != null) {
                 return ((Topic) topic).getTopicName();
             }
         } catch (JMSException e) {
             e.printStackTrace();
-            if(LOGGER.isDebugEnabled()){
-                LOGGER.debug("There is a problem with the queue name "+topic.toString());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("There is a problem with the queue name " + topic.toString());
             }
         }
         return "*";
     }
-    public  void sendMessage(){
+
+    public void sendMessage() {
         jmsTemplate.send(jobRequestQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return session.createTextMessage("test");
@@ -485,7 +489,7 @@ public class StatsUtil {
         });
     }
 
-    public  void sendhighMemMessage(){
+    public void sendhighMemMessage() {
         jmsTemplate.send(highMemJobRequestQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return session.createTextMessage("test2");
@@ -494,29 +498,29 @@ public class StatsUtil {
     }
 
     /**
-     *  poll the topic for statistics
+     * poll the topic for statistics
+     *
      * @param topic
      * @return
      */
-    private boolean  pollStatsBrokerTopic(Destination topic){
+    private boolean pollStatsBrokerTopic(Destination topic) {
         statsMessageListener.setDestination(topic);
-        LOGGER.info("Setting the destination to "+getQueueName(topic));
-        jmsTemplate.execute(STATS_BROKER_DESTINATION +  getTopicName(topic), new ProducerCallbackImpl(statsQueue));
+        LOGGER.info("Setting the destination to " + getQueueName(topic));
+        jmsTemplate.execute(STATS_BROKER_DESTINATION + getTopicName(topic), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {
-            Thread.sleep(1*500);
+            Thread.sleep(1 * 500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return  statsMessageListener.getStats()!=null;
+        return statsMessageListener.getStats() != null;
     }
 
     /**
      * display queue statistics for debugging
-     *
      */
-    public void displayQueueStatistics(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+    public void displayQueueStatistics() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerJobQueue();
         if (!requestQueueStatsAvailable) {
             System.out.println("JobRequestQueue: not initialised");
         } else {
@@ -534,37 +538,39 @@ public class StatsUtil {
 
     /**
      * get the request queue size
+     *
      * @return
      */
-    public int getRequestQueueSize(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+    public int getRequestQueueSize() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerJobQueue();
         if (!requestQueueStatsAvailable) {
             LOGGER.warn("JobRequestQueue: not initialised");
             return -99;
         }
         setRequestQueueConsumerCount(statsMessageListener.getConsumers());
-        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+        return statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
     }
 
     /**
      * get highmem queuesie
+     *
      * @return
      */
-    public int getHighMemRequestQueueSize(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+    public int getHighMemRequestQueueSize() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
             Utilities.verboseLog(5, "HighMemJobRequestQueue: not initialised");
             return -99;
         }
-        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+        return statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
     }
 
-    public void displayHighMemoryQueueStatistics(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+    public void displayHighMemoryQueueStatistics() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            Utilities.verboseLog(5,"JobRequestQueue: not initialised");
+            Utilities.verboseLog(5, "JobRequestQueue: not initialised");
         } else {
-            Utilities.verboseLog(5,"HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
+            Utilities.verboseLog(5, "HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
         }
 
     }
@@ -572,11 +578,11 @@ public class StatsUtil {
     /**
      * set the unfinished jobs
      */
-    public void updateStatsUtilJobCounts(){
+    public void updateStatsUtilJobCounts() {
         pollStatsBrokerResponseQueue();
-        int responseDequeueCount =    statsMessageListener.getDequeueCount();
+        int responseDequeueCount = statsMessageListener.getDequeueCount();
         pollStatsBrokerJobQueue();
-        int requestEnqueueCount =    statsMessageListener.getEnqueueCount();
+        int requestEnqueueCount = statsMessageListener.getEnqueueCount();
 
         //unfinishedJobs = requestEnqueueCount - responseDequeueCount;
         setUnfinishedJobs(requestEnqueueCount - responseDequeueCount);
@@ -585,62 +591,65 @@ public class StatsUtil {
     }
 
     /**
-     *   Display master job progress report based on the number of jobs left to run
+     * Display master job progress report based on the number of jobs left to run
      */
-    public void displayMasterProgress(){
+    public void displayMasterProgress() {
 //        System.out.println("#un:to - " + unfinishedJobs + ":" + totalJobs);
         Long masterTotalJobs = totalJobs;
-        if(unfinishedJobs > 0 && masterTotalJobs > 5.0){
-            Double progress = (double)(masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
+        if (unfinishedJobs > 0 && masterTotalJobs > 5.0) {
+            Double progress = (double) (masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
             boolean displayProgress = false;
             Double actualProgress;
             int changeSinceLastReport = 0;
-            if ((progress *100) % 10 == 0){
-                displayProgress = true;
-               	progressCounter ++;                
-            }
+//            if ((progress * 100) % 10 == 0) {
+//                displayProgress = true;
+//                progressCounter++;
+//            }
 
-            if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
+            if (progress > 0.25 && progress < 0.5 && progressCounter < 1) {
                 displayProgress = true;
                 progressCounter = 1;
-            }else if  (progress > 0.5 && progress < 0.75 && progressCounter < 2){
+            } else if (progress > 0.5 && progress < 0.75 && progressCounter < 2) {
                 displayProgress = true;
                 progressCounter = 2;
-            }else if  (progress > 0.75 && progress < 0.9 && progressCounter < 3){
+            } else if (progress > 0.75 && progress < 0.9 && progressCounter < 3) {
                 displayProgress = true;
                 progressCounter = 3;
-            }else if  (progress > 0.9 && progressCounter < 4){
+            } else if (progress > 0.9 && progressCounter < 4) {
                 displayProgress = true;
                 progressCounter = 4;
-            }else if  (progress > 0.9 && progressCounter  >= 4){
+            } else if (progress > 0.9 && progressCounter >= 4) {
                 Long now = System.currentTimeMillis();
                 Long timeSinceLastReport = now - progressReportTime;
                 changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-                if(timeSinceLastReport > 1800000 && changeSinceLastReport > 0){
+                if (timeSinceLastReport > 1800000 && changeSinceLastReport > 0) {
                     displayProgress = true;
                     previousUnfinishedJobs = unfinishedJobs;
-                    progressCounter ++;
+                    progressCounter++;
                 }
             }
-            if (forceDisplayProgress){
+            if (forceDisplayProgress) {
                 displayProgress = true;
             }
-            if(displayProgress){
+            if (displayProgress) {
                 progressReportTime = System.currentTimeMillis();
                 // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
                 actualProgress = Math.floor(progress * 100);
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
+                Set<String> nonAckStepInstances = new HashSet<>();
 
-		Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances:" + getNonAcknowledgedSubmittedStepInstances());
-		displayRunningJobs();
+                //for (StepInstance stepinstance: getNonAcknowledgedSubmittedStepInstances()):
+
+                Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances:" + getNonAcknowledgedSubmittedStepInstances());
+                displayRunningJobs();
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
                 changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-                if (changeSinceLastReport > 0){
+                if (changeSinceLastReport > 0) {
                     previousUnfinishedJobs = unfinishedJobs;
                 }
-              
+
                 String debugProgressString = " #:t" + masterTotalJobs + " :l" + unfinishedJobs + " change: " + changeSinceLastReport + " :c" + connectionCount;
                 Utilities.verboseLog("debugProgressString: " + debugProgressString);
 //                LOGGER.debug(statsMessageListener.getStats());
@@ -649,23 +658,22 @@ public class StatsUtil {
     }
 
 
-
     /**
-     *   Display worker job progress report based on the number of jobs left to run
+     * Display worker job progress report based on the number of jobs left to run
      */
-    public void displayWorkerProgress(){
-        if(progressCounter ==  0){
+    public void displayWorkerProgress() {
+        if (progressCounter == 0) {
             progressReportTime = System.currentTimeMillis();
         }
         Long now = System.currentTimeMillis();
         Long timeSinceLastReport = now - progressReportTime;
         float progressPercent = 0;
         Long workerTotalJobs = totalJobs;
-        if(workerTotalJobs > 5.0){
+        if (workerTotalJobs > 5.0) {
             progressPercent = (workerTotalJobs - unfinishedJobs) * 100 / workerTotalJobs;
         }
         //display every hour 60 * 60 * 1000
-        if(timeSinceLastReport > 3600000){
+        if (timeSinceLastReport > 3600000) {
             int connectionCount = statsMessageListener.getConsumers();
             int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
             int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
@@ -678,13 +686,13 @@ public class StatsUtil {
             progressReportTime = System.currentTimeMillis();
             previousUnfinishedJobs = unfinishedJobs;
         }
-        progressCounter ++;
+        progressCounter++;
     }
 
     /**
-     *   Display final worker job progress report based on the number of jobs left to run
+     * Display final worker job progress report based on the number of jobs left to run
      */
-    public void displayFinalWorkerProgress(){
+    public void displayFinalWorkerProgress() {
         Long workerTotalJobs = totalJobs;
         int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
         System.out.println(Utilities.getTimeNow() + " Completed " + finishedJobs + " of " + workerTotalJobs + " jobs");
@@ -696,32 +704,32 @@ public class StatsUtil {
      *
      */
 
-    public int getAvailableProcessors(){
+    public int getAvailableProcessors() {
         int processors = Runtime.getRuntime().availableProcessors();
         LOGGER.debug(Utilities.getTimeNow() + " Processors available: " + processors);
         return processors;
     }
 
-    public void memoryDisplay(){
+    public void memoryDisplay() {
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
 
-        if(systemInfo == null){
+        if (systemInfo == null) {
             systemInfo = new SystemInfo();
         }
         System.out.println("SystemInfo \n " + systemInfo.Info());
     }
 
-    public void displaySystemInfo(){
-        if(systemInfo == null){
+    public void displaySystemInfo() {
+        if (systemInfo == null) {
             systemInfo = new SystemInfo();
         }
         System.out.println(Utilities.getTimeNow() + " " + "SystemInfo \n " + systemInfo.Info());
     }
 
-    public void displayMemInfo(){
-        if(systemInfo == null){
+    public void displayMemInfo() {
+        if (systemInfo == null) {
             systemInfo = new SystemInfo();
         }
         System.out.println(Utilities.getTimeNow() + " Stats from the JVM ");
@@ -729,12 +737,12 @@ public class StatsUtil {
         System.out.println(getHeapNonHeapUsage());
         // get virtual memory etc
         String PID = "";
-        try{
+        try {
             PID = Utilities.getPid();
             System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetailsCLC(PID));
             Utilities.runFreeCmd();
             Utilities.runVmstatCmd();
-        }catch (Exception ex ){
+        } catch (Exception ex) {
             LOGGER.debug("Error in getting process PID" + ex);
             System.out.println(Utilities.getTimeNow() + " Failed to get other memory stats - PID : " + PID + " " + ex);
             ex.printStackTrace();
@@ -743,9 +751,10 @@ public class StatsUtil {
 
     /**
      * get memory usage for the JVM
+     *
      * @return
      */
-    public String getHeapNonHeapUsage(){
+    public String getHeapNonHeapUsage() {
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
@@ -764,7 +773,7 @@ public class StatsUtil {
     /**
      * get memeory utilisation from the JvM
      */
-    public void getJVMMemory(){
+    public void getJVMMemory() {
 
         // init code
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
