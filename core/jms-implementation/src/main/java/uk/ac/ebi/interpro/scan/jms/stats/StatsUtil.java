@@ -595,6 +595,12 @@ public class StatsUtil {
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
             boolean displayProgress = false;
             Double actualProgress;
+            int changeSinceLastReport = 0;
+            if ((progress *100) % 10 == 0){
+                displayProgress = true;
+               	progressCounter ++;                
+            }
+
             if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
                 displayProgress = true;
                 progressCounter = 1;
@@ -610,7 +616,7 @@ public class StatsUtil {
             }else if  (progress > 0.9 && progressCounter  >= 4){
                 Long now = System.currentTimeMillis();
                 Long timeSinceLastReport = now - progressReportTime;
-                int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
                 if(timeSinceLastReport > 1800000 && changeSinceLastReport > 0){
                     displayProgress = true;
                     previousUnfinishedJobs = unfinishedJobs;
@@ -626,9 +632,17 @@ public class StatsUtil {
                 actualProgress = Math.floor(progress * 100);
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
 
+		Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances:" + getNonAcknowledgedSubmittedStepInstances());
+		displayRunningJobs();
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
-                String debugProgressString = " #:t" + masterTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+                changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                if (changeSinceLastReport > 0){
+                    previousUnfinishedJobs = unfinishedJobs;
+                }
+              
+                String debugProgressString = " #:t" + masterTotalJobs + " :l" + unfinishedJobs + " change: " + changeSinceLastReport + " :c" + connectionCount;
+                Utilities.verboseLog("debugProgressString: " + debugProgressString);
 //                LOGGER.debug(statsMessageListener.getStats());
             }
         }
