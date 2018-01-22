@@ -37,7 +37,7 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "XrefType")
-@JsonIgnoreProperties({"id", "db"})
+@JsonIgnoreProperties({"id", "db", "databaseName"})
 abstract class Xref implements Serializable {
 
     @Id
