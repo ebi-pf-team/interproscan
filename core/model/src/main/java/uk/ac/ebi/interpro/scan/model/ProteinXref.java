@@ -36,7 +36,7 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ProteinXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id", "db"})
 public class ProteinXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
@@ -68,7 +68,8 @@ public class ProteinXref extends Xref implements Serializable {
         this.description = description;
     }
 
-    @XmlAttribute(name = "desc", required = false)
+    //@XmlAttribute(name = "desc", required = false)
+    @XmlTransient
     public String getDescription() {
         return description;
     }

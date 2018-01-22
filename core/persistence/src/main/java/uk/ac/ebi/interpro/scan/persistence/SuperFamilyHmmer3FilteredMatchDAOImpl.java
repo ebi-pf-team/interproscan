@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,17 +50,31 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
      */
     @Transactional
     public void persist(Collection<RawProtein<SuperFamilyHmmer3RawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+        int proteinCount = 0;
+        int matchCount = 0;
+        int sfBatchSize = 3000;
+        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start persist " + filteredProteins.size() + " filteredProteins,");
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
+            proteinCount++;
             final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<UUID, SuperFamilyHmmer3Match>();
 
-            final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+            Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
             LOGGER.debug("Protein: " + protein);
+//            if ((proteinCount == 1) || (proteinCount % sfBatchSize == 0)){
+//               	Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: considering Protein: " + protein.getId());
+//            }
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
+//                if ((proteinCount == 1) || (proteinCount % sfBatchSize == 0)) {
+//                    if (match != null) {
+//                        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: considering Protein: " + match);
+//                    }
+//                }
+
                 if (match == null) {
                     final Signature currentSignature = modelIdToSignatureMap.get(rawMatch.getModelId());
                     if (currentSignature == null) {
@@ -75,14 +90,22 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                         rawMatch.getLocationStart(),
                         rawMatch.getLocationEnd()
                 ));
+                matchCount++;
+//                if ((matchCount == 1) || (matchCount % sfBatchSize == 0)) {
+//                    Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: dealt with  " + matchCount + " matches");
+//                }
             }
 
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
-                LOGGER.debug("superfamily match: " + match);
-                LOGGER.debug("Protein with match: " + protein);
+                //LOGGER.debug("superfamily match: " + match);
+                //LOGGER.debug("Protein with match: " + protein);
+                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getLocations() + " \nProtein with match: " + protein.getId());
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
+//            if ((proteinCount == 1) || (proteinCount % 500 == 0)) {
+//                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: persisted " + proteinCount + " matches/raw proteins");
+//            }
         }
     }
 }

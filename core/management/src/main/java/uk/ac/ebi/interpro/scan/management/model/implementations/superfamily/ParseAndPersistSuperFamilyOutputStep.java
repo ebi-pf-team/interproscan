@@ -58,7 +58,10 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
      *                               stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+ 	Long bottomProtein = stepInstance.getBottomProtein();
+ 	Long topProtein = stepInstance.getTopProtein();
 
+	Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Start parse and persist [" + bottomProtein + "-"+ topProtein + "]"); 
         // Retrieve raw matches from the SuperFamily binary output file
         InputStream inputStream = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, superFamilyBinaryOutputFileName);
@@ -98,7 +101,9 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
+	    Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Persist the parsed matches for proteins: " + bottomProtein + "-"+ topProtein);
             filteredMatchDAO.persist(rawProteins);
+            Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Completed persisting the parsed matches for proteins: " + bottomProtein + "-"+ topProtein);
             //TODO refactor this
             Long now = System.currentTimeMillis();
             if (count > 0){
@@ -122,7 +127,7 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
                 LOGGER.debug("No SuperFamily matches were persisted as none were found in the SuperFamily binary output file: " + fileName);
             }
         }
-
+	Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Completed parse and persist [" + bottomProtein + "-"+ topProtein + "]");
 
     }
 }

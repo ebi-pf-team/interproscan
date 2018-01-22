@@ -37,7 +37,7 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "XrefType")
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id", "db"})
 abstract class Xref implements Serializable {
 
     @Id
@@ -99,7 +99,8 @@ abstract class Xref implements Serializable {
         this.name = name;
     }
 
-    @XmlAttribute(name = "db")
+    //@XmlAttribute(name = "db")
+    @XmlTransient
     public String getDatabaseName() {
         return databaseName;
     }

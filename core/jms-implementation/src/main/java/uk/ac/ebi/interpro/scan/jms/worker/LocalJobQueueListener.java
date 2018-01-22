@@ -143,6 +143,7 @@ public class LocalJobQueueListener implements MessageListener {
             return;
         }
 
+        String messageName = "";
         try {
             if (controller != null) {
                 controller.jobStarted(messageId);
@@ -172,7 +173,9 @@ public class LocalJobQueueListener implements MessageListener {
 
                 stepName =  stepExecution.getStepInstance().getStepId();
                 Long stepId = stepExecution.getStepInstance().getId();
-                statsUtil.jobStarted(stepName);
+                String proteinRange = stepExecution.getStepInstance().getBottomProtein() + "-" + stepExecution.getStepInstance().getTopProtein();
+                messageName = stepName + ": " + proteinRange;
+                statsUtil.jobStarted(messageName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
 //                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
@@ -192,7 +195,9 @@ public class LocalJobQueueListener implements MessageListener {
                     Utilities.verboseLog("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
                     Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
-                statsUtil.jobFinished(stepName);
+                statsUtil.jobFinished(messageName);
+                Utilities.verboseLog("Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);                
+
             } catch (Exception e) {
                 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;

@@ -223,11 +223,11 @@
         <property name="outputFileNameTemplate" value="getorf.err.txt"/>
         <!--More specific parameter-->
         <property name="fullPathToBinary" value="${binary.getorf.path}"/>
-        <property name="fastaFilePath" value="orfs.fasta"/>
+        <property name="fastaFilePath" ref="getOrfResultFile"/>
         <property name="minSize" value="${getorf.minsize}"/>
     </bean>
 
-    <!-- STEP 3 (depends on both Step 1 and 2) -->
+    <!-- STEP 4 (depends on both Step 1 and 2) -->
     <bean id="stepLoadOrfFromFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
         <!--Abstract parameter-->
@@ -296,6 +296,10 @@
 
     <bean id="getOrfResultFile" class="java.lang.String">
         <constructor-arg value="orfs.fasta"/>
+    </bean>
+
+    <bean id="getOrfParserResultFile" class="java.lang.String">
+        <constructor-arg value="orfs.filtered.fasta"/>
     </bean>
 
     <bean id="getOrfErrorFile" class="java.lang.String">

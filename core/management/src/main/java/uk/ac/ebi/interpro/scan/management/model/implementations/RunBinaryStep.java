@@ -219,4 +219,18 @@ abstract public class RunBinaryStep extends Step {
         return null;
     }
 
+    /**
+     *
+     * @param command
+     * @return
+     */
+    protected String getCommandBuilder(List<String>  command){
+        StringBuilder commandBuilder = new StringBuilder();
+        for (String value : command) {
+            commandBuilder.append(value).append(" ");
+        }
+        return commandBuilder.toString();
+    }
+
+
 }

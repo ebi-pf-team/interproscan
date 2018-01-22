@@ -111,7 +111,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             List<String> slowSteps = new ArrayList<String>();
             slowSteps.add("stepPantherRunHmmer3");
             slowSteps.add("stepSMARTRunBinary");
-            slowSteps.add("stepPrositeProfilesRunBinary");
+            //slowSteps.add("stepPrositeProfilesRunBinary");
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
             boolean controlledLogging = false;
@@ -121,6 +121,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 List<StepInstance> unfinshedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
                 for (StepInstance stepInstance : unfinshedStepInstances) {
                     runStatus = 51;
+                    statsUtil.addToAllAvailableJobs(stepInstance, "unfinshed");
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
