@@ -38,10 +38,9 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd"})
-@JsonIgnoreProperties({"id", "hmmBounds"}) // hmmBounds is not output in the json
-public abstract class HmmerLocation extends Location {
-
+@XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
+//@JsonIgnoreProperties({"hmmBounds", "hmmLength"}) // hmmBounds and  hmmLength is not output i the json
+public abstract class HmmerLocation<T extends LocationFragment> extends Location {
     @Column(nullable = false, name = "hmm_start")
     private int hmmStart;
 
@@ -73,9 +72,9 @@ public abstract class HmmerLocation extends Location {
     }
 
     // Don't use Builder pattern because all fields are required
-    public HmmerLocation(int start, int end, double score, double evalue,
+    public HmmerLocation(T locationFragment, double score, double evalue,
                          int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
-        super(start, end);
+        super(locationFragment);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
         setHmmBounds(hmmBounds);
@@ -84,9 +83,9 @@ public abstract class HmmerLocation extends Location {
     }
 
     // Don't use Builder pattern because all fields are required
-    public HmmerLocation(int start, int end, double score, double evalue,
-                         int hmmStart, int hmmEnd) {
-        super(start, end);
+    public HmmerLocation(T locationFragment, double score, double evalue,
+                         int hmmStart, int hmmEnd, int hmmLength) {
+        super(locationFragment);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
         setEvalue(evalue);

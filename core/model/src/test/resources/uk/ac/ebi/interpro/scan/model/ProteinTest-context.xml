@@ -50,7 +50,8 @@
             <protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.1.xsd">
+                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
+
                 <sequence md5="58F1C327155B01E0EE4C95CE0067973C">MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
                 <xref db="UniParc" id="UPI0001C4B400" name="UPI0001C4B400"/>
                 <matches>
@@ -59,7 +60,11 @@
                         <locations>
                             <hmmer2-location start="7" end="172"
                                              score="294.5" evalue="6.3E-86"
-                                             hmm-start="1" hmm-end="186" />
+                                             hmm-start="1" hmm-end="186" hmm-length="186">
+                                <locationFragments>
+                                    <hmmer2-location-fragment start="7" end="172"/>
+                                </locationFragments>
+                            </hmmer2-location>
                         </locations>
                     </hmmer2-match>
                 </matches>

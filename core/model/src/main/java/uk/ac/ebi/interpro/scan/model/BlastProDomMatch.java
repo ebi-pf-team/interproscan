@@ -77,7 +77,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         }
 
         public BlastProDomLocation(int start, int end, double score, double evalue) {
-            super(start, end);
+            super(new BlastProDomLocationFragment(start, end));
             setScore(score);
             setEvalue(evalue);
         }
@@ -127,5 +127,44 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         public Object clone() throws CloneNotSupportedException {
             return new BlastProDomLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue());
         }
+
+        /**
+         * Location fragment of a ProDom match on a protein sequence
+         */
+        @Entity
+        @Table(name = "blast_prodom_location_fragment")
+        @XmlType(name = "ProDomLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class BlastProDomLocationFragment extends LocationFragment {
+
+            protected BlastProDomLocationFragment() {
+            }
+
+            public BlastProDomLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof BlastProDomLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(117, 119)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new BlastProDomLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
     }
 }

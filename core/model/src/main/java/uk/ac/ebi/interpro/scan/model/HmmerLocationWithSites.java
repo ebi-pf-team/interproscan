@@ -35,10 +35,9 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "HmmerLocationWithSitesType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd"})
-@JsonIgnoreProperties({"id", "hmmBounds"}) // hmmBounds is not output in the json
-public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLocationWithSites.HmmerSite> {
 
+@XmlType(name = "HmmerLocationWithSitesType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
+public abstract class HmmerLocationWithSites<T extends LocationFragment> extends LocationWithSites<HmmerLocationWithSites.HmmerSite, T> {
     @Column(nullable = false, name = "hmm_start")
     private int hmmStart;
 
@@ -70,9 +69,9 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
     }
 
     // Don't use Builder pattern because all fields are required
-    public HmmerLocationWithSites(int start, int end, double score, double evalue,
+    public HmmerLocationWithSites(T locationFragment, double score, double evalue,
                                   int hmmStart, int hmmEnd, HmmBounds hmmBounds, Set<HmmerSite> sites) {
-        super(start, end, sites);
+        super(locationFragment, sites);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
         setHmmBounds(hmmBounds);
@@ -81,9 +80,11 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
     }
 
     // Don't use Builder pattern because all fields are required
-    public HmmerLocationWithSites(int start, int end, double score, double evalue,
-                                  int hmmStart, int hmmEnd, Set<HmmerSite> sites) {
-        super(start, end, sites);
+
+    public HmmerLocationWithSites(T locationFragment, double score, double evalue,
+                                  int hmmStart, int hmmEnd, int hmmLength, Set<HmmerSite> sites) {
+        super(locationFragment, sites);
+
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
         setEvalue(evalue);

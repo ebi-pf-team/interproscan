@@ -73,8 +73,11 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         Protein p = new Protein("MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDI");
         Signature signature = new Signature("PF02310", "B12-binding");
         p.addCrossReference(new ProteinXref("A0A000_9ACTO"));
-        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 2, 108));
+        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<>();
+        HmmBounds hmmBounds =  HmmBounds.COMPLETE; //use this for hmmbounds
+
+        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 121, 2, 108));
+
         p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
         // Create release
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");

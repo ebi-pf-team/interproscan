@@ -9,10 +9,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * SuperFamily filtered match data access object.
@@ -56,26 +53,30 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
         Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start persist " + filteredProteins.size() + " filteredProteins,");
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
             proteinCount++;
-            final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<UUID, SuperFamilyHmmer3Match>();
+            final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<>();
+
 
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
-            LOGGER.debug("Protein: " + protein);
-//            if ((proteinCount == 1) || (proteinCount % sfBatchSize == 0)){
-//               	Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: considering Protein: " + protein.getId());
-//            }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Protein: " + protein);
+            }
+            // Each line in the Superfamily ass3.pl Perl script output represents a Superfamily match for a given sequence
+            // and model with e-value. We'd never have more than one location against a Superfamily match, but a location
+            // could have multiple location fragments (so are in the same split group). Each Superfamily raw match
+            // represents a Superfamily location fragment.
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
-//                if ((proteinCount == 1) || (proteinCount % sfBatchSize == 0)) {
-//                    if (match != null) {
-//                        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: considering Protein: " + match);
-//                    }
-//                }
+
+                SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(
+                        rawMatch.getLocationStart(),
+                        rawMatch.getLocationEnd());
 
                 if (match == null) {
+                    // This raw match is not part of an existing split group
                     final Signature currentSignature = modelIdToSignatureMap.get(rawMatch.getModelId());
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find model " + rawMatch.getModelId() + " in the database.");
@@ -85,21 +86,41 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                             rawMatch.getEvalue(),
                             null);
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
+
+                    SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
+                            locationFragment);
+                    match.addLocation(location);
                 }
-                match.addLocation(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
-                        rawMatch.getLocationStart(),
-                        rawMatch.getLocationEnd()
-                ));
+                else {
+                    // This raw match is part of an existing split group, so add this fragment to the existing
+                    // match location
+                    Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = match.getLocations();
+                    if (locations == null || locations.size() != 1) {
+                        throw new IllegalStateException("Superfamily match did not have one location as expected, but had " + (locations == null ? "NULL" : locations.size()));
+                    }
+                    SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = locations.iterator().next();
+                    location.addLocationFragment(locationFragment);
+                }
+
+//                match.addLocation(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
+//                        rawMatch.getLocationStart(),
+//                        rawMatch.getLocationEnd()
+//                ));
                 matchCount++;
 //                if ((matchCount == 1) || (matchCount % sfBatchSize == 0)) {
 //                    Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: dealt with  " + matchCount + " matches");
 //                }
+
+
             }
 
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
-                //LOGGER.debug("superfamily match: " + match);
-                //LOGGER.debug("Protein with match: " + protein);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Superfamily match: " + match);
+                    LOGGER.debug("Protein with match: " + protein);
+                }
                 Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getLocations() + " \nProtein with match: " + protein.getId());
+
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
