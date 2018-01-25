@@ -67,6 +67,7 @@ public abstract class Location<T extends LocationFragment> implements Serializab
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = LocationFragment.class, mappedBy = "location")
     @BatchSize(size=4000)
+    //@XmlElement(name = "location-fragments")
     @JsonManagedReference
     private Set<T> locationFragments = new LinkedHashSet<>();
 
