@@ -105,8 +105,8 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         }
 
         public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd,
-                              int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
+                                       int hmmStart, int hmmEnd, int hmmLength,
+                                       int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
             super(new Hmmer3LocationWithSitesFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmLength, sites);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);

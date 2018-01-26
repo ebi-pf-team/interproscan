@@ -59,6 +59,10 @@ public abstract class HmmerLocation<T extends LocationFragment> extends Location
     @Column(nullable = false, name = "hmm_bounds", length = 2)
     private String hmmBounds;
 
+    // TODO: Make HMM length non-nullable?
+    @Column(name = "hmm_length")
+    private int hmmLength;
+
     @Column(nullable = false, name = "evalue")
     private double evalue;
 
@@ -118,6 +122,15 @@ public abstract class HmmerLocation<T extends LocationFragment> extends Location
 
     private void setHmmBounds(HmmBounds hmmBounds) {
         this.hmmBounds = hmmBounds.getSymbol();
+    }
+
+    @XmlAttribute(name = "hmm-length", required = true)
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    protected void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
     }
 
     @XmlAttribute(required = true)
