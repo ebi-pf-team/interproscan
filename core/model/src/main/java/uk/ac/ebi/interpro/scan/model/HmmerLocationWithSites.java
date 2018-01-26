@@ -16,7 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -35,9 +34,9 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-
 @XmlType(name = "HmmerLocationWithSitesType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
 public abstract class HmmerLocationWithSites<T extends LocationFragment> extends LocationWithSites<HmmerLocationWithSites.HmmerSite, T> {
+
     @Column(nullable = false, name = "hmm_start")
     private int hmmStart;
 
@@ -55,6 +54,10 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
      */
     @Column(nullable = false, name = "hmm_bounds", length = 2)
     private String hmmBounds;
+
+    // TODO: Make HMM length non-nullable?
+    @Column(name = "hmm_length")
+    private int hmmLength;
 
     @Column(nullable = false, name = "evalue")
     private double evalue;
@@ -80,13 +83,12 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
     }
 
     // Don't use Builder pattern because all fields are required
-
     public HmmerLocationWithSites(T locationFragment, double score, double evalue,
                                   int hmmStart, int hmmEnd, int hmmLength, Set<HmmerSite> sites) {
         super(locationFragment, sites);
-
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
+        setHmmLength(hmmLength);
         setEvalue(evalue);
         setScore(score);
     }
@@ -119,6 +121,15 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
         this.hmmBounds = hmmBounds.getSymbol();
     }
 
+    @XmlAttribute(name = "hmm-length", required = true)
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    protected void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
+    }
+
     @XmlAttribute(required = true)
     public double getEvalue() {
         return evalue;
@@ -148,6 +159,7 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
                 .appendSuper(super.equals(o))
                 .append(hmmStart, h.hmmStart)
                 .append(hmmEnd, h.hmmEnd)
+                .append(hmmLength, h.hmmLength)
                 .append(hmmBounds, h.hmmBounds)
                 .append(score, h.score)
                 .isEquals()
@@ -161,6 +173,7 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
                 .appendSuper(super.hashCode())
                 .append(hmmStart)
                 .append(hmmEnd)
+                .append(hmmLength)
                 .append(hmmBounds)
                 .append(score)
                 .append(evalue)

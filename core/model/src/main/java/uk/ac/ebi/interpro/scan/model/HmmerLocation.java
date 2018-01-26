@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength"})
 //@JsonIgnoreProperties({"hmmBounds", "hmmLength"}) // hmmBounds and  hmmLength is not output i the json
 public abstract class HmmerLocation<T extends LocationFragment> extends Location {
+
     @Column(nullable = false, name = "hmm_start")
     private int hmmStart;
 
@@ -92,6 +93,7 @@ public abstract class HmmerLocation<T extends LocationFragment> extends Location
         super(locationFragment);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
+        setHmmLength(hmmLength);
         setEvalue(evalue);
         setScore(score);
     }
@@ -162,6 +164,7 @@ public abstract class HmmerLocation<T extends LocationFragment> extends Location
                 .appendSuper(super.equals(o))
                 .append(hmmStart, h.hmmStart)
                 .append(hmmEnd, h.hmmEnd)
+                .append(hmmLength, h.hmmLength)
                 .append(hmmBounds, h.hmmBounds)
                 .append(score, h.score)
                 .isEquals()
@@ -175,6 +178,7 @@ public abstract class HmmerLocation<T extends LocationFragment> extends Location
                 .appendSuper(super.hashCode())
                 .append(hmmStart)
                 .append(hmmEnd)
+                .append(hmmLength)
                 .append(hmmBounds)
                 .append(score)
                 .append(evalue)

@@ -24,10 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -198,12 +195,19 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                                 //we dont deal with discontinuous domains currently, or we do??
                                 String[] domainRegions = cathResolverRecord.getResolvedStartsStopsPosition().split(",");
 
+                                final UUID splitGroup = UUID.randomUUID();
+
+                                boolean isDiscontinuous = (domainRegions.length > 1);
+
                                 for (String domainRegion : domainRegions) {
                                     String[] locations = domainRegion.split("-");
                                     int locationStart = Integer.parseInt(locations[0]);
                                     int locationEnd = Integer.parseInt(locations[1]);
 
                                     Gene3dHmmer3RawMatch gene3dHmmer3RawMatch = createRawMatch(signatureLibraryRelease, domTblDomainMatch, cathResolverRecord, modelAccession, locationStart, locationEnd);
+                                    if (isDiscontinuous) {
+                                        gene3dHmmer3RawMatch.setSplitGroup(splitGroup);
+                                    }
                                     String sequenceIdentifier = gene3dHmmer3RawMatch.getSequenceIdentifier();
                                     if (matchData.containsKey(sequenceIdentifier)) {
                                         RawProtein<Gene3dHmmer3RawMatch> rawProtein = matchData.get(sequenceIdentifier);

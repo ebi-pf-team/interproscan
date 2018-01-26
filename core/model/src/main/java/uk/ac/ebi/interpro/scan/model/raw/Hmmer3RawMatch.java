@@ -43,6 +43,9 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     @Column(nullable = false)
     private double domainBias;
 
+    @Column(nullable = true)
+    private UUID splitGroup;
+
     protected Hmmer3RawMatch() {
     }
 
@@ -122,6 +125,14 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         this.domainBias = domainBias;
     }
 
+    public UUID getSplitGroup() {
+        return splitGroup;
+    }
+
+    public void setSplitGroup(UUID splitGroup) {
+        this.splitGroup = splitGroup;
+    }
+
     // TODO: Generalise this to RawMatch
 
     public static Collection<Hmmer3Match> getMatches(Collection<? extends Hmmer3RawMatch> rawMatches,
@@ -156,7 +167,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
             Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
             if (signature != null) {
                 //TODO when gene3d model 2signaturemap is resolved remove this condition
-                matches.add(getMatch(signature, key, matchesByModel));
+                matches.addAll(getMatches(signature, key, matchesByModel));
             }else{
                 //TODO
                 // display warning
@@ -167,19 +178,53 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
     }
 
-    private static Hmmer3Match getMatch(Signature signature, String modelId, Map<String, Set<Hmmer3RawMatch>> matchesByModel) {
-        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+    private static Collection<Hmmer3Match> getMatches(Signature signature, String modelId, Map<String, Set<Hmmer3RawMatch>> matchesByModel) {
+        Set<Hmmer3Match.Hmmer3Location> nonSplitLocations = new HashSet<Hmmer3Match.Hmmer3Location>();
         double score = 0, evalue = 0;
+
+        final Map<UUID, Hmmer3Match> splitGroupToMatch = new HashMap<>();
+
         for (Hmmer3RawMatch m : matchesByModel.get(modelId)) {
-            // Score and evalue should be the same (repeated for each location)
-            score = m.getScore();
-            evalue = m.getEvalue();
-            locations.add(getLocation(m));
+
+            Hmmer3Match match = splitGroupToMatch.get(m.getSplitGroup());
+            Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment hmmer3LocationFragment = new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
+                    m.getLocationStart(), m.getLocationEnd()
+            );
+            if (match == null){
+                //create new match or new location
+                Hmmer3Match.Hmmer3Location hmmer3Location = getLocation(m);
+                if (m.getSplitGroup() == null){
+                    // this is a normal single location
+                    // Score and evalue should be the same (repeated for each location)
+                    score = m.getScore();
+                    evalue = m.getEvalue();
+                    nonSplitLocations.add(hmmer3Location);
+                }else {
+                    //this is a discontinuous domain as it has a split group
+                    match = new Hmmer3Match(signature, m.getScore(), m.getEvalue(), null);
+                    match.addLocation(hmmer3Location);
+                    splitGroupToMatch.put(m.getSplitGroup(), match);
+                }
+            }else{
+                //we already have the match in the splitgroup match
+                //this is a discontinuous domain as it has a split group
+                Set<Hmmer3Match.Hmmer3Location> locations = match.getLocations();
+                Hmmer3Match.Hmmer3Location location = locations.iterator().next();
+                location.addLocationFragment(hmmer3LocationFragment);
+            }
+
         }
-        return new Hmmer3Match(signature, score, evalue, locations);
+        if (nonSplitLocations.size() > 0) {
+            Hmmer3Match nonSplitMatch = new Hmmer3Match(signature, score, evalue, nonSplitLocations);
+            final UUID matchUUID = UUID.randomUUID(); // just for putting the match in the matchset
+            splitGroupToMatch.put(matchUUID, nonSplitMatch);
+        }
+        //return new Hmmer3Match(signature, score, evalue, locations);
+        return splitGroupToMatch.values();
     }
 
     private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m) {
+
         return new Hmmer3Match.Hmmer3Location(
                 m.getLocationStart(),
                 m.getLocationEnd(),
