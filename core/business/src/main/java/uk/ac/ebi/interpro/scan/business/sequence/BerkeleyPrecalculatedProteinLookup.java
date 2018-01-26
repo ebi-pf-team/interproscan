@@ -287,10 +287,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         for (String analysisJobName : analysisJobMap.keySet()) {
             if (lookupAnalysesMap.containsKey(analysisJobName.toUpperCase())) {
                 String lookUpMatchAnalaysVersion = lookupAnalysesMap.get(analysisJobName.toUpperCase());
-                LOGGER.debug("analysis: " + analysisJobName + " lookUpMatchAnalaysiVersion: "
-                        + lookUpMatchAnalaysVersion + " analysisJobName: " + analysisJobName + " analysisJobVersion: " + analysisJobMap.get(analysisJobName).getVersion());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("analysis: " + analysisJobName + " lookUpMatchAnalaysiVersion: "
+                            + lookUpMatchAnalaysVersion + " analysisJobName: " + analysisJobName + " analysisJobVersion: " + analysisJobMap.get(analysisJobName).getVersion());
+                }
                 if (!lookUpMatchAnalaysVersion.equals(analysisJobMap.get(analysisJobName).getVersion())) {
-                    LOGGER.debug("Different versions of  " + analysisJobName + " running ");
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Different versions of  " + analysisJobName + " running ");
+                    }
                     return false;
                 }
             }

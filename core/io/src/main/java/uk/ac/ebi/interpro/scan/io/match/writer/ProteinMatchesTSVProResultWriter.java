@@ -85,13 +85,17 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(seqEvalue);
                         }
                         if (match instanceof FingerPrintsMatch) {
+                            FingerPrintsMatch.FingerPrintsLocation printsLocation = (FingerPrintsMatch.FingerPrintsLocation) location;
+                            mappingFields.add(Integer.toString(printsLocation.getMotifNumber()));
+                            mappingFields.add(Double.toString(printsLocation.getPvalue()));
                             mappingFields.add(((FingerPrintsMatch) match).getGraphscan());
                         } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {
-//                            mappingFields.add (Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore()));
-//                            mappingFields.add (((ProfileScanMatch.ProfileScanLocation) location).getAlignment());
+                            // Location score for Prosite Profiles/HAMAP already taken care of by getSeqScore method
+                            // mappingFields.add (Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore()));
+                            mappingFields.add (((ProfileScanMatch.ProfileScanLocation) location).getAlignment());
                         } else if (location instanceof PatternScanMatch.PatternScanLocation) {
                             mappingFields.add(((PatternScanMatch.PatternScanLocation) location).getLevel().getTagNumber());
-//                            mappingFields.add (((PatternScanMatch.PatternScanLocation) location).getAlignment());
+                            mappingFields.add (((PatternScanMatch.PatternScanLocation) location).getAlignment());
                         } else if (location instanceof PantherMatch.PantherLocation) {
                             PantherMatch.PantherLocation pantherLocation = (PantherMatch.PantherLocation) location;
                             mappingFields.add(pantherLocation.getHmmBounds().getSymbol());
@@ -124,6 +128,17 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmerLocation.getScore()));
                             mappingFields.add(Double.toString(hmmerLocation.getEvalue()));
                         }
+                        if (location instanceof Hmmer3MatchWithSites.Hmmer3LocationWithSites) {
+                            Hmmer3MatchWithSites.Hmmer3LocationWithSites hmmer3LocationWithSite = (Hmmer3MatchWithSites.Hmmer3LocationWithSites) location;
+                            mappingFields.add(hmmer3LocationWithSite.getHmmBounds().getSymbol());
+                            mappingFields.add(Integer.toString(hmmer3LocationWithSite.getHmmStart()));
+                            mappingFields.add(Integer.toString(hmmer3LocationWithSite.getHmmEnd()));
+                            mappingFields.add(Integer.toString(hmmer3LocationWithSite.getHmmLength()));
+                            mappingFields.add(Integer.toString(hmmer3LocationWithSite.getEnvelopeStart()));
+                            mappingFields.add(Integer.toString(hmmer3LocationWithSite.getEnvelopeEnd()));
+                            mappingFields.add(Double.toString(hmmer3LocationWithSite.getScore()));
+                            mappingFields.add(Double.toString(hmmer3LocationWithSite.getEvalue()));
+                        }
 
 
                         this.tsvWriter.write(mappingFields);
@@ -145,18 +160,20 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
             seqScore = Double.toString( ((Hmmer3Match) match).getScore());
         } else if (match instanceof Hmmer2Match) {
             seqScore = Double.toString(((Hmmer2Match) match).getScore());
+        } else if (match instanceof Hmmer3MatchWithSites) {
+            seqScore = Double.toString(((Hmmer3MatchWithSites) match).getScore());
         } else if (location instanceof RPSBlastMatch.RPSBlastLocation) {
             seqScore = Double.toString(((RPSBlastMatch.RPSBlastLocation) location).getScore());
         } else  if (location instanceof BlastProDomMatch.BlastProDomLocation) {
             seqScore = Double.toString(((BlastProDomMatch.BlastProDomLocation) location).getScore());
-        }else if (location instanceof FingerPrintsMatch.FingerPrintsLocation) {
-            seqScore = Double.toString( ((FingerPrintsMatch.FingerPrintsLocation) location).getScore() );
+        } else if (location instanceof FingerPrintsMatch.FingerPrintsLocation) {
+            seqScore = Double.toString( ((FingerPrintsMatch.FingerPrintsLocation) location).getScore());
         } else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
-            seqScore = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
-        }else if (location instanceof TMHMMMatch.TMHMMLocation) {
-            seqScore = Double.toString( ((TMHMMMatch.TMHMMLocation) location).getScore() );
+            seqScore = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore());
+        } else if (location instanceof TMHMMMatch.TMHMMLocation) {
+            seqScore = Double.toString( ((TMHMMMatch.TMHMMLocation) location).getScore());
         } else if (location instanceof SignalPMatch.SignalPLocation) {
-            seqScore = Double.toString( ((SignalPMatch.SignalPLocation) location).getScore() );
+            seqScore = Double.toString( ((SignalPMatch.SignalPLocation) location).getScore());
         }
 
         return seqScore;
@@ -165,14 +182,22 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
     private String getSeqEvalue(Match match, Location location) {
         //get the seevalue
         String seqEvalue = null;
-        if (match instanceof Hmmer3Match) {
+        if (match instanceof PantherMatch) {
+            seqEvalue = Double.toString(((PantherMatch) match).getEvalue());
+        } else if (match instanceof Hmmer3Match) {
             seqEvalue = Double.toString(((Hmmer3Match) match).getEvalue());
+        } else if (match instanceof Hmmer2Match) {
+            seqEvalue = Double.toString(((Hmmer2Match) match).getEvalue());
+        } else if (match instanceof Hmmer3MatchWithSites) {
+            seqEvalue = Double.toString(((Hmmer3MatchWithSites) match).getEvalue());
         } else if (location instanceof RPSBlastMatch.RPSBlastLocation) {
             seqEvalue = Double.toString(((RPSBlastMatch.RPSBlastLocation) location).getEvalue());
+        } else  if (location instanceof BlastProDomMatch.BlastProDomLocation) {
+            seqEvalue = Double.toString(((BlastProDomMatch.BlastProDomLocation) location).getEvalue());
+        } else if (match instanceof FingerPrintsMatch) {
+            seqEvalue = Double.toString(((FingerPrintsMatch) match).getEvalue());
         } else if (match instanceof SuperFamilyHmmer3Match) {
             seqEvalue = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
-        }else if (match instanceof FingerPrintsMatch) {
-            seqEvalue = Double.toString(((FingerPrintsMatch) match).getEvalue());
         }
 
         return seqEvalue;
