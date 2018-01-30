@@ -45,6 +45,9 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
     @Column(nullable = false, name = "hmm_end")
     private int hmmEnd;
 
+    @Column(nullable = false, name = "hmm_length")
+    private int hmmLength;
+
 //    @Column (nullable = false, name="hmm_bounds")
 //    @Enumerated(javax.persistence.EnumType.STRING)
 //    private HmmBounds hmmBounds;
@@ -71,24 +74,25 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
 
     // Don't use Builder pattern because all fields are required
     public HmmerLocationWithSites(int start, int end, double score, double evalue,
-                                  int hmmStart, int hmmEnd, HmmBounds hmmBounds, Set<HmmerSite> sites) {
+                                  int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds, Set<HmmerSite> sites) {
         super(start, end, sites);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
+        setHmmLength(hmmLength);
         setHmmBounds(hmmBounds);
         setEvalue(evalue);
         setScore(score);
     }
 
-    // Don't use Builder pattern because all fields are required
-    public HmmerLocationWithSites(int start, int end, double score, double evalue,
-                                  int hmmStart, int hmmEnd, Set<HmmerSite> sites) {
-        super(start, end, sites);
-        setHmmStart(hmmStart);
-        setHmmEnd(hmmEnd);
-        setEvalue(evalue);
-        setScore(score);
-    }
+//    // Don't use Builder pattern because all fields are required
+//    public HmmerLocationWithSites(int start, int end, double score, double evalue,
+//                                  int hmmStart, int hmmEnd, Set<HmmerSite> sites) {
+//        super(start, end, sites);
+//        setHmmStart(hmmStart);
+//        setHmmEnd(hmmEnd);
+//        setEvalue(evalue);
+//        setScore(score);
+//    }
 
     @XmlAttribute(name = "hmm-start", required = true)
     public int getHmmStart() {
@@ -108,8 +112,16 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
         this.hmmEnd = hmmEnd;
     }
 
-    // TODO: Remove HMM bounds? Can infer from HMM length
-    //@XmlAttribute(name="hmm-bounds", required=true)
+    @XmlAttribute(name = "hmm-length", required = true)
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    private void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
+    }
+
+    @XmlAttribute(name="hmm-bounds", required=true)
     public HmmBounds getHmmBounds() {
         return HmmBounds.parseSymbol(hmmBounds);
     }
@@ -147,6 +159,7 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
                 .appendSuper(super.equals(o))
                 .append(hmmStart, h.hmmStart)
                 .append(hmmEnd, h.hmmEnd)
+                .append(hmmLength, h.hmmLength)
                 .append(hmmBounds, h.hmmBounds)
                 .append(score, h.score)
                 .isEquals()
@@ -160,6 +173,7 @@ public abstract class HmmerLocationWithSites extends LocationWithSites<HmmerLoca
                 .appendSuper(super.hashCode())
                 .append(hmmStart)
                 .append(hmmEnd)
+                .append(hmmLength)
                 .append(hmmBounds)
                 .append(score)
                 .append(evalue)

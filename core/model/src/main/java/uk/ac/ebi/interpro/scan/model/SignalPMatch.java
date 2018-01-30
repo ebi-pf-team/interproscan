@@ -26,9 +26,9 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
 
     private SignalPOrganismType orgType;
 
-    public SignalPMatch(Signature signature, SignalPOrganismType orgType, Set<SignalPLocation> locations) {
+    public SignalPMatch(Signature signature, String signatureModels, SignalPOrganismType orgType, Set<SignalPLocation> locations) {
         // Only ever 1 Signal Peptide location
-        super(signature, locations);
+        super(signature, signatureModels, locations);
         this.orgType = orgType;
     }
 
@@ -37,7 +37,7 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
         for (SignalPLocation location : this.getLocations()) {
             clonedLocations.add((SignalPLocation) location.clone());
         }
-        return new SignalPMatch(this.getSignature(), this.getOrgType(), clonedLocations);
+        return new SignalPMatch(this.getSignature(), this.getSignatureModels(), this.getOrgType(), clonedLocations);
     }
 
     @Enumerated(EnumType.ORDINAL)   // Using ordinal to keep the database size down.

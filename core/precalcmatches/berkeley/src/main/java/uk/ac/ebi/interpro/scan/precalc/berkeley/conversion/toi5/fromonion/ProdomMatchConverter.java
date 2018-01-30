@@ -33,6 +33,7 @@ public class ProdomMatchConverter extends BerkeleyMatchConverter<BlastProDomMatc
 
         return new BlastProDomMatch(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 locations
         );
     }

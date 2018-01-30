@@ -33,6 +33,8 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
 
     private Integer hmmEnd;
 
+    private Integer hmmLength;
+
     private String hmmBounds;
 
     private Integer envelopeStart;
@@ -110,6 +112,14 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         this.hmmEnd = hmmEnd;
     }
 
+    public Integer getHmmLength() {
+        return hmmLength;
+    }
+
+    public void setHmmLength(Integer hmmLength) {
+        this.hmmLength = hmmLength;
+    }
+
     public String getHmmBounds() {
         return hmmBounds;
     }
@@ -169,6 +179,7 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         if (hmmBounds != null ? !hmmBounds.equals(that.hmmBounds) : that.hmmBounds != null) return false;
         if (hmmEnd != null ? !hmmEnd.equals(that.hmmEnd) : that.hmmEnd != null) return false;
         if (hmmStart != null ? !hmmStart.equals(that.hmmStart) : that.hmmStart != null) return false;
+        if (hmmLength != null ? !hmmLength.equals(that.hmmLength) : that.hmmLength != null) return false;
         if (level != null ? !level.equals(that.level) : that.level != null) return false;
         if (motifNumber != null ? !motifNumber.equals(that.motifNumber) : that.motifNumber != null) return false;
         if (pValue != null ? !pValue.equals(that.pValue) : that.pValue != null) return false;
@@ -188,6 +199,7 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         result = 31 * result + (motifNumber != null ? motifNumber.hashCode() : 0);
         result = 31 * result + (hmmStart != null ? hmmStart.hashCode() : 0);
         result = 31 * result + (hmmEnd != null ? hmmEnd.hashCode() : 0);
+        result = 31 * result + (hmmLength != null ? hmmLength.hashCode() : 0);
         result = 31 * result + (hmmBounds != null ? hmmBounds.hashCode() : 0);
         result = 31 * result + (envelopeStart != null ? envelopeStart.hashCode() : 0);
         result = 31 * result + (envelopeEnd != null ? envelopeEnd.hashCode() : 0);

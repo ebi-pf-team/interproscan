@@ -46,7 +46,7 @@ public class PhobiusMatchMarshalTest extends TestCase {
         final Set<PhobiusMatch.PhobiusLocation> locations = new HashSet<PhobiusMatch.PhobiusLocation>();
         locations.add(new PhobiusMatch.PhobiusLocation(1, 2));
         final Signature signature = new Signature.Builder("SIGNAL_PEPTIDE").name("Signal Peptide").build();
-        final PhobiusMatch match = new PhobiusMatch(signature, locations);
+        final PhobiusMatch match = new PhobiusMatch(signature, "SIGNAL_PEPTIDE", locations);
         final Protein protein = new Protein("aaa");
         protein.addMatch(match);
         try {

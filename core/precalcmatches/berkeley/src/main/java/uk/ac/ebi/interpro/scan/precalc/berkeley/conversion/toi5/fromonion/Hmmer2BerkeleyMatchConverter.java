@@ -2,12 +2,14 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,12 +41,14 @@ public class Hmmer2BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer2M
                     valueOrZero(location.geteValue()),
                     valueOrZero(location.getHmmStart()),
                     valueOrZero(location.getHmmEnd()),
+                    valueOrZero(location.getHmmLength()),
                     bounds
             ));
         }
 
         return new Hmmer2Match(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 valueOrZero(berkeleyMatch.getSequenceScore()),
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 locations

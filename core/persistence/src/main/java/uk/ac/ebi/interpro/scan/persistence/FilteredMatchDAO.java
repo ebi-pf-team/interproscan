@@ -4,10 +4,9 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawSite;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -37,10 +36,10 @@ public interface FilteredMatchDAO<T extends RawMatch, U extends Match> extends G
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Transactional
-    default  void persist(Collection<RawProtein<T>> filteredProteins,
-                                    final Map<String, Signature> modelAccessionToSignatureMap,
+    default void persist(Collection<RawProtein<T>> filteredProteins,
+                                    final Map<String, SignatureModelHolder> modelAccessionToSignatureMap,
                                     final Map<String, Protein> proteinIdToProteinMap) {
-        //if this class is called but not implemeneted, thow an exception
+        //if this class is called but not implemented, throw an exception
         throw new UnsupportedOperationException();
     }
 

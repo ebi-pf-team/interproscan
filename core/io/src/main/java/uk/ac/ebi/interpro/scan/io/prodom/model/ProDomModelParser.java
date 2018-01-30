@@ -144,7 +144,7 @@ public class ProDomModelParser extends AbstractModelFileParser {
     }
 
     protected Signature createSignature(String accession, String name, String description, SignatureLibraryRelease release, StringBuffer modelBuffer) {
-        Model model = new Model(accession, name, description, null);
+        Model model = new Model(accession, name, description);
         modelBuffer.delete(0, modelBuffer.length());
         return new Signature(accession, name, null, description, null, release, Collections.singleton(model));
     }

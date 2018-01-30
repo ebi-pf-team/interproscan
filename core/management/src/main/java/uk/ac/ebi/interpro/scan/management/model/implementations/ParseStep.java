@@ -83,7 +83,6 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
             final Set<RawProtein<T>> results = getParser().parse(is);
             RawMatch represantiveRawMatch = null;
             int matchCount = 0;
-            Collection<T> firstMatchList = new ArrayList();
             for (RawProtein<T> rawProtein : results) {
                 matchCount += rawProtein.getMatches().size();
                 if (represantiveRawMatch == null) {

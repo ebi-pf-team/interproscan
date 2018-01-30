@@ -17,7 +17,9 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -70,6 +72,8 @@ public class ProteinXref extends Xref implements Serializable {
 
     //@XmlAttribute(name = "desc", required = false)
     @XmlTransient
+    @JsonManagedReference
+    @JsonIgnore
     public String getDescription() {
         return description;
     }

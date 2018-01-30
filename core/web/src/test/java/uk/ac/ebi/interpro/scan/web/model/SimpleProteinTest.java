@@ -53,8 +53,8 @@ public class SimpleProteinTest {
         this.testProteinXref = this.testProtein.addCrossReference(new ProteinXref(proteinXrefIdentifier));
 
         //Instantiate match with locations
-        this.hmmer2Location1 = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE);
-        this.hmmer2Location2 = new Hmmer2Match.Hmmer2Location(120, 310, 3.0, 3.7e-9, 1, 104, HmmBounds.C_TERMINAL_COMPLETE);
+        this.hmmer2Location1 = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE);
+        this.hmmer2Location2 = new Hmmer2Match.Hmmer2Location(120, 310, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.C_TERMINAL_COMPLETE);
         this.locations.add(hmmer2Location1);
         this.locations.add(hmmer2Location2);
 
@@ -70,7 +70,7 @@ public class SimpleProteinTest {
     @Test
     public void testValueOfMethodForUnintegratedSignature() {
         //Add protein match
-        testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), 0.035, 3.7e-9, locations));
+        testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), signatureAccession, 0.035, 3.7e-9, locations));
 
         //Simple sanity checks
         Assert.assertNotNull(testMatch.getSignature());
@@ -154,7 +154,7 @@ public class SimpleProteinTest {
         entry.addSignature(pirsfSignature);
 
         //Add protein match
-        testMatch = testProtein.addMatch(new Hmmer2Match(pantherSignature, 0.035, 3.7e-9, locations));
+        testMatch = testProtein.addMatch(new Hmmer2Match(pantherSignature, "PTHR13763", 0.035, 3.7e-9, locations));
 
         //Finally, test the valueOf method
         SimpleProtein simpleProtein = SimpleProtein.valueOf(testProtein, testProteinXref, entryHierarchy);

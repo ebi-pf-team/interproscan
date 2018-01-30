@@ -73,7 +73,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Lo
                 Set<PhobiusMatch.PhobiusLocation> locations = Collections.singleton(
                         new PhobiusMatch.PhobiusLocation(feature.getStart(), feature.getStop())
                 );
-                PhobiusMatch match = new PhobiusMatch(signature, locations);
+                PhobiusMatch match = new PhobiusMatch(signature, signature.getAccession(), locations);
                 persistentProtein.addMatch(match);
                 entityManager.persist(match);
             }

@@ -39,7 +39,7 @@ public class PhobiusMatchTest extends TestCase {
     @Test public void testMatchEquals() {
         PhobiusMatch original = new PhobiusMatch(
                 new Signature("SIGNAL_PEPTIDE_N_REGION", "Signal peptide N-region"),
-
+                "SIGNAL_PEPTIDE_N_REGION",
                 new HashSet<PhobiusMatch.PhobiusLocation>(Arrays.asList(
                         new PhobiusMatch.PhobiusLocation(3, 107)
                 ))
@@ -51,7 +51,7 @@ public class PhobiusMatchTest extends TestCase {
                 original.equals(
                         new PhobiusMatch(
                 new Signature("NON_CYTOPLASMIC_DOMAIN", "Non cytoplasmic domain"),
-
+                "SIGNAL_PEPTIDE_N_REGION",
                 new HashSet<PhobiusMatch.PhobiusLocation>(Arrays.asList(
                         new PhobiusMatch.PhobiusLocation(3, 107)
                 ))

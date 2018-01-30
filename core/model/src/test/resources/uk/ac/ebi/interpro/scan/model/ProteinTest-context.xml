@@ -37,8 +37,8 @@
                 p.addCrossReference(new ProteinXref("UniParc", "UPI0001C4B400", "UPI0001C4B400"));
                 Signature signature = new Signature("PIRSF000743", "RPO19");
                 Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-                locations.add(new Hmmer2Match.Hmmer2Location(7, 172, 294.5, 6.3E-86, 1, 186));
-                p.addMatch(new Hmmer2Match(signature, 294.5, 6.3E-86, locations));
+                locations.add(new Hmmer2Match.Hmmer2Location(7, 172, 294.5, 6.3E-86, 1, 186, 186, HmmBounds.INCOMPLETE));
+                p.addMatch(new Hmmer2Match(signature, "PIRSF000743", 294.5, 6.3E-86, locations));
                 return p;
             ]]>
         </lang:inline-script>
@@ -50,7 +50,7 @@
             <protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.1.xsd">
+                                         http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-2.2.xsd">
                 <sequence md5="58F1C327155B01E0EE4C95CE0067973C">MEESVNVEYADEDEDEIEEYEEEEEEEEEESAEGAAGSSVSDVAISATEKLVASEVPEDAVAADTNVRQRVTARVEELKARYTRRMSLFELTGIVAESFNLLCRGRLPLVADAADPALDSELKVVVRELEEGVCPIVIEKNGEFLAPGDFDPECLKYHLNYMTDLWKSQGRM</sequence>
                 <xref db="UniParc" id="UPI0001C4B400" name="UPI0001C4B400"/>
                 <matches>
@@ -59,7 +59,7 @@
                         <locations>
                             <hmmer2-location start="7" end="172"
                                              score="294.5" evalue="6.3E-86"
-                                             hmm-start="1" hmm-end="186" />
+                                             hmm-start="1" hmm-end="186" hmm-length="185" hmm-bounds="INCOMPLETE" />
                         </locations>
                     </hmmer2-match>
                 </matches>

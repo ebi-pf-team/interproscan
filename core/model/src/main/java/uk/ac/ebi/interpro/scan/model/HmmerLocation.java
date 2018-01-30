@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd"})
-@JsonIgnoreProperties({"id", "hmmBounds"}) // hmmBounds is not output in the json
+@XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength", "hmmBounds"})
+@JsonIgnoreProperties({"id"})
 public abstract class HmmerLocation extends Location {
 
     @Column(nullable = false, name = "hmm_start")
@@ -47,6 +47,9 @@ public abstract class HmmerLocation extends Location {
 
     @Column(nullable = false, name = "hmm_end")
     private int hmmEnd;
+
+    @Column(nullable = false, name = "hmm_length")
+    private int hmmLength;
 
 //    @Column (nullable = false, name="hmm_bounds")
 //    @Enumerated(javax.persistence.EnumType.STRING)
@@ -74,24 +77,26 @@ public abstract class HmmerLocation extends Location {
 
     // Don't use Builder pattern because all fields are required
     public HmmerLocation(int start, int end, double score, double evalue,
-                         int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
+                         int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds) {
         super(start, end);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
+        setHmmLength(hmmLength);
         setHmmBounds(hmmBounds);
         setEvalue(evalue);
         setScore(score);
     }
 
-    // Don't use Builder pattern because all fields are required
-    public HmmerLocation(int start, int end, double score, double evalue,
-                         int hmmStart, int hmmEnd) {
-        super(start, end);
-        setHmmStart(hmmStart);
-        setHmmEnd(hmmEnd);
-        setEvalue(evalue);
-        setScore(score);
-    }
+//    // Don't use Builder pattern because all fields are required
+//    public HmmerLocation(int start, int end, double score, double evalue,
+//                         int hmmStart, int hmmEnd) {
+//        super(start, end);
+//        setHmmStart(hmmStart);
+//        setHmmEnd(hmmEnd);
+//        setHmmLength(hmmEnd - hmmStart);
+//        setEvalue(evalue);
+//        setScore(score);
+//    }
 
     @XmlAttribute(name = "hmm-start", required = true)
     public int getHmmStart() {
@@ -111,8 +116,16 @@ public abstract class HmmerLocation extends Location {
         this.hmmEnd = hmmEnd;
     }
 
-    // TODO: Remove HMM bounds? Can infer from HMM length
-    //@XmlAttribute(name="hmm-bounds", required=true)
+    @XmlAttribute(name = "hmm-length", required = true)
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    private void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
+    }
+
+    @XmlAttribute(name="hmm-bounds", required=true)
     public HmmBounds getHmmBounds() {
         return HmmBounds.parseSymbol(hmmBounds);
     }
@@ -150,6 +163,7 @@ public abstract class HmmerLocation extends Location {
                 .appendSuper(super.equals(o))
                 .append(hmmStart, h.hmmStart)
                 .append(hmmEnd, h.hmmEnd)
+                .append(hmmLength, h.hmmLength)
                 .append(hmmBounds, h.hmmBounds)
                 .append(score, h.score)
                 .isEquals()
@@ -163,6 +177,7 @@ public abstract class HmmerLocation extends Location {
                 .appendSuper(super.hashCode())
                 .append(hmmStart)
                 .append(hmmEnd)
+                .append(hmmLength)
                 .append(hmmBounds)
                 .append(score)
                 .append(evalue)

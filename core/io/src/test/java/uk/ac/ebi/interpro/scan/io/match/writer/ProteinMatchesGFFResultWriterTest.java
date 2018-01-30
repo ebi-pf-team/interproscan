@@ -102,7 +102,7 @@ public class ProteinMatchesGFFResultWriterTest {
 
         Set<Match> matches = new HashSet<>();
         Set<Location> locations = new HashSet<>();
-        Match match = new Match(signature, locations) {
+        Match match = new Match(signature, "PF00001", locations) {
             public Object clone() throws CloneNotSupportedException {
                 return null;
             }
