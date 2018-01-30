@@ -78,4 +78,37 @@ public enum HmmBounds {
         return bound;
     }
 
+    /**
+     * Calculate HMM bounds
+     *
+     * E.g. for env 1 - 330:
+     * ali 1 - 330, hmmBounds = []
+     * ali 3 - 330, hmmBounds = .]
+     * ali 1 - 209, hmmBounds =  [.
+     * ali 3 - 209, hmmBounds = ..
+     *
+     * @param envStart
+     * @param envEnd
+     * @param aliStart
+     * @param aliEnd
+     * @return
+     */
+    public static String calculateHmmBounds(int envStart, int envEnd, int aliStart, int aliEnd) {
+        String hmmBounds;
+        if (envStart == aliStart) {
+            hmmBounds = "[";
+        }
+        else {
+            hmmBounds = ".";
+        }
+        if (envEnd == aliEnd) {
+            hmmBounds += "]";
+        }
+        else {
+            hmmBounds += ".";
+        }
+        assert HmmBounds.parseSymbol(hmmBounds) != null;
+        return hmmBounds;
+    }
+
 }
