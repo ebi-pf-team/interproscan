@@ -250,11 +250,9 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                         new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
-		Utilities.verboseLog("start actually loading sequences and creating step instances.");
                 fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
 
                 LOGGER.debug("Finished loading sequences and creating step instances.");
-                Utilities.verboseLog("Finished loading sequences and creating step instances.");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -268,7 +266,6 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
             }
         }
         Utilities.verboseLog(10, " FastaFileLoadStep - done");
-	Utilities.verboseLog(10, " FastaFileLoadStep - done");
     }
 
     private String getTimeNow() {

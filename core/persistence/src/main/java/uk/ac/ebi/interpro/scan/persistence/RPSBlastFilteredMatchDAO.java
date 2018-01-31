@@ -108,7 +108,9 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 //for this location find the sites
                 Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
 
-               LOGGER.debug("filtered sites: " + rpsBlastSites);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("filtered sites: " + rpsBlastSites);
+                }
 
                 locations.add(
                         new RPSBlastMatch.RPSBlastLocation(
@@ -127,7 +129,9 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                     LOGGER.debug("rpsBlast match: " + match);
                 }
                 protein.addMatch(match);
-                //LOGGER.debug("Protein with match: " + protein);
+                if (LOGGER.isDebugEnabled()) {
+                    //LOGGER.debug("Protein with match: " + protein);
+                }
                 entityManager.persist(match);
             }
         }

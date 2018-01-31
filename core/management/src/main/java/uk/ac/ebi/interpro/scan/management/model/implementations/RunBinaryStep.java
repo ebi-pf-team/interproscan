@@ -231,6 +231,4 @@ abstract public class RunBinaryStep extends Step {
         }
         return commandBuilder.toString();
     }
-
-
 }

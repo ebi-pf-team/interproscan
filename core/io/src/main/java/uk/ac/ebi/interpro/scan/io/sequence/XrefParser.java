@@ -192,7 +192,7 @@ public class XrefParser {
             if (matcher.find()) {
                 return new NucleotideSequenceXref(null, matcher.group(1), id);
             } else {
-                return new NucleotideSequenceXref(id, id);
+                return new NucleotideSequenceXref(null, id, id);
             }
         }
     }
