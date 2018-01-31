@@ -395,15 +395,15 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 newOrf.setProtein(newProtein);
                 Long startAddOpenReadingFrame = System.currentTimeMillis();
                 toDebugPrint(newProteins.size(), proteinCount,
-                        "SetProtein: " + (startAddOpenReadingFrame - startSetProtein ) + " millis ");
+                        "SetProtein in ORF: " + (startAddOpenReadingFrame - startSetProtein ) + " millis ");
                 newProtein.addOpenReadingFrame(newOrf);
                 Long startOrfAwaitingPersistence = System.currentTimeMillis();
                 toDebugPrint(newProteins.size(), proteinCount,
-                        "newOrf: " + (startOrfAwaitingPersistence - startAddOpenReadingFrame ) + " millis ");
+                        "Add Orf to protein: " + (startOrfAwaitingPersistence - startAddOpenReadingFrame ) + " millis ");
                 orfsAwaitingPersistence.add(newOrf);
                 Long endOrfAwaitingPersistence = System.currentTimeMillis();
                 toDebugPrint(newProteins.size(), proteinCount,
-                        "newOrf: " + (endOrfAwaitingPersistence - startOrfAwaitingPersistence ) + " millis ");
+                        "Add newOrf to ORFs AwaitingPersistence: " + (endOrfAwaitingPersistence - startOrfAwaitingPersistence ) + " millis ");
             }
             /*
             if (proteinCount %  (proteinInsertBatchSize / 2) == 0){
@@ -415,7 +415,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             */
 
             int avgXrefPerProtein =  totalXrefs /  proteinCount;
-            if (proteinCount %  200 == 0){
+            if (proteinCount %  4000 == 0){
                 Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
                         "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + "  "
                         + " avgXrefPerProtein: " + avgXrefPerProtein

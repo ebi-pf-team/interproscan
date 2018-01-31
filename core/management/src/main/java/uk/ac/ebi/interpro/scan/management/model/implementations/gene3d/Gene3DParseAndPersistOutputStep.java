@@ -281,6 +281,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                                                int locationStart,
                                                int locationEnd
     ) {
+        int envStart = domTblDomainMatch.getDomainEnvFrom();
+        int envEnd = domTblDomainMatch.getDomainEnvTo();
         return new Gene3dHmmer3RawMatch(
                 domTblDomainMatch.getTargetIdentifier(),
                 modelAccession,
@@ -293,10 +295,10 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 domTblDomainMatch.getSequenceScore(),
                 domTblDomainMatch.getDomainHmmfrom(),
                 domTblDomainMatch.getDomainHmmto(),
-                "[]",
+                HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd),
                 domTblDomainMatch.getDomainScore(),
-                locationStart,
-                locationEnd,
+                envStart,
+                envEnd,
                 domTblDomainMatch.getDomainAccuracy(),
                 domTblDomainMatch.getSequenceBias(),
                 cathResolverRecord.getCondEvalue(),
