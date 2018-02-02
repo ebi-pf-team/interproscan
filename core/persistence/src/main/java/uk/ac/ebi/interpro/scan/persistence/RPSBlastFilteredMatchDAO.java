@@ -73,7 +73,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
 
-            //LOGGER.debug("Protein: " + protein);
+
             Collection<T> rawMatches = rawProtein.getMatches();
 //            if (rawMatches == null su|| rawMatches.size() != 1) {
 //                throw new IllegalStateException("Protein did not have only one RPSBlast match! " +

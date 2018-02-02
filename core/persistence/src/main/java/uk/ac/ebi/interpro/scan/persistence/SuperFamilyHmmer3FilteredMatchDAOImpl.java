@@ -106,7 +106,9 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     LOGGER.debug("superfamily match: " + match);
                     LOGGER.debug("Protein with match: " + protein);
                 }
-                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getLocations() + " \nProtein with match: " + protein.getId());
+                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getSignature()
+                        + "locations size: " + match.getLocations().size()
+                        + " \nProtein with match: " + protein.getId());
 
                 protein.addMatch(match);
                 entityManager.persist(match);
