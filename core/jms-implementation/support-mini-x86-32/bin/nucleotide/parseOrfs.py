@@ -7,22 +7,17 @@ import time
 
 
 def get_sequences(fasta_file):
-    fasta = open(fasta_file, 'r')
-    fasta_dict = {}
-    ena_found = False
-    for line in fasta:
-        line = line.strip()
-        if line == '':
-            continue
-        if line.startswith('>'):
-            seq_id = line.lstrip('>')
-            fasta_dict[seq_id] = ''
-        else:
-            fasta_dict[seq_id] += line + '\n'
-            if ena_found:
-                print seq_id + '\n' + line
-                ena_found = False
-    fasta.close()
+    with open(fasta_file, 'r') as fasta:
+        fasta_dict = {}
+        for line in fasta:
+            line = line.strip()
+            if line == '':
+                continue
+            if line.startswith('>'):
+                seq_id = line.lstrip('>')
+                fasta_dict[seq_id] = ''
+            else:
+                fasta_dict[seq_id] += line + '\n'
     return fasta_dict
 
 def updateSet(key, new_elem, seq_list):
