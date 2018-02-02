@@ -77,7 +77,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                         protein.addMatch(match);
                     }
                     // Reset everything
-                    locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
+                    locations = new HashSet<>();
                     currentModelId = rawMatch.getModelId();
                     holder = modelIdToSignatureMap.get(currentModelId);
                     currentSignature = holder.getSignature();
@@ -97,7 +97,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                match = new BlastProDomMatch(currentSignature, lastRawMatch.getModelId(), locations);
+                match = new BlastProDomMatch(currentSignature, currentModelId, locations);
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
