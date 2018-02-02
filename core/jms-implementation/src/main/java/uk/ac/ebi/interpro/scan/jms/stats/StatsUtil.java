@@ -71,7 +71,7 @@ public class StatsUtil {
 
     static private AtomicInteger localJobsCompleted = new AtomicInteger(0);
 
-    private final Map<String,String> allAvailableJobs = new HashMap<>();
+    private final ConcurrentMap<String, String> allAvailableJobs = new ConcurrentHashMap<>();
 
     private final List<String> runningJobs = Collections.synchronizedList(new ArrayList<String>());
 
@@ -272,15 +272,23 @@ public class StatsUtil {
 
     public void addToAllAvailableJobs(StepInstance stepInstance, String status) {
         String key = stepInstance.getStepId();
-        allAvailableJobs.put(key, status);
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
+        String newKey = key + proteinRange;
+        String oldStatus = allAvailableJobs.get(newKey);
+        if(oldStatus != null && (! oldStatus.equals(status))) {
+            allAvailableJobs.put(newKey, status);
+        }
     }
 
     public void removeFromAllAvailableJobs(StepInstance stepInstance) {
         String key = stepInstance.getStepId();
-        allAvailableJobs.remove(key);
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
+        String newKey = key + proteinRange;
+
+        allAvailableJobs.remove(newKey);
     }
 
-   
+
     public int getSubmittedStepInstancesCount() {
         return submittedStepInstances.size();
     }
@@ -304,7 +312,7 @@ public class StatsUtil {
     }
 
     public void removeFromSubmittedStepInstances(StepInstance stepInstance) {
-        submittedStepInstances.remove(stepInstance.getId());        
+        submittedStepInstances.remove(stepInstance.getId());
     }
 
     public Integer getKey(Long id, String name) {
@@ -399,9 +407,8 @@ public class StatsUtil {
     }
 
 
-
     public void displayRunningJobs() {
-        if(Utilities.verboseLog) {
+        if (Utilities.verboseLog) {
             Utilities.verboseLog("Current active Jobs");
             List<String> currentRunningJobs = getRunningJobs();
             for (String runningJob : currentRunningJobs) {
@@ -416,15 +423,15 @@ public class StatsUtil {
         }
     }
 
-   public void displayAllAvailableJobs() {
-        if(Utilities.verboseLog) {
+    public void displayAllAvailableJobs() {
+        if (Utilities.verboseLog) {
             Utilities.verboseLog("Current available Jobs");
             Iterator it = allAvailableJobs.entrySet().iterator();
-	    while (it.hasNext()) {
-        	Map.Entry pair = (Map.Entry)it.next();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
                 String jobName = (String) pair.getKey();
-		String status = (String) pair.getValue();
-               	System.out.println(String.format("%15s %s $s", "", jobName, status));
+                String status = (String) pair.getValue();
+                System.out.println(String.format("%15s %s %s", "", jobName, status));
             }
             it.remove();
         }
@@ -642,11 +649,11 @@ public class StatsUtil {
             Long now = System.currentTimeMillis();
             Long timeSinceLastReport = now - progressReportTime;
             if (timeSinceLastReport > 1200000) {
-                    displayProgress = true;
-                    progressCounter++;
-                    if (progressCounter > 3){
-                       displayRemainingJobs = true;
-		    }
+                displayProgress = true;
+                progressCounter++;
+                if (progressCounter > 3) {
+                    displayRemainingJobs = true;
+                }
             }
 
             if (progress > 0.25 && progress < 0.5 && progressCounter < 1) {
@@ -685,9 +692,9 @@ public class StatsUtil {
 
                 Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances:" + getNonAcknowledgedSubmittedStepInstances());
                 displayRunningJobs();
-		if (displayRemainingJobs) {                
-                	displayAllAvailableJobs();
-		}
+                if (displayRemainingJobs) {
+                    displayAllAvailableJobs();
+                }
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
                 changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
