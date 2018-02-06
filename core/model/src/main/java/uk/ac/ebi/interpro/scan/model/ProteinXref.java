@@ -38,18 +38,16 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ProteinXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
-@JsonIgnoreProperties({"db", "databaseName", "description"})
+@JsonIgnoreProperties({"databaseName", "description"})
 public class ProteinXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
     @JsonBackReference
     private Protein protein;
 
+    //TODO Get rid of this column - no longer really used, it's not in the XML/JSON ouptut
     @Column(nullable = true)
     private String description;
-
-//    @Column(nullable = false)
-//    private String originalHeaderName;
 
     /**
      * Zero arguments constructor just for Hibernate.
@@ -72,8 +70,6 @@ public class ProteinXref extends Xref implements Serializable {
 
     //@XmlAttribute(name = "desc", required = false)
     @XmlTransient
-    @JsonManagedReference
-    @JsonIgnore
     public String getDescription() {
         return description;
     }

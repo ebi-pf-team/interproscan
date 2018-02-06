@@ -600,7 +600,6 @@
         <xs:complexContent>
             <xs:extension base="tns:XrefType">
                 <xs:sequence/>
-                <xs:attribute name="desc" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

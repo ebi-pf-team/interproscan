@@ -40,7 +40,6 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "XrefType")
-//@JsonIgnoreProperties({"id", "db", "databaseName"})
 abstract class Xref implements Serializable {
 
     @Id
@@ -76,7 +75,6 @@ abstract class Xref implements Serializable {
 
 
     @XmlTransient
-    @JsonManagedReference
     @JsonIgnore
     public Long getId() {
         return id;
@@ -97,8 +95,6 @@ abstract class Xref implements Serializable {
     }
 
     @XmlAttribute(name = "name")
-//    @JsonManagedReference
-//    @JsonIgnore
     public String getName() {
         return name;
     }
@@ -109,9 +105,6 @@ abstract class Xref implements Serializable {
 
 
     @XmlAttribute(name = "db")
-    //@XmlTransient
-    @JsonManagedReference
-    //@JsonIgnore
     public String getDatabaseName() {
         return databaseName;
     }

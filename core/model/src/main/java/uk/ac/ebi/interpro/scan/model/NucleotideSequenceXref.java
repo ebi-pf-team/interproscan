@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.Entity;
@@ -35,7 +36,7 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "NucleotideSequenceXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
-//@JsonIgnoreProperties({"databaseName"})
+@JsonIgnoreProperties({"databaseName"})
 public class NucleotideSequenceXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
