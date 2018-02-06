@@ -28,14 +28,6 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
 
             final HmmBounds bounds;
-            /*
-            if (location.getHmmBounds() == null || location.getHmmBounds().isEmpty()) {
-                bounds = HmmBounds.COMPLETE;   // FUDGE!  HmmBounds cannot be null...
-            } else {
-                bounds = HmmBounds.parseSymbol(location.getHmmBounds());
-            }
-            */
-
             int locationStart = valueOrZero(location.getStart());
             int locationEnd = valueOrZero(location.getEnd());
 

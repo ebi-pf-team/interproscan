@@ -129,9 +129,9 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                     LOGGER.debug("rpsBlast match: " + match);
                 }
                 protein.addMatch(match);
-                if (LOGGER.isDebugEnabled()) {
+                //if (LOGGER.isDebugEnabled()) {
                     //LOGGER.debug("Protein with match: " + protein);
-                }
+                //}
                 entityManager.persist(match);
             }
         }

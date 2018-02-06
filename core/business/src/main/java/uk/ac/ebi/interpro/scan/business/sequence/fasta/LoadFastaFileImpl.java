@@ -186,8 +186,5 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         return currentId;
     }
 
-
     protected abstract void addToMoleculeCollection(String sequence, final String currentId, final Set<T> parsedMolecules);
-
-
 }
