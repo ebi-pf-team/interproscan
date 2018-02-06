@@ -78,21 +78,20 @@ def get_hamap_profile(profiles_list_filename):
     return profiles
 
 def get_sequences(fasta_file):
-    fasta = open(fasta_file, 'r')
-    fasta_dict = {}
-    for line in fasta:
-        line = line.strip()
-        if line == '':
-            continue
-        if line.startswith('>'):
-            seq_id = line.lstrip('>')
-            seq_id = re.sub('\..*', '', seq_id)
-            fasta_dict[seq_id] = ''
-        else:
-            fasta_dict[seq_id] += line + '\n'
-            if len(line) > 80:
-                raise ValueError('Input fasta file format problem for pfsearch, line length greater than 80 ')
-    fasta.close()
+    with open(fasta_file, 'r') as fasta:
+        fasta_dict = {}
+        for line in fasta:
+            line = line.strip()
+            if line == '':
+                continue
+            if line.startswith('>'):
+                seq_id = line.lstrip('>')
+                seq_id = re.sub('\..*', '', seq_id)
+                fasta_dict[seq_id] = ''
+            else:
+                fasta_dict[seq_id] += line + '\n'
+                if len(line) > 80:
+                    raise ValueError('Input fasta file format problem for pfsearch, line length greater than 80 ')
     return fasta_dict
 
 def get_sequences_for_profile(key_list, seqs_dict):

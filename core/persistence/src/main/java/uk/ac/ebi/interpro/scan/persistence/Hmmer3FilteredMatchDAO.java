@@ -64,8 +64,6 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     }
                 }
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
-                //Utilities.verboseLog("Actual protein: " + protein);
-                //Utilities.verboseLog("Actual match: " + match);
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
             }

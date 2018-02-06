@@ -121,7 +121,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 List<StepInstance> unfinshedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances();
                 for (StepInstance stepInstance : unfinshedStepInstances) {
                     runStatus = 51;
-                    statsUtil.addToAllAvailableJobs(stepInstance, "unfinshed");
+
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Iterating over StepInstances: Currently on " + stepInstance);
                     }
@@ -183,6 +183,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         messageSender.sendMessage(stepInstance, false, priority, false);
                         statsUtil.addToSubmittedStepInstances(stepInstance);
                         controlledLogging = false;
+                        statsUtil.addToAllAvailableJobs(stepInstance, "submitted");
+                    }else{
+                        statsUtil.addToAllAvailableJobs(stepInstance, "considered");
                     }
                 }
                 //Utilities.verboseLog("runStatus:" + runStatus);

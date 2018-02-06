@@ -100,7 +100,7 @@ public final class PantherMatchParser
                     hmmLocation[0],
                     hmmLocation[1],
                     hmmLength,
-                    calculateHmmBounds(envLocation[0], envLocation[1], aliLocation[0], aliLocation[1]),
+                    HmmBounds.calculateHmmBounds(envLocation[0], envLocation[1], aliLocation[0], aliLocation[1]),
                     envLocation[0],
                     envLocation[1]);
         }
@@ -123,36 +123,4 @@ public final class PantherMatchParser
         return location;
     }
 
-    /**
-     * Calculate HMM bounds
-     *
-     * E.g. for env 1 - 330:
-     * ali 1 - 330, hmmBounds = []
-     * ali 3 - 330, hmmBounds = .]
-     * ali 1 - 209, hmmBounds =  [.
-     * ali 3 - 209, hmmBounds = ..
-     *
-     * @param envStart
-     * @param envEnd
-     * @param aliStart
-     * @param aliEnd
-     * @return
-     */
-    private String calculateHmmBounds(int envStart, int envEnd, int aliStart, int aliEnd) {
-        String hmmBounds;
-        if (envStart == aliStart) {
-            hmmBounds = "[";
-        }
-        else {
-            hmmBounds = ".";
-        }
-        if (envEnd == aliEnd) {
-            hmmBounds += "]";
-        }
-        else {
-            hmmBounds += ".";
-        }
-        assert HmmBounds.parseSymbol(hmmBounds) != null;
-        return hmmBounds;
-    }
 }

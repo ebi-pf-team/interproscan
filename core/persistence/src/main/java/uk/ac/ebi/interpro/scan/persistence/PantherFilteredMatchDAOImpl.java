@@ -71,7 +71,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         }
                         match = new PantherMatch(
                                 currentSignature,
-                                rawMatch.getModelId(),
+                                currentSignatureAc,
                                 locations,
                                 lastRawMatch.getEvalue(),
                                 lastRawMatch.getFamilyName(),
@@ -114,7 +114,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             if (lastRawMatch != null) {
                 match = new PantherMatch(
                         currentSignature,
-                        lastRawMatch.getModelId(),
+                        currentSignatureAc,
                         locations,
                         lastRawMatch.getEvalue(),
                         lastRawMatch.getFamilyName(),

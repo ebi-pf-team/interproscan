@@ -36,9 +36,10 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     private SequenceLoader<T> sequenceLoader;
 
+    protected String inputType = "Protein";
+
     protected static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
 
-    protected String inputType = "Protein";
 
     public void setInputType(String inputType) {
         this.inputType = inputType;
@@ -66,7 +67,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
             final Set<T> parsedMolecules = new HashSet<>();
 
-            Utilities.verboseLog("start Parsing " + inputType + " input file stream");
+            Utilities.verboseLog("Start Parsing  input file stream of - " + inputType +  " - sequences");
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.length() > 0) {
@@ -185,5 +186,8 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         return currentId;
     }
 
+
     protected abstract void addToMoleculeCollection(String sequence, final String currentId, final Set<T> parsedMolecules);
+
+
 }

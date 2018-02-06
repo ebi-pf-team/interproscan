@@ -227,7 +227,31 @@
         <property name="minSize" value="${getorf.minsize}"/>
     </bean>
 
-    <!-- STEP 4 (depends on both Step 1 and 2) -->
+
+    <!-- STEP 3 -->
+    <bean id="stepRunParseGetOrf"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfParserStep">
+        <!--Abstract parameter-->
+        <property name="job" ref="jobLoadNucleicAcidSequence"/>
+        <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="dependsUpon">
+            <list>
+                <ref bean="stepRunGetOrf"/>
+            </list>
+        </property>
+        <property name="fullPathToPython" value="${python.command}"/>
+        <property name="fullPathToBinary" value="${binary.getorf.parser.path}"/>
+        <property name="orfsFilterSize" value="${binary.getorf.parser.filtersize}"/>
+        <property name="binarySwitches" value="${getorf.parser.binary.switches}"/>
+        <property name="orfsFilePath" ref="getOrfResultFile"/>
+        <property name="fastaFilePath" ref="getOrfParserResultFile"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+
+    <!-- STEP 3 (depends on both Step 1 and 2) -->
     <bean id="stepLoadOrfFromFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
         <!--Abstract parameter-->
@@ -241,7 +265,7 @@
         <property name="dependsUpon">
             <list>
                 <ref bean="stepLoadNucleicAcidFromFasta"/>
-                <ref bean="stepRunGetOrf"/>
+                <ref bean="stepRunParseGetOrf"/>
             </list>
         </property>
         <!--More specific parameter-->
@@ -262,10 +286,9 @@
 
                     </bean>
                 </property>
-                <property name="inputType" value="Protein"/>
             </bean>
         </property>
-        <property name="overridingFastaFileName" ref="getOrfResultFile"/>
+        <property name="overridingFastaFileName" ref="getOrfParserResultFile"/>
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
@@ -288,6 +311,7 @@
             </list>
         </property>
     </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadNucleicAcidSequence !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

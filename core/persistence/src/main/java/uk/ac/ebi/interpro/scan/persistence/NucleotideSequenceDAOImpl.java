@@ -43,7 +43,7 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
      * @return
      */
     @Transactional(readOnly = true)
-    public NucleotideSequence retrieveByXrefIdentifier(String identifier) {
+    public NucleotideSequence retrieveByXrefIdentifierByJoinApproach(String identifier) {
         final Query query =
                 entityManager.createQuery(
                         "SELECT s FROM NucleotideSequence s INNER JOIN s.xrefs x " +
@@ -55,6 +55,49 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
         }
         return null;
     }
+
+    /**
+     * this might be faster than this one retrieveByXrefIdentifierByJoinApproach used previously
+     *
+     * no joins are used here and we should have a constant retrieval time hopefully
+     *
+     * @param identifier
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public NucleotideSequence retrieveByXrefIdentifier(String identifier) {
+        Long startGetXref = System.currentTimeMillis();
+        final Query xrefQuery =
+                entityManager.createQuery(
+                        "SELECT x FROM NucleotideSequenceXref x " +
+                                "WHERE x.identifier = :identifier");
+        xrefQuery.setParameter("identifier", identifier);
+        @SuppressWarnings("unchecked") NucleotideSequenceXref xref = (NucleotideSequenceXref) xrefQuery.getSingleResult();
+        Long startGetNucleotideSequenceTest = System.currentTimeMillis();
+        //Utilities.verboseLog("RetrieveByXref: " + (startGetNucleotideSequenceTest - startGetXref) + " millis ");
+        if (xref != null) {
+            NucleotideSequence nucleotideSequenceTest = xref.getNucleotideSequence();
+            Long startGetNucleotideSequence = System.currentTimeMillis();
+            //Utilities.verboseLog("RetrieveNucleotideSequenceTest: " + (startGetNucleotideSequence - startGetNucleotideSequenceTest) + " millis ");
+            return nucleotideSequenceTest;
+        }
+
+        Long startGetNucleotideSequence = System.currentTimeMillis();
+        if (xref != null) {
+            Long sequenceId = xref.getNucleotideSequence().getId();
+            final Query query =
+                    entityManager.createQuery(
+                            "SELECT s FROM NucleotideSequence s  " +
+                                    "WHERE s.id = :identifier");
+            query.setParameter("identifier", sequenceId);
+            @SuppressWarnings("unchecked") NucleotideSequence nucleotideSequence = (NucleotideSequence) query.getSingleResult();
+            Long endGetNucleotideSequence = System.currentTimeMillis();
+            //Utilities.verboseLog("RetrieveNucleotideSequence: " + (endGetNucleotideSequence - startGetNucleotideSequence) + " millis ");
+            return nucleotideSequence;
+        }
+        return null;
+    }
+
 
     /**
      * SELECT * FROM NUCLEOTIDE_SEQUENCE s

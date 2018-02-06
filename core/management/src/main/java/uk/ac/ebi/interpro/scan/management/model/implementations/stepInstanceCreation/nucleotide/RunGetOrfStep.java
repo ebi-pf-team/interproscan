@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,31 +79,33 @@ public class RunGetOrfStep extends RunBinaryStep {
             setMinSize(minSizeCommandLine);
         }
         final String fastaFile = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePath);
-            final List<String> command = new ArrayList<String>();
-            command.add(fullPathToBinary);
+        final List<String> command = new ArrayList<String>();
+        command.add(fullPathToBinary);
             /*
             Using the pearson format switch (undocumented feature!) means that getorf will
             use all text up to the first space as the identifier.
             This is essential for the short term nucletide header fix to work (IBU-2426)
             TODO - consider removing this switch when the long-term fix is implemented
              */
-            command.add("-sf");
-            command.add("pearson");
-            command.add("-sequence");
-            command.add(nucleicAcidSeqFilePath);
-            command.add("-outseq");
-            command.add(fastaFile);
-            if (this.minSize != null) {
-                command.add("-minsize");
-                command.add(this.minSize);
-            }
-            if (this.maxSize != null) {
-                command.add("-maxsize");
-                command.add(this.maxSize);
-            }
-            // Need to build binary switches.
-            // Need to have default minimum length (100?)
-            command.addAll(getBinarySwitchesAsList());
-            return command;
+        command.add("-sf");
+        command.add("pearson");
+        command.add("-sequence");
+        command.add(nucleicAcidSeqFilePath);
+        command.add("-outseq");
+        command.add(fastaFile);
+        if (this.minSize != null) {
+            command.add("-minsize");
+            command.add(this.minSize);
         }
+        if (this.maxSize != null) {
+            command.add("-maxsize");
+            command.add(this.maxSize);
+        }
+        // Need to build binary switches.
+        // Need to have default minimum length (100?)
+        command.addAll(getBinarySwitchesAsList());
+
+        Utilities.verboseLog("RunGetOrfStep: " + getCommandBuilder(command));
+        return command;
+    }
 }

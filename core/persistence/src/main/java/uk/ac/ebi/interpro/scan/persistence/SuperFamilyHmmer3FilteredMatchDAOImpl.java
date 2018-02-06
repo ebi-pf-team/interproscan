@@ -21,6 +21,7 @@ import java.util.UUID;
  * SuperFamily filtered match data access object.
  *
  * @author Matthew Fraser
+ * @author Gift Nuka
  * @version $Id$
  */
 public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<SuperFamilyHmmer3RawMatch, SuperFamilyHmmer3Match> implements SuperFamilyHmmer3FilteredMatchDAO {
@@ -67,19 +68,13 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Protein: " + protein);
+            }
 
-            LOGGER.debug("Protein: " + protein);
-//            if ((proteinCount == 1) || (proteinCount % sfBatchSize == 0)){
-//               	Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: considering Protein: " + protein.getId());
-//            }
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 final SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
-//                if ((proteinCount == 1) || (proteinCount % sfBatchSize == 0)) {
-//                    if (match != null) {
-//                        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: considering Protein: " + match);
-//                    }
-//                }
 
                 if (match == null) {
                     final Signature currentSignature = holder.getSignature();
@@ -104,9 +99,6 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                         hmmLength
                 ));
                 matchCount++;
-//                if ((matchCount == 1) || (matchCount % sfBatchSize == 0)) {
-//                    Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: dealt with  " + matchCount + " matches");
-//                }
             }
 
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
@@ -114,14 +106,13 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     LOGGER.debug("superfamily match: " + match);
                     LOGGER.debug("Protein with match: " + protein);
                 }
-                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getLocations() + " \nProtein with match: " + protein.getId());
+//                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getSignature()
+//                        + "locations size: " + match.getLocations().size()
+//                        + " \nProtein with match: " + protein.getId());
 
                 protein.addMatch(match);
                 entityManager.persist(match);
             }
-//            if ((proteinCount == 1) || (proteinCount % 500 == 0)) {
-//                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: persisted " + proteinCount + " matches/raw proteins");
-//            }
         }
     }
 }

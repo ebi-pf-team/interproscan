@@ -35,6 +35,7 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "NucleotideSequenceXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
+//@JsonIgnoreProperties({"databaseName"})
 public class NucleotideSequenceXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
@@ -51,7 +52,7 @@ public class NucleotideSequenceXref extends Xref implements Serializable {
     }
 
     public NucleotideSequenceXref(String databaseName, String identifier) {
-        this(databaseName, identifier, null);
+        this(databaseName, identifier, identifier);
     }
 
     public NucleotideSequenceXref(String databaseName, String identifier, String name) {

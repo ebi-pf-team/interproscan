@@ -28,27 +28,37 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
 
             final HmmBounds bounds;
+            /*
             if (location.getHmmBounds() == null || location.getHmmBounds().isEmpty()) {
                 bounds = HmmBounds.COMPLETE;   // FUDGE!  HmmBounds cannot be null...
             } else {
                 bounds = HmmBounds.parseSymbol(location.getHmmBounds());
             }
+            */
+
+            int locationStart = valueOrZero(location.getStart());
+            int locationEnd = valueOrZero(location.getEnd());
+
+            int envStart = location.getEnvelopeStart() == null
+                    ? (location.getStart() == null ? 0 : location.getStart())
+                    : location.getEnvelopeStart();
+            int envEnd =  location.getEnvelopeEnd() == null
+                    ? location.getEnd() == null ? 0 : location.getEnd()
+                    : location.getEnvelopeEnd();
+
+            bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
 
             locations.add(new Hmmer3Match.Hmmer3Location(
-                    valueOrZero(location.getStart()),
-                    valueOrZero(location.getEnd()),
+                    locationStart,
+                    locationEnd,
                     valueOrZero(location.getScore()),
                     valueOrZero(location.geteValue()),
                     valueOrZero(location.getHmmStart()),
                     valueOrZero(location.getHmmEnd()),
                     valueOrZero(location.getHmmLength()),
                     bounds,
-                    location.getEnvelopeStart() == null
-                            ? (location.getStart() == null ? 0 : location.getStart())
-                            : location.getEnvelopeStart(),
-                    location.getEnvelopeEnd() == null
-                            ? location.getEnd() == null ? 0 : location.getEnd()
-                            : location.getEnvelopeEnd()
+                    envStart,
+                    envEnd
             ));
         }
 

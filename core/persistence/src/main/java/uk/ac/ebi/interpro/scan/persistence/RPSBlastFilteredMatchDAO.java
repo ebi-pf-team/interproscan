@@ -73,7 +73,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
 
-            //LOGGER.debug("Protein: " + protein);
+
             Collection<T> rawMatches = rawProtein.getMatches();
 //            if (rawMatches == null su|| rawMatches.size() != 1) {
 //                throw new IllegalStateException("Protein did not have only one RPSBlast match! " +
@@ -108,7 +108,9 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 //for this location find the sites
                 Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
 
-               LOGGER.debug("filtered sites: " + rpsBlastSites);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("filtered sites: " + rpsBlastSites);
+                }
 
                 locations.add(
                         new RPSBlastMatch.RPSBlastLocation(
@@ -127,7 +129,9 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                     LOGGER.debug("rpsBlast match: " + match);
                 }
                 protein.addMatch(match);
-                //LOGGER.debug("Protein with match: " + protein);
+                if (LOGGER.isDebugEnabled()) {
+                    //LOGGER.debug("Protein with match: " + protein);
+                }
                 entityManager.persist(match);
             }
         }
