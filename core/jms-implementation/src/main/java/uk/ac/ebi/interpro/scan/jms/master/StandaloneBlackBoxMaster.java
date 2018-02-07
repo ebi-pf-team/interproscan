@@ -234,6 +234,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     runStatus = 0;
                     break;
                 }
+                if(completed
+                        && totalUnfinishedStepInstances == 0 ){
+                    Utilities.verboseLog("Should be finished: stepInstanceDAO.count() " + totalStepInstances
+                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                            + " minimumStepsExpected : " + minimumStepsExpected
+                            + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
+                }
                 //for standalone es mode this should be < 200
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }

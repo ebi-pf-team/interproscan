@@ -89,7 +89,12 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
                 }
                 else{
-                    match.addSignatureModel(rawMatch.getModelId());
+                    if (! match.getSignatureModels().contains(rawMatch.getModelId()) {
+                        match.addSignatureModel(rawMatch.getModelId());
+                    }else{
+                        Utilities.verboseLog("Model " + rawMatch.getModelId() + " already in list: "
+                                + match.getSignatureModels());
+                    }
                 }
                 Model model = holder.getModel();
                 int hmmLength = model == null ? 0 : model.getLength();

@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -26,6 +27,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import javax.swing.text.Utilities;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -34,6 +36,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.logging.Logger;
+
 
 /**
  * Represents a signature match on a protein sequence.
@@ -122,7 +126,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
         }else {
             for(String elem: this.signatureModels.split(",")){
                 if (signatureModel.equals(elem)){
-                    System.out.println("Model already in list: " + elem);
+                    //System.out.println("Model already in list: " + elem);
+                    //("Model already in list: " + elem);
                     return;
                 }
             }
