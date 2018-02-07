@@ -131,9 +131,9 @@
                                 </signature>
                                 <locations>
                                     <rpsblast-location evalue="2.4E-32" score="2.0" start="1" end="237">
-                                        <locationFragments>
+                                        <location-fragments>
                                             <rpsblast-location-fragment start="1" end="237"/>
-                                        </locationFragments>
+                                        </location-fragments>
                                         <sites>
                                             <rpsblast-site description="heterodimer interface" numLocations="2">
                                                 <site-locations>
@@ -371,9 +371,9 @@
                                 </signature>
                                 <locations>
                                     <superfamilyhmmer3-location start="1" end="237">
-                                        <locationFragments>
+                                        <location-fragments>
                                             <superfamilyhmmer3-location-fragment start="1" end="237"/>
-                                        </locationFragments>
+                                        </location-fragments>
                                     </superfamilyhmmer3-location>
                                 </locations>
                             </superfamilyhmmer3-match>

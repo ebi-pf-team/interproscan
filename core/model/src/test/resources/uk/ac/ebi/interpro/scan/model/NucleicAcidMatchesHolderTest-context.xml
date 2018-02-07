@@ -291,9 +291,9 @@
                                 </signature>
                                 <locations>
                                     <superfamilyhmmer3-location start="1" end="237">
-                                        <locationFragments>
+                                        <location-fragments>
                                             <superfamilyhmmer3-location-fragment start="1" end="237"/>
-                                        </locationFragments>
+                                        </location-fragments>
                                     </superfamilyhmmer3-location>
                                 </locations>
                             </superfamilyhmmer3-match>

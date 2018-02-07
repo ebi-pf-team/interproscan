@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -167,6 +168,8 @@ public abstract class Location<T extends LocationFragment> implements Serializab
 
     @Transient
     @XmlJavaTypeAdapter(LocationFragment.LocationFragmentAdapter.class)
+    @XmlElement(name = "location-fragments")
+    @JsonProperty("location-fragments")
     public Set<T> getLocationFragments() {
 //        return Collections.unmodifiableSet(locationFragments);
         return locationFragments;

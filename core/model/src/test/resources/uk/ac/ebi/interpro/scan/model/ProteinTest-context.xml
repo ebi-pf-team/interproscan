@@ -61,9 +61,9 @@
                             <hmmer2-location start="7" end="172"
                                              score="294.5" evalue="6.3E-86"
                                              hmm-start="1" hmm-end="186" hmm-length="186">
-                                <locationFragments>
+                                <location-fragments>
                                     <hmmer2-location-fragment start="7" end="172"/>
-                                </locationFragments>
+                                </location-fragments>
                             </hmmer2-location>
                         </locations>
                     </hmmer2-match>
