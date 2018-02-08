@@ -5,12 +5,12 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.21-60.0</version>
+        <version>5.27-66.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jms-implementation</artifactId>
-    <version>5.21-60.0</version>
+    <version>5.27-66.0</version>
 
     <packaging>jar</packaging>
 
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-management</artifactId>
-            <version>5.21-60.0</version>
+            <version>5.27-66.0</version>
         </dependency>
 
         <dependency>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.3.1</version>
+            <version>1.4</version>
         </dependency>
 
         <!-- Installer JDBC access to InterPro database -->

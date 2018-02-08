@@ -5,12 +5,15 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.util.*;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
+ *
  *         Date: 21/06/11
  *         Time: 16:43
  */
@@ -40,7 +43,7 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
      * @return
      */
     @Transactional(readOnly = true)
-    public NucleotideSequence retrieveByXrefIdentifier(String identifier) {
+    public NucleotideSequence retrieveByXrefIdentifierByJoinApproach(String identifier) {
         final Query query =
                 entityManager.createQuery(
                         "SELECT s FROM NucleotideSequence s INNER JOIN s.xrefs x " +
@@ -52,6 +55,49 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
         }
         return null;
     }
+
+    /**
+     * this might be faster than this one retrieveByXrefIdentifierByJoinApproach used previously
+     *
+     * no joins are used here and we should have a constant retrieval time hopefully
+     *
+     * @param identifier
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public NucleotideSequence retrieveByXrefIdentifier(String identifier) {
+        Long startGetXref = System.currentTimeMillis();
+        final Query xrefQuery =
+                entityManager.createQuery(
+                        "SELECT x FROM NucleotideSequenceXref x " +
+                                "WHERE x.identifier = :identifier");
+        xrefQuery.setParameter("identifier", identifier);
+        @SuppressWarnings("unchecked") NucleotideSequenceXref xref = (NucleotideSequenceXref) xrefQuery.getSingleResult();
+        Long startGetNucleotideSequenceTest = System.currentTimeMillis();
+        //Utilities.verboseLog("RetrieveByXref: " + (startGetNucleotideSequenceTest - startGetXref) + " millis ");
+        if (xref != null) {
+            NucleotideSequence nucleotideSequenceTest = xref.getNucleotideSequence();
+            Long startGetNucleotideSequence = System.currentTimeMillis();
+            //Utilities.verboseLog("RetrieveNucleotideSequenceTest: " + (startGetNucleotideSequence - startGetNucleotideSequenceTest) + " millis ");
+            return nucleotideSequenceTest;
+        }
+
+        Long startGetNucleotideSequence = System.currentTimeMillis();
+        if (xref != null) {
+            Long sequenceId = xref.getNucleotideSequence().getId();
+            final Query query =
+                    entityManager.createQuery(
+                            "SELECT s FROM NucleotideSequence s  " +
+                                    "WHERE s.id = :identifier");
+            query.setParameter("identifier", sequenceId);
+            @SuppressWarnings("unchecked") NucleotideSequence nucleotideSequence = (NucleotideSequence) query.getSingleResult();
+            Long endGetNucleotideSequence = System.currentTimeMillis();
+            //Utilities.verboseLog("RetrieveNucleotideSequence: " + (endGetNucleotideSequence - startGetNucleotideSequence) + " millis ");
+            return nucleotideSequence;
+        }
+        return null;
+    }
+
 
     /**
      * SELECT * FROM NUCLEOTIDE_SEQUENCE s
@@ -76,6 +122,41 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
     }
 
     /**
+     * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<NucleotideSequence> retrieveAll() {
+        final Query query =
+                entityManager.createQuery(
+                        "SELECT s FROM NucleotideSequence s ");
+        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
+        if (list != null && !list.isEmpty()) {
+            return list;
+        }
+        return null;
+    }
+
+    /**
+     * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
+     *      but select first item
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public NucleotideSequence retrieveOne() {
+        final Query query =
+                entityManager.createQuery(
+                        "SELECT s FROM NucleotideSequence s ");
+        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**
      * Inserts new Sequences.
      * If there are NucleotideSequence objects with the same MD5 / sequence in the database,
      * this method updates these, rather than inserting the new ones.
@@ -91,6 +172,7 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
     @SuppressWarnings("unchecked")
     public PersistedNucleotideSequences insertNewNucleotideSequences(Collection<NucleotideSequence> newSequences) {
         PersistedNucleotideSequences persistedNucleotideSequences = new PersistedNucleotideSequences();
+        Long startInsertNewNucleotideSequences = System.currentTimeMillis();
         if (newSequences.size() > 0) {
             // Create a List of MD5s (just as Strings) to query the database with
             final List<String> newMd5s = new ArrayList<String>(newSequences.size());
@@ -100,22 +182,33 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
                     LOGGER.debug("MD5 of new nucleotide sequence: " + newSequence.getMd5());
                 }
             }
+            Utilities.verboseLog("MD5 of new nucleotide sequence generated in " + (System.currentTimeMillis() - startInsertNewNucleotideSequences) + " millis");
             // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
             // being inserted and place in a Map of MD5 to Protein object.
             final Map<String, NucleotideSequence> md5ToExistingSequence = new HashMap<String, NucleotideSequence>();
             final Query query = entityManager.createQuery("select n from NucleotideSequence n left outer join fetch n.xrefs where n.md5 in (:md5)");
             query.setParameter("md5", newMd5s);
+            Long startQueryMd5ToExistingSequence = System.currentTimeMillis();
+            int count = 0;
             for (NucleotideSequence existingSequence : (List<NucleotideSequence>) query.getResultList()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Found 1 existing nucleotide sequence with MD5: " + existingSequence.getMd5());
                 }
                 md5ToExistingSequence.put(existingSequence.getMd5(), existingSequence);
+                count ++;
             }
+            Utilities.verboseLog("Completed querying for Xrefs to get md5ToExistingSequence in " +
+                            (System.currentTimeMillis() - startQueryMd5ToExistingSequence) + " millis  and found " +
+                    count + "  existing nucleotide sequence with MD5 " );
 
             // Now have the List of 'new' Nucleotide sequence, and a list of existing Nucleotide sequence that match
             // them. Insert / update Nucleotide sequence as appropriate.
+            Long startUpdatingNewNucleotideSequences = System.currentTimeMillis();
+            Long countCheckNewNucleotideSequences = System.currentTimeMillis();
+            count = 0;
             for (NucleotideSequence candidate : newSequences) {
 
+                count ++;
                 // Nucleotide sequence ALREADY EXISTS in the DB. - update cross references and save.
                 if (md5ToExistingSequence.keySet().contains(candidate.getMd5())) {
                     // This Nucleotide sequence is already in the database - add any new Xrefs and update.
@@ -150,7 +243,14 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
                     // Nucleotide sequences is redundant (e.g. a FASTA file with sequences repeated).
                     md5ToExistingSequence.put(candidate.getMd5(), candidate);
                 }
+                if (count % 200 == 0){
+                    Utilities.verboseLog("Completed processing " + count + " New NucleotideSequences in " +
+                            (System.currentTimeMillis() - countCheckNewNucleotideSequences ) + " millis " );
+                    countCheckNewNucleotideSequences = System.currentTimeMillis();
+                }
             }
+            Utilities.verboseLog("Time to update New NucleotideSequences =  " + (System.currentTimeMillis() - startUpdatingNewNucleotideSequences) + " millis");
+
         }
         // Finally return all the persisted Nucleotide sequence objects (new or existing)
         entityManager.flush();

@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.io;
 
 import org.springframework.util.StringUtils;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;

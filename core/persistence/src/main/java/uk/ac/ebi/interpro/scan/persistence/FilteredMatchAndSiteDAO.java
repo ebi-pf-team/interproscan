@@ -1,11 +1,11 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawSite;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.*;
 
@@ -35,7 +35,8 @@ public interface FilteredMatchAndSiteDAO<T extends RawMatch, U extends Match, E 
 
     @Transactional
     default void persist(Collection<RawProtein<T>> rawProteins, Collection<E> sites,
-                        Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+                         Map<String, SignatureModelHolder> modelIdToSignatureMap,
+                         Map<String, Protein> proteinIdToProteinMap) {
         //if this class is called but not implemeneted, thow an exception
         throw new UnsupportedOperationException();
     }

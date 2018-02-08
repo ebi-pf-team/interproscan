@@ -28,79 +28,82 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name="EntryTypeType")
 public enum EntryType {
 
-    // TODO: Should this be an enum, or read from the database?
-
-    // select upper(abbrev)||'("'||code||'", "'||abbrev||'", "'||description||'"),'
-    // from interpro.cv_entry_type order by code;
-
     /** Active site */
     ACTIVE_SITE('A',
             "Active site",
             "Active sites are best known as the catalytic pockets of enzymes " +
-            "where a substrate is bound and converted to a product, which is then released. Distant parts of a " +
-            "protein's primary structure may be involved in the formation of the catalytic pocket. " +
-            "Therefore, to describe an active site, different signatures may well be needed to cover all " +
-            "the active site residues. In InterPro active sites are defined by PROSITE patterns and the " +
-            "amino acids involved in the catalytic reaction must be described and mutational inactivation " +
-            "studies reported."),
+                    "where a substrate is bound and converted to a product, which is then released. Distant parts of a " +
+                    "protein's primary structure may be involved in the formation of the catalytic pocket. " +
+                    "Therefore, to describe an active site, different signatures may well be needed to cover all " +
+                    "the active site residues. In InterPro active sites are defined by PROSITE patterns and the " +
+                    "amino acids involved in the catalytic reaction must be described and mutational inactivation " +
+                    "studies reported."),
 
     /** Binding site */
     BINDING_SITE('B',
             "Binding site",
             "An InterPro Binding site binds chemical compounds, which themselves are not substrates " +
-            "for a reaction and where the binding is reversible. The compound, which is bound, may be a " +
-            "required co-factor for a chemical reaction, be involved in electron transport or be involved " +
-            "in protein structure modification. In InterPro binding sites are defined by PROSITE patterns " +
-            "where the amino acid(s) involved in the binding have been described."),
+                    "for a reaction and where the binding is reversible. The compound, which is bound, may be a " +
+                    "required co-factor for a chemical reaction, be involved in electron transport or be involved " +
+                    "in protein structure modification. In InterPro binding sites are defined by PROSITE patterns " +
+                    "where the amino acid(s) involved in the binding have been described."),
 
     /** Conserved site */
     CONSERVED_SITE('C',
             "Conserved site",
             "A Conserved site is a protein motif that is define by a PROSITE pattern. " +
-            "These PROSITE patterns are intended to identify proteins containing a characteristic fingerprint " +
-            "of a protein domain or where they are members of a protein family. In InterPro these are not " +
-            "defined as 'Binding Sites', 'Active Sites' or 'PTMs'."),
+                    "These PROSITE patterns are intended to identify proteins containing a characteristic fingerprint " +
+                    "of a protein domain or where they are members of a protein family. In InterPro these are not " +
+                    "defined as 'Binding Sites', 'Active Sites' or 'PTMs'."),
 
     /** Domain */
     DOMAIN('D',
             "Domain",
             "In InterPro a 'Domain' can be an evolutionary conserved sequence defining a known biological " +
-            "domain or a region of unknown function. Its length is not defined but it must have adjacent member " +
-            "database signatures."),
+                    "domain or a region of unknown function. Its length is not defined but it must have adjacent member " +
+                    "database signatures."),
 
     /** Family */
     FAMILY('F',
             "Family",
             "Group of evolutionarily related proteins that may share one or more features in common, " +
-            "which in InterPro are defined by a member database signature with no adjacent signatures."),
+                    "which in InterPro are defined by a member database signature with no adjacent signatures."),
+
+    /** Homologous superfamily */
+    HOMOLOGOUS_SUPERFAMILY('H',
+            "Homologous superfamily",
+            "A homologous superfamily is a group of proteins that share a common evolutionary origin, reflected by " +
+                    "similarity in their structure. Since superfamily members often display very low similarity at " +
+                    "the sequence level, this type of InterPro entry is usually based on a collection of underlying " +
+                    "hidden Markov models, rather than a single signature."),
 
     /** Post-translational modification */
     PTM('P',
             "PTM",
             "Posttranslational modification (PTM) is the chemical modification of a protein after its translation. " +
-            "PTMs involve the addition of functional groups, addition of other proteins or peptides, " +
-            "changing the chemical nature of amino acids or changing the primary structure of the protein itself.  " +
-            "Sequence motifs defining the modification sites are generally, but not always, " +
-            "defined by PROSITE patterns."),
+                    "PTMs involve the addition of functional groups, addition of other proteins or peptides, " +
+                    "changing the chemical nature of amino acids or changing the primary structure of the protein itself.  " +
+                    "Sequence motifs defining the modification sites are generally, but not always, " +
+                    "defined by PROSITE patterns."),
 
     /** Repeat */
     REPEAT('R',
             "Repeat",
             "Repeats are regions that are not expected to fold into a globular domain on their own. " +
-            "For example 6-8 copies of the WD40 repeat are needed to form a single globular domain. " +
-            "There also many other short repeat motifs that probably do not form a globular fold."),
+                    "For example 6-8 copies of the WD40 repeat are needed to form a single globular domain. " +
+                    "There also many other short repeat motifs that probably do not form a globular fold."),
 
     /** Unknown */
     UNKNOWN('U',
             "Unknown",
-            "Placeholder for undecided cases. There should not be any in a release.");
+            "Placeholder for undecided cases."); // There should not be any 'unknown' in a release
 
 
     private final char code;
     private final String name;
     private final String description;
 
-    private EntryType(char code, String name, String description) {
+    EntryType(char code, String name, String description) {
         this.code        = code;
         this.name        = name;
         this.description = description;

@@ -24,12 +24,12 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
 
     private boolean writeFullGFF = true;
 
-    public GFFResultWriterForProtSeqs(Path path) throws IOException {
-        super(path);
+    public GFFResultWriterForProtSeqs(Path path, String interProScanVersion) throws IOException {
+        super(path, interProScanVersion);
     }
 
-    public GFFResultWriterForProtSeqs(Path path, boolean writeFullGFF) throws IOException {
-        super(path, writeFullGFF);
+    public GFFResultWriterForProtSeqs(Path path, String interProScanVersion, boolean writeFullGFF) throws IOException {
+        super(path, interProScanVersion, writeFullGFF);
         this.writeFullGFF = false;
     }
 

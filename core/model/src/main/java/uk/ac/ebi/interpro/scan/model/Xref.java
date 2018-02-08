@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -71,6 +75,7 @@ abstract class Xref implements Serializable {
 
 
     @XmlTransient
+    @JsonIgnore
     public Long getId() {
         return id;
     }
@@ -80,6 +85,7 @@ abstract class Xref implements Serializable {
     }
 
     @XmlAttribute(name = "id", required = true)
+    @JsonProperty("id")
     public String getIdentifier() {
         return identifier;
     }
@@ -96,6 +102,7 @@ abstract class Xref implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
 
     @XmlAttribute(name = "db")
     public String getDatabaseName() {

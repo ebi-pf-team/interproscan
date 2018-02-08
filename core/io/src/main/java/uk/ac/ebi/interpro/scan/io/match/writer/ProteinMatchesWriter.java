@@ -9,5 +9,8 @@ import java.io.IOException;
  * Write proteins to output
  */
 public interface ProteinMatchesWriter extends Closeable {
+
+    String getInterProScanVersion();
+
     int write(Protein protein) throws IOException;
 }

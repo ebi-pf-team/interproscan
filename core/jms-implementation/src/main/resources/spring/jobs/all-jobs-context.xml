@@ -14,7 +14,7 @@
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobMobiDBLite-context.xml"/>
     <import resource="jobPanther-context.xml"/>
-    <import resource="jobPIRSF-3.01-context.xml"/>
+    <import resource="jobPIRSF-context.xml"/>
 
     <import resource="jobPfam-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
@@ -27,7 +27,6 @@
     <import resource="jobSignalP_GRAM_POSITIVE-context.xml"/>
     <import resource="jobSignalP_GRAM_NEGATIVE-context.xml"/>
     <import resource="jobSMART-context.xml"/>
-    <import resource="jobSMART-6.2-context.xml"/>
     <import resource="jobTIGRFAM-context.xml"/>
 
     <import resource="jobSuperFamily-1.75-context.xml"/>
@@ -58,6 +57,7 @@
                 <ref bean="jobPanther"/>
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
+                <ref bean="jobPIRSF" />
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles"/>
@@ -67,9 +67,8 @@
                 <ref bean="jobSignalP_GRAM_POSITIVE"/>
                 <ref bean="jobSignalP_GRAM_NEGATIVE"/>
                 <ref bean="jobSMART"/>
-                <ref bean="jobSMART-6.2"/>
                 <ref bean="jobTIGRFAM"/>
-                <ref bean="jobPIRSF-3.01" />
+
                 <ref bean="jobSuperFamily-1.75"/>
                 <ref bean="jobTMHMM"/>
             </list>
@@ -93,6 +92,10 @@
 
     <bean id="rawAnalaysisOutputTwoFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND]_two.raw.out"/>
+    </bean>
+
+    <bean id="rawAnalaysisOutputThreeFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND]_three.raw.out"/>
     </bean>
 
     <bean id="rawAnalaysisOutputTbloutFileTemplate" class="java.lang.String">
@@ -198,6 +201,7 @@
                         <property name="nucleotideSequenceXrefDAO" ref="nucleotideSequenceXrefDAO"/>
                     </bean>
                 </property>
+                <property name="inputType" value="NucleotideSequence"/>
             </bean>
         </property>
         <!-- Don't need the following two properties, that have been copied from load Protein fasta file above.-->
@@ -219,9 +223,33 @@
         <property name="outputFileNameTemplate" value="getorf.err.txt"/>
         <!--More specific parameter-->
         <property name="fullPathToBinary" value="${binary.getorf.path}"/>
-        <property name="fastaFilePath" value="orfs.fasta"/>
+        <property name="fastaFilePath" ref="getOrfResultFile"/>
         <property name="minSize" value="${getorf.minsize}"/>
     </bean>
+
+
+    <!-- STEP 3 -->
+    <bean id="stepRunParseGetOrf"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfParserStep">
+        <!--Abstract parameter-->
+        <property name="job" ref="jobLoadNucleicAcidSequence"/>
+        <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="dependsUpon">
+            <list>
+                <ref bean="stepRunGetOrf"/>
+            </list>
+        </property>
+        <property name="fullPathToPython" value="${python.command}"/>
+        <property name="fullPathToBinary" value="${binary.getorf.parser.path}"/>
+        <property name="orfsFilterSize" value="${binary.getorf.parser.filtersize}"/>
+        <property name="binarySwitches" value="${getorf.parser.binary.switches}"/>
+        <property name="orfsFilePath" ref="getOrfResultFile"/>
+        <property name="fastaFilePath" ref="getOrfParserResultFile"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
 
     <!-- STEP 3 (depends on both Step 1 and 2) -->
     <bean id="stepLoadOrfFromFasta"
@@ -237,7 +265,7 @@
         <property name="dependsUpon">
             <list>
                 <ref bean="stepLoadNucleicAcidFromFasta"/>
-                <ref bean="stepRunGetOrf"/>
+                <ref bean="stepRunParseGetOrf"/>
             </list>
         </property>
         <!--More specific parameter-->
@@ -246,19 +274,21 @@
                 <property name="sequenceLoader">
                     <bean class="uk.ac.ebi.interpro.scan.business.sequence.ProteinLoader">
                         <property name="proteinPrecalcLookupBatchSize" value="50"/>
-                        <!-- MUST NOT EXCEED 1000 -->
-                        <property name="proteinInsertBatchSize" value="50"/>
+                        <!-- MUST NOT EXCEED 1000 ?? maybe need to revise this after more testing  : gift -->
+                        <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
+                        <property name="proteinInsertBatchSizeNoLookup" value="${precalculated.match.protein.insert.batch.size.nolookup}"/>
                         <property name="proteinDAO" ref="proteinDAO"/>
                         <property name="proteinLookup" ref="precalculatedLookup"/>
                         <property name="getOrfOutput" value="true"/>
                         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
                         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
                         <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
+
                     </bean>
                 </property>
             </bean>
         </property>
-        <property name="overridingFastaFileName" ref="getOrfResultFile"/>
+        <property name="overridingFastaFileName" ref="getOrfParserResultFile"/>
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
@@ -281,6 +311,7 @@
             </list>
         </property>
     </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadNucleicAcidSequence !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: jobLoadFromUniParc !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -289,6 +320,10 @@
 
     <bean id="getOrfResultFile" class="java.lang.String">
         <constructor-arg value="orfs.fasta"/>
+    </bean>
+
+    <bean id="getOrfParserResultFile" class="java.lang.String">
+        <constructor-arg value="orfs.filtered.fasta"/>
     </bean>
 
     <bean id="getOrfErrorFile" class="java.lang.String">
@@ -304,6 +339,7 @@
 
     <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
         <property name="sequenceLoader" ref="proteinLoader"/>
+        <property name="inputType" value="Protein"/>
     </bean>
 
     <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
@@ -323,7 +359,7 @@
         <property name="proteinPrecalcLookupBatchSize" value="${precalculated.match.protein.lookup.batch.size}"/>
 
         <!-- MUST NOT EXCEED 1000 -->
-        <!-- maybe the comment above only applies to when using the lookup match service -gn-->
+        <!-- maybe the comment above only applies to when using the lookup match service : gn-->
         <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
         <property name="proteinInsertBatchSizeNoLookup" value="${precalculated.match.protein.insert.batch.size.nolookup}"/>
         <property name="proteinDAO" ref="proteinDAO"/>

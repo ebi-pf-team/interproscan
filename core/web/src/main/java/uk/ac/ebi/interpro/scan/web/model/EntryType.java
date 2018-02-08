@@ -12,6 +12,7 @@ import java.util.*;
 public enum EntryType {
 
     // Note: protein page orders matches according to order of enums here!
+    HOMOLOGOUS_SUPERFAMILY("Homologous_superfamily"),
     FAMILY("Family"),
     DOMAIN("Domain"),
     REPEAT("Repeat"),
@@ -19,7 +20,7 @@ public enum EntryType {
     UNKNOWN("Unknown");
 
     private final String name;
-    private final List<String> alternativeNames = new ArrayList<String>();
+    private final List<String> alternativeNames = new ArrayList<>();
 
     private static final Map<String, EntryType> TYPE_NAME_TO_TYPE = new HashMap<String, EntryType>();
 
@@ -63,6 +64,9 @@ public enum EntryType {
             case FAMILY:
                 return FAMILY;
 
+            case HOMOLOGOUS_SUPERFAMILY:
+                return HOMOLOGOUS_SUPERFAMILY;
+
             case REPEAT:
                 return REPEAT;
 
@@ -84,6 +88,10 @@ public enum EntryType {
         // In rare cases, may get IPR that's not been released yet, for example, the following
         // returned "IPR001438 does not exist. IPR001438 is not released" on 20 October 2011:
         // http://www.ebi.ac.uk/interpro/entry/IPR001438
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

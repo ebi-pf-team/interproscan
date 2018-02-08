@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -60,6 +60,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         for (RawProtein<T> rawProtein : filteredProteins) {
             for (T rawMatch : rawProtein.getMatches()) {
                 rawMatchCount++;
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rawMatch :" + rawMatch.toString());
+                }
                 if (signatureLibraryRelease == null) {
                     signatureLibraryRelease = rawMatch.getSignatureLibraryRelease();
                     if (signatureLibraryRelease == null) {
@@ -86,20 +89,18 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             return;
         }
 
+        LOGGER.debug("getProteinIdToProteinMap: " );
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
-        final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
+        LOGGER.debug("getModelAccessionToSignatureMap: " );
+        final Map<String, SignatureModelHolder> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
 
-        LOGGER.debug("signatureLibrary: " +  signatureLibrary
-                + " signatureLibraryRelease: "     + signatureLibraryRelease
-                + " filteredProteins: " + filteredProteins.size()
-                + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
-
-
-        StringBuilder signatureList = new StringBuilder();
-        for (Signature signature:   modelIdToSignatureMap.values()){
-            signatureList.append(signature.getModels().toString());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("signatureLibrary: " + signatureLibrary
+                    + " signatureLibraryRelease: " + signatureLibraryRelease
+                    + " filteredProteins: " + filteredProteins.size()
+                    + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+            LOGGER.debug("now persists the filtered proteins: " );
         }
-
 
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
 
@@ -115,13 +116,13 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return
      */
     @Transactional(readOnly = true)
-    protected Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
-                                                                   Collection<RawProtein<T>> rawProteins) {
+    protected Map<String, SignatureModelHolder> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+                                                                                Collection<RawProtein<T>> rawProteins) {
         //Model accession to signatures map
         LOGGER.info("Creating model accession to signature map...");
-        final Map<String, Signature> result = new HashMap<String, Signature>();
+        final Map<String, SignatureModelHolder> result = new HashMap<>();
 
-        List<String> modelIDs = new ArrayList<String>();
+        List<String> modelIDs = new ArrayList<>();
         for (RawProtein<T> rawProtein : rawProteins) {
             for (RawMatch rawMatch : rawProtein.getMatches()) {
                 modelIDs.add(rawMatch.getModelId());
@@ -160,7 +161,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             //Inner join
             final Query query =
                     entityManager.createQuery(
-                            "select s from Signature s, Model m " +
+                            "select s, m from Signature s, Model m " +
                                     "where s.id = m.signature.id " +
                                     "and m.accession in (:accession) " +
                                     "and s.signatureLibraryRelease.version = :version " +
@@ -168,14 +169,23 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             query.setParameter("accession", modelIdsSlice);
             query.setParameter("signatureLibrary", signatureLibrary);
             query.setParameter("version", signatureLibraryRelease);
-            @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
+            @SuppressWarnings("unchecked") List<Object[]> signatureModels = query.getResultList();
 
-            for (Signature s : signatures) {
-                for (Model m : s.getModels().values()) {
-                    result.put(m.getAccession(), s);
-                    LOGGER.debug("accession: " + m.getAccession() + " signature: " + s);
-                }
+            if (LOGGER.isDebugEnabled()) {
+                String signatureModelQueryMessage = "SignatureModel query: "
+                        + "accession: " + modelIdsSlice.toString()
+                        + " signatureLibrary: " + signatureLibrary
+                        + " version: " + signatureLibraryRelease;
+                LOGGER.debug(signatureModelQueryMessage);
+//            Utilities.verboseLog(signatureModelQueryMessage);
             }
+
+            for (Object[] row : signatureModels) {
+                Signature signature = (Signature) row[0];
+                Model model = (Model) row[1];
+                result.put(model.getAccession(), new SignatureModelHolder(signature, model));
+            }
+
         }
         return result;
     }

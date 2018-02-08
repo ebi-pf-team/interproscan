@@ -24,7 +24,7 @@ public class MatchTest extends TestCase {
                 new ProfileScanMatch.ProfileScanLocation(1, 2, 1.1d, "CIGARALIGN"),
                 new ProfileScanMatch.ProfileScanLocation(4, 5, 2.2d, "CIGARALIGN")
         ));
-        ProfileScanMatch m = new ProfileScanMatch(new Signature("SIG001"), locations);
+        ProfileScanMatch m = new ProfileScanMatch(new Signature("SIG001"), "MOD001", locations);
         assertEquals(2, m.getLocations().size());
     }
 

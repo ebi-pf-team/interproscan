@@ -3,6 +3,10 @@
 /*Colours for entries of type domain and repeat.*/
 /*  TYPE Family , site, unintegrated */
 
+.Homologous_superfamily {
+    fill: #399fc7;
+}
+
 .Family {
     fill: #ffffff;
 }

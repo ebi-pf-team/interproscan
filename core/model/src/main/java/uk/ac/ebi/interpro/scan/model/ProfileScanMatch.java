@@ -16,6 +16,9 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
@@ -44,8 +47,8 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     protected ProfileScanMatch() {
     }
 
-    public ProfileScanMatch(Signature signature, Set<ProfileScanLocation> locations) {
-        super(signature, locations);
+    public ProfileScanMatch(Signature signature, String signatureModels, Set<ProfileScanLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -53,7 +56,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         for (ProfileScanLocation location : this.getLocations()) {
             clonedLocations.add((ProfileScanLocation) location.clone());
         }
-        return new ProfileScanMatch(this.getSignature(), clonedLocations);
+        return new ProfileScanMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     /**
@@ -64,6 +67,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     @Entity
     @Table(name = "profile_scan_location")
     @XmlType(name = "ProfileScanLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @JsonIgnoreProperties({"id", "cigarAlignment"}) // cigarAlignment is not output i the json
     public static class ProfileScanLocation extends Location {
 
         @Column(nullable = false)

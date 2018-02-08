@@ -16,9 +16,13 @@ import java.util.EnumSet;
  * @since 1.0-SNAPSHOT
  */
 public enum I5Option {
+    VERSION("version", "version", false, "Optional, display version number", null, false, Mode.SET_OF_STANDARD_MODES),
+    HELP("help", "help", false, "Optional, display help information", null, false, Mode.SET_OF_STANDARD_MODES),
+    CPU("cpu", "cpu", false, "Optional, number of cores for inteproscan.", "CPU", false, Mode.SET_OF_ALL_MODES),
     MODE("mode", "m", false, "Optional, the mode in which InterProScan is being run, the default mode is " + Mode.STANDALONE.getRunnableBean() + ". Must be one of: " + Mode.getCommaSepModeList() + ".", "MODE-NAME", false, Mode.SET_OF_NO_MODES),
     INPUT("input", "i", false, "Optional, path to fasta file that should be loaded on Master startup. Alternatively, in CONVERT mode, the InterProScan 5 XML file to convert.", "INPUT-FILE-PATH", false, Mode.SET_OF_ALL_MODES),
-    OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, GFF3, HTML and SVG. Default for protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3 and XML.", "OUTPUT-FORMATS", true, Mode.SET_OF_ALL_MODES),
+    OUTPUT_FORMATS("formats", "f", false, "Optional, case-insensitive, comma separated list of output formats. Supported formats are TSV, XML, JSON, GFF3, HTML and SVG. Default for protein sequences are TSV, XML and GFF3, or for nucleotide sequences GFF3 and XML.", "OUTPUT-FORMATS", true, Mode.SET_OF_ALL_MODES),
+    TSV_VERSION_OUTPUT("output-tsv-version", "vtsv", false, "Optional, includes a TSV version file along with any TSV output (when TSV output requested)", null, false, Mode.SET_OF_STANDARD_MODES),
     BASE_OUT_FILENAME("output-file-base", "b", false, "Optional, base output filename (relative or absolute path).  Note that this option, the --output-dir (-d) option and the --outfile (-o) option are mutually exclusive.  The appropriate file extension for the output format(s) will be appended automatically. By default the input file path/name will be used.", "OUTPUT-FILE-BASE", false, Mode.SET_OF_ALL_MODES),
     OUTPUT_FILE("outfile", "o", false, "Optional explicit output file name (relative or absolute path).  Note that this option, the --output-dir (-d) option and the --output-file-base (-b) option are mutually exclusive. If this option is given, you MUST specify a single output format using the -f option.  The output file name will not be modified. Note that specifying an output file name using this option OVERWRITES ANY EXISTING FILE.", "EXPLICIT_OUTPUT_FILENAME", false, Mode.SET_OF_ALL_MODES),
     OUTPUT_DIRECTORY("output-dir", "d", false, "Optional, output directory.  Note that this option, the --outfile (-o) option and the --output-file-base (-b) option are mutually exclusive. The output filename(s) are the same as the input filename, with the appropriate file extension(s) for the output format(s) appended automatically .", "OUTPUT-DIR", false, Mode.SET_OF_ALL_MODES),
@@ -27,10 +31,12 @@ public enum I5Option {
     IPRLOOKUP("iprlookup", "iprlookup", false, "Also include lookup of corresponding InterPro annotation in the TSV and GFF3 output formats.", null, false, Mode.SET_OF_STANDARD_MODES),
     GOTERMS("goterms", "goterms", false, "Optional, switch on lookup of corresponding Gene Ontology annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
     PATHWAY_LOOKUP("pathways", "pa", false, "Optional, switch on lookup of corresponding Pathway annotation (IMPLIES -iprlookup option)", null, false, Mode.SET_OF_STANDARD_MODES),
-    NOSITES("exclude-sites", "x", false, "Optional, excludes sites from the XML output", null, false, Mode.SET_OF_STANDARD_MODES),
+    DISABLE_RESIDUE_ANNOT("disable-residue-annot", "dra", false, "Optional, excludes sites from the XML, JSON output", null, false, Mode.SET_OF_STANDARD_MODES),
     MASTER_URI("masteruri", "masteruri", false, "The TCP URI of the Master.", "MASTER-URI", false, Mode.SET_OF_NO_MODES),
     MASTER_MAXLIFE("mastermaxlife", "mastermaxlife", false, "The maximum lifetime of the Master.", "MASTER-MAXLIFE", false, Mode.SET_OF_NO_MODES),
     SEQUENCE_TYPE("seqtype", "t", false, "Optional, the type of the input sequences (dna/rna (n) or protein (p)).  The default sequence type is protein.", "SEQUENCE-TYPE", false, Mode.SET_OF_STANDARD_MODES),
+    SEQUENCE_COUNT("sequencecount", "sct", false, "The total number of input sequences in master.", "SEQUENCE_COUNT", false, Mode.SET_OF_NO_MODES),
+
     MIN_SIZE("minsize", "ms", false, "Optional, minimum nucleotide size of ORF to report. Will only be considered if n is specified as a sequence type. " +
             "Please be aware of the fact that if you specify a too short value it might be that the analysis takes a very long time!", "MINIMUM-SIZE", false, Mode.SET_OF_STANDARD_MODES),
     TEMP_DIRECTORY_NAME("tempdirname", "td", false, "Optional, used to start up a worker with the correct temporary directory.", "TEMP-DIR-NAME", false, Mode.SET_OF_NO_MODES),

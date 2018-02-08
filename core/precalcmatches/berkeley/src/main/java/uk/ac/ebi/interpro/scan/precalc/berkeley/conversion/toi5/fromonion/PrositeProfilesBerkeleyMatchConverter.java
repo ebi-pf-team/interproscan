@@ -29,7 +29,7 @@ public class PrositeProfilesBerkeleyMatchConverter extends BerkeleyMatchConverte
             ));
         }
 
-        return new ProfileScanMatch(signature, locations);
+        return new ProfileScanMatch(signature, berkeleyMatch.getSignatureModels(), locations);
     }
 
 }

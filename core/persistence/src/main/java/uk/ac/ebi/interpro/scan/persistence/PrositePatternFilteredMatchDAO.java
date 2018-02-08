@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,12 +34,13 @@ public class PrositePatternFilteredMatchDAO
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Override
-    public void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<ProSitePatternRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             for (ProSitePatternRawMatch rawMatch : rawProtein.getMatches()) {
 
-                Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                Signature signature = holder.getSignature();
                 PatternScanMatch match = buildMatch(signature, rawMatch);
                 protein.addMatch(match);
                 entityManager.persist(match);
@@ -52,6 +54,6 @@ public class PrositePatternFilteredMatchDAO
                 rawMatch.getLocationEnd(),
                 rawMatch.getPatternLevel(),
                 rawMatch.getCigarAlignment());
-        return new PatternScanMatch(signature, Collections.singleton(location));
+        return new PatternScanMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 }

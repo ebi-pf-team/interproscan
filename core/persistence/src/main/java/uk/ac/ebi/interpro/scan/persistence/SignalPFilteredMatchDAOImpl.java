@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SignalPRawMatch;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,7 +51,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Transactional
-    public void persist(Collection<RawProtein<SignalPRawMatch>> rawProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<SignalPRawMatch>> rawProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<SignalPRawMatch> rawProtein : rawProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -68,7 +69,8 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
                 // only ever be 1 raw match for each protein, but never mind!
                 if (rawMatch == null) continue;
 
-                Signature signature = modelIdToSignatureMap.get(rawMatch.getModelId());
+                SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
+                Signature signature = holder.getSignature();
 
                 SignalPOrganismType organismType = rawMatch.getOrganismType();
                 if (organismType == null) {
@@ -84,7 +86,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
                                 rawMatch.getdScore()
                         )
                 );
-                SignalPMatch match = new SignalPMatch(signature, organismType, locations);
+                SignalPMatch match = new SignalPMatch(signature, rawMatch.getModelId(), organismType, locations);
                 protein.addMatch(match);
                 entityManager.persist(match);
             }

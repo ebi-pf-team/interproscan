@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.21-60.0</version>
+        <version>5.27-66.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-model</artifactId>
-    <version>5.21-60.0</version>
+    <version>5.27-66.0</version>
 
     <packaging>jar</packaging>
 
@@ -51,6 +51,13 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>${jaxb-api.version}</version>
+        </dependency>
+
+        <!--Jackson JSON support-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.6</version>
         </dependency>
 
         <!-- Apache Commons -->
@@ -108,7 +115,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.21-60.0</version>
+            <version>5.27-66.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -160,7 +167,7 @@
                         <configuration>
                             <target>
                                 <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
-                                <property name="latest.interpro.schema.version" value="2.0"/>
+                                <property name="latest.interpro.schema.version" value="2.2"/>
                                 <mkdir dir="${project.build.schema.dir}"/>
                                 <taskdef name="schemagen"
                                          classname="com.sun.tools.jxc.SchemaGenTask"

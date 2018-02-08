@@ -16,9 +16,12 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -41,7 +44,8 @@ import java.util.regex.Pattern;
 @Entity
 @XmlRootElement(name = "nucleotide-sequence")
 @XmlType(name = "NucleotideType", propOrder = {"sequenceObject", "crossReferences", "openReadingFrames"})
-public class NucleotideSequence implements Serializable {
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+public class NucleotideSequence implements OutputListElement, Serializable {
 
     // TODO: Refactor code that can be shared with Protein class
 
@@ -75,9 +79,11 @@ public class NucleotideSequence implements Serializable {
     private String md5;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotideSequence")
+    @BatchSize(size=4000)
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sequence")
+    @BatchSize(size=4000)
     private final Set<NucleotideSequenceXref> xrefs = new HashSet<NucleotideSequenceXref>();
 
     /**

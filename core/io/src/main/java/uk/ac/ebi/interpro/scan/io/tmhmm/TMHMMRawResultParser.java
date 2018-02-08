@@ -160,6 +160,7 @@ public final class TMHMMRawResultParser {
                 description(prediction.getShortDesc()).
                 signatureLibraryRelease(signatureLibraryRelease).
                 build();
-        return new TMHMMMatch(signature, locations);
+        String signatureModel = signature.getAccession();
+        return new TMHMMMatch(signature, signatureModel, locations);
     }
 }

@@ -54,6 +54,7 @@ public class Hmmer3SearchMatchParserTest {
     private org.springframework.core.io.Resource emptyAlignmentLineFile;
 
     @Test
+    @Ignore// As of Gene3d 4.2.0, no longer applies
     public void testGene3DParser() throws IOException {
         final Set<String> expected = new HashSet<String>(Arrays.asList(
                 "HP0834:24M2I9M1D9M1D2M2D10M7I42M7D16M5D12M1I24M",
@@ -65,7 +66,7 @@ public class Hmmer3SearchMatchParserTest {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, gene3dFile.getInputStream());
         for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
             for (Gene3dHmmer3RawMatch m : p.getMatches()) {
-                actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                actual.add(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
             }
         }
         assertEquals("Expected matches not found", expected, actual);
@@ -94,6 +95,7 @@ public class Hmmer3SearchMatchParserTest {
     }
 
     @Test
+    @Ignore// As of Gene3d 4.2.0, no longer applies
     public void testEmptyAlignmentLine() throws IOException {
 
         final Set<String> expected = new HashSet<String>(Arrays.asList(
@@ -104,9 +106,9 @@ public class Hmmer3SearchMatchParserTest {
         Set<RawProtein<Gene3dHmmer3RawMatch>> proteins = parse(gene3dParser, emptyAlignmentLineFile.getInputStream());
         for (RawProtein<Gene3dHmmer3RawMatch> p : proteins) {
             for (Gene3dHmmer3RawMatch m : p.getMatches()) {
-                actual.add(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                actual.add(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(m.getSequenceIdentifier() + ":" + m.getCigarAlignment());
+                    LOGGER.debug(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
                 }
             }
         }

@@ -34,16 +34,20 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_SIG_LIB_NAME = 2;
     private static final int COL_IDX_SIG_LIB_RELEASE = 3;
     private static final int COL_IDX_SIG_ACCESSION = 4;
-    private static final int COL_IDX_SCORE = 5;
-    private static final int COL_IDX_SEQ_SCORE = 6;
-    private static final int COL_IDX_SEQ_EVALUE = 7;
-    private static final int COL_IDX_EVALUE = 8;
-    private static final int COL_IDX_SEQ_START = 9;
-    private static final int COL_IDX_SEQ_END = 10;
-    private static final int COL_IDX_HMM_START = 11;
-    private static final int COL_IDX_HMM_END = 12;
-//    Uncomment because I5 doesn't calculate them at the moment
-    private static final int COL_IDX_HMM_BOUNDS = 13;
+    private static final int COL_IDX_MODEL_ACCESSION = 5;
+    private static final int COL_IDX_SCORE = 6;
+    private static final int COL_IDX_SEQ_SCORE = 7;
+    private static final int COL_IDX_SEQ_EVALUE = 8;
+    private static final int COL_IDX_EVALUE = 9;
+    private static final int COL_IDX_SEQ_START = 10;
+    private static final int COL_IDX_SEQ_END = 11;
+    private static final int COL_IDX_HMM_START = 12;
+    private static final int COL_IDX_HMM_END = 13;
+    private static final int COL_IDX_HMM_LENGTH = 14;
+    private static final int COL_IDX_HMM_BOUNDS = 15;
+    private static final int COL_IDX_ENV_START = 16;
+    private static final int COL_IDX_ENV_END = 17;
+    //private static final int COL_IDX_ALIGNMENT = 18;
 
     private static final String CREATE_TEMP_TABLE =
             "create global temporary table  berkley_tmp_tab " +
@@ -53,6 +57,7 @@ public class CreateMatchDBFromIprscan {
                     "        l.library as signature_library_name, " +
                     "        l.version as signature_library_release, " +
                     "        m.method_ac as signature_accession, " +
+                    "        m.model_ac as model_accession, " +
                     "        m.score as score, " +
                     "        m.seqscore as sequence_score, " +
                     "        m.seqevalue as sequence_evalue, " +
@@ -61,9 +66,11 @@ public class CreateMatchDBFromIprscan {
                     "        m.seq_end, " +
                     "        m.hmm_start, " +
                     "        m.hmm_end, " +
-                    //    Uncomment because I5 doesn't calculate them at the moment
-                    "        m.hmm_bounds " +
-//                    "        m.hmm_length " +
+                    "        m.hmm_length, " +
+                    "        m.hmm_bounds, " +
+                    "        m.envelope_start, " +
+                    "        m.envelope_end " +
+                   // "        ,m.alignment " +
                     "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
                     "        mv_iprscan m," +
                     "        INTERPRO.iprscan2dbcode r," +
@@ -73,11 +80,13 @@ public class CreateMatchDBFromIprscan {
                     "        AND r.iprscan_sig_lib_rel_id=l.id";
 
     private static final String QUERY_TEMPORARY_TABLE =
-            "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, SCORE, " +
-                    "       SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, SEQ_END, HMM_START, HMM_END, HMM_BOUNDS " +
+            "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
+                    "SIGNATURE_ACCESSION, MODEL_ACCESSION, SCORE, SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, " +
+                    "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END" +
+                    //", ALIGNMENT " +
                     "       from  berkley_tmp_tab " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
-                    "       SEQUENCE_SCORE";
+                    "       MODEL_ACCESSION, SEQUENCE_SCORE";
 
     private static final String TRUNCATE_TEMPORARY_TABLE =
             "truncate table berkley_tmp_tab";
@@ -202,11 +211,17 @@ public class CreateMatchDBFromIprscan {
                     final String signatureAccession = rs.getString(COL_IDX_SIG_ACCESSION);
                     if (signatureAccession == null || signatureAccession.length() == 0) continue;
 
+                    final String modelAccession = rs.getString(COL_IDX_MODEL_ACCESSION);
+                    if (modelAccession == null || modelAccession.length() == 0) continue;
+
                     Integer hmmStart = rs.getInt(COL_IDX_HMM_START);
                     if (rs.wasNull()) hmmStart = null;
 
                     Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
                     if (rs.wasNull()) hmmEnd = null;
+
+                    Integer hmmLength = rs.getInt(COL_IDX_HMM_LENGTH);
+                    if (rs.wasNull()) hmmLength = null;
 
                     String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
 
@@ -223,16 +238,29 @@ public class CreateMatchDBFromIprscan {
                     if (rs.wasNull()) {
                         eValue = null;
                     }
-                    // arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmmBounds column...
+
+                    Integer envelopeStart = rs.getInt(COL_IDX_ENV_START);
+                    if (rs.wasNull()) envelopeStart = null;
+
+                    Integer envelopeEnd = rs.getInt(COL_IDX_ENV_END);
+                    if (rs.wasNull()) envelopeEnd = null;
+
+                    //String alignment = rs.getString(COL_IDX_ALIGNMENT);
+
+                    // arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmm_bounds column...
 
                     final BerkeleyLocation location = new BerkeleyLocation();
                     location.setStart(sequenceStart);
                     location.setEnd(sequenceEnd);
                     location.setHmmStart(hmmStart);
                     location.setHmmEnd(hmmEnd);
+                    location.setHmmLength(hmmLength);
                     location.setHmmBounds(hmmBounds);
                     location.seteValue(eValue);
                     location.setScore(locationScore);
+                    location.setEnvelopeStart(envelopeStart);
+                    location.setEnvelopeEnd(envelopeEnd);
+                    //location.setCigarAlignment(alignment);
                     locationCount++;
 
                     if (match != null) {
@@ -241,6 +269,7 @@ public class CreateMatchDBFromIprscan {
                                         signatureLibraryName.equals(match.getSignatureLibraryName()) &&
                                         sigLibRelease.equals(match.getSignatureLibraryRelease()) &&
                                         signatureAccession.equals(match.getSignatureAccession()) &&
+                                        modelAccession.equals(match.getSignatureModels()) &&
                                         (match.getSequenceEValue() == null && sequenceEValue == null || (sequenceEValue != null && sequenceEValue.equals(match.getSequenceEValue()))) &&
                                         (match.getSequenceScore() == null && sequenceScore == null || (sequenceScore != null && sequenceScore.equals(match.getSequenceScore())))) {
                             // Same Match as previous, so just add a new BerkeleyLocation
@@ -259,6 +288,7 @@ public class CreateMatchDBFromIprscan {
                             match.setSignatureLibraryName(signatureLibraryName);
                             match.setSignatureLibraryRelease(sigLibRelease);
                             match.setSignatureAccession(signatureAccession);
+                            match.setSignatureModels(modelAccession);
                             match.setSequenceScore(sequenceScore);
                             match.setSequenceEValue(sequenceEValue);
                             match.addLocation(location);
@@ -270,6 +300,7 @@ public class CreateMatchDBFromIprscan {
                         match.setSignatureLibraryName(signatureLibraryName);
                         match.setSignatureLibraryRelease(sigLibRelease);
                         match.setSignatureAccession(signatureAccession);
+                        match.setSignatureModels(modelAccession);
                         match.setSequenceScore(sequenceScore);
                         match.setSequenceEValue(sequenceEValue);
                         match.addLocation(location);

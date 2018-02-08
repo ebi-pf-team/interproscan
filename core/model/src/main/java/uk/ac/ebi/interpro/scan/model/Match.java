@@ -16,12 +16,18 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import javax.swing.text.Utilities;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -30,6 +36,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.logging.Logger;
+
 
 /**
  * Represents a signature match on a protein sequence.
@@ -42,7 +50,8 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "MatchType", propOrder = {"signature", "locations"})
+@XmlType(name = "MatchType", propOrder = {"signature", "signatureModels", "locations"})
+@JsonIgnoreProperties({"id"})
 public abstract class Match<T extends Location> implements Serializable, Cloneable {
 
     @Id
@@ -52,22 +61,28 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "PROTEIN_ID", referencedColumnName = "ID")
+    @JsonBackReference
     private Protein protein;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "SIGNATURE_ID", referencedColumnName = "ID")
     private Signature signature;
 
+    @Column(nullable = true)
+    private String signatureModels;
+
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class, mappedBy = "match")
     @BatchSize(size=4000)
+    @JsonManagedReference
     protected Set<T> locations = new LinkedHashSet<T>();
 
     protected Match() {
     }
 
-    protected Match(Signature signature, Set<T> locations) {
+    protected Match(Signature signature, String signatureModels, Set<T> locations) {
         setLocations(locations);
         setSignature(signature);
+        setSignatureModels(signatureModels);
     }
 
     @XmlTransient
@@ -96,6 +111,32 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
     private void setSignature(Signature signature) {
         this.signature = signature;
+    }
+
+    // add the signatureModels variable for handling model string list
+    @XmlElement (name = "model-ac")
+    @JsonProperty("model-ac")
+    public String getSignatureModels() {
+        return signatureModels;
+    }
+
+    public void addSignatureModel(String signatureModel) {
+        if (this.signatureModels == null){
+            setSignatureModels(signatureModel);
+        }else {
+            for(String elem: this.signatureModels.split(",")){
+                if (signatureModel.equals(elem)){
+                    //System.out.println("Model already in list: " + elem);
+                    //("Model already in list: " + elem);
+                    return;
+                }
+            }
+            this.signatureModels = this.signatureModels + ","  + signatureModel;
+        }
+    }
+
+    public void setSignatureModels(String signatureModels) {
+        this.signatureModels = signatureModels;
     }
 
     @Transient

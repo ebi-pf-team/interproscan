@@ -39,7 +39,7 @@ public class SignalPBerkeleyMatchConverter extends BerkeleyMatchConverter<Signal
             return null;
         }
 
-        return new SignalPMatch(signature, type, Collections.singleton(location));
+        return new SignalPMatch(signature, berkeleyMatch.getSignatureModels(), type, Collections.singleton(location));
     }
 
 }

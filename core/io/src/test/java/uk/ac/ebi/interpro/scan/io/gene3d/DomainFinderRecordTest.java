@@ -37,7 +37,10 @@ public class DomainFinderRecordTest {
     //    #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
     //  ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
     //    1 !   41.5   0.0   1.7e-11   8.6e-10       8     171 ..      10     167 ..       3     171 .. 0.83    
-    private static final String MODEL_ID    = "2hxsA00";    
+    private static final String MODEL_ID    = "2hxsA00";
+    private static final String HIT_MODEL_NAME = "2hxsA00-i1";
+    private static final String CATH_FAMILY_ID = "3.30.300.20";
+    private static final String SIG_LIB_REL = "4.2.0";
     private static final String SEQ_ID      = "HP0834";
     private static final double SEQ_EVALUE  = 2.6e-21;
     private static final double SEQ_SCORE   = 79.0;
@@ -55,6 +58,7 @@ public class DomainFinderRecordTest {
     private static final int ENV_END        = 171;
     private static final double EXPECTED_ACCURACY = 0.83;
     private static final String ALIGNMENT   = "24M2I9M1D9";
+    private static final String REGION = null;
 
     private static final Integer MATCHED_SEQ_COUNT = 1;
     private static final String SEGMENT_BOUNDARIES = "10:44";
@@ -74,11 +78,11 @@ public class DomainFinderRecordTest {
             DUMMY_DBL + "\t" + MATCHED_SEQ_COUNT + "\t" + SEGMENT_BOUNDARIES;
 
     private final static Gene3dHmmer3RawMatch EXPECTED_RAW_MATCH
-            = new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.3.0",
+            = new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, CATH_FAMILY_ID, HIT_MODEL_NAME, SIG_LIB_REL,
                                        SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                                        MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                                        ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,
-                                       DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT);
+                                       DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT, REGION);
 
     @Test
     public void testSegmentAndBoundaries() {

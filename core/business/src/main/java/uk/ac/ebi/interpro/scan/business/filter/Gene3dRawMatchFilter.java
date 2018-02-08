@@ -288,6 +288,8 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                                 Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
                                         mSeqId,
                                         mModelId,
+                                        "",
+                                        "",
                                         m.getSignatureLibraryRelease(),
                                         splitDomainStart,
                                         number,
@@ -304,7 +306,9 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
                                         m.getDomainCeValue(),
                                         m.getDomainIeValue(),
                                         m.getDomainBias(),
-                                        m.getCigarAlignment());
+                                        m.getAlignedRegions(),
+                                        ""
+                                );
                                 // Add match
                                 filteredProtein.addMatch(match);
                                 matchKeys.add(matchKey);

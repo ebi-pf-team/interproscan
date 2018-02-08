@@ -44,7 +44,7 @@
         <property name="fullPathToPython" value="${python.command}"/>
         <property name="fullPathToBinary" value="${binary.mobidb.path}"/>
         <property name="fullPathToBinDirectory" value="${binary.mobidb.binx.path}"/>
-        <property name="binarySwitches" value="${mobidb.binary.switches}"/>
+        <property name="binarySwitches" value="${mobidb.binary.switches} ${mobidb.binary.cpu.switches}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>

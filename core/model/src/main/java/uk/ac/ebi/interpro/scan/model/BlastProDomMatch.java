@@ -42,8 +42,8 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
     protected BlastProDomMatch() {
     }
 
-    public BlastProDomMatch(Signature signature, Set<BlastProDomLocation> locations) {
-        super(signature, locations);
+    public BlastProDomMatch(Signature signature, String signatureModels,Set<BlastProDomLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -51,7 +51,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
         for (BlastProDomLocation location : this.getLocations()) {
             clonedLocations.add((BlastProDomLocation) location.clone());
         }
-        return new BlastProDomMatch(this.getSignature(), clonedLocations);
+        return new BlastProDomMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     /**

@@ -74,7 +74,7 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP: Run the SignalP binary in eukaryote mode -->
+    <!-- STEP: Run the SignalP binary in Gram+ mode -->
     <bean id="stepSignalPGramPositiveRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.signalp.RunSignalPBinaryStep"
           parent="abstractSignalPGramPositiveStep">

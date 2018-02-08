@@ -16,6 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -34,11 +38,14 @@ import java.io.Serializable;
 @Entity
 @XmlType(name = "ProteinXrefType")
 @Table(indexes = { @Index(columnList = "IDENTIFIER") })
+@JsonIgnoreProperties({"databaseName", "description"})
 public class ProteinXref extends Xref implements Serializable {
 
     @ManyToOne(optional = false)
+    @JsonBackReference
     private Protein protein;
 
+    //TODO Get rid of this column - no longer really used, it's not in the XML/JSON ouptut
     @Column(nullable = true)
     private String description;
 
@@ -61,7 +68,8 @@ public class ProteinXref extends Xref implements Serializable {
         this.description = description;
     }
 
-    @XmlAttribute(name = "desc", required = false)
+    //@XmlAttribute(name = "desc", required = false)
+    @XmlTransient
     public String getDescription() {
         return description;
     }

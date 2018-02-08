@@ -4,12 +4,9 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.util.Utilities;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -19,6 +16,7 @@ import java.util.Map;
  *
  * @author Antony Quinn
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  */
 abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
@@ -40,32 +38,20 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Transactional
-    public void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, Signature> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, final Map<String, SignatureModelHolder> modelAccessionToSignatureMap, final Map<String, Protein> proteinIdToProteinMap) {
         // Add matches to protein
         for (RawProtein<T> rp : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rp.getProteinIdentifier());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("persist protein: " + protein.getId() + " md5:" + protein.getMd5());
+            }
             if (protein == null) {
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
             }
 //            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
             // Convert raw matches to filtered matches
-            Collection<Hmmer3Match> filteredMatches =
-                    Hmmer3RawMatch.getMatches(rp.getMatches(), new RawMatch.Listener() {
-                        @Override
-                        public Signature getSignature(String modelAccession,
-                                                      SignatureLibrary signatureLibrary,
-                                                      String signatureLibraryRelease) {
-                            Signature signature = modelAccessionToSignatureMap.get(modelAccession);
-                            if (signature == null) {
-                                throw new IllegalStateException("Attempting to persist a match to " + modelAccession + " however this has not been found in the database.");
-                            }
-                            Utilities.verboseLog("signature: " + signature + " from - " + modelAccession );
-                            //why not return just signature
-                            return modelAccessionToSignatureMap.get(modelAccession);
-                        }
-                    }
-                    );
+            Collection<Hmmer3Match> filteredMatches = Hmmer3RawMatch.getMatches(rp.getMatches(), modelAccessionToSignatureMap);
 
             int matchLocationCount = 0;
             for (Hmmer3Match match : filteredMatches) {
@@ -81,7 +67,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
             }
-            //TODO use a different utitlity function
+            //TODO use a different utility function
             //System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }
     }

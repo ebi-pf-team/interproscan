@@ -18,13 +18,18 @@
 
 
     <#import "../macros/signature.ftl" as signatureMacro>
-    <#if ! standalone>
+    <#if !standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
 
+    <h3>Homologous superfamilies</h3>
+
+    <#--<@condensedViewMacro.condensedView condensedView=condensedHSView scale=scale entryColours=entryColours idPrefix="h"/>-->
+    <@condensedViewMacro.condensedView condensedView=condensedHSView scale=scale entryColours="" idPrefix="h"/>
+
     <h3>Domains and repeats</h3>
 
-    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours/>
+    <@condensedViewMacro.condensedView condensedView=condensedView scale=scale entryColours=entryColours idPrefix="dr"/>
 
     <#if protein.entries?has_content || protein.unintegratedSignatures?has_content>
     <h3>Detailed signature matches</h3>
@@ -37,7 +42,7 @@
                     <#-- Prepare required variables for this entry -->
                 <#--Use unintegrated signature icon if unknown (probably needs own icon)-->
                     <#assign icon>
-                        <#if entry.type?lower_case?starts_with("family") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("region") || entry.type?lower_case?starts_with("repeat")>
+                        <#if entry.type?lower_case?starts_with("homologous") || entry.type?lower_case?starts_with("family") || entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("region") || entry.type?lower_case?starts_with("repeat")>
                         ${entry.type?lower_case}
                         <#elseif entry.type?lower_case?starts_with("unknown")>uni
                         <#else>site
@@ -47,6 +52,7 @@
                     <#assign title=entry.type?replace("_"," ")>
                     <#assign colourClass>
                     <#--For cases where the entry colour file is out of sync, we need to check that entryColours[entry.ac] exists -->
+                    <#--No "entry.type?lower_case?starts_with("homologous") ||" for now-->
                         <#if entryColours[entry.ac]?? && (entry.type?lower_case?starts_with("domain") || entry.type?lower_case?starts_with("repeat"))>
                             c${entryColours[entry.ac]} ${entry.type}
                         <#else>
@@ -181,7 +187,7 @@
 
             <#assign hasGo=false/>
             <p><#list protein.processGoTerms as goTerm>
-            <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+            <a href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
@@ -196,7 +202,7 @@
 
             <#assign hasGo=false/>
         <p><#list protein.functionGoTerms as goTerm>
-              <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+              <a href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>
@@ -211,7 +217,7 @@
 
             <#assign hasGo=false/>
         <p><#list protein.componentGoTerms as goTerm>
-                <a href="http://www.ebi.ac.uk/QuickGO/GTerm?id=${goTerm.accession}"
+                <a href="http://www.ebi.ac.uk/QuickGO/term/${goTerm.accession}"
                    class="ext">${goTerm.accession}</a> ${goTerm.termName}
                 <#assign hasGo=true/>
                 <br/>

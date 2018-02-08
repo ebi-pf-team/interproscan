@@ -1,190 +1,912 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" interproscan-version="5.28-67.0">
+    <protein>
+        <sequence md5="88d47cc807fe8e977130b0cc93e0bd61">MSKIGKSIRLERIIDRKTRKTVIVPMDHGLTVGPIPGLIDLAAAVDKVAEGGANAVLGHMGLPLYGHRGYGKDVGLIIHLSASTSLGPDANHKVLVTRVEDAIRVGADGVSIHVNVGAEDEAEMLRDLGMVARRCDLWGMPLLAMMYPRGAKVRSEHSVEYVKHAARVGAELGVDIVKTNYTGSPETFREVVRGCPAPVVIAGGPKMDTEADLLQMVYDAMQAGAAGISIGRNIFQAENPTLLTRKLSKIVHEGYTPEEAARLKL</sequence>
+        <xref id="A0B6J9"/>
+        <matches>
+            <hmmer2-match evalue="4.3E-64" score="228.9">
+                <signature ac="SM01133" name="DeoC_2">
+                    <entry ac="IPR002915" desc="DeoC/FbaB/ lacD aldolase" name="DeoC/FbaB/lacD_aldolase" type="FAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0016829" name="lyase activity"/>
+                        <pathway-xref db="Reactome" id="R-HSA-71336" name="Pentose phosphate pathway (hexose monophosphate shunt)"/>
+                        <pathway-xref db="Reactome" id="R-HSA-6798695" name="Neutrophil degranulation"/>
+                    </entry>
+                    <signature-library-release library="SMART" version="7.1"/>
+                </signature>
+                <model-ac>SM01133</model-ac>
+                <locations>
+                    <hmmer2-location score="228.9" evalue="4.3E-64" hmm-start="1" hmm-end="291" hmm-length="291" hmm-bounds="COMPLETE" start="21" end="237"/>
+                </locations>
+            </hmmer2-match>
+            <hmmer3-match evalue="3.3E-91" score="302.7">
+                <signature ac="PIRSF038992" name="Aldolase_Ia">
+                    <entry ac="IPR002915" desc="DeoC/FbaB/ lacD aldolase" name="DeoC/FbaB/lacD_aldolase" type="FAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0016829" name="lyase activity"/>
+                        <pathway-xref db="Reactome" id="R-HSA-71336" name="Pentose phosphate pathway (hexose monophosphate shunt)"/>
+                        <pathway-xref db="Reactome" id="R-HSA-6798695" name="Neutrophil degranulation"/>
+                    </entry>
+                    <signature-library-release library="PIRSF" version="3.02"/>
+                </signature>
+                <model-ac>PIRSF038992</model-ac>
+                <locations>
+                    <hmmer3-location env-end="265" env-start="1" score="302.6" evalue="3.7E-91" hmm-start="2" hmm-end="262" hmm-length="271" hmm-bounds="INCOMPLETE" start="1" end="265"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="5.5E-95" score="319.4">
+                <signature ac="G3DSA:3.20.20.70">
+                    <entry ac="IPR013785" desc="Aldolase-type TIM barrel" name="Aldolase_TIM" type="HOMOLOGOUS_SUPERFAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003824" name="catalytic activity"/>
+                    </entry>
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
+                </signature>
+                <model-ac>2qjgA00</model-ac>
+                <locations>
+                    <hmmer3-location env-end="264" env-start="1" score="319.2" evalue="6.4E-95" hmm-start="8" hmm-end="268" hmm-length="273" hmm-bounds="COMPLETE" start="1" end="264"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="1.3E-111" score="370.3">
+                <signature ac="TIGR01949" desc="AroFGH_arch: predicted phospho-2-dehydro-3-deoxyheptonate aldolase" name="TIGR01949">
+                    <entry ac="IPR010210" desc="2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase" name="ADH_synthase" type="FAMILY">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0009073" name="aromatic amino acid family biosynthetic process"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0016836" name="hydro-lyase activity"/>
+                        <pathway-xref db="KEGG" id="00400+2.2.1.10" name="Phenylalanine, tyrosine and tryptophan biosynthesis"/>
+                        <pathway-xref db="MetaCyc" id="PWY-6160" name="3-dehydroquinate biosynthesis II (archaea)"/>
+                    </entry>
+                    <signature-library-release library="TIGRFAM" version="15.0"/>
+                </signature>
+                <model-ac>TIGR01949</model-ac>
+                <locations>
+                    <hmmer3-location env-end="262" env-start="4" score="370.1" evalue="1.5E-111" hmm-start="1" hmm-end="253" hmm-length="255" hmm-bounds="N_TERMINAL_COMPLETE" start="4" end="260"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="2.1E-59" score="200.9">
+                <signature ac="PF01791" desc="DeoC/LacD family aldolase" name="DeoC">
+                    <entry ac="IPR002915" desc="DeoC/FbaB/ lacD aldolase" name="DeoC/FbaB/lacD_aldolase" type="FAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0016829" name="lyase activity"/>
+                        <pathway-xref db="Reactome" id="R-HSA-71336" name="Pentose phosphate pathway (hexose monophosphate shunt)"/>
+                        <pathway-xref db="Reactome" id="R-HSA-6798695" name="Neutrophil degranulation"/>
+                    </entry>
+                    <signature-library-release library="PFAM" version="31.0"/>
+                </signature>
+                <model-ac>PF01791</model-ac>
+                <locations>
+                    <hmmer3-location env-end="237" env-start="21" score="200.7" evalue="2.4E-59" hmm-start="1" hmm-end="234" hmm-length="235" hmm-bounds="N_TERMINAL_COMPLETE" start="21" end="236"/>
+                </locations>
+            </hmmer3-match>
+            <panther-match evalue="1.2E-22" familyName="FRUCTOSE-BISPHOSPHATE ALDOLASE" score="82.6">
+                <signature ac="PTHR11627" name="FRUCTOSE-BISPHOSPHATE ALDOLASE">
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR11627</model-ac>
+                <locations>
+                    <panther-location env-start="2" env-end="265" hmm-start="38" hmm-end="342" hmm-length="357" hmm-bounds="INCOMPLETE" start="9" end="261"/>
+                </locations>
+            </panther-match>
+            <panther-match evalue="1.2E-22" familyName="FRUCTOSE-BISPHOSPHATE ALDOLASE" score="82.6">
+                <signature ac="PTHR11627:SF20" name="FRUCTOSE-BISPHOSPHATE ALDOLASE">
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR11627</model-ac>
+                <locations>
+                    <panther-location env-start="2" env-end="265" hmm-start="38" hmm-end="342" hmm-length="357" hmm-bounds="INCOMPLETE" start="9" end="261"/>
+                </locations>
+            </panther-match>
+            <profilescan-match>
+                <signature ac="MF_00960" desc="2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase [aroA']." name="ADH_synthase">
+                    <entry ac="IPR010210" desc="2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase" name="ADH_synthase" type="FAMILY">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0009073" name="aromatic amino acid family biosynthetic process"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0016836" name="hydro-lyase activity"/>
+                        <pathway-xref db="KEGG" id="00400+2.2.1.10" name="Phenylalanine, tyrosine and tryptophan biosynthesis"/>
+                        <pathway-xref db="MetaCyc" id="PWY-6160" name="3-dehydroquinate biosynthesis II (archaea)"/>
+                    </entry>
+                    <signature-library-release library="HAMAP" version="2017_10"/>
+                </signature>
+                <model-ac>MF_00960</model-ac>
+                <locations>
+                    <profilescan-location score="61.29" start="3" end="265">
+                        <alignment>KIGKSIRLERIIDRKTRKTVIVPMDHGLTVGPIPGLIDLAAAVDKVAEGGANAVLGHMGLPLYGHRGYGKDVGLIIHLSASTSLGPDANHKVLVTRVEDAIRVGADGVSIHVNVGA-EDEAEMLRDLGMVARRCDLWGMPLLAMMYPRGAKVRSEHSVEYVKHAARVGAELGVDIVKTNYTGSPETFREVVRGCPAPVVIAGGPKMDTEADLLQMVYDAMQAGAAGISIGRNIFQAENPTLLTRKLSKIVHEGYTPEEAARLKL</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <rpsblast-match>
+                <signature ac="cd00958" desc="DhnA" name="DhnA">
+                    <signature-library-release library="CDD" version="3.16"/>
+                </signature>
+                <model-ac>cd00958</model-ac>
+                <locations>
+                    <rpsblast-location evalue="2.17004E-112" score="321.08" start="21" end="252">
+                        <sites>
+                            <rpsblast-site description="catalytic residue" numLocations="1">
+                                <site-locations>
+                                    <site-location residue="G" start="194" end="194"/>
+                                </site-locations>
+                            </rpsblast-site>
+                            <rpsblast-site description="putative active site " numLocations="8">
+                                <site-locations>
+                                    <site-location residue="L" start="242" end="242"/>
+                                    <site-location residue="M" start="221" end="221"/>
+                                    <site-location residue="D" start="219" end="219"/>
+                                    <site-location residue="G" start="194" end="194"/>
+                                    <site-location residue="T" start="241" end="241"/>
+                                    <site-location residue="L" start="243" end="243"/>
+                                    <site-location residue="A" start="220" end="220"/>
+                                    <site-location residue="A" start="197" end="197"/>
+                                </site-locations>
+                            </rpsblast-site>
+                        </sites>
+                    </rpsblast-location>
+                </locations>
+            </rpsblast-match>
+            <superfamilyhmmer3-match evalue="9.89E-82">
+                <signature ac="SSF51569" name="Aldolase">
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0048586</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="251" start="5" end="253"/>
+                </locations>
+            </superfamilyhmmer3-match>
+        </matches>
+    </protein>
+    <protein>
+        <sequence md5="f927b0d241297dcc9a1c5990b58bf3c4">MAAEEGVVIACHNKDEFDAQMTKAKEAGKVVIIDFTASWCGPCRFIAPVFAEYAKKFPGAVFLKVDVDELKEVAEKYNVEAMPTFLFIKDGAEADKVVGARKDDLQNTIVKHVGATAASASA</sequence>
+        <xref id="A2YIW7"/>
+        <matches>
+            <fingerprints-match evalue="2.5E-7" graphscan="III">
+                <signature ac="PR00421" desc="Thioredoxin family signature" name="THIOREDOXIN">
+                    <signature-library-release library="PRINTS" version="42.0"/>
+                </signature>
+                <model-ac>PR00421</model-ac>
+                <locations>
+                    <fingerprints-location motifNumber="3" pvalue="2.29E-5" score="37.87" start="78" end="89"/>
+                    <fingerprints-location motifNumber="1" pvalue="7.38E-4" score="48.89" start="31" end="39"/>
+                    <fingerprints-location motifNumber="2" pvalue="5.46E-6" score="65.28" start="39" end="48"/>
+                </locations>
+            </fingerprints-match>
+            <hmmer3-match evalue="3.3E-39" score="135.5">
+                <signature ac="G3DSA:3.40.30.10">
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
+                </signature>
+                <model-ac>3d22A00</model-ac>
+                <locations>
+                    <hmmer3-location env-end="119" env-start="1" score="135.4" evalue="3.8E-39" hmm-start="22" hmm-end="130" hmm-length="139" hmm-bounds="COMPLETE" start="1" end="119"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="4.9E-31" score="106.7">
+                <signature ac="PF00085" desc="Thioredoxin" name="Thioredoxin">
+                    <entry ac="IPR013766" desc="Thioredoxin domain" name="Thioredoxin_domain" type="DOMAIN">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0045454" name="cell redox homeostasis"/>
+                    </entry>
+                    <signature-library-release library="PFAM" version="31.0"/>
+                </signature>
+                <model-ac>PF00085</model-ac>
+                <locations>
+                    <hmmer3-location env-end="112" env-start="8" score="106.4" evalue="5.7E-31" hmm-start="2" hmm-end="104" hmm-length="104" hmm-bounds="C_TERMINAL_COMPLETE" start="9" end="112"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="2.4E-29" score="99.1">
+                <signature ac="PIRSF000077" name="Thioredoxin">
+                    <entry ac="IPR005746" desc="Thioredoxin" name="Thioredoxin" type="FAMILY">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0006662" name="glycerol ether metabolic process"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0015035" name="protein disulfide oxidoreductase activity"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0045454" name="cell redox homeostasis"/>
+                    </entry>
+                    <signature-library-release library="PIRSF" version="3.02"/>
+                </signature>
+                <model-ac>PIRSF000077</model-ac>
+                <locations>
+                    <hmmer3-location env-end="113" env-start="7" score="98.8" evalue="3.0E-29" hmm-start="14" hmm-end="111" hmm-length="107" hmm-bounds="INCOMPLETE" start="7" end="113"/>
+                </locations>
+            </hmmer3-match>
+            <panther-match evalue="1.7E-51" familyName="SUBFAMILY NOT NAMED" score="175.4">
+                <signature ac="PTHR10438" name="THIOREDOXIN">
+                    <entry ac="IPR005746" desc="Thioredoxin" name="Thioredoxin" type="FAMILY">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0006662" name="glycerol ether metabolic process"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0015035" name="protein disulfide oxidoreductase activity"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0045454" name="cell redox homeostasis"/>
+                    </entry>
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR10438:SF293</model-ac>
+                <locations>
+                    <panther-location env-start="1" env-end="118" hmm-start="2" hmm-end="113" hmm-length="117" hmm-bounds="INCOMPLETE" start="3" end="114"/>
+                </locations>
+            </panther-match>
+            <panther-match evalue="1.7E-51" familyName="SUBFAMILY NOT NAMED" score="175.4">
+                <signature ac="PTHR10438:SF293" name="SUBFAMILY NOT NAMED">
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR10438:SF293</model-ac>
+                <locations>
+                    <panther-location env-start="1" env-end="118" hmm-start="2" hmm-end="113" hmm-length="117" hmm-bounds="INCOMPLETE" start="3" end="114"/>
+                </locations>
+            </panther-match>
+            <patternscan-match>
+                <signature ac="PS00194" desc="Thioredoxin family active site." name="THIOREDOXIN_1">
+                    <entry ac="IPR017937" desc="Thioredoxin, conserved site" name="Thioredoxin_CS" type="CONSERVED_SITE">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0045454" name="cell redox homeostasis"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PATTERNS" version="2017_09"/>
+                </signature>
+                <model-ac>PS00194</model-ac>
+                <locations>
+                    <patternscan-location level="STRONG" start="32" end="50">
+                        <alignment>IIdFTasWCGPCRfIapvF</alignment>
+                    </patternscan-location>
+                </locations>
+            </patternscan-match>
+            <profilescan-match>
+                <signature ac="PS51352" desc="Thioredoxin domain profile." name="THIOREDOXIN_2">
+                    <entry ac="IPR013766" desc="Thioredoxin domain" name="Thioredoxin_domain" type="DOMAIN">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0045454" name="cell redox homeostasis"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS51352</model-ac>
+                <locations>
+                    <profilescan-location score="14.057" start="1" end="118">
+                        <alignment>-----------MAAEEGVViachnkdEF---DAQMtkakeAGKVVIIDFTASWCGPCRFIAPVFAEYAKKFPG--AVFLKVDVDELKE--VAEKYNVEAMPT-------------FLFIKDGAEADK---VVGARkdDLQNTiVKHVGATAA</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <rpsblast-match>
+                <signature ac="cd02947" desc="TRX_family" name="TRX_family">
+                    <signature-library-release library="CDD" version="3.16"/>
+                </signature>
+                <model-ac>cd02947</model-ac>
+                <locations>
+                    <rpsblast-location evalue="6.86446E-36" score="116.118" start="15" end="109">
+                        <sites>
+                            <rpsblast-site description="catalytic residues" numLocations="2">
+                                <site-locations>
+                                    <site-location residue="C" start="43" end="43"/>
+                                    <site-location residue="C" start="40" end="40"/>
+                                </site-locations>
+                            </rpsblast-site>
+                        </sites>
+                    </rpsblast-location>
+                </locations>
+            </rpsblast-match>
+            <superfamilyhmmer3-match evalue="6.53E-36">
+                <signature ac="SSF52833" name="Thioredoxin-like">
+                    <entry ac="IPR036249" desc="Thioredoxin-like superfamily" name="Thioredoxin-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0053311</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="217" start="6" end="114"/>
+                </locations>
+            </superfamilyhmmer3-match>
+        </matches>
+    </protein>
     <protein>
         <sequence md5="493932c1f43289805b4c4e651ceb9249">GRGLLPFVLLALGIXAPWAVEGAENALKGGACPPRKIVQCLRYEKPKCTSDWQCPDKKKCCRDTCAIKCLNPVAITNPVKVKPGKCPVVYGQCMMLNPPNHCKTDSQCLGDLKCCKSMCGKVCLTPVKA</sequence>
         <xref id="P22298"/>
         <matches>
-            <fingerprints-match graphscan="IIII" evalue="1.44E-7">
-                <signature name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003">
-                    <entry type="DOMAIN" name="WAP" desc="Whey acidic protein-type  4-disulphide core" ac="IPR008197">
-                        <go-xref category="MOLECULAR_FUNCTION" name="peptidase inhibitor activity" id="GO:0030414" db="GO"/>
-                        <go-xref category="CELLULAR_COMPONENT" name="extracellular region" id="GO:0005576" db="GO"/>
+            <fingerprints-match evalue="1.4E-7" graphscan="IIII">
+                <signature ac="PR00003" desc="4-disulphide core signature" name="4DISULPHCORE">
+                    <entry ac="IPR008197" desc="WAP-type 'four-disulfide core' domain" name="WAP_dom" type="DOMAIN">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005576" name="extracellular region"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0030414" name="peptidase inhibitor activity"/>
                     </entry>
-                    <models>
-                        <model name="4DISULPHCORE" desc="4-disulphide core signature" ac="PR00003"/>
-                    </models>
-                    <signature-library-release version="42.0" library="PRINTS"/>
+                    <signature-library-release library="PRINTS" version="42.0"/>
                 </signature>
+                <model-ac>PR00003</model-ac>
                 <locations>
-                    <fingerprints-location score="50.0" pvalue="4.37E-4" motifNumber="4" end="126" start="118"/>
-                    <fingerprints-location score="49.17" pvalue="2.32E-4" motifNumber="1" end="88" start="79"/>
-                    <fingerprints-location score="47.92" pvalue="0.00296" motifNumber="2" end="108" start="101"/>
-                    <fingerprints-location score="52.92" pvalue="2.09E-4" motifNumber="3" end="117" start="108"/>
+                    <fingerprints-location motifNumber="3" pvalue="2.09E-4" score="52.92" start="108" end="117"/>
+                    <fingerprints-location motifNumber="1" pvalue="2.32E-4" score="49.17" start="79" end="88"/>
+                    <fingerprints-location motifNumber="2" pvalue="0.00296" score="47.92" start="101" end="108"/>
+                    <fingerprints-location motifNumber="4" pvalue="4.37E-4" score="50.0" start="118" end="126"/>
                 </locations>
             </fingerprints-match>
-            <panther-match score="229.4" familyName="ANTILEUKOPROTEINASE" evalue="8.5E-66">
-                <signature name="ANTILEUKOPROTEINASE" ac="PTHR19441:SF24">
-                    <entry type="FAMILY" name="ALP" desc="Antileukoproteinase" ac="IPR029712">
-                        <go-xref category="BIOLOGICAL_PROCESS" name="negative regulation of endopeptidase activity" id="GO:0010951" db="GO"/>
-                        <go-xref category="MOLECULAR_FUNCTION" name="endopeptidase inhibitor activity" id="GO:0004866" db="GO"/>
+            <hmmer2-match evalue="4.7E-32" score="122.5">
+                <signature ac="SM00217" name="wap2">
+                    <entry ac="IPR008197" desc="WAP-type 'four-disulfide core' domain" name="WAP_dom" type="DOMAIN">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005576" name="extracellular region"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0030414" name="peptidase inhibitor activity"/>
                     </entry>
-                    <models>
-                        <model name="ANTILEUKOPROTEINASE" ac="PTHR19441:SF24"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+                    <signature-library-release library="SMART" version="7.1"/>
                 </signature>
+                <model-ac>SM00217</model-ac>
                 <locations>
-                    <panther-location end="128" start="3"/>
+                    <hmmer2-location score="34.1" evalue="1.9E-5" hmm-start="1" hmm-end="51" hmm-length="51" hmm-bounds="COMPLETE" start="28" end="73"/>
+                    <hmmer2-location score="88.4" evalue="8.6E-22" hmm-start="1" hmm-end="51" hmm-length="51" hmm-bounds="COMPLETE" start="82" end="127"/>
+                </locations>
+            </hmmer2-match>
+            <hmmer3-match evalue="1.0E-20" score="75.3">
+                <signature ac="G3DSA:4.10.75.10">
+                    <entry ac="IPR036645" desc="Elafin-like superfamily" name="Elafin-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
+                </signature>
+                <model-ac>3nggB00</model-ac>
+                <locations>
+                    <hmmer3-location env-end="76" env-start="24" score="42.5" evalue="1.7E-10" hmm-start="6" hmm-end="48" hmm-length="50" hmm-bounds="COMPLETE" start="24" end="76"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="2.0E-28" score="100.0">
+                <signature ac="G3DSA:4.10.75.10">
+                    <entry ac="IPR036645" desc="Elafin-like superfamily" name="Elafin-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
+                </signature>
+                <model-ac>2z7fI00</model-ac>
+                <locations>
+                    <hmmer3-location env-end="129" env-start="80" score="65.0" evalue="1.8E-17" hmm-start="3" hmm-end="49" hmm-length="50" hmm-bounds="COMPLETE" start="80" end="129"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="1.3E-19" score="70.2">
+                <signature ac="PF00095" desc="WAP-type (Whey Acidic Protein) 'four-disulfide core'" name="WAP">
+                    <entry ac="IPR008197" desc="WAP-type 'four-disulfide core' domain" name="WAP_dom" type="DOMAIN">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005576" name="extracellular region"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0030414" name="peptidase inhibitor activity"/>
+                    </entry>
+                    <signature-library-release library="PFAM" version="31.0"/>
+                </signature>
+                <model-ac>PF00095</model-ac>
+                <locations>
+                    <hmmer3-location env-end="72" env-start="28" score="36.0" evalue="6.1E-9" hmm-start="1" hmm-end="40" hmm-length="40" hmm-bounds="COMPLETE" start="28" end="72"/>
+                    <hmmer3-location env-end="126" env-start="82" score="40.5" evalue="2.4E-10" hmm-start="1" hmm-end="40" hmm-length="40" hmm-bounds="COMPLETE" start="82" end="126"/>
+                </locations>
+            </hmmer3-match>
+            <panther-match evalue="2.2E-64" familyName="ANTILEUKOPROTEINASE" score="217.9">
+                <signature ac="PTHR19441" name="WHEY ACDIC PROTEIN  WAP">
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR19441</model-ac>
+                <locations>
+                    <panther-location env-start="1" env-end="129" hmm-start="4" hmm-end="132" hmm-length="132" hmm-bounds="C_TERMINAL_COMPLETE" start="2" end="129"/>
                 </locations>
             </panther-match>
-            <panther-match score="229.4" familyName="WHEY ACDIC PROTEIN (WAP)" evalue="8.5E-66">
-                <signature name="WHEY ACDIC PROTEIN (WAP)" ac="PTHR19441">
-                    <models>
-                        <model name="WHEY ACDIC PROTEIN (WAP)" ac="PTHR19441"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+            <panther-match evalue="2.2E-64" familyName="ANTILEUKOPROTEINASE" score="217.9">
+                <signature ac="PTHR19441:SF44" name="ANTILEUKOPROTEINASE">
+                    <signature-library-release library="PANTHER" version="12.0"/>
                 </signature>
+                <model-ac>PTHR19441</model-ac>
                 <locations>
-                    <panther-location end="128" start="3"/>
+                    <panther-location env-start="1" env-end="129" hmm-start="4" hmm-end="132" hmm-length="132" hmm-bounds="C_TERMINAL_COMPLETE" start="2" end="129"/>
                 </locations>
             </panther-match>
+            <profilescan-match>
+                <signature ac="PS51390" desc="WAP-type 'four-disulfide core' domain profile." name="WAP">
+                    <entry ac="IPR008197" desc="WAP-type 'four-disulfide core' domain" name="WAP_dom" type="DOMAIN">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005576" name="extracellular region"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0030414" name="peptidase inhibitor activity"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS51390</model-ac>
+                <locations>
+                    <profilescan-location score="13.453" start="25" end="73">
+                        <alignment>NALKGGACPPRKIV--QCLryeKPKCTSDWQCPDKKKCCRDTCAIKCLNPV</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS51390" desc="WAP-type 'four-disulfide core' domain profile." name="WAP">
+                    <entry ac="IPR008197" desc="WAP-type 'four-disulfide core' domain" name="WAP_dom" type="DOMAIN">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005576" name="extracellular region"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0030414" name="peptidase inhibitor activity"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS51390</model-ac>
+                <locations>
+                    <profilescan-location score="14.545" start="79" end="127">
+                        <alignment>VKVKPGKCPVV-YG--QCMmlnpPNHCKTDSQCLGDLKCCKSMCGKVCLTPV</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <rpsblast-match>
+                <signature ac="cd00199" desc="WAP" name="WAP">
+                    <signature-library-release library="CDD" version="3.16"/>
+                </signature>
+                <model-ac>cd00199</model-ac>
+                <locations>
+                    <rpsblast-location evalue="3.62698E-9" score="47.4447" start="77" end="127">
+                        <sites>
+                            <rpsblast-site description="inhibitory loop" numLocations="7">
+                                <site-locations>
+                                    <site-location residue="Y" start="90" end="90"/>
+                                    <site-location residue="L" start="96" end="96"/>
+                                    <site-location residue="Q" start="92" end="92"/>
+                                    <site-location residue="M" start="94" end="94"/>
+                                    <site-location residue="M" start="95" end="95"/>
+                                    <site-location residue="G" start="91" end="91"/>
+                                    <site-location residue="C" start="93" end="93"/>
+                                </site-locations>
+                            </rpsblast-site>
+                        </sites>
+                    </rpsblast-location>
+                </locations>
+            </rpsblast-match>
+            <superfamilyhmmer3-match evalue="6.8E-13">
+                <signature ac="SSF57256" name="Elafin-like">
+                    <entry ac="IPR036645" desc="Elafin-like superfamily" name="Elafin-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0053294</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="57" start="75" end="127"/>
+                </locations>
+            </superfamilyhmmer3-match>
+            <superfamilyhmmer3-match evalue="1.7E-10">
+                <signature ac="SSF57256" name="Elafin-like">
+                    <entry ac="IPR036645" desc="Elafin-like superfamily" name="Elafin-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0053294</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="57" start="26" end="73"/>
+                </locations>
+            </superfamilyhmmer3-match>
+        </matches>
+    </protein>
+    <protein>
+        <sequence md5="1fb3569701c50e369fa112ac96b5e459">MEVKGKKKLTGKGTKMSQEKSKFHKNNDSGSSKTFPKKVVKEGGPKITSKNFEKTATKPGKKGVKQFKNKQQGDRIPKNKFQQANKFNQKRKFQPDSKSDESAAKKPKWDEFKKKKKELKQSRQLSDKTNYDIVIRAKQIWEILRRKDCDKEKRVKLMSDLQKLIQGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFEELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIRSFKGHVRKLLRHAEASAIVEYAYNDKAILEQRNMLTEELYGNTFQLYKSADHPTLDKVLEVQPEKLELIMDEMKQILTPMAQKEAVIKHSLVHKVFLDFFTYAPPKLRSEMIEAIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVKTMKTYIEKVANGQYSHLVLLAAFDCIDDTKLVKQIIISEIINSLPNIVNDKYGRKVLLYLLSPRDPAHTVREIIEVLQKGDGNAHSKKDTEIRRRELLESISPALLSYLQGHAQEVVLDKSACVLVADILGTATGDVQPAMDAVASLAAAELHPGGKDGELHIAEHPAGHLVLKWLIEQDKKMKERGREGCFAKTLIERVGVKNLKSWASVNRGAIILSSLLQSSDQEVANKVKAGLKSLIPALEKSKNTSKGIEMLLEKLTA</sequence>
+        <xref id="A2VDN9"/>
+        <matches>
+            <hmmer2-match evalue="1.6E-34" score="130.7">
+                <signature ac="SM00025" name="pum_5">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="SMART" version="7.1"/>
+                </signature>
+                <model-ac>SM00025</model-ac>
+                <locations>
+                    <hmmer2-location score="28.3" evalue="0.0011" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="200" end="235"/>
+                    <hmmer2-location score="25.4" evalue="0.0082" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="164" end="199"/>
+                    <hmmer2-location score="22.1" evalue="0.079" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="423" end="459"/>
+                    <hmmer2-location score="16.0" evalue="3.9" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="236" end="272"/>
+                    <hmmer2-location score="26.2" evalue="0.0045" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="349" end="384"/>
+                    <hmmer2-location score="12.8" evalue="10.0" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="385" end="421"/>
+                </locations>
+            </hmmer2-match>
+            <hmmer3-match evalue="8.1E-70" score="237.5">
+                <signature ac="G3DSA:1.25.10.10">
+                    <entry ac="IPR011989" desc="Armadillo-like helical" name="ARM-like" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
+                </signature>
+                <model-ac>3k49A00</model-ac>
+                <locations>
+                    <hmmer3-location env-end="320" env-start="135" score="127.0" evalue="3.0E-36" hmm-start="5" hmm-end="182" hmm-length="369" hmm-bounds="COMPLETE" start="135" end="320"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="3.6E-53" score="179.7">
+                <signature ac="PF08144" desc="CPL (NUC119) domain" name="CPL">
+                    <entry ac="IPR012959" desc="CPL domain" name="CPL_dom" type="DOMAIN">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PFAM" version="31.0"/>
+                </signature>
+                <model-ac>PF08144</model-ac>
+                <locations>
+                    <hmmer3-location env-end="573" env-start="433" score="173.2" evalue="3.5E-51" hmm-start="1" hmm-end="141" hmm-length="143" hmm-bounds="N_TERMINAL_COMPLETE" start="433" end="571"/>
+                </locations>
+            </hmmer3-match>
+            <mobidblite-match>
+                <signature ac="mobidb-lite" desc="consensus disorder prediction" name="disorder_prediction">
+                    <signature-library-release library="MOBIDB_LITE" version="1.0"/>
+                </signature>
+                <model-ac>mobidb-lite</model-ac>
+                <locations>
+                    <mobidblite-location start="1" end="108"/>
+                </locations>
+            </mobidblite-match>
+            <panther-match evalue="4.3E-242" familyName="UNCHARACTERIZED" score="807.4">
+                <signature ac="PTHR13389" name="UNCHARACTERIZED">
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR13389</model-ac>
+                <locations>
+                    <panther-location env-start="1" env-end="647" hmm-start="1" hmm-end="609" hmm-length="611" hmm-bounds="N_TERMINAL_COMPLETE" start="1" end="646"/>
+                </locations>
+            </panther-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="4.604" start="492" end="530">
+                        <alignment>YLQGHAQEVVLDKSACVLVADILGTATGDVQpamDAVAS</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50303" desc="Pumilio homology domain (PUM-HD) profile." name="PUM_HD">
+                    <entry ac="IPR033133" desc="Pumilio homology domain" name="PUM-HD" type="DOMAIN">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50303</model-ac>
+                <locations>
+                    <profilescan-location score="46.174" start="136" end="489">
+                        <alignment>RAKQIWEILRRKdcDKEKRVKLMSDLqkliQGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFEELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIRSFKGHVRKLLRHAEASAIVEYAYNDKAILEQrNMLTEELYGNTFQLYK--SADHPTLDKVLEVQPEKLELIMDEMkqiltpMAQKEAVIKHSLVHKVFLDFFTYAPPKLRSEMIEAIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVKTMKTYIEKVANGQYSHLVLLAAFDciDDTKLVKQIIISEIIN--------SLPNIVNDKYGRKVLLYLLSPRDPAHT-VREIIEVLQKGDGNAHSKkdteIRRRELLESISPAL</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="6.587" start="163" end="199">
+                        <alignment>KLIqGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFE</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="4.651" start="236" end="271">
+                        <alignment>SFKGHVRKLLRHAEASAIVEYAYNDKAILEQRNMLT</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="4.511" start="385" end="422">
+                        <alignment>TMKTYIEKVANGQYSHLVLLAAFDCIDDTKLvkQIIIS</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="8.337" start="423" end="459">
+                        <alignment>EIINSLPNIVNDKYGRKVLLYLLSPRDPAHTvREIIE</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="8.174" start="200" end="235">
+                        <alignment>ELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIR</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature ac="PS50302" desc="Pumilio RNA-binding repeat profile." name="PUM">
+                    <entry ac="IPR001313" desc="Pumilio RNA-binding repeat" name="Pumilio_RNA-bd_rpt" type="REPEAT">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS50302</model-ac>
+                <locations>
+                    <profilescan-location score="6.144" start="349" end="384">
+                        <alignment>AIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVK</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <superfamilyhmmer3-match evalue="1.69E-77">
+                <signature ac="SSF48371" name="ARM repeat">
+                    <entry ac="IPR016024" desc="Armadillo-type fold" name="ARM-type_fold" type="HOMOLOGOUS_SUPERFAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0005488" name="binding"/>
+                    </entry>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0048121</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="339" start="145" end="478"/>
+                </locations>
+            </superfamilyhmmer3-match>
+            <superfamilyhmmer3-match evalue="1.09E-8">
+                <signature ac="SSF48371" name="ARM repeat">
+                    <entry ac="IPR016024" desc="Armadillo-type fold" name="ARM-type_fold" type="HOMOLOGOUS_SUPERFAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0005488" name="binding"/>
+                    </entry>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0048121</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="339" start="488" end="645"/>
+                </locations>
+            </superfamilyhmmer3-match>
         </matches>
     </protein>
     <protein>
         <sequence md5="bb3bde1de955af5b7f49a84ba2c4d4ae">MKYKRIVFKVGTSSLTNEDGSLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEKGLRTQKQWLAFYAQSQGSIWVDKGAAEALSQYGKSLLLSGIVEAEGVFSYGDIVTVFDKESGKSLGKGRVQFGASALEDMLRSQKAKGVLIYRDDWISITPEIQLLFTEF</sequence>
         <xref id="Q97R95"/>
         <matches>
-            <hmmer2-match score="38.2" evalue="1.1E-6">
-                <signature name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359">
-                    <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
-                        <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
+            <fingerprints-match evalue="8.3E-49" graphscan="IIIII">
+                <signature ac="PR00474" desc="Glutamate 5-kinase family signature" name="GLU5KINASE">
+                    <entry ac="IPR001057" desc="Glutamate/acetylglutamate kinase" name="Glu/AcGlu_kinase" type="FAMILY">
+                        <pathway-xref db="Reactome" id="R-HSA-70614" name="Amino acid synthesis and interconversion (transamination)"/>
                     </entry>
-                    <models>
-                        <model name="PUA" desc="Putative RNA-binding Domain in PseudoUridine synthase and Archaeosine transglycosylase" ac="SM00359"/>
-                    </models>
-                    <signature-library-release version="6.2" library="SMART"/>
+                    <signature-library-release library="PRINTS" version="42.0"/>
                 </signature>
+                <model-ac>PR00474</model-ac>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="86" hmm-start="1" evalue="1.1E-6" score="38.2" end="347" start="276"/>
+                    <fingerprints-location motifNumber="3" pvalue="8.3E-10" score="47.14" start="115" end="136"/>
+                    <fingerprints-location motifNumber="2" pvalue="4.73E-9" score="39.46" start="75" end="103"/>
+                    <fingerprints-location motifNumber="5" pvalue="7.69E-12" score="51.32" start="208" end="228"/>
+                    <fingerprints-location motifNumber="4" pvalue="1.11E-16" score="60.71" start="147" end="174"/>
+                    <fingerprints-location motifNumber="1" pvalue="3.38E-10" score="63.7" start="41" end="55"/>
+                </locations>
+            </fingerprints-match>
+            <hmmer2-match evalue="1.1E-6" score="38.2">
+                <signature ac="SM00359" name="pua_5">
+                    <entry ac="IPR002478" desc="PUA domain" name="PUA" type="DOMAIN">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="SMART" version="7.1"/>
+                </signature>
+                <model-ac>SM00359</model-ac>
+                <locations>
+                    <hmmer2-location score="38.2" evalue="1.1E-6" hmm-start="1" hmm-end="86" hmm-length="86" hmm-bounds="COMPLETE" start="276" end="347"/>
                 </locations>
             </hmmer2-match>
-            <hmmer2-match score="614.2" evalue="1.2E-184">
-                <signature name="GK" ac="PIRSF000729">
-                    <entry type="FAMILY" name="Glu_5kinase" desc="Glutamate 5-kinase" ac="IPR011529">
-                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
-                        <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
-                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
+            <hmmer3-match evalue="3.8E-16" score="58.7">
+                <signature ac="PF01472" desc="PUA domain" name="PUA">
+                    <entry ac="IPR002478" desc="PUA domain" name="PUA" type="DOMAIN">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
                     </entry>
-                    <models>
-                        <model name="GK" ac="PIRSF000729"/>
-                    </models>
-                    <signature-library-release version="2.84" library="PIRSF"/>
+                    <signature-library-release library="PFAM" version="31.0"/>
                 </signature>
+                <model-ac>PF01472</model-ac>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="389" hmm-start="1" evalue="1.2E-184" score="614.2" end="368" start="1"/>
-                </locations>
-            </hmmer2-match>
-            <hmmer3-match score="446.2" evalue="1.9E-134">
-                <signature name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027">
-                    <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
-                        <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
-                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
-                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
-                    </entry>
-                    <models>
-                        <model name="TIGR01027" desc="proB: glutamate 5-kinase" ac="TIGR01027"/>
-                    </models>
-                    <signature-library-release version="13.0" library="TIGRFAM"/>
-                </signature>
-                <locations>
-                    <hmmer3-location env-start="4" env-end="365" hmm-length="0" hmm-end="359" hmm-start="1" evalue="2.2E-134" score="446.0" end="361" start="4"/>
+                    <hmmer3-location env-end="349" env-start="276" score="57.5" evalue="9.3E-16" hmm-start="1" hmm-end="64" hmm-length="74" hmm-bounds="N_TERMINAL_COMPLETE" start="276" end="341"/>
                 </locations>
             </hmmer3-match>
-            <panther-match score="444.6" familyName="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" evalue="1.4E-130">
-                <signature name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063">
-                    <models>
-                        <model name="GLUTAMATE SEMIALDEHYDE DEHYDROGENASE" ac="PTHR11063"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+            <hmmer3-match evalue="3.7E-22" score="80.1">
+                <signature ac="G3DSA:2.30.130.10">
+                    <entry ac="IPR036974" desc="PUA domain superfamily" name="PUA_sf" type="HOMOLOGOUS_SUPERFAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
+                    </entry>
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
                 </signature>
+                <model-ac>2cx0A02</model-ac>
                 <locations>
-                    <panther-location end="363" start="2"/>
+                    <hmmer3-location env-end="352" env-start="273" score="76.7" evalue="4.3E-21" hmm-start="4" hmm-end="77" hmm-length="83" hmm-bounds="COMPLETE" start="273" end="352"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="2.2E-134" score="446.2">
+                <signature ac="TIGR01027" desc="proB: glutamate 5-kinase" name="TIGR01027">
+                    <entry ac="IPR005715" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" name="Glu_5kinase/COase_Synthase" type="FAMILY">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005737" name="cytoplasm"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0006561" name="proline biosynthetic process"/>
+                        <pathway-xref db="MetaCyc" id="PWY-3341" name="L-proline biosynthesis III"/>
+                        <pathway-xref db="MetaCyc" id="PWY-6922" name="L-Ndelta-acetylornithine biosynthesis"/>
+                        <pathway-xref db="KEGG" id="00332+2.7.2.11" name="Carbapenem biosynthesis"/>
+                        <pathway-xref db="KEGG" id="00330+2.7.2.11" name="Arginine and proline metabolism"/>
+                        <pathway-xref db="Reactome" id="R-HSA-70614" name="Amino acid synthesis and interconversion (transamination)"/>
+                    </entry>
+                    <signature-library-release library="TIGRFAM" version="15.0"/>
+                </signature>
+                <model-ac>TIGR01027</model-ac>
+                <locations>
+                    <hmmer3-location env-end="365" env-start="4" score="446.0" evalue="2.5E-134" hmm-start="1" hmm-end="359" hmm-length="363" hmm-bounds="N_TERMINAL_COMPLETE" start="4" end="361"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="1.0E-83" score="282.8">
+                <signature ac="G3DSA:3.40.1160.10">
+                    <entry ac="IPR036393" desc="Acetylglutamate kinase-like superfamily" name="AceGlu_kinase-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
+                </signature>
+                <model-ac>4q1tB01</model-ac>
+                <locations>
+                    <hmmer3-location env-end="264" env-start="1" score="282.5" evalue="1.3E-83" hmm-start="11" hmm-end="268" hmm-length="273" hmm-bounds="COMPLETE" start="1" end="264"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="1.4E-134" score="446.5">
+                <signature ac="PIRSF000729" name="GK">
+                    <entry ac="IPR011529" desc="Glutamate 5-kinase" name="Glu_5kinase" type="FAMILY">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0004349" name="glutamate 5-kinase activity"/>
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005737" name="cytoplasm"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0006561" name="proline biosynthetic process"/>
+                        <pathway-xref db="KEGG" id="00330+2.7.2.11" name="Arginine and proline metabolism"/>
+                        <pathway-xref db="MetaCyc" id="PWY-3341" name="L-proline biosynthesis III"/>
+                        <pathway-xref db="MetaCyc" id="PWY-6922" name="L-Ndelta-acetylornithine biosynthesis"/>
+                        <pathway-xref db="KEGG" id="00332+2.7.2.11" name="Carbapenem biosynthesis"/>
+                    </entry>
+                    <signature-library-release library="PIRSF" version="3.02"/>
+                </signature>
+                <model-ac>PIRSF000729</model-ac>
+                <locations>
+                    <hmmer3-location env-end="368" env-start="1" score="446.3" evalue="1.5E-134" hmm-start="2" hmm-end="365" hmm-length="374" hmm-bounds="INCOMPLETE" start="1" end="368"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match evalue="4.6E-42" score="144.2">
+                <signature ac="PF00696" desc="Amino acid kinase family" name="AA_kinase">
+                    <entry ac="IPR001048" desc="Aspartate/glutamate/uridylate kinase" name="Asp/Glu/Uridylate_kinase" type="DOMAIN">
+                        <pathway-xref db="Reactome" id="R-HSA-70614" name="Amino acid synthesis and interconversion (transamination)"/>
+                    </entry>
+                    <signature-library-release library="PFAM" version="31.0"/>
+                </signature>
+                <model-ac>PF00696</model-ac>
+                <locations>
+                    <hmmer3-location env-end="234" env-start="4" score="143.5" evalue="7.2E-42" hmm-start="1" hmm-end="241" hmm-length="241" hmm-bounds="COMPLETE" start="4" end="234"/>
+                </locations>
+            </hmmer3-match>
+            <panther-match evalue="3.8E-117" familyName="GLUTAMATE 5-KINASE" score="393.9">
+                <signature ac="PTHR43654" name="FAMILY NOT NAMED">
+                    <signature-library-release library="PANTHER" version="12.0"/>
+                </signature>
+                <model-ac>PTHR43654</model-ac>
+                <locations>
+                    <panther-location env-start="1" env-end="357" hmm-start="10" hmm-end="349" hmm-length="377" hmm-bounds="INCOMPLETE" start="3" end="343"/>
                 </locations>
             </panther-match>
-            <panther-match score="444.6" familyName="GLUTAMATE 5-KINASE" evalue="1.4E-130">
-                <signature name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6">
-                    <models>
-                        <model name="GLUTAMATE 5-KINASE" ac="PTHR11063:SF6"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+            <panther-match evalue="3.8E-117" familyName="GLUTAMATE 5-KINASE" score="393.9">
+                <signature ac="PTHR43654:SF3" name="GLUTAMATE 5-KINASE">
+                    <signature-library-release library="PANTHER" version="12.0"/>
                 </signature>
+                <model-ac>PTHR43654</model-ac>
                 <locations>
-                    <panther-location end="363" start="2"/>
+                    <panther-location env-start="1" env-end="357" hmm-start="10" hmm-end="349" hmm-length="377" hmm-bounds="INCOMPLETE" start="3" end="343"/>
                 </locations>
             </panther-match>
             <patternscan-match>
-                <signature name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902">
-                    <entry type="CONSERVED_SITE" name="Glutamate_5-kinase_CS" desc="Glutamate 5-kinase, conserved site" ac="IPR019797">
-                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
-                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
-                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                <signature ac="PS00902" desc="Glutamate 5-kinase signature." name="GLUTAMATE_5_KINASE">
+                    <entry ac="IPR019797" desc="Glutamate 5-kinase, conserved site" name="Glutamate_5-kinase_CS" type="CONSERVED_SITE">
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0006561" name="proline biosynthetic process"/>
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0004349" name="glutamate 5-kinase activity"/>
+                        <pathway-xref db="KEGG" id="00332+2.7.2.11" name="Carbapenem biosynthesis"/>
+                        <pathway-xref db="MetaCyc" id="PWY-3341" name="L-proline biosynthesis III"/>
+                        <pathway-xref db="MetaCyc" id="PWY-6922" name="L-Ndelta-acetylornithine biosynthesis"/>
+                        <pathway-xref db="Reactome" id="R-HSA-70614" name="Amino acid synthesis and interconversion (transamination)"/>
+                        <pathway-xref db="KEGG" id="00330+2.7.2.11" name="Arginine and proline metabolism"/>
                     </entry>
-                    <models>
-                        <model name="GLUTAMATE_5_KINASE" desc="Glutamate 5-kinase signature." ac="PS00902"/>
-                    </models>
-                    <signature-library-release version="20.105" library="PROSITE_PATTERNS"/>
+                    <signature-library-release library="PROSITE_PATTERNS" version="2017_09"/>
                 </signature>
+                <model-ac>PS00902</model-ac>
                 <locations>
-                    <patternscan-location level="STRONG" end="223" start="206">
+                    <patternscan-location level="STRONG" start="206" end="223">
                         <alignment>SsnGtGGMlTKIkAAtiA</alignment>
                     </patternscan-location>
                 </locations>
             </patternscan-match>
             <profilescan-match>
-                <signature name="PUA" desc="PUA domain profile." ac="PS50890">
-                    <entry type="DOMAIN" name="PUA" desc="PUA domain" ac="IPR002478">
-                        <go-xref category="MOLECULAR_FUNCTION" name="RNA binding" id="GO:0003723" db="GO"/>
+                <signature ac="PS50890" desc="PUA domain profile." name="PUA">
+                    <entry ac="IPR002478" desc="PUA domain" name="PUA" type="DOMAIN">
+                        <go-xref category="MOLECULAR_FUNCTION" db="GO" id="GO:0003723" name="RNA binding"/>
                     </entry>
-                    <models>
-                        <model name="PUA" desc="PUA domain profile." ac="PS50890"/>
-                    </models>
-                    <signature-library-release version="20.105" library="PROSITE_PROFILES"/>
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
                 </signature>
+                <model-ac>PS50890</model-ac>
                 <locations>
-                    <profilescan-location score="15.593" end="355" start="275">
+                    <profilescan-location score="15.593" start="275" end="355">
                         <alignment>QGSIWVDKGAAEALSqYGK-SLLLSGIVEAEGVFSYGDIVTVFDKeSGKSLGKGRVQFGASALEDMlRSQKAKGVLIYRDDW</alignment>
                     </profilescan-location>
                 </locations>
             </profilescan-match>
             <profilescan-match>
-                <signature name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456">
-                    <entry type="FAMILY" name="Glu_5kinase/COase_Synthase" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" ac="IPR005715">
-                        <go-xref category="CELLULAR_COMPONENT" name="cytoplasm" id="GO:0005737" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="proline biosynthetic process" id="GO:0006561" db="GO"/>
-                        <go-xref category="MOLECULAR_FUNCTION" name="glutamate 5-kinase activity" id="GO:0004349" db="GO"/>
-                        <pathway-xref name="Amino-acid biosynthesis; L-proline biosynthesis; L-glutamate 5-semialdehyde from L-glutamate: step 2/2" id="UPA00098" db="UniPathway"/>
-                        <pathway-xref name="Arginine and proline metabolism" id="00330+2.7.2.11" db="KEGG"/>
-                        <pathway-xref name="Carbapenem biosynthesis" id="00332+2.7.2.11" db="KEGG"/>
+                <signature ac="MF_00456" desc="Glutamate 5-kinase [proB]." name="ProB">
+                    <entry ac="IPR005715" desc="Glutamate 5-kinase/delta-1-pyrroline-5-carboxylate synthase" name="Glu_5kinase/COase_Synthase" type="FAMILY">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0005737" name="cytoplasm"/>
+                        <go-xref category="BIOLOGICAL_PROCESS" db="GO" id="GO:0006561" name="proline biosynthetic process"/>
+                        <pathway-xref db="MetaCyc" id="PWY-3341" name="L-proline biosynthesis III"/>
+                        <pathway-xref db="MetaCyc" id="PWY-6922" name="L-Ndelta-acetylornithine biosynthesis"/>
+                        <pathway-xref db="KEGG" id="00332+2.7.2.11" name="Carbapenem biosynthesis"/>
+                        <pathway-xref db="KEGG" id="00330+2.7.2.11" name="Arginine and proline metabolism"/>
+                        <pathway-xref db="Reactome" id="R-HSA-70614" name="Amino acid synthesis and interconversion (transamination)"/>
                     </entry>
-                    <models>
-                        <model name="ProB" desc="Glutamate 5-kinase [proB]." ac="MF_00456"/>
-                    </models>
-                    <signature-library-release version="201311.27" library="HAMAP"/>
+                    <signature-library-release library="HAMAP" version="2017_10"/>
                 </signature>
+                <model-ac>MF_00456</model-ac>
                 <locations>
-                    <profilescan-location score="35.919" end="259" start="3">
-                        <alignment>YKRIVFKVGTSSLTNEDG-SLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFVAQEK</alignment>
+                    <profilescan-location score="35.882" start="4" end="259">
+                        <alignment>KRIVFKVGTSSLTNEDGSLSRSKVKDITQQLAMLHEAGHELILVSSGAIAAGFGALGFKKRPTKIADKQASAAVGQGLLLEEYTTNLLLRQIVSAQILLTQDDFVDKRRYKNAHQALSVLLNRGAIPIINENDSVVIDELKVGDNDTLSAQVAAMVQADLLVFLTDVDGLYTGNPNSDPRAKRLERIETINREIIDMAGGAGSSNGTGGMLTKIKAATIATESGVPVYICSSLKSDSMIEAAEETEDGSYFvAQEK</alignment>
                     </profilescan-location>
                 </locations>
             </profilescan-match>
+            <rpsblast-match>
+                <signature ac="cd04242" desc="AAK_G5K_ProB" name="AAK_G5K_ProB">
+                    <signature-library-release library="CDD" version="3.16"/>
+                </signature>
+                <model-ac>cd04242</model-ac>
+                <locations>
+                    <rpsblast-location evalue="5.87787E-131" score="372.932" start="5" end="255">
+                        <sites>
+                            <rpsblast-site description="homotetrameric interface" numLocations="14">
+                                <site-locations>
+                                    <site-location residue="Q" start="72" end="72"/>
+                                    <site-location residue="Q" start="99" end="99"/>
+                                    <site-location residue="H" start="42" end="42"/>
+                                    <site-location residue="S" start="137" end="137"/>
+                                    <site-location residue="E" start="39" end="39"/>
+                                    <site-location residue="L" start="101" end="101"/>
+                                    <site-location residue="V" start="122" end="122"/>
+                                    <site-location residue="V" start="138" end="138"/>
+                                    <site-location residue="A" start="116" end="116"/>
+                                    <site-location residue="N" start="125" end="125"/>
+                                    <site-location residue="N" start="115" end="115"/>
+                                    <site-location residue="A" start="76" end="76"/>
+                                    <site-location residue="H" start="38" end="38"/>
+                                    <site-location residue="N" start="135" end="135"/>
+                                </site-locations>
+                            </rpsblast-site>
+                            <rpsblast-site description="putative allosteric binding site" numLocations="3">
+                                <site-locations>
+                                    <site-location residue="A" start="51" end="51"/>
+                                    <site-location residue="D" start="147" end="147"/>
+                                    <site-location residue="D" start="136" end="136"/>
+                                </site-locations>
+                            </rpsblast-site>
+                            <rpsblast-site description="nucleotide binding site" numLocations="9">
+                                <site-locations>
+                                    <site-location residue="G" start="212" end="212"/>
+                                    <site-location residue="K" start="216" end="216"/>
+                                    <site-location residue="D" start="169" end="169"/>
+                                    <site-location residue="L" start="173" end="173"/>
+                                    <site-location residue="V" start="170" end="170"/>
+                                    <site-location residue="T" start="210" end="210"/>
+                                    <site-location residue="S" start="13" end="13"/>
+                                    <site-location residue="Y" start="174" end="174"/>
+                                    <site-location residue="T" start="168" end="168"/>
+                                </site-locations>
+                            </rpsblast-site>
+                            <rpsblast-site description="putative phosphate binding site" numLocations="8">
+                                <site-locations>
+                                    <site-location residue="A" start="51" end="51"/>
+                                    <site-location residue="I" start="52" end="52"/>
+                                    <site-location residue="G" start="57" end="57"/>
+                                    <site-location residue="G" start="50" end="50"/>
+                                    <site-location residue="A" start="54" end="54"/>
+                                    <site-location residue="G" start="55" end="55"/>
+                                    <site-location residue="A" start="53" end="53"/>
+                                    <site-location residue="F" start="56" end="56"/>
+                                </site-locations>
+                            </rpsblast-site>
+                        </sites>
+                    </rpsblast-location>
+                </locations>
+            </rpsblast-match>
+            <superfamilyhmmer3-match evalue="9.39E-14">
+                <signature ac="SSF88697" name="PUA domain-like">
+                    <entry ac="IPR015947" desc="PUA-like superfamily" name="PUA-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0043106</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="81" start="276" end="356"/>
+                </locations>
+            </superfamilyhmmer3-match>
+            <superfamilyhmmer3-match evalue="1.7E-67">
+                <signature ac="SSF53633" name="Carbamate kinase-like">
+                    <entry ac="IPR036393" desc="Acetylglutamate kinase-like superfamily" name="AceGlu_kinase-like_sf" type="HOMOLOGOUS_SUPERFAMILY"/>
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0051788</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="250" start="4" end="255"/>
+                </locations>
+            </superfamilyhmmer3-match>
         </matches>
     </protein>
     <protein>
@@ -192,84 +914,75 @@
         <xref id="P02939"/>
         <matches>
             <coils-match>
-                <signature name="Coil" ac="Coil">
-                    <signature-library-release version="2.2" library="COILS"/>
+                <signature ac="Coil" name="Coil">
+                    <signature-library-release library="COILS" version="2.2.1"/>
                 </signature>
+                <model-ac>Coil</model-ac>
                 <locations>
-                    <coils-location end="76" start="27"/>
+                    <coils-location start="27" end="75"/>
                 </locations>
             </coils-match>
-        </matches>
-    </protein>
-    <protein>
-        <sequence md5="f927b0d241297dcc9a1c5990b58bf3c4">MAAEEGVVIACHNKDEFDAQMTKAKEAGKVVIIDFTASWCGPCRFIAPVFAEYAKKFPGAVFLKVDVDELKEVAEKYNVEAMPTFLFIKDGAEADKVVGARKDDLQNTIVKHVGATAASASA</sequence>
-        <xref id="A2YIW7"/>
-        <matches>
-            <hmmer2-match score="100.5" evalue="5.0E-30">
-                <signature name="Thioredoxin" ac="PIRSF000077">
-                    <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
-                        <go-xref category="MOLECULAR_FUNCTION" name="protein disulfide oxidoreductase activity" id="GO:0015035" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="cell redox homeostasis" id="GO:0045454" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="glycerol ether metabolic process" id="GO:0006662" db="GO"/>
+            <hmmer3-match evalue="2.7E-25" score="88.4">
+                <signature ac="PF04728" desc="Lipoprotein leucine-zipper" name="LPP">
+                    <entry ac="IPR006817" desc="Lipoprotein leucine-zipper" name="Lipoprotein_leucine-zipper_dom" type="DOMAIN">
+                        <go-xref category="CELLULAR_COMPONENT" db="GO" id="GO:0019867" name="outer membrane"/>
                     </entry>
-                    <models>
-                        <model name="Thioredoxin" ac="PIRSF000077"/>
-                    </models>
-                    <signature-library-release version="2.84" library="PIRSF"/>
+                    <signature-library-release library="PFAM" version="31.0"/>
                 </signature>
+                <model-ac>PF04728</model-ac>
                 <locations>
-                    <hmmer2-location hmm-length="0" hmm-end="108" hmm-start="1" evalue="5.0E-30" score="100.5" end="113" start="4"/>
+                    <hmmer3-location env-end="78" env-start="26" score="88.2" evalue="3.2E-25" hmm-start="1" hmm-end="53" hmm-length="53" hmm-bounds="COMPLETE" start="26" end="78"/>
                 </locations>
-            </hmmer2-match>
-            <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
-                <signature name="THIOREDOXIN" ac="PTHR10438">
-                    <entry type="FAMILY" name="Thioredoxin" desc="Thioredoxin" ac="IPR005746">
-                        <go-xref category="MOLECULAR_FUNCTION" name="protein disulfide oxidoreductase activity" id="GO:0015035" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="cell redox homeostasis" id="GO:0045454" db="GO"/>
-                        <go-xref category="BIOLOGICAL_PROCESS" name="glycerol ether metabolic process" id="GO:0006662" db="GO"/>
-                    </entry>
-                    <models>
-                        <model name="THIOREDOXIN" ac="PTHR10438"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+            </hmmer3-match>
+            <hmmer3-match evalue="1.2E-31" score="110.6">
+                <signature ac="G3DSA:1.20.5.190">
+                    <signature-library-release library="GENE3D" version="4.2.0"/>
                 </signature>
+                <model-ac>1jccC00</model-ac>
                 <locations>
-                    <panther-location end="114" start="4"/>
+                    <hmmer3-location env-end="77" env-start="22" score="110.4" evalue="1.4E-31" hmm-start="1" hmm-end="56" hmm-length="56" hmm-bounds="COMPLETE" start="22" end="77"/>
                 </locations>
-            </panther-match>
-            <panther-match score="159.1" familyName="THIOREDOXIN" evalue="1.3E-44">
-                <signature name="THIOREDOXIN" ac="PTHR10438:SF126">
-                    <models>
-                        <model name="THIOREDOXIN" ac="PTHR10438:SF126"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+            </hmmer3-match>
+            <hmmer3-match evalue="8.2E-30" score="100.7">
+                <signature ac="PIRSF002855" name="Murein-lipo">
+                    <entry ac="IPR016367" desc="Murein-lipoprotein" name="Murein-lipoprotein" type="FAMILY"/>
+                    <signature-library-release library="PIRSF" version="3.02"/>
                 </signature>
+                <model-ac>PIRSF002855</model-ac>
                 <locations>
-                    <panther-location end="114" start="4"/>
+                    <hmmer3-location env-end="78" env-start="1" score="100.6" evalue="9.0E-30" hmm-start="1" hmm-end="78" hmm-length="79" hmm-bounds="COMPLETE" start="1" end="78"/>
                 </locations>
-            </panther-match>
-        </matches>
-    </protein>
-    <protein>
-        <sequence md5="88d47cc807fe8e977130b0cc93e0bd61">MSKIGKSIRLERIIDRKTRKTVIVPMDHGLTVGPIPGLIDLAAAVDKVAEGGANAVLGHMGLPLYGHRGYGKDVGLIIHLSASTSLGPDANHKVLVTRVEDAIRVGADGVSIHVNVGAEDEAEMLRDLGMVARRCDLWGMPLLAMMYPRGAKVRSEHSVEYVKHAARVGAELGVDIVKTNYTGSPETFREVVRGCPAPVVIAGGPKMDTEADLLQMVYDAMQAGAAGISIGRNIFQAENPTLLTRKLSKIVHEGYTPEEAARLKL</sequence>
-        <xref id="A0B6J9"/>
-        <matches/>
-    </protein>
-    <protein>
-        <sequence md5="1fb3569701c50e369fa112ac96b5e459">MEVKGKKKLTGKGTKMSQEKSKFHKNNDSGSSKTFPKKVVKEGGPKITSKNFEKTATKPGKKGVKQFKNKQQGDRIPKNKFQQANKFNQKRKFQPDSKSDESAAKKPKWDEFKKKKKELKQSRQLSDKTNYDIVIRAKQIWEILRRKDCDKEKRVKLMSDLQKLIQGKIKTIAFAHDSTRVIQCYIQFGNEEQRKQAFEELRGDLVELSKAKYSRNIVKKFLMYGSKAQIAEIIRSFKGHVRKLLRHAEASAIVEYAYNDKAILEQRNMLTEELYGNTFQLYKSADHPTLDKVLEVQPEKLELIMDEMKQILTPMAQKEAVIKHSLVHKVFLDFFTYAPPKLRSEMIEAIREAVVYLAHTHDGARVAMYCLWHGTPKDRKVIVKTMKTYIEKVANGQYSHLVLLAAFDCIDDTKLVKQIIISEIINSLPNIVNDKYGRKVLLYLLSPRDPAHTVREIIEVLQKGDGNAHSKKDTEIRRRELLESISPALLSYLQGHAQEVVLDKSACVLVADILGTATGDVQPAMDAVASLAAAELHPGGKDGELHIAEHPAGHLVLKWLIEQDKKMKERGREGCFAKTLIERVGVKNLKSWASVNRGAIILSSLLQSSDQEVANKVKAGLKSLIPALEKSKNTSKGIEMLLEKLTA</sequence>
-        <xref id="A2VDN9"/>
-        <matches>
-            <panther-match score="1049.9" familyName="UNCHARACTERIZED" evalue="0.0">
-                <signature name="UNCHARACTERIZED" ac="PTHR13389">
-                    <models>
-                        <model name="UNCHARACTERIZED" ac="PTHR13389"/>
-                    </models>
-                    <signature-library-release version="9.0" library="PANTHER"/>
+            </hmmer3-match>
+            <panther-match evalue="2.4E-35" familyName="FAMILY NOT NAMED" score="123.0">
+                <signature ac="PTHR38763" name="FAMILY NOT NAMED">
+                    <entry ac="IPR016367" desc="Murein-lipoprotein" name="Murein-lipoprotein" type="FAMILY"/>
+                    <signature-library-release library="PANTHER" version="12.0"/>
                 </signature>
+                <model-ac>PTHR38763</model-ac>
                 <locations>
-                    <panther-location end="647" start="2"/>
+                    <panther-location env-start="1" env-end="78" hmm-start="1" hmm-end="78" hmm-length="78" hmm-bounds="COMPLETE" start="1" end="78"/>
                 </locations>
             </panther-match>
+            <profilescan-match>
+                <signature ac="PS51257" desc="Prokaryotic membrane lipoprotein lipid attachment site profile." name="PROKAR_LIPOPROTEIN">
+                    <signature-library-release library="PROSITE_PROFILES" version="2017_09"/>
+                </signature>
+                <model-ac>PS51257</model-ac>
+                <locations>
+                    <profilescan-location score="6.0" start="1" end="21">
+                        <alignment>MNRT--K------------LVLGAVILGSTLLAGC</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <superfamilyhmmer3-match evalue="2.62E-22">
+                <signature ac="SSF58042" name="Outer membrane lipoprotein">
+                    <signature-library-release library="SUPERFAMILY" version="1.75"/>
+                </signature>
+                <model-ac>0053520</model-ac>
+                <locations>
+                    <superfamilyhmmer3-location hmm-length="51" start="24" end="73"/>
+                </locations>
+            </superfamilyhmmer3-match>
         </matches>
     </protein>
 </protein-matches>

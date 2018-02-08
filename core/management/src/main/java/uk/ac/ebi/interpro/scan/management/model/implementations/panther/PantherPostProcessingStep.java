@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Set;
 
@@ -64,7 +65,9 @@ public class PantherPostProcessingStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        LOGGER.info("Starting step with Id " + this.getId());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Starting step with Id " + this.getId());
+        }
         // Retrieve raw results for protein range.
         Set<RawProtein<PantherRawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),
@@ -76,6 +79,12 @@ public class PantherPostProcessingStep extends Step {
         Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
         LOGGER.info("Finally persisting filtered raw matches.");
         filteredMatchDAO.persist(filteredMatches);
-        LOGGER.info("Step with Id " + this.getId() + " finished.");
+        Utilities.verboseLog("PostProcess panther matches: protein-range : "
+                + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein()
+                + " rawMatches count:  " + rawMatches.size());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Step with Id " + this.getId() + " finished.");
+        }
+
     }
 }

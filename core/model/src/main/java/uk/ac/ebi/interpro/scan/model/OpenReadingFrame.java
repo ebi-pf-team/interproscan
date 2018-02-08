@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -35,6 +37,7 @@ import java.io.Serializable;
 @XmlType(name = "OrfType")
 @Entity
 @Table(name = "open_reading_frame")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class OpenReadingFrame implements Serializable {
 
     @Id
@@ -68,6 +71,10 @@ public class OpenReadingFrame implements Serializable {
         this.start = start;
         this.end = end;
         this.strand = strand;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @XmlAttribute(required = true)

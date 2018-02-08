@@ -53,8 +53,8 @@ public class SimpleProteinTest {
         this.testProteinXref = this.testProtein.addCrossReference(new ProteinXref(proteinXrefIdentifier));
 
         //Instantiate match with locations
-        this.hmmer2Location1 = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE);
-        this.hmmer2Location2 = new Hmmer2Match.Hmmer2Location(120, 310, 3.0, 3.7e-9, 1, 104, HmmBounds.C_TERMINAL_COMPLETE);
+        this.hmmer2Location1 = new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE);
+        this.hmmer2Location2 = new Hmmer2Match.Hmmer2Location(120, 310, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.C_TERMINAL_COMPLETE);
         this.locations.add(hmmer2Location1);
         this.locations.add(hmmer2Location2);
 
@@ -70,7 +70,7 @@ public class SimpleProteinTest {
     @Test
     public void testValueOfMethodForUnintegratedSignature() {
         //Add protein match
-        testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), 0.035, 3.7e-9, locations));
+        testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), signatureAccession, 0.035, 3.7e-9, locations));
 
         //Simple sanity checks
         Assert.assertNotNull(testMatch.getSignature());
@@ -116,10 +116,8 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleSignature.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
         //Test simple entry
@@ -138,10 +136,8 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleEntry.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
         Assert.assertEquals(1, simpleEntry.getSignaturesMap().size());
@@ -158,7 +154,7 @@ public class SimpleProteinTest {
         entry.addSignature(pirsfSignature);
 
         //Add protein match
-        testMatch = testProtein.addMatch(new Hmmer2Match(pantherSignature, 0.035, 3.7e-9, locations));
+        testMatch = testProtein.addMatch(new Hmmer2Match(pantherSignature, "PTHR13763", 0.035, 3.7e-9, locations));
 
         //Finally, test the valueOf method
         SimpleProtein simpleProtein = SimpleProtein.valueOf(testProtein, testProteinXref, entryHierarchy);
@@ -200,25 +196,21 @@ public class SimpleProteinTest {
         for (SimpleLocation simpleLocation : simpleEntry.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
 
         //Test simple signature locations
-        SimpleSignature simpleSignature = simpleEntry.getSignaturesMap().get("PTHR13763");
+        SimpleSignature simpleSignature = simpleEntry.getSignaturesMap().get("PTHR13763-PANTHER");
         Assert.assertNotNull(simpleSignature);
         Assert.assertNotNull(simpleSignature.getLocations());
         Assert.assertEquals(2, simpleSignature.getLocations().size());
         for (SimpleLocation simpleLocation : simpleSignature.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
                 Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location1.getHmmLength(), simpleLocation.getLength());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
                 Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
-                Assert.assertEquals(hmmer2Location2.getHmmLength(), simpleLocation.getLength());
             }
         }
     }

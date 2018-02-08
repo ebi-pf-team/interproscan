@@ -28,7 +28,7 @@ public class CoilsBerkeleyMatchConverter extends BerkeleyMatchConverter<CoilsMat
             ));
         }
 
-        return new CoilsMatch(signature, locations);
+        return new CoilsMatch(signature, berkeleyMatch.getSignatureModels(), locations);
     }
 
 }

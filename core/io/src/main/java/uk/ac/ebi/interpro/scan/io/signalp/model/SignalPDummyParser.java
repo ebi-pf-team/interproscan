@@ -36,12 +36,12 @@ public class SignalPDummyParser extends AbstractModelFileParser {
                 this.getSignatureLibrary(),
                 this.getReleaseVersionNumber());
 
-        final Model model1 = new Model(SIGNALP_SIGNATURE_NAME1, SIGNALP_SIGNATURE_NAME1, null, null);
+        final Model model1 = new Model(SIGNALP_SIGNATURE_NAME1, SIGNALP_SIGNATURE_NAME1, null);
         final Signature.Builder builder1 = new Signature.Builder(SIGNALP_SIGNATURE_NAME1);
         final Signature signature1 = builder1.name(SIGNALP_SIGNATURE_NAME1).model(model1).signatureLibraryRelease(release).build();
         release.addSignature(signature1);
 
-        final Model model2 = new Model(SIGNALP_SIGNATURE_NAME2, SIGNALP_SIGNATURE_NAME2, null, null);
+        final Model model2 = new Model(SIGNALP_SIGNATURE_NAME2, SIGNALP_SIGNATURE_NAME2, null);
         final Signature.Builder builder2 = new Signature.Builder(SIGNALP_SIGNATURE_NAME2);
         final Signature signature2 = builder2.name(SIGNALP_SIGNATURE_NAME2).model(model2).signatureLibraryRelease(release).build();
         release.addSignature(signature2);

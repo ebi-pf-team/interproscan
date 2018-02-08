@@ -87,7 +87,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrositeProfileStep-20.105">
         <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput-20.105"/>
-        <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
+        <property name="stepDescription" value="Delete the binary output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 

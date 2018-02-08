@@ -199,10 +199,14 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
+            Utilities.verboseLog("Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
             if (isGetOrfOutput) {
+                Utilities.verboseLog("Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
                 createAndPersistNewORFs(persistedProteins);
+                Utilities.verboseLog("Completed Persisting  getOrfOutput ");
             }
             proteinsAwaitingPersistence.clear();
+
         }
     }
 
@@ -302,10 +306,10 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 //            Utilities.setMode("singleseq");
 
         }
-        if (count > 10000) {
-            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
+        if (count > 12000) {
+            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " unique sequences for analysis");
         }
-        Utilities.verboseLog(10, " Uploaded/Stored " + count + " sequences for analysis");
+        Utilities.verboseLog(10, " Uploaded/Stored " + count + " unique sequences for analysis");
 
         if(LOGGER.isInfoEnabled()) {
             LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
@@ -330,14 +334,27 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             LOGGER.debug("Persisted " + newProteins.size() + " new proteins and their cross references.");
             LOGGER.debug("Iterating over all new proteins and their xrefs...");
         }
+        Long startCreateAndPersistNewORFs = System.currentTimeMillis();
+        Long  countCreateAndPersistNewORFs = System.currentTimeMillis();
+        Utilities.verboseLog("Start createAndPersistNewORFs for  " + newProteins.size() + " new proteins and their cross references.");
+        int proteinCount = 0;
+        int totalXrefs = 0;
         for (Protein newProtein : newProteins) {
+            proteinCount ++;
+            Long startPersistProtein = System.currentTimeMillis();
             Set<ProteinXref> xrefs = newProtein.getCrossReferences();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Protein with ID " + newProtein.getId() + " has " + xrefs.size() + " cross references.");
             }
+            int xrefCount = xrefs.size();
+            totalXrefs = totalXrefs + xrefCount;
+
+            toDebugPrint(newProteins.size(), proteinCount,
+                    "getCrossReferences: " + (System.currentTimeMillis() - startPersistProtein ) + " millis ");
             for (ProteinXref xref : xrefs) {
                 String nucleotideId = xref.getIdentifier();
                 String description = xref.getDescription();
+                Long startNewOrf = System.currentTimeMillis();
                 OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 //Get rid of the underscore
                 nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
@@ -347,6 +364,11 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 */
                 //Get rid of those pesky version numbers too
                 //nucleotideId = XrefParser.stripOfVersionNumberIfExists(nucleotideId);
+                //this step might be expensive -- consider getting all xrefs and puting them into a map?? -- gift
+                Long startRetrieveByXrefIdentifier = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
+
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
@@ -363,18 +385,82 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                     throw new IllegalStateException("Couldn't find nucleotide sequence by the following cross reference: " + nucleotideId);
 
                 }
+                Long startSetNucleotideSequence = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "RetrieveByXrefIdentifier: " + (startSetNucleotideSequence - startRetrieveByXrefIdentifier ) + " millis ");
                 newOrf.setNucleotideSequence(nucleotide);
+                Long startSetProtein = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "SetNucleotideSequence: " + (startSetProtein - startSetNucleotideSequence ) + " millis ");
                 newOrf.setProtein(newProtein);
+                Long startAddOpenReadingFrame = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "SetProtein in ORF: " + (startAddOpenReadingFrame - startSetProtein ) + " millis ");
                 newProtein.addOpenReadingFrame(newOrf);
+                Long startOrfAwaitingPersistence = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "Add Orf to protein: " + (startOrfAwaitingPersistence - startAddOpenReadingFrame ) + " millis ");
                 orfsAwaitingPersistence.add(newOrf);
+                Long endOrfAwaitingPersistence = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "Add newOrf to ORFs AwaitingPersistence: " + (endOrfAwaitingPersistence - startOrfAwaitingPersistence ) + " millis ");
+            }
+            /*
+            if (proteinCount %  (proteinInsertBatchSize / 2) == 0){
+                Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
+                        "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + " in " +
+                        (System.currentTimeMillis() - countCreateAndPersistNewORFs ) + " millis " );
+                countCreateAndPersistNewORFs = System.currentTimeMillis();
+            }
+            */
+
+            int avgXrefPerProtein =  totalXrefs /  proteinCount;
+            if (proteinCount %  4000 == 0){
+                Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
+                        "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + "  "
+                        + " avgXrefPerProtein: " + avgXrefPerProtein
+                        + " in " +
+                        (System.currentTimeMillis() - countCreateAndPersistNewORFs ) + " millis " );
+                countCreateAndPersistNewORFs = System.currentTimeMillis();
             }
         }
+        Utilities.verboseLog("createAndPersistNewORFs done in " +
+                (System.currentTimeMillis() - startCreateAndPersistNewORFs) + " millis");
+
         //Finally persist open reading frames
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Persisting " + orfsAwaitingPersistence.size() + " new open reading frames.");
         }
+        Long startNewOrf2 = System.currentTimeMillis();
+//        toDebugPrint(newProteins.size(), proteinCount,
+//                "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
         openReadingFrameDAO.insert(orfsAwaitingPersistence);
+        Long startNewOrf3 = System.currentTimeMillis();
+//        toDebugPrint(newProteins.size(), proteinCount,
+//                "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
         openReadingFrameDAO.flush();
+        Long startNewOrf4 = System.currentTimeMillis();
+//        toDebugPrint(newProteins.size(), proteinCount,
+//                "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
+    }
+
+    void toDebugPrint(int size, int count, String debugString){
+        if(count < 0){
+            return;
+        }
+        int halfSize = size / 2;
+        boolean debugPrint = false;
+        if(count == 1){
+            debugPrint =  true;
+        }else if (count == halfSize){
+            debugPrint =  true;
+        }else if (count == size - 1){
+            debugPrint =  true;
+        }
+
+        if (debugPrint) {
+            Utilities.verboseLog(25,"count:" + count + " - " + debugString);
+        }
     }
 
 

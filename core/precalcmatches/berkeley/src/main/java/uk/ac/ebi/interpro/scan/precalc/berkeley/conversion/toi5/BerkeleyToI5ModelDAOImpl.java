@@ -59,13 +59,15 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
 
         //the following was the problem:
         //analysisJobMap = new HashMap<String, SignatureLibraryRelease>();
-        LOGGER.debug("analysisJobMap: " + analysisJobMap);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("analysisJobMap: " + analysisJobMap);
+        }
         //Mapping between SignatureLibrary and the version number, e.g key=PIRSF,value=2.84
         Map<SignatureLibrary, String> librariesToAnalyse = null;
 
         //Populate map with data
         if (analysisJobMap != null) {
-            librariesToAnalyse = new HashMap<SignatureLibrary, String>();
+            librariesToAnalyse = new HashMap<>();
             for (String analysisJobName : analysisJobMap.keySet()) {
                 String analysisJob = null;
                 String versionNumber = null;
@@ -86,19 +88,21 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             }
         }
         //Debug
-        StringBuilder jobsToAnalyse = new StringBuilder();
-        for (String job: analysisJobMap.keySet()){
-            jobsToAnalyse.append("job: " + job + " version: " + analysisJobMap.get(job).getVersion() + "\n");
-        }
-        LOGGER.debug("From analysisJobMap" + jobsToAnalyse);
-        jobsToAnalyse = new StringBuilder();
-        for (SignatureLibrary signatureLibrary: librariesToAnalyse.keySet()){
-            jobsToAnalyse.append("job: " + signatureLibrary.getName() + " version: " + librariesToAnalyse.get(signatureLibrary) + "\n");
-        }
-        LOGGER.debug("From librariesToAnalyse: " + jobsToAnalyse);
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder jobsToAnalyse = new StringBuilder();
+            for (String job : analysisJobMap.keySet()) {
+                jobsToAnalyse.append("job: " + job + " version: " + analysisJobMap.get(job).getVersion() + "\n");
+            }
+            LOGGER.debug("From analysisJobMap" + jobsToAnalyse);
+            jobsToAnalyse = new StringBuilder();
+            for (SignatureLibrary signatureLibrary : librariesToAnalyse.keySet()) {
+                jobsToAnalyse.append("job: " + signatureLibrary.getName() + " version: " + librariesToAnalyse.get(signatureLibrary) + "\n");
+            }
+            LOGGER.debug("From librariesToAnalyse: " + jobsToAnalyse);
 
 //        LOGGER.debug("From librariesToAnalyse: " + jobsToAnalyse);
-        String temp;
+        }
+
         // Collection of BerkeleyMatches of different kinds.
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
             String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
@@ -108,22 +112,26 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
                     || sigLib.getName().equals(SignatureLibrary.SFLD.getName())){
                 continue;
             }
-            if(analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
+            if(LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
                 LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
             }
             debugString = "sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion;
             debugString +=  "\n librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib);
 //            Utilities.verboseLog(10, debugString);
 
-            LOGGER.debug("sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);
-            LOGGER.debug("librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);
+                LOGGER.debug("librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib));
+            }
 
             // Check to see if the signature library is required for the analysis.
             // First check: librariesToAnalyse == null -> -appl option hasn't been set
             // Second check: Analysis library has been request with the right release version -> -appl PIRSF-2.84
             if (librariesToAnalyse == null || (librariesToAnalyse.containsKey(sigLib) && librariesToAnalyse.get(sigLib).equals(signatureLibraryReleaseVersion))) {
                 // Retrieve Signature to match
-                LOGGER.debug("Check match for : " + sigLib + "-" + signatureLibraryReleaseVersion);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Check match for : " + sigLib + "-" + signatureLibraryReleaseVersion);
+                }
                 Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library and s.signatureLibraryRelease.version = :version");
                 sigQuery.setParameter("sig_ac", berkeleyMatch.getSignatureAccession());
                 sigQuery.setParameter("library", sigLib);
@@ -132,7 +140,9 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
 
                 @SuppressWarnings("unchecked") List<Signature> signatures = sigQuery.getResultList();
                 Signature signature = null;
-                LOGGER.debug("signatures size: " + signatures.size());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("signatures size: " + signatures.size());
+                }
 
                 //what should be the behaviour here:
                 //
@@ -151,7 +161,9 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
                     //throw new IllegalStateException("Data inconsistency issue. This distribution appears to contain the same signature multiple times: " + berkeleyMatch.getSignatureAccession());
                 } else {
                     signature = signatures.get(0);
-                    LOGGER.debug("signatures size: " +signatures.get(0));
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("signatures size: " +signatures.get(0));
+                    }
                 }
 
                 // determine the type or the match currently being observed

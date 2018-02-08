@@ -40,7 +40,7 @@ public class TMHMMFilteredMatchDAOImpl extends GenericDAOImpl<TMHMMMatch, Long> 
             }
             for (TMHMMMatch match : protein.getMatches()) {
                 final Signature signature = sigAccToDbSignatureMap.get(match.getSignature().getAccession());
-                TMHMMMatch newMatch = new TMHMMMatch(signature, match.getLocations());
+                TMHMMMatch newMatch = new TMHMMMatch(signature, signature.getAccession(), match.getLocations());
                 persistentProtein.addMatch(newMatch);
                 entityManager.persist(newMatch);
             }

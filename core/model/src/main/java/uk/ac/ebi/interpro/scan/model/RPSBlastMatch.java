@@ -28,8 +28,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     protected RPSBlastMatch() {
     }
 
-    public RPSBlastMatch(Signature signature, Set<RPSBlastLocation> locations) {
-        super(signature, locations);
+    public RPSBlastMatch(Signature signature, String signatureModels, Set<RPSBlastLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         for (RPSBlastLocation location : this.getLocations()) {
             clonedLocations.add((RPSBlastLocation) location.clone());
         }
-        return new RPSBlastMatch(this.getSignature(), clonedLocations);
+        return new RPSBlastMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     @Override

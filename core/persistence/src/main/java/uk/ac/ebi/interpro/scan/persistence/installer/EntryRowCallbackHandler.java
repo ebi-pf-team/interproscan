@@ -29,7 +29,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     private static Logger log = Logger.getLogger(EntryRowCallbackHandler.class);
 
-//    private final int BATCH_COMMIT_SIZE = 60;
+    //    private final int BATCH_COMMIT_SIZE = 60;
     private final int BATCH_COMMIT_SIZE = 500;
 
 

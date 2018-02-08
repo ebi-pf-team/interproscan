@@ -39,6 +39,7 @@
     </amq:broker>
 
     <bean id="ssOptimisedBlackBoxMaster" class="uk.ac.ebi.interpro.scan.jms.master.SingleSeqOptimisedBlackBoxMaster">
+        <constructor-arg ref="amqEmbeddedWorkerJmsContainer"/>
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="databaseCleaner" ref="databaseCleaner"/>

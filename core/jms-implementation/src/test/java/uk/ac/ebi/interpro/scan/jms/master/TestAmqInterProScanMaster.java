@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.junit.Test;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class TestAmqInterProScanMaster {
     @Test
     public void processOutputFormatsForProteinsTest() {
         //Set up the master
-        master = new StandaloneBlackBoxMaster();
+        master = new StandaloneBlackBoxMaster(new DefaultMessageListenerContainer());
         master.setSequenceType("p");
         //Run the test
         Map<String, String> params = new HashMap<String, String>();
@@ -55,7 +56,7 @@ public class TestAmqInterProScanMaster {
     @Test
     public void processOutputFormatsForNucleicAcidsTest() {
         //Set up the master
-        master = new StandaloneBlackBoxMaster();
+        master = new StandaloneBlackBoxMaster(new DefaultMessageListenerContainer());
         master.setSequenceType("n");
         //Run the test
         Map<String, String> params = new HashMap<String, String>();

@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -41,6 +42,7 @@ public class GoXref extends Xref implements Serializable {
 
     @ManyToMany(mappedBy = "goXRefs",
             targetEntity = Entry.class)
+    @JsonBackReference
     private Set<Entry> entries = new HashSet<Entry>();
 
     private GoCategory category;

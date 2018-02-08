@@ -27,6 +27,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     protected String outputBaseFilename;
     /* Default value, if no output format is specified */
     private String[] outputFormats;
+    private boolean inclTSVVersion = false;
     /**
      * Specifies the type of the I5 input sequences.
      * <p/>
@@ -145,6 +146,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
         processOutputFormats(params, this.outputFormats);
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
+        params.put(WriteOutputStep.INCL_TSV_VERSION, Boolean.toString(this.inclTSVVersion));
 
         String outputBaseName;
         if (outputBaseFilename == null || outputBaseFilename.isEmpty()) {
@@ -192,6 +194,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
                         extension.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.GFF3_PARTIAL.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.JSON_SLIM.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.TSV_PRO.getFileExtension())) {
                     // SVG, HTML and RAW formats are not part of the default formats
                     continue;
@@ -388,5 +392,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     public void setGridCheckInterval(int gridCheckInterval) {
         this.gridCheckInterval = gridCheckInterval;
+    }
+
+    @Override
+    public void setInclTSVVersion(boolean inclTSVVersion) {
+        this.inclTSVVersion = inclTSVVersion;
     }
 }

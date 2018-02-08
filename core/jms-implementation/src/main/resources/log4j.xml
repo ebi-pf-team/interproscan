@@ -51,9 +51,9 @@
     <!--<level value="debug" />-->
     <!--</logger>-->
 
-    <!--<logger name="uk.ac.ebi.interpro.scan">-->
-        <!--<level value="debug" />-->
-    <!--</logger>-->
+     <!--<logger name="uk.ac.ebi.interpro.scan">-->
+         <!--<level value="debug" />-->
+     <!--</logger>-->
 
     <logger name="uk.ac.ebi.interpro.scan">
     <level value="warn" />

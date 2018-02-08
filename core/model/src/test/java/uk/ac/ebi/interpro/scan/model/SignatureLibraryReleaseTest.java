@@ -124,7 +124,7 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
                         .name("Nucleic acid-binding proteins")
                         .type("domain")
                         .build());
-        signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins"));
+        signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins", 265));
         return release;
     }
 

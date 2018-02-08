@@ -12,12 +12,24 @@
         <property name="connectionFactory" ref="connectionFactory"/>
         <property name="destination" ref="jobRequestQueue"/>
         <property name="messageListener" ref="amqEmbeddedWorker"/>
-        <property name="concurrentConsumers" value="${number.of.embedded.workers}"/>
+        <property name="concurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="autoStartup" value="true"/>
     </bean>
+
+    <!--<bean id="amqEmbeddedWorkerJmsContainerThinMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="connectionFactory"/>-->
+        <!--<property name="destination" ref="jobRequestQueue"/>-->
+        <!--<property name="messageListener" ref="amqEmbeddedWorker"/>-->
+        <!--<property name="concurrentConsumers" value="${thinmaster.number.of.embedded.workers}"/>-->
+        <!--<property name="maxConcurrentConsumers" value="${thinmaster.maxnumber.of.embedded.workers}"/>-->
+        <!--<property name="sessionTransacted" value="true"/>-->
+        <!--<property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>-->
+        <!--<property name="messageSelector" value="remote = FALSE"/>-->
+        <!--<property name="autoStartup" value="false"/>-->
+    <!--</bean>-->
 
     <!--Listens to the local job queue and performs jobs-->
     <bean id="amqEmbeddedWorker" class="uk.ac.ebi.interpro.scan.jms.worker.LocalJobQueueListener">

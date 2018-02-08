@@ -7,7 +7,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.util.Utilities;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.*;
 
@@ -49,7 +49,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
     @Override
     @Transactional
     public void persist(Collection<RawProtein<T>> rawProteins, Collection<R> rawSites,
-                        Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+                        Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
         // Map seqId to raw sites for that sequence
         Map<String, List<R>> seqIdToRawSitesMap = new HashMap<>();
@@ -73,7 +73,7 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
 
-            //LOGGER.debug("Protein: " + protein);
+
             Collection<T> rawMatches = rawProtein.getMatches();
 //            if (rawMatches == null su|| rawMatches.size() != 1) {
 //                throw new IllegalStateException("Protein did not have only one RPSBlast match! " +
@@ -84,7 +84,8 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 // only ever be 1 raw match for each protein, but never mind!
                 if (rawMatch == null) continue;
 
-                Signature signature = modelIdToSignatureMap.get(rawMatch.getModelId());
+                SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
+                Signature signature = holder.getSignature();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("rpsBlast match model id:" + rawMatch.getModelId() + " signature: " + signature);
                     LOGGER.debug("modelIdToSignatureMap: " + modelIdToSignatureMap);
@@ -107,7 +108,9 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 //for this location find the sites
                 Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> rpsBlastSites = getSites(rawMatch, seqIdToRawSitesMap.get(rawMatch.getSequenceIdentifier()));
 
-               LOGGER.debug("filtered sites: " + rpsBlastSites);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("filtered sites: " + rpsBlastSites);
+                }
 
                 locations.add(
                         new RPSBlastMatch.RPSBlastLocation(
@@ -119,14 +122,16 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                         )
                 );
 
-                RPSBlastMatch match = new RPSBlastMatch(signature, locations);
+                RPSBlastMatch match = new RPSBlastMatch(signature, rawMatch.getModelId(), locations);
 
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("rpsBlast match: " + match);
                 }
                 protein.addMatch(match);
-                //LOGGER.debug("Protein with match: " + protein);
+                //if (LOGGER.isDebugEnabled()) {
+                    //LOGGER.debug("Protein with match: " + protein);
+                //}
                 entityManager.persist(match);
             }
         }

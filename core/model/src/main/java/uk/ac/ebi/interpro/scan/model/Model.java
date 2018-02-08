@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -43,6 +45,7 @@ import java.util.List;
         @Index(name = "MODEL_NAME_IDX", columnList = "MODEL_NAME"),
         @Index(name = "MODEL_MD5_IDX", columnList = "MD5")
 })
+@JsonIgnoreProperties({"definition", "md5", "length"}) // IBU-4703: "definition" and "md5" are never populated
 public class Model implements Serializable {
 
     @Transient
@@ -77,6 +80,7 @@ public class Model implements Serializable {
     private String description;
 
     @ManyToOne(optional = true)
+    @JsonBackReference
     private Signature signature;
 
     /**
@@ -103,6 +107,9 @@ public class Model implements Serializable {
 
     private String md5;
 
+    @Column(name = "model_length")
+    private Integer length;
+
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
      */
@@ -120,11 +127,11 @@ public class Model implements Serializable {
     }
 
 
-    public Model(String accession, String name, String description, String definition) {
+    public Model(String accession, String name, String description, Integer length) {
         setAccession(accession);
         setName(name);
         setDescription(description);
-        setDefinition(definition);
+        setLength(length);
     }
 
     /**
@@ -144,13 +151,15 @@ public class Model implements Serializable {
         private Signature signature;
         private String definition;
         private String md5;
+        private Integer length;
 
         public Builder(String accession) {
             this.accession = accession;
         }
 
         public Model build() {
-            Model model = new Model(accession, name, description, definition);
+            Model model = new Model(accession, name, description, length);
+            model.setDefinition(definition);
             model.setSignature(signature);
             model.setMd5(md5);
             return model;
@@ -178,6 +187,11 @@ public class Model implements Serializable {
 
         public Builder md5(String md5) {
             this.md5 = md5;
+            return this;
+        }
+
+        public Builder length(Integer length) {
+            this.length = length;
             return this;
         }
 
@@ -265,6 +279,15 @@ public class Model implements Serializable {
         this.md5 = md5;
     }
 
+    @XmlAttribute(name = "length")
+    public Integer getLength() {
+        return length;
+    }
+
+    private void setLength(Integer length) {
+        this.length = length;
+    }
+
     /**
      * Returns key to use in, for example, HashMap.
      * TODO - Check if it is the correct decision to make this transient.
@@ -295,6 +318,7 @@ public class Model implements Serializable {
                 .append(getSafeMd5(md5), getSafeMd5(m.md5))
                 .append(getDescription(), m.getDescription())
                 .append(getDefinition(), m.getDefinition())
+                .append(length, m.length)
                 .isEquals();
     }
 
@@ -306,6 +330,7 @@ public class Model implements Serializable {
                 .append(getSafeMd5(md5))
                 .append(getDescription())
                 .append(getDefinition())
+                .append(length)
                 .toHashCode();
     }
 
@@ -318,6 +343,7 @@ public class Model implements Serializable {
                 .append("definition", getDefinition())
                 .append("signature-ac", (signature == null ? null : signature.getAccession()))
                 .append("md5", md5)
+                .append("length", length)
                 .toString();
     }
 

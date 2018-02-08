@@ -19,6 +19,7 @@
         <property name="temporaryDirectory" value="${temporary.file.directory}"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+        <property name="interproscanVersion" value="${i5.version}"/>
     </bean>
 
 </beans>

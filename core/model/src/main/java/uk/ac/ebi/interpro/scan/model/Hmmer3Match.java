@@ -43,8 +43,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
     protected Hmmer3Match() {
     }
 
-    public Hmmer3Match(Signature signature, double score, double evalue, Set<Hmmer3Match.Hmmer3Location> locations) {
-        super(signature, score, evalue, locations);
+    public Hmmer3Match(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer3Match.Hmmer3Location> locations) {
+        super(signature, signatureModels, score, evalue, locations);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         for (Hmmer3Location location : this.getLocations()) {
             clonedLocations.add((Hmmer3Location) location.clone());
         }
-        return new Hmmer3Match(this.getSignature(), this.getScore(), this.getEvalue(), clonedLocations);
+        return new Hmmer3Match(this.getSignature(), this.getSignatureModels(), this.getScore(), this.getEvalue(), clonedLocations);
     }
 
     /**
@@ -98,22 +98,21 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         protected Hmmer3Location() {
         }
 
-        // TODO: Remove HMM Bounds?
         public Hmmer3Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, HmmBounds hmmBounds,
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
                               int envelopeStart, int envelopeEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
+            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
         }
 
-        public Hmmer3Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, int hmmLength,
-                              int envelopeStart, int envelopeEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength);
-            setEnvelopeStart(envelopeStart);
-            setEnvelopeEnd(envelopeEnd);
-        }
+//        public Hmmer3Location(int start, int end, double score, double evalue,
+//                              int hmmStart, int hmmEnd,
+//                              int envelopeStart, int envelopeEnd) {
+//            super(start, end, score, evalue, hmmStart, hmmEnd);
+//            setEnvelopeStart(envelopeStart);
+//            setEnvelopeEnd(envelopeEnd);
+//        }
 
         @XmlAttribute(name = "env-start", required = true)
         public int getEnvelopeStart() {
@@ -160,8 +159,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
-            clone.setHmmLength(this.getHmmLength());
+            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
             return clone;
         }
 

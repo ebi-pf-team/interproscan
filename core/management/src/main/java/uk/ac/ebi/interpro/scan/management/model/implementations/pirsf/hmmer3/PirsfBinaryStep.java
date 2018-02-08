@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +14,15 @@ import java.util.List;
 public class PirsfBinaryStep extends RunBinaryStep {
 
     private String scriptPath;
+    private String inputFileNameDomTbloutTemplate;
+
     private String fastaFileNameTemplate;
     private String hmmerPath;
     private String sfHmmAllPath;
     private String pirsfDatPath;
     private String perlCommand;
+
+    private boolean forceHmmsearch = true;
 
     public String getScriptPath() {
         return scriptPath;
@@ -65,6 +70,22 @@ public class PirsfBinaryStep extends RunBinaryStep {
         this.perlCommand = perlCommand;
     }
 
+    public String getInputFileNameDomTbloutTemplate() {
+        return inputFileNameDomTbloutTemplate;
+    }
+
+    public void setInputFileNameDomTbloutTemplate(String inputFileNameDomTbloutTemplate) {
+        this.inputFileNameDomTbloutTemplate = inputFileNameDomTbloutTemplate;
+    }
+
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
+
     /**
      * Returns command line for running the PIRSF Perl script.
      * <p/>
@@ -86,6 +107,8 @@ public class PirsfBinaryStep extends RunBinaryStep {
         final String fastaFilePath
                 = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
 
+        final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
+
         List<String> command = new ArrayList<String>();
         //Add command
         command.add(this.getPerlCommand());
@@ -94,6 +117,9 @@ public class PirsfBinaryStep extends RunBinaryStep {
         // Input FASTA file
         command.add("--fasta");
         command.add(fastaFilePath);
+        // input domtblout
+        command.add("--domtbl");
+        command.add(inputFileNameDomTblout);
         // Path to HMMER3 binaries
         command.add("-path");
         command.add(this.getHmmerPath());
@@ -103,8 +129,27 @@ public class PirsfBinaryStep extends RunBinaryStep {
         // Path to pirsf.dat
         command.add("-dat");
         command.add(this.getPirsfDatPath());
+        // Temporary directory
+        String batchTemplate =  String.format("%012d", stepInstance.getBottomProtein())
+                + "_" +
+                String.format("%012d", stepInstance.getTopProtein());
+        command.add("--tmpdir");
+        String tempdir = getAbsoluteAnalysisTempDirPath(temporaryFileDirectory, batchTemplate);
+        command.add(tempdir);
+        Utilities.verboseLog("tempdir for PIRSF : " + tempdir);
+        command.add("--mode");
+        if (forceHmmsearch || Utilities.getSequenceCount() > 10 ) {
+            command.add("hmmsearch");
+            Utilities.verboseLog("PIRSF postprocess use hmmsearch output");
+        }else{
+            command.add("hmmscan");
+            Utilities.verboseLog("PIRSF postprocess use hmmscan output");
+        }
+
         // Arguments
         command.addAll(this.getBinarySwitchesAsList());
+
+        Utilities.verboseLog("PIRSF binary cmd to run: " + command.toString());
         return command;
     }
 }

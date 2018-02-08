@@ -124,7 +124,7 @@ public class Gene3DPostProcessing implements Serializable {
                     // Get start and end coordinates for each split domain
                     // For example "10:20:30:40" represents two domains: (start=10,end=20) and (start=30,end=40)
                     // The domain string has already been split, so we have:
-                    // segments[0]=10, ssfsegments[1]=20, segments[2]=30, segments[4]=40
+                    // segments[0]=10, segments[1]=20, segments[2]=30, segments[4]=40
                     // The even numbered array indexes contain the start position, and
                     // the odd numbered indexes contain the end position
                     int splitDomainStart = 0;
@@ -141,6 +141,8 @@ public class Gene3DPostProcessing implements Serializable {
                                 Gene3dHmmer3RawMatch match = new Gene3dHmmer3RawMatch(
                                         mSeqId,
                                         mModelId,
+                                        "",
+                                        "",
                                         m.getSignatureLibraryRelease(),
                                         splitDomainStart,
                                         number,
@@ -157,7 +159,9 @@ public class Gene3DPostProcessing implements Serializable {
                                         m.getDomainCeValue(),
                                         m.getDomainIeValue(),
                                         m.getDomainBias(),
-                                        m.getCigarAlignment());
+                                        m.getAlignedRegions(),
+                                        ""
+                                );
                                 // Add match
                                 filteredProtein.addMatch(match);
                                 matchKeys.add(matchKey);

@@ -717,7 +717,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         }
 
         if (ftMode) {
-            statsUtil.printNonAcknowledgedSubmittedStepInstances();
+            statsUtil.displayNonAcknowledgedSubmittedStepInstances();
         }
     }
 

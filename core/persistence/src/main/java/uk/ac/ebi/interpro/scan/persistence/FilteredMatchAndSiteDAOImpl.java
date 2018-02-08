@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawSite;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -87,7 +88,7 @@ public abstract class FilteredMatchAndSiteDAOImpl<T extends RawMatch, U extends 
         }
 
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
-        final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
+        final Map<String, SignatureModelHolder> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("signatureLibrary: " + signatureLibrary
@@ -96,19 +97,14 @@ public abstract class FilteredMatchAndSiteDAOImpl<T extends RawMatch, U extends 
                     + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
         }
 
-
-        StringBuilder signatureList = new StringBuilder();
-        for (Signature signature:   modelIdToSignatureMap.values()){
-            signatureList.append(signature.getModels().toString());
-        }
-
         persist(filteredProteins, sites, modelIdToSignatureMap, proteinIdToProteinMap);
 
     }
 
     @Transactional
     public abstract void persist(Collection<RawProtein<T>> rawProteins, Collection<E> sites,
-                                 Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap);
+                                 Map<String, SignatureModelHolder> modelIdToSignatureMap,
+                                 Map<String, Protein> proteinIdToProteinMap);
 
 
     /**

@@ -82,7 +82,7 @@
           parent="abstractPhobiusStep">
         <property name="dependsUpon" ref="stepPhobiusRunBinary"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of the Phobius binary"/>
     </bean>
 
     <!-- STEP 3 -->

@@ -12,6 +12,7 @@
         <property name="entryHierarchyBeanId" value="entryHierarchy"/>
         <property name="htmlResourcesDir" value="data/freemarker/resources"/>
         <property name="tempDirectory" value="temp/"/>
+        <property name="interproscanVersion" value="${i5.version}"/>
     </bean>
 
     <bean id="defaultWrapperHtmlWriter" class="freemarker.template.DefaultObjectWrapper"/>

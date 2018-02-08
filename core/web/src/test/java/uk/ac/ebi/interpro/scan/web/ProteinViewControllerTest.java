@@ -101,7 +101,7 @@ public class ProteinViewControllerTest {
 
         // Add matches
         Set<Hmmer3Match.Hmmer3Location> l1 = new HashSet<Hmmer3Match.Hmmer3Location>();
-        l1.add(new Hmmer3Match.Hmmer3Location(1, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
+        l1.add(new Hmmer3Match.Hmmer3Location(1, 123, -8.9, 0.28, 63, 82, 19, HmmBounds.INCOMPLETE, 73, 94));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("G3DSA:2.40.50.140")
                         .name("Nucleic acid-binding proteins")
@@ -111,7 +111,7 @@ public class ProteinViewControllerTest {
                                 .type(EntryType.DOMAIN)
                                 .build())
                         .build(),
-                -8.9, 0.28, l1));
+                "2wltA02", -8.9, 0.28, l1));
 
 
         Entry entry = new Entry.Builder("IPR016027")
@@ -119,21 +119,21 @@ public class ProteinViewControllerTest {
                 .type(EntryType.DOMAIN)
                 .build();
         Set<Hmmer3Match.Hmmer3Location> l2 = new HashSet<Hmmer3Match.Hmmer3Location>();
-        l2.add(new Hmmer3Match.Hmmer3Location(2, 123, -8.9, 0.28, 63, 82, 114, 73, 94));
+        l2.add(new Hmmer3Match.Hmmer3Location(2, 123, -8.9, 0.28, 63, 82, 19, HmmBounds.INCOMPLETE, 73, 94));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50249")
                         .name("Nucleic_acid_OB")
                         .signatureLibraryRelease(release)
                         .entry(entry)
                         .build(),
-                -8.9, 0.28, l2));
+                "2wltA02", -8.9, 0.28, l2));
         p.addMatch(new Hmmer3Match(
                 new Signature.Builder("SSF50250")
                         .name("Made up name")
                         .signatureLibraryRelease(release)
                         .entry(entry)
                         .build(),
-                -8.9, 0.28, l2));
+                "2wltA02", -8.9, 0.28, l2));
 
         return p;
 

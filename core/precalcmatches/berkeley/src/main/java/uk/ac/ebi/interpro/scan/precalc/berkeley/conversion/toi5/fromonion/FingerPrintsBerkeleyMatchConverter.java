@@ -49,6 +49,7 @@ public class FingerPrintsBerkeleyMatchConverter extends BerkeleyMatchConverter<F
 
         return new FingerPrintsMatch(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 valueOrZero(firstLocation.geteValue()),
                 firstLocation.getHmmBounds() == null ? "" : firstLocation.getHmmBounds(),     // Note - Onion stores the graphscan in the HmmBounds column.
                 locations
