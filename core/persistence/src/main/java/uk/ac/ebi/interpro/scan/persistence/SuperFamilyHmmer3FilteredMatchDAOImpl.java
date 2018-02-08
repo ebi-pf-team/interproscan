@@ -89,7 +89,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
                 }
                 else{
-                    if (! match.getSignatureModels().contains(rawMatch.getModelId()) {
+                    if (! match.getSignatureModels().contains(rawMatch.getModelId())) {
                         match.addSignatureModel(rawMatch.getModelId());
                     }else{
                         Utilities.verboseLog("Model " + rawMatch.getModelId() + " already in list: "

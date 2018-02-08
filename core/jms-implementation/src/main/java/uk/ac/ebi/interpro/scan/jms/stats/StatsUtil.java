@@ -277,7 +277,7 @@ public class StatsUtil {
         if (jobStatus != null){
             jobStatus.put(proteinRange, status);
         }else{
-            jobStatus = new HashMap<>();
+            jobStatus = new ConcurrentHashMap<>();
             jobStatus.put(proteinRange, status);
         }
         allAvailableJobs.put(key, jobStatus);
@@ -305,7 +305,7 @@ public class StatsUtil {
         if (jobStatus != null){
             jobStatus.put(proteinRange, status);
         }else{
-            jobStatus = new HashMap<>();
+            jobStatus = new ConcurrentHashMap<>();
             jobStatus.put(proteinRange, status);
             //Utilities.verboseLog("StepInstanceAdd " + key + ":" +  jobStatus.toString());
         }
