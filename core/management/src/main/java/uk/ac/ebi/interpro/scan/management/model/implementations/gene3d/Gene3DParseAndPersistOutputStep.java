@@ -144,7 +144,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
         }
 
 
-        Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap();
+        Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap<>();
 
         if (cathResolverRecordMap != null) {
             Utilities.verboseLog("cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
@@ -238,7 +238,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
 
             //now persists the rawmatches
-            Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(matchData.values());
+            Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = new HashSet<>(matchData.values());
             Utilities.verboseLog("rawProteins # :" + rawProteins.size());
             int count = 0;
             RawMatch represantiveRawMatch = null;
@@ -251,7 +251,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 }
             }
 
-            if (rawProteins != null && rawProteins.size() > 0) {
+            if (rawProteins.size() > 0) {
                 Utilities.verboseLog("Persist Gene3D rawProteins # :" + rawProteins.size());
                 filteredMatchDAO.persist(rawProteins);
                 Long now = System.currentTimeMillis();

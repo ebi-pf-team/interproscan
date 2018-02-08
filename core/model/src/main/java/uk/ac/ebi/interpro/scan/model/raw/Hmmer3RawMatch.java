@@ -224,6 +224,10 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     }
 
     private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m) {
+        boolean postProcessed = false;
+        if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch) {
+            postProcessed = true;
+        }
 
         return new Hmmer3Match.Hmmer3Location(
                 m.getLocationStart(),
@@ -234,7 +238,8 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 m.getHmmEnd(),
                 HmmBounds.parseSymbol(m.getHmmBounds()),
                 m.getEnvelopeStart(),
-                m.getEnvelopeEnd()
+                m.getEnvelopeEnd(),
+                postProcessed
         );
     }
 

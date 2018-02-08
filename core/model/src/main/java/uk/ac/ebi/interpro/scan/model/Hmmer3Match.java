@@ -92,6 +92,9 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         @Column(name = "envelope_end", nullable = false)
         private int envelopeEnd;
 
+        @Column(name = "post_processed", nullable = false)
+        private boolean postProcessed; // Is this a native HMMER3 result or has it been post processed in some way?
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -101,10 +104,11 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         // TODO: Remove HMM Bounds?
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, HmmBounds hmmBounds,
-                              int envelopeStart, int envelopeEnd) {
+                              int envelopeStart, int envelopeEnd, boolean postProcessed) {
             super(new Hmmer3LocationFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
+            setPostProcessed(postProcessed);
         }
 
         public Hmmer3Location(int start, int end, double score, double evalue,
@@ -133,6 +137,15 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             this.envelopeEnd = envelopeEnd;
         }
 
+        @XmlAttribute(name = "post-processed", required = true)
+        public boolean isPostProcessed() {
+            return postProcessed;
+        }
+
+        public void setPostProcessed(boolean postProcessed) {
+            this.postProcessed = postProcessed;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -142,6 +155,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                     .appendSuper(super.equals(o))
                     .append(envelopeStart, l.envelopeStart)
                     .append(envelopeEnd, l.envelopeEnd)
+                    .append(postProcessed, l.postProcessed)
                     .isEquals();
         }
 
@@ -151,6 +165,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                     .appendSuper(super.hashCode())
                     .append(envelopeStart)
                     .append(envelopeEnd)
+                    .append(postProcessed)
                     .toHashCode();
         }
 
@@ -160,7 +175,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
+            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), this.isPostProcessed());
             return clone;
         }
 

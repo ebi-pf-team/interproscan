@@ -21,6 +21,12 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
 
     public Hmmer3Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
 
+        final String sln = berkeleyMatch.getSignatureLibraryName();
+        boolean postProcessed = false;
+        if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM")) {
+            postProcessed = true;
+        }
+
         final Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>(berkeleyMatch.getLocations().size());
 
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
@@ -45,7 +51,8 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                             : location.getEnvelopeStart(),
                     location.getEnvelopeEnd() == null
                             ? location.getEnd() == null ? 0 : location.getEnd()
-                            : location.getEnvelopeEnd()
+                            : location.getEnvelopeEnd(),
+                    postProcessed
             ));
         }
 
