@@ -735,10 +735,10 @@ public class StatsUtil {
             boolean displayRemainingJobs = false;
             Long now = System.currentTimeMillis();
             Long timeSinceLastReport = now - progressReportTime;
-            if (timeSinceLastReport > 1200000) {
+            if (timeSinceLastReport > 3600000) {
                 displayProgress = true;
                 progressCounter++;
-                if (progressCounter > 3) {
+                if (progressCounter > 4) {
                     displayRemainingJobs = true;
                 }
             }
@@ -758,7 +758,7 @@ public class StatsUtil {
                 progressCounter = 4;
             } else if (progress > 0.9 && progressCounter >= 4) {
                 changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-                if (timeSinceLastReport > 1800000 && changeSinceLastReport > 0) {
+                if (timeSinceLastReport > 3600000 && changeSinceLastReport > 0) {
                     displayProgress = true;
                     previousUnfinishedJobs = unfinishedJobs;
                     progressCounter++;
@@ -780,7 +780,11 @@ public class StatsUtil {
                 displayNonAcknowledgedSubmittedStepInstances();
                 displayRunningJobs();
                 if (displayRemainingJobs) {
-                    displayAllAvailableJobs();
+                    //displayAllAvailableJobs(); TODO refactor
+                    if (unfinishedJobs > 1){
+                        Utilities.verboseLog("allAvailableJobs uniq count:" + allAvailableJobs.size());
+                    }
+                    //
                 }
 
                 int connectionCount = 9999; //statsMessageListener.getConsumers();
