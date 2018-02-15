@@ -6,11 +6,28 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
+
     <!-- ######################## JOB: MobiDB ############################  -->
+
+    <bean id="pathToMobiDBLiteBinary" class="java.lang.String">
+        <constructor-arg value="${binary.mobidb.path}"/>
+    </bean>
+
     <bean id="jobMobiDBLite" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="Prediction of disordered domains Regions in Proteins"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseMobiDB"/>
+        <!--Check mechanism for licensed binaries-->
+        <property name="nonEmptyPaths">
+            <list value-type="java.lang.String">
+                <ref bean="pathToMobiDBLiteBinary"/>
+            </list>
+        </property>
+        <property name="mandatoryParameters">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="binary.mobidb.path" value-ref="pathToMobiDBLiteBinary"/>
+            </map>
+        </property>
         <property name="doRunLocally" value="true"/>
         <property name="active" value="true" />
     </bean>
