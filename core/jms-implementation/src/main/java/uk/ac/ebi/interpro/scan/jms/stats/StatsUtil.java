@@ -767,8 +767,14 @@ public class StatsUtil {
                     progressCounter++;
                 }
             }
-            if (forceDisplayProgress) {
-                displayProgress = true;
+            if (forceDisplayProgress && ! displayProgress) {
+                int multiplier = 2;
+                int intervalTime = 3600000 * (progressCounter / multiplier);
+                if (progressCounter >= 5 && timeSinceLastReport > intervalTime) {
+                    displayProgress = true;
+                    progressCounter++;
+                    forceDisplayProgress = false;
+                }
             }
             if (displayProgress) {
                 progressReportTime = System.currentTimeMillis();
