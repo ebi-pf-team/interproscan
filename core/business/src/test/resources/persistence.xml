@@ -12,6 +12,7 @@
         </description>
 
         <!-- Interfaces -->
+        <class>uk.ac.ebi.interpro.scan.model.LocationFragment</class>
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.LocationWithSites</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>

@@ -28,8 +28,7 @@ public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamil
         Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<>(berkeleyMatch.getLocations().size());
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
             locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
-                    berkeleyLocation.getStart(),
-                    berkeleyLocation.getEnd(),
+                    new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(berkeleyLocation.getStart(), berkeleyLocation.getEnd()),
                     valueOrZero(berkeleyLocation.getHmmLength())
             ));
         }
