@@ -96,6 +96,11 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             setHmmLength(hmmLength);
         }
 
+        public SuperFamilyHmmer3Location(Set<SuperFamilyHmmer3LocationFragment> fragments, int hmmLength) {
+            super(fragments);
+            setHmmLength(hmmLength);
+        }
+
         @XmlAttribute(name = "hmm-length", required = true)
         public int getHmmLength() {
             return hmmLength;

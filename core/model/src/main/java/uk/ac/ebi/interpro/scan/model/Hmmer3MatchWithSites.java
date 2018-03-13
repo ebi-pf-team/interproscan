@@ -152,8 +152,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
             for (HmmerSite site : this.getSites()) {
                 clonedSites.add((HmmerSite) site.clone());
             }
-            final Hmmer3LocationWithSites clone = new Hmmer3LocationWithSites(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), clonedSites);
-            clone.setHmmLength(this.getHmmLength());
+            final Hmmer3LocationWithSites clone = new Hmmer3LocationWithSites(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), clonedSites);
             return clone;
         }
 
