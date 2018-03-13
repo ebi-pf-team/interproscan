@@ -97,7 +97,7 @@
         <lang:inline-script>
             <![CDATA[
                 import uk.ac.ebi.interpro.scan.model.*
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0")
+                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "4.2.0")
                 Signature signature = release.addSignature(
                         new Signature.Builder("G3DSA:2.40.50.140")
                                 .name("Nucleic acid-binding proteins")
