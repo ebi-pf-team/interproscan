@@ -38,8 +38,8 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
 
             locations.add(new PantherMatch.PantherLocation(
                     berkeleyLocation.getStart(), berkeleyLocation.getEnd(),
-                    berkeleyLocation.getHmmStart(), berkeleyLocation.getHmmEnd(), valueOrZero(berkeleyLocation.getHmmLength()),
-                    bounds, berkeleyLocation.getEnvelopeStart(), berkeleyLocation.getEnvelopeEnd()
+                    valueOrZero(berkeleyLocation.getHmmStart()), valueOrZero(berkeleyLocation.getHmmEnd()), valueOrZero(berkeleyLocation.getHmmLength()),
+                    bounds, valueOrZero(berkeleyLocation.getEnvelopeStart()), valueOrZero(berkeleyLocation.getEnvelopeEnd())
             ));
         }
 

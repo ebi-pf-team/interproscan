@@ -116,7 +116,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                             // Getorf appends '_N' where N is an integer to the protein accession. We need to compare this to the nucleotide sequence ID, that does not have _N on the end, so first of all strip this off for the comparison.
                             String strippedProteinId = XrefParser.stripOfFinalUnderScore(proteinXref.getIdentifier());
                             // Get rid of those pesky version numbers too.
-                            strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
+                            //strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
                             // V.
                             if ((nucleotideSequenceXrefId.equals(strippedProteinId))) {
                                 // VI.
