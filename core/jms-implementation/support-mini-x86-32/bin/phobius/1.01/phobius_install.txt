@@ -9,4 +9,7 @@ The "decodeanhmm" binary, the "phobius.pl" perl scirpt and other associated file
 (Phobius website) and extracted into this directory if required (or another directory on the file system).
 
 Once you have the required files in place on your system then the interproscan.properties file can be updated
-accordingly.
+if necessary.
+
+For more information see https://github.com/ebi-pf-team/interproscan/wiki/ActivatingLicensedAnalyses
+
