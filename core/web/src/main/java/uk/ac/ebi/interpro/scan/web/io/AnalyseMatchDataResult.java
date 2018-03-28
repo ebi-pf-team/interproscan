@@ -112,6 +112,7 @@ public class AnalyseMatchDataResult {
 
             final String methodAc = record.getMethodAc();
             final String methodName = record.getMethodName();
+            final String models = record.getModels();
             final String methodDatabase = record.getMethodDatabase();
             final String entryAc = record.getEntryAc();
             final String entryShortName = record.getEntryShortName();
@@ -141,7 +142,7 @@ public class AnalyseMatchDataResult {
                 } else {
                     // New signature for this entry, add it to the map
                     SimpleSignature signature =
-                            new SimpleSignature(methodAc, methodName, methodDatabase);
+                            new SimpleSignature(methodAc, methodName, models, methodDatabase);
                     signature.addLocation(location);
                     signatures.put(methodAc, signature);
                 }
@@ -150,7 +151,7 @@ public class AnalyseMatchDataResult {
                 // New entry for this protein, add it to the map
                 SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
                 SimpleSignature signature =
-                        new SimpleSignature(methodAc, methodName, methodDatabase);
+                        new SimpleSignature(methodAc, methodName, models, methodDatabase);
                 signature.addLocation(location);
                 entry.getSignaturesMap().put(methodAc, signature);
                 entries.add(entry);

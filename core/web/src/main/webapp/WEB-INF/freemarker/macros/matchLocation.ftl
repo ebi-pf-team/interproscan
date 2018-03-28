@@ -13,25 +13,14 @@
         <@matchLocationPopupMacro.matchLocationPopup matchPopupId=prefix+"-popup-"+matchId proteinAc=proteinAc signature=signature location=location colourClass=colourClass/>
     <#else>
     <#--If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call-->
-    <#if entryAc?? && entryAc?has_content && entryAc!="null">
-        <#--Integrated signature match-->
+    <#--Integrated signature match or un-integrated signature, therefore has no entryAc associated-->
+    <#-- Gene3D or SUPERFAMILY where along with the signatureAc we also show the modelAc responsible for the hit-->
         <a id="${prefix}-location-${matchId}"
-           title="${title} ${location.start} - ${location.end}"
-           class="match ${colourClass}"
-           style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
-                   width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
-           href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&entryAc=${entryAc}&start=${location.start?c}&end=${location.end?c}">
-    <#else>
-       <#--Un-integrated signature, therefore has no entryAc associated-->
-    <a id="${prefix}-location-${matchId}"
-       title="${title} ${location.start} - ${location.end}"
-       class="match ${colourClass}"
-       style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
-               width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
-       href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&db=${signature.dataSource.sourceName}&start=${location.start?c}&end=${location.end?c}">
-    </#if>
-        <#--<@locationMacro.location locationSpanId=prefix+"-span-"+matchId proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>-->
-    </a>
-
+               title="${title} ${location.start} - ${location.end}"
+               class="match ${colourClass}"
+               style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
+                       width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
+            href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}<#if entryAc?? && entryAc?has_content && entryAc!="null">&entryAc=${entryAc}<#else>&db=${signature.dataSource.sourceName}</#if><#if signature.models?? && signature.models?has_content && signature.models!="null" && signature.ac!=signature.models>&model=${signature.models}</#if>">
+        </a>
     </#if>
 </#macro>

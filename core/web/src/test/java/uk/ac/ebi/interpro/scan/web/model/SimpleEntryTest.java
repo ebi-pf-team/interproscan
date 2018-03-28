@@ -41,7 +41,7 @@ public class SimpleEntryTest {
         locations.add(new SimpleLocation(322, 395));
         entry1.setLocations(locations);
         Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
-        SimpleSignature signature1 = new SimpleSignature("G3DSA:1.10.238.10", "EF-Hand_type", "GENE3D");
+        SimpleSignature signature1 = new SimpleSignature("G3DSA:1.10.238.10", "EF-Hand_type", null, "GENE3D");
         signature1.addLocation(new SimpleLocation(244, 321));
         signature1.addLocation(new SimpleLocation(322, 395));
         signatures.put("G3DSA:1.10.238.10", signature1);

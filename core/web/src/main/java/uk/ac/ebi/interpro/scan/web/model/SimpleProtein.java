@@ -425,12 +425,13 @@ public final class SimpleProtein implements Serializable {
             // 2) Create SimpleSignature object
             final Signature signature = match.getSignature();
             final String signatureAc = signature.getAccession();
+            final String signatureModels = match.getSignatureModels();
             final String signatureName = (signature.getName() == null || signature.getName().length() == 0)
                     ? signatureAc
                     : signature.getName();
             SignatureLibraryRelease signatureLibraryRelease = signature.getSignatureLibraryRelease();
             final String signatureLibraryName = signatureLibraryRelease == null ? "UNKNOWN" : signatureLibraryRelease.getLibrary().getName();
-            SimpleSignature simpleSignature = new SimpleSignature(signatureAc, signatureName, signatureLibraryName);
+            SimpleSignature simpleSignature = new SimpleSignature(signatureAc, signatureName, signatureModels, signatureLibraryName);
 
             // 3) Create SimpleEntry object
             final Entry entry = signature.getEntry();

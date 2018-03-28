@@ -38,6 +38,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
 
     private final String methodAc;
     private final String methodName;
+    private final String models; // Could be NULL
     private final String methodDatabase;
     private final Double score; // Could be NULL
     private final String entryAc;
@@ -49,13 +50,14 @@ public final class MatchDataRecord extends AbstractDataRecord {
     private final String taxFullName;
 
     public MatchDataRecord(String proteinAc, String proteinId, String proteinDescription, int proteinLength,
-                           String crc64, String methodAc, String methodName, String methodDatabase,
+                           String crc64, String methodAc, String methodName, String models, String methodDatabase,
                            int posFrom, int posTo, Double score,
                            String entryAc, String entryShortName, String entryName, String entryType,
                            int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
         super(proteinAc, proteinId, proteinDescription, proteinLength, crc64, posFrom, posTo, isProteinFragment);
         this.methodAc = methodAc;
         this.methodName = methodName;
+        this.models = models;
         this.methodDatabase = methodDatabase;
         this.score = score;
         this.entryAc = entryAc;
@@ -73,6 +75,10 @@ public final class MatchDataRecord extends AbstractDataRecord {
 
     public String getMethodName() {
         return methodName;
+    }
+
+    public String getModels() {
+        return models;
     }
 
     public String getMethodDatabase() {
@@ -127,6 +133,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(getCrc64(), r.getCrc64())
                 .append(methodAc, r.methodAc)
                 .append(methodName, r.methodName)
+                .append(models, r.models)
                 .append(methodDatabase, r.methodDatabase)
                 .append(getPosFrom(), r.getPosFrom())
                 .append(getPosTo(), r.getPosTo())
@@ -152,6 +159,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(getCrc64())
                 .append(methodAc)
                 .append(methodName)
+                .append(models)
                 .append(methodDatabase)
                 .append(getPosFrom())
                 .append(getPosTo())
