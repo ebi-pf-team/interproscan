@@ -431,7 +431,7 @@ public final class SimpleProtein implements Serializable {
                     : signature.getName();
             SignatureLibraryRelease signatureLibraryRelease = signature.getSignatureLibraryRelease();
             final String signatureLibraryName = signatureLibraryRelease == null ? "UNKNOWN" : signatureLibraryRelease.getLibrary().getName();
-            SimpleSignature simpleSignature = new SimpleSignature(signatureAc, signatureName, signatureModels, signatureLibraryName);
+            SimpleSignature simpleSignature = new SimpleSignature(signatureAc, signatureName, signatureLibraryName);
 
             // 3) Create SimpleEntry object
             final Entry entry = signature.getEntry();
@@ -461,7 +461,7 @@ public final class SimpleProtein implements Serializable {
 
                 // 4) Create SimpleLocation object
                 final Location location = (Location) o;
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd(), signatureModels);
 
                 // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
                 simpleSignature.getLocations().add(simpleLocation);
@@ -480,7 +480,7 @@ public final class SimpleProtein implements Serializable {
                             }
                             SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
                             for (SiteLocation siteLocation : site.getSiteLocations()) {
-                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd()));
+                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd(), signatureModels));
                                 simpleSite.addSiteLocation(simpleSiteLocation);
                             }
                             simpleProtein.getSites().add(simpleSite);

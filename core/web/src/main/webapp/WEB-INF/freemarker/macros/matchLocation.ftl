@@ -20,7 +20,7 @@
                class="match ${colourClass}"
                style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
                        width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
-            href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}<#if entryAc?? && entryAc?has_content && entryAc!="null">&entryAc=${entryAc}<#else>&db=${signature.dataSource.sourceName}</#if><#if signature.models?? && signature.models?has_content && signature.models!="null" && signature.ac!=signature.models>&model=${signature.models}</#if>">
+            href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}<#if entryAc?? && entryAc?has_content && entryAc!="null">&entryAc=${entryAc}<#else>&db=${signature.dataSource.sourceName}</#if><#if location.models?? && location.models?has_content && location.models!="null" && signature.ac!=location.models>&model=${location.models}</#if>">
         </a>
     </#if>
 </#macro>

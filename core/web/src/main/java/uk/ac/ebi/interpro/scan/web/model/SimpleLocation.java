@@ -12,6 +12,12 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
 
     private final int start;
     private final int end;
+    private String models = null;
+
+    public SimpleLocation(int start, int end, String models) {
+        this(start, end);
+        this.models = models;
+    }
 
     public SimpleLocation(int start, int end) {
         this.start = start;
@@ -24,6 +30,10 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
 
     public int getEnd() {
         return end;
+    }
+
+    public String getModels() {
+        return models;
     }
 
     @Override
@@ -51,20 +61,21 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SimpleLocation)) return false;
 
         SimpleLocation that = (SimpleLocation) o;
 
-        if (end != that.end) return false;
         if (start != that.start) return false;
+        if (end != that.end) return false;
+        return models != null ? models.equals(that.models) : that.models == null;
 
-        return true;
     }
 
     @Override
     public int hashCode() {
         int result = start;
         result = 31 * result + end;
+        result = 31 * result + (models != null ? models.hashCode() : 0);
         return result;
     }
 
@@ -78,6 +89,7 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
         sb.append("SimpleLocation");
         sb.append("{start=").append(start);
         sb.append(", end=").append(end);
+        sb.append(", models=").append(models);
         sb.append('}');
         return sb.toString();
     }

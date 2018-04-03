@@ -18,14 +18,12 @@ public final class SimpleSignature implements Comparable<SimpleSignature>, Seria
 
     private final String ac;
     private final String name;
-    private final String models;
     private final MatchDataSource dataSource;
     private final List<SimpleLocation> locations;
 
-    public SimpleSignature(String ac, String name, String models, String databaseName) {
+    public SimpleSignature(String ac, String name, String databaseName) {
         this.ac = ac;
         this.name = name;
-        this.models = models;
         this.dataSource = MatchDataSource.parseName(databaseName);
         this.locations = new ArrayList<>();
     }
@@ -37,10 +35,6 @@ public final class SimpleSignature implements Comparable<SimpleSignature>, Seria
 
     public String getName() {
         return name;
-    }
-
-    public String getModels() {
-        return models;
     }
 
     public MatchDataSource getDataSource() {

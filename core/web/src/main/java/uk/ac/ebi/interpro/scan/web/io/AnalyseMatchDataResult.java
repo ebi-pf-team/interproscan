@@ -124,7 +124,7 @@ public class AnalyseMatchDataResult {
             }
 
             // Need to eventually associate this match location with the existing SimpleProtein object
-            SimpleLocation location = new SimpleLocation(record.getPosFrom(), record.getPosTo());
+            SimpleLocation location = new SimpleLocation(record.getPosFrom(), record.getPosTo(), models);
 
             // Has this entry already been added to the protein?
             List<SimpleEntry> entries = protein.getAllEntries();
@@ -142,7 +142,7 @@ public class AnalyseMatchDataResult {
                 } else {
                     // New signature for this entry, add it to the map
                     SimpleSignature signature =
-                            new SimpleSignature(methodAc, methodName, models, methodDatabase);
+                            new SimpleSignature(methodAc, methodName, methodDatabase);
                     signature.addLocation(location);
                     signatures.put(methodAc, signature);
                 }
@@ -151,7 +151,7 @@ public class AnalyseMatchDataResult {
                 // New entry for this protein, add it to the map
                 SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
                 SimpleSignature signature =
-                        new SimpleSignature(methodAc, methodName, models, methodDatabase);
+                        new SimpleSignature(methodAc, methodName, methodDatabase);
                 signature.addLocation(location);
                 entry.getSignaturesMap().put(methodAc, signature);
                 entries.add(entry);
