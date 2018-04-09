@@ -52,7 +52,7 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
     private static final Pattern QUERY_LINE_PATTERN
             = Pattern.compile("^QUERY\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(.*)$");
     private static final Pattern DOMAIN_LINE_PATTERN
-            = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)");
+            = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)(.*)$");
             //s+(.*)$");
 
     /**
@@ -124,12 +124,20 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                 lineNumber++;
                 LOGGER.debug("Line: " + line);
                 //id 80	99
-//                Utilities.verboseLog("Domain line: " + line);
+                Utilities.verboseLog("Domain line: " + line);
                 Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line.trim());
+
                 if (matcher.matches()) {
+                    Utilities.verboseLog("number of groups: " + matcher.groupCount());
                     sequenceIdentifier = matcher.group(1);
                     int locationStart = Integer.parseInt(matcher.group(2));
                     int locationEnd = Integer.parseInt(matcher.group(3));
+                    String feature = matcher.group(4);
+                    if (! (feature.isEmpty() || feature == null)) {
+                        String feature2 = feature;
+//                        Utilities.verboseLog("We have a feature  : " + feature2 + " " +
+//                                sequenceIdentifier + " region: " + locationStart + "-" +  locationEnd);
+                    }
 
                     //TODO hardcoded accession should be removed
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
