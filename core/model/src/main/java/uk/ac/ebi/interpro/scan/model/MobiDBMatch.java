@@ -21,6 +21,8 @@ import java.util.Set;
 @XmlType(name = "MobiDBMatchType")
 public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
 
+
+
     protected MobiDBMatch() {
     }
 
@@ -45,6 +47,8 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
     @XmlType(name = "MobiDBLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class MobiDBLocation extends Location {
 
+        String description;
+
         /**
          * Protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -53,6 +57,20 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
 
         public MobiDBLocation(int start, int end) {
             super(start, end);
+        }
+
+        public MobiDBLocation(int start, int end, String description) {
+            super(start, end);
+            setDescription(description);
+        }
+
+        @XmlAttribute(name = "description", required = true)
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
 
         @Override

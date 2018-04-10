@@ -124,25 +124,27 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                 lineNumber++;
                 LOGGER.debug("Line: " + line);
                 //id 80	99
-                Utilities.verboseLog("Domain line: " + line);
+//                Utilities.verboseLog("Domain line: " + line);
                 Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line.trim());
 
                 if (matcher.matches()) {
-                    Utilities.verboseLog("number of groups: " + matcher.groupCount());
+//                    Utilities.verboseLog("number of groups: " + matcher.groupCount());
                     sequenceIdentifier = matcher.group(1);
                     int locationStart = Integer.parseInt(matcher.group(2));
                     int locationEnd = Integer.parseInt(matcher.group(3));
-                    String feature = matcher.group(4);
+                    String feature = matcher.group(4).trim();
                     if (! (feature.isEmpty() || feature == null)) {
                         String feature2 = feature;
 //                        Utilities.verboseLog("We have a feature  : " + feature2 + " " +
 //                                sequenceIdentifier + " region: " + locationStart + "-" +  locationEnd);
+                    }else{
+                        feature = "";
                     }
 
                     //TODO hardcoded accession should be removed
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
                             SignatureLibrary.MOBIDB_LITE, signatureLibraryRelease,
-                            locationStart, locationEnd));
+                            locationStart, locationEnd, feature));
 //                    Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
                 }
             }

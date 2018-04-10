@@ -62,6 +62,8 @@
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
         <!--

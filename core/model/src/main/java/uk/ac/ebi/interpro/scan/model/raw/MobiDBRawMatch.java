@@ -40,12 +40,22 @@ public class MobiDBRawMatch extends RawMatch implements Serializable {
         UPI000058F423	882	917
      */
 
+    String description;
 
     protected MobiDBRawMatch() {}
 
     public MobiDBRawMatch(String sequenceIdentifier, String model,
                           SignatureLibrary signatureLibrary, String signatureLibraryRelease,
-                          int locationStart, int locationEnd) {
+                          int locationStart, int locationEnd, String description) {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd);
+        setDescription(description);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
