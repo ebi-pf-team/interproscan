@@ -87,7 +87,7 @@ def get_filtered_best_hits(best_hits):
     filtered_best_hits = []
     all_best_hits = best_hits
     hits_per_hmmid = get_match_groups(best_hits)
-    if len(hits_per_hmmid.keys()) == 1:
+    if len(list(hits_per_hmmid.keys())) == 1:
         return best_hits
     for hmmid in hits_per_hmmid:
         hmmid_hits =  hits_per_hmmid[hmmid]
