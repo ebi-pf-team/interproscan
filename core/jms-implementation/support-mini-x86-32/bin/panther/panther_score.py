@@ -66,8 +66,8 @@ def append_to_match_list(all_scores, seq_id, item):
 
 #return true if two int ranges overlap
 def location_overlaps(location1, location2):
-    start_1,end_1 = map(int, location1.split("-"))
-    start_2,end_2 = map(int,location2.split("-"))
+    start_1,end_1 = list(map(int, location1.split("-")))
+    start_2,end_2 = list(map(int,location2.split("-")))
     return max(start_1,start_2) <= min(end_1,end_2)
 
 def get_match_groups(best_hits):
@@ -168,7 +168,7 @@ def print_list(seq_key, best_hits):
 
 def print_error(message):
     if sys.version_info >= (3, 0):
-        print(str(sys.version_info)+'\n')
+        print((str(sys.version_info)+'\n'))
         #print(message, file=sys.stderr)
         sys.stderr.write(message)
     else:
