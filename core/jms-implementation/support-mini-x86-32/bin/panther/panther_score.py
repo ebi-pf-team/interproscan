@@ -70,32 +70,46 @@ def location_overlaps(location1, location2):
     start_2,end_2 = map(int,location2.split("-"))
     return max(start_1,start_2) <= min(end_1,end_2)
 
+def get_match_groups(best_hits):
+    group_hits = {}
+    for el in best_hits:
+        hmm_id = el[0]
+        if hmm_id in group_hits:
+            el_hits = group_hits[hmm_id]
+            if el not in el_hits:
+                el_hits.append(el)
+        else:
+            group_hits[hmm_id] = [el]
+    return group_hits
+
 def get_filtered_best_hits(best_hits):
     # hmm_hit = [hmm_id, description, float(eVal), float(score), location]
     filtered_best_hits = []
-    for el in best_hits:
-        base_el_location = el[4]
-        overlaps = False
-        if ":SF" in el[0]:
-            #do nothing for now, we dont expect subfamilies to overlap in theory
-            do_nothing = 0
-        else:
-            for other_el in best_hits:
+    all_best_hits = best_hits
+    hits_per_hmmid = get_match_groups(best_hits)
+    if len(hits_per_hmmid.keys()) == 1:
+        return best_hits
+    for hmmid in hits_per_hmmid:
+        hmmid_hits =  hits_per_hmmid[hmmid]
+        if ":SF" in hmmid:
+            filtered_best_hits.extend(hmmid_hits)
+            continue
+        for el in hmmid_hits:
+            base_el_location = el[4]
+            overlaps = False
+            for other_el in all_best_hits:
                 if el == other_el:
                     continue
+                if el[0] == other_el[0]:
+                    continue
                 if location_overlaps(base_el_location, other_el[4]):
-                    #deal with case where overlaps are present
                     overlaps = True
-        if overlaps:
-            # deal with this, skip this hit
-            #print("overlaps.. so skip")
-            overlaps_print_error = False
-        else:
-            #add to to filtered best hits
-            filtered_best_hits.append(el)
-
+                    break
+            if overlaps:
+                all_best_hits.remove(el)
+            else:
+                filtered_best_hits.append(el)
     return filtered_best_hits
-
 
 
 def get_best_hits(matches, evalue_cutoff):
@@ -122,6 +136,9 @@ def parse_domtblout(domtblout, panther_families, run_mode):
     all_scores = {}
     with open(domtblout, 'r') as infile:
         for line in infile:
+            if not line.strip():
+                #possible empty lines
+                continue
             if not line.startswith('#'):
                 if run_mode == 'hmmscan':
                     hmma, acc2, qlen, seqid, acc1, tlen, eVal, score, bias, num, num_t, cEval, iEval, dscore, dbias, hmm_f, hmm_t, ali_f, ali_t, env_f, env_t, accuracy, desc = line.split()
