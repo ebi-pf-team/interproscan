@@ -69,7 +69,7 @@
         <property name="retries" value="3"/>
         <property name="fullPathToPFsearch" value="${binary.prosite.pfsearch.path}"/>
         <property name="fullPathToPfsearchWrapper" value="${binary.prosite.pfsearch.wrapperpath}"/>
-        <property name="fullPathToPython" value="${binary.prosite.python.path}"/>
+        <property name="fullPathToPython" value="${python.command}"/>
         <property name="modelDir" value="${hamap.profile.models.dir}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
