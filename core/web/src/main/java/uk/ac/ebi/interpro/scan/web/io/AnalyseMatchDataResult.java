@@ -112,6 +112,7 @@ public class AnalyseMatchDataResult {
 
             final String methodAc = record.getMethodAc();
             final String methodName = record.getMethodName();
+            final String models = record.getModels();
             final String methodDatabase = record.getMethodDatabase();
             final String entryAc = record.getEntryAc();
             final String entryShortName = record.getEntryShortName();
@@ -123,7 +124,7 @@ public class AnalyseMatchDataResult {
             }
 
             // Need to eventually associate this match location with the existing SimpleProtein object
-            SimpleLocation location = new SimpleLocation(record.getPosFrom(), record.getPosTo());
+            SimpleLocation location = new SimpleLocation(record.getPosFrom(), record.getPosTo(), models);
 
             // Has this entry already been added to the protein?
             List<SimpleEntry> entries = protein.getAllEntries();

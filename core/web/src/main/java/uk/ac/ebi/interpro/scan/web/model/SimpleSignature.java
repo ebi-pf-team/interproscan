@@ -25,8 +25,9 @@ public final class SimpleSignature implements Comparable<SimpleSignature>, Seria
         this.ac = ac;
         this.name = name;
         this.dataSource = MatchDataSource.parseName(databaseName);
-        this.locations = new ArrayList<SimpleLocation>();
+        this.locations = new ArrayList<>();
     }
+
 
     public String getAc() {
         return ac;

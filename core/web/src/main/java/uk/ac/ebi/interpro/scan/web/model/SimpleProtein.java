@@ -425,6 +425,7 @@ public final class SimpleProtein implements Serializable {
             // 2) Create SimpleSignature object
             final Signature signature = match.getSignature();
             final String signatureAc = signature.getAccession();
+            final String signatureModels = match.getSignatureModels();
             final String signatureName = (signature.getName() == null || signature.getName().length() == 0)
                     ? signatureAc
                     : signature.getName();
@@ -460,7 +461,7 @@ public final class SimpleProtein implements Serializable {
 
                 // 4) Create SimpleLocation object
                 final Location location = (Location) o;
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd(), signatureModels);
 
                 // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
                 simpleSignature.getLocations().add(simpleLocation);
@@ -479,7 +480,7 @@ public final class SimpleProtein implements Serializable {
                             }
                             SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
                             for (SiteLocation siteLocation : site.getSiteLocations()) {
-                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd()));
+                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd(), signatureModels));
                                 simpleSite.addSiteLocation(simpleSiteLocation);
                             }
                             simpleProtein.getSites().add(simpleSite);
