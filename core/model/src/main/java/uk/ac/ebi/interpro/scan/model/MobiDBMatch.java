@@ -47,7 +47,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
     @XmlType(name = "MobiDBLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class MobiDBLocation extends Location {
 
-        String description;
+        String sequenceFeature;
 
         /**
          * Protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -59,18 +59,18 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
             super(start, end);
         }
 
-        public MobiDBLocation(int start, int end, String description) {
+        public MobiDBLocation(int start, int end, String sequenceFeature) {
             super(start, end);
-            setDescription(description);
+            setSequenceFeature(sequenceFeature);
         }
 
-        @XmlAttribute(name = "description", required = true)
-        public String getDescription() {
-            return description;
+        @XmlAttribute(name = "sequence-feature", required = true)
+        public String getSequenceFeature() {
+            return sequenceFeature;
         }
 
-        public void setDescription(String description) {
-            this.description = description;
+        public void setSequenceFeature(String sequenceFeature) {
+            this.sequenceFeature = sequenceFeature;
         }
 
         @Override
