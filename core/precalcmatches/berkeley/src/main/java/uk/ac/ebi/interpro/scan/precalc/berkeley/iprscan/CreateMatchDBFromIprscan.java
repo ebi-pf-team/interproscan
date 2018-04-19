@@ -310,6 +310,7 @@ public class CreateMatchDBFromIprscan {
                 if (match != null) {
                     primIDX.put(match);
                 }
+                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
             } finally {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
