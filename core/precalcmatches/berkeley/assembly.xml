@@ -34,7 +34,7 @@
             <includes>
                 <include>*.sh</include>
             </includes>
-            <fileMode>0755</fileMode>
+            <fileMode>0775</fileMode>
         </fileSet>
 
     </fileSets>
