@@ -40,7 +40,7 @@ public class CathResolveHitsOutputParser {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                if (line.startsWith("#")){
+                if (line.trim().isEmpty() || line.startsWith("#")){
                     continue;
                 }
                 rawDomainCount ++;
