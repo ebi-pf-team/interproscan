@@ -196,6 +196,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                         .isEquals();
             }
 
+
             @Override
             public int hashCode() {
                 return new HashCodeBuilder(139, 159)

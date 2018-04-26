@@ -44,7 +44,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "LocationFragmentType", propOrder = {"start", "end"})
 @JsonIgnoreProperties({"id"})
-public abstract class LocationFragment implements Serializable, Cloneable {
+public abstract class LocationFragment implements Serializable, Cloneable, Comparable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LOCN_FRAG_IDGEN")
@@ -416,6 +416,21 @@ public abstract class LocationFragment implements Serializable, Cloneable {
                 .append(start, h.start)
                 .append(end, h.end)
                 .isEquals();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (this == o) {
+            return 0;
+        }
+        final LocationFragment h = (LocationFragment) o;
+        if (this.start < h.start) {
+            return -10;
+        }
+        if (this.start > h.start) {
+            return 10;
+        }
+        return -1;
     }
 
     @Override
