@@ -187,12 +187,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
         }
 
 
-        Utilities.verboseLog("nestedModelsMap count:" + nestedModelsMap.keySet().size());
-        for (String testKey : nestedModelsMap.keySet()) {
-            if (testKey.contains("PF01193")) {
-                Utilities.verboseLog("testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
-            }
-        }
+//        Utilities.verboseLog("nestedModelsMap count:" + nestedModelsMap.keySet().size());
+//        for (String testKey : nestedModelsMap.keySet()) {
+//            if (testKey.contains("PF01193")) {
+//                Utilities.verboseLog("testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
+//            }
+//        }
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             Utilities.verboseLog(pfamHmmer3RawMatch.getModelId() + " [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
