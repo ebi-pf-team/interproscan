@@ -14,6 +14,8 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates a Berkeley database of proteins for which matches have been calculated in IPRSCAN.
@@ -85,6 +87,7 @@ public class CreateMatchDBFromIprscan {
                     "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END" +
                     //", ALIGNMENT " +
                     "       from  berkley_tmp_tab " +
+                    "       where PROTEIN_MD5 >= ? and PROTEIN_MD5 <= ? " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       MODEL_ACCESSION, SEQUENCE_SCORE";
 
@@ -147,141 +150,170 @@ public class CreateMatchDBFromIprscan {
 
             PrimaryIndex<Long, BerkeleyMatch> primIDX = null;
 
+            // For efficiency these protein MD5 ranges should match each subpartition range in the iprscan.berkley_tmp_tab table
+            Map<String, String> md5RangesMap = new HashMap<>();
+            md5RangesMap.put("00000000000000000000000000000000", "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("20000000000000000000000000000000", "3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("40000000000000000000000000000000", "5FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("60000000000000000000000000000000", "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("80000000000000000000000000000000", "9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("A0000000000000000000000000000000", "BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("C0000000000000000000000000000000", "DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("E0000000000000000000000000000000", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
-                ps = connection.prepareStatement(QUERY_TEMPORARY_TABLE);
-                rs = ps.executeQuery();
-                BerkeleyMatch match = null;
+                for (Map.Entry<String, String> md5RangesMapEntry : md5RangesMap.entrySet()) {
+                    final String md5Start = md5RangesMapEntry.getKey();
+                    final String md5End = md5RangesMapEntry.getValue();
+                    System.out.println("Now processing proteins with MD5 " + md5Start + " to " + md5End);
+                    ps = connection.prepareStatement(QUERY_TEMPORARY_TABLE);
+                    ps.setString(1, md5Start);
+                    ps.setString(2, md5End);
+                    rs = ps.executeQuery();
+                    BerkeleyMatch match = null;
 
-                int locationCount = 0, matchCount = 0;
+                    int locationCount = 0, matchCount = 0;
 
-                while (rs.next()) {
-                    // Open the BerkeleyDB at the VERY LAST MOMENT - prevent timeouts.
-                    if (primIDX == null) {
-                        // Now create the berkeley database directory is present and writable.
-                        File berkeleyDBDirectory = new File(directoryPath);
-                        if (berkeleyDBDirectory.exists()) {
-                            if (!berkeleyDBDirectory.isDirectory()) {
-                                throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a Berkeley Database.");
+                    while (rs.next()) {
+                        // Open the BerkeleyDB at the VERY LAST MOMENT - prevent timeouts.
+                        if (primIDX == null) {
+                            // Now create the berkeley database directory is present and writable.
+                            File berkeleyDBDirectory = new File(directoryPath);
+                            if (berkeleyDBDirectory.exists()) {
+                                if (!berkeleyDBDirectory.isDirectory()) {
+                                    throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a Berkeley Database.");
+                                }
+                                File[] directoryContents = berkeleyDBDirectory.listFiles();
+                                if (directoryContents != null && directoryContents.length > 0) {
+                                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscan.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
+                                }
+                                if (!berkeleyDBDirectory.canWrite()) {
+                                    throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
+                                }
+                            } else if (!(berkeleyDBDirectory.mkdirs())) {
+                                throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
                             }
-                            File[] directoryContents = berkeleyDBDirectory.listFiles();
-                            if (directoryContents != null && directoryContents.length > 0) {
-                                throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscan.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
-                            }
-                            if (!berkeleyDBDirectory.canWrite()) {
-                                throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
-                            }
-                        } else if (!(berkeleyDBDirectory.mkdirs())) {
-                            throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
+
+                            // Open up the Berkeley Database
+                            EnvironmentConfig myEnvConfig = new EnvironmentConfig();
+                            StoreConfig storeConfig = new StoreConfig();
+
+                            myEnvConfig.setAllowCreate(true);
+                            storeConfig.setAllowCreate(true);
+                            storeConfig.setTransactional(false);
+                            // Open the environment and entity store
+                            myEnv = new Environment(berkeleyDBDirectory, myEnvConfig);
+                            store = new EntityStore(myEnv, "EntityStore", storeConfig);
+
+                            primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
+
+                        }
+                        // Only process if the SignatureLibraryName is recognised.
+                        final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
+                        if (rs.wasNull() || signatureLibraryName == null) continue;
+                        if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+
+                        // Now collect rest of the data and test for mandatory fields.
+                        final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
+                        if (rs.wasNull()) continue;
+
+                        final int sequenceEnd = rs.getInt(COL_IDX_SEQ_END);
+                        if (rs.wasNull()) continue;
+
+                        final String proteinMD5 = rs.getString(COL_IDX_MD5);
+                        if (proteinMD5 == null || proteinMD5.length() == 0) continue;
+
+                        final String sigLibRelease = rs.getString(COL_IDX_SIG_LIB_RELEASE);
+                        if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
+
+                        final String signatureAccession = rs.getString(COL_IDX_SIG_ACCESSION);
+                        if (signatureAccession == null || signatureAccession.length() == 0) continue;
+
+                        final String modelAccession = rs.getString(COL_IDX_MODEL_ACCESSION);
+                        if (modelAccession == null || modelAccession.length() == 0) continue;
+
+                        Integer hmmStart = rs.getInt(COL_IDX_HMM_START);
+                        if (rs.wasNull()) hmmStart = null;
+
+                        Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
+                        if (rs.wasNull()) hmmEnd = null;
+
+                        Integer hmmLength = rs.getInt(COL_IDX_HMM_LENGTH);
+                        if (rs.wasNull()) hmmLength = null;
+
+                        String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
+
+                        Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
+                        if (rs.wasNull()) sequenceScore = null;
+
+                        Double sequenceEValue = rs.getDouble(COL_IDX_SEQ_EVALUE);
+                        if (rs.wasNull()) sequenceEValue = null;
+
+                        Double locationScore = rs.getDouble(COL_IDX_SCORE);
+                        if (rs.wasNull()) locationScore = null;
+
+                        Double eValue = rs.getDouble(COL_IDX_EVALUE);
+                        if (rs.wasNull()) {
+                            eValue = null;
                         }
 
-                        // Open up the Berkeley Database
-                        EnvironmentConfig myEnvConfig = new EnvironmentConfig();
-                        StoreConfig storeConfig = new StoreConfig();
+                        Integer envelopeStart = rs.getInt(COL_IDX_ENV_START);
+                        if (rs.wasNull()) envelopeStart = null;
 
-                        myEnvConfig.setAllowCreate(true);
-                        storeConfig.setAllowCreate(true);
-                        storeConfig.setTransactional(false);
-                        // Open the environment and entity store
-                        myEnv = new Environment(berkeleyDBDirectory, myEnvConfig);
-                        store = new EntityStore(myEnv, "EntityStore", storeConfig);
+                        Integer envelopeEnd = rs.getInt(COL_IDX_ENV_END);
+                        if (rs.wasNull()) envelopeEnd = null;
 
-                        primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
+                        //String alignment = rs.getString(COL_IDX_ALIGNMENT);
 
-                    }
-                    // Only process if the SignatureLibraryName is recognised.
-                    final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
-                    if (rs.wasNull() || signatureLibraryName == null) continue;
-                    if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+                        // arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmm_bounds column...
 
-                    // Now collect rest of the data and test for mandatory fields.
-                    final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
-                    if (rs.wasNull()) continue;
+                        final BerkeleyLocation location = new BerkeleyLocation();
+                        location.setStart(sequenceStart);
+                        location.setEnd(sequenceEnd);
+                        location.setHmmStart(hmmStart);
+                        location.setHmmEnd(hmmEnd);
+                        location.setHmmLength(hmmLength);
+                        location.setHmmBounds(hmmBounds);
+                        location.seteValue(eValue);
+                        location.setScore(locationScore);
+                        location.setEnvelopeStart(envelopeStart);
+                        location.setEnvelopeEnd(envelopeEnd);
+                        //location.setCigarAlignment(alignment);
+                        locationCount++;
 
-                    final int sequenceEnd = rs.getInt(COL_IDX_SEQ_END);
-                    if (rs.wasNull()) continue;
+                        if (match != null) {
+                            if (
+                                    proteinMD5.equals(match.getProteinMD5()) &&
+                                            signatureLibraryName.equals(match.getSignatureLibraryName()) &&
+                                            sigLibRelease.equals(match.getSignatureLibraryRelease()) &&
+                                            signatureAccession.equals(match.getSignatureAccession()) &&
+                                            modelAccession.equals(match.getSignatureModels()) &&
+                                            (match.getSequenceEValue() == null && sequenceEValue == null || (sequenceEValue != null && sequenceEValue.equals(match.getSequenceEValue()))) &&
+                                            (match.getSequenceScore() == null && sequenceScore == null || (sequenceScore != null && sequenceScore.equals(match.getSequenceScore())))) {
+                                // Same Match as previous, so just add a new BerkeleyLocation
+                                match.addLocation(location);
+                            } else {
+                                // Store last match
+                                primIDX.put(match);
+                                matchCount++;
+                                if (matchCount % 400000 == 0) {
+                                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                                }
 
-                    final String proteinMD5 = rs.getString(COL_IDX_MD5);
-                    if (proteinMD5 == null || proteinMD5.length() == 0) continue;
-
-                    final String sigLibRelease = rs.getString(COL_IDX_SIG_LIB_RELEASE);
-                    if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
-
-                    final String signatureAccession = rs.getString(COL_IDX_SIG_ACCESSION);
-                    if (signatureAccession == null || signatureAccession.length() == 0) continue;
-
-                    final String modelAccession = rs.getString(COL_IDX_MODEL_ACCESSION);
-                    if (modelAccession == null || modelAccession.length() == 0) continue;
-
-                    Integer hmmStart = rs.getInt(COL_IDX_HMM_START);
-                    if (rs.wasNull()) hmmStart = null;
-
-                    Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
-                    if (rs.wasNull()) hmmEnd = null;
-
-                    Integer hmmLength = rs.getInt(COL_IDX_HMM_LENGTH);
-                    if (rs.wasNull()) hmmLength = null;
-
-                    String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
-
-                    Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
-                    if (rs.wasNull()) sequenceScore = null;
-
-                    Double sequenceEValue = rs.getDouble(COL_IDX_SEQ_EVALUE);
-                    if (rs.wasNull()) sequenceEValue = null;
-
-                    Double locationScore = rs.getDouble(COL_IDX_SCORE);
-                    if (rs.wasNull()) locationScore = null;
-
-                    Double eValue = rs.getDouble(COL_IDX_EVALUE);
-                    if (rs.wasNull()) {
-                        eValue = null;
-                    }
-
-                    Integer envelopeStart = rs.getInt(COL_IDX_ENV_START);
-                    if (rs.wasNull()) envelopeStart = null;
-
-                    Integer envelopeEnd = rs.getInt(COL_IDX_ENV_END);
-                    if (rs.wasNull()) envelopeEnd = null;
-
-                    //String alignment = rs.getString(COL_IDX_ALIGNMENT);
-
-                    // arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmm_bounds column...
-
-                    final BerkeleyLocation location = new BerkeleyLocation();
-                    location.setStart(sequenceStart);
-                    location.setEnd(sequenceEnd);
-                    location.setHmmStart(hmmStart);
-                    location.setHmmEnd(hmmEnd);
-                    location.setHmmLength(hmmLength);
-                    location.setHmmBounds(hmmBounds);
-                    location.seteValue(eValue);
-                    location.setScore(locationScore);
-                    location.setEnvelopeStart(envelopeStart);
-                    location.setEnvelopeEnd(envelopeEnd);
-                    //location.setCigarAlignment(alignment);
-                    locationCount++;
-
-                    if (match != null) {
-                        if (
-                                proteinMD5.equals(match.getProteinMD5()) &&
-                                        signatureLibraryName.equals(match.getSignatureLibraryName()) &&
-                                        sigLibRelease.equals(match.getSignatureLibraryRelease()) &&
-                                        signatureAccession.equals(match.getSignatureAccession()) &&
-                                        modelAccession.equals(match.getSignatureModels()) &&
-                                        (match.getSequenceEValue() == null && sequenceEValue == null || (sequenceEValue != null && sequenceEValue.equals(match.getSequenceEValue()))) &&
-                                        (match.getSequenceScore() == null && sequenceScore == null || (sequenceScore != null && sequenceScore.equals(match.getSequenceScore())))) {
-                            // Same Match as previous, so just add a new BerkeleyLocation
-                            match.addLocation(location);
-                        } else {
-                            // Store last match
-                            primIDX.put(match);
-                            matchCount++;
-                            if (matchCount % 400000 == 0) {
-                                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                                // Create new match and add location to it
+                                match = new BerkeleyMatch();
+                                match.setProteinMD5(proteinMD5);
+                                match.setSignatureLibraryName(signatureLibraryName);
+                                match.setSignatureLibraryRelease(sigLibRelease);
+                                match.setSignatureAccession(signatureAccession);
+                                match.setSignatureModels(modelAccession);
+                                match.setSequenceScore(sequenceScore);
+                                match.setSequenceEValue(sequenceEValue);
+                                match.addLocation(location);
                             }
-
+                        } else {
                             // Create new match and add location to it
                             match = new BerkeleyMatch();
                             match.setProteinMD5(proteinMD5);
@@ -293,22 +325,11 @@ public class CreateMatchDBFromIprscan {
                             match.setSequenceEValue(sequenceEValue);
                             match.addLocation(location);
                         }
-                    } else {
-                        // Create new match and add location to it
-                        match = new BerkeleyMatch();
-                        match.setProteinMD5(proteinMD5);
-                        match.setSignatureLibraryName(signatureLibraryName);
-                        match.setSignatureLibraryRelease(sigLibRelease);
-                        match.setSignatureAccession(signatureAccession);
-                        match.setSignatureModels(modelAccession);
-                        match.setSequenceScore(sequenceScore);
-                        match.setSequenceEValue(sequenceEValue);
-                        match.addLocation(location);
                     }
-                }
-                // Don't forget the last match!
-                if (match != null) {
-                    primIDX.put(match);
+                    // Don't forget the last match!
+                    if (match != null) {
+                        primIDX.put(match);
+                    }
                 }
             } finally {
                 if (rs != null) rs.close();
