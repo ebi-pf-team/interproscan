@@ -23,13 +23,14 @@
         <#--<#assign greyBoxYDimension=19/>-->
         <#assign signatureLinkYDimension=20/>
         <#list entry.signatures as signature>
-    <@signatureMacro.signature signature=signature entryType=entry.type entryAccession=entry.ac greyBoxYDimension=greyBoxYDimension signatureLinkYDimension=signatureLinkYDimension/>
+        <@signatureMacro.signature signature=signature entryType=entry.type entryAccession=entry.ac greyBoxYDimension=greyBoxYDimension signatureLinkYDimension=signatureLinkYDimension/>
         <#assign greyBoxYDimension=greyBoxYDimension+17/>
         <#assign signatureLinkYDimension=signatureLinkYDimension+17/>
     </#list>
     </svg>
     <#assign entryComponentYPosition=entryComponentYPosition+entryComponentHeight/>
 </#list>
+<#--Unintegrated-->
 <#assign unintegratedSignaturesComponentHeight=entryInfoHeight+protein.getUnintegratedSignaturesComponentHeightForSVG(17,20)+outerSpaceHeight/>
 <#if protein?? && protein.unintegratedSignatures?has_content>
     <svg id="unintegratedSignatures" y="${entryComponentYPosition}" width="1210"
@@ -42,11 +43,36 @@
         <#assign greyBoxYDimension=19/>
         <#assign signatureLinkYDimension=20/>
         <#list protein.unintegratedSignatures as signature>
-    <@signatureMacro.signature signature=signature entryType="Unknown" entryAccession="" greyBoxYDimension=greyBoxYDimension signatureLinkYDimension=signatureLinkYDimension/>
+        <@signatureMacro.signature signature=signature entryType="Unknown" entryAccession="" greyBoxYDimension=greyBoxYDimension signatureLinkYDimension=signatureLinkYDimension/>
+        <#assign greyBoxYDimension=greyBoxYDimension+17/>
+        <#assign signatureLinkYDimension=signatureLinkYDimension+17/>
+    </#list>
+    </svg>
+    <#assign entryComponentYPosition=entryComponentYPosition+unintegratedSignaturesComponentHeight/>
+</#if>
+<#--Sequence features (MobiDB, SignalP, TMHMM and Phobius)-->
+<#assign sequenceFeaturesComponentHeight=protein.getSequenceFeaturesComponentHeightForSVG(17,20)+outerSpaceHeight/>
+<#if protein?? && protein.sequenceFeatures?has_content>
+    <text y="${entryComponentYPosition}"
+          style="fill:#393939;font-family:Verdana,Helvetica,sans-serif;font-size:13px;font-weight:bold">
+        Sequence features
+    </text>
+<#--<#assign entryComponentYPosition=entryComponentYPosition+13/>-->
+    <svg id="sequenceFeaturesBlock" y="${entryComponentYPosition}" width="1210"
+         height="${sequenceFeaturesComponentHeight}"
+         viewBox="0 0 1210 ${sequenceFeaturesComponentHeight}">
+    <#--<svg id="sequenceFeatures" y="${entryComponentYDimension}px">-->
+    <#--<@entryInfoMacro.entryInfo entryType="Unknown" reference="ico_type_uni_small"-->
+    <#--title="Sequence Features" entryAccession="no IPR" entryName="Sequence Features" filling="#525252"-->
+    <#--textDecoration="none" height=entryInfoHeight/>-->
+        <#assign greyBoxYDimension=19/>
+        <#assign signatureLinkYDimension=20/>
+        <#list protein.sequenceFeatures as signature>
+        <@signatureMacro.signature signature=signature entryType="Unknown" entryAccession="" greyBoxYDimension=greyBoxYDimension signatureLinkYDimension=signatureLinkYDimension/>
         <#assign greyBoxYDimension=greyBoxYDimension+17/>
         <#assign signatureLinkYDimension=signatureLinkYDimension+17/>
     </#list>
     </svg>
 </#if>
-<#assign proteinFeaturesComponentHeight=entryComponentYPosition+unintegratedSignaturesComponentHeight/>
+<#assign proteinFeaturesComponentHeight=entryComponentYPosition+sequenceFeaturesComponentHeight/>
 </svg>

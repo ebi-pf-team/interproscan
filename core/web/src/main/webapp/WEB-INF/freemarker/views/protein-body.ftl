@@ -116,7 +116,24 @@
             </div>
         </#if>
 
-        <#--Residue annotation features-->
+        <#if protein.sequenceFeatures?has_content>
+        <h3>Sequence Features</h3>
+        <div class="prot_sum">
+            <div class="bot-row">
+                <div class="bot-row-line-top"></div>
+                <ol class="signatures">
+                    <#list protein.sequenceFeatures as signature>
+                        <li class="signature">
+                            <@signatureMacro.signature proteinAc=proteinAc proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale entryAc="null" colourClass="uni" />
+                        </li>
+                    </#list>
+                </ol>
+                <div class="bot-row-line-bot"></div>
+            </div>
+        </div>
+        </#if>
+
+    <#--Residue annotation features-->
         <#if protein.sites?has_content>
             <#global residueId=0>
             <div id="sites">

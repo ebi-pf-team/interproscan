@@ -240,7 +240,12 @@ public final class SimpleProtein implements Serializable {
         final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
         for (SimpleEntry entry : this.entries) {
             if (!entry.isIntegrated()) {
-                signatures.addAll(entry.getSignatures());
+                for (SimpleSignature signature : entry.getSignatures()) {
+                    if (!MatchDataSource.isSequenceFeature(signature.getDataSource())) {
+                        signatures.add(signature);
+                    }
+                }
+                break;
             }
         }
         Collections.sort(signatures);
@@ -259,6 +264,43 @@ public final class SimpleProtein implements Serializable {
         int resultValue = 0;
         if (getUnintegratedSignatures() != null) {
             resultValue = (getUnintegratedSignatures().size() - 1) * heightPerSignatureLine + globalHeight;
+        }
+        return resultValue;
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
+    public List<SimpleSignature> getSequenceFeatures() {
+        final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
+        for (SimpleEntry entry : this.entries) {
+            if (!entry.isIntegrated()) {
+                for (SimpleSignature signature : entry.getSignatures()) {
+                    if (MatchDataSource.isSequenceFeature(signature.getDataSource())) {
+                        signatures.add(signature);
+                    }
+                }
+                break;
+            }
+        }
+        Collections.sort(signatures);
+        return signatures;
+    }
+
+    /**
+     * Returns the height in pixel for the un-integrated signatures section within the SVG template.
+     *
+     * @param heightPerSignatureLine
+     * @param globalHeight
+     * @return
+     */
+    public int getSequenceFeaturesComponentHeightForSVG(int heightPerSignatureLine, int globalHeight) {
+        //default
+        int resultValue = 0;
+        if (getSequenceFeatures() != null) {
+            resultValue = (getSequenceFeatures().size() - 1) * heightPerSignatureLine + globalHeight;
         }
         return resultValue;
     }

@@ -116,7 +116,7 @@ public class ProteinViewHelper {
             int entryComponentHeight = entryInfoHeight + outerSpaceHeight + entry.getEntryComponentHeightForSVG(17, 20);
             totalHeight += entryComponentHeight;
         }
-        totalHeight += entryInfoHeight + outerSpaceHeight + protein.getUnintegratedSignaturesComponentHeightForSVG(17, 20);
+        totalHeight += entryInfoHeight + outerSpaceHeight + protein.getUnintegratedSignaturesComponentHeightForSVG(17, 20) + protein.getSequenceFeaturesComponentHeightForSVG(17, 20);
         return totalHeight;
     }
 }
