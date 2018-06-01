@@ -72,16 +72,16 @@ public class RunMobiDBBinaryStep extends RunBinaryStep {
 
 
         if(this.getFullPathToPython().trim().isEmpty()){
-            command.add("python");
+            command.add("python3");
         }else{
             command.add(this.getFullPathToPython());
         }
 
         command.add(fullPathToBinary);
-        command.addAll(getBinarySwitchesAsList());
-        command.add("-bin");
-        String absoluteBinxDirectoryPath = new File(fullPathToBinDirectory).getAbsolutePath();
-        command.add(absoluteBinxDirectoryPath);
+//        command.addAll(getBinarySwitchesAsList());
+//        command.add("-bin");
+//        String absoluteBinxDirectoryPath = new File(fullPathToBinDirectory).getAbsolutePath();
+//        command.add(absoluteBinxDirectoryPath);
         //command.add("-o");
         //String absolutePathToOutputFileName = new File(outputFileName).getAbsolutePath();
         //command.add(absolutePathToOutputFileName);
