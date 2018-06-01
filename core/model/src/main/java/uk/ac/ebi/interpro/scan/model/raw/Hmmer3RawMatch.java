@@ -6,6 +6,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
+//import uk.ac.ebi.interpro.scan.util.Utilities;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.*;
@@ -193,11 +195,12 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
             Hmmer3Match match = splitGroupToMatch.get(m.getSplitGroup());
             Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment hmmer3LocationFragment = new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
-                    m.getLocationStart(), m.getLocationEnd()
+                    m.getLocationStart(), m.getLocationEnd(), m.getLocFragmentBounds()
             );
+//            System.out.println("hmmer3LocationFragment: bounds was [" + m.getLocFragmentBounds() + "] -- > " + hmmer3LocationFragment.toString());
             if (match == null){
                 //create new match or new location
-                Hmmer3Match.Hmmer3Location hmmer3Location = getLocation(m, hmmLength);
+                Hmmer3Match.Hmmer3Location hmmer3Location = getLocation(m, hmmLength, m.getLocFragmentBounds());
                 if (m.getSplitGroup() == null){
                     // this is a normal single location
                     nonSplitLocations.add(hmmer3Location);
@@ -207,12 +210,14 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                     match.addLocation(hmmer3Location);
                     splitGroupToMatch.put(m.getSplitGroup(), match);
                 }
+//                System.out.println("hmmer3Location:" + hmmer3Location.toString());
             }else{
                 //we already have the match in the splitgroup match
                 //this is a discontinuous domain as it has a split group
                 Set<Hmmer3Match.Hmmer3Location> locations = match.getLocations();
                 Hmmer3Match.Hmmer3Location location = locations.iterator().next();
                 location.addLocationFragment(hmmer3LocationFragment);
+//                System.out.println("location:" + location.toString());
             }
 
         }
@@ -222,10 +227,11 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
             splitGroupToMatch.put(matchUUID, nonSplitMatch);
         }
         //return new Hmmer3Match(signature, score, evalue, locations);
+//        System.out.println("Matches:" + splitGroupToMatch.values().toString());
         return splitGroupToMatch.values();
     }
 
-    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength) {
+    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength, String bounds) {
         boolean postProcessed = false;
         if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch) {
             postProcessed = true;
@@ -242,7 +248,8 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 HmmBounds.parseSymbol(m.getHmmBounds()),
                 m.getEnvelopeStart(),
                 m.getEnvelopeEnd(),
-                postProcessed
+                postProcessed,
+                bounds
         );
     }
 

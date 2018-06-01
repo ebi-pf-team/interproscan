@@ -59,6 +59,10 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     // 'end' is reserved word in SQL.
     private int end;
 
+    @Column(name = "loc_bounds", nullable = false)
+    // 'end' is reserved word in SQL.
+    private String bounds;
+
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JsonBackReference
     private Location location;
@@ -72,6 +76,13 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     public LocationFragment(int start, int end) {
         setStart(start);
         setEnd(end);
+        bounds = "c";
+    }
+
+    public LocationFragment(int start, int end, String bounds) {
+        setStart(start);
+        setEnd(end);
+        setBounds(bounds);
     }
 
     /**
@@ -124,6 +135,20 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
      */
     private void setEnd(int end) {
         this.end = end;
+    }
+
+    @XmlAttribute(required = true)
+    public String getBounds() {
+        return bounds;
+    }
+
+    /**
+     * Location bounds for this LocationFragment.
+     *
+     * @param bounds characteristics of this LocationFragment.
+     */
+    public void setBounds(String bounds) {
+        this.bounds = bounds;
     }
 
     /**

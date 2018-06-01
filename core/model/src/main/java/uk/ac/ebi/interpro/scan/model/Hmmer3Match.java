@@ -103,8 +103,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
 
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
-                              int envelopeStart, int envelopeEnd, boolean postProcessed) {
-            super(new Hmmer3LocationFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
+                              int envelopeStart, int envelopeEnd, boolean postProcessed, String bounds) {
+            super(new Hmmer3LocationFragment(start, end, bounds), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
             setPostProcessed(postProcessed);
@@ -166,7 +166,13 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), this.isPostProcessed());
+            String tempLocationBounds = "c";
+            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(),
+                    this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), this.isPostProcessed(), tempLocationBounds);
+            Set<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> locationFragments = this.getLocationFragments();
+            for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment locationFragment: locationFragments) {
+                clone.addLocationFragment(locationFragment);
+            }
             return clone;
         }
 
@@ -183,6 +189,10 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
 
             public Hmmer3LocationFragment(int start, int end) {
                 super(start, end);
+            }
+
+            public Hmmer3LocationFragment(int start, int end, String bounds) {
+                super(start, end, bounds);
             }
 
             @Override

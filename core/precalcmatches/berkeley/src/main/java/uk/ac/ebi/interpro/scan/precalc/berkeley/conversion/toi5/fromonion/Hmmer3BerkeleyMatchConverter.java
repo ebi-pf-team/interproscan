@@ -42,6 +42,9 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                     ? location.getEnd() == null ? 0 : location.getEnd()
                     : location.getEnvelopeEnd();
 
+            //TODO use locationFragments, needs refactoring
+            String locationBounds = "c";
+
             bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
 
             locations.add(new Hmmer3Match.Hmmer3Location(
@@ -55,7 +58,8 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                     bounds,
                     envStart,
                     envEnd,
-                    postProcessed
+                    postProcessed,
+                    locationBounds
             ));
         }
 

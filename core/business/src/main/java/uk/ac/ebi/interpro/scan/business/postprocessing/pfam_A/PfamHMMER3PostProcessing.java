@@ -193,10 +193,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
 //                Utilities.verboseLog("testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
 //            }
 //        }
+        Utilities.verboseLog("The matches found so far: ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             Utilities.verboseLog(pfamHmmer3RawMatch.getModelId() + " [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
         }
+        Utilities.verboseLog("  --ooo--- ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             String modelId = pfamHmmer3RawMatch.getModelId();
             Utilities.verboseLog("ModelId to consider: " + modelId + " region: [" +
@@ -209,39 +211,78 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 pfamHmmer3RawMatch.setSplitGroup(splitGroup);
                 //get new regions
                 List<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> locationFragments = new ArrayList<>();
+                int nestedFragments = 0;
                 for (PfamHmmer3RawMatch rawMatch : filteredMatches.getMatches()) {
                     if (nestedModels.contains(rawMatch.getModelId()) &&
                             (matchesOverlap(rawMatch, pfamHmmer3RawMatch))) {
                         locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
                                 rawMatch.getLocationStart(), rawMatch.getLocationEnd()));
+                        nestedFragments ++;
                     }
                 }
-                Utilities.verboseLog("locationFragments to consider: " + locationFragments.toString());
+                Utilities.verboseLog("locationFragments to consider:  (# " + nestedFragments + ")" + locationFragments.toString());
                 //the following is for testing only should be removed in the main code later
 //                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
 //                        380, 395));
                 //sort these according to the start and stop positions
                 Collections.sort(locationFragments);
-                int newLocationStart = pfamHmmer3RawMatch.getLocationStart();
-                int newLocationEnd = pfamHmmer3RawMatch.getLocationEnd();
-                int finalLocationEnd = pfamHmmer3RawMatch.getLocationEnd();
-                for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
-                    Utilities.verboseLog("region to consider: " + fragment.toString());
-                    newLocationEnd = fragment.getStart() - 1;
-                    Utilities.verboseLog("New Region: " + newLocationStart + "-" + newLocationEnd);
-                    PfamHmmer3RawMatch pfMatch = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd);
-                    pfMatch.setSplitGroup(splitGroup);
-                    filteredRawProtein.addMatch(pfMatch);
-                    newLocationStart = fragment.getEnd() + 1;
-                    Utilities.verboseLog(" new Match :" + pfMatch.toString());
+
+                String fragmentBounds = "c";
+
+                List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
+                rawDiscontinuousMatches.add(pfamHmmer3RawMatch);
+                if (nestedFragments > 1){
+                    Utilities.verboseLog("nestedFragments >1 require special investigation ");
                 }
-                //deal with final region
-                Utilities.verboseLog("The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
-                PfamHmmer3RawMatch pfMatch = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd);
-                pfMatch.setSplitGroup(splitGroup);
-                filteredRawProtein.addMatch(pfMatch);
-                //resolve the location frgaments
+                for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
+                    List<PfamHmmer3RawMatch> newMatchesFromFragment  = new ArrayList<>();
+                    for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
+                        int newLocationStart = rawDiscontinuousMatch.getLocationStart();
+                        int newLocationEnd = rawDiscontinuousMatch.getLocationEnd();
+                        int finalLocationEnd = pfamHmmer3RawMatch.getLocationEnd();
+
+                        boolean twoAtualRegions = false;
+                        Utilities.verboseLog("region to consider: " + fragment.toString());
+                        if (fragment.getStart() <= newLocationStart) {
+                            newLocationStart = fragment.getEnd() + 1;
+                            fragmentBounds = "s";
+                        } else if (fragment.getEnd() >= newLocationEnd) {
+                            newLocationEnd = fragment.getStart() - 1;
+                            fragmentBounds = "e";
+                        } else if (fragment.getStart() > newLocationStart && fragment.getEnd() < newLocationEnd) {
+                            //we have two new fragments
+                            newLocationEnd = fragment.getStart() - 1;
+                            twoAtualRegions = true;
+                            fragmentBounds = "e";
+                        }
+                        Utilities.verboseLog("New Region: " + newLocationStart + "-" + newLocationEnd);
+                        PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentBounds);
+                        pfMatchRegionOne.setSplitGroup(splitGroup);
+                        pfMatchRegionOne.setLocFragmentBounds(fragmentBounds);
+                        newMatchesFromFragment.add(pfMatchRegionOne);
+                        newLocationStart = fragment.getEnd() + 1;
+                        Utilities.verboseLog(" New Match for Region One  :" + pfMatchRegionOne.toString());
+                        if (twoAtualRegions) {
+                            //deal with final region
+                            fragmentBounds = "s";
+                            Utilities.verboseLog("The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
+                            PfamHmmer3RawMatch pfMatchRegionTwo = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd, fragmentBounds);
+                            pfMatchRegionTwo.setSplitGroup(splitGroup);
+                            pfMatchRegionTwo.setLocFragmentBounds(fragmentBounds);
+                            newMatchesFromFragment.add(pfMatchRegionTwo);
+                            Utilities.verboseLog(" New Match for Region Two :" + pfMatchRegionTwo.toString());
+                        }
+                    }
+                    rawDiscontinuousMatches = newMatchesFromFragment;
+                }
+                //now add the processed discontinuous matches for further post processing or filtering into actual matches
+                for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
+                    filteredRawProtein.addMatch(rawDiscontinuousMatch);
+                }
+
+                    //resolve the location frgaments
             } else {
+                String fragmentType = "c";
                 filteredRawProtein.addMatch(pfamHmmer3RawMatch);
             }
         }
@@ -279,7 +320,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
     }
 
-    private PfamHmmer3RawMatch getTempPfamHmmer3RawMatch(PfamHmmer3RawMatch rawMatch, int start, int end) {
+    private PfamHmmer3RawMatch getTempPfamHmmer3RawMatch(PfamHmmer3RawMatch rawMatch, int start, int end, String bounds) {
         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
                 rawMatch.getSequenceIdentifier(),
                 rawMatch.getModelId(),
@@ -301,6 +342,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 rawMatch.getDomainIeValue(),
                 rawMatch.getDomainBias()
         );
+        match.setLocFragmentBounds(bounds);
 
         return match;
     }

@@ -46,6 +46,14 @@
 
     <dependencies>
 
+        <!-- util interproscan -->
+        <!--<dependency>-->
+            <!--<groupId>uk.ac.ebi.interpro.scan</groupId>-->
+            <!--<artifactId>util</artifactId>-->
+            <!--<version>5.28-67.0</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
         <!-- JAXB API -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
