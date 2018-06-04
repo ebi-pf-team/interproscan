@@ -118,7 +118,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
      */
     private RawProtein processProtein(final RawProtein<PfamHmmer3RawMatch> rawProteinUnfiltered, final Map<String, Set<String>> nestedModelsMap, final List<SeedAlignment> seedAlignments) {
         int verboseLevel = 25;
-        Utilities.verboseLog("Start processProtein ---oo--");
+        Utilities.verboseLog(verboseLevel,"Start processProtein ---oo--");
         RawProtein<PfamHmmer3RawMatch> filteredMatches = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
         RawProtein<PfamHmmer3RawMatch> filteredRawProtein = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
 
@@ -199,7 +199,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
             Utilities.verboseLog(verboseLevel,pfamHmmer3RawMatch.getModelId() + " [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
         }
-        Utilities.verboseLog("  --ooo--- ");
+        Utilities.verboseLog(verboseLevel,"  --ooo--- ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             String modelId = pfamHmmer3RawMatch.getModelId();
             Utilities.verboseLog(verboseLevel,"ModelId to consider: " + modelId + " region: [" +
