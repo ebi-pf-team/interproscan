@@ -117,6 +117,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return a List of filtered matches.
      */
     private RawProtein processProtein(final RawProtein<PfamHmmer3RawMatch> rawProteinUnfiltered, final Map<String, Set<String>> nestedModelsMap, final List<SeedAlignment> seedAlignments) {
+        int verboseLevel = 25;
         Utilities.verboseLog("Start processProtein ---oo--");
         RawProtein<PfamHmmer3RawMatch> filteredMatches = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
         RawProtein<PfamHmmer3RawMatch> filteredRawProtein = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
@@ -126,7 +127,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
         final Set<PfamHmmer3RawMatch> seedMatches = new HashSet<PfamHmmer3RawMatch>();
 
         if (seedAlignments != null) {        // TODO This check can be removed, once the seed alignment stuff has been sorted.
-            Utilities.verboseLog("seedAlignments count:" + seedAlignments.size());
+            Utilities.verboseLog(verboseLevel,"seedAlignments count:" + seedAlignments.size());
             for (final SeedAlignment seedAlignment : seedAlignments) {
                 for (final PfamHmmer3RawMatch candidateMatch : rawProteinUnfiltered.getMatches()) {
 
@@ -136,7 +137,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                 seedAlignment.getAlignmentEnd() >= candidateMatch.getLocationEnd()) {
                             // Found a match to a seed, where the coordinates fall within the seed alignment.
                             // Add it directly to the filtered rawProteinUnfiltered...
-                            Utilities.verboseLog("found match to a seed - candidateMatch and seedMatch: " + candidateMatch);
+                            Utilities.verboseLog(verboseLevel,"found match to a seed - candidateMatch and seedMatch: " + candidateMatch);
                             filteredMatches.addMatch(candidateMatch);
                             seedMatches.add(candidateMatch);
                         }
@@ -148,16 +149,16 @@ public class PfamHMMER3PostProcessing implements Serializable {
         // Then iterate over the non-seed raw rawProteinUnfiltered, sorted in order ievalue ASC score DESC
         final Set<PfamHmmer3RawMatch> unfilteredByEvalue = new TreeSet<PfamHmmer3RawMatch>(rawProteinUnfiltered.getMatches());
 
-        Utilities.verboseLog("unfilteredByEvalue count: " + unfilteredByEvalue.size());
-        Utilities.verboseLog("unfilteredByEvalue: " + unfilteredByEvalue);
+        Utilities.verboseLog(verboseLevel,"unfilteredByEvalue count: " + unfilteredByEvalue.size());
+        Utilities.verboseLog(verboseLevel,"unfilteredByEvalue: " + unfilteredByEvalue);
         for (final RawMatch rawMatch : unfilteredByEvalue) {
             final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
-            Utilities.verboseLog("consider match - candidateMatch: " + candidateMatch);
+            Utilities.verboseLog(verboseLevel,"consider match - candidateMatch: " + candidateMatch);
             if (!seedMatches.contains(candidateMatch)) {
                 final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModelId());
 
                 boolean passes = true;   // Optimistic algorithm!
-                Utilities.verboseLog("candidateMatchClan: " + candidateMatchClan);
+                Utilities.verboseLog(verboseLevel,"candidateMatchClan: " + candidateMatchClan);
                 if (candidateMatchClan != null) {
                     // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
                     for (final PfamHmmer3RawMatch match : filteredMatches.getMatches()) {
@@ -171,7 +172,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                     passes = false;
                                     break;  // out of loop over filtered rawProteinUnfiltered.
                                 } else {
-                                    Utilities.verboseLog("nested match: candidateMatch - " + candidateMatch
+                                    Utilities.verboseLog(verboseLevel,"nested match: candidateMatch - " + candidateMatch
                                             + " other match:- " + match);
                                 }
                             }
@@ -193,19 +194,19 @@ public class PfamHMMER3PostProcessing implements Serializable {
 //                Utilities.verboseLog("testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
 //            }
 //        }
-        Utilities.verboseLog("The matches found so far: ");
+        Utilities.verboseLog(verboseLevel,"The matches found so far: ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
-            Utilities.verboseLog(pfamHmmer3RawMatch.getModelId() + " [" +
+            Utilities.verboseLog(verboseLevel,pfamHmmer3RawMatch.getModelId() + " [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
         }
         Utilities.verboseLog("  --ooo--- ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             String modelId = pfamHmmer3RawMatch.getModelId();
-            Utilities.verboseLog("ModelId to consider: " + modelId + " region: [" +
+            Utilities.verboseLog(verboseLevel,"ModelId to consider: " + modelId + " region: [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
 
             Set<String> nestedModels = nestedModelsMap.get(modelId);
-            Utilities.verboseLog("nestedModels: " + nestedModels);
+            Utilities.verboseLog(verboseLevel,"nestedModels: " + nestedModels);
             if (nestedModels != null && ! nestedModels.isEmpty()) {
                 final UUID splitGroup = UUID.randomUUID();
                 pfamHmmer3RawMatch.setSplitGroup(splitGroup);
@@ -220,57 +221,66 @@ public class PfamHMMER3PostProcessing implements Serializable {
                         nestedFragments ++;
                     }
                 }
-                Utilities.verboseLog("locationFragments to consider:  (# " + nestedFragments + ")" + locationFragments.toString());
+                Utilities.verboseLog(verboseLevel,"locationFragments to consider:  (# " + nestedFragments + ")" + locationFragments.toString());
                 //the following is for testing only should be removed in the main code later
 //                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
 //                        380, 395));
                 //sort these according to the start and stop positions
                 Collections.sort(locationFragments);
 
+                //where is tthe fragment discontinous, at start, at both start and end, or only at the end of the domain sequence
                 String fragmentBounds = "c";
 
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
                 rawDiscontinuousMatches.add(pfamHmmer3RawMatch);
                 if (nestedFragments > 1){
-                    Utilities.verboseLog("nestedFragments >1 require special investigation ");
+                    Utilities.verboseLog(verboseLevel,"nestedFragments >1 require special investigation ");
                 }
                 for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
                     List<PfamHmmer3RawMatch> newMatchesFromFragment  = new ArrayList<>();
                     for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
+                        Utilities.verboseLog(verboseLevel,"rawDiscontinuousMatch to consider: " + rawDiscontinuousMatch.toString());
                         int newLocationStart = rawDiscontinuousMatch.getLocationStart();
                         int newLocationEnd = rawDiscontinuousMatch.getLocationEnd();
-                        int finalLocationEnd = pfamHmmer3RawMatch.getLocationEnd();
+                        int finalLocationEnd = rawDiscontinuousMatch.getLocationEnd();
+                        if (! regionsOverlap(newLocationStart,newLocationEnd, fragment.getStart(), fragment.getEnd())){
+                            newMatchesFromFragment.add(rawDiscontinuousMatch);  // we add this match as previously processed
+                            continue;
+                        }
 
+                        if(fragmentBounds.equals("c")){
+                            fragmentBounds = "";
+                        }
                         boolean twoAtualRegions = false;
-                        Utilities.verboseLog("region to consider: " + fragment.toString());
+                        Utilities.verboseLog(verboseLevel,"region to consider: " + fragment.toString());
                         if (fragment.getStart() <= newLocationStart) {
                             newLocationStart = fragment.getEnd() + 1;
                             fragmentBounds = "s";
                         } else if (fragment.getEnd() >= newLocationEnd) {
                             newLocationEnd = fragment.getStart() - 1;
-                            fragmentBounds = "e";
+                            fragmentBounds = fragmentBounds + "e";
                         } else if (fragment.getStart() > newLocationStart && fragment.getEnd() < newLocationEnd) {
                             //we have two new fragments
                             newLocationEnd = fragment.getStart() - 1;
                             twoAtualRegions = true;
-                            fragmentBounds = "e";
+                            fragmentBounds = fragmentBounds +  "e";
                         }
-                        Utilities.verboseLog("New Region: " + newLocationStart + "-" + newLocationEnd);
+                        Utilities.verboseLog(verboseLevel,"New Region: " + newLocationStart + "-" + newLocationEnd);
                         PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentBounds);
                         pfMatchRegionOne.setSplitGroup(splitGroup);
                         pfMatchRegionOne.setLocFragmentBounds(fragmentBounds);
                         newMatchesFromFragment.add(pfMatchRegionOne);
                         newLocationStart = fragment.getEnd() + 1;
-                        Utilities.verboseLog(" New Match for Region One  :" + pfMatchRegionOne.toString());
+                        Utilities.verboseLog(verboseLevel," New Match for Region One  :" + pfMatchRegionOne.toString());
                         if (twoAtualRegions) {
                             //deal with final region
                             fragmentBounds = "s";
-                            Utilities.verboseLog("The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
+                            Utilities.verboseLog(verboseLevel,"The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
                             PfamHmmer3RawMatch pfMatchRegionTwo = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd, fragmentBounds);
                             pfMatchRegionTwo.setSplitGroup(splitGroup);
                             pfMatchRegionTwo.setLocFragmentBounds(fragmentBounds);
                             newMatchesFromFragment.add(pfMatchRegionTwo);
-                            Utilities.verboseLog(" New Match for Region Two :" + pfMatchRegionTwo.toString());
+                            Utilities.verboseLog(verboseLevel," New Match for Region Two :" + pfMatchRegionTwo.toString());
                         }
                     }
                     rawDiscontinuousMatches = newMatchesFromFragment;
@@ -299,9 +309,16 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return true if the two domain matches overlap.
      */
     boolean matchesOverlap(PfamHmmer3RawMatch one, PfamHmmer3RawMatch two) {
-        return !
-                ((one.getLocationStart() > two.getLocationEnd()) ||
-                        (two.getLocationStart() > one.getLocationEnd()));
+        return Math.max(one.getLocationStart(),two.getLocationStart()) <= Math.min(one.getLocationEnd(),two.getLocationEnd());
+//        return !
+//                ((one.getLocationStart() > two.getLocationEnd()) ||
+//                        (two.getLocationStart() > one.getLocationEnd()));
+    }
+
+    boolean regionsOverlap(int startRegionOne, int endRegionOne, int startRegionTwo, int endRegionTwo) {
+        boolean regionsOverlap = false;
+        return Math.max(startRegionOne,startRegionTwo) <= Math.min(endRegionOne,endRegionTwo);
+
     }
 
     /**
