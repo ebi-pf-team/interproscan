@@ -274,7 +274,7 @@ public final class SimpleProtein implements Serializable {
      * @return
      */
     public List<SimpleSignature> getSequenceFeatures() {
-        final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
+        final List<SimpleSignature> signatures = new ArrayList<>();
         for (SimpleEntry entry : this.entries) {
             if (!entry.isIntegrated()) {
                 for (SimpleSignature signature : entry.getSignatures()) {
@@ -503,7 +503,11 @@ public final class SimpleProtein implements Serializable {
 
                 // 4) Create SimpleLocation object
                 final Location location = (Location) o;
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd(), signatureModels);
+                String feature = null;
+                if (location instanceof MobiDBMatch.MobiDBLocation) {
+                    feature = ((MobiDBMatch.MobiDBLocation) location).getSequenceFeature();
+                }
+                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd(), signatureModels, feature);
 
                 // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
                 simpleSignature.getLocations().add(simpleLocation);

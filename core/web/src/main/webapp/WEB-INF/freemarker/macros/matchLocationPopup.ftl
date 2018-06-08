@@ -29,7 +29,7 @@
         </#if>
         <a href='${linkUrl}' class="ext">${signature.ac} </a>
         <span>(<#if signature.name??>${signature.name}<#else>${signature.ac}</#if>)</span>
-        <#if location.models?? && location.models?has_content && location.models != "null" && signature.ac != location.models>
+        <#if location.models?? && location.models?has_content && location.models != "null"  && location.models != 'N/A' && signature.ac != location.models>
         <#-- Gene3D or SUPERFAMILY where along with the signatureAc we also show the modelAc responsible for the hit-->
             <br/>
             Model: ${location.models}

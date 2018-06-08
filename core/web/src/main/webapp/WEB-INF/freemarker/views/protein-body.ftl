@@ -18,6 +18,7 @@
 
 
     <#import "../macros/signature.ftl" as signatureMacro>
+    <#import "../macros/feature.ftl" as featureMacro>
     <#if !standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
@@ -123,9 +124,7 @@
                 <div class="bot-row-line-top"></div>
                 <ol class="signatures">
                     <#list protein.sequenceFeatures as signature>
-                        <li class="signature">
-                            <@signatureMacro.signature proteinAc=proteinAc proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale entryAc="null" colourClass="uni" />
-                        </li>
+                        <@featureMacro.feature proteinAc=proteinAc proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale entryAc="null" colourClass="uni" />
                     </#list>
                 </ol>
                 <div class="bot-row-line-bot"></div>
