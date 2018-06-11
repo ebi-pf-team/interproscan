@@ -47,7 +47,7 @@ public class MatchCloneTest {
         final Match coilsMatch = new CoilsMatch(coilsSig, "MOD001", Collections.singleton(coilsLocation));
         matches.add(coilsMatch);
 
-        final Hmmer3Match.Hmmer3Location pfamLocation = new Hmmer3Match.Hmmer3Location(10, 20, 12.2, 2.2, 15, 30, 15, HmmBounds.COMPLETE, 10, 10, false);
+        final Hmmer3Match.Hmmer3Location pfamLocation = new Hmmer3Match.Hmmer3Location(10, 20, 12.2, 2.2, 15, 30, 15, HmmBounds.COMPLETE, 10, 10, false, "c");
         final Hmmer3Match pfamMatch = new Hmmer3Match(pfamSig, "MOD001", 101.0d, 10d, Collections.singleton(pfamLocation));
         matches.add(pfamMatch);
 

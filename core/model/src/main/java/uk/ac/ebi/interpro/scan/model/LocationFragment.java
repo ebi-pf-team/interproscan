@@ -60,7 +60,6 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     private int end;
 
     @Column(name = "loc_bounds", nullable = false)
-    // 'end' is reserved word in SQL.
     private String bounds;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)

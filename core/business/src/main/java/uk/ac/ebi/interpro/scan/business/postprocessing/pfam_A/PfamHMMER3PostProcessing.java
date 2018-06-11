@@ -228,7 +228,8 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 //sort these according to the start and stop positions
                 Collections.sort(locationFragments);
 
-                //where is tthe fragment discontinous, at start, at both start and end, or only at the end of the domain sequence
+                //where is the fragment discontinous? at start (s), at both start and end (se), or only at the end (e) of the domain sequence
+                // or not a discontinous fragment (c)
                 String fragmentBounds = "c";
 
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
@@ -290,7 +291,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                     filteredRawProtein.addMatch(rawDiscontinuousMatch);
                 }
 
-                    //resolve the location frgaments
+                    //resolve the location fragments
             } else {
                 String fragmentType = "c";
                 filteredRawProtein.addMatch(pfamHmmer3RawMatch);
