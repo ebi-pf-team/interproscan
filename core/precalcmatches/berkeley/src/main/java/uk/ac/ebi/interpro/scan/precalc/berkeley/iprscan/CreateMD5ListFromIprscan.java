@@ -117,6 +117,7 @@ public class CreateMD5ListFromIprscan {
                     System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
                 }
             }
+            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
         } catch (ClassNotFoundException e) {
