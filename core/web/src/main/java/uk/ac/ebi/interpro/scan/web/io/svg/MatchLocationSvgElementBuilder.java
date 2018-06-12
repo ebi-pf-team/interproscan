@@ -39,6 +39,10 @@ public class MatchLocationSvgElementBuilder {
                 int locStart = simpleLocation.getStart();
                 int locEnd = simpleLocation.getEnd();
                 String models = simpleLocation.getModels();
+                String feature = simpleLocation.getFeature();
+                if (!(feature == null || feature.equals(""))) {
+                    continue; // TODO IBU-6881 Remove this limitation when MobiDB features data populated
+                }
                 int scaledLocationStart = ScaledLocationUtil.getScaledLocationStart(scaleFactor, locStart);
                 int scaledRectangleWidth = ScaledLocationUtil.getScaledLocationLength(scaleFactor, locStart, locEnd + 1, proteinLength); // Blob drawn as ending at location + 1 (start of next amino acid)
 
@@ -55,7 +59,10 @@ public class MatchLocationSvgElementBuilder {
                 result.append("style=\"stroke:black;stroke-width:1.0\">");
                 result.append("<title>" + locStart + " - " + locEnd);
                 if (models != null && !models.equals("")) {
-                    result.append(" (" + models + ")");
+                    result.append(" (model: " + models + ")");
+                }
+                if (feature != null && !feature.equals("")) {
+                    result.append(" (feature: " + feature + ")");
                 }
                 result.append("</title>");
                 result.append("</rect>");
