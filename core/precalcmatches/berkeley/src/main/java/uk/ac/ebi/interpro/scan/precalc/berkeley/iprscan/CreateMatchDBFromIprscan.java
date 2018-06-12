@@ -164,6 +164,8 @@ public class CreateMatchDBFromIprscan {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
+                int locationCount = 0, matchCount = 0;
+
                 for (Map.Entry<String, String> md5RangesMapEntry : md5RangesMap.entrySet()) {
                     final String md5Start = md5RangesMapEntry.getKey();
                     final String md5End = md5RangesMapEntry.getValue();
@@ -173,8 +175,6 @@ public class CreateMatchDBFromIprscan {
                     ps.setString(2, md5End);
                     rs = ps.executeQuery();
                     BerkeleyMatch match = null;
-
-                    int locationCount = 0, matchCount = 0;
 
                     while (rs.next()) {
                         // Open the BerkeleyDB at the VERY LAST MOMENT - prevent timeouts.
