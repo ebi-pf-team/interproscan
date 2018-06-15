@@ -73,7 +73,7 @@
         <property name="inputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="domainToFamilyMapFile" value="${gene3d.model2sf_map.path}"/>
         <property name="discontinuousRegionsFile" value="${gene3d.discontinuous_regs.path}"/>
-        <property name="fullPathToPython" value="${python.command}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
         <property name="fullPathToBinary" value="${assign.cath.superfamilies.path}"/>
         <property name="binarySwitches" value="${assign.cath.superfamilies.switches.gene3d}"/>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>

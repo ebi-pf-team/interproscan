@@ -240,7 +240,7 @@
                 <ref bean="stepRunGetOrf"/>
             </list>
         </property>
-        <property name="fullPathToPython" value="${python.command}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
         <property name="fullPathToBinary" value="${binary.getorf.parser.path}"/>
         <property name="orfsFilterSize" value="${binary.getorf.parser.filtersize}"/>
         <property name="binarySwitches" value="${getorf.parser.binary.switches}"/>
