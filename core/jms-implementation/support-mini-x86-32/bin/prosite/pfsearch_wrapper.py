@@ -177,7 +177,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
         if not os.path.isfile(profiles[prf][0]):
             #profile not available
             continue
-        output = subprocess.check_output(comd_to_run)
+        output = subprocess.check_output(comd_to_run).decode('ascii')
         #append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
         #if prf == 'MF_00005':
         #    append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
@@ -241,7 +241,7 @@ if __name__ == "__main__":
             #stats_filename = fasta_file + ".stats"
             #run the pfsearch binary
             pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, fasta_file, command_index)
-            sys.stderr.write('prfs: ' + str(count))
+            sys.stderr.write('prfs: ' + str(pfsearch_cmd_run_count))
     except:
         print(sys.version)
         print("Unexpected error: ")
