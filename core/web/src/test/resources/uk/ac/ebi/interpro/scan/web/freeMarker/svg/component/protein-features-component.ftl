@@ -55,7 +55,7 @@
 <#if protein?? && protein.sequenceFeatures?has_content>
     <text y="${entryComponentYPosition}"
           style="fill:#393939;font-family:Verdana,Helvetica,sans-serif;font-size:13px;font-weight:bold">
-        Sequence features
+        Other features
     </text>
 <#--<#assign entryComponentYPosition=entryComponentYPosition+13/>-->
     <svg id="sequenceFeaturesBlock" y="${entryComponentYPosition}" width="1210"
