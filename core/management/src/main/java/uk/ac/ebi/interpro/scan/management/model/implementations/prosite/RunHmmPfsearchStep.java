@@ -142,7 +142,7 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
 
         List<String> command = new ArrayList<String>();
         if(this.getFullPathToPython().trim().isEmpty()){
-            command.add("python");
+            command.add("python3");
         }else{
             command.add(this.getFullPathToPython());
         }

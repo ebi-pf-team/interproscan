@@ -90,7 +90,7 @@ public class RunGetOrfParserStep extends RunBinaryStep {
         final List<String> command = new ArrayList<String>();
 
         if(this.getFullPathToPython().trim().isEmpty()){
-            command.add("python");
+            command.add("python3");
         }else{
             command.add(this.getFullPathToPython());
         }
