@@ -118,7 +118,7 @@
         </#if>
 
         <#if protein.sequenceFeatures?has_content>
-        <h3>Sequence Features</h3>
+        <h3>Other features</h3>
         <div class="prot_sum">
             <div class="bot-row">
                 <div class="bot-row-line-top"></div>
