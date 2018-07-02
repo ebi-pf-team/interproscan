@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.28-67.0</version>
+        <version>5.29-68.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-persistence</artifactId>
-    <version>5.28-67.0</version>
+    <version>5.29-68.0</version>
 
     <packaging>jar</packaging>
 
@@ -37,19 +37,19 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.28-67.0</version>
+            <version>5.29-68.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.28-67.0</version>
+            <version>5.29-68.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.28-67.0</version>
+            <version>5.29-68.0</version>
         </dependency>
 
         <dependency>
@@ -62,6 +62,8 @@
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
         <!--

@@ -88,7 +88,7 @@
         <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
         <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
         <!--Add Perl command-->
-        <property name="fullPathToPython" value="${python.command}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
         <!--PantherScore python script-->
         <property name="fullPathToBinary" value="${binary.pantherscore.path}"/>
         <property name="binarySwitches" value="${pantherscore.binary.switches}"/>

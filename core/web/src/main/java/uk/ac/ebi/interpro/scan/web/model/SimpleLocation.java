@@ -12,7 +12,13 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
 
     private final int start;
     private final int end;
-    private String models = null;
+    private String models = null; // Required for Gene3D and SUPERFAMILY
+    private String feature = null; // For sequence features only (MobiDB)
+
+    public SimpleLocation(int start, int end, String models, String feature) {
+        this(start, end, models);
+        this.feature = feature;
+    }
 
     public SimpleLocation(int start, int end, String models) {
         this(start, end);
@@ -34,6 +40,10 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
 
     public String getModels() {
         return models;
+    }
+
+    public String getFeature() {
+        return feature;
     }
 
     @Override
@@ -67,7 +77,8 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
 
         if (start != that.start) return false;
         if (end != that.end) return false;
-        return models != null ? models.equals(that.models) : that.models == null;
+        if (models != null ? !models.equals(that.models) : that.models != null) return false;
+        return feature != null ? feature.equals(that.feature) : that.feature == null;
 
     }
 
@@ -76,6 +87,7 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
         int result = start;
         result = 31 * result + end;
         result = 31 * result + (models != null ? models.hashCode() : 0);
+        result = 31 * result + (feature != null ? feature.hashCode() : 0);
         return result;
     }
 
@@ -90,6 +102,7 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
         sb.append("{start=").append(start);
         sb.append(", end=").append(end);
         sb.append(", models=").append(models);
+        sb.append(", feature=").append(feature);
         sb.append('}');
         return sb.toString();
     }

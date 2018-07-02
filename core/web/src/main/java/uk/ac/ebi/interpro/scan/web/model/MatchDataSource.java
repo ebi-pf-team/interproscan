@@ -305,6 +305,15 @@ public enum MatchDataSource {
         return UNKNOWN;
     }
 
+    public static boolean isSequenceFeature(MatchDataSource matchDataSource) {
+        return (matchDataSource.equals(COILS)
+                || matchDataSource.equals(MOBIDB) || matchDataSource.equals(MOBIDB_LITE)
+                || matchDataSource.equals(SIGNALP) || matchDataSource.equals(SIGNALP_EUK)
+                || matchDataSource.equals(SIGNALP_GRAM_POSITIVE) || matchDataSource.equals(SIGNALP_GRAM_NEGATIVE)
+                || matchDataSource.equals(PHOBIUS) || matchDataSource.equals(TMHMM));
+    }
+
+
     public static boolean isStructuralFeature(MatchDataSource matchDataSource) {
         return (matchDataSource.equals(CATH) || matchDataSource.equals(SCOP) || matchDataSource.equals(PDB));
     }
