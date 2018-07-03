@@ -183,7 +183,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             Set<SFLDHmmer3RawSite> promotedRawSites = null;
             if (parents != null && parents.size() > 0) {
                 promotedRawSites = getPromotedRawSites(rawSite, parents);
-                /Utilities.verboseLog( "promotedRawSites count: " + promotedRawSites.size());
+                //Utilities.verboseLog( "promotedRawSites count: " + promotedRawSites.size());
             }
             String sequenceId = rawSite.getSequenceIdentifier();
             if (rawProteinSiteMap.containsKey(sequenceId)) {
@@ -430,6 +430,11 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
     }
 
 
+    /**
+     * get HierarchyInformation information child - parent relationships
+     *
+     * @return sfldHierarchyInformation
+     */
     public Map<String, Set<String>> getHierarchyInformation(){
         Map<String, Set<String>> sfldHierarchyInformation = new HashMap<>();
         try (FileInputStream is = new FileInputStream(sfldHierarchyFilePath)){
