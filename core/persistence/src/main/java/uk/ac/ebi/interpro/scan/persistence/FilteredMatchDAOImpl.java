@@ -122,12 +122,16 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         LOGGER.info("Creating model accession to signature map...");
         final Map<String, SignatureModelHolder> result = new HashMap<>();
 
-        List<String> modelIDs = new ArrayList<>();
+        Set<String> modelIDsSet = new HashSet<>();
+        int count = 0;
         for (RawProtein<T> rawProtein : rawProteins) {
             for (RawMatch rawMatch : rawProtein.getMatches()) {
-                modelIDs.add(rawMatch.getModelId());
+                modelIDsSet.add(rawMatch.getModelId());
+                count ++;
             }
         }
+        List<String> modelIDs = new ArrayList<>();
+        modelIDs.addAll(modelIDsSet);
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("... for " + modelIDs.size() + " model IDs.");
@@ -180,12 +184,30 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 //            Utilities.verboseLog(signatureModelQueryMessage);
             }
 
+            int modelCount = 0;
             for (Object[] row : signatureModels) {
                 Signature signature = (Signature) row[0];
                 Model model = (Model) row[1];
                 result.put(model.getAccession(), new SignatureModelHolder(signature, model));
+                modelCount ++;
+                if (result.get(model.getAccession()) == null){
+                    LOGGER.error("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
+                }
             }
 
+        }
+        //check which models are missing and why?
+
+        List<String> missingModelIDs = new ArrayList<>();
+        Set<String> resultMOdelIds = result.keySet();
+        for (String modelID : modelIDsSet){
+            if(! resultMOdelIds.contains(modelID)){
+                missingModelIDs.add(modelID);
+            }
+        }
+        if (missingModelIDs.size() > 0) {
+            LOGGER.error("Failed to get some of the analaysis models from h2 db: " + missingModelIDs.size());
+            LOGGER.error("e.g. some missing models : " + missingModelIDs.get(0));
         }
         return result;
     }

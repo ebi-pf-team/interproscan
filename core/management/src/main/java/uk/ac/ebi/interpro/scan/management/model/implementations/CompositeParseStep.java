@@ -102,6 +102,7 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
                 LOGGER.debug("Parsed out " + results.size() + " proteins with matches from file " + fileName);
                 LOGGER.debug("A total of " + count + " matches from file " + fileName);
             }
+            Utilities.verboseLog("Parsed out " + results.size() + " proteins with matches from file " + fileName + " -- A total of " + count + " matches");
             rawMatchDAO.insertProteinMatches(results);
             Long now = System.currentTimeMillis();
             if (count > 0){
