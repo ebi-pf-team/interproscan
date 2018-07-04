@@ -144,6 +144,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         Map<String, Set<String>> hierarchyInformation = getHierarchyInformation();
 
+        Utilities.verboseLog("Parsed  match count: " + rawMatches.size());
+
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
             Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
@@ -178,13 +180,16 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         Map<String, RawProteinSite<SFLDHmmer3RawSite>> rawProteinSiteMap = new HashMap<>();
         Set<SFLDHmmer3RawSite> rawSites = matchData.getSites();
-        Utilities.verboseLog("Parsed site count: " + rawSites.size());
 
+        int siteCount = rawSites.size();
+        Utilities.verboseLog("Parsed site count: " + siteCount);
+        int promotedSiteCont = 0;
         for (SFLDHmmer3RawSite rawSite : rawSites) {
             Set<String> parents = hierarchyInformation.get(rawSite.getModelId());
             Set<SFLDHmmer3RawSite> promotedRawSites = null;
             if (parents != null && parents.size() > 0) {
                 promotedRawSites = getPromotedRawSites(rawSite, parents);
+                promotedSiteCont += promotedRawSites.size();
                 //Utilities.verboseLog( "promotedRawSites count: " + promotedRawSites.size());
             }
             String sequenceId = rawSite.getSequenceIdentifier();
@@ -199,7 +204,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 rawProteinSiteMap.put(sequenceId, rawProteinSite);
             }
         }
-        Utilities.verboseLog("Total (inc. promoted) site count: " + rawProteinSiteMap.values().size());
+        int totalSiteCount = promotedSiteCont + siteCount;
+        Utilities.verboseLog("Total (inc. " + promotedSiteCont + " promoted ) site count: " + totalSiteCount));
         //Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
 
         //promote the SFLD matched to the parents in the hierarchy
