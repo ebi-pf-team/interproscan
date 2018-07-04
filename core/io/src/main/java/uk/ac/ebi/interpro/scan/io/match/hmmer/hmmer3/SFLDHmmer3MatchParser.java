@@ -75,7 +75,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 //    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
 //    private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
-    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)$");
+    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)(\\s+.*)?$");
     /**
      * This interface has a single method that
      * takes the HmmsearchOutputMethod object, containing sequence
@@ -178,6 +178,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         Map<String, RawProteinSite<SFLDHmmer3RawSite>> rawProteinSiteMap = new HashMap<>();
         Set<SFLDHmmer3RawSite> rawSites = matchData.getSites();
+        Utilities.verboseLog("Parsed site count: " + rawSites.size());
+
         for (SFLDHmmer3RawSite rawSite : rawSites) {
             Set<String> parents = hierarchyInformation.get(rawSite.getModelId());
             Set<SFLDHmmer3RawSite> promotedRawSites = null;
@@ -197,6 +199,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 rawProteinSiteMap.put(sequenceId, rawProteinSite);
             }
         }
+        Utilities.verboseLog("Total (inc. promoted) site count: " + rawProteinSiteMap.values().size());
         //Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
 
         //promote the SFLD matched to the parents in the hierarchy
@@ -274,6 +277,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("line: " + line + "  stage: " + stage.toString());
                 }
+//                Utilities.verboseLog("dealing with line: " + line + "  stage: " + stage.toString());
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
@@ -329,18 +333,6 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                             currentSequenceIdentifier = null;
                         }
                         break;
-//                    case LOOKING_FOR_SITE_SECTION:
-//                        // Example: Sites:
-//                        if (line.startsWith(SEQUENCE_SECTION_START)) {
-////                            sites.clear();
-//                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-//                        } else if (line.startsWith(SITE_SECTION_START)) {
-//                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
-//                            LOGGER.debug("Site Section ");
-//                        } else {
-//                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
-//                        }
-//                        break;
                     case LOOKING_FOR_SITE_DATA_LINE:
                         Matcher sitesDataLineMatcher = SITES_LINE_PATTERN.matcher(line);
                         if (line.startsWith(END_OF_RECORD)) {
@@ -364,16 +356,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
         //TODO consider using the utilities methods
         Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
-        //Utilities.verboseLog(rawResults.values().toString());
-        /*
-        //can be used to check if we have the correct mtahces
-        for (RawProtein<T> rawProtein : rawResults.values()) {
-            for (T rawMatch : rawProtein.getMatches()) {
-                Utilities.verboseLog(rawMatch.toString());
-            }
-        }
-        */
-//       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
+        Utilities.verboseLog(10, " Raw Results: site Count: " + rawSites.size());
 
         for (RawProtein<T> rawProtein : rawResults.values()) {
             rawMatches.addAll((Collection<? extends SFLDHmmer3RawMatch>) rawProtein.getMatches());
