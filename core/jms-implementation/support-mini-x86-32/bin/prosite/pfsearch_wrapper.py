@@ -92,6 +92,7 @@ def get_sequences(fasta_file):
                 fasta_dict[seq_id] += line + '\n'
                 if len(line) > 80:
                     raise ValueError('Input fasta file format problem for pfsearch, line length greater than 80 ')
+
     return fasta_dict
 
 def get_sequences_for_profile(key_list, seqs_dict):
@@ -177,7 +178,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
         if not os.path.isfile(profiles[prf][0]):
             #profile not available
             continue
-        output = subprocess.check_output(comd_to_run)
+        output = subprocess.check_output(comd_to_run, universal_newlines=True)
         #append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
         #if prf == 'MF_00005':
         #    append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
@@ -203,8 +204,8 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
 
 if __name__ == "__main__":
 
-    if sys.version_info<(2,7,0):
-        sys.exit("Error: You need python 2.7 or later to run this script")
+    if sys.version_info<(3,0,0):
+        sys.exit("Error: You need python 3.0 or later to run this script")
 
     #deal with arguments that are required
     if len(sys.argv) < 6:
@@ -241,7 +242,7 @@ if __name__ == "__main__":
             #stats_filename = fasta_file + ".stats"
             #run the pfsearch binary
             pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, fasta_file, command_index)
-            sys.stderr.write('prfs: ' + str(count))
+            sys.stderr.write('prfs: ' + str(pfsearch_cmd_run_count))
     except:
         print(sys.version)
         print("Unexpected error: ")

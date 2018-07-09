@@ -17,7 +17,7 @@ outfile = sys.argv[4]
 
 evalue_coff = 0.001
 
-discontinuous_regs = pkl.load(open(os.path.join(discontinuous_regs_file), 'rb'), encoding='bytes')
+discontinuous_regs = pkl.load(open(discontinuous_regs_file, 'rb'), encoding='utf-8')
 
 mode = "with_family"
 if len(sys.argv) > 2:
