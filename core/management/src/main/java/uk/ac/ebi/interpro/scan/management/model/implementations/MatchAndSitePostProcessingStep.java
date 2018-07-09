@@ -110,7 +110,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                     stepInstance.getTopProtein(),
                     signatureLibraryRelease
             );
-            Utilities.verboseLog(10, "matches after : " + rawProteins.size());
+            Utilities.verboseLog(10, "proteins after : " + rawProteins.size());
         }
 
         int matchCount = 0;

@@ -213,27 +213,13 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
     }
 
-    public SFLDHmmer3RawMatch getRawMatch(SFLDHmmer3RawMatch rawMatch, String modelAc){
-        SFLDHmmer3RawMatch promotedRawMatch = new SFLDHmmer3RawMatch(rawMatch.getSequenceIdentifier(), modelAc,
-                rawMatch.getSignatureLibrary(), rawMatch.getSignatureLibraryRelease(),
-                rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
-                rawMatch.getEvalue(), rawMatch.getScore(),
-                rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmBounds(),
-                rawMatch.getLocationScore(),
-                rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd(),
-                rawMatch.getExpectedAccuracy(), rawMatch.getFullSequenceBias(),
-                rawMatch.getDomainCeValue(), rawMatch.getDomainIeValue(), rawMatch.getDomainBias());
-        //Utilities.verboseLog("Promoted match for " + rawMatch.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
-        return promotedRawMatch;
-    }
-
     private Set<SFLDHmmer3RawMatch> getPromotedRawMatches(SFLDHmmer3RawMatch rawMatch, Set<String> parents){
         Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet();
         String childModelId = rawMatch.getModelId();
         //Utilities.verboseLog("Promoted match for " + childModelId + " with parents: " + parents);
         for (String modelAc:parents){
             if (! childModelId.equals(modelAc)) {
-                promotedRawMatches.add(getRawMatch(rawMatch, modelAc));
+                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
             }
         }
         return promotedRawMatches;
