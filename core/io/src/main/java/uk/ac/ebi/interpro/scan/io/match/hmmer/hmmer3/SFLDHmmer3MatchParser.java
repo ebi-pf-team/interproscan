@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +75,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 //    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
 //    private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
-    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)$");
+    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)(\\s+.*)?$");
     /**
      * This interface has a single method that
      * takes the HmmsearchOutputMethod object, containing sequence
@@ -87,6 +88,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
     private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
+    private String sfldHierarchyFilePath;
 
     private SFLDHmmer3MatchParser() {
         signatureLibrary = null;
@@ -111,6 +113,15 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         this.hmmer3ParserSupport = hmmer3ParserSupport;
     }
 
+    public String getSfldHierarchyFilePath() {
+        return sfldHierarchyFilePath;
+    }
+
+    @Required
+    public void setSfldHierarchyFilePath(String sfldHierarchyFilePath) {
+        this.sfldHierarchyFilePath = sfldHierarchyFilePath;
+    }
+
     /**
      * Enum of states that the parser may be in - used to minimise parsing time.
      */
@@ -131,33 +142,122 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         MatchData matchData = parseFileInput(is);
         Set<SFLDHmmer3RawMatch> rawMatches = matchData.getMatches();
 
+        Map<String, Set<String>> hierarchyInformation = getHierarchyInformation();
+
+        Utilities.verboseLog("Parsed  match count: " + rawMatches.size());
+
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
+            Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
+            Set<SFLDHmmer3RawMatch> promotedRawMatches = null;
+            if (parents != null && parents.size() > 0) {
+                promotedRawMatches = getPromotedRawMatches(rawMatch, parents);
+                //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
+            }
+
             if (rawProteinMap.containsKey(sequenceId)) {
                 RawProtein<SFLDHmmer3RawMatch> rawProtein = rawProteinMap.get(sequenceId);
                 rawProtein.addMatch(rawMatch);
+                rawProtein.addAllMatches(promotedRawMatches);
             } else {
                 RawProtein<SFLDHmmer3RawMatch> rawProtein = new RawProtein<>(sequenceId);
                 rawProtein.addMatch(rawMatch);
+                rawProtein.addAllMatches(promotedRawMatches);
                 rawProteinMap.put(sequenceId, rawProtein);
             }
         }
 
+        //Utilities.verboseLog("Parsed and Promotted matches ...");
+        int matchCount = 0;
+        for (RawProtein<SFLDHmmer3RawMatch> rp: rawProteinMap.values()){
+            Collection <SFLDHmmer3RawMatch> moreRawMatches =  rp.getMatches();
+            for (SFLDHmmer3RawMatch rawMatch : moreRawMatches){
+                matchCount ++;
+                //Utilities.verboseLog(matchCount + ": " + rawMatch);
+            }
+        }
+        Utilities.verboseLog("Parsed and Promotted match count: " + matchCount);
+
         Map<String, RawProteinSite<SFLDHmmer3RawSite>> rawProteinSiteMap = new HashMap<>();
         Set<SFLDHmmer3RawSite> rawSites = matchData.getSites();
+
+        int siteCount = rawSites.size();
+        Utilities.verboseLog("Parsed site count: " + siteCount);
+        int promotedSiteCont = 0;
         for (SFLDHmmer3RawSite rawSite : rawSites) {
+            Set<String> parents = hierarchyInformation.get(rawSite.getModelId());
+            Set<SFLDHmmer3RawSite> promotedRawSites = null;
+            if (parents != null && parents.size() > 0) {
+                promotedRawSites = getPromotedRawSites(rawSite, parents);
+                promotedSiteCont += promotedRawSites.size();
+                //Utilities.verboseLog( "promotedRawSites count: " + promotedRawSites.size());
+            }
             String sequenceId = rawSite.getSequenceIdentifier();
             if (rawProteinSiteMap.containsKey(sequenceId)) {
                 RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = rawProteinSiteMap.get(sequenceId);
                 rawProteinSite.addSite(rawSite);
+                rawProteinSite.addAllSites(promotedRawSites);
             } else {
                 RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = new RawProteinSite<>(sequenceId);
                 rawProteinSite.addSite(rawSite);
+                rawProteinSite.addAllSites(promotedRawSites);
                 rawProteinSiteMap.put(sequenceId, rawProteinSite);
             }
         }
-        Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
+        int totalSiteCount = promotedSiteCont + siteCount;
+        Utilities.verboseLog("Total (inc. " + promotedSiteCont + " promoted ) site count: " + totalSiteCount);
+        //Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
+
+        //promote the SFLD matched to the parents in the hierarchy
+
         return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+    }
+
+    public SFLDHmmer3RawMatch getRawMatch(SFLDHmmer3RawMatch rawMatch, String modelAc){
+        SFLDHmmer3RawMatch promotedRawMatch = new SFLDHmmer3RawMatch(rawMatch.getSequenceIdentifier(), modelAc,
+                rawMatch.getSignatureLibrary(), rawMatch.getSignatureLibraryRelease(),
+                rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
+                rawMatch.getEvalue(), rawMatch.getScore(),
+                rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmBounds(),
+                rawMatch.getLocationScore(),
+                rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd(),
+                rawMatch.getExpectedAccuracy(), rawMatch.getFullSequenceBias(),
+                rawMatch.getDomainCeValue(), rawMatch.getDomainIeValue(), rawMatch.getDomainBias());
+        //Utilities.verboseLog("Promoted match for " + rawMatch.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
+        return promotedRawMatch;
+    }
+
+    private Set<SFLDHmmer3RawMatch> getPromotedRawMatches(SFLDHmmer3RawMatch rawMatch, Set<String> parents){
+        Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet();
+        String childModelId = rawMatch.getModelId();
+        //Utilities.verboseLog("Promoted match for " + childModelId + " with parents: " + parents);
+        for (String modelAc:parents){
+            if (! childModelId.equals(modelAc)) {
+                promotedRawMatches.add(getRawMatch(rawMatch, modelAc));
+            }
+        }
+        return promotedRawMatches;
+    }
+
+    public SFLDHmmer3RawSite getRawSite(SFLDHmmer3RawSite rawSite, String modelAc){
+        //Utilities.verboseLog( "Get promoted sites for : " + rawSite.getModelId() + " modelAc: " + modelAc);
+        SFLDHmmer3RawSite promotedRawSite = new SFLDHmmer3RawSite(rawSite.getSequenceIdentifier(),
+                rawSite.getTitle(), rawSite.getResidues(), modelAc,rawSite.getSignatureLibraryRelease());
+
+        //Utilities.verboseLog("Promoted site for " + rawSite.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawSite);
+        return promotedRawSite;
+    }
+
+    private Set<SFLDHmmer3RawSite> getPromotedRawSites(SFLDHmmer3RawSite rawSite, Set<String> parents){
+        Set<SFLDHmmer3RawSite> promotedRawSites = new HashSet();
+        String childModelId = rawSite.getModelId();
+        //Utilities.verboseLog( "Get promoted sites for : " + childModelId + " with parents: " + parents);
+        for (String modelAc:parents){
+            if (! childModelId.equals(modelAc)) {
+                promotedRawSites.add(getRawSite(rawSite, modelAc));
+            }
+        }
+        return promotedRawSites;
     }
 
     public MatchData parseFileInput(InputStream is) throws IOException {
@@ -183,6 +283,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("line: " + line + "  stage: " + stage.toString());
                 }
+//                Utilities.verboseLog("dealing with line: " + line + "  stage: " + stage.toString());
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
@@ -238,18 +339,6 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                             currentSequenceIdentifier = null;
                         }
                         break;
-//                    case LOOKING_FOR_SITE_SECTION:
-//                        // Example: Sites:
-//                        if (line.startsWith(SEQUENCE_SECTION_START)) {
-////                            sites.clear();
-//                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-//                        } else if (line.startsWith(SITE_SECTION_START)) {
-//                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
-//                            LOGGER.debug("Site Section ");
-//                        } else {
-//                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
-//                        }
-//                        break;
                     case LOOKING_FOR_SITE_DATA_LINE:
                         Matcher sitesDataLineMatcher = SITES_LINE_PATTERN.matcher(line);
                         if (line.startsWith(END_OF_RECORD)) {
@@ -273,16 +362,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
         //TODO consider using the utilities methods
         Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
-        //Utilities.verboseLog(rawResults.values().toString());
-        /*
-        //can be used to check if we have the correct mtahces
-        for (RawProtein<T> rawProtein : rawResults.values()) {
-            for (T rawMatch : rawProtein.getMatches()) {
-                Utilities.verboseLog(rawMatch.toString());
-            }
-        }
-        */
-//       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
+        Utilities.verboseLog(10, " Raw Results: site Count: " + rawSites.size());
 
         for (RawProtein<T> rawProtein : rawResults.values()) {
             rawMatches.addAll((Collection<? extends SFLDHmmer3RawMatch>) rawProtein.getMatches());
@@ -336,5 +416,41 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
 
         return  domainCoordinatesCorrect;
+    }
+
+
+    /**
+     * get HierarchyInformation information child - parent relationships
+     *
+     * @return sfldHierarchyInformation
+     */
+    public Map<String, Set<String>> getHierarchyInformation(){
+        Map<String, Set<String>> sfldHierarchyInformation = new HashMap<>();
+        try (FileInputStream is = new FileInputStream(sfldHierarchyFilePath)){
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                int lineNumber = 0;
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] modelWithParents =  line.trim().split(":");
+
+                    if (modelWithParents.length >= 2) {
+                        String modelAc = modelWithParents[0];
+                        String[] allParents = modelWithParents[1].split("\\s+");
+                        Set<String> parents = new HashSet<>();
+                        for (String parent: allParents){
+                            if ( ! (parent.trim().isEmpty() || parent.trim().equals(modelAc))){
+                                parents.add(parent.trim());
+                            }
+                        }
+                        sfldHierarchyInformation.put(modelAc,parents);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sfldHierarchyInformation;
     }
 }
