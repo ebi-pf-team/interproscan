@@ -11,6 +11,7 @@
                 <property name="hmmKey" value="ACCESSION"/>
              </bean>
         </property>
+        <property name="sfldHierarchyFilePath" value="data/sfld/sfld_hierarchy_flat.txt"/>
     </bean>
 
     <bean id="sfldFile" class="org.springframework.core.io.ClassPathResource">

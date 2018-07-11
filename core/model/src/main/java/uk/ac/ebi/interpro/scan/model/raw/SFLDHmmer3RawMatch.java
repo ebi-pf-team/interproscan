@@ -39,4 +39,18 @@ public class SFLDHmmer3RawMatch extends Hmmer3RawMatch {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias);
     }
+
+    public SFLDHmmer3RawMatch getNewRawMatch(String modelAc){
+        SFLDHmmer3RawMatch promotedRawMatch = new SFLDHmmer3RawMatch(this.getSequenceIdentifier(), modelAc,
+                this.getSignatureLibrary(), this.getSignatureLibraryRelease(),
+                this.getLocationStart(), this.getLocationEnd(),
+                this.getEvalue(), this.getScore(),
+                this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds(),
+                this.getLocationScore(),
+                this.getEnvelopeStart(), this.getEnvelopeEnd(),
+                this.getExpectedAccuracy(), this.getFullSequenceBias(),
+                this.getDomainCeValue(), this.getDomainIeValue(), this.getDomainBias());
+        //Utilities.verboseLog("Promoted match for " + this.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
+        return promotedRawMatch;
+    }
 }

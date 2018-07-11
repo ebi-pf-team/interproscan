@@ -328,7 +328,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         return matchGroups;
     }
 
-    public SFLDHmmer3RawMatch getRawMatch(SFLDHmmer3RawMatch rawMatch, String modelAc){
+    public SFLDHmmer3RawMatch getRawMatchTDL(SFLDHmmer3RawMatch rawMatch, String modelAc){
         SFLDHmmer3RawMatch promotedRawMatch = new SFLDHmmer3RawMatch(rawMatch.getSequenceIdentifier(), modelAc,
                 rawMatch.getSignatureLibrary(), rawMatch.getSignatureLibraryRelease(),
                 rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
@@ -348,7 +348,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         //Utilities.verboseLog("Promoted match for " + childModelId + " with parents: " + parents);
         for (String modelAc:parents){
             if (! childModelId.equals(modelAc)) {
-                promotedRawMatches.add(getRawMatch(rawMatch, modelAc));
+                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
             }
         }
         return promotedRawMatches;
