@@ -148,35 +148,66 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
-            Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
-            Set<SFLDHmmer3RawMatch> promotedRawMatches = null;
-            if (parents != null && parents.size() > 0) {
-                promotedRawMatches = getPromotedRawMatches(rawMatch, parents);
-                //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
-            }
-
             if (rawProteinMap.containsKey(sequenceId)) {
                 RawProtein<SFLDHmmer3RawMatch> rawProtein = rawProteinMap.get(sequenceId);
                 rawProtein.addMatch(rawMatch);
-                rawProtein.addAllMatches(promotedRawMatches);
             } else {
                 RawProtein<SFLDHmmer3RawMatch> rawProtein = new RawProtein<>(sequenceId);
                 rawProtein.addMatch(rawMatch);
-                rawProtein.addAllMatches(promotedRawMatches);
                 rawProteinMap.put(sequenceId, rawProtein);
             }
         }
 
+        int promotedTentativeCount = 0;
+        //deal with overlaps
+        Set<String>  seqIds = rawProteinMap.keySet();
+        for (String key: seqIds){
+            RawProtein<SFLDHmmer3RawMatch> rawProtein = rawProteinMap.get(key);
+            Collection <SFLDHmmer3RawMatch> proteinRawMatches =  rawProtein.getMatches();
+            if (proteinRawMatches.size() == 1){
+                continue;
+            }else {
+                continue;
+                /*
+                Set <SFLDHmmer3RawMatch> resolvedOverlappingMatches = resolveOverlappingMatches(proteinRawMatches);
+                //rawProtein.setMatches(resolvedOverlappingMatches);
+                promotedTentativeCount = resolvedOverlappingMatches.size() - proteinRawMatches.size();
+                Utilities.verboseLog("Match count: " + promotedTentativeCount + " resolvedOverlappingMatches: " + resolvedOverlappingMatches.size() +
+                        " proteinRawMatches : " + proteinRawMatches.size());
+                rawProtein.setMatches(resolvedOverlappingMatches);
+                */
+            }
+        }
+
+
         //Utilities.verboseLog("Parsed and Promotted matches ...");
         int matchCount = 0;
-        for (RawProtein<SFLDHmmer3RawMatch> rp: rawProteinMap.values()){
+        int totalOriginalMatchCount = 0;
+        int totalPromotedRawMatchesCount = 0;
+        for (String key: seqIds){
+            RawProtein<SFLDHmmer3RawMatch> rp = rawProteinMap.get(key);
             Collection <SFLDHmmer3RawMatch> moreRawMatches =  rp.getMatches();
+            //check for overlaps and remove
+            int originalMatchCount = moreRawMatches.size();
+            totalOriginalMatchCount += originalMatchCount;
+            int promotedRawMatchesCount = 0;
             for (SFLDHmmer3RawMatch rawMatch : moreRawMatches){
-                matchCount ++;
+                Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
+                Set<SFLDHmmer3RawMatch> promotedRawMatches = null;
+                if (parents != null && parents.size() > 0) {
+                    promotedRawMatches = getPromotedRawMatches(rawMatch, parents);
+                    promotedRawMatchesCount = promotedRawMatches.size();
+                    totalPromotedRawMatchesCount += promotedRawMatchesCount;
+                    //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
+                    rp.addAllMatches(promotedRawMatches);
+                }
+                matchCount = originalMatchCount + promotedRawMatchesCount;
+
                 //Utilities.verboseLog(matchCount + ": " + rawMatch);
             }
         }
-        Utilities.verboseLog("Parsed and Promotted match count: " + matchCount);
+        Utilities.verboseLog("Original Parsed match count: " + totalOriginalMatchCount);
+        Utilities.verboseLog("Promotted match count: " + totalPromotedRawMatchesCount);
 
         Map<String, RawProteinSite<SFLDHmmer3RawSite>> rawProteinSiteMap = new HashMap<>();
         Set<SFLDHmmer3RawSite> rawSites = matchData.getSites();
@@ -211,6 +242,90 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         //promote the SFLD matched to the parents in the hierarchy
 
         return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+    }
+
+    public  Set<SFLDHmmer3RawMatch> resolveOverlappingMatches( Collection<SFLDHmmer3RawMatch> rawMatches ){
+        // hmm_hit = [hmm_id, description, float(eVal), float(score), location]
+        Set<SFLDHmmer3RawMatch> overlapFreeRawMatches = new HashSet<>();
+
+        Collection <SFLDHmmer3RawMatch> allRawMatches =  rawMatches;
+        Map<String,Set <SFLDHmmer3RawMatch>>  matchesPerModel = getMatchGroups(rawMatches);
+        Utilities.verboseLog("matchesPerModel: " + matchesPerModel.toString());
+        if (matchesPerModel.keySet().size() == 1){
+            overlapFreeRawMatches.addAll(rawMatches);
+            return overlapFreeRawMatches;
+        }
+        for (String key:matchesPerModel.keySet()){
+            Set <SFLDHmmer3RawMatch> modelMatches =  matchesPerModel.get(key);
+            if (key.contains("SFLDF")){
+                overlapFreeRawMatches.addAll(modelMatches);
+                continue;
+            }
+            for (SFLDHmmer3RawMatch modelMatch: modelMatches){
+                boolean overlaps = false;
+                SFLDHmmer3RawMatch baseMatch = modelMatch;
+                for (SFLDHmmer3RawMatch otherMatch: allRawMatches){
+                    if (modelMatch.equals(otherMatch)){
+                       continue;
+                    }
+                    if (modelMatch.getModelId().equals(otherMatch.getModelId())){
+                       continue;
+                    }
+                    if (modelMatch.overlapsWith(otherMatch)){
+                        overlaps = true;
+                        Utilities.verboseLog("modelMatch.overlapsWith(otherMatch) - modelMatch: " + modelMatch.toString()
+                                + " otherMatch: " + otherMatch);
+                        break;
+                    }
+                }            
+                if (overlaps){
+                    allRawMatches.remove(modelMatch);
+                }else{
+                    overlapFreeRawMatches.add(modelMatch);
+                }            
+	    }
+        }
+
+
+                ;
+//        hits_per_hmmid = get_match_groups(best_hits)
+//        if len(list(hits_per_hmmid.keys())) == 1:
+//        return best_hits
+//        for hmmid in hits_per_hmmid:
+//        hmmid_hits =  hits_per_hmmid[hmmid]
+//        if ":SF" in hmmid:
+//        filtered_best_hits.extend(hmmid_hits)
+//        continue
+//        for el in hmmid_hits:
+//        base_el_location = el[4]
+//        overlaps = False
+//        for other_el in all_best_hits:
+//        if el == other_el:
+//        continue
+//        if el[0] == other_el[0]:
+//        continue
+//        if location_overlaps(base_el_location, other_el[4]):
+//        overlaps = True
+//        break
+//        if overlaps:
+//        all_best_hits.remove(el)
+//            else:
+//        filtered_best_hits.append(el)
+//        return filtered_best_hits
+
+        return overlapFreeRawMatches;
+    }
+
+    public  Map <String, Set<SFLDHmmer3RawMatch>> getMatchGroups(Collection<SFLDHmmer3RawMatch> rawMatches){
+        Map <String, Set<SFLDHmmer3RawMatch>> matchGroups = new HashMap<>();
+
+        return matchGroups;
+    }
+
+    public  Map <String, Set<SFLDHmmer3RawMatch>> getMatchGroups(Set<SFLDHmmer3RawMatch> rawMatches){
+        Map <String, Set<SFLDHmmer3RawMatch>> matchGroups = new HashMap<>();
+
+        return matchGroups;
     }
 
     public SFLDHmmer3RawMatch getRawMatch(SFLDHmmer3RawMatch rawMatch, String modelAc){
@@ -453,4 +568,6 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
         return sfldHierarchyInformation;
     }
+
+
 }

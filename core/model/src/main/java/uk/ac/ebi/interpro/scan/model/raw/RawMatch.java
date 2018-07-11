@@ -143,6 +143,19 @@ public abstract class RawMatch implements Serializable {
         this.locationEnd = locationEnd;
     }
 
+    /**
+     * Determines if two domains overlap.
+     *
+     * @param other domain match other.
+     * @return true if the two domain matches overlap.
+     */
+    public boolean overlapsWith(RawMatch other) {
+        return !
+                ((this.getLocationStart() > other.getLocationEnd()) ||
+                        (other.getLocationStart() > this.getLocationEnd()));
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
