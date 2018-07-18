@@ -296,7 +296,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             */
         }
         int totalSiteCount = promotedSiteCont + siteCount;
-        Utilities.verboseLog("Sites withing match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
+        Utilities.verboseLog("Sites within match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
 
         //promote the SFLD matched to the parents in the hierarchy
 
