@@ -51,6 +51,11 @@ public final class RawProtein<T extends RawMatch> implements Serializable {
         matches.add(match);
     }
 
+    public void setMatches(Set<T> matches) {
+        //this.matches.clear();
+        this.addAllMatches(matches);
+    }
+
     public Collection<T> getMatches() {
 //        return Collections.unmodifiableCollection(matches);
         return matches;
