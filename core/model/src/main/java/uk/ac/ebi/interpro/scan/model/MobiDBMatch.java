@@ -62,7 +62,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
         }
 
         public MobiDBLocation(int start, int end, String sequenceFeature) {
-            super(start, end);
+            super(new MobiDBLocationFragment(start, end));
             setSequenceFeature(sequenceFeature);
         }
 
