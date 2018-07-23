@@ -81,7 +81,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
     @Entity
     @Table(name = "hmmer3_location_with_sites")
     @XmlType(name = "Hmmer3LocationWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-    public static class Hmmer3LocationWithSites extends HmmerLocationWithSites {
+    public static class Hmmer3LocationWithSites extends HmmerLocationWithSites<Hmmer3LocationWithSites.Hmmer3LocationWithSitesFragment> {
 
         @Column(name = "envelope_start", nullable = false)
         private int envelopeStart;
@@ -98,18 +98,10 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
                               int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds, sites);
+            super(new Hmmer3LocationWithSitesFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds, sites);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
         }
-
-//        public Hmmer3LocationWithSites(int start, int end, double score, double evalue,
-//                              int hmmStart, int hmmEnd,
-//                              int envelopeStart, int envelopeEnd, Set<HmmerSite> sites) {
-//            super(start, end, score, evalue, hmmStart, hmmEnd, sites);
-//            setEnvelopeStart(envelopeStart);
-//            setEnvelopeEnd(envelopeEnd);
-//        }
 
         @XmlAttribute(name = "env-start", required = true)
         public int getEnvelopeStart() {
@@ -162,6 +154,44 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
             }
             final Hmmer3LocationWithSites clone = new Hmmer3LocationWithSites(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), clonedSites);
             return clone;
+        }
+
+        /**
+         * Location fragment of a HMMER3 match on a protein sequence
+         */
+        @Entity
+        @Table(name = "hmmer3_locn_frag_with_sites")
+        @XmlType(name = "Hmmer3LocationFragmentWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class Hmmer3LocationWithSitesFragment extends LocationFragment {
+
+            protected Hmmer3LocationWithSitesFragment() {
+            }
+
+            public Hmmer3LocationWithSitesFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof Hmmer3LocationWithSitesFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(139, 159)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new Hmmer3LocationWithSitesFragment(this.getStart(), this.getEnd());
+            }
         }
 
         @Entity

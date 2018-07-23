@@ -140,7 +140,31 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmer3LocationWithSite.getEvalue()));
                         }
 
-
+                        if (signatureLibrary.getName().equals(SignatureLibrary.GENE3D.getName())
+                                || signatureLibrary.getName().equals(SignatureLibrary.PFAM.getName())
+                                ){
+                            Set<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> locationFragments = location.getLocationFragments();
+                            StringBuilder listOfLocationFragments = new StringBuilder();
+                            String prefix = "";
+                            for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment locationFragment: locationFragments){
+                                listOfLocationFragments.append(prefix);
+                                listOfLocationFragments.append(getDomainRegion(locationFragment));
+                                prefix = ",";
+                            }
+                            mappingFields.add(listOfLocationFragments.toString());
+                        }
+                        if (signatureLibrary.getName().equals(SignatureLibrary.SUPERFAMILY.getName())
+                                ){
+                            Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment> locationFragments = location.getLocationFragments();
+                            StringBuilder listOfLocationFragments = new StringBuilder();
+                            String prefix = "";
+                            for (SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment: locationFragments){
+                                listOfLocationFragments.append(prefix);
+                                listOfLocationFragments.append(getDomainRegion(locationFragment));
+                                prefix = ",";
+                            }
+                            mappingFields.add(listOfLocationFragments.toString());
+                        }
                         this.tsvWriter.write(mappingFields);
                     }
                 }
@@ -149,6 +173,10 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
         return locationCount;
     }
 
+    private String getDomainRegion(LocationFragment locationFragment){
+        String domainRegion = locationFragment.getStart() + "-" + locationFragment.getEnd() + "-" + locationFragment.getBounds();
+        return domainRegion;
+    }
 
 
     private String getSeqScore(Match match, Location location){

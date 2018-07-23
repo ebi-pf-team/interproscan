@@ -2,14 +2,12 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
-import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,6 +20,12 @@ import java.util.Set;
 public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3Match> {
 
     public Hmmer3Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
+
+        final String sln = berkeleyMatch.getSignatureLibraryName();
+        boolean postProcessed = false;
+        if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM")) {
+            postProcessed = true;
+        }
 
         final Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>(berkeleyMatch.getLocations().size());
 
@@ -38,6 +42,9 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                     ? location.getEnd() == null ? 0 : location.getEnd()
                     : location.getEnvelopeEnd();
 
+            //TODO use locationFragments, needs refactoring
+            String locationBounds = "c";
+
             bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
 
             locations.add(new Hmmer3Match.Hmmer3Location(
@@ -50,7 +57,9 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                     valueOrZero(location.getHmmLength()),
                     bounds,
                     envStart,
-                    envEnd
+                    envEnd,
+                    postProcessed,
+                    locationBounds
             ));
         }
 

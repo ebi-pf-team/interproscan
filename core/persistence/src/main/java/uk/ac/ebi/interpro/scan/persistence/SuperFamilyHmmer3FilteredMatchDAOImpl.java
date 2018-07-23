@@ -12,10 +12,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * SuperFamily filtered match data access object.
@@ -61,7 +58,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
 
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
             proteinCount++;
-            final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<UUID, SuperFamilyHmmer3Match>();
+            final Map<UUID, SuperFamilyHmmer3Match> splitGroupToMatch = new HashMap<>();
 
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -71,12 +68,23 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Protein: " + protein);
             }
-
+            // Each line in the Superfamily ass3.pl Perl script output represents a Superfamily match for a given sequence
+            // and model with e-value. We'd never have more than one location against a Superfamily match, but a location
+            // could have multiple location fragments (so are in the same split group). Each Superfamily raw match
+            // represents a Superfamily location fragment.
             for (SuperFamilyHmmer3RawMatch rawMatch : rawProtein.getMatches()) {
                 final SignatureModelHolder holder = modelIdToSignatureMap.get(rawMatch.getModelId());
+                Model model = holder.getModel();
+                int hmmLength = model == null ? 0 : model.getLength();
+
                 SuperFamilyHmmer3Match match = splitGroupToMatch.get(rawMatch.getSplitGroup());
 
+                SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(
+                        rawMatch.getLocationStart(),
+                        rawMatch.getLocationEnd());
+
                 if (match == null) {
+                    // This raw match is not part of an existing split group
                     final Signature currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find model " + rawMatch.getModelId() + " in the database.");
@@ -87,22 +95,31 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                             rawMatch.getEvalue(),
                             null);
                     splitGroupToMatch.put(rawMatch.getSplitGroup(), match);
+
+                    SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
+                            locationFragment, hmmLength);
+                    match.addLocation(location);
                 }
-                else{
+                else {
+                    // Add model to the match
                     if (! match.getSignatureModels().contains(rawMatch.getModelId())) {
                         match.addSignatureModel(rawMatch.getModelId());
-                    }else{
+                    }
+                    else {
                         Utilities.verboseLog("Model " + rawMatch.getModelId() + " already in list: "
                                 + match.getSignatureModels());
                     }
+
+                    // This raw match is part of an existing split group, so add this fragment to the existing
+                    // match location
+                    Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = match.getLocations();
+                    if (locations == null || locations.size() != 1) {
+                        throw new IllegalStateException("Superfamily match did not have one location as expected, but had " + (locations == null ? "NULL" : locations.size()));
+                    }
+                    SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = locations.iterator().next();
+                    location.addLocationFragment(locationFragment);
+
                 }
-                Model model = holder.getModel();
-                int hmmLength = model == null ? 0 : model.getLength();
-                match.addLocation(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
-                        rawMatch.getLocationStart(),
-                        rawMatch.getLocationEnd(),
-                        hmmLength
-                ));
                 matchCount++;
             }
 

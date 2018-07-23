@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlType(name = "HmmerLocationType", propOrder = {"score", "evalue", "hmmStart", "hmmEnd", "hmmLength", "hmmBounds"})
 @JsonIgnoreProperties({"id"})
-public abstract class HmmerLocation extends Location {
+public abstract class HmmerLocation<T extends LocationFragment> extends Location {
 
     @Column(nullable = false, name = "hmm_start")
     private int hmmStart;
@@ -76,9 +76,9 @@ public abstract class HmmerLocation extends Location {
     }
 
     // Don't use Builder pattern because all fields are required
-    public HmmerLocation(int start, int end, double score, double evalue,
+    public HmmerLocation(T locationFragment, double score, double evalue,
                          int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds) {
-        super(start, end);
+        super(locationFragment);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
         setHmmLength(hmmLength);
@@ -86,17 +86,6 @@ public abstract class HmmerLocation extends Location {
         setEvalue(evalue);
         setScore(score);
     }
-
-//    // Don't use Builder pattern because all fields are required
-//    public HmmerLocation(int start, int end, double score, double evalue,
-//                         int hmmStart, int hmmEnd) {
-//        super(start, end);
-//        setHmmStart(hmmStart);
-//        setHmmEnd(hmmEnd);
-//        setHmmLength(hmmEnd - hmmStart);
-//        setEvalue(evalue);
-//        setScore(score);
-//    }
 
     @XmlAttribute(name = "hmm-start", required = true)
     public int getHmmStart() {

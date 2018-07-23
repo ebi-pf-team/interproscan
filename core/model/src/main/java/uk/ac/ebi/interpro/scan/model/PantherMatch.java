@@ -154,7 +154,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         }
 
         public PantherLocation(int start, int end, int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds, int envelopeStart, int envelopeEnd) {
-            super(start, end);
+            super(new PantherLocationFragment(start, end));
             this.hmmStart = hmmStart;
             this.hmmEnd = hmmEnd;
             this.hmmLength = hmmLength;
@@ -251,6 +251,44 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         public Object clone() throws CloneNotSupportedException {
             final PantherLocation clone = new PantherLocation(this.getStart(), this.getEnd(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
             return clone;
+        }
+
+        /**
+         * Location fragment of a PANTHER match on a protein sequence
+         */
+        @Entity
+        @Table(name = "panther_location_fragment")
+        @XmlType(name = "PantherLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class PantherLocationFragment extends LocationFragment {
+
+            protected PantherLocationFragment() {
+            }
+
+            public PantherLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof PantherLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(119, 161)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new PantherLocationFragment(this.getStart(), this.getEnd());
+            }
         }
 
     }

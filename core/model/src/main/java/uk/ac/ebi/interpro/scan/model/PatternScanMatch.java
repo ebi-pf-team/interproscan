@@ -78,7 +78,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         }
 
         public PatternScanLocation(int start, int end, Level level, String cigarAlignment) {
-            super(start, end);
+            super(new PatternScanLocationFragment(start, end));
             setLevel(level);
             setCigarAlignment(cigarAlignment);
         }
@@ -211,6 +211,45 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         public Object clone() throws CloneNotSupportedException {
             return new PatternScanLocation(this.getStart(), this.getEnd(), this.getLevel(), this.getCigarAlignment());
         }
+
+        /**
+         * Location fragment of a Prosite Pattern match on a protein sequence
+         */
+        @Entity
+        @Table(name = "pattern_scan_location_fragment")
+        @XmlType(name = "PatternScanLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class PatternScanLocationFragment extends LocationFragment {
+
+            protected PatternScanLocationFragment() {
+            }
+
+            public PatternScanLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof PatternScanLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(119, 185)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new PatternScanLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
     }
 }

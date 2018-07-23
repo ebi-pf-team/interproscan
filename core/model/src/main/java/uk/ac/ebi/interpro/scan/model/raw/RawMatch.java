@@ -66,6 +66,9 @@ public abstract class RawMatch implements Serializable {
     @Column
     private int locationEnd;
 
+    @Column
+    private String locFragmentBounds;
+
     protected RawMatch() {
     }
 
@@ -78,6 +81,19 @@ public abstract class RawMatch implements Serializable {
         this.setSignatureLibraryRelease(signatureLibraryRelease);
         this.setLocationStart(locationStart);
         this.setLocationEnd(locationEnd);
+        this.locFragmentBounds = "c";
+    }
+
+    protected RawMatch(String sequenceIdentifier, String modelId,
+                       SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+                       int locationStart, int locationEnd, String locFragmentBounds) {
+        this.setSequenceIdentifier(sequenceIdentifier);
+        this.setModelId(modelId);
+        this.setSignatureLibrary(signatureLibrary);
+        this.setSignatureLibraryRelease(signatureLibraryRelease);
+        this.setLocationStart(locationStart);
+        this.setLocationEnd(locationEnd);
+        this.locFragmentBounds = locFragmentBounds;
     }
 
     public Long getId() {
@@ -141,6 +157,14 @@ public abstract class RawMatch implements Serializable {
 
     private void setLocationEnd(int locationEnd) {
         this.locationEnd = locationEnd;
+    }
+
+    public String getLocFragmentBounds() {
+        return locFragmentBounds;
+    }
+
+    public void setLocFragmentBounds(String locFragmentBounds) {
+        this.locFragmentBounds = locFragmentBounds;
     }
 
     /**
