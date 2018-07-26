@@ -507,30 +507,34 @@ public final class SimpleProtein implements Serializable {
                 if (location instanceof MobiDBMatch.MobiDBLocation) {
                     feature = ((MobiDBMatch.MobiDBLocation) location).getSequenceFeature();
                 }
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd(), signatureModels, feature);
 
-                // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
-                simpleSignature.getLocations().add(simpleLocation);
-                // Add location to the list of super matches
-                simpleEntry.getLocations().add(simpleLocation);
+                for (Object p : location.getLocationFragments()) {
+                    final LocationFragment locationFragment = (LocationFragment) p;
+                    // TODO Expand SimpleLocation - add concept of SimpleLocationFragment so the current SimpleLocation is not just an abbreviation of the two concepts
+                    final SimpleLocation simpleLocation = new SimpleLocation(locationFragment.getStart(), locationFragment.getEnd(), signatureModels, feature);
+                    // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
+                    simpleSignature.getLocations().add(simpleLocation);
+                    // Add location to the list of super matches
+                    simpleEntry.getLocations().add(simpleLocation);
 
-                // Add any sites from that location
-                if (location instanceof LocationWithSites) {
-                    final Set<Site> siteSet = ((LocationWithSites) location).getSites();
-                    if (siteSet != null) {
-                        long i = 1L;
-                        for (Site site : siteSet) {
-                            Long siteId = site.getId();
-                            if (siteId == null) {
-                                siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
+                    // Add any sites from that location
+                    if (location instanceof LocationWithSites) {
+                        final Set<Site> siteSet = ((LocationWithSites) location).getSites();
+                        if (siteSet != null) {
+                            long i = 1L;
+                            for (Site site : siteSet) {
+                                Long siteId = site.getId();
+                                if (siteId == null) {
+                                    siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
+                                }
+                                SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
+                                for (SiteLocation siteLocation : site.getSiteLocations()) {
+                                    SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd(), signatureModels));
+                                    simpleSite.addSiteLocation(simpleSiteLocation);
+                                }
+                                simpleProtein.getSites().add(simpleSite);
+                                i++;
                             }
-                            SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
-                            for (SiteLocation siteLocation : site.getSiteLocations()) {
-                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd(), signatureModels));
-                                simpleSite.addSiteLocation(simpleSiteLocation);
-                            }
-                            simpleProtein.getSites().add(simpleSite);
-                            i++;
                         }
                     }
                 }
