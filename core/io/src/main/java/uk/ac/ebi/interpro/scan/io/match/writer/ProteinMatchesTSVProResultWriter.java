@@ -92,10 +92,10 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {
                             // Location score for Prosite Profiles/HAMAP already taken care of by getSeqScore method
                             // mappingFields.add (Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore()));
-                            mappingFields.add (((ProfileScanMatch.ProfileScanLocation) location).getAlignment());
+                            mappingFields.add (((ProfileScanMatch.ProfileScanLocation) location).getCigarAlignment());
                         } else if (location instanceof PatternScanMatch.PatternScanLocation) {
                             mappingFields.add(((PatternScanMatch.PatternScanLocation) location).getLevel().getTagNumber());
-                            mappingFields.add (((PatternScanMatch.PatternScanLocation) location).getAlignment());
+                            mappingFields.add (((PatternScanMatch.PatternScanLocation) location).getCigarAlignment());
                         } else if (location instanceof PantherMatch.PantherLocation) {
                             PantherMatch.PantherLocation pantherLocation = (PantherMatch.PantherLocation) location;
                             mappingFields.add(pantherLocation.getHmmBounds().getSymbol());
@@ -106,6 +106,8 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Integer.toString(pantherLocation.getEnvelopeEnd()));
                         } else if (location instanceof SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) {
                             mappingFields.add(Integer.toString(((SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) location).getHmmLength()));
+                        } else if (location instanceof MobiDBMatch.MobiDBLocation){
+                            mappingFields.add(((MobiDBMatch.MobiDBLocation) location).getSequenceFeature());
                         }
 
                         if (location instanceof Hmmer3Match.Hmmer3Location) {
@@ -165,6 +167,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             }
                             mappingFields.add(listOfLocationFragments.toString());
                         }
+
                         this.tsvWriter.write(mappingFields);
                     }
                 }
