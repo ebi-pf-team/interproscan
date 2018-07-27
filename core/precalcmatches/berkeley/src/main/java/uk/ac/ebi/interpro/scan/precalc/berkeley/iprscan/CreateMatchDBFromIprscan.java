@@ -9,13 +9,18 @@ import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Creates a Berkeley database of proteins for which matches have been calculated in IPRSCAN.
@@ -49,7 +54,9 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_HMM_BOUNDS = 15;
     private static final int COL_IDX_ENV_START = 16;
     private static final int COL_IDX_ENV_END = 17;
-    //private static final int COL_IDX_ALIGNMENT = 18;
+    private static final int COL_IDX_SEQ_FEATURE = 18;
+    private static final int COL_IDX_FRAGMENTS = 19;
+    //private static final int COL_IDX_ALIGNMENT = 20;
 
     private static final String CREATE_TEMP_TABLE =
             "create global temporary table  berkley_tmp_tab " +
@@ -71,7 +78,9 @@ public class CreateMatchDBFromIprscan {
                     "        m.hmm_length, " +
                     "        m.hmm_bounds, " +
                     "        m.envelope_start, " +
-                    "        m.envelope_end " +
+                    "        m.envelope_end, " +
+                    "        m.seq_feature, " +
+                    "        m.fragments " +
                    // "        ,m.alignment " +
                     "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
                     "        mv_iprscan m," +
@@ -84,7 +93,8 @@ public class CreateMatchDBFromIprscan {
     private static final String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION, SCORE, SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, " +
-                    "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END" +
+                    "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END, " +
+                    "SEQ_FEATURE, FRAGMENTS" +
                     //", ALIGNMENT " +
                     "       from  berkley_tmp_tab " +
                     "       where PROTEIN_MD5 >= ? and PROTEIN_MD5 <= ? " +
@@ -265,6 +275,8 @@ public class CreateMatchDBFromIprscan {
                         Integer envelopeEnd = rs.getInt(COL_IDX_ENV_END);
                         if (rs.wasNull()) envelopeEnd = null;
 
+                        String seqFeature = rs.getString(COL_IDX_SEQ_FEATURE);
+                        String fragments = rs.getString(COL_IDX_FRAGMENTS);
                         //String alignment = rs.getString(COL_IDX_ALIGNMENT);
 
                         // arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmm_bounds column...
@@ -280,7 +292,12 @@ public class CreateMatchDBFromIprscan {
                         location.setScore(locationScore);
                         location.setEnvelopeStart(envelopeStart);
                         location.setEnvelopeEnd(envelopeEnd);
+                        location.setSeqFeature(seqFeature);
                         //location.setCigarAlignment(alignment);
+
+                        Set<BerkeleyLocationFragment> berkeleyLocationFragments = parseLocationFragments(fragments);
+                        location.setLocationFragments(berkeleyLocationFragments);
+
                         locationCount++;
 
                         if (match != null) {
@@ -413,5 +430,39 @@ public class CreateMatchDBFromIprscan {
                 }
             }
         }
+    }
+
+    public static Set<BerkeleyLocationFragment> parseLocationFragments(final String fragments) {
+        // Example fragments input: "10-20-e,34-39-s"
+        Set<BerkeleyLocationFragment> berkeleyLocationFragments = new HashSet<>();
+        if (fragments == null || fragments.equals("")) {
+            return berkeleyLocationFragments;
+        }
+
+        Pattern pattern = Pattern.compile("^[0-9]+-[0-9]+-[c|s|e|se]$");
+        String[] input = fragments.trim().split(",");
+        for (String s : input) {
+            Matcher matcher = pattern.matcher(s);
+            if (matcher.find()) {
+                String[] a = s.split("-");
+                if (a.length == 3) {
+                    BerkeleyLocationFragment berkeleyLocationFragment = new BerkeleyLocationFragment();
+                    berkeleyLocationFragment.setStart(Integer.parseInt(a[0]));
+                    berkeleyLocationFragment.setEnd(Integer.parseInt(a[1]));
+                    if (berkeleyLocationFragment.getStart() > berkeleyLocationFragment.getEnd()) {
+                        throw new IllegalArgumentException("Error parsing fragment '" + s + "' from fragment string (end is before start): " + fragments);
+                    }
+                    berkeleyLocationFragment.setBounds(a[2]);
+                    berkeleyLocationFragments.add(berkeleyLocationFragment);
+                }
+                else {
+                    throw new IllegalArgumentException("Error parsing fragment '" + s + "' from fragment string: " + fragments);
+                }
+            }
+            else {
+                throw new IllegalArgumentException("Error parsing fragment string: " + fragments);
+            }
+        }
+        return berkeleyLocationFragments;
     }
 }

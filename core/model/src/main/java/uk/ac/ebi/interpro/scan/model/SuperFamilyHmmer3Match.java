@@ -91,6 +91,11 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
         protected SuperFamilyHmmer3Location() {
         }
 
+        public SuperFamilyHmmer3Location(int start, int end, Set locationFragments, int hmmLength) {
+            super(start, end, locationFragments);
+            this.hmmLength = hmmLength;
+        }
+
         public SuperFamilyHmmer3Location(SuperFamilyHmmer3LocationFragment fragment, int hmmLength) {
             super(fragment);
             setHmmLength(hmmLength);
@@ -145,6 +150,10 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             protected SuperFamilyHmmer3LocationFragment() {
             }
 
+            public SuperFamilyHmmer3LocationFragment(int start, int end, String bounds) {
+                super(start, end, bounds);
+            }
+
             public SuperFamilyHmmer3LocationFragment(int start, int end) {
                 super(start, end);
             }
@@ -168,7 +177,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             }
 
             public Object clone() throws CloneNotSupportedException {
-                return new SuperFamilyHmmer3LocationFragment(this.getStart(), this.getEnd());
+                return new SuperFamilyHmmer3LocationFragment(this.getStart(), this.getEnd(), this.getBounds());
             }
         }
 

@@ -2,6 +2,11 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.model;
 
 import com.sleepycat.persist.model.Persistent;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import java.util.Set;
+import java.util.TreeSet;
+
 
 /**
  * Very simple Location implementation for data transfer &
@@ -44,6 +49,29 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
     private String level;
 
     private String cigarAlignment;
+
+    private String seqFeature;
+
+    private Set<BerkeleyLocationFragment> locationFragments;
+
+    // XmLElementWrapper generates a wrapper element around XML representation
+    @XmlElementWrapper(name = "location-fragments")
+    // XmlElement sets the name of the entities
+    @XmlElement(name = "location-fragment")
+    public Set<BerkeleyLocationFragment> getLocationFragments() {
+        return locationFragments;
+    }
+
+    public void setLocationFragments(Set<BerkeleyLocationFragment> locationFragments) {
+        this.locationFragments = locationFragments;
+    }
+
+    public void addLocationFragment(BerkeleyLocationFragment locationFragment) {
+        if (this.locationFragments == null) {
+            this.locationFragments = new TreeSet<BerkeleyLocationFragment>();
+        }
+        locationFragments.add(locationFragment);
+    }
 
     public BerkeleyLocation() {
     }
@@ -160,6 +188,14 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         this.cigarAlignment = cigarAlignment;
     }
 
+    public String getSeqFeature() {
+        return seqFeature;
+    }
+
+    public void setSeqFeature(String seqFeature) {
+        this.seqFeature = seqFeature;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -184,7 +220,8 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         if (motifNumber != null ? !motifNumber.equals(that.motifNumber) : that.motifNumber != null) return false;
         if (pValue != null ? !pValue.equals(that.pValue) : that.pValue != null) return false;
         if (score != null ? !score.equals(that.score) : that.score != null) return false;
-
+        if (seqFeature != null ? !seqFeature.equals(that.seqFeature) : that.seqFeature != null) return false;
+        if (locationFragments != null ? !locationFragments.equals(that.locationFragments) : that.locationFragments != null) return false;
 
         return true;
     }
@@ -205,6 +242,8 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
         result = 31 * result + (envelopeEnd != null ? envelopeEnd.hashCode() : 0);
         result = 31 * result + (level != null ? level.hashCode() : 0);
         result = 31 * result + (cigarAlignment != null ? cigarAlignment.hashCode() : 0);
+        result = 31 * result + (seqFeature != null ? seqFeature.hashCode() : 0);
+        result = 31 * result + (locationFragments != null ? locationFragments.hashCode() : 0);
         return result;
     }
 

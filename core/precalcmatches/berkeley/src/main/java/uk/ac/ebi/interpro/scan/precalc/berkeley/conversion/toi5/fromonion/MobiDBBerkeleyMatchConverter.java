@@ -30,7 +30,8 @@ public class MobiDBBerkeleyMatchConverter extends BerkeleyMatchConverter<MobiDBM
         for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
             locations.add(new MobiDBMatch.MobiDBLocation(
                     valueOrZero(location.getStart()),
-                    valueOrZero(location.getEnd())
+                    valueOrZero(location.getEnd()),
+                    location.getSeqFeature()
             ));
         }
 

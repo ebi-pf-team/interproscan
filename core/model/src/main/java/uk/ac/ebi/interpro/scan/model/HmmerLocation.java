@@ -29,6 +29,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Set;
 
 /**
  * Location(s) of match on protein sequence
@@ -79,6 +80,18 @@ public abstract class HmmerLocation<T extends LocationFragment> extends Location
     public HmmerLocation(T locationFragment, double score, double evalue,
                          int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds) {
         super(locationFragment);
+        setHmmStart(hmmStart);
+        setHmmEnd(hmmEnd);
+        setHmmLength(hmmLength);
+        setHmmBounds(hmmBounds);
+        setEvalue(evalue);
+        setScore(score);
+    }
+
+    // Don't use Builder pattern because all fields are required
+    public HmmerLocation(int start, int end, double score, double evalue,
+                         int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds, Set<T> locationFragments) {
+        super(start, end, locationFragments);
         setHmmStart(hmmStart);
         setHmmEnd(hmmEnd);
         setHmmLength(hmmLength);

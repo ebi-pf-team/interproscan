@@ -81,7 +81,8 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
 
                 SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(
                         rawMatch.getLocationStart(),
-                        rawMatch.getLocationEnd());
+                        rawMatch.getLocationEnd(),
+                        rawMatch.getLocFragmentBounds());
 
                 if (match == null) {
                     // This raw match is not part of an existing split group
