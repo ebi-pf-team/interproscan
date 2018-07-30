@@ -174,7 +174,7 @@ public class CreateMatchDBFromIprscan {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
-                int locationCount = 0, matchCount = 0;
+                long locationFragmentCount = 0, locationCount = 0, matchCount = 0;
 
                 for (Map.Entry<String, String> md5RangesMapEntry : md5RangesMap.entrySet()) {
                     final String md5Start = md5RangesMapEntry.getKey();
@@ -299,6 +299,7 @@ public class CreateMatchDBFromIprscan {
                         location.setLocationFragments(berkeleyLocationFragments);
 
                         locationCount++;
+                        locationFragmentCount = locationFragmentCount + berkeleyLocationFragments.size();
 
                         if (match != null) {
                             if (
@@ -315,8 +316,8 @@ public class CreateMatchDBFromIprscan {
                                 // Store last match
                                 primIDX.put(match);
                                 matchCount++;
-                                if (matchCount % 400000 == 0) {
-                                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                                if (matchCount % 500000 == 0) {
+                                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations and " + locationFragmentCount + " fragments.");
                                 }
 
                                 // Create new match and add location to it
@@ -348,7 +349,7 @@ public class CreateMatchDBFromIprscan {
                         primIDX.put(match);
                     }
                 }
-                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations.");
+                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations and " + locationFragmentCount + " fragments.");
             } finally {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
