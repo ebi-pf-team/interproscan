@@ -101,10 +101,34 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         protected Hmmer3Location() {
         }
 
+        /**
+         * Create a {@Hmmer3Location} consisting of one fragment with the same start/stop (initially)
+         * @param start
+         * @param end
+         * @param score
+         * @param evalue
+         * @param hmmStart
+         * @param hmmEnd
+         * @param hmmLength
+         * @param hmmBounds
+         * @param envelopeStart
+         * @param envelopeEnd
+         * @param postProcessed
+         * @param bounds
+         */
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
                               int envelopeStart, int envelopeEnd, boolean postProcessed, String bounds) {
             super(new Hmmer3LocationFragment(start, end, bounds), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
+            setEnvelopeStart(envelopeStart);
+            setEnvelopeEnd(envelopeEnd);
+            setPostProcessed(postProcessed);
+        }
+
+        public Hmmer3Location(int start, int end, double score, double evalue,
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
+                              int envelopeStart, int envelopeEnd, boolean postProcessed, Set<Hmmer3LocationFragment> locationFragments) {
+            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds, locationFragments);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
             setPostProcessed(postProcessed);
@@ -166,13 +190,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Object clone() throws CloneNotSupportedException {
-            String tempLocationBounds = "c";
             final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(),
-                    this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), this.isPostProcessed(), tempLocationBounds);
-            Set<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> locationFragments = this.getLocationFragments();
-            for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment locationFragment: locationFragments) {
-                clone.addLocationFragment(locationFragment);
-            }
+                    this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), this.isPostProcessed(), this.getLocationFragments());
             return clone;
         }
 
@@ -215,7 +234,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             }
 
             public Object clone() throws CloneNotSupportedException {
-                return new Hmmer3LocationFragment(this.getStart(), this.getEnd());
+                return new Hmmer3LocationFragment(this.getStart(), this.getEnd(), this.getBounds());
             }
         }
 

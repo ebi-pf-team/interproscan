@@ -89,6 +89,10 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("prints", SignatureLibrary.PRINTS);
 
         libraryNameToSignatureLibrary.put("hamap", SignatureLibrary.HAMAP);
+
+
+        libraryNameToSignatureLibrary.put("tmhmm", SignatureLibrary.TMHMM);
+
         libraryNameToSignatureLibrary.put("signalp_euk", SignatureLibrary.SIGNALP_EUK);
         libraryNameToSignatureLibrary.put("signalp_gram+", SignatureLibrary.SIGNALP_GRAM_POSITIVE);
         libraryNameToSignatureLibrary.put("signalp_gram-", SignatureLibrary.SIGNALP_GRAM_NEGATIVE);

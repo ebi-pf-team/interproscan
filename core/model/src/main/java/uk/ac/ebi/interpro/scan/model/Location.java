@@ -78,6 +78,12 @@ public abstract class Location<T extends LocationFragment> implements Serializab
     protected Location() {
     }
 
+    public Location(int start, int end, Set<T> locationFragments) {
+        this.start = start;
+        this.end = end;
+        this.locationFragments = locationFragments;
+    }
+
     public Location(T locationFragment) {
         this.start = locationFragment.getStart();
         this.end = locationFragment.getEnd();

@@ -4,6 +4,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.util.HashSet;
@@ -21,24 +22,33 @@ public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamil
 
     //TODO: Add the e-value to the match location
     @Override
-    public SuperFamilyHmmer3Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
-        if (berkeleyMatch == null || signature == null) {
+    public SuperFamilyHmmer3Match convertMatch(BerkeleyMatch match, Signature signature) {
+        if (match == null || signature == null) {
             return null;
         }
-        Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<>(berkeleyMatch.getLocations().size());
-        for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
+        Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<>(match.getLocations().size());
+        for (BerkeleyLocation location : match.getLocations()) {
+            int start = valueOrZero(location.getStart());
+            int end = valueOrZero(location.getEnd());
+            Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment> locationFragments = new HashSet<>(location.getLocationFragments().size());
+            for (BerkeleyLocationFragment locationFragment : location.getLocationFragments()) {
+                int fragStart = valueOrZero(locationFragment.getStart());
+                int fragEnd = valueOrZero(locationFragment.getEnd());
+                String fragBounds = locationFragment.getBounds(); // Always default ("c") for SUPERFAMILY?
+                locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, fragBounds));
+            }
             locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
-                    new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(
-                            berkeleyLocation.getStart(),
-                            berkeleyLocation.getEnd()),
-                    valueOrZero(berkeleyLocation.getHmmLength())
+                    start,
+                    end,
+                    locationFragments,
+                    valueOrZero(location.getHmmLength())
             ));
         }
 
         return new SuperFamilyHmmer3Match(
                 signature,
-                berkeleyMatch.getSignatureModels(),
-                valueOrZero(berkeleyMatch.getSequenceEValue()),
+                match.getSignatureModels(),
+                valueOrZero(match.getSequenceEValue()),
                 locations
         );
     }

@@ -73,15 +73,13 @@ public final class SimpleSignature implements Comparable<SimpleSignature>, Seria
                 if (feature == null) {
                     feature = "";
                 }
-                if (feature.equals("")) { //TODO IBU-6881 Remove this limitation when MobiDB features data populated
-                    if (featureLocationsMap.containsKey(feature)) {
-                        List<SimpleLocation> l = featureLocationsMap.get(feature);
-                        l.add(location);
-                    } else {
-                        List<SimpleLocation> l = new ArrayList<>();
-                        l.add(location);
-                        featureLocationsMap.put(feature, l);
-                    }
+                if (featureLocationsMap.containsKey(feature)) {
+                    List<SimpleLocation> l = featureLocationsMap.get(feature);
+                    l.add(location);
+                } else {
+                    List<SimpleLocation> l = new ArrayList<>();
+                    l.add(location);
+                    featureLocationsMap.put(feature, l);
                 }
             }
             return featureLocationsMap;
