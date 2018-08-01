@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -150,7 +151,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             protected SuperFamilyHmmer3LocationFragment() {
             }
 
-            public SuperFamilyHmmer3LocationFragment(int start, int end, String dcStatus) {
+            public SuperFamilyHmmer3LocationFragment(int start, int end, DCStatus dcStatus) {
                 super(start, end, dcStatus);
             }
 

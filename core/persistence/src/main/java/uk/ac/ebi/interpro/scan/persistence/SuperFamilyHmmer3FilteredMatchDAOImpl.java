@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -83,7 +84,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(
                         rawMatch.getLocationStart(),
                         rawMatch.getLocationEnd(),
-                        rawMatch.getLocFragmentBounds());
+                        DCStatus.parseSymbol(rawMatch.getLocFragmentDCStatus()));
 
                 if (match == null) {
                     // This raw match is not part of an existing split group

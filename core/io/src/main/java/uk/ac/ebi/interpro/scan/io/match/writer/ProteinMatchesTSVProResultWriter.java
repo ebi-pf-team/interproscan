@@ -174,7 +174,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
     }
 
     private String getDomainRegion(LocationFragment locationFragment){
-        String domainRegion = locationFragment.getStart() + "-" + locationFragment.getEnd() + "-" + locationFragment.getDcStatus();
+        String domainRegion = locationFragment.getStart() + "-" + locationFragment.getEnd() + "-" + locationFragment.getDcStatus().getSymbol();
         return domainRegion;
     }
 

@@ -19,6 +19,7 @@ package uk.ac.ebi.interpro.scan.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -76,10 +77,10 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     public LocationFragment(int start, int end) {
         setStart(start);
         setEnd(end);
-        dcStatus = "c";
+        setDcStatus(DCStatus.CONTINUOUS);
     }
 
-    public LocationFragment(int start, int end, String dcStatus) {
+    public LocationFragment(int start, int end, DCStatus dcStatus) {
         setStart(start);
         setEnd(end);
         setDcStatus(dcStatus);
@@ -137,11 +138,11 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
         this.end = end;
     }
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name="dc-status", required = true)
 //    @XmlElement (name = "dc-status")
     @JsonProperty("dc-status")
-    public String getDcStatus() {
-        return dcStatus;
+    public DCStatus getDcStatus() {
+        return DCStatus.parseSymbol(dcStatus);
     }
 
     /**
@@ -149,8 +150,8 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
      *
      * @param dcStatus characteristics of this LocationFragment.
      */
-    public void setDcStatus(String dcStatus) {
-        this.dcStatus = dcStatus;
+    public void setDcStatus(DCStatus dcStatus) {
+        this.dcStatus = dcStatus.getSymbol();
     }
 
     /**
@@ -171,6 +172,8 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     public Location getLocation() {
         return location;
     }
+
+
 
     /**
      * Ensure sub-classes of AbstractLocationFragment are represented correctly in XML.
@@ -446,18 +449,18 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     }
 
     public void updateDCStatus(Object o) {
-        if (this == o || this.dcStatus.equals("se")) {
+        if (this == o || this.dcStatus.equals(DCStatus.NC_TERMINAL_DISC.getSymbol())) {
             return;
         }
-        if (this.dcStatus.equals("c")){
-            setDcStatus("");
-        }
+//        if (this.dcStatus.equals(DCStatus.CONTINUOUS.getSymbol())){
+//            setDcStatus(null);
+//        }
         final LocationFragment h = (LocationFragment) o;
         if (this.start < h.start) {
-            setDcStatus(getDCStatus(this.dcStatus, "e"));
+            setDcStatus(DCStatus.getNewDCStatus(DCStatus.parseSymbol(this.dcStatus), DCStatus.C_TERMINAL_DISC));
         }
         if (this.start > h.start) {
-            setDcStatus(getDCStatus(this.dcStatus, "s"));
+            setDcStatus(DCStatus.getNewDCStatus(DCStatus.parseSymbol(this.dcStatus), DCStatus.N_TERMINAL_DISC));
         }
         System.out.println("this.dcStatus: " + this.dcStatus +  " h.dcStatus: " + h.getDcStatus());
     }

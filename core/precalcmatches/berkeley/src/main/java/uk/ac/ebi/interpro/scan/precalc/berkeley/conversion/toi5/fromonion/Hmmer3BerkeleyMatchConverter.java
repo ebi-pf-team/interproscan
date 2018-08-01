@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
@@ -47,7 +48,7 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                 int fragStart = valueOrZero(fragment.getStart());
                 int fragEnd = valueOrZero(fragment.getEnd());
                 String fragBounds = fragment.getBounds();
-                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, fragBounds));
+                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(fragBounds)));
             }
 
             final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
