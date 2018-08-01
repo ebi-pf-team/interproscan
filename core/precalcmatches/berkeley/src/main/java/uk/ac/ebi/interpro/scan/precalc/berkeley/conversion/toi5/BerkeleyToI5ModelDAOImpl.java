@@ -107,7 +107,7 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
             String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
-            //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally
+            //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
             if(sigLib.getName().equals(SignatureLibrary.CDD.getName())
                     || sigLib.getName().equals(SignatureLibrary.SFLD.getName())){
                 continue;

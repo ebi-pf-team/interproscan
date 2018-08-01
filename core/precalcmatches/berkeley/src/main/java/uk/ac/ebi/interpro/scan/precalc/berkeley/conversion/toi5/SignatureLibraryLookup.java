@@ -33,6 +33,7 @@ public final class SignatureLibraryLookup {
         // ALL SHOULD BE LOWER CASE. (Any queries will be converted to lower case.)
 
         libraryNameToSignatureLibrary.put("mobidblite", SignatureLibrary.MOBIDB_LITE);
+        libraryNameToSignatureLibrary.put("mobidb_lite", SignatureLibrary.MOBIDB_LITE);
 
         libraryNameToSignatureLibrary.put("sfld", SignatureLibrary.SFLD);
 

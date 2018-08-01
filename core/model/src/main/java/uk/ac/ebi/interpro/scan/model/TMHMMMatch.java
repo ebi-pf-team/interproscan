@@ -75,10 +75,10 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
     @XmlType(name = "TMHMMLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class TMHMMLocation extends Location {
 
-        @Column(nullable = false)
+        @Column(nullable = true)
         private String prediction;
 
-        @Column(nullable = false)
+        @Column(nullable = true)
         private float score;
 
         /**
