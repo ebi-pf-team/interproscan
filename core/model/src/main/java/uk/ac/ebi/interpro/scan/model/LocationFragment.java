@@ -462,7 +462,7 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
         if (this.start > h.start) {
             setDcStatus(DCStatus.getNewDCStatus(DCStatus.parseSymbol(this.dcStatus), DCStatus.N_TERMINAL_DISC));
         }
-        System.out.println("this.dcStatus: " + this.dcStatus +  " h.dcStatus: " + h.getDcStatus());
+        //System.out.println("this.dcStatus: " + this.dcStatus +  " h.dcStatus: " + h.getDcStatus());
     }
 
 

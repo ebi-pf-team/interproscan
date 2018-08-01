@@ -221,14 +221,16 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                     LocationFragment cmprLocationFragment = (LocationFragment)  objFragment;
                     hmmer3LocationFragment.updateDCStatus(cmprLocationFragment);
                     cmprLocationFragment.updateDCStatus(hmmer3LocationFragment);
-                    System.out.println("cmprLocationFragment: " + cmprLocationFragment.toString() + " \nhmmer3LocationFragment : "
-                            + hmmer3LocationFragment.toString());
+//                    System.out.println("cmprLocationFragment: " + cmprLocationFragment.toString() + " \nhmmer3LocationFragment : "
+//                            + hmmer3LocationFragment.toString());
                 }
                 location.addLocationFragment(hmmer3LocationFragment);
 //                System.out.println("location:" + location.toString());
             }
             if (match != null) {
-                System.out.println("match: " + match.toString());
+//                System.out.println("match: " + match.toString());
+                // find a better way of displaying debug in model classes
+                int count = 0;
             }
 
         }

@@ -67,7 +67,7 @@ public abstract class RawMatch implements Serializable {
     @Column
     private int locationEnd;
 
-    @Column  
+    @Column
     private String locFragmentDCStatus;
 
     protected RawMatch() {
