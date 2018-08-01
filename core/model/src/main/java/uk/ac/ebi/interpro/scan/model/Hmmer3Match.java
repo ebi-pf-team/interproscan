@@ -210,8 +210,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                 super(start, end);
             }
 
-            public Hmmer3LocationFragment(int start, int end, String bounds) {
-                super(start, end, bounds);
+            public Hmmer3LocationFragment(int start, int end, String dcStatus) {
+                super(start, end, dcStatus);
             }
 
             @Override
@@ -234,7 +234,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             }
 
             public Object clone() throws CloneNotSupportedException {
-                return new Hmmer3LocationFragment(this.getStart(), this.getEnd(), this.getBounds());
+                return new Hmmer3LocationFragment(this.getStart(), this.getEnd(), this.getDcStatus());
             }
         }
 

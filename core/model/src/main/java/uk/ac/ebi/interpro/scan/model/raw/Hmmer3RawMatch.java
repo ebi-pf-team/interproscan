@@ -216,8 +216,18 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 //this is a discontinuous domain as it has a split group
                 Set<Hmmer3Match.Hmmer3Location> locations = match.getLocations();
                 Hmmer3Match.Hmmer3Location location = locations.iterator().next();
+                for (Object objFragment: location.getLocationFragments()){
+                    LocationFragment cmprLocationFragment = (LocationFragment)  objFragment;
+                    hmmer3LocationFragment.updateDCStatus(cmprLocationFragment);
+                    cmprLocationFragment.updateDCStatus(hmmer3LocationFragment);
+                    System.out.println("cmprLocationFragment: " + cmprLocationFragment.toString() + " \nhmmer3LocationFragment : "
+                            + hmmer3LocationFragment.toString());
+                }
                 location.addLocationFragment(hmmer3LocationFragment);
 //                System.out.println("location:" + location.toString());
+            }
+            if (match != null) {
+                System.out.println("match: " + match.toString());
             }
 
         }

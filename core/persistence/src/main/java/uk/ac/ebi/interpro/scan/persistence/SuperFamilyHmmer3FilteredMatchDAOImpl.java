@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.LocationFragment;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
@@ -112,14 +113,20 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     }
 
                     // This raw match is part of an existing split group, so add this fragment to the existing
-                    // match location
+                    // match locations
                     Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = match.getLocations();
                     if (locations == null || locations.size() != 1) {
                         throw new IllegalStateException("Superfamily match did not have one location as expected, but had " + (locations == null ? "NULL" : locations.size()));
                     }
+                    Utilities.verboseLog("locations: " + locations.toString());
                     SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = locations.iterator().next();
+                    Utilities.verboseLog("locationFragment: " + locationFragment.toString());
+                    for (Object objFragment: location.getLocationFragments()){
+                        LocationFragment cmprLocationFragment = (LocationFragment)  objFragment;
+                        locationFragment.updateDCStatus(cmprLocationFragment);
+                        cmprLocationFragment.updateDCStatus(locationFragment);
+                    }
                     location.addLocationFragment(locationFragment);
-
                 }
                 matchCount++;
             }

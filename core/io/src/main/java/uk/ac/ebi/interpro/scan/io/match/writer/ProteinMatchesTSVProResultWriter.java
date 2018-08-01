@@ -74,6 +74,18 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         mappingFields.add(signatureModels);
                         mappingFields.add(Integer.toString(location.getStart()));
                         mappingFields.add(Integer.toString(location.getEnd()));
+
+                        //deal with fragments
+                        Set<LocationFragment> locationFragments = location.getLocationFragments();
+                        StringBuilder listOfLocationFragments = new StringBuilder();
+                        String prefix = "";
+                        for (LocationFragment locationFragment: locationFragments){
+                            listOfLocationFragments.append(prefix);
+                            listOfLocationFragments.append(getDomainRegion(locationFragment));
+                            prefix = ",";
+                        }
+                        mappingFields.add(listOfLocationFragments.toString());
+
                         //Default seq score
                         String seqScore = getSeqScore(match,location);
                         if(seqScore != null) {
@@ -142,31 +154,16 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmer3LocationWithSite.getEvalue()));
                         }
 
-                        if (signatureLibrary.getName().equals(SignatureLibrary.GENE3D.getName())
-                                || signatureLibrary.getName().equals(SignatureLibrary.PFAM.getName())
-                                ){
-                            Set<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> locationFragments = location.getLocationFragments();
-                            StringBuilder listOfLocationFragments = new StringBuilder();
-                            String prefix = "";
-                            for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment locationFragment: locationFragments){
-                                listOfLocationFragments.append(prefix);
-                                listOfLocationFragments.append(getDomainRegion(locationFragment));
-                                prefix = ",";
-                            }
-                            mappingFields.add(listOfLocationFragments.toString());
-                        }
-                        if (signatureLibrary.getName().equals(SignatureLibrary.SUPERFAMILY.getName())
-                                ){
-                            Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment> locationFragments = location.getLocationFragments();
-                            StringBuilder listOfLocationFragments = new StringBuilder();
-                            String prefix = "";
-                            for (SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment: locationFragments){
-                                listOfLocationFragments.append(prefix);
-                                listOfLocationFragments.append(getDomainRegion(locationFragment));
-                                prefix = ",";
-                            }
-                            mappingFields.add(listOfLocationFragments.toString());
-                        }
+
+//                        Set<LocationFragment> locationFragments = location.getLocationFragments();
+//                        StringBuilder listOfLocationFragments = new StringBuilder();
+//                        String prefix = "";
+//                        for (LocationFragment locationFragment: locationFragments){
+//                            listOfLocationFragments.append(prefix);
+//                            listOfLocationFragments.append(getDomainRegion(locationFragment));
+//                            prefix = ",";
+//                        }
+//                        mappingFields.add(listOfLocationFragments.toString());
 
                         this.tsvWriter.write(mappingFields);
                     }
@@ -177,7 +174,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
     }
 
     private String getDomainRegion(LocationFragment locationFragment){
-        String domainRegion = locationFragment.getStart() + "-" + locationFragment.getEnd() + "-" + locationFragment.getBounds();
+        String domainRegion = locationFragment.getStart() + "-" + locationFragment.getEnd() + "-" + locationFragment.getDcStatus();
         return domainRegion;
     }
 

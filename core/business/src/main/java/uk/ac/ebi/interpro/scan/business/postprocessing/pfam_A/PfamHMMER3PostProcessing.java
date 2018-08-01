@@ -259,12 +259,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             fragmentBounds = "s";
                         } else if (fragment.getEnd() >= newLocationEnd) {
                             newLocationEnd = fragment.getStart() - 1;
-                            fragmentBounds = fragmentBounds + "e";
+                            fragmentBounds = getDCStatus(fragmentBounds, "e");
                         } else if (fragment.getStart() > newLocationStart && fragment.getEnd() < newLocationEnd) {
                             //we have two new fragments
                             newLocationEnd = fragment.getStart() - 1;
                             twoAtualRegions = true;
-                            fragmentBounds = fragmentBounds +  "e";
+                            fragmentBounds = getDCStatus(fragmentBounds,  "e");
                         }
                         Utilities.verboseLog(verboseLevel,"New Region: " + newLocationStart + "-" + newLocationEnd);
                         PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentBounds);
@@ -301,6 +301,25 @@ public class PfamHMMER3PostProcessing implements Serializable {
         //return filteredMatches;
         return filteredRawProtein;
     }
+
+    private String getDCStatus(String statusOne, String statusTwo){
+        String status = "";
+
+        if (statusOne.equals(statusTwo)) {
+            status = statusOne;
+        }else if (statusOne.equals("c")){
+            status = statusTwo;
+        }else if (statusTwo.equals("c")){
+            status = statusOne;
+        }else{
+            status = statusOne + statusTwo;
+            if (status.equals("es")){
+                status = "se";
+            }
+        }
+        return status;
+    }
+
 
     /**
      * Determines if two domains overlap.
