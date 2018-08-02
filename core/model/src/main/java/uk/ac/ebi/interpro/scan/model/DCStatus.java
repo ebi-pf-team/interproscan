@@ -32,7 +32,7 @@ public enum DCStatus {
     CONTINUOUS("S", "continuous single chain domain"),
     N_TERMINAL_DISC("N", "N-terminal discontinuous "),
     C_TERMINAL_DISC("C", "C-terminal discontinuous"),
-    NC_TERMINAL_DISC("(NC)", "N and C -terminal discontinuous");
+    NC_TERMINAL_DISC("NC", "N and C -terminal discontinuous");
 
     private static final Map<String, DCStatus> SYMBOL_TO_ENUM = new HashMap<String, DCStatus>(DCStatus.values().length);
 
