@@ -116,6 +116,7 @@
                 </div>
             </div>
         </#if>
+    </#if>
 
         <#if protein.sequenceFeatures?has_content>
         <h3>Other features</h3>
@@ -188,10 +189,6 @@
 
         </#if>
 
-
-    <#else>
-        <#-- No matches so the detailed matches section is omitted. -->
-    </#if>
 
 <h3>GO term prediction</h3>
 

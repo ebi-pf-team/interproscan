@@ -39,6 +39,7 @@ public class AnalyseMatchDataResult {
      * @return The simple protein, or NULL if nothing found
      */
     public SimpleProtein parseMatchDataOutput(Resource resource) {
+        //TODO This does not parse feature matches - but this code is no longer used since the original REST service was retired
         /*
          * Example output:
          *
@@ -54,7 +55,7 @@ public class AnalyseMatchDataResult {
         //Read in match data from resource (InterProScan TSV output)
         Collection<MatchDataRecord> records = readInMatchDataFromResource(resource);
         //Create and return SimpleProtein object.
-        return createSimpleProtein(records);
+        return createSimpleProtein(records, new ArrayList<>());
     }
 
     protected Collection<MatchDataRecord> readInMatchDataFromResource(Resource resource) {
@@ -87,7 +88,7 @@ public class AnalyseMatchDataResult {
      * @param records a Collection of MatchDataRecord objects
      * @return The simple protein, or NULL if nothing found
      */
-    public SimpleProtein createSimpleProtein(Collection<MatchDataRecord> records) {
+    public SimpleProtein createSimpleProtein(Collection<MatchDataRecord> records, Collection<FeatureMatchDataRecord> featureRecords) {
         if (records == null || records.isEmpty()) {
             return null;
         }
@@ -177,6 +178,51 @@ public class AnalyseMatchDataResult {
             }
             entry.setLocations(locations);
         }
+
+        // Feature matches (are always unintegrated)
+        for (FeatureMatchDataRecord featureRecord : featureRecords) {
+            // Loop through query output one line at a time
+
+            final String methodAc = featureRecord.getMethodAc();
+            final String methodName = featureRecord.getMethodName();
+            final String seqFeature = featureRecord.getSeqFeature();
+            final String methodDatabase = featureRecord.getMethodDatabase();
+            // Need to eventually associate this match location with the existing SimpleProtein object
+            SimpleLocation location = new SimpleLocation(featureRecord.getPosFrom(), featureRecord.getPosTo(), null, seqFeature);
+
+            // Has this entry already been added to the protein?
+            //List<SimpleEntry> entries = protein.getAllEntries();
+            SimpleEntry newEntry = new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, EntryType.UNKNOWN, entryHierarchy);
+            if (entries.contains(newEntry)) {
+                // Entry already exists
+                SimpleEntry entry = entries.get(entries.indexOf(newEntry));
+
+                // Has this signature already been added to the entry?
+                Map<String, SimpleSignature> signatures = entry.getSignaturesMap();
+                if (signatures.containsKey(methodAc)) {
+                    // Signature already exists
+                    SimpleSignature signature = signatures.get(methodAc);
+                    signature.addLocation(location);
+                } else {
+                    // New signature for this entry, add it to the map
+                    SimpleSignature signature =
+                            new SimpleSignature(methodAc, methodName, methodDatabase);
+                    signature.addLocation(location);
+                    signatures.put(methodAc, signature);
+                }
+
+            } else {
+                // New entry for this protein, add it to the map
+                SimpleEntry entry = new SimpleEntry("", SimpleEntry.UNINTEGRATED, SimpleEntry.UNINTEGRATED, EntryType.UNKNOWN, entryHierarchy);
+                SimpleSignature signature =
+                        new SimpleSignature(methodAc, methodName, methodDatabase);
+                signature.addLocation(location);
+                entry.getSignaturesMap().put(methodAc, signature);
+                entries.add(entry);
+            }
+        }
+
+
         return protein;
     }
 

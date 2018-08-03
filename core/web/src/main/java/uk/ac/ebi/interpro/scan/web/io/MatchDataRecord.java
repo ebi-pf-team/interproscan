@@ -22,6 +22,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
      * CRC64
      * METHOD_AC
      * METHOD_NAME
+     * MODELS
      * METHOD_DATABASE_NAME
      * POS_FROM
      * POS_TO
