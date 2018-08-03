@@ -56,7 +56,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
         int proteinCount = 0;
         int matchCount = 0;
         int sfBatchSize = 3000;
-        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start persist " + filteredProteins.size() + " filteredProteins,");
+        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start to persist " + filteredProteins.size() + " filteredProteins,");
 
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
             proteinCount++;
@@ -109,7 +109,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                         match.addSignatureModel(rawMatch.getModelId());
                     }
                     else {
-                        Utilities.verboseLog("Model " + rawMatch.getModelId() + " already in list: "
+                        Utilities.verboseLog(25, "Model " + rawMatch.getModelId() + " already in list: "
                                 + match.getSignatureModels());
                     }
 
@@ -119,9 +119,9 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     if (locations == null || locations.size() != 1) {
                         throw new IllegalStateException("Superfamily match did not have one location as expected, but had " + (locations == null ? "NULL" : locations.size()));
                     }
-                    Utilities.verboseLog("locations: " + locations.toString());
+                    Utilities.verboseLog(25,"locations: " + locations.toString());
                     SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = locations.iterator().next();
-                    Utilities.verboseLog("locationFragment: " + locationFragment.toString());
+                    Utilities.verboseLog(25,"locationFragment: " + locationFragment.toString());
                     for (Object objFragment: location.getLocationFragments()){
                         LocationFragment cmprLocationFragment = (LocationFragment)  objFragment;
                         locationFragment.updateDCStatus(cmprLocationFragment);
