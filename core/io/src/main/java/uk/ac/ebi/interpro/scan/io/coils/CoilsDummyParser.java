@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.coils;
 
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
@@ -30,8 +31,12 @@ public class CoilsDummyParser extends AbstractModelFileParser {
                 this.getSignatureLibrary(),
                 this.getReleaseVersionNumber());
 
+        final Model model = new Model(COILS_SIGNATURE_NAME, COILS_SIGNATURE_NAME, null);
         final Signature.Builder builder = new Signature.Builder(COILS_SIGNATURE_NAME);
-        final Signature signature = builder.name(COILS_SIGNATURE_NAME).signatureLibraryRelease(release).build();
+        final Signature signature = builder.name(COILS_SIGNATURE_NAME)
+                .signatureLibraryRelease(release)
+                .model(model)
+                .build();
         release.addSignature(signature);
         return release;
     }
