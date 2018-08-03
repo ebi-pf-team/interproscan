@@ -30,7 +30,7 @@
 
 .prodom {background-color: #92acd1;}
 
-.signalp-euk, .signalp-gram+-prok, .signalp-gram--prok {background-color: rgb(255, 51, 153);}
+.signalp-euk, .signalp-gram-positive, .signalp-gram-negative {background-color: rgb(255, 51, 153);}
 .tmhmm {background-color: #a5a5a5;}
 .phobius {background-color: rgb(153, 0, 0);}
 .coils {background-color: #c3b8f0;}

@@ -97,6 +97,8 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("signalp_euk", SignatureLibrary.SIGNALP_EUK);
         libraryNameToSignatureLibrary.put("signalp_gram+", SignatureLibrary.SIGNALP_GRAM_POSITIVE);
         libraryNameToSignatureLibrary.put("signalp_gram-", SignatureLibrary.SIGNALP_GRAM_NEGATIVE);
+        libraryNameToSignatureLibrary.put("signalp_gram-positive", SignatureLibrary.SIGNALP_GRAM_POSITIVE);
+        libraryNameToSignatureLibrary.put("signalp_gram-negative", SignatureLibrary.SIGNALP_GRAM_NEGATIVE);
 
     }
 
