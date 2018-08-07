@@ -236,7 +236,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
                 rawDiscontinuousMatches.add(pfamHmmer3RawMatch);
                 if (nestedFragments > 1){
-                    Utilities.verboseLog(verboseLevel,"nestedFragments >1 require special investigation ");
+                    Utilities.verboseLog(verboseLevel,"nestedFragments > 1 require special investigation ");
                 }
                 for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
                     List<PfamHmmer3RawMatch> newMatchesFromFragment  = new ArrayList<>();
@@ -247,6 +247,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
                         int finalLocationEnd = rawDiscontinuousMatch.getLocationEnd();
                         if (! regionsOverlap(newLocationStart,newLocationEnd, fragment.getStart(), fragment.getEnd())){
                             newMatchesFromFragment.add(rawDiscontinuousMatch);  // we add this match as previously processed
+                            continue;
+                        }
+                        if (fragment.getStart() < newLocationStart && fragment.getEnd() > newLocationEnd){
+                            fragmentDCStatus = DCStatus.NC_TERMINAL_DISC;
+                            rawDiscontinuousMatch.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
+                            newMatchesFromFragment.add(rawDiscontinuousMatch);
                             continue;
                         }
 
