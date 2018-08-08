@@ -61,7 +61,7 @@
                                              score="294.5" evalue="6.3E-86"
                                              hmm-start="1" hmm-end="186" hmm-length="185" hmm-bounds="INCOMPLETE">
                                 <location-fragments>
-                                    <hmmer2-location-fragment start="7" end="172"/>
+                                    <hmmer2-location-fragment start="7" end="172" bounds="c"/>
                                 </location-fragments>
                             </hmmer2-location>
                         </locations>

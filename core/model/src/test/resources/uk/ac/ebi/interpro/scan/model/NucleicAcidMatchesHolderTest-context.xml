@@ -295,7 +295,7 @@
                                 <locations>
                                     <superfamilyhmmer3-location start="1" end="237" hmm-length="237">
                                         <location-fragments>
-                                            <superfamilyhmmer3-location-fragment start="1" end="237"/>
+                                            <superfamilyhmmer3-location-fragment start="1" end="237" bounds="c"/>
                                         </location-fragments>
                                     </superfamilyhmmer3-location>
                                 </locations>

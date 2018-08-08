@@ -177,6 +177,7 @@
         <xs:sequence/>
         <xs:attribute name="start" type="xs:int" use="required"/>
         <xs:attribute name="end" type="xs:int" use="required"/>
+        <xs:attribute name="bounds" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="CoilsLocationFragmentType">
@@ -433,6 +434,7 @@
         <xs:complexContent>
             <xs:extension base="tns:LocationType">
                 <xs:sequence/>
+                <xs:attribute name="sequence-feature" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -792,73 +794,73 @@
 
     <xs:simpleType name="GoCategoryType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="CELLULAR_COMPONENT"/>
             <xs:enumeration value="MOLECULAR_FUNCTION"/>
             <xs:enumeration value="BIOLOGICAL_PROCESS"/>
+            <xs:enumeration value="CELLULAR_COMPONENT"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="EntryTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="UNKNOWN"/>
-            <xs:enumeration value="BINDING_SITE"/>
-            <xs:enumeration value="CONSERVED_SITE"/>
-            <xs:enumeration value="REPEAT"/>
-            <xs:enumeration value="ACTIVE_SITE"/>
+            <xs:enumeration value="DOMAIN"/>
             <xs:enumeration value="PTM"/>
             <xs:enumeration value="FAMILY"/>
-            <xs:enumeration value="DOMAIN"/>
             <xs:enumeration value="HOMOLOGOUS_SUPERFAMILY"/>
+            <xs:enumeration value="CONSERVED_SITE"/>
+            <xs:enumeration value="REPEAT"/>
+            <xs:enumeration value="BINDING_SITE"/>
+            <xs:enumeration value="UNKNOWN"/>
+            <xs:enumeration value="ACTIVE_SITE"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="SignatureLibraryType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="PHOBIUS"/>
-            <xs:enumeration value="CDD"/>
-            <xs:enumeration value="GENE3D"/>
-            <xs:enumeration value="COILS"/>
-            <xs:enumeration value="MOBIDB_LITE"/>
-            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
-            <xs:enumeration value="PRINTS"/>
-            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
-            <xs:enumeration value="PANTHER"/>
-            <xs:enumeration value="SFLD"/>
             <xs:enumeration value="PIRSF"/>
-            <xs:enumeration value="TMHMM"/>
-            <xs:enumeration value="PROSITE_PATTERNS"/>
-            <xs:enumeration value="TIGRFAM"/>
+            <xs:enumeration value="PANTHER"/>
             <xs:enumeration value="HAMAP"/>
+            <xs:enumeration value="SIGNALP_GRAM_NEGATIVE"/>
+            <xs:enumeration value="COILS"/>
+            <xs:enumeration value="TIGRFAM"/>
+            <xs:enumeration value="SIGNALP_EUK"/>
+            <xs:enumeration value="TMHMM"/>
+            <xs:enumeration value="SIGNALP_GRAM_POSITIVE"/>
+            <xs:enumeration value="PROSITE_PATTERNS"/>
+            <xs:enumeration value="GENE3D"/>
+            <xs:enumeration value="SFLD"/>
+            <xs:enumeration value="CDD"/>
+            <xs:enumeration value="MOBIDB_LITE"/>
+            <xs:enumeration value="PRINTS"/>
+            <xs:enumeration value="SUPERFAMILY"/>
             <xs:enumeration value="PFAM"/>
             <xs:enumeration value="SMART"/>
             <xs:enumeration value="PRODOM"/>
             <xs:enumeration value="PROSITE_PROFILES"/>
-            <xs:enumeration value="SIGNALP_EUK"/>
-            <xs:enumeration value="SUPERFAMILY"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="HmmBoundsType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="C_TERMINAL_COMPLETE"/>
             <xs:enumeration value="N_TERMINAL_COMPLETE"/>
-            <xs:enumeration value="INCOMPLETE"/>
             <xs:enumeration value="COMPLETE"/>
+            <xs:enumeration value="C_TERMINAL_COMPLETE"/>
+            <xs:enumeration value="INCOMPLETE"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="LevelType">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="WEAK"/>
             <xs:enumeration value="NONE"/>
             <xs:enumeration value="STRONG"/>
-            <xs:enumeration value="WEAK"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="NucleotideSequenceStrandType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="SENSE"/>
             <xs:enumeration value="ANTISENSE"/>
+            <xs:enumeration value="SENSE"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
