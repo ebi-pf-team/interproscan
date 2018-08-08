@@ -68,7 +68,7 @@ public class BerkeleyLocation implements Comparable<BerkeleyLocation> {
 
     public void addLocationFragment(BerkeleyLocationFragment locationFragment) {
         if (this.locationFragments == null) {
-            this.locationFragments = new TreeSet<BerkeleyLocationFragment>();
+            this.locationFragments = new TreeSet<>();
         }
         locationFragments.add(locationFragment);
     }

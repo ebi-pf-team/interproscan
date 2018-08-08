@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,10 +66,8 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
             setSequenceFeature(sequenceFeature);
         }
 
-        // TODO Enable this field when data can be populated
-        //@XmlAttribute(name = "sequence-feature", required = true)
-        @XmlTransient
-        @JsonIgnore
+        @XmlAttribute(name = "sequence-feature", required = false)
+        @JsonProperty("sequence-feature")
         public String getSequenceFeature() {
             return sequenceFeature;
         }
