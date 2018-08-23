@@ -52,8 +52,10 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
      */
     @Override
     @Transactional
-    public void persist(Collection<RawProtein<MobiDBRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<MobiDBRawMatch>> filteredProteins) {
+//        public void persist(Collection<RawProtein<MobiDBRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
+        Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
         for (RawProtein<MobiDBRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             for (MobiDBRawMatch rawMatch : rawProtein.getMatches()) {
@@ -63,7 +65,6 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
 //                Utilities.verboseLog("MobiDb match:" + match.toString());
                 protein.addMatch(match);
                 entityManager.persist(match);
-
             }
         }
     }

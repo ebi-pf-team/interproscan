@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -8,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.LocationFragment;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
@@ -54,7 +56,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
         int proteinCount = 0;
         int matchCount = 0;
         int sfBatchSize = 3000;
-        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start persist " + filteredProteins.size() + " filteredProteins,");
+        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start to persist " + filteredProteins.size() + " filteredProteins,");
 
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
             proteinCount++;
@@ -82,7 +84,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment locationFragment = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(
                         rawMatch.getLocationStart(),
                         rawMatch.getLocationEnd(),
-                        rawMatch.getLocFragmentBounds());
+                        DCStatus.parseSymbol(rawMatch.getLocFragmentDCStatus()));
 
                 if (match == null) {
                     // This raw match is not part of an existing split group
@@ -107,19 +109,25 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                         match.addSignatureModel(rawMatch.getModelId());
                     }
                     else {
-                        Utilities.verboseLog("Model " + rawMatch.getModelId() + " already in list: "
+                        Utilities.verboseLog(25, "Model " + rawMatch.getModelId() + " already in list: "
                                 + match.getSignatureModels());
                     }
 
                     // This raw match is part of an existing split group, so add this fragment to the existing
-                    // match location
+                    // match locations
                     Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = match.getLocations();
                     if (locations == null || locations.size() != 1) {
                         throw new IllegalStateException("Superfamily match did not have one location as expected, but had " + (locations == null ? "NULL" : locations.size()));
                     }
+                    Utilities.verboseLog(25,"locations: " + locations.toString());
                     SuperFamilyHmmer3Match.SuperFamilyHmmer3Location location = locations.iterator().next();
+                    Utilities.verboseLog(25,"locationFragment: " + locationFragment.toString());
+                    for (Object objFragment: location.getLocationFragments()){
+                        LocationFragment cmprLocationFragment = (LocationFragment)  objFragment;
+                        locationFragment.updateDCStatus(cmprLocationFragment);
+                        cmprLocationFragment.updateDCStatus(locationFragment);
+                    }
                     location.addLocationFragment(locationFragment);
-
                 }
                 matchCount++;
             }

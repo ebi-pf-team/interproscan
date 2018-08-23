@@ -125,6 +125,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         Set<String> modelIDsSet = new HashSet<>();
         int count = 0;
         for (RawProtein<T> rawProtein : rawProteins) {
+//            LOGGER.warn("rawProtein: " + rawProtein.toString());
             for (RawMatch rawMatch : rawProtein.getMatches()) {
                 modelIDsSet.add(rawMatch.getModelId());
                 count ++;
@@ -175,14 +176,15 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             query.setParameter("version", signatureLibraryRelease);
             @SuppressWarnings("unchecked") List<Object[]> signatureModels = query.getResultList();
 
+            String signatureModelQueryMessage = "SignatureModel query: "
+                    + "accession: " + modelIdsSlice.toString()
+                    + " signatureLibrary: " + signatureLibrary
+                    + " version: " + signatureLibraryRelease;
             if (LOGGER.isDebugEnabled()) {
-                String signatureModelQueryMessage = "SignatureModel query: "
-                        + "accession: " + modelIdsSlice.toString()
-                        + " signatureLibrary: " + signatureLibrary
-                        + " version: " + signatureLibraryRelease;
                 LOGGER.debug(signatureModelQueryMessage);
 //            Utilities.verboseLog(signatureModelQueryMessage);
             }
+
 
             int modelCount = 0;
             for (Object[] row : signatureModels) {
@@ -191,23 +193,25 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                 result.put(model.getAccession(), new SignatureModelHolder(signature, model));
                 modelCount ++;
                 if (result.get(model.getAccession()) == null){
-                    LOGGER.error("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
+                    LOGGER.warn("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
                 }
             }
-
         }
         //check which models are missing and why?
 
         List<String> missingModelIDs = new ArrayList<>();
-        Set<String> resultMOdelIds = result.keySet();
+        Set<String> resultModelIds = result.keySet();
+
+
         for (String modelID : modelIDsSet){
-            if(! resultMOdelIds.contains(modelID)){
+            if(! resultModelIds.contains(modelID)){
                 missingModelIDs.add(modelID);
             }
         }
+
         if (missingModelIDs.size() > 0) {
-            LOGGER.error("Failed to get some of the analaysis models from h2 db: " + missingModelIDs.size());
-            LOGGER.error("e.g. some missing models : " + missingModelIDs.get(0));
+            LOGGER.warn("Failed to get some of the analaysis models from h2 db: #" + missingModelIDs.size());
+            LOGGER.warn("First missing model : " + missingModelIDs.get(0));
         }
         return result;
     }

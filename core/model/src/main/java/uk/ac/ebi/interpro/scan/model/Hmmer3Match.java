@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -118,8 +119,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
          */
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
-                              int envelopeStart, int envelopeEnd, boolean postProcessed, String bounds) {
-            super(new Hmmer3LocationFragment(start, end, bounds), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
+                              int envelopeStart, int envelopeEnd, boolean postProcessed, DCStatus dcStatus) {
+            super(new Hmmer3LocationFragment(start, end, dcStatus), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
             setPostProcessed(postProcessed);
@@ -210,8 +211,8 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                 super(start, end);
             }
 
-            public Hmmer3LocationFragment(int start, int end, String bounds) {
-                super(start, end, bounds);
+            public Hmmer3LocationFragment(int start, int end, DCStatus dcStatus) {
+                super(start, end, dcStatus);
             }
 
             @Override
@@ -234,7 +235,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             }
 
             public Object clone() throws CloneNotSupportedException {
-                return new Hmmer3LocationFragment(this.getStart(), this.getEnd(), this.getBounds());
+                return new Hmmer3LocationFragment(this.getStart(), this.getEnd(), this.getDcStatus());
             }
         }
 

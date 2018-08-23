@@ -18,6 +18,8 @@ package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -59,8 +61,8 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     // 'end' is reserved word in SQL.
     private int end;
 
-    @Column(name = "loc_bounds", nullable = false)
-    private String bounds;
+    @Column(name = "dc_status", nullable = false)
+    private String dcStatus;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JsonBackReference
@@ -75,13 +77,13 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     public LocationFragment(int start, int end) {
         setStart(start);
         setEnd(end);
-        bounds = "c";
+        setDcStatus(DCStatus.CONTINUOUS);
     }
 
-    public LocationFragment(int start, int end, String bounds) {
+    public LocationFragment(int start, int end, DCStatus dcStatus) {
         setStart(start);
         setEnd(end);
-        setBounds(bounds);
+        setDcStatus(dcStatus);
     }
 
     /**
@@ -136,18 +138,20 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
         this.end = end;
     }
 
-    @XmlAttribute(required = true)
-    public String getBounds() {
-        return bounds;
+    @XmlAttribute(name="dc-status", required = true)
+//    @XmlElement (name = "dc-status")
+    @JsonProperty("dc-status")
+    public DCStatus getDcStatus() {
+        return DCStatus.parseSymbol(dcStatus);
     }
 
     /**
-     * Location bounds for this LocationFragment.
+     * Location dcStatus for this LocationFragment.
      *
-     * @param bounds characteristics of this LocationFragment.
+     * @param dcStatus characteristics of this LocationFragment.
      */
-    public void setBounds(String bounds) {
-        this.bounds = bounds;
+    public void setDcStatus(DCStatus dcStatus) {
+        this.dcStatus = dcStatus.getSymbol();
     }
 
     /**
@@ -168,6 +172,8 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     public Location getLocation() {
         return location;
     }
+
+
 
     /**
      * Ensure sub-classes of AbstractLocationFragment are represented correctly in XML.
@@ -428,6 +434,37 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
             return (tmhmmLocationFragments == null ? Collections.<TMHMMMatch.TMHMMLocation.TMHMMLocationFragment>emptySet() : tmhmmLocationFragments);
         }
     }
+
+    private String getDCStatus(String statusOne, String statusTwo){
+        String status = "";
+        if (statusOne.equals(statusTwo)){
+            status = statusOne;
+        }else{
+            status = statusOne + statusTwo;
+            if (status.equals("es")){
+                status = "se";
+            }
+        }
+        return status;
+    }
+
+    public void updateDCStatus(Object o) {
+        if (this == o || this.dcStatus.equals(DCStatus.NC_TERMINAL_DISC.getSymbol())) {
+            return;
+        }
+//        if (this.dcStatus.equals(DCStatus.CONTINUOUS.getSymbol())){
+//            setDcStatus(null);
+//        }
+        final LocationFragment h = (LocationFragment) o;
+        if (this.start < h.start) {
+            setDcStatus(DCStatus.getNewDCStatus(DCStatus.parseSymbol(this.dcStatus), DCStatus.C_TERMINAL_DISC));
+        }
+        if (this.start > h.start) {
+            setDcStatus(DCStatus.getNewDCStatus(DCStatus.parseSymbol(this.dcStatus), DCStatus.N_TERMINAL_DISC));
+        }
+        //System.out.println("this.dcStatus: " + this.dcStatus +  " h.dcStatus: " + h.getDcStatus());
+    }
+
 
     @Override
     public boolean equals(Object o) {

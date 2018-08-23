@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
@@ -35,7 +36,7 @@ public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamil
                 int fragStart = valueOrZero(locationFragment.getStart());
                 int fragEnd = valueOrZero(locationFragment.getEnd());
                 String fragBounds = locationFragment.getBounds(); // Always default ("c") for SUPERFAMILY?
-                locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, fragBounds));
+                locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(fragBounds)));
             }
             locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
                     start,

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
@@ -96,7 +97,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 seedAlignments = seedAlignmentData.getSeedAlignments(proteinId);
             }
 
-            Utilities.verboseLog("Pfam A post processing: processing protein " + proteinId);
+            Utilities.verboseLog(25,"Pfam A post processing: processing protein " + proteinId);
             proteinIdToRawProteinMap.put(proteinId, processProtein(proteinIdToRawMatchMap.get(proteinId), nestedModelsMap, seedAlignments));
         }
         if (LOGGER.isDebugEnabled()) {
@@ -230,12 +231,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
                 //where is the fragment discontinous? at start (s), at both start and end (se), or only at the end (e) of the domain sequence
                 // or not a discontinous fragment (c)
-                String fragmentBounds = "c";
+                DCStatus fragmentDCStatus = DCStatus.CONTINUOUS;
 
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
                 rawDiscontinuousMatches.add(pfamHmmer3RawMatch);
                 if (nestedFragments > 1){
-                    Utilities.verboseLog(verboseLevel,"nestedFragments >1 require special investigation ");
+                    Utilities.verboseLog(verboseLevel,"nestedFragments > 1 require special investigation ");
                 }
                 for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
                     List<PfamHmmer3RawMatch> newMatchesFromFragment  = new ArrayList<>();
@@ -248,38 +249,44 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             newMatchesFromFragment.add(rawDiscontinuousMatch);  // we add this match as previously processed
                             continue;
                         }
+                        if (fragment.getStart() < newLocationStart && fragment.getEnd() > newLocationEnd){
+                            fragmentDCStatus = DCStatus.NC_TERMINAL_DISC;
+                            rawDiscontinuousMatch.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
+                            newMatchesFromFragment.add(rawDiscontinuousMatch);
+                            continue;
+                        }
 
-                        if(fragmentBounds.equals("c")){
-                            fragmentBounds = "";
+                        if(fragmentDCStatus ==  DCStatus.CONTINUOUS){
+                            fragmentDCStatus = null;
                         }
                         boolean twoAtualRegions = false;
                         Utilities.verboseLog(verboseLevel,"region to consider: " + fragment.toString());
                         if (fragment.getStart() <= newLocationStart) {
                             newLocationStart = fragment.getEnd() + 1;
-                            fragmentBounds = "s";
+                            fragmentDCStatus = DCStatus.N_TERMINAL_DISC;
                         } else if (fragment.getEnd() >= newLocationEnd) {
                             newLocationEnd = fragment.getStart() - 1;
-                            fragmentBounds = fragmentBounds + "e";
+                            fragmentDCStatus = DCStatus.getNewDCStatus(fragmentDCStatus, DCStatus.C_TERMINAL_DISC);
                         } else if (fragment.getStart() > newLocationStart && fragment.getEnd() < newLocationEnd) {
                             //we have two new fragments
                             newLocationEnd = fragment.getStart() - 1;
                             twoAtualRegions = true;
-                            fragmentBounds = fragmentBounds +  "e";
+                            fragmentDCStatus = DCStatus.getNewDCStatus(fragmentDCStatus,  DCStatus.C_TERMINAL_DISC);
                         }
                         Utilities.verboseLog(verboseLevel,"New Region: " + newLocationStart + "-" + newLocationEnd);
-                        PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentBounds);
+                        PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentDCStatus);
                         pfMatchRegionOne.setSplitGroup(splitGroup);
-                        pfMatchRegionOne.setLocFragmentBounds(fragmentBounds);
+                        pfMatchRegionOne.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
                         newMatchesFromFragment.add(pfMatchRegionOne);
                         newLocationStart = fragment.getEnd() + 1;
                         Utilities.verboseLog(verboseLevel," New Match for Region One  :" + pfMatchRegionOne.toString());
                         if (twoAtualRegions) {
                             //deal with final region
-                            fragmentBounds = "s";
+                            fragmentDCStatus = DCStatus.N_TERMINAL_DISC;
                             Utilities.verboseLog(verboseLevel,"The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
-                            PfamHmmer3RawMatch pfMatchRegionTwo = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd, fragmentBounds);
+                            PfamHmmer3RawMatch pfMatchRegionTwo = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd, fragmentDCStatus);
                             pfMatchRegionTwo.setSplitGroup(splitGroup);
-                            pfMatchRegionTwo.setLocFragmentBounds(fragmentBounds);
+                            pfMatchRegionTwo.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
                             newMatchesFromFragment.add(pfMatchRegionTwo);
                             Utilities.verboseLog(verboseLevel," New Match for Region Two :" + pfMatchRegionTwo.toString());
                         }
@@ -301,6 +308,25 @@ public class PfamHMMER3PostProcessing implements Serializable {
         //return filteredMatches;
         return filteredRawProtein;
     }
+
+    private String getDCStatus(String statusOne, String statusTwo){
+        String status = "";
+
+        if (statusOne.equals(statusTwo)) {
+            status = statusOne;
+        }else if (statusOne.equals("c")){
+            status = statusTwo;
+        }else if (statusTwo.equals("c")){
+            status = statusOne;
+        }else{
+            status = statusOne + statusTwo;
+            if (status.equals("es")){
+                status = "se";
+            }
+        }
+        return status;
+    }
+
 
     /**
      * Determines if two domains overlap.
@@ -338,7 +364,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
     }
 
-    private PfamHmmer3RawMatch getTempPfamHmmer3RawMatch(PfamHmmer3RawMatch rawMatch, int start, int end, String bounds) {
+    private PfamHmmer3RawMatch getTempPfamHmmer3RawMatch(PfamHmmer3RawMatch rawMatch, int start, int end, DCStatus dcStatus) {
         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
                 rawMatch.getSequenceIdentifier(),
                 rawMatch.getModelId(),
@@ -360,7 +386,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 rawMatch.getDomainIeValue(),
                 rawMatch.getDomainBias()
         );
-        match.setLocFragmentBounds(bounds);
+        match.setLocFragmentDCStatus(dcStatus.getSymbol());
 
         return match;
     }

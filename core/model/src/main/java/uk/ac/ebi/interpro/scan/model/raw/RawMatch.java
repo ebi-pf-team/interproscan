@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -67,7 +68,7 @@ public abstract class RawMatch implements Serializable {
     private int locationEnd;
 
     @Column
-    private String locFragmentBounds;
+    private String locFragmentDCStatus;
 
     protected RawMatch() {
     }
@@ -81,19 +82,19 @@ public abstract class RawMatch implements Serializable {
         this.setSignatureLibraryRelease(signatureLibraryRelease);
         this.setLocationStart(locationStart);
         this.setLocationEnd(locationEnd);
-        this.locFragmentBounds = "c";
+        this.locFragmentDCStatus = DCStatus.CONTINUOUS.getSymbol();
     }
 
     protected RawMatch(String sequenceIdentifier, String modelId,
                        SignatureLibrary signatureLibrary, String signatureLibraryRelease,
-                       int locationStart, int locationEnd, String locFragmentBounds) {
+                       int locationStart, int locationEnd, String locFragmentDCStatus) {
         this.setSequenceIdentifier(sequenceIdentifier);
         this.setModelId(modelId);
         this.setSignatureLibrary(signatureLibrary);
         this.setSignatureLibraryRelease(signatureLibraryRelease);
         this.setLocationStart(locationStart);
         this.setLocationEnd(locationEnd);
-        this.locFragmentBounds = locFragmentBounds;
+        this.locFragmentDCStatus = locFragmentDCStatus;
     }
 
     public Long getId() {
@@ -159,12 +160,12 @@ public abstract class RawMatch implements Serializable {
         this.locationEnd = locationEnd;
     }
 
-    public String getLocFragmentBounds() {
-        return locFragmentBounds;
+    public String getLocFragmentDCStatus() {
+        return locFragmentDCStatus;
     }
 
-    public void setLocFragmentBounds(String locFragmentBounds) {
-        this.locFragmentBounds = locFragmentBounds;
+    public void setLocFragmentDCStatus(String locFragmentDCStatus) {
+        this.locFragmentDCStatus = locFragmentDCStatus;
     }
 
     /**

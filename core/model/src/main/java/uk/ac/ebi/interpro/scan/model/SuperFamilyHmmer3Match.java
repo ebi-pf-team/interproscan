@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -150,8 +151,8 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             protected SuperFamilyHmmer3LocationFragment() {
             }
 
-            public SuperFamilyHmmer3LocationFragment(int start, int end, String bounds) {
-                super(start, end, bounds);
+            public SuperFamilyHmmer3LocationFragment(int start, int end, DCStatus dcStatus) {
+                super(start, end, dcStatus);
             }
 
             public SuperFamilyHmmer3LocationFragment(int start, int end) {
@@ -177,7 +178,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
             }
 
             public Object clone() throws CloneNotSupportedException {
-                return new SuperFamilyHmmer3LocationFragment(this.getStart(), this.getEnd(), this.getBounds());
+                return new SuperFamilyHmmer3LocationFragment(this.getStart(), this.getEnd(), this.getDcStatus());
             }
         }
 
