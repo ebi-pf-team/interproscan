@@ -17,7 +17,7 @@
                 <locations>
                     <hmmer2-location score="228.9" evalue="4.3E-64" hmm-start="1" hmm-end="291" hmm-length="291" hmm-bounds="COMPLETE" start="21" end="237">
                         <location-fragments>
-                            <hmmer2-location-fragment start="21" end="237" bounds="c"/>
+                            <hmmer2-location-fragment start="21" end="237" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                 </locations>
@@ -93,7 +93,7 @@
                 <locations>
                     <panther-location env-start="2" env-end="265" hmm-start="38" hmm-end="342" hmm-length="357" hmm-bounds="COMPLETE" start="9" end="261">
                         <location-fragments>
-                            <panther-location-fragment start="9" end="261" bounds="c"/>
+                            <panther-location-fragment start="9" end="261" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -106,7 +106,7 @@
                 <locations>
                     <panther-location env-start="2" env-end="265" hmm-start="38" hmm-end="342" hmm-length="357" hmm-bounds="COMPLETE" start="9" end="261">
                         <location-fragments>
-                            <panther-location-fragment start="9" end="261" bounds="c"/>
+                            <panther-location-fragment start="9" end="261" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -125,7 +125,7 @@
                 <locations>
                     <profilescan-location score="61.29" start="3" end="265">
                         <location-fragments>
-                            <profilescan-location-fragment start="3" end="265" bounds="c"/>
+                            <profilescan-location-fragment start="3" end="265" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -156,17 +156,17 @@
                 <locations>
                     <fingerprints-location motifNumber="1" pvalue="0.0" score="48.89" start="31" end="39">
                         <location-fragments>
-                            <fingerprints-location-fragment start="31" end="39" bounds="c"/>
+                            <fingerprints-location-fragment start="31" end="39" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="2" pvalue="0.0" score="37.87" start="78" end="89">
                         <location-fragments>
-                            <fingerprints-location-fragment start="78" end="89" bounds="c"/>
+                            <fingerprints-location-fragment start="78" end="89" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="3" pvalue="0.0" score="65.28" start="39" end="48">
                         <location-fragments>
-                            <fingerprints-location-fragment start="39" end="48" bounds="c"/>
+                            <fingerprints-location-fragment start="39" end="48" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                 </locations>
@@ -220,7 +220,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="118" hmm-start="2" hmm-end="113" hmm-length="117" hmm-bounds="COMPLETE" start="3" end="114">
                         <location-fragments>
-                            <panther-location-fragment start="3" end="114" bounds="c"/>
+                            <panther-location-fragment start="3" end="114" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -238,7 +238,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="118" hmm-start="2" hmm-end="113" hmm-length="117" hmm-bounds="COMPLETE" start="3" end="114">
                         <location-fragments>
-                            <panther-location-fragment start="3" end="114" bounds="c"/>
+                            <panther-location-fragment start="3" end="114" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -254,7 +254,7 @@
                 <locations>
                     <patternscan-location level="NONE" start="32" end="50">
                         <location-fragments>
-                            <patternscan-location-fragment start="32" end="50" bounds="c"/>
+                            <patternscan-location-fragment start="32" end="50" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </patternscan-location>
@@ -271,7 +271,7 @@
                 <locations>
                     <profilescan-location score="14.057" start="1" end="118">
                         <location-fragments>
-                            <profilescan-location-fragment start="1" end="118" bounds="c"/>
+                            <profilescan-location-fragment start="1" end="118" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -306,27 +306,27 @@
                 <locations>
                     <fingerprints-location motifNumber="3" pvalue="0.0" score="63.7" start="41" end="55">
                         <location-fragments>
-                            <fingerprints-location-fragment start="41" end="55" bounds="c"/>
+                            <fingerprints-location-fragment start="41" end="55" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="1" pvalue="0.0" score="39.46" start="75" end="103">
                         <location-fragments>
-                            <fingerprints-location-fragment start="75" end="103" bounds="c"/>
+                            <fingerprints-location-fragment start="75" end="103" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="5" pvalue="0.0" score="51.32" start="208" end="228">
                         <location-fragments>
-                            <fingerprints-location-fragment start="208" end="228" bounds="c"/>
+                            <fingerprints-location-fragment start="208" end="228" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="4" pvalue="0.0" score="47.14" start="115" end="136">
                         <location-fragments>
-                            <fingerprints-location-fragment start="115" end="136" bounds="c"/>
+                            <fingerprints-location-fragment start="115" end="136" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="2" pvalue="0.0" score="60.71" start="147" end="174">
                         <location-fragments>
-                            <fingerprints-location-fragment start="147" end="174" bounds="c"/>
+                            <fingerprints-location-fragment start="147" end="174" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                 </locations>
@@ -342,7 +342,7 @@
                 <locations>
                     <hmmer2-location score="38.2" evalue="1.1E-6" hmm-start="1" hmm-end="86" hmm-length="86" hmm-bounds="COMPLETE" start="276" end="347">
                         <location-fragments>
-                            <hmmer2-location-fragment start="276" end="347" bounds="c"/>
+                            <hmmer2-location-fragment start="276" end="347" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                 </locations>
@@ -449,7 +449,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="357" hmm-start="10" hmm-end="349" hmm-length="377" hmm-bounds="COMPLETE" start="3" end="343">
                         <location-fragments>
-                            <panther-location-fragment start="3" end="343" bounds="c"/>
+                            <panther-location-fragment start="3" end="343" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -462,7 +462,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="357" hmm-start="10" hmm-end="349" hmm-length="377" hmm-bounds="COMPLETE" start="3" end="343">
                         <location-fragments>
-                            <panther-location-fragment start="3" end="343" bounds="c"/>
+                            <panther-location-fragment start="3" end="343" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -484,7 +484,7 @@
                 <locations>
                     <patternscan-location level="NONE" start="206" end="223">
                         <location-fragments>
-                            <patternscan-location-fragment start="206" end="223" bounds="c"/>
+                            <patternscan-location-fragment start="206" end="223" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </patternscan-location>
@@ -498,7 +498,7 @@
                 <locations>
                     <phobius-location start="62" end="369">
                         <location-fragments>
-                            <phobius-location-fragment start="62" end="369" bounds="c"/>
+                            <phobius-location-fragment start="62" end="369" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -511,7 +511,7 @@
                 <locations>
                     <phobius-location start="1" end="43">
                         <location-fragments>
-                            <phobius-location-fragment start="1" end="43" bounds="c"/>
+                            <phobius-location-fragment start="1" end="43" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -524,7 +524,7 @@
                 <locations>
                     <phobius-location start="44" end="61">
                         <location-fragments>
-                            <phobius-location-fragment start="44" end="61" bounds="c"/>
+                            <phobius-location-fragment start="44" end="61" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -546,7 +546,7 @@
                 <locations>
                     <profilescan-location score="35.882" start="4" end="259">
                         <location-fragments>
-                            <profilescan-location-fragment start="4" end="259" bounds="c"/>
+                            <profilescan-location-fragment start="4" end="259" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -563,7 +563,7 @@
                 <locations>
                     <profilescan-location score="15.593" start="275" end="355">
                         <location-fragments>
-                            <profilescan-location-fragment start="275" end="355" bounds="c"/>
+                            <profilescan-location-fragment start="275" end="355" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -611,22 +611,22 @@
                 <locations>
                     <fingerprints-location motifNumber="3" pvalue="0.0" score="52.92" start="108" end="117">
                         <location-fragments>
-                            <fingerprints-location-fragment start="108" end="117" bounds="c"/>
+                            <fingerprints-location-fragment start="108" end="117" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="2" pvalue="0.0" score="49.17" start="79" end="88">
                         <location-fragments>
-                            <fingerprints-location-fragment start="79" end="88" bounds="c"/>
+                            <fingerprints-location-fragment start="79" end="88" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="1" pvalue="0.0" score="50.0" start="118" end="126">
                         <location-fragments>
-                            <fingerprints-location-fragment start="118" end="126" bounds="c"/>
+                            <fingerprints-location-fragment start="118" end="126" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                     <fingerprints-location motifNumber="4" pvalue="0.0" score="47.92" start="101" end="108">
                         <location-fragments>
-                            <fingerprints-location-fragment start="101" end="108" bounds="c"/>
+                            <fingerprints-location-fragment start="101" end="108" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </fingerprints-location>
                 </locations>
@@ -643,12 +643,12 @@
                 <locations>
                     <hmmer2-location score="34.1" evalue="1.9E-5" hmm-start="1" hmm-end="51" hmm-length="51" hmm-bounds="COMPLETE" start="28" end="73">
                         <location-fragments>
-                            <hmmer2-location-fragment start="28" end="73" bounds="c"/>
+                            <hmmer2-location-fragment start="28" end="73" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                     <hmmer2-location score="88.4" evalue="8.6E-22" hmm-start="1" hmm-end="51" hmm-length="51" hmm-bounds="COMPLETE" start="82" end="127">
                         <location-fragments>
-                            <hmmer2-location-fragment start="82" end="127" bounds="c"/>
+                            <hmmer2-location-fragment start="82" end="127" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                 </locations>
@@ -703,7 +703,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="129" hmm-start="4" hmm-end="132" hmm-length="132" hmm-bounds="COMPLETE" start="2" end="129">
                         <location-fragments>
-                            <panther-location-fragment start="2" end="129" bounds="c"/>
+                            <panther-location-fragment start="2" end="129" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -716,7 +716,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="129" hmm-start="4" hmm-end="132" hmm-length="132" hmm-bounds="COMPLETE" start="2" end="129">
                         <location-fragments>
-                            <panther-location-fragment start="2" end="129" bounds="c"/>
+                            <panther-location-fragment start="2" end="129" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -729,7 +729,7 @@
                 <locations>
                     <phobius-location start="15" end="22">
                         <location-fragments>
-                            <phobius-location-fragment start="15" end="22" bounds="c"/>
+                            <phobius-location-fragment start="15" end="22" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -742,7 +742,7 @@
                 <locations>
                     <phobius-location start="1" end="22">
                         <location-fragments>
-                            <phobius-location-fragment start="1" end="22" bounds="c"/>
+                            <phobius-location-fragment start="1" end="22" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -755,7 +755,7 @@
                 <locations>
                     <phobius-location start="1" end="2">
                         <location-fragments>
-                            <phobius-location-fragment start="1" end="2" bounds="c"/>
+                            <phobius-location-fragment start="1" end="2" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -768,7 +768,7 @@
                 <locations>
                     <phobius-location start="3" end="14">
                         <location-fragments>
-                            <phobius-location-fragment start="3" end="14" bounds="c"/>
+                            <phobius-location-fragment start="3" end="14" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -781,7 +781,7 @@
                 <locations>
                     <phobius-location start="23" end="129">
                         <location-fragments>
-                            <phobius-location-fragment start="23" end="129" bounds="c"/>
+                            <phobius-location-fragment start="23" end="129" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -798,13 +798,13 @@
                 <locations>
                     <profilescan-location score="14.545" start="79" end="127">
                         <location-fragments>
-                            <profilescan-location-fragment start="79" end="127" bounds="c"/>
+                            <profilescan-location-fragment start="79" end="127" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="13.453" start="25" end="73">
                         <location-fragments>
-                            <profilescan-location-fragment start="25" end="73" bounds="c"/>
+                            <profilescan-location-fragment start="25" end="73" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -818,7 +818,7 @@
                 <locations>
                     <signalp-location score="0.808" start="1" end="22">
                         <location-fragments>
-                            <signalp-location-fragment start="1" end="22" bounds="c"/>
+                            <signalp-location-fragment start="1" end="22" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </signalp-location>
                 </locations>
@@ -831,7 +831,7 @@
                 <locations>
                     <signalp-location start="1" end="22">
                         <location-fragments>
-                            <signalp-location-fragment start="1" end="22" bounds="c"/>
+                            <signalp-location-fragment start="1" end="22" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </signalp-location>
                 </locations>
@@ -877,32 +877,32 @@
                 <locations>
                     <hmmer2-location score="28.3" evalue="0.0011" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="200" end="235">
                         <location-fragments>
-                            <hmmer2-location-fragment start="200" end="235" bounds="c"/>
+                            <hmmer2-location-fragment start="200" end="235" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                     <hmmer2-location score="25.4" evalue="0.0082" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="164" end="199">
                         <location-fragments>
-                            <hmmer2-location-fragment start="164" end="199" bounds="c"/>
+                            <hmmer2-location-fragment start="164" end="199" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                     <hmmer2-location score="22.1" evalue="0.079" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="423" end="459">
                         <location-fragments>
-                            <hmmer2-location-fragment start="423" end="459" bounds="c"/>
+                            <hmmer2-location-fragment start="423" end="459" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                     <hmmer2-location score="16.0" evalue="3.9" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="236" end="272">
                         <location-fragments>
-                            <hmmer2-location-fragment start="236" end="272" bounds="c"/>
+                            <hmmer2-location-fragment start="236" end="272" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                     <hmmer2-location score="26.2" evalue="0.0045" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="349" end="384">
                         <location-fragments>
-                            <hmmer2-location-fragment start="349" end="384" bounds="c"/>
+                            <hmmer2-location-fragment start="349" end="384" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                     <hmmer2-location score="12.8" evalue="10.0" hmm-start="1" hmm-end="39" hmm-length="39" hmm-bounds="COMPLETE" start="385" end="421">
                         <location-fragments>
-                            <hmmer2-location-fragment start="385" end="421" bounds="c"/>
+                            <hmmer2-location-fragment start="385" end="421" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </hmmer2-location>
                 </locations>
@@ -941,22 +941,22 @@
                 <locations>
                     <mobidblite-location sequence-feature="Polyampholyte" start="91" end="108">
                         <location-fragments>
-                            <mobidblite-location-fragment start="91" end="108" bounds="c"/>
+                            <mobidblite-location-fragment start="91" end="108" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                     <mobidblite-location sequence-feature="Polar" start="76" end="90">
                         <location-fragments>
-                            <mobidblite-location-fragment start="76" end="90" bounds="c"/>
+                            <mobidblite-location-fragment start="76" end="90" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                     <mobidblite-location sequence-feature="Polyampholyte" start="1" end="27">
                         <location-fragments>
-                            <mobidblite-location-fragment start="1" end="27" bounds="c"/>
+                            <mobidblite-location-fragment start="1" end="27" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                     <mobidblite-location start="1" end="108">
                         <location-fragments>
-                            <mobidblite-location-fragment start="1" end="108" bounds="c"/>
+                            <mobidblite-location-fragment start="1" end="108" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                 </locations>
@@ -969,7 +969,7 @@
                 <locations>
                     <mobidblite-location sequence-feature="Polyampholyte" start="1" end="27">
                         <location-fragments>
-                            <mobidblite-location-fragment start="1" end="27" bounds="c"/>
+                            <mobidblite-location-fragment start="1" end="27" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                 </locations>
@@ -982,7 +982,7 @@
                 <locations>
                     <mobidblite-location sequence-feature="Polyampholyte" start="91" end="108">
                         <location-fragments>
-                            <mobidblite-location-fragment start="91" end="108" bounds="c"/>
+                            <mobidblite-location-fragment start="91" end="108" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                 </locations>
@@ -995,7 +995,7 @@
                 <locations>
                     <mobidblite-location sequence-feature="" start="1" end="108">
                         <location-fragments>
-                            <mobidblite-location-fragment start="1" end="108" bounds="c"/>
+                            <mobidblite-location-fragment start="1" end="108" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                 </locations>
@@ -1008,7 +1008,7 @@
                 <locations>
                     <mobidblite-location sequence-feature="Polar" start="76" end="90">
                         <location-fragments>
-                            <mobidblite-location-fragment start="76" end="90" bounds="c"/>
+                            <mobidblite-location-fragment start="76" end="90" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </mobidblite-location>
                 </locations>
@@ -1021,7 +1021,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="647" hmm-start="1" hmm-end="609" hmm-length="611" hmm-bounds="COMPLETE" start="1" end="646">
                         <location-fragments>
-                            <panther-location-fragment start="1" end="646" bounds="c"/>
+                            <panther-location-fragment start="1" end="646" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -1037,43 +1037,43 @@
                 <locations>
                     <profilescan-location score="6.587" start="163" end="199">
                         <location-fragments>
-                            <profilescan-location-fragment start="163" end="199" bounds="c"/>
+                            <profilescan-location-fragment start="163" end="199" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="4.651" start="236" end="271">
                         <location-fragments>
-                            <profilescan-location-fragment start="236" end="271" bounds="c"/>
+                            <profilescan-location-fragment start="236" end="271" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="4.511" start="385" end="422">
                         <location-fragments>
-                            <profilescan-location-fragment start="385" end="422" bounds="c"/>
+                            <profilescan-location-fragment start="385" end="422" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="4.604" start="492" end="530">
                         <location-fragments>
-                            <profilescan-location-fragment start="492" end="530" bounds="c"/>
+                            <profilescan-location-fragment start="492" end="530" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="6.144" start="349" end="384">
                         <location-fragments>
-                            <profilescan-location-fragment start="349" end="384" bounds="c"/>
+                            <profilescan-location-fragment start="349" end="384" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="8.337" start="423" end="459">
                         <location-fragments>
-                            <profilescan-location-fragment start="423" end="459" bounds="c"/>
+                            <profilescan-location-fragment start="423" end="459" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
                     <profilescan-location score="8.174" start="200" end="235">
                         <location-fragments>
-                            <profilescan-location-fragment start="200" end="235" bounds="c"/>
+                            <profilescan-location-fragment start="200" end="235" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -1090,7 +1090,7 @@
                 <locations>
                     <profilescan-location score="46.174" start="136" end="489">
                         <location-fragments>
-                            <profilescan-location-fragment start="136" end="489" bounds="c"/>
+                            <profilescan-location-fragment start="136" end="489" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -1134,7 +1134,7 @@
                 <locations>
                     <coils-location start="27" end="75">
                         <location-fragments>
-                            <coils-location-fragment start="27" end="75" bounds="c"/>
+                            <coils-location-fragment start="27" end="75" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </coils-location>
                 </locations>
@@ -1185,7 +1185,7 @@
                 <locations>
                     <panther-location env-start="1" env-end="78" hmm-start="1" hmm-end="78" hmm-length="78" hmm-bounds="COMPLETE" start="1" end="78">
                         <location-fragments>
-                            <panther-location-fragment start="1" end="78" bounds="c"/>
+                            <panther-location-fragment start="1" end="78" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </panther-location>
                 </locations>
@@ -1198,7 +1198,7 @@
                 <locations>
                     <phobius-location start="26" end="78">
                         <location-fragments>
-                            <phobius-location-fragment start="26" end="78" bounds="c"/>
+                            <phobius-location-fragment start="26" end="78" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -1211,7 +1211,7 @@
                 <locations>
                     <phobius-location start="1" end="5">
                         <location-fragments>
-                            <phobius-location-fragment start="1" end="5" bounds="c"/>
+                            <phobius-location-fragment start="1" end="5" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -1224,7 +1224,7 @@
                 <locations>
                     <phobius-location start="1" end="25">
                         <location-fragments>
-                            <phobius-location-fragment start="1" end="25" bounds="c"/>
+                            <phobius-location-fragment start="1" end="25" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -1237,7 +1237,7 @@
                 <locations>
                     <phobius-location start="6" end="17">
                         <location-fragments>
-                            <phobius-location-fragment start="6" end="17" bounds="c"/>
+                            <phobius-location-fragment start="6" end="17" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -1250,7 +1250,7 @@
                 <locations>
                     <phobius-location start="18" end="25">
                         <location-fragments>
-                            <phobius-location-fragment start="18" end="25" bounds="c"/>
+                            <phobius-location-fragment start="18" end="25" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </phobius-location>
                 </locations>
@@ -1263,7 +1263,7 @@
                 <locations>
                     <profilescan-location score="6.0" start="1" end="21">
                         <location-fragments>
-                            <profilescan-location-fragment start="1" end="21" bounds="c"/>
+                            <profilescan-location-fragment start="1" end="21" dc-status="CONTINUOUS"/>
                         </location-fragments>
                         <alignment>Not available</alignment>
                     </profilescan-location>
@@ -1277,7 +1277,7 @@
                 <locations>
                     <signalp-location score="0.624" start="1" end="25">
                         <location-fragments>
-                            <signalp-location-fragment start="1" end="25" bounds="c"/>
+                            <signalp-location-fragment start="1" end="25" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </signalp-location>
                 </locations>
@@ -1290,7 +1290,7 @@
                 <locations>
                     <signalp-location start="1" end="23">
                         <location-fragments>
-                            <signalp-location-fragment start="1" end="23" bounds="c"/>
+                            <signalp-location-fragment start="1" end="23" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </signalp-location>
                 </locations>
@@ -1303,7 +1303,7 @@
                 <locations>
                     <signalp-location score="0.607" start="1" end="23">
                         <location-fragments>
-                            <signalp-location-fragment start="1" end="23" bounds="c"/>
+                            <signalp-location-fragment start="1" end="23" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </signalp-location>
                 </locations>
@@ -1316,7 +1316,7 @@
                 <locations>
                     <signalp-location score="0.622" start="1" end="25">
                         <location-fragments>
-                            <signalp-location-fragment start="1" end="25" bounds="c"/>
+                            <signalp-location-fragment start="1" end="25" dc-status="CONTINUOUS"/>
                         </location-fragments>
                     </signalp-location>
                 </locations>

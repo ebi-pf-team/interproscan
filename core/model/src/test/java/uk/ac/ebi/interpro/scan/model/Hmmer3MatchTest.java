@@ -51,11 +51,11 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
     @Before
     public void init() {
         originalLocation =
-                new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2, false, "c");
+                new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2, false, DCStatus.CONTINUOUS);
         originalMatch = new Hmmer3Match(
                 new Signature("PF02310", "B12-binding"), "PF02310", 0.035, 3.7e-9,
                 new HashSet<>(Arrays.asList(
-                        new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2, false, "c")
+                        new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2, false, DCStatus.CONTINUOUS)
                 ))
         );
     }
@@ -101,7 +101,7 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
         HmmerLocation copy = (HmmerLocation)SerializationUtils.clone(original);
         assertEquals("Original should equal itself", original, original);
         assertEquals("Original and copy should be equal", original, copy);
-        copy = new Hmmer3Match.Hmmer3Location(1, 2, 3, 4, 5, 6, 7, HmmBounds.COMPLETE, 7, 8, false, "c");
+        copy = new Hmmer3Match.Hmmer3Location(1, 2, 3, 4, 5, 6, 7, HmmBounds.COMPLETE, 7, 8, false, DCStatus.CONTINUOUS);
         assertFalse("Original and copy should not be equal", original.equals(copy));
     }
     

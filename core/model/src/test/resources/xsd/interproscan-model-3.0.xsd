@@ -177,7 +177,7 @@
         <xs:sequence/>
         <xs:attribute name="start" type="xs:int" use="required"/>
         <xs:attribute name="end" type="xs:int" use="required"/>
-        <xs:attribute name="bounds" type="xs:string" use="required"/>
+        <xs:attribute name="dc-status" type="tns:DCStatusType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="CoilsLocationFragmentType">
@@ -837,6 +837,15 @@
             <xs:enumeration value="SMART"/>
             <xs:enumeration value="PRODOM"/>
             <xs:enumeration value="PROSITE_PROFILES"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DCStatusType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NC_TERMINAL_DISC"/>
+            <xs:enumeration value="N_TERMINAL_DISC"/>
+            <xs:enumeration value="C_TERMINAL_DISC"/>
+            <xs:enumeration value="CONTINUOUS"/>
         </xs:restriction>
     </xs:simpleType>
 

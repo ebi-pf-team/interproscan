@@ -16,7 +16,6 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -115,7 +114,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
          * @param envelopeStart
          * @param envelopeEnd
          * @param postProcessed
-         * @param bounds
+         * @param dcStatus
          */
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,

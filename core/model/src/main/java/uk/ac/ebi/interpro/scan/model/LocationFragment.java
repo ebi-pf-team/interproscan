@@ -19,7 +19,6 @@ package uk.ac.ebi.interpro.scan.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -139,7 +138,6 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     }
 
     @XmlAttribute(name="dc-status", required = true)
-//    @XmlElement (name = "dc-status")
     @JsonProperty("dc-status")
     public DCStatus getDcStatus() {
         return DCStatus.parseSymbol(dcStatus);
@@ -433,19 +431,6 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
         public Set<TMHMMMatch.TMHMMLocation.TMHMMLocationFragment> getTMHMMLocationFragments() {
             return (tmhmmLocationFragments == null ? Collections.<TMHMMMatch.TMHMMLocation.TMHMMLocationFragment>emptySet() : tmhmmLocationFragments);
         }
-    }
-
-    private String getDCStatus(String statusOne, String statusTwo){
-        String status = "";
-        if (statusOne.equals(statusTwo)){
-            status = statusOne;
-        }else{
-            status = statusOne + statusTwo;
-            if (status.equals("es")){
-                status = "se";
-            }
-        }
-        return status;
     }
 
     public void updateDCStatus(Object o) {

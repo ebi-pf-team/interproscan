@@ -29,7 +29,7 @@ import java.util.Map;
 @XmlType(name="DCStatusType")
 public enum DCStatus {
 
-    CONTINUOUS("S", "continuous single chain domain"),
+    CONTINUOUS("S", "Continuous single chain domain"),
     N_TERMINAL_DISC("N", "N-terminal discontinuous "),
     C_TERMINAL_DISC("C", "C-terminal discontinuous"),
     NC_TERMINAL_DISC("NC", "N and C -terminal discontinuous");
