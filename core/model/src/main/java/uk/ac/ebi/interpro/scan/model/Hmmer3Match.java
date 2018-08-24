@@ -84,7 +84,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
     @Entity
     @Table(name = "hmmer3_location")
     @XmlType(name = "Hmmer3LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-    public static class Hmmer3Location extends HmmerLocation {
+    public static class Hmmer3Location extends HmmerLocation<Hmmer3Location.Hmmer3LocationFragment> {
 
         @Column(name = "envelope_start", nullable = false)
         private int envelopeStart;
@@ -92,27 +92,47 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         @Column(name = "envelope_end", nullable = false)
         private int envelopeEnd;
 
+        @Column(name = "post_processed", nullable = false)
+        private boolean postProcessed; // Is this a native HMMER3 result or has it been post processed in some way?
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
         protected Hmmer3Location() {
         }
 
+        /**
+         * Create a {@Hmmer3Location} consisting of one fragment with the same start/stop (initially)
+         * @param start
+         * @param end
+         * @param score
+         * @param evalue
+         * @param hmmStart
+         * @param hmmEnd
+         * @param hmmLength
+         * @param hmmBounds
+         * @param envelopeStart
+         * @param envelopeEnd
+         * @param postProcessed
+         * @param dcStatus
+         */
         public Hmmer3Location(int start, int end, double score, double evalue,
                               int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
-                              int envelopeStart, int envelopeEnd) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
+                              int envelopeStart, int envelopeEnd, boolean postProcessed, DCStatus dcStatus) {
+            super(new Hmmer3LocationFragment(start, end, dcStatus), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
+            setPostProcessed(postProcessed);
         }
 
-//        public Hmmer3Location(int start, int end, double score, double evalue,
-//                              int hmmStart, int hmmEnd,
-//                              int envelopeStart, int envelopeEnd) {
-//            super(start, end, score, evalue, hmmStart, hmmEnd);
-//            setEnvelopeStart(envelopeStart);
-//            setEnvelopeEnd(envelopeEnd);
-//        }
+        public Hmmer3Location(int start, int end, double score, double evalue,
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
+                              int envelopeStart, int envelopeEnd, boolean postProcessed, Set<Hmmer3LocationFragment> locationFragments) {
+            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds, locationFragments);
+            setEnvelopeStart(envelopeStart);
+            setEnvelopeEnd(envelopeEnd);
+            setPostProcessed(postProcessed);
+        }
 
         @XmlAttribute(name = "env-start", required = true)
         public int getEnvelopeStart() {
@@ -132,6 +152,15 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             this.envelopeEnd = envelopeEnd;
         }
 
+        @XmlAttribute(name = "post-processed", required = true)
+        public boolean isPostProcessed() {
+            return postProcessed;
+        }
+
+        public void setPostProcessed(boolean postProcessed) {
+            this.postProcessed = postProcessed;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -141,6 +170,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                     .appendSuper(super.equals(o))
                     .append(envelopeStart, l.envelopeStart)
                     .append(envelopeEnd, l.envelopeEnd)
+                    .append(postProcessed, l.postProcessed)
                     .isEquals();
         }
 
@@ -150,6 +180,7 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
                     .appendSuper(super.hashCode())
                     .append(envelopeStart)
                     .append(envelopeEnd)
+                    .append(postProcessed)
                     .toHashCode();
         }
 
@@ -159,9 +190,54 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd());
+            final Hmmer3Location clone = new Hmmer3Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(),
+                    this.getHmmBounds(), this.getEnvelopeStart(), this.getEnvelopeEnd(), this.isPostProcessed(), this.getLocationFragments());
             return clone;
         }
+
+        /**
+         * Location fragment of a HMMER3 match on a protein sequence
+         */
+        @Entity
+        @Table(name = "hmmer3_location_fragment")
+        @XmlType(name = "Hmmer3LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class Hmmer3LocationFragment extends LocationFragment {
+
+            protected Hmmer3LocationFragment() {
+            }
+
+            public Hmmer3LocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            public Hmmer3LocationFragment(int start, int end, DCStatus dcStatus) {
+                super(start, end, dcStatus);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof Hmmer3LocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(139, 159)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new Hmmer3LocationFragment(this.getStart(), this.getEnd(), this.getDcStatus());
+            }
+        }
+
 
     }
 }

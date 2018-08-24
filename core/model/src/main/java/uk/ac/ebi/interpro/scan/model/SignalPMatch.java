@@ -72,7 +72,7 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
         }
 
         public SignalPLocation(int start, int end, Double score) {
-            super(start, end);
+            super(new SignalPLocationFragment(start, end));
             setScore(score);
         }
 
@@ -109,6 +109,45 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
         public Object clone() throws CloneNotSupportedException {
             return new SignalPLocation(this.getStart(), this.getEnd(), this.getScore());
         }
+
+        /**
+         * Location fragment of a SignalP match on a protein sequence
+         */
+        @Entity
+        @Table(name = "signalp_location_fragment")
+        @XmlType(name = "SignalPLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class SignalPLocationFragment extends LocationFragment {
+
+            protected SignalPLocationFragment() {
+            }
+
+            public SignalPLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof SignalPLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(119, 121)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new SignalPLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
     }
 

@@ -108,7 +108,7 @@ public class AnalyseMatchDataResultTest {
                 "Mus musculus (Mouse)",
                 false));
 
-        SimpleProtein protein = instance.createSimpleProtein(records);
+        SimpleProtein protein = instance.createSimpleProtein(records, new ArrayList<>());
         assertNotNull(protein);
         List<SimpleEntry> entries = protein.getEntries();
         assertNotNull(entries);

@@ -27,6 +27,7 @@
                     <property name="signatureLibrary" value="COILS"/>
                     <property name="releaseVersionNumber" value="${coils.signature.library.release}"/>
                     <property name="analysisJobId" value="jobCoils"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
@@ -41,6 +42,7 @@
                     <property name="signatureLibrary" value="MOBIDB_LITE"/>
                     <property name="releaseVersionNumber" value="${mobidb.signature.library.release}"/>
                     <property name="analysisJobId" value="jobMobiDBLite"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
@@ -55,12 +57,14 @@
                     <property name="signatureLibrary" value="TMHMM"/>
                     <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.phobius.PhobiusDummyParser">
                     <property name="signatureLibrary" value="PHOBIUS"/>
                     <property name="releaseVersionNumber" value="${phobius.signature.library.release}"/>
                     <property name="analysisJobId" value="jobPhobius"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">

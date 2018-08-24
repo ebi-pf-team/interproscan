@@ -13,6 +13,7 @@
                 <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML</value>
                 <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch</value>
                 <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation</value>
+                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment</value>
             </list>
         </property>
         <property name="marshallerProperties">

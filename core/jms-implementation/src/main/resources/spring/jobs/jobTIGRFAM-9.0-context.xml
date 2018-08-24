@@ -6,7 +6,7 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Coils ############################  -->
+    <!-- ######################## JOB: TIGRFAM ############################  -->
     <bean id="jobTIGRFAM-9.0" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="TIGRFAMs are protein families based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
@@ -105,7 +105,7 @@
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO-9.0"/>
     </bean>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: TIGRFAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="tigrfamRawMatchDAO-9.0"

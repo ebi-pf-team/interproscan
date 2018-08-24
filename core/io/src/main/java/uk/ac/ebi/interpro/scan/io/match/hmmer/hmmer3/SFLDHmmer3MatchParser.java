@@ -204,7 +204,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             if (initialRawMatches == null) {
                 LOGGER.error("initialRawMatches == null!! ");
             }
-//            Utilities.verboseLog("idxCount : " + idxCount + " of " + seqIdsCount + " with " + originalMatchCount + " raw matches originalMatchCount");
+            Utilities.verboseLog(15, "idxCount : " + idxCount + " of " + seqIdsCount + " with " + originalMatchCount + " raw matches originalMatchCount");
+            Set<SFLDHmmer3RawMatch> seqPromotedRawMatches = new HashSet<>();
             for (SFLDHmmer3RawMatch rawMatch : initialRawMatches) {
                 Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
 
@@ -214,9 +215,18 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                     promotedRawMatchesCount = promotedRawMatches.size();
                     totalPromotedRawMatchesCount += promotedRawMatchesCount;
                     //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
-                    filteredRawProtein.addAllMatches(promotedRawMatches);
+                    //filteredRawProtein.addAllMatches(promotedRawMatches);
+                    seqPromotedRawMatches.addAll(promotedRawMatches);
+                    //Utilities.verboseLog("promotedRawMatches:" + promotedRawMatches);
                 }
                 matchCount = originalMatchCount + promotedRawMatchesCount;
+            }
+            if (seqPromotedRawMatches.size() > 0){
+                //Utilities.verboseLog(25, "seqPromotedRawMatches:" + seqPromotedRawMatches);
+                Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = resolveDuplicateMatches(seqPromotedRawMatches);
+                //Utilities.verboseLog(25,"duplicateFreeRawMatches:" + duplicateFreeRawMatches);
+                filteredRawProtein.addAllMatches(duplicateFreeRawMatches);
+
             }
             filteredRawProtein.addAllMatches(initialRawMatches);
             filtertedRawProteinMap.put(key, filteredRawProtein);
@@ -360,6 +370,84 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         return overlapFreeRawMatches;
     }
 
+    public Set<SFLDHmmer3RawMatch> resolveDuplicateMatches(Set<SFLDHmmer3RawMatch> rawMatches){
+        Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = new HashSet<>();
+        Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
+        Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
+        //Utilities.verboseLog("matchesPerModel: " + matchesPerModel.toString());
+        /*if (matchesPerModel.keySet().size() == 1) {
+            duplicateFreeRawMatches.addAll(rawMatches);
+            return overlapFreeRawMatches;
+        }
+        */
+        for (String key : matchesPerModel.keySet()) {
+            Set<SFLDHmmer3RawMatch> modelMatches = matchesPerModel.get(key);
+
+            /* debug
+            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
+
+                //Utilities.verboseLog("raw unfilt match : " + getMatchDetails(modelMatch));
+
+            }
+            */
+
+            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
+                boolean duplicate = false;
+                SFLDHmmer3RawMatch baseMatch = modelMatch;
+                //Utilities.verboseLog("Consider  match: " + getMatchDetails(modelMatch));
+                for (SFLDHmmer3RawMatch otherMatch : allRawMatches) {
+                    //Utilities.verboseLog(20,"Consider against match: " + getMatchDetails(otherMatch));
+                    if (modelMatch.equals(otherMatch) || ! modelMatch.getModelId().equals(otherMatch.getModelId())) {
+                        continue;
+                    }
+
+                    if (modelMatch.getLocationStart() == otherMatch.getLocationStart() && modelMatch.getLocationEnd() == otherMatch.getLocationEnd()) {
+                        if (modelMatch.getScore() <= modelMatch.getScore() ) {
+                           // Utilities.verboseLog(getMatchDetails(modelMatch) + " -- is duplicate .... of ..  -- " + getMatchDetails(otherMatch) );
+                            duplicate = true;
+                            break;
+                            //check hmmstarts and envstarts;
+                        }
+
+                    }
+                }
+                if (duplicate) {
+                    allRawMatches.remove(modelMatch);
+                } else {
+                    duplicateFreeRawMatches.add(modelMatch);
+                }
+            }
+        }
+
+        return duplicateFreeRawMatches;
+    }
+
+    /**
+     *
+     * @param modelMatch
+     * @return
+     */
+    private String getMatchDetails(SFLDHmmer3RawMatch modelMatch){
+        final List<String> mappingFields = new ArrayList<>();
+        mappingFields.add(modelMatch.getSequenceIdentifier());
+        mappingFields.add(modelMatch.getModelId());
+        mappingFields.add(Integer.toString(modelMatch.getLocationStart()));
+        mappingFields.add(Integer.toString(modelMatch.getLocationEnd()));
+        mappingFields.add(Integer.toString(modelMatch.getHmmStart()));
+        mappingFields.add(Integer.toString(modelMatch.getHmmEnd()));
+        mappingFields.add(Integer.toString(modelMatch.getEnvelopeStart()));
+        mappingFields.add(Integer.toString(modelMatch.getEnvelopeEnd()));
+        mappingFields.add(Double.toString(modelMatch.getScore()));
+        mappingFields.add(Double.toString(modelMatch.getEvalue()));
+
+        return mappingFields.toString();
+    }
+
+    /**
+     *
+     * @param rawMatches
+     * @return
+     */
     public Map<String, Set<SFLDHmmer3RawMatch>> getMatchGroups(Collection<SFLDHmmer3RawMatch> rawMatches) {
         Map<String, Set<SFLDHmmer3RawMatch>> matchGroups = new HashMap<>();
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {

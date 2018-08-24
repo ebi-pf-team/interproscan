@@ -39,12 +39,12 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class LocationWithSites<T extends Site> extends Location {
+public abstract class LocationWithSites<T extends Site, U extends LocationFragment> extends Location {
 
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
     @BatchSize(size=4000)
     @JsonManagedReference
-    protected Set<T> sites = new HashSet<T>();
+    protected Set<T> sites = new HashSet<>();
 
     /**
      * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -52,8 +52,8 @@ public abstract class LocationWithSites<T extends Site> extends Location {
     protected LocationWithSites() {
     }
 
-    public LocationWithSites(int start, int end, Set<T> sites) {
-        super(start, end);
+    public LocationWithSites(U locationFragment, Set<T> sites) {
+        super(locationFragment);
         setSites(sites);
     }
 
