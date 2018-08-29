@@ -45,7 +45,7 @@ fi
 
 #PYTHON=$(type -p python)
 #if [[ "$PYTHON" == "" ]]; then
-#    printf 'Python not found. Please install Python 2.7\n'
+#    printf 'Python not found. Please install Python 3\n'
 #    printf 'and place it on your path,\n'
 #    printf 'or edit the interproscan.sh script to refer to your Python installation.\n'.
 #    exit 1
@@ -56,9 +56,9 @@ fi
 #PYTHON_VERSION=$("$PYTHON" -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
 #PYTHON_MAJOR_VERSION=${PYTHON_VERSION%%.*}
 #PYTHON_MINOR_VERSION=${PYTHON_VERSION#*.}
-#if [[ "${PYTHON_MAJOR_VERSION}" != "2" || "${PYTHON_MINOR_VERSION}" != "7" ]];
+#if [[ "${PYTHON_MAJOR_VERSION}" != "3" ]];
 #then
-#    printf 'Python version 2.7 is required to run InterProScan.\n'
+#    printf 'Python version 3 is required to run InterProScan.\n'
 #    printf 'Detected version %s.%s\n' "${PYTHON_MAJOR_VERSION}" "${PYTHON_MINOR_VERSION}"
 #    printf 'Please install the correct version.\n'
 #    exit 1
