@@ -293,7 +293,8 @@ public class CreateMatchDBFromIprscan {
                         location.setEnvelopeStart(envelopeStart);
                         location.setEnvelopeEnd(envelopeEnd);
                         location.setSeqFeature(seqFeature);
-                        //location.setCigarAlignment(alignment);
+                        //we done have a column for cigar alignment so we can just as well reuse the column seqFeatures
+                        location.setCigarAlignment(seqFeature); //TODO check this and test
 
                         Set<BerkeleyLocationFragment> berkeleyLocationFragments = parseLocationFragments(fragments);
                         location.setLocationFragments(berkeleyLocationFragments);
