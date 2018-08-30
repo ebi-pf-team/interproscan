@@ -1,0 +1,1 @@
+30.09.03: fixed bugs in pipeline (truncated long sequences by 20 bytes)!
