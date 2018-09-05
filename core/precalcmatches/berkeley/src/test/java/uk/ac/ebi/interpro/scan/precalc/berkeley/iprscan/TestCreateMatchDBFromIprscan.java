@@ -14,19 +14,19 @@ public class TestCreateMatchDBFromIprscan {
 
     @Test
     public void check1() {
-        final String fragments = "10-20-e,34-39-s";
+        final String fragments = "10-20-C,34-39-N";
         Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
         assertNotNull(locationFragments);
         assertEquals(2, locationFragments.size());
         for (BerkeleyLocationFragment locationFragment : locationFragments) {
             assertTrue(locationFragment.getStart() <= locationFragment.getEnd());
-            assertTrue(locationFragment.getBounds().matches("^[c|s|e|se]$"));
+            assertTrue(locationFragment.getBounds().matches("^[S|N|C|NC]$"));
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void check2() {
-        final String fragments = "10-20-e,34-32-s";
+        final String fragments = "10-20-S,34-32-S";
         Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
         // Should have thrown an exception
         fail("Test should have failed but didn't");
