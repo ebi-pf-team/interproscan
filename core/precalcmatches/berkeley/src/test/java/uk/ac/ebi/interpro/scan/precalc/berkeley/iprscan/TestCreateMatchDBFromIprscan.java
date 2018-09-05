@@ -20,7 +20,6 @@ public class TestCreateMatchDBFromIprscan {
         assertEquals(2, locationFragments.size());
         for (BerkeleyLocationFragment locationFragment : locationFragments) {
             assertTrue(locationFragment.getStart() <= locationFragment.getEnd());
-            assertTrue(locationFragment.getBounds().matches("^[S|N|C|NC]$"));
         }
     }
 
@@ -39,5 +38,17 @@ public class TestCreateMatchDBFromIprscan {
         assertNotNull(locationFragments);
         assertEquals(0, locationFragments.size());
     }
+
+    @Test
+    public void check4() {
+        final String fragments = "262-303-NC,109-148-C,421-509-N";
+        Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
+        assertNotNull(locationFragments);
+        assertEquals(3, locationFragments.size());
+        for (BerkeleyLocationFragment locationFragment : locationFragments) {
+            assertTrue(locationFragment.getStart() <= locationFragment.getEnd());
+        }
+    }
+
 
 }
