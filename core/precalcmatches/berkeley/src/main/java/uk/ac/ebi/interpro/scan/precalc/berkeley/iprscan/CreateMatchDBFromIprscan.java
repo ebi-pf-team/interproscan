@@ -449,7 +449,7 @@ public class CreateMatchDBFromIprscan {
             return berkeleyLocationFragments;
         }
 
-        Pattern pattern = Pattern.compile("^[0-9]+-[0-9]+-[c|s|e|se]$");
+        Pattern pattern = Pattern.compile("^[0-9]+-[0-9]+-[S|N|C|NC]$");
         String[] input = fragments.trim().split(",");
         for (String s : input) {
             Matcher matcher = pattern.matcher(s);
