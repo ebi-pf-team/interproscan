@@ -249,12 +249,19 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             newMatchesFromFragment.add(rawDiscontinuousMatch);  // we add this match as previously processed
                             continue;
                         }
-                        if (fragment.getStart() < newLocationStart && fragment.getEnd() > newLocationEnd){
+                        if (fragment.getStart() <= newLocationStart && fragment.getEnd() >= newLocationEnd){
                             fragmentDCStatus = DCStatus.NC_TERMINAL_DISC;
                             rawDiscontinuousMatch.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
                             newMatchesFromFragment.add(rawDiscontinuousMatch);
                             continue;
                         }
+
+//                        if (fragment.getStart() < newLocationStart) {
+//                            newLocationStart =
+//                        }
+//                        if (fragment.getEnd() > newLocationEnd) {
+//                            newLocationStart =
+//                        }
 
                         if(fragmentDCStatus ==  DCStatus.CONTINUOUS){
                             fragmentDCStatus = null;
