@@ -229,8 +229,6 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 //sort these according to the start and stop positions
                 Collections.sort(locationFragments);
 
-                //where is the fragment discontinous? at start (s), at both start and end (se), or only at the end (e) of the domain sequence
-                // or not a discontinous fragment (c)
                 DCStatus fragmentDCStatus = DCStatus.CONTINUOUS;
 
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();

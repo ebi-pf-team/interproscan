@@ -58,54 +58,53 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_FRAGMENTS = 19;
     //private static final int COL_IDX_ALIGNMENT = 20;
 
-    private static final String CREATE_TEMP_TABLE =
-            "create global temporary table  berkley_tmp_tab " +
-                    "on commit preserve rows " +
-                    "as " +
-                    "select  /*+ PARALLEL */ p.md5 as protein_md5, " +
-                    "        l.library as signature_library_name, " +
-                    "        l.version as signature_library_release, " +
-                    "        m.method_ac as signature_accession, " +
-                    "        m.model_ac as model_accession, " +
-                    "        m.score as score, " +
-                    "        m.seqscore as sequence_score, " +
-                    "        m.seqevalue as sequence_evalue, " +
-                    "        m.evalue, " +
-                    "        m.seq_start, " +
-                    "        m.seq_end, " +
-                    "        m.hmm_start, " +
-                    "        m.hmm_end, " +
-                    "        m.hmm_length, " +
-                    "        m.hmm_bounds, " +
-                    "        m.envelope_start, " +
-                    "        m.envelope_end, " +
-                    "        m.seq_feature, " +
-                    "        m.fragments " +
-                   // "        ,m.alignment " +
-                    "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
-                    "        mv_iprscan m," +
-                    "        INTERPRO.iprscan2dbcode r," +
-                    "        mv_signature_library_release l" +
-                    "  where m.upi = p.upi " +
-                    "        AND r.iprscan_sig_lib_rel_id = m.analysis_id " +
-                    "        AND r.iprscan_sig_lib_rel_id=l.id";
+//    private static final String CREATE_TEMP_TABLE =
+//            "create global temporary table  berkley_tmp_tab " +
+//                    "on commit preserve rows " +
+//                    "as " +
+//                    "select  /*+ PARALLEL */ p.md5 as protein_md5, " +
+//                    "        l.library as signature_library_name, " +
+//                    "        l.version as signature_library_release, " +
+//                    "        m.method_ac as signature_accession, " +
+//                    "        m.model_ac as model_accession, " +
+//                    "        m.score as score, " +
+//                    "        m.seqscore as sequence_score, " +
+//                    "        m.seqevalue as sequence_evalue, " +
+//                    "        m.evalue, " +
+//                    "        m.seq_start, " +
+//                    "        m.seq_end, " +
+//                    "        m.hmm_start, " +
+//                    "        m.hmm_end, " +
+//                    "        m.hmm_length, " +
+//                    "        m.hmm_bounds, " +
+//                    "        m.envelope_start, " +
+//                    "        m.envelope_end, " +
+//                    "        m.seq_feature, " +
+//                    "        m.fragments " +
+//                   // "        ,m.alignment " +
+//                    "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
+//                    "        mv_iprscan m," +
+//                    "        INTERPRO.iprscan2dbcode r," +
+//                    "        mv_signature_library_release l" +
+//                    "  where m.upi = p.upi " +
+//                    "        AND r.iprscan_sig_lib_rel_id = m.analysis_id " +
+//                    "        AND r.iprscan_sig_lib_rel_id=l.id";
 
     private static final String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION, SCORE, SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, " +
                     "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END, " +
                     "SEQ_FEATURE, FRAGMENTS" +
-                    //", ALIGNMENT " +
                     "       from  berkley_tmp_tab " +
                     "       where PROTEIN_MD5 >= ? and PROTEIN_MD5 <= ? " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       MODEL_ACCESSION, SEQUENCE_SCORE";
 
-    private static final String TRUNCATE_TEMPORARY_TABLE =
-            "truncate table berkley_tmp_tab";
-
-    private static final String DROP_TEMPORARY_TABLE =
-            "drop  table berkley_tmp_tab";
+//    private static final String TRUNCATE_TEMPORARY_TABLE =
+//            "truncate table berkley_tmp_tab";
+//
+//    private static final String DROP_TEMPORARY_TABLE =
+//            "drop  table berkley_tmp_tab";
 
 
     public static void main(String[] args) {
@@ -443,7 +442,7 @@ public class CreateMatchDBFromIprscan {
     }
 
     public static Set<BerkeleyLocationFragment> parseLocationFragments(final String fragments) {
-        // Example fragments input: "10-20-e,34-39-s"
+        // Example fragments input: "10-20-S,34-39-S"
         Set<BerkeleyLocationFragment> berkeleyLocationFragments = new HashSet<>();
         if (fragments == null || fragments.equals("")) {
             return berkeleyLocationFragments;
@@ -460,9 +459,11 @@ public class CreateMatchDBFromIprscan {
                     berkeleyLocationFragment.setStart(Integer.parseInt(a[0]));
                     berkeleyLocationFragment.setEnd(Integer.parseInt(a[1]));
                     if (berkeleyLocationFragment.getStart() > berkeleyLocationFragment.getEnd()) {
-                        throw new IllegalArgumentException("Error parsing fragment '" + s + "' from fragment string (end is before start): " + fragments);
+                        // Shouldn't happen, but log and skip if it does
+                        System.out.println("Error parsing fragment '" + s + "' from fragment string (end is before start): " + fragments);
+                        continue;
                     }
-                    berkeleyLocationFragment.setBounds(a[2]);
+                    berkeleyLocationFragment.setDcStatus(a[2]);
                     berkeleyLocationFragments.add(berkeleyLocationFragment);
                 }
                 else {
@@ -472,6 +473,9 @@ public class CreateMatchDBFromIprscan {
             else {
                 throw new IllegalArgumentException("Error parsing fragment string: " + fragments);
             }
+        }
+        if (berkeleyLocationFragments.isEmpty()) {
+            throw new IllegalArgumentException("No fragments could be parsed from fragment string: " + fragments);
         }
         return berkeleyLocationFragments;
     }

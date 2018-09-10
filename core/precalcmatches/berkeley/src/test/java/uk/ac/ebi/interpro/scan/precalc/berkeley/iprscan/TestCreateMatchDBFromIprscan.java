@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 
@@ -24,6 +25,7 @@ public class TestCreateMatchDBFromIprscan {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Ignore
     public void check2() {
         final String fragments = "10-20-S,34-32-S";
         Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);

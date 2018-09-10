@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
@@ -21,6 +22,8 @@ import java.util.Set;
  */
 public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamilyHmmer3Match> {
 
+    private static final Logger LOG = Logger.getLogger(SuperfamilyMatchConverter.class.getName());
+
     //TODO: Add the e-value to the match location
     @Override
     public SuperFamilyHmmer3Match convertMatch(BerkeleyMatch match, Signature signature) {
@@ -35,8 +38,12 @@ public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamil
             for (BerkeleyLocationFragment locationFragment : location.getLocationFragments()) {
                 int fragStart = valueOrZero(locationFragment.getStart());
                 int fragEnd = valueOrZero(locationFragment.getEnd());
-                String fragBounds = locationFragment.getBounds(); // Always default ("c") for SUPERFAMILY?
-                locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(fragBounds)));
+                String dcStatus = locationFragment.getDcStatus(); // Always default ("S") for SUPERFAMILY?
+                if (dcStatus == null) {
+                    LOG.warn("NULL dcStatus for fragment " + fragStart + " - " + fragEnd + " in SUPERFAMILY " + match.getSignatureAccession());
+                    dcStatus = "S"; // Default
+                }
+                locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
             }
             locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
                     start,
