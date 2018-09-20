@@ -6,7 +6,7 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
@@ -97,6 +97,8 @@ public class CreateMatchDBFromIprscan {
                     "SEQ_FEATURE, FRAGMENTS" +
                     "       from  berkley_tmp_tab " +
                     "       where PROTEIN_MD5 >= ? and PROTEIN_MD5 <= ? " +
+//                    "       and protein_md5 in ('87F771E77682ED406254840A168B01DA', '0CCD68D52F794C94E7A16A0FC76A5AF2', 'EC935C82764FDDFE8E4305274CB6B7F8', 'A6E26D2D15081CDDEE658EE5F508ECD3', '7AEE44ED0E1BC9C2D8AF709C0A08B038', '6C1E382EE4B949F08D95286148B00DAE', '6AA0521D2126859DF869A1EEA891DD3A')" +
+//                    "       and protein_md5 in ('6C1E382EE4B949F08D95286148B00DAE', '6AA0521D2126859DF869A1EEA891DD3A')" +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       MODEL_ACCESSION, SEQUENCE_SCORE";
 
@@ -213,11 +215,21 @@ public class CreateMatchDBFromIprscan {
                                 throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
                             }
 
+                            final int numSubDirs = 256;
+                            //mkdir data{001..256}
+                            for (int i = 1; i <= numSubDirs; i++) {
+                                File subDir = new File(directoryPath + File.separator + "data" + String.format("%03d", i));
+                                if (!subDir.exists()) {
+                                    subDir.mkdir();
+                                }
+                            }
                             // Open up the Berkeley Database
                             EnvironmentConfig myEnvConfig = new EnvironmentConfig();
                             StoreConfig storeConfig = new StoreConfig();
 
                             myEnvConfig.setAllowCreate(true);
+                            // Split *.jdb log files into subdirectories in the env home dir
+                            myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(numSubDirs));
                             storeConfig.setAllowCreate(true);
                             storeConfig.setTransactional(false);
                             // Open the environment and entity store
@@ -230,7 +242,8 @@ public class CreateMatchDBFromIprscan {
                         // Only process if the SignatureLibraryName is recognised.
                         final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
                         if (rs.wasNull() || signatureLibraryName == null) continue;
-                        if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+                        SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
+                        if (signatureLibrary == null) continue;
 
                         // Now collect rest of the data and test for mandatory fields.
                         final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
@@ -309,7 +322,30 @@ public class CreateMatchDBFromIprscan {
                         locationCount++;
                         locationFragmentCount = locationFragmentCount + berkeleyLocationFragments.size();
 
-                        if (match != null) {
+                        if (match == null || !signatureLibrary.isInterproMDB()) {
+
+                            if(match != null) {
+                                // Store last match
+                                primIDX.put(match);
+                                matchCount++;
+                                if (matchCount % 1000000 == 0) {
+                                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations and " + locationFragmentCount + " fragments.");
+                                }
+                            }
+
+                            // Create new match and add location to it
+                            match = new BerkeleyMatch();
+                            match.setProteinMD5(proteinMD5);
+                            match.setSignatureLibraryName(signatureLibraryName);
+                            match.setSignatureLibraryRelease(sigLibRelease);
+                            match.setSignatureAccession(signatureAccession);
+                            match.setSignatureModels(modelAccession);
+                            match.setSequenceScore(sequenceScore);
+                            match.setSequenceEValue(sequenceEValue);
+                            match.addLocation(location);
+
+                        }
+                        else {
                             if (
                                     proteinMD5.equals(match.getProteinMD5()) &&
                                             signatureLibraryName.equals(match.getSignatureLibraryName()) &&
@@ -324,7 +360,7 @@ public class CreateMatchDBFromIprscan {
                                 // Store last match
                                 primIDX.put(match);
                                 matchCount++;
-                                if (matchCount % 500000 == 0) {
+                                if (matchCount % 1000000 == 0) {
                                     System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations and " + locationFragmentCount + " fragments.");
                                 }
 
@@ -339,17 +375,6 @@ public class CreateMatchDBFromIprscan {
                                 match.setSequenceEValue(sequenceEValue);
                                 match.addLocation(location);
                             }
-                        } else {
-                            // Create new match and add location to it
-                            match = new BerkeleyMatch();
-                            match.setProteinMD5(proteinMD5);
-                            match.setSignatureLibraryName(signatureLibraryName);
-                            match.setSignatureLibraryRelease(sigLibRelease);
-                            match.setSignatureAccession(signatureAccession);
-                            match.setSignatureModels(modelAccession);
-                            match.setSequenceScore(sequenceScore);
-                            match.setSequenceEValue(sequenceEValue);
-                            match.addLocation(location);
                         }
                     }
                     // Don't forget the last match!

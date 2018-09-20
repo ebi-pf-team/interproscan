@@ -87,9 +87,7 @@ public abstract class Location<T extends LocationFragment> implements Serializab
     public Location(T locationFragment) {
         this.start = locationFragment.getStart();
         this.end = locationFragment.getEnd();
-        Set<T> locationFragments = new HashSet<>();
-        locationFragments.add(locationFragment);
-        setLocationFragments(locationFragments);
+        addLocationFragment(locationFragment);
     }
 
     public Location(Set<T> locationFragments) {
