@@ -109,7 +109,10 @@ public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
             final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
             //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
             if(sigLib.getName().equals(SignatureLibrary.CDD.getName())
-                    || sigLib.getName().equals(SignatureLibrary.SFLD.getName())){
+                    || sigLib.getName().equals(SignatureLibrary.SFLD.getName())
+                    || sigLib.getName().equals(SignatureLibrary.SIGNALP_EUK.getName())
+                    || sigLib.getName().equals(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName())
+                    || sigLib.getName().equals(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName())){
                 continue;
             }
             if(LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())){
