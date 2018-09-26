@@ -11,7 +11,7 @@
         <property name="description" value="Prediction of Coiled Coil Regions in Proteins"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseCoils"/>
-        <property name="doRunLocally" value="true"/>
+        <property name="doRunLocally" value="false"/>
         <property name="active" value="true" />
     </bean>
 

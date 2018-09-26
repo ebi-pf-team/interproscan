@@ -1,8 +1,6 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
-import org.hibernate.procedure.internal.Util;
-import org.omg.PortableInterceptor.LOCATION_FORWARD;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;

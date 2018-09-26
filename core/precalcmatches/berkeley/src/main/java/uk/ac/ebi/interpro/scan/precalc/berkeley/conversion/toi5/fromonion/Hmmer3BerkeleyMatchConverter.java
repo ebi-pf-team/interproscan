@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -21,17 +22,19 @@ import java.util.Set;
  */
 public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3Match> {
 
-    public Hmmer3Match convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
+    private static final Logger LOG = Logger.getLogger(Hmmer3BerkeleyMatchConverter.class.getName());
 
-        final String sln = berkeleyMatch.getSignatureLibraryName();
+    public Hmmer3Match convertMatch(BerkeleyMatch match, Signature signature) {
+
+        final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;
         if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM")) {
             postProcessed = true;
         }
 
-        final Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>(berkeleyMatch.getLocations().size());
+        final Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<>(match.getLocations().size());
 
-        for (BerkeleyLocation location : berkeleyMatch.getLocations()) {
+        for (BerkeleyLocation location : match.getLocations()) {
 
             int locationStart = valueOrZero(location.getStart());
             int locationEnd = valueOrZero(location.getEnd());
@@ -47,8 +50,12 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
             for (BerkeleyLocationFragment fragment : location.getLocationFragments()) {
                 int fragStart = valueOrZero(fragment.getStart());
                 int fragEnd = valueOrZero(fragment.getEnd());
-                String fragBounds = fragment.getBounds();
-                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(fragBounds)));
+                String dcStatus = fragment.getDcStatus();
+                if (dcStatus == null) {
+                    LOG.warn("NULL dcStatus for fragment " + fragStart + " - " + fragEnd + " in " + sln + " " + match.getSignatureAccession());
+                    dcStatus = "S"; // Default
+                }
+                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
             }
 
             final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
@@ -71,9 +78,9 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
 
         return new Hmmer3Match(
                 signature,
-                berkeleyMatch.getSignatureModels(),
-                valueOrZero(berkeleyMatch.getSequenceScore()),
-                valueOrZero(berkeleyMatch.getSequenceEValue()),
+                match.getSignatureModels(),
+                valueOrZero(match.getSequenceScore()),
+                valueOrZero(match.getSequenceEValue()),
                 locations
         );
     }

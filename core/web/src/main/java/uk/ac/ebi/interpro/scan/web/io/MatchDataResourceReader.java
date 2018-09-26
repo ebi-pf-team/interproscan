@@ -114,7 +114,7 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
                 methodAc, methodName, null, methodDatabase,
                 posFrom, posTo, score,
                 entryAc, entryShortName, entryName, entryType,
-                taxId, taxScienceName, taxFullName, isProteinFragment);
+                taxId, taxScienceName, taxFullName, isProteinFragment,"");//TODo Fragments empty - remove all this code?
     }
 
 }

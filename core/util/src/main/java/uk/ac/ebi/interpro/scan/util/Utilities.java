@@ -507,6 +507,7 @@ public class Utilities {
 
     //verbose output using System out
     public static void verboseLog(int level, String out){
+        //System.out.println(Utilities.getTimeNow() + " level: " + level + " - " + out);
         if(verboseLogLevel >= level){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }

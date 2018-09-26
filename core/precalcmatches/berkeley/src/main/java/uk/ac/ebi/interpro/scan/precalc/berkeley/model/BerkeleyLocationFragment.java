@@ -21,7 +21,7 @@ public class BerkeleyLocationFragment implements Comparable<BerkeleyLocationFrag
 
     private Integer end;
 
-    private String bounds;
+    private String dcStatus;
 
     public BerkeleyLocationFragment() {
     }
@@ -42,12 +42,12 @@ public class BerkeleyLocationFragment implements Comparable<BerkeleyLocationFrag
         this.end = end;
     }
 
-    public String getBounds() {
-        return bounds;
+    public String getDcStatus() {
+        return dcStatus;
     }
 
-    public void setBounds(String bounds) {
-        this.bounds = bounds;
+    public void setDcStatus(String dcStatus) {
+        this.dcStatus = dcStatus;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BerkeleyLocationFragment implements Comparable<BerkeleyLocationFrag
 
         if (start != null ? !start.equals(that.start) : that.start != null) return false;
         if (end != null ? !end.equals(that.end) : that.end != null) return false;
-        if (bounds != null ? !bounds.equals(that.bounds) : that.bounds != null) {
+        if (dcStatus != null ? !dcStatus.equals(that.dcStatus) : that.dcStatus != null) {
             return false;
         }
 
@@ -70,7 +70,7 @@ public class BerkeleyLocationFragment implements Comparable<BerkeleyLocationFrag
     public int hashCode() {
         int result = start != null ? start.hashCode() : 0;
         result = 31 * result + (end != null ? end.hashCode() : 0);
-        result = 31 * result + (bounds != null ? bounds.hashCode() : 0);
+        result = 31 * result + (dcStatus != null ? dcStatus.hashCode() : 0);
         return result;
     }
 
@@ -79,6 +79,7 @@ public class BerkeleyLocationFragment implements Comparable<BerkeleyLocationFrag
         return "BerkeleyLocationFragment{" +
                 "start=" + start +
                 ", end=" + end +
+                ", dcStatus=" + dcStatus +
                 '}';
     }
 

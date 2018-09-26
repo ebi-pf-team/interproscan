@@ -216,7 +216,33 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                     totalPromotedRawMatchesCount += promotedRawMatchesCount;
                     //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
                     //filteredRawProtein.addAllMatches(promotedRawMatches);
-                    seqPromotedRawMatches.addAll(promotedRawMatches);
+                    boolean promotedContainsMatch = false;
+                    boolean matchContainsPromted = false;
+                    SFLDHmmer3RawMatch matchToRemove = null;
+                    for (SFLDHmmer3RawMatch promotedMatch: promotedRawMatches){
+                        for (SFLDHmmer3RawMatch seqPromotedMatch: seqPromotedRawMatches){
+                           if (promotedMatch.getLocationStart() <= seqPromotedMatch.getLocationStart() &&
+                                   promotedMatch.getLocationEnd() >= seqPromotedMatch.getLocationEnd() ){
+                               promotedContainsMatch = true;
+                               matchToRemove = seqPromotedMatch;
+                           }else if (seqPromotedMatch.getLocationStart() <= promotedMatch.getLocationStart() &&
+                                   seqPromotedMatch.getLocationEnd() >= promotedMatch.getLocationEnd() ){
+                               matchContainsPromted = true;
+                               break;
+                               // no need to add the new promoted match
+                           }
+                        }
+                        if (promotedContainsMatch){
+                            seqPromotedRawMatches.remove(matchToRemove);
+                        }
+                        if (matchContainsPromted){
+                            //do nothing
+                            continue;
+                        }else {
+                            seqPromotedRawMatches.add(promotedMatch);
+                        }
+                    }
+
                     //Utilities.verboseLog("promotedRawMatches:" + promotedRawMatches);
                 }
                 matchCount = originalMatchCount + promotedRawMatchesCount;
@@ -310,6 +336,39 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         //promote the SFLD matched to the parents in the hierarchy
 
+        //print the matches with sites
+        Utilities.verboseLog(25,"Matches and sites --- ooo ---");
+        if (Utilities.verboseLogLevel >= 25) {
+            for (RawProtein<SFLDHmmer3RawMatch> rawProtein : filtertedRawProteinMap.values()) {
+                String sequenceIdentifier = rawProtein.getProteinIdentifier();
+                Collection<SFLDHmmer3RawMatch> allRawMatches = rawProtein.getMatches();
+                for (SFLDHmmer3RawMatch rawMatch : allRawMatches) {
+                    StringBuffer outMatch = new StringBuffer("match: ")
+                            .append(sequenceIdentifier).append(" ")
+                            .append(rawMatch.getModelId()).append(" ")
+                            .append(rawMatch.getLocationStart()).append(" ")
+                            .append(rawMatch.getLocationEnd()).append(" ");
+                    Utilities.verboseLog(outMatch.toString());
+                    for (RawProteinSite<SFLDHmmer3RawSite> rawProteinSite : rawProteinSiteMap.values()) {
+                        if (rawProteinSite.getProteinIdentifier().equals(sequenceIdentifier)) {
+                            Set<SFLDHmmer3RawSite> allRawSites = (HashSet<SFLDHmmer3RawSite>) rawProteinSite.getSites();
+                            for (SFLDHmmer3RawSite rawSite : rawSites) {
+                                if (rawSite.getModelId().equals(rawMatch.getModelId())) {
+                                    StringBuffer outSite = new StringBuffer("site: ")
+                                            .append(rawSite.getSequenceIdentifier()).append(" ")
+                                            .append(rawSite.getResidues()).append(" ")
+                                            .append(rawSite.getFirstStart()).append(" ")
+                                            .append(rawSite.getLastEnd());
+                                    Utilities.verboseLog(outSite.toString());
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
         return new MatchSiteData<>(new HashSet<>(filtertedRawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
     }
 

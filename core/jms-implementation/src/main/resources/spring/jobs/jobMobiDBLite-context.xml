@@ -28,7 +28,7 @@
                 <entry key="binary.mobidb.path" value-ref="pathToMobiDBLiteBinary"/>
             </map>
         </property>
-        <property name="doRunLocally" value="true"/>
+        <property name="doRunLocally" value="false"/>
         <property name="active" value="true" />
     </bean>
 

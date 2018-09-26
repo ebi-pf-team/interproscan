@@ -229,8 +229,6 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 //sort these according to the start and stop positions
                 Collections.sort(locationFragments);
 
-                //where is the fragment discontinous? at start (s), at both start and end (se), or only at the end (e) of the domain sequence
-                // or not a discontinous fragment (c)
                 DCStatus fragmentDCStatus = DCStatus.CONTINUOUS;
 
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
@@ -249,12 +247,19 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             newMatchesFromFragment.add(rawDiscontinuousMatch);  // we add this match as previously processed
                             continue;
                         }
-                        if (fragment.getStart() < newLocationStart && fragment.getEnd() > newLocationEnd){
+                        if (fragment.getStart() <= newLocationStart && fragment.getEnd() >= newLocationEnd){
                             fragmentDCStatus = DCStatus.NC_TERMINAL_DISC;
                             rawDiscontinuousMatch.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
                             newMatchesFromFragment.add(rawDiscontinuousMatch);
                             continue;
                         }
+
+//                        if (fragment.getStart() < newLocationStart) {
+//                            newLocationStart =
+//                        }
+//                        if (fragment.getEnd() > newLocationEnd) {
+//                            newLocationStart =
+//                        }
 
                         if(fragmentDCStatus ==  DCStatus.CONTINUOUS){
                             fragmentDCStatus = null;

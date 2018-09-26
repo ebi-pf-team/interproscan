@@ -6,7 +6,7 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
@@ -58,54 +58,55 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_FRAGMENTS = 19;
     //private static final int COL_IDX_ALIGNMENT = 20;
 
-    private static final String CREATE_TEMP_TABLE =
-            "create global temporary table  berkley_tmp_tab " +
-                    "on commit preserve rows " +
-                    "as " +
-                    "select  /*+ PARALLEL */ p.md5 as protein_md5, " +
-                    "        l.library as signature_library_name, " +
-                    "        l.version as signature_library_release, " +
-                    "        m.method_ac as signature_accession, " +
-                    "        m.model_ac as model_accession, " +
-                    "        m.score as score, " +
-                    "        m.seqscore as sequence_score, " +
-                    "        m.seqevalue as sequence_evalue, " +
-                    "        m.evalue, " +
-                    "        m.seq_start, " +
-                    "        m.seq_end, " +
-                    "        m.hmm_start, " +
-                    "        m.hmm_end, " +
-                    "        m.hmm_length, " +
-                    "        m.hmm_bounds, " +
-                    "        m.envelope_start, " +
-                    "        m.envelope_end, " +
-                    "        m.seq_feature, " +
-                    "        m.fragments " +
-                   // "        ,m.alignment " +
-                    "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
-                    "        mv_iprscan m," +
-                    "        INTERPRO.iprscan2dbcode r," +
-                    "        mv_signature_library_release l" +
-                    "  where m.upi = p.upi " +
-                    "        AND r.iprscan_sig_lib_rel_id = m.analysis_id " +
-                    "        AND r.iprscan_sig_lib_rel_id=l.id";
+//    private static final String CREATE_TEMP_TABLE =
+//            "create global temporary table  berkley_tmp_tab " +
+//                    "on commit preserve rows " +
+//                    "as " +
+//                    "select  /*+ PARALLEL */ p.md5 as protein_md5, " +
+//                    "        l.library as signature_library_name, " +
+//                    "        l.version as signature_library_release, " +
+//                    "        m.method_ac as signature_accession, " +
+//                    "        m.model_ac as model_accession, " +
+//                    "        m.score as score, " +
+//                    "        m.seqscore as sequence_score, " +
+//                    "        m.seqevalue as sequence_evalue, " +
+//                    "        m.evalue, " +
+//                    "        m.seq_start, " +
+//                    "        m.seq_end, " +
+//                    "        m.hmm_start, " +
+//                    "        m.hmm_end, " +
+//                    "        m.hmm_length, " +
+//                    "        m.hmm_bounds, " +
+//                    "        m.envelope_start, " +
+//                    "        m.envelope_end, " +
+//                    "        m.seq_feature, " +
+//                    "        m.fragments " +
+//                   // "        ,m.alignment " +
+//                    "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
+//                    "        mv_iprscan m," +
+//                    "        INTERPRO.iprscan2dbcode r," +
+//                    "        mv_signature_library_release l" +
+//                    "  where m.upi = p.upi " +
+//                    "        AND r.iprscan_sig_lib_rel_id = m.analysis_id " +
+//                    "        AND r.iprscan_sig_lib_rel_id=l.id";
 
     private static final String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION, SCORE, SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, " +
                     "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END, " +
                     "SEQ_FEATURE, FRAGMENTS" +
-                    //", ALIGNMENT " +
                     "       from  berkley_tmp_tab " +
                     "       where PROTEIN_MD5 >= ? and PROTEIN_MD5 <= ? " +
+//                    "       and protein_md5 in ('87F771E77682ED406254840A168B01DA', '0CCD68D52F794C94E7A16A0FC76A5AF2', 'EC935C82764FDDFE8E4305274CB6B7F8', 'A6E26D2D15081CDDEE658EE5F508ECD3', '7AEE44ED0E1BC9C2D8AF709C0A08B038', '6C1E382EE4B949F08D95286148B00DAE', '6AA0521D2126859DF869A1EEA891DD3A')" +
+//                    "       and protein_md5 in ('6C1E382EE4B949F08D95286148B00DAE', '6AA0521D2126859DF869A1EEA891DD3A')" +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
                     "       MODEL_ACCESSION, SEQUENCE_SCORE";
 
-    private static final String TRUNCATE_TEMPORARY_TABLE =
-            "truncate table berkley_tmp_tab";
-
-    private static final String DROP_TEMPORARY_TABLE =
-            "drop  table berkley_tmp_tab";
+//    private static final String TRUNCATE_TEMPORARY_TABLE =
+//            "truncate table berkley_tmp_tab";
+//
+//    private static final String DROP_TEMPORARY_TABLE =
+//            "drop  table berkley_tmp_tab";
 
 
     public static void main(String[] args) {
@@ -162,14 +163,22 @@ public class CreateMatchDBFromIprscan {
 
             // For efficiency these protein MD5 ranges should match each subpartition range in the iprscan.berkley_tmp_tab table
             Map<String, String> md5RangesMap = new HashMap<>();
-            md5RangesMap.put("00000000000000000000000000000000", "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("20000000000000000000000000000000", "3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("40000000000000000000000000000000", "5FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("60000000000000000000000000000000", "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("80000000000000000000000000000000", "9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("A0000000000000000000000000000000", "BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("C0000000000000000000000000000000", "DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-            md5RangesMap.put("E0000000000000000000000000000000", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("00000000000000000000000000000000", "0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("10000000000000000000000000000000", "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("20000000000000000000000000000000", "2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("30000000000000000000000000000000", "3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("40000000000000000000000000000000", "4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("50000000000000000000000000000000", "5FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("60000000000000000000000000000000", "6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("70000000000000000000000000000000", "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("80000000000000000000000000000000", "8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("90000000000000000000000000000000", "9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("A0000000000000000000000000000000", "AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("B0000000000000000000000000000000", "BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("C0000000000000000000000000000000", "CFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("D0000000000000000000000000000000", "DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("E0000000000000000000000000000000", "EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+            md5RangesMap.put("F0000000000000000000000000000000", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
 
             PreparedStatement ps = null;
             ResultSet rs = null;
@@ -206,11 +215,21 @@ public class CreateMatchDBFromIprscan {
                                 throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
                             }
 
+                            final int numSubDirs = 256;
+                            //mkdir data{001..256}
+                            for (int i = 1; i <= numSubDirs; i++) {
+                                File subDir = new File(directoryPath + File.separator + "data" + String.format("%03d", i));
+                                if (!subDir.exists()) {
+                                    subDir.mkdir();
+                                }
+                            }
                             // Open up the Berkeley Database
                             EnvironmentConfig myEnvConfig = new EnvironmentConfig();
                             StoreConfig storeConfig = new StoreConfig();
 
                             myEnvConfig.setAllowCreate(true);
+                            // Split *.jdb log files into subdirectories in the env home dir
+                            myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(numSubDirs));
                             storeConfig.setAllowCreate(true);
                             storeConfig.setTransactional(false);
                             // Open the environment and entity store
@@ -223,7 +242,8 @@ public class CreateMatchDBFromIprscan {
                         // Only process if the SignatureLibraryName is recognised.
                         final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
                         if (rs.wasNull() || signatureLibraryName == null) continue;
-                        if (SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName) == null) continue;
+                        SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
+                        if (signatureLibrary == null) continue;
 
                         // Now collect rest of the data and test for mandatory fields.
                         final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
@@ -302,7 +322,30 @@ public class CreateMatchDBFromIprscan {
                         locationCount++;
                         locationFragmentCount = locationFragmentCount + berkeleyLocationFragments.size();
 
-                        if (match != null) {
+                        if (match == null || !signatureLibrary.isInterproMDB()) {
+
+                            if(match != null) {
+                                // Store last match
+                                primIDX.put(match);
+                                matchCount++;
+                                if (matchCount % 1000000 == 0) {
+                                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations and " + locationFragmentCount + " fragments.");
+                                }
+                            }
+
+                            // Create new match and add location to it
+                            match = new BerkeleyMatch();
+                            match.setProteinMD5(proteinMD5);
+                            match.setSignatureLibraryName(signatureLibraryName);
+                            match.setSignatureLibraryRelease(sigLibRelease);
+                            match.setSignatureAccession(signatureAccession);
+                            match.setSignatureModels(modelAccession);
+                            match.setSequenceScore(sequenceScore);
+                            match.setSequenceEValue(sequenceEValue);
+                            match.addLocation(location);
+
+                        }
+                        else {
                             if (
                                     proteinMD5.equals(match.getProteinMD5()) &&
                                             signatureLibraryName.equals(match.getSignatureLibraryName()) &&
@@ -317,7 +360,7 @@ public class CreateMatchDBFromIprscan {
                                 // Store last match
                                 primIDX.put(match);
                                 matchCount++;
-                                if (matchCount % 500000 == 0) {
+                                if (matchCount % 1000000 == 0) {
                                     System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches, with a total of " + locationCount + " locations and " + locationFragmentCount + " fragments.");
                                 }
 
@@ -332,17 +375,6 @@ public class CreateMatchDBFromIprscan {
                                 match.setSequenceEValue(sequenceEValue);
                                 match.addLocation(location);
                             }
-                        } else {
-                            // Create new match and add location to it
-                            match = new BerkeleyMatch();
-                            match.setProteinMD5(proteinMD5);
-                            match.setSignatureLibraryName(signatureLibraryName);
-                            match.setSignatureLibraryRelease(sigLibRelease);
-                            match.setSignatureAccession(signatureAccession);
-                            match.setSignatureModels(modelAccession);
-                            match.setSequenceScore(sequenceScore);
-                            match.setSequenceEValue(sequenceEValue);
-                            match.addLocation(location);
                         }
                     }
                     // Don't forget the last match!
@@ -435,13 +467,13 @@ public class CreateMatchDBFromIprscan {
     }
 
     public static Set<BerkeleyLocationFragment> parseLocationFragments(final String fragments) {
-        // Example fragments input: "10-20-e,34-39-s"
+        // Example fragments input: "10-20-S,34-39-S"
         Set<BerkeleyLocationFragment> berkeleyLocationFragments = new HashSet<>();
         if (fragments == null || fragments.equals("")) {
             return berkeleyLocationFragments;
         }
 
-        Pattern pattern = Pattern.compile("^[0-9]+-[0-9]+-[c|s|e|se]$");
+        Pattern pattern = Pattern.compile("^[0-9]+-[0-9]+-(S|N|C|NC)$");
         String[] input = fragments.trim().split(",");
         for (String s : input) {
             Matcher matcher = pattern.matcher(s);
@@ -452,9 +484,11 @@ public class CreateMatchDBFromIprscan {
                     berkeleyLocationFragment.setStart(Integer.parseInt(a[0]));
                     berkeleyLocationFragment.setEnd(Integer.parseInt(a[1]));
                     if (berkeleyLocationFragment.getStart() > berkeleyLocationFragment.getEnd()) {
-                        throw new IllegalArgumentException("Error parsing fragment '" + s + "' from fragment string (end is before start): " + fragments);
+                        // Shouldn't happen, but log and skip if it does
+                        System.out.println("Error parsing fragment '" + s + "' from fragment string (end is before start): " + fragments);
+                        continue;
                     }
-                    berkeleyLocationFragment.setBounds(a[2]);
+                    berkeleyLocationFragment.setDcStatus(a[2]);
                     berkeleyLocationFragments.add(berkeleyLocationFragment);
                 }
                 else {
@@ -464,6 +498,9 @@ public class CreateMatchDBFromIprscan {
             else {
                 throw new IllegalArgumentException("Error parsing fragment string: " + fragments);
             }
+        }
+        if (berkeleyLocationFragments.isEmpty()) {
+            throw new IllegalArgumentException("No fragments could be parsed from fragment string: " + fragments);
         }
         return berkeleyLocationFragments;
     }

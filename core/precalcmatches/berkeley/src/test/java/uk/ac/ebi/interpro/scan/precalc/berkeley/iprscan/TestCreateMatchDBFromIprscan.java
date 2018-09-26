@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 
@@ -14,19 +15,19 @@ public class TestCreateMatchDBFromIprscan {
 
     @Test
     public void check1() {
-        final String fragments = "10-20-e,34-39-s";
+        final String fragments = "10-20-C,34-39-N";
         Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
         assertNotNull(locationFragments);
         assertEquals(2, locationFragments.size());
         for (BerkeleyLocationFragment locationFragment : locationFragments) {
             assertTrue(locationFragment.getStart() <= locationFragment.getEnd());
-            assertTrue(locationFragment.getBounds().matches("^[c|s|e|se]$"));
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Ignore
     public void check2() {
-        final String fragments = "10-20-e,34-32-s";
+        final String fragments = "10-20-S,34-32-S";
         Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
         // Should have thrown an exception
         fail("Test should have failed but didn't");
@@ -39,5 +40,17 @@ public class TestCreateMatchDBFromIprscan {
         assertNotNull(locationFragments);
         assertEquals(0, locationFragments.size());
     }
+
+    @Test
+    public void check4() {
+        final String fragments = "262-303-NC,109-148-C,421-509-N";
+        Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
+        assertNotNull(locationFragments);
+        assertEquals(3, locationFragments.size());
+        for (BerkeleyLocationFragment locationFragment : locationFragments) {
+            assertTrue(locationFragment.getStart() <= locationFragment.getEnd());
+        }
+    }
+
 
 }
