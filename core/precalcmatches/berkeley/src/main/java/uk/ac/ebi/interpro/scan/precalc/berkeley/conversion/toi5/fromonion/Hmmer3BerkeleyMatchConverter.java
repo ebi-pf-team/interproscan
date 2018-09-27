@@ -57,6 +57,11 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
                 }
                 locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
             }
+            if (locationFragments.isEmpty()) {
+                // Only required if location fragments for this match are not in the lookup service (shouldn't happen)
+                Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment f = new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(locationStart, locationEnd, DCStatus.CONTINUOUS);
+                locationFragments.add(f);
+            }
 
             final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
 
