@@ -52,6 +52,35 @@
             <version>18.3.1</version>
         </dependency>
 
+	<!-- https://mvnrepository.com/artifact/org.iq80.leveldb/leveldb -->
+        <dependency>
+            <groupId>org.iq80.leveldb</groupId>
+            <artifactId>leveldb</artifactId>
+            <version>0.10</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni -->
+        <dependency>
+            <groupId>org.rocksdb</groupId>
+            <artifactId>rocksdbjni</artifactId>
+            <version>5.15.10</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava -->
+        <dependency>
+            <groupId>org.lmdbjava</groupId>
+            <artifactId>lmdbjava</artifactId>
+            <version>0.6.1</version>
+        </dependency>
+
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
+
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
