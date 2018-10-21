@@ -27,12 +27,12 @@ public class LMDBStore {
 
     }
 
-    public Dbi<ByteBuffer>  getLMDBStore(String dbStorePath) {
+    public Dbi<ByteBuffer>  getLMDBStore(String dbStorePath, long dbSize) {
         //
         final File lookupMatchDBDirectory = new File(dbStorePath);
         
 	final Env<ByteBuffer> env = create()
-        .setMapSize(10 * 1024 * 1024)
+        .setMapSize(dbSize)
         .setMaxDbs(1)
         .open(lookupMatchDBDirectory);
 

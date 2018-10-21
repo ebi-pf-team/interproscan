@@ -7,6 +7,7 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.dbstore.LMDBStore;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSMatch;
@@ -15,19 +16,17 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.nio.ByteBuffer;
 import static java.nio.ByteBuffer.allocateDirect;
 
-import org.lmdbjava.CursorIterator.KeyVal;
-import static org.lmdbjava.DbiFlags.MDB_CREATE;
-import static org.lmdbjava.DbiFlags.MDB_DUPSORT;
-import static org.lmdbjava.DirectBufferProxy.PROXY_DB;
-//import static org.lmdbjava.Env;
-import static org.lmdbjava.Env.create;
-import static org.lmdbjava.Env.open;
-import static org.lmdbjava.GetOp.MDB_SET;
-import static org.lmdbjava.SeekOp.MDB_FIRST;
-import static org.lmdbjava.SeekOp.MDB_LAST;
-import static org.lmdbjava.SeekOp.MDB_PREV;
+//import static org.lmdbjava.Dbi;
+
+import org.lmdbjava.*;
+
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,12 +34,12 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 /**
  * Creates a Berkeley database of proteins for which matches have been calculated in IPRSCAN.
  *
  * @author Phil Jones
  * @author Maxim Scheremetjew
- * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -49,6 +48,8 @@ import java.util.regex.Pattern;
 public class CreateMatchDBFromIprscanLMDB {
 
     private static final String databaseName = "IPRSCAN";
+
+    long dbsize = 20 * 1024l * 1024l * 1024l; 
 
     //These indices go hand by hand with the 'lookup_tmp_tab' table
     private static final int COL_IDX_MD5 = 1;
@@ -72,8 +73,6 @@ public class CreateMatchDBFromIprscanLMDB {
     private static final int COL_IDX_FRAGMENTS = 19;
     //private static final int COL_IDX_ALIGNMENT = 20;
 
-
-
     private static String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION, SCORE, SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, " +
@@ -82,6 +81,7 @@ public class CreateMatchDBFromIprscanLMDB {
                     "       from  lookup_tmp_tab  partition (partitionName) " +
                     "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5";
+
 
     public static void main(String[] args) {
         if (args.length < 4) {
@@ -114,21 +114,6 @@ public class CreateMatchDBFromIprscanLMDB {
             Class.forName("oracle.jdbc.OracleDriver");
             connection = DriverManager.getConnection(databaseUrl, username, password);
 
-            // First, create the populate the temporary table before create the BerkeleyDB, to prevent timeouts.
-            // we now create the table outside this process
-            /*
-
-            Statement statement = null;
-            try {
-                statement = connection.createStatement();
-                statement.execute(CREATE_TEMP_TABLE.replace("MAX_UPI", maxUPI));
-            } finally {
-                if (statement != null) {
-                    statement.close();
-                }
-            }
-
-            */
             long now = System.currentTimeMillis();
             System.out.println(Utilities.getTimeNow() + " Start the lookup match servive data build");
             startMillis = now;
@@ -139,16 +124,37 @@ public class CreateMatchDBFromIprscanLMDB {
 
             PreparedStatement ps = null;
             ResultSet rs = null;
-            try {
-                long locationFragmentCount = 0, proteinMD5Count = 0, matchCount = 0;
 
+            //prepare the db directory
+            final File lookupMatchDBDirectory = new File(directoryPath);
+            if (lookupMatchDBDirectory.exists()) {
+                if (!lookupMatchDBDirectory.isDirectory()) {
+                    throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a KV Database.");
+                }
+                File[] directoryContents = lookupMatchDBDirectory.listFiles();
+                if (directoryContents != null && directoryContents.length > 0) {
+                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanLevelDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
+                }
+                if (!lookupMatchDBDirectory.canWrite()) {
+                    throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
+                }
+            } else if (!(lookupMatchDBDirectory.mkdirs())) {
+                throw new IllegalStateException("Unable to create KV database directory " + directoryPath);
+            }
+
+            String dbStoreName = directoryPath;
+
+            try {
+                System.out.println(Utilities.getTimeNow() + " dbStoreName: " + dbStoreName + " dbsize: " + dbsize);
+                
+                Dbi lookupMatchDB = new LMDBStore().getLMDBStore(dbStoreName, dbsize);
+                long locationFragmentCount = 0, proteinMD5Count = 0, matchCount = 0;
+                int partitionCount = 0;
                 for (String partitionName : partitionNames) {
-//                    if (! (partitionName.equals("UPI00009") || partitionName.equals("UPI00012"))){
-//                        continue;
-//                    }
+                    partitionCount ++;
                     long startPartition = System.currentTimeMillis();
                     int partitionMatchCount = 0;
-                    System.out.println(Utilities.getTimeNow() + " Now processing partition :-  " + partitionName);
+                    System.out.println(Utilities.getTimeNow() + " Now processing partition #" + partitionCount  + " :-  " + partitionName);
                     String partitionQueryLookupTable = QUERY_TEMPORARY_TABLE.replace("partitionName", partitionName);
                     System.out.println(Utilities.getTimeNow() + " sql for this partition: " + partitionQueryLookupTable);
                     ps = connection.prepareStatement(partitionQueryLookupTable);
@@ -161,68 +167,9 @@ public class CreateMatchDBFromIprscanLMDB {
                     //BerkeleyMatch match = null;
                     KVSMatch match = null;
 
-                    // LMDB setup
-                    // The path cannot be on a remote file system.
-                    final File lookupMatchDBDirectory = new File(directoryPath);
-                    if (lookupMatchDBDirectory.exists()) {
-                        if (!lookupMatchDBDirectory.isDirectory()) {
-                            throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a KV Database.");
-                        }
-                        File[] directoryContents = lookupMatchDBDirectory.listFiles();
-                        if (directoryContents != null && directoryContents.length > 0) {
-                            throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanLMDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
-                        }
-                        if (!lookupMatchDBDirectory.canWrite()) {
-                            throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
-                        }
-                    } else if (!(lookupMatchDBDirectory.mkdirs())) {
-                        throw new IllegalStateException("Unable to create KV database directory " + directoryPath);
-                    }
 
-
-                    // Create Env  to store databases (ie sorted maps).
-
-//                    final Env<ByteBuffer> env = open(lookupMatchDBDirectory, 1024 * 10);
-//                    final Dbi<ByteBuffer> db = env.openDbi(DB_NAME, MDB_CREATE);
-
-                    /*
-                    final Env<ByteBuffer> env = create()
-                            // LMDB also needs to know how large our DB might be. Over-estimating is OK.
-                            .setMapSize(10_485_760)
-                            // LMDB also needs to know how many DBs (Dbi) we want to store in this Env.
-                            .setMaxDbs(2)
-                            // Now let's open the Env. The same path can be concurrently opened and
-                            // used in different processes, but do not open the same path twice in
-                            // the same process at the same time.
-                            .open(lookupMatchDBDirectory);
-
-                    // We need a Dbi for each DB. A Dbi roughly equates to a sorted map. The
-                    // MDB_CREATE flag causes the DB to be created if it doesn't already exist.
-                    final String lookupMatchDatabaseName = databaseName + "Match";
-                    final Dbi<ByteBuffer> db = env.openDbi(lookupMatchDatabaseName, MDB_CREATE);
-
-                    */
-
-                    /*
                     while (rs.next()) {
-                        // Open the BerkeleyDB at the VERY LAST MOMENT - prevent timeouts.
-                        if (primIDX == null) {
-                            // Now create the berkeley database directory is present and writable.
 
-                            // Open up the Berkeley Database
-                            EnvironmentConfig myEnvConfig = new EnvironmentConfig();
-                            StoreConfig storeConfig = new StoreConfig();
-
-                            myEnvConfig.setAllowCreate(true);
-                            storeConfig.setAllowCreate(true);
-                            storeConfig.setTransactional(false);
-                            // Open the environment and entity store
-                            myEnv = new Environment(berkeleyDBDirectory, myEnvConfig);
-                            store = new EntityStore(myEnv, "EntityStore", storeConfig);
-
-                            primIDX = store.getPrimaryIndex(Long.class, KVSMatch.class);
-
-                        }
                         // Only process if the SignatureLibraryName is recognised.
                         final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
 //                        System.out.println(Utilities.getTimeNow() + " signatureLibraryName : # " + COL_IDX_SIG_LIB_NAME + " - " +  signatureLibraryName);
@@ -324,7 +271,16 @@ public class CreateMatchDBFromIprscanLMDB {
                             if (proteinMD5.equals(match.getProteinMD5())) {
                                 match.addMatch(kvMatch);
                             }else{
-                                primIDX.put(match);
+                                byte[] keyBytes = getBytes(match.getProteinMD5());
+                                byte[] valueBytes = getBytes(match);
+                                final ByteBuffer key = allocateDirect(keyBytes.length);
+				final ByteBuffer value = allocateDirect(valueBytes.length);
+                                if (proteinMD5Count == 0) {
+                            		System.out.println(Utilities.getTimeNow() + " key size:  " + keyBytes.length + " value size = " + valueBytes.length);
+                       		}
+                                key.put(keyBytes).flip();
+                                value.put(valueBytes).flip();
+                                lookupMatchDB.put(key, value);
                                 proteinMD5Count ++;
                                 match = new KVSMatch ();
                                 match.setProteinMD5(proteinMD5);
@@ -342,11 +298,15 @@ public class CreateMatchDBFromIprscanLMDB {
                     }
                     // Don't forget the last match!
                     if (match != null) {
-                        primIDX.put(match);
+				byte[] keyBytes = getBytes(match.getProteinMD5());
+                                byte[] valueBytes = getBytes(match);
+                                final ByteBuffer key = allocateDirect(keyBytes.length);
+                                final ByteBuffer value = allocateDirect(valueBytes.length);
+                                key.put(keyBytes).flip();
+                                value.put(valueBytes).flip();
+                                lookupMatchDB.put(key, value);
+                        //lookupMatchDB.put(getBytes(match.getProteinMD5()), getBytes(match));
                     }
-
-                    */
-
                     // partition statistics
                     long timeProcessingPartition = System.currentTimeMillis() - startPartition;
                     Integer timeProcessingPartitionSeconds = (int) timeProcessingPartition / 1000;
@@ -361,11 +321,11 @@ public class CreateMatchDBFromIprscanLMDB {
 
                 }
                 System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches");
+                lookupMatchDB.close();
             } finally {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
             }
-
 
             now = System.currentTimeMillis();
             startMillis = now;
@@ -379,6 +339,8 @@ public class CreateMatchDBFromIprscanLMDB {
             throw new IllegalStateException("Unable to load the oracle.jdbc.OracleDriver class", e);
         } catch (SQLException e) {
             throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
+        //}catch (IOException e) {
+        //    throw new IllegalStateException("IOException thrown by interproscan", e);
         } finally {
             if (store != null) {
                 try {
@@ -405,7 +367,6 @@ public class CreateMatchDBFromIprscanLMDB {
                 }
             }
         }
-
     }
 
     public Set <String>  getPartitionNames(Connection connection){
@@ -432,42 +393,12 @@ public class CreateMatchDBFromIprscanLMDB {
         return (obj == null) ? "" : obj.toString();
     }
 
-    public static Set<BerkeleyLocationFragment> parseLocationFragments(final String fragments) {
-        // Example fragments input: "10-20-S,34-39-S"
-        Set<BerkeleyLocationFragment> berkeleyLocationFragments = new HashSet<>();
-        if (fragments == null || fragments.equals("")) {
-            return berkeleyLocationFragments;
-        }
-
-        Pattern pattern = Pattern.compile("^[0-9]+-[0-9]+-(S|N|C|NC)$");
-        String[] input = fragments.trim().split(",");
-        for (String s : input) {
-            Matcher matcher = pattern.matcher(s);
-            if (matcher.find()) {
-                String[] a = s.split("-");
-                if (a.length == 3) {
-                    BerkeleyLocationFragment berkeleyLocationFragment = new BerkeleyLocationFragment();
-                    berkeleyLocationFragment.setStart(Integer.parseInt(a[0]));
-                    berkeleyLocationFragment.setEnd(Integer.parseInt(a[1]));
-                    if (berkeleyLocationFragment.getStart() > berkeleyLocationFragment.getEnd()) {
-                        // Shouldn't happen, but log and skip if it does
-                        System.out.println("Error parsing fragment '" + s + "' from fragment string (end is before start): " + fragments);
-                        continue;
-                    }
-                    berkeleyLocationFragment.setDcStatus(a[2]);
-                    berkeleyLocationFragments.add(berkeleyLocationFragment);
-                }
-                else {
-                    throw new IllegalArgumentException("Error parsing fragment '" + s + "' from fragment string: " + fragments);
-                }
-            }
-            else {
-                throw new IllegalArgumentException("Error parsing fragment string: " + fragments);
-            }
-        }
-        if (berkeleyLocationFragments.isEmpty()) {
-            throw new IllegalArgumentException("No fragments could be parsed from fragment string: " + fragments);
-        }
-        return berkeleyLocationFragments;
+    public byte[] getBytes(String value){
+        return SerializationUtils.serialize(value);
     }
+
+    public byte[] getBytes(KVSMatch match){
+        return SerializationUtils.serialize(match);
+    }
+
 }
