@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
+import uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan.CreateMatchDBFromIprscanBerkeleyDB;
+
 /**
  * @author Phil Jones
  *         Date: 20/05/11
@@ -48,7 +50,7 @@ public class IprscanMain {
 
         */
 
-        CreateMatchDBFromIprscanLMDB matchBuilder = new CreateMatchDBFromIprscanLMDB();
+        CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();
         matchBuilder.buildDatabase(
                 matchDBPath,
                 databaseUrl,

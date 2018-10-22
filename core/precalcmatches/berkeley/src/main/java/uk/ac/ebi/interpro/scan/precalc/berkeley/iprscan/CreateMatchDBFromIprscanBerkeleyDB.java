@@ -2,34 +2,23 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.StoreConfig;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.dbstore.LevelDBStore;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
-import uk.ac.ebi.interpro.scan.util.Utilities;
-
-
-import org.iq80.leveldb.DB;
-import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
-import org.iq80.leveldb.Options;
-
 import org.apache.commons.lang3.SerializationUtils;
+import org.iq80.leveldb.DB;
+import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.dbstore.LevelDBStore;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -42,37 +31,38 @@ import java.util.regex.Pattern;
  */
 
 
-public class CreateMatchDBFromIprscanLevelDB {
+public class CreateMatchDBFromIprscanBerkeleyDB {
 
     private static final String databaseName = "IPRSCAN";
 
     //These indices go hand by hand with the 'lookup_tmp_tab' table
-    private static final int COL_IDX_MD5 = 1;
-    private static final int COL_IDX_SIG_LIB_NAME = 2;
-    private static final int COL_IDX_SIG_LIB_RELEASE = 3;
-    private static final int COL_IDX_SIG_ACCESSION = 4;
-    private static final int COL_IDX_MODEL_ACCESSION = 5;
-    private static final int COL_IDX_SCORE = 6;
-    private static final int COL_IDX_SEQ_SCORE = 7;
-    private static final int COL_IDX_SEQ_EVALUE = 8;
-    private static final int COL_IDX_EVALUE = 9;
-    private static final int COL_IDX_SEQ_START = 10;
-    private static final int COL_IDX_SEQ_END = 11;
-    private static final int COL_IDX_HMM_START = 12;
-    private static final int COL_IDX_HMM_END = 13;
-    private static final int COL_IDX_HMM_LENGTH = 14;
-    private static final int COL_IDX_HMM_BOUNDS = 15;
-    private static final int COL_IDX_ENV_START = 16;
-    private static final int COL_IDX_ENV_END = 17;
-    private static final int COL_IDX_SEQ_FEATURE = 18;
-    private static final int COL_IDX_FRAGMENTS = 19;
-    //private static final int COL_IDX_ALIGNMENT = 20;
+//    private static final int COL_IDX_MD5 = 1;
+//    private static final int COL_IDX_SIG_LIB_NAME = 2;
+//    private static final int COL_IDX_SIG_LIB_RELEASE = 3;
+//    private static final int COL_IDX_SIG_ACCESSION = 4;
+//    private static final int COL_IDX_MODEL_ACCESSION = 5;
+//    private static final int COL_IDX_SCORE = 6;
+//    private static final int COL_IDX_SEQ_SCORE = 7;
+//    private static final int COL_IDX_SEQ_EVALUE = 8;
+//    private static final int COL_IDX_EVALUE = 9;
+//    private static final int COL_IDX_SEQ_START = 10;
+//    private static final int COL_IDX_SEQ_END = 11;
+//    private static final int COL_IDX_HMM_START = 12;
+//    private static final int COL_IDX_HMM_END = 13;
+//    private static final int COL_IDX_HMM_LENGTH = 14;
+//    private static final int COL_IDX_HMM_BOUNDS = 15;
+//    private static final int COL_IDX_ENV_START = 16;
+//    private static final int COL_IDX_ENV_END = 17;
+//    private static final int COL_IDX_SEQ_FEATURE = 18;
+//    private static final int COL_IDX_FRAGMENTS = 19;
+
+
 
     private static String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
-                    "SIGNATURE_ACCESSION, MODEL_ACCESSION, SCORE, SEQUENCE_SCORE, SEQUENCE_EVALUE, EVALUE, SEQ_START, " +
-                    "SEQ_END, HMM_START, HMM_END, HMM_LENGTH, HMM_BOUNDS, ENVELOPE_START, ENVELOPE_END, " +
-                    "SEQ_FEATURE, FRAGMENTS" +
+                    "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
+                    "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
+                    "SEQ_FEATURE" +
                     "       from  lookup_tmp_tab  partition (partitionName) " +
                     "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5";
@@ -88,7 +78,7 @@ public class CreateMatchDBFromIprscanLevelDB {
         String password = args[3];
         String maxUPI = args[4];
 
-        CreateMatchDBFromIprscanLevelDB instance = new CreateMatchDBFromIprscanLevelDB();
+        CreateMatchDBFromIprscanBerkeleyDB instance = new CreateMatchDBFromIprscanBerkeleyDB();
 
         instance.buildDatabase(directoryPath,
                 databaseUrl,
@@ -128,7 +118,7 @@ public class CreateMatchDBFromIprscanLevelDB {
                 }
                 File[] directoryContents = lookupMatchDBDirectory.listFiles();
                 if (directoryContents != null && directoryContents.length > 0) {
-                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanLevelDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
+                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanBerkeleyDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
                 }
                 if (!lookupMatchDBDirectory.canWrite()) {
                     throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
@@ -163,67 +153,67 @@ public class CreateMatchDBFromIprscanLevelDB {
                     while (rs.next()) {
 
                         // Only process if the SignatureLibraryName is recognised.
-                        final String signatureLibraryName = rs.getString(COL_IDX_SIG_LIB_NAME);
+                        final String signatureLibraryName = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_NAME);
 //                        System.out.println(Utilities.getTimeNow() + " signatureLibraryName : # " + COL_IDX_SIG_LIB_NAME + " - " +  signatureLibraryName);
                         if (rs.wasNull() || signatureLibraryName == null) continue;
                         SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
                         if (signatureLibrary == null) continue;
 
                         // Now collect rest of the data and test for mandatory fields.
-                        final int sequenceStart = rs.getInt(COL_IDX_SEQ_START);
+                        final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
 //                        System.out.println(Utilities.getTimeNow() + " sequenceStart : # " + COL_IDX_SEQ_START + " - " +  sequenceStart);
                         if (rs.wasNull()) continue;
 
-                        final int sequenceEnd = rs.getInt(COL_IDX_SEQ_END);
+                        final int sequenceEnd = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_END);
 //                        System.out.println(Utilities.getTimeNow() + " sequenceEnd : # " + COL_IDX_SEQ_END + " - " +  sequenceEnd);
                         if (rs.wasNull()) continue;
 
-                        final String proteinMD5 = rs.getString(COL_IDX_MD5);
+                        final String proteinMD5 = rs.getString(SimpleLookupMatch.COL_IDX_MD5);
 //                        System.out.println(Utilities.getTimeNow() + " proteinMD5 : # " + COL_IDX_MD5 + " - " +  proteinMD5);
                         if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                        final String sigLibRelease = rs.getString(COL_IDX_SIG_LIB_RELEASE);
+                        final String sigLibRelease = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_RELEASE);
                         if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
 
-                        final String signatureAccession = rs.getString(COL_IDX_SIG_ACCESSION);
+                        final String signatureAccession = rs.getString(SimpleLookupMatch.COL_IDX_SIG_ACCESSION);
                         if (signatureAccession == null || signatureAccession.length() == 0) continue;
 
-                        final String modelAccession = rs.getString(COL_IDX_MODEL_ACCESSION);
+                        final String modelAccession = rs.getString(SimpleLookupMatch.COL_IDX_MODEL_ACCESSION);
                         if (modelAccession == null || modelAccession.length() == 0) continue;
 
-                        Integer hmmStart = rs.getInt(COL_IDX_HMM_START);
+                        Integer hmmStart = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_START);
                         if (rs.wasNull()) hmmStart = null;
 
-                        Integer hmmEnd = rs.getInt(COL_IDX_HMM_END);
+                        Integer hmmEnd = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_END);
                         if (rs.wasNull()) hmmEnd = null;
 
-                        Integer hmmLength = rs.getInt(COL_IDX_HMM_LENGTH);
+                        Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
                         if (rs.wasNull()) hmmLength = null;
 
-                        String hmmBounds = rs.getString(COL_IDX_HMM_BOUNDS);
+                        String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
 
-                        Double sequenceScore = rs.getDouble(COL_IDX_SEQ_SCORE);
+                        Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
                         if (rs.wasNull()) sequenceScore = null;
 
-                        Double sequenceEValue = rs.getDouble(COL_IDX_SEQ_EVALUE);
+                        Double sequenceEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_EVALUE);
                         if (rs.wasNull()) sequenceEValue = null;
 
-                        Double locationScore = rs.getDouble(COL_IDX_SCORE);
+                        Double locationScore = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_SCORE);
                         if (rs.wasNull()) locationScore = null;
 
-                        Double locationEValue = rs.getDouble(COL_IDX_EVALUE);
+                        Double locationEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_EVALUE);
                         if (rs.wasNull()) {
                             locationEValue = null;
                         }
 
-                        Integer envelopeStart = rs.getInt(COL_IDX_ENV_START);
+                        Integer envelopeStart = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_START);
                         if (rs.wasNull()) envelopeStart = null;
 
-                        Integer envelopeEnd = rs.getInt(COL_IDX_ENV_END);
+                        Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
                         if (rs.wasNull()) envelopeEnd = null;
 
-                        String seqFeature = rs.getString(COL_IDX_SEQ_FEATURE);
-                        String fragments = rs.getString(COL_IDX_FRAGMENTS);
+                        String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
+                        String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
                         //reformat the fragments to be semi colon delimited
                         fragments.replace(",", ";");
 
@@ -265,7 +255,7 @@ public class CreateMatchDBFromIprscanLevelDB {
                             }else{
                                 lookupMatchDB.put(getBytes(match.getProteinMD5()), getBytes(match));
                                 proteinMD5Count ++;
-                                match = new KVSequenceEntry();
+                                match = new KVSequenceEntry ();
                                 match.setProteinMD5(proteinMD5);
                                 match.addMatch(kvMatch);
                             }
