@@ -62,7 +62,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
                     "SEQ_FEATURE" +
-                    "       from  lookup_tmp_tab  partition (partitionName) " +
+                    "       from  tmp_lookup_tmp_tab_part  partition (partitionName) " +
                     "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5";
 
@@ -76,6 +76,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
         String username = args[2];
         String password = args[3];
         String maxUPI = args[4];
+        int fetchSize = Integer.parseInt(args[5]);
 
         CreateMatchDBFromIprscanBerkeleyDB instance = new CreateMatchDBFromIprscanBerkeleyDB();
 
@@ -83,11 +84,12 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                 databaseUrl,
                 username,
                 password,
-                maxUPI
+                maxUPI,
+                fetchSize
         );
     }
 
-    void buildDatabase(String directoryPath, String databaseUrl, String username, String password, String maxUPI) {
+    void buildDatabase(String directoryPath, String databaseUrl, String username, String password, String maxUPI, int fetchSize) {
         long startMillis = System.currentTimeMillis();
         Connection connection = null;
 
@@ -97,7 +99,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
             connection = DriverManager.getConnection(databaseUrl, username, password);
 
             long now = System.currentTimeMillis();
-            System.out.println(Utilities.getTimeNow() + " Start the lookup match servive data build");
+            System.out.println(Utilities.getTimeNow() + " Start the lookup match servive data build @ " + directoryPath);
             startMillis = now;
 
             PrimaryIndex<Long, KVSequenceEntry> primIDX = null;
@@ -142,6 +144,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     String partitionQueryLookupTable = QUERY_TEMPORARY_TABLE.replace("partitionName", partitionName);
                     System.out.println(Utilities.getTimeNow() + " sql for this partition: " + partitionQueryLookupTable);
                     ps = connection.prepareStatement(partitionQueryLookupTable);
+                    //should we play witht eh featch array size
+                    System.out.println(Utilities.getTimeNow() + " ps.setFetchSize: " + ps.getFetchSize());
+                    ps.setFetchSize(fetchSize);
                     ps.setString(1, partitionName);
                     //ps.setString(2, partitionName);
                     //System.out.println(Utilities.getTimeNow() + "sql:" + ps.toString());
@@ -159,7 +164,15 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 //                        System.out.println(Utilities.getTimeNow() + " signatureLibraryName : # " + COL_IDX_SIG_LIB_NAME + " - " +  signatureLibraryName);
                         if (rs.wasNull() || signatureLibraryName == null) continue;
                         SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
-                        if (signatureLibrary == null) continue;
+                        if (signatureLibrary == null
+                                || signatureLibrary.getName().equals(SignatureLibrary.PHOBIUS.getName())
+                                || signatureLibrary.getName().equals(SignatureLibrary.SMART.getName())
+                                || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_EUK.getName())
+                                || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName())
+                                || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName())
+                                ){
+                            continue;
+                        }
 
                         // Now collect rest of the data and test for mandatory fields.
                         final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
@@ -321,7 +334,8 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
     public Set <String>  getPartitionNames(Connection connection){
         Set <String> partitionNames = new HashSet<>();
 
-        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' ORDER BY PARTITION_NAME";
+        //tmp_lookup_tmp_tab_part
+        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'TMP_LOOKUP_TMP_TAB_PART' ORDER BY PARTITION_NAME";
 //        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME <= 'UPI00002' ORDER BY PARTITION_NAME";
 
         try {
