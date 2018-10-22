@@ -289,14 +289,11 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
                 }
                 System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches");
-                lookupMatchDB.close();
+                //lookupMatchDB.close();  not needed as used the autocloseable
             } finally {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
             }
-
-            now = System.currentTimeMillis();
-            startMillis = now;
 
             System.out.println("Finished building BerkeleyDB.");
 
