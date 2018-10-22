@@ -1,14 +1,13 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import org.apache.commons.lang3.SerializationUtils;
-import org.iq80.leveldb.DB;
+
+
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.dbstore.LevelDBStore;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.dbstore.BerkeleyDBStore;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -90,8 +89,6 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
     void buildDatabase(String directoryPath, String databaseUrl, String username, String password, String maxUPI) {
         long startMillis = System.currentTimeMillis();
-        Environment myEnv = null;
-        EntityStore store = null;
         Connection connection = null;
 
         try {
@@ -129,7 +126,12 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
             String dbStoreName = directoryPath;
 
-            try (DB lookupMatchDB = new LevelDBStore().getLevelDBStore(dbStoreName)){
+            try (BerkeleyDBStore lookupMatchDB = new BerkeleyDBStore()){
+                lookupMatchDB.create(dbStoreName, lookupMatchDBDirectory);
+                if (primIDX == null) {
+                    primIDX = lookupMatchDB.getEntityStore().getPrimaryIndex(Long.class, KVSequenceEntry.class);
+                }
+
                 long locationFragmentCount = 0, proteinMD5Count = 0, matchCount = 0;
                 int partitionCount = 0;
                 for (String partitionName : partitionNames) {
@@ -253,7 +255,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                             if (proteinMD5.equals(match.getProteinMD5())) {
                                 match.addMatch(kvMatch);
                             }else{
-                                lookupMatchDB.put(getBytes(match.getProteinMD5()), getBytes(match));
+                                primIDX.put(match);
                                 proteinMD5Count ++;
                                 match = new KVSequenceEntry ();
                                 match.setProteinMD5(proteinMD5);
@@ -271,7 +273,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     }
                     // Don't forget the last match!
                     if (match != null) {
-                        lookupMatchDB.put(getBytes(match.getProteinMD5()), getBytes(match));
+                        primIDX.put(match);
                     }
                     // partition statistics
                     long timeProcessingPartition = System.currentTimeMillis() - startPartition;
@@ -305,25 +307,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
             throw new IllegalStateException("Unable to load the oracle.jdbc.OracleDriver class", e);
         } catch (SQLException e) {
             throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
-        }catch (IOException e) {
-            throw new IllegalStateException("IOException thrown by interproscan", e);
+//        }catch (IOException e) {
+//            throw new IllegalStateException("IOException thrown by interproscan", e);
         } finally {
-            if (store != null) {
-                try {
-                    store.close();
-                } catch (DatabaseException dbe) {
-                    System.out.println("Unable to close the BerkeleyDB connection.");
-                }
-            }
-
-            if (myEnv != null) {
-                try {
-                    // Finally, close environment.
-                    myEnv.close();
-                } catch (DatabaseException dbe) {
-                    System.out.println("Unable to close the BerkeleyDB environment.");
-                }
-            }
 
             if (connection != null) {
                 try {
@@ -357,14 +343,6 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
     public static String kvValueOf(Object obj) {
         return (obj == null) ? "" : obj.toString();
-    }
-
-    public byte[] getBytes(String value){
-        return SerializationUtils.serialize(value);
-    }
-
-    public byte[] getBytes(KVSequenceEntry match){
-        return SerializationUtils.serialize(match);
     }
 
 }
