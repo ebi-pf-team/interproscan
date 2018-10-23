@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,5 +31,5 @@ public interface PrecalculatedProteinLookup {
     boolean isSynchronised() throws IOException;
 
 
-    boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap);
+    boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<.KVSequenceEntry> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap);
 }

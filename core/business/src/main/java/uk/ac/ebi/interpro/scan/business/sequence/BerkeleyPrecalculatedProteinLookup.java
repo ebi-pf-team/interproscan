@@ -8,8 +8,8 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyToI5ModelDAO;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -113,7 +113,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 startTime = System.nanoTime();
             }
             lookupMessageStatus = "Get matches of proteins analysed previously";
-            final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
+            final KVSequenceEntry kvSequenceEntryXML = preCalcMatchClient.getMatches(upperMD5);
 
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
@@ -274,7 +274,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * @param analysisJobMap
      * @return
      */
-    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap) {
+    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Collection of BerkeleyMatches of different kinds.
         Map<String, String> lookupAnalysesMap = new HashMap<String, String>();
         for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
