@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
 
 import java.util.ArrayList;
@@ -60,16 +60,16 @@ public class MatchesServiceImpl implements MatchesService {
      * @param proteinMD5s md5 checksum of sequences.
      * @return a List of matches for these proteins.
      */
-    public List<BerkeleyMatch> getMatches(List<String> proteinMD5s) {
+    public List<KVSequenceEntry> getMatches(List<String> proteinMD5s) {
         Assert.notNull(berkeleyMatchDBService.getMD5Index(), "The MD5 index must not be null.");
-        List<BerkeleyMatch> matches = new ArrayList<BerkeleyMatch>();
+        List<KVSequenceEntry> matches = new ArrayList<>();
 
         for (String md5 : proteinMD5s) {
-            EntityCursor<BerkeleyMatch> matchCursor = null;
+            EntityCursor<KVSequenceEntry> matchCursor = null;
             try {
                 matchCursor = berkeleyMatchDBService.getMD5Index().entities(md5, true, md5, true);
 
-                BerkeleyMatch currentMatch;
+                KVSequenceEntry currentMatch;
                 while ((currentMatch = matchCursor.next()) != null) {
                     matches.add(currentMatch);
                 }

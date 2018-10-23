@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.server.service;
 
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface MatchesService {
      * @param proteinMD5s md5 checksum of sequences.
      * @return a List of matches for these proteins.
      */
-    List<BerkeleyMatch> getMatches(List<String> proteinMD5s);
+    List<KVSequenceEntry> getMatches(List<String> proteinMD5s);
 
     /**
      * Web service request for a List of protein sequence MD5

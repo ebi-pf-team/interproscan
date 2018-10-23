@@ -9,7 +9,7 @@ import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 
 import java.io.File;
 
@@ -26,7 +26,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
 
     private String databasePath;
 
-    private SecondaryIndex<String, Long, BerkeleyMatch> secIDX = null;
+    private SecondaryIndex<String, Long, KVSequenceEntry> secIDX = null;
 
     private int cacheSizeInBytes;
 
@@ -59,7 +59,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         shutdown();
     }
 
-    SecondaryIndex<String, Long, BerkeleyMatch> getMD5Index() {
+    SecondaryIndex<String, Long, KVSequenceEntry> getMD5Index() {
         return secIDX;
     }
 
@@ -83,7 +83,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         store = new EntityStore(myEnv, "EntityStore", storeConfig);
 
 
-        PrimaryIndex<Long, BerkeleyMatch> primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
+        PrimaryIndex<Long, KVSequenceEntry> primIDX = store.getPrimaryIndex(Long.class, KVSequenceEntry.class);
         secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
     }
 

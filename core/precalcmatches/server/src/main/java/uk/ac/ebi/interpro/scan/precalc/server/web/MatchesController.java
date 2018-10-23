@@ -6,8 +6,8 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -49,8 +49,8 @@ public class MatchesController {
     @RequestMapping
     public void getMatches(HttpServletResponse response,
                            @RequestParam(value = "md5", required = true) String[] md5Array) {
-        List<BerkeleyMatch> matches = matchService.getMatches(Arrays.asList(md5Array));
-        BerkeleyMatchXML matchXML = new BerkeleyMatchXML(matches);
+        List<KVSequenceEntry> matches = matchService.getMatches(Arrays.asList(md5Array));
+        KVSequenceEntryXML matchXML = new KVSequenceEntryXML(matches);
         response.setContentType("application/xml");
         Writer out = null;
         try {

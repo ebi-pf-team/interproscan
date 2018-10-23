@@ -31,5 +31,5 @@ public interface PrecalculatedProteinLookup {
     boolean isSynchronised() throws IOException;
 
 
-    boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<.KVSequenceEntry> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap);
+    boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap);
 }

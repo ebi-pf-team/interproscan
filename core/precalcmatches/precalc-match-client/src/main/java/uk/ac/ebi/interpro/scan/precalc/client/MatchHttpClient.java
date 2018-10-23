@@ -24,7 +24,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.transform.stream.StreamSource;
@@ -94,7 +94,7 @@ public class MatchHttpClient {
 
     public String getProxyPort() { return proxyPort;  }
 
-    public BerkeleyMatchXML getMatches(String... md5s) throws IOException {
+    public KVSequenceEntryXML getMatches(String... md5s) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Call to MatchHttpClient.getMatches:");
             for (String md5 : md5s) {
@@ -121,8 +121,8 @@ public class MatchHttpClient {
         post.setEntity(encodedParameterEntity);
 
 
-        ResponseHandler<BerkeleyMatchXML> handler = new ResponseHandler<BerkeleyMatchXML>() {
-            public BerkeleyMatchXML handleResponse(
+        ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
+            public KVSequenceEntryXML handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
 //                Utilities.verboseLog("response:" + response.toString());
@@ -134,7 +134,7 @@ public class MatchHttpClient {
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
 //                        Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
-                        return (BerkeleyMatchXML) unmarshaller.unmarshal(new StreamSource(bis));
+                        return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(bis));
                     } finally {
                         if (bis != null) {
                             bis.close();
@@ -169,7 +169,7 @@ public class MatchHttpClient {
 
         }
 
-        BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
+        KVSequenceEntryXML matchXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
 //        Utilities.verboseLog("matchXML:" + matchXML.toString());
