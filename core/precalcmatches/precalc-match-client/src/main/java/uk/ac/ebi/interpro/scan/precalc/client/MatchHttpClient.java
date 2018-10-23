@@ -118,8 +118,9 @@ public class MatchHttpClient {
 
         // Using HttpPost to ensure no problems with long URLs.
         HttpPost post = new HttpPost(url + MATCH_SERVICE_PATH);
-        post.setEntity(encodedParameterEntity);
 
+        long startGetMatches = System.currentTimeMillis();
+        post.setEntity(encodedParameterEntity);
 
         ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
             public KVSequenceEntryXML handleResponse(
@@ -173,6 +174,9 @@ public class MatchHttpClient {
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
 //        Utilities.verboseLog("matchXML:" + matchXML.toString());
+        long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
+
         return matchXML;
     }
 

@@ -234,7 +234,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
                         String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
                         //reformat the fragments to be semi colon delimited
-                        fragments.replace(",", ";");
+                        fragments = fragments.replace(",", ";"); //carefull with this one as replace doesnt work in place
 
                         String columnDelimiter = ",";
                         StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);

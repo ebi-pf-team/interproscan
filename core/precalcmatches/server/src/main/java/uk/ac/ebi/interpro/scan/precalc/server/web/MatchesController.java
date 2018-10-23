@@ -10,6 +10,8 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
 
+import uk.ac.ebi.interpro.scan.util.Utilities;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
@@ -49,7 +51,13 @@ public class MatchesController {
     @RequestMapping
     public void getMatches(HttpServletResponse response,
                            @RequestParam(value = "md5", required = true) String[] md5Array) {
+        long startGetMatches = System.currentTimeMillis();
+        System.out.println("md5Array: " + Arrays.toString(md5Array));
         List<KVSequenceEntry> matches = matchService.getMatches(Arrays.asList(md5Array));
+        long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+        //Integer timeProcessingPartitionSeconds = (int) timeProcessingPartition / 1000;
+        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5Array.length  + " md5s");
+
         KVSequenceEntryXML matchXML = new KVSequenceEntryXML(matches);
         response.setContentType("application/xml");
         Writer out = null;

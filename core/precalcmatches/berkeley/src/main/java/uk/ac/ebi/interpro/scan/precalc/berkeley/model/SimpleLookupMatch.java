@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.model;
 
+import java.util.Arrays;
+
 public class SimpleLookupMatch {
     //These indices go hand by hand with the 'lookup_tmp_tab' table
 
@@ -47,6 +49,7 @@ public class SimpleLookupMatch {
     public SimpleLookupMatch(String lookupMatch) {
         String [] lookupMatchTokens =  lookupMatch.split(",");
 
+
 //        System.out.println("lookupMatchTokens: " + lookupMatchTokens);
 //        for (String token: lookupMatchTokens){
 //            System.out.println(token);
@@ -55,6 +58,7 @@ public class SimpleLookupMatch {
 //        String csvmatch = "00006F313F29B29DA473B6DDF28AF744,SMART,7.1,SM00929,SM00929,92,132,92-132-S,85.9,4.9E-21,[],1,43,43,0,0,4.9E-21,85.9,";
 //        System.out.println("csvmatch length: " + lookupMatchTokens.length) ;
 
+        System.out.println("hit: (" + lookupMatchTokens.length + ") " + Arrays.toString(lookupMatchTokens));
         int columnOffSet = 1;
         proteinMD5 = lookupMatchTokens[COL_IDX_MD5 - columnOffSet];
         signatureLibraryName = lookupMatchTokens[COL_IDX_SIG_LIB_NAME - columnOffSet];
@@ -65,6 +69,8 @@ public class SimpleLookupMatch {
         sequenceEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_SEQ_END - columnOffSet]);
 //        System.out.println("toString(): (after sequenceEnd)" + toString());
         fragments = lookupMatchTokens[COL_IDX_FRAGMENTS - columnOffSet];
+//        fragments.replace(";", ",");  // we change fragments back to comma separated string, or maybe not
+
 //        System.out.println("toString(): (after frag) " + toString());
         sequenceScore = Double.parseDouble(lookupMatchTokens[COL_IDX_SEQ_SCORE - columnOffSet]);
 //        System.out.println("toString(): (after sequenceScore )" + toString());
