@@ -26,7 +26,10 @@ public class IprscanMain {
         String databaseUsername = args[3];
         String databasePassword = args[4];
         String maxUPI = args[5];
-        int fetchSize = Integer.parseInt(args[6]);
+        int fetchSize = 100000;
+        if (args.length >= 6) {
+            fetchSize = Integer.parseInt(args[6]);
+        }
 
         // TODO Allow user to kick of ALL (both MD5 and MATCH) or just one
 
