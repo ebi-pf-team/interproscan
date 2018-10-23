@@ -145,8 +145,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     System.out.println(Utilities.getTimeNow() + " sql for this partition: " + partitionQueryLookupTable);
                     ps = connection.prepareStatement(partitionQueryLookupTable);
                     //should we play witht eh featch array size
-                    System.out.println(Utilities.getTimeNow() + " ps.setFetchSize: " + ps.getFetchSize());
+                    System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
                     ps.setFetchSize(fetchSize);
+                    System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
                     ps.setString(1, partitionName);
                     //ps.setString(2, partitionName);
                     //System.out.println(Utilities.getTimeNow() + "sql:" + ps.toString());
