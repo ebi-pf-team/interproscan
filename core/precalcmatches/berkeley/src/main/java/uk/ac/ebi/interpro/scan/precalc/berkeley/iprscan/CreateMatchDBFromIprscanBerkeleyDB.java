@@ -77,7 +77,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
         String password = args[3];
         String maxUPI = args[4];
         int fetchSize = 100000;
-        if (args.length >= 5) {
+        if (args.length >= 6) {
             fetchSize =  Integer.parseInt(args[5]);
         }
 

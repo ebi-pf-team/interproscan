@@ -46,19 +46,24 @@ public class CreateMD5ListFromIprscan {
         String databaseUsername = args[2];
         String databasePassword = args[3];
         String maxUPI = args[4];
+        int fetchSize = 100000;
+        if (args.length >= 6) {
+            fetchSize =  Integer.parseInt(args[5]);
+        }
         CreateMD5ListFromIprscan instance = new CreateMD5ListFromIprscan();
 
         instance.buildDatabase(directoryPath,
                 databaseUrl,
                 databaseUsername,
                 databasePassword,
-                maxUPI
+                maxUPI,
+                fetchSize
         );
 
 
     }
 
-    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword, String maxUPI) {
+    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword, String maxUPI, int fetchSize) {
         Environment myEnv = null;
         EntityStore store = null;
         Connection connection = null;
@@ -99,6 +104,9 @@ public class CreateMD5ListFromIprscan {
             connection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword);
 
             PreparedStatement ps = connection.prepareStatement(MD5_QUERY);
+            System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
+            ps.setFetchSize(fetchSize);
+            System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
 //            ps.setString(1, maxUPI);
             ResultSet rs = ps.executeQuery();
 
