@@ -58,7 +58,7 @@ public class SimpleLookupMatch {
 //        String csvmatch = "00006F313F29B29DA473B6DDF28AF744,SMART,7.1,SM00929,SM00929,92,132,92-132-S,85.9,4.9E-21,[],1,43,43,0,0,4.9E-21,85.9,";
 //        System.out.println("csvmatch length: " + lookupMatchTokens.length) ;
 
-        System.out.println("hit: (" + lookupMatchTokens.length + ") " + Arrays.toString(lookupMatchTokens));
+//        System.out.println("hit: (" + lookupMatchTokens.length + ") " + Arrays.toString(lookupMatchTokens));
         int columnOffSet = 1;
         proteinMD5 = lookupMatchTokens[COL_IDX_MD5 - columnOffSet];
         signatureLibraryName = lookupMatchTokens[COL_IDX_SIG_LIB_NAME - columnOffSet];

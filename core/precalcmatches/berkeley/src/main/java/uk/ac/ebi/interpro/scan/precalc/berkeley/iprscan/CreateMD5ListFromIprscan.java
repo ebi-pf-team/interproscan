@@ -33,7 +33,7 @@ public class CreateMD5ListFromIprscan {
 //                    "  order by protein_md5";
 
     private static final String MD5_QUERY =
-            "select md5 as protein_md5 from berkerly_tmp_upi_md5 order by protein_md5";
+            "select md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
 
 
     public static void main(String[] args) {

@@ -62,7 +62,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
                     "SEQ_FEATURE" +
-                    "       from  tmp_lookup_tmp_tab_part  partition (partitionName) " +
+                    "       from  lookup_tmp_tab  partition (partitionName) " +
                     "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5";
 
@@ -339,7 +339,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
         Set <String> partitionNames = new HashSet<>();
 
         //tmp_lookup_tmp_tab_part
-        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'TMP_LOOKUP_TMP_TAB_PART' ORDER BY PARTITION_NAME";
+        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' ORDER BY PARTITION_NAME";
 //        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME <= 'UPI00002' ORDER BY PARTITION_NAME";
 
         try {

@@ -33,16 +33,18 @@ public class IprscanMain {
 
         // TODO Allow user to kick of ALL (both MD5 and MATCH) or just one
 
-        /*
+
         CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
         md5Builder.buildDatabase(
                 md5DBPath,
                 databaseUrl,
                 databaseUsername,
                 databasePassword,
-                maxUPI
+                maxUPI,
+                fetchSize
         );
 
+        /*
         CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
         matchBuilder.buildDatabase(
                 matchDBPath,
