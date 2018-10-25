@@ -15,9 +15,10 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.Collections;
 
 
 /**
@@ -136,9 +137,10 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                 if (primIDX == null) {
                     primIDX = lookupMatchDB.getEntityStore().getPrimaryIndex(Long.class, KVSequenceEntry.class);
                 }
-
+                                
                 long locationFragmentCount = 0, proteinMD5Count = 0, matchCount = 0;
                 int partitionCount = 0;
+
                 for (String partitionName : partitionNames) {
                     partitionCount ++;
                     long startPartition = System.currentTimeMillis();
@@ -285,7 +287,12 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                             System.out.println(Utilities.getTimeNow() + " match 1:  " + match.toString());
                         }
                         if (matchCount % 2000000 == 0) {
-                            System.out.println(Utilities.getTimeNow() + " Stored " + proteinMD5Count + " protein MD5s, with a total of " + matchCount + " matches.");
+                            if (matchCount % 6000000 == 0) {
+                              lookupMatchDB.getEntityStore().sync();
+                              System.out.println(Utilities.getTimeNow() + " Sync to disk " + proteinMD5Count + " protein MD5s, with a total of " + matchCount + " matches.");
+                            }else{
+                              System.out.println(Utilities.getTimeNow() + " Stored " + proteinMD5Count + " protein MD5s, with a total of " + matchCount + " matches.");
+                            }
                         }
                     }
                     // Don't forget the last match!
@@ -303,10 +310,11 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     Integer throughputPerSecond = partitionMatchCount / timeProcessingPartitionSeconds;
                     System.out.println(Utilities.getTimeNow() + " ThroughputPerSecond =  " + throughputPerSecond + "  .... o ......");
                     //break;  //lets look at one partition now
-
+                    
                 }
                 System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches");
                 //lookupMatchDB.close();  not needed as used the autocloseable
+                lookupMatchDB.getEntityStore().sync();
             } finally {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
@@ -336,7 +344,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
     }
 
     public Set <String>  getPartitionNames(Connection connection){
-        Set <String> partitionNames = new HashSet<>();
+        Set <String> partitionNames = new TreeSet<>();
 
         //tmp_lookup_tmp_tab_part
         String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' ORDER BY PARTITION_NAME";

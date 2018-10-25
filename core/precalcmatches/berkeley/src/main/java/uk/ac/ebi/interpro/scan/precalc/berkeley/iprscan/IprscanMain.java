@@ -27,13 +27,16 @@ public class IprscanMain {
         String databasePassword = args[4];
         String maxUPI = args[5];
         int fetchSize = 100000;
-        if (args.length >= 6) {
+        if (args.length >= 7) {
             fetchSize = Integer.parseInt(args[6]);
         }
 
         // TODO Allow user to kick of ALL (both MD5 and MATCH) or just one
 
+        /*
 
+        // we have now this built
+        
         CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
         md5Builder.buildDatabase(
                 md5DBPath,
@@ -44,6 +47,8 @@ public class IprscanMain {
                 fetchSize
         );
 
+
+        */
         /*
         CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
         matchBuilder.buildDatabase(
