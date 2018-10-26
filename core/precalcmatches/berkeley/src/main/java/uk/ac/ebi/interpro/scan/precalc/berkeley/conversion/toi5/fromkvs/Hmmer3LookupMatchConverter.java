@@ -6,15 +6,13 @@ import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Converts a BerkeleyMatch to a HMMER3 Match.
+ * Converts a LookupMatch to a HMMER3 Match.
  *
  * @author Phil Jones
  * @author Gift Nuka
@@ -26,7 +24,6 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
     private static final Logger LOG = Logger.getLogger(Hmmer3LookupMatchConverter.class.getName());
 
     public Hmmer3Match convertMatch(SimpleLookupMatch match, Signature signature) {
-
 
         final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;
@@ -40,10 +37,10 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
         int locationEnd = valueOrZero(match.getSequenceEnd());
 
         int envStart = match.getEnvelopeStart() == null
-                ? (match.getEnvelopeStart() == null ? 0 : match.getSequenceStart())
+                ? (match.getEnvelopeStart() == null ? 0 : locationStart)
                 : match.getEnvelopeStart();
         int envEnd =  match.getEnvelopeEnd() == null
-                ? match.getSequenceEnd() == null ? 0 : match.getSequenceEnd()
+                ? match.getSequenceEnd() == null ? 0 : locationEnd
                 : match.getEnvelopeEnd();
 
         String [] fragmentsTokens =  match.getFragments().split(";");
