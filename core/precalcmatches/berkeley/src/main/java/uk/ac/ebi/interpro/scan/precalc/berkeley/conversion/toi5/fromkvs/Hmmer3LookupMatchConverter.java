@@ -58,8 +58,8 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
         locations.add(new Hmmer3Match.Hmmer3Location(
                 locationStart,
                 locationEnd,
-                valueOrZero(match.getSequenceScore()),
-                valueOrZero(match.getSequenceEValue()),
+                valueOrZero(match.getLocationScore()),
+                valueOrZero(match.getLocationEValue()),
                 valueOrZero(match.getHmmStart()),
                 valueOrZero(match.getHmmEnd()),
                 valueOrZero(match.getHmmLength()),

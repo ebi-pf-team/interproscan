@@ -14,17 +14,17 @@
                 <entry key="GENE3D" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PIRSF" value-ref="hmmer3LookupMatchConverter"/>
-                <!--<entry key="PRINTS" value-ref="fingerPrintsBerkeleyMatchConverter"/>-->
+                <entry key="PRINTS" value-ref="printsLookupMatchConverter"/>
                 <entry key="TIGRFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="COILS" value-ref="coilsLookupMatchConverter"/>
                 <entry key="PROSITE_PATTERNS" value-ref="prositePatternsLookupMatchConverter"/>
                 <entry key="PROSITE_PROFILES" value-ref="prositeProfilesLookupMatchConverter"/>
-                <!--<entry key="PANTHER" value-ref="pantherMatchConverter"/>-->
-                <!--<entry key="SUPERFAMILY" value-ref="superfamilyMatchConverter"/>-->
-                <!--<entry key="PRODOM" value-ref="prodomMatchConverter"/>-->
-                <!--<entry key="HAMAP" value-ref="prositeProfilesMatchConverter"/>-->
+                <entry key="PANTHER" value-ref="pantherLookupMatchConverter"/>
+                <entry key="SUPERFAMILY" value-ref="superfamilyLookupMatchConverter"/>
+                <entry key="PRODOM" value-ref="prodomLookupMatchConverter"/>
+                <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
                 <entry key="SFLD" value-ref="hmmer3LookupMatchConverter"/>
-                <!--<entry key="SMART" value-ref="hmmer2BerkeleyMatchConverter"/>-->
+                <entry key="SMART" value-ref="hmmer2LookupMatchConverter"/>
                 <!--<entry key="SIGNALP_EUK" value-ref="signalpLookupMatchConverter"/>-->
                 <!--<entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpLookupMatchConverter"/>-->
                 <!--<entry key="SIGNALP_GRAM_POSITIVE" value-ref="signalpLookupMatchConverter"/>-->
@@ -39,10 +39,10 @@
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.MobiDBLookupMatchConverter"/>
     <bean id="rpsblastLookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.RPSBlastLookupMatchConverter"/>
-    <bean id="fingerPrintsBerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.FingerPrintsBerkeleyMatchConverter"/>
-    <bean id="hmmer2BerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.Hmmer2BerkeleyMatchConverter"/>
+    <bean id="printsLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrintsLookupMatchConverter"/>
+    <bean id="hmmer2LookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer2LookupMatchConverter"/>
     <bean id="hmmer3LookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer3LookupMatchConverter"/>
     <bean id="coilsLookupMatchConverter"
@@ -51,12 +51,12 @@
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositeProfilesLookupMatchConverter"/>
     <bean id="prositePatternsLookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositePatternsLookupMatchConverter"/>
-    <bean id="pantherMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.PantherBerkeleyMatchConverter"/>
-    <bean id="superfamilyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.SuperfamilyMatchConverter"/>
-    <bean id="prodomMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.ProdomMatchConverter"/>
+    <bean id="pantherLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PantherLookupMatchConverter"/>
+    <bean id="superfamilyLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SuperfamilyLookupMatchConverter"/>
+    <bean id="prodomLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.ProdomLookupMatchConverter"/>
     <bean id="signalpLookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.SignalPBerkeleyMatchConverter"/>
     <bean id="phobiusLookupMatchConverter"
