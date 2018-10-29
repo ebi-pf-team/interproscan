@@ -50,7 +50,7 @@ public class BerkeleyDBStore implements AutoCloseable{
         myEnvConfig.setConfigParam("je.env.runCleaner", Boolean.toString(false));
         myEnvConfig.setConfigParam("je.env.runCheckpointer", Boolean.toString(false));
 
-        myEnvConfig.setConfigParam("je.checkpointer.bytesInterval", Long.toString(200000000000l)); //10000000000l
+        myEnvConfig.setConfigParam("je.checkpointer.bytesInterval", Long.toString(400000000000l)); // 370GB 10000000000l
         myEnvConfig.setConfigParam("je.cleaner.minAge", Integer.toString(1000)); // time between cleaning
         myEnvConfig.setConfigParam("je.log.useODSYNC", Boolean.toString(true));
         storeConfig.setAllowCreate(true);

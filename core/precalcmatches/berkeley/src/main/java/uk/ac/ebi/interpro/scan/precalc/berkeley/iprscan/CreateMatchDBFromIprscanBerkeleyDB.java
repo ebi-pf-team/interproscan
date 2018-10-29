@@ -121,6 +121,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                 }
                 File[] directoryContents = lookupMatchDBDirectory.listFiles();
                 if (directoryContents != null && directoryContents.length > 0) {
+                    //System.out.println("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanBerkeleyDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
                     throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanBerkeleyDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
                 }
                 if (!lookupMatchDBDirectory.canWrite()) {
@@ -132,6 +133,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
             String dbStoreName = directoryPath;
 
+            System.out.println("Create the Berkeley DB Store and populate ... ");
             try (BerkeleyDBStore lookupMatchDB = new BerkeleyDBStore()){
                 lookupMatchDB.create(dbStoreName, lookupMatchDBDirectory);
                 if (primIDX == null) {
@@ -143,6 +145,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
                 for (String partitionName : partitionNames) {
                     partitionCount ++;
+//                    if (partitionName.compareTo("UPI00085") <= 0){
+//                        continue;
+//                    }
                     long startPartition = System.currentTimeMillis();
                     int partitionMatchCount = 0;
                     System.out.println(Utilities.getTimeNow() + " Now processing partition #" + partitionCount  + " :-  " + partitionName);
@@ -288,8 +293,12 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         }
                         if (matchCount % 2000000 == 0) {
                             if (matchCount % 6000000 == 0) {
+                              long startSync = System.currentTimeMillis();
+                              System.out.println(Utilities.getTimeNow() + " Start Sync to disk ");
                               lookupMatchDB.getEntityStore().sync();
-                              System.out.println(Utilities.getTimeNow() + " Sync to disk " + proteinMD5Count + " protein MD5s, with a total of " + matchCount + " matches.");
+                              long syncTime = System.currentTimeMillis() - startSync;
+                              Integer syncTimeSeconds = (int) syncTime / 1000;
+                              System.out.println(Utilities.getTimeNow() + " Sync to disk " + proteinMD5Count + " protein MD5s, with a total of " + matchCount + " matches.-- syncTimeSeconds: " + syncTimeSeconds);
                             }else{
                               System.out.println(Utilities.getTimeNow() + " Stored " + proteinMD5Count + " protein MD5s, with a total of " + matchCount + " matches.");
                             }
@@ -310,7 +319,15 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     Integer throughputPerSecond = partitionMatchCount / timeProcessingPartitionSeconds;
                     System.out.println(Utilities.getTimeNow() + " ThroughputPerSecond =  " + throughputPerSecond + "  .... o ......");
                     //break;  //lets look at one partition now
-                    
+                    try {
+                      
+                      if (rs != null) rs.close();
+                      if (ps != null) ps.close();
+                    } finally {
+                      if (rs != null) rs.close();
+                      if (ps != null) ps.close();
+                    }
+		    
                 }
                 System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches");
                 //lookupMatchDB.close();  not needed as used the autocloseable
