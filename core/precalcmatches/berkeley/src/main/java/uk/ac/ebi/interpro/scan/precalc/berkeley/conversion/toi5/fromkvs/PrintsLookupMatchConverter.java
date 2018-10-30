@@ -23,8 +23,8 @@ public class PrintsLookupMatchConverter extends LookupMatchConverter<FingerPrint
         locations.add(new FingerPrintsMatch.FingerPrintsLocation(
                 valueOrZero(match.getSequenceStart()),
                 valueOrZero(match.getSequenceEnd()),
-                valueOrZero(match.getLocationScore()),
                 valueOrZero(match.getSequenceScore()),
+                valueOrZero(match.getLocationEValue()), // TODO Change locationEvalue to locationScore if columns swapped in MV_IPRSCAN for PRINTS?
                 0)); // TODO Implement motif number
 
 //        int locationIndex = -1;
@@ -54,7 +54,7 @@ public class PrintsLookupMatchConverter extends LookupMatchConverter<FingerPrint
                 signature,
                 match.getModelAccession(),
                 valueOrZero(match.getSequenceEValue()),
-                match.getHmmBounds() == null ? "" : match.getHmmBounds(),     // Note - Onion stores the graphscan in the HmmBounds column.
+                match.getSeqFeature() == null ? "" : match.getSeqFeature(), // graphscan
                 locations
         );
     }

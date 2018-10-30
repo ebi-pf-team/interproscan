@@ -21,8 +21,8 @@ public class SimpleLookupMatch {
     public static final int COL_IDX_HMM_LENGTH = 14;
     public static final int COL_IDX_ENV_START = 15;
     public static final int COL_IDX_ENV_END = 16;
-    public static final int COL_IDX_LOC_EVALUE = 17;
-    public static final int COL_IDX_LOC_SCORE = 18;
+    public static final int COL_IDX_LOC_SCORE = 17;
+    public static final int COL_IDX_LOC_EVALUE = 18;
     public static final int COL_IDX_SEQ_FEATURE = 19;
 
 
@@ -42,8 +42,8 @@ public class SimpleLookupMatch {
     Integer hmmLength;
     Integer envelopeStart;
     Integer envelopeEnd;
-    Double locationEValue;
     Double locationScore;
+    Double locationEValue;
     String seqFeature;
 
     public SimpleLookupMatch(String lookupMatch) {
@@ -83,8 +83,8 @@ public class SimpleLookupMatch {
         hmmLength = Integer.parseInt(lookupMatchTokens[COL_IDX_HMM_LENGTH - columnOffSet]);
         envelopeStart = Integer.parseInt(lookupMatchTokens[COL_IDX_ENV_START - columnOffSet]);
         envelopeEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_ENV_END - columnOffSet]);
-        locationEValue = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_EVALUE - columnOffSet]);
         locationScore = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_SCORE - columnOffSet]);
+        locationEValue = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_EVALUE - columnOffSet]);
         if(lookupMatchTokens.length == 19) {
             seqFeature = lookupMatchTokens[COL_IDX_SEQ_FEATURE - columnOffSet];
         }else{
@@ -162,12 +162,12 @@ public class SimpleLookupMatch {
         return envelopeEnd;
     }
 
-    public Double getLocationEValue() {
-        return locationEValue;
-    }
-
     public Double getLocationScore() {
         return locationScore;
+    }
+
+    public Double getLocationEValue() {
+        return locationEValue;
     }
 
     public String getSeqFeature() {
@@ -193,8 +193,8 @@ public class SimpleLookupMatch {
                 ", hmmLength=" + hmmLength +
                 ", envelopeStart=" + envelopeStart +
                 ", envelopeEnd=" + envelopeEnd +
-                ", locationEValue=" + locationEValue +
                 ", locationScore=" + locationScore +
+                ", locationEValue=" + locationEValue +
                 ", seqFeature='" + seqFeature + '\'' +
                 '}';
     }

@@ -27,7 +27,7 @@ public class MobiDBLookupMatchConverter extends LookupMatchConverter<MobiDBMatch
         Set<MobiDBMatch.MobiDBLocation> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
         int locationEnd = valueOrZero(match.getSequenceEnd());
-        locations.add(new MobiDBMatch.MobiDBLocation(locationStart, locationEnd));
+        locations.add(new MobiDBMatch.MobiDBLocation(locationStart, locationEnd, match.getSeqFeature()));
 
         return new MobiDBMatch(signature, match.getModelAccession(), locations);
     }
