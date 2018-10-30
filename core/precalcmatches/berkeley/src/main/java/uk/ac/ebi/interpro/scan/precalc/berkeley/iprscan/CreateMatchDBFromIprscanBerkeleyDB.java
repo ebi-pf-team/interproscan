@@ -177,7 +177,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
                         if (signatureLibrary == null
                                 || signatureLibrary.getName().equals(SignatureLibrary.PHOBIUS.getName())
-                                || signatureLibrary.getName().equals(SignatureLibrary.SMART.getName())
+                                || signatureLibrary.getName().equals(SignatureLibrary.TMHMM.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_EUK.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName())

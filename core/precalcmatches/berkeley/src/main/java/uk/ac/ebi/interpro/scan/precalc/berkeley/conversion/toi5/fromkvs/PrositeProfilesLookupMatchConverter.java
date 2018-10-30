@@ -15,7 +15,7 @@ public class PrositeProfilesLookupMatchConverter extends LookupMatchConverter<Pr
         Set<ProfileScanMatch.ProfileScanLocation> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
         int locationEnd = valueOrZero(match.getSequenceEnd());
-        Double score = valueOrZero(match.getLocationScore());
+        Double score = valueOrZero(match.getSequenceScore());
         String alignment = valueOrNotAvailable(match.getSeqFeature());
         locations.add(new ProfileScanMatch.ProfileScanLocation(locationStart, locationEnd, score, alignment));
         return new ProfileScanMatch(signature, match.getModelAccession(), locations);
