@@ -37,5 +37,11 @@ public abstract class LookupMatchConverter<T extends Match> {
                 : value;
     }
 
+    protected static String valueOrEmpty(String value) {
+        return (value == null)
+                ? ""
+                : value;
+    }
+
 
 }

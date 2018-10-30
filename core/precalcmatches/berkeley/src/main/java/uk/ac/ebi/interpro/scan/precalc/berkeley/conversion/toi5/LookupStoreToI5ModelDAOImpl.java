@@ -18,7 +18,6 @@ import java.util.*;
  * @version $Id$
  * @since 1.0
  */
-
 public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
     private static final Logger LOGGER = Logger.getLogger(LookupStoreToI5ModelDAOImpl.class.getName());
@@ -108,6 +107,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         for (KVSequenceEntry lookupMatch : kvSequenceEntries) {
             //now we ahave a list
             Set<String> sequenceHits = lookupMatch.getSequenceHits();
+            //possible place to include multiple locations
             for (String sequenceHit :sequenceHits) {
                 SimpleLookupMatch simpleMatch = new SimpleLookupMatch(sequenceHit);
                 String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
@@ -115,9 +115,11 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
                 if (sigLib.getName().equals(SignatureLibrary.CDD.getName())
                         || sigLib.getName().equals(SignatureLibrary.SFLD.getName())
+                        || sigLib.getName().equals(SignatureLibrary.PHOBIUS.getName())
                         || sigLib.getName().equals(SignatureLibrary.SIGNALP_EUK.getName())
                         || sigLib.getName().equals(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName())
-                        || sigLib.getName().equals(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName())) {
+                        || sigLib.getName().equals(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName())
+                        || sigLib.getName().equals(SignatureLibrary.TMHMM.getName())) {
                     continue;
                 }
                 if (LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())) {
@@ -180,25 +182,20 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                     if (signatureLibraryToMatchConverter == null) {
                         throw new IllegalStateException("The match converter map has not been populated.");
                     }
-                    if (sigLib.getName().equals(SignatureLibrary.PFAM.getName()) ||
-                            sigLib.getName().equals(SignatureLibrary.PIRSF.getName()) ||
-                            sigLib.getName().equals(SignatureLibrary.GENE3D.getName()) ||
-                            sigLib.getName().equals(SignatureLibrary.TIGRFAM.getName())) {
-                        LookupMatchConverter matchConverter = signatureLibraryToMatchConverter.get(sigLib);
-                        if (matchConverter != null) {
-                            Match i5Match = matchConverter.convertMatch(simpleMatch, signature);
-                            if (i5Match != null) {
-                                // Lookup up the right protein
-                                final Protein prot = md5ToProteinMap.get(simpleMatch.getProteinMD5().toUpperCase());
-                                if (prot != null) {
-                                    prot.addMatch(i5Match);
-                                } else {
-                                    LOGGER.warn("Attempted to store a match in a Protein, but cannot find the protein??? This makes no sense. Possible coding error.");
-                                }
+                    LookupMatchConverter matchConverter = signatureLibraryToMatchConverter.get(sigLib);
+                    if (matchConverter != null) {
+                        Match i5Match = matchConverter.convertMatch(simpleMatch, signature);
+                        if (i5Match != null) {
+                            // Lookup up the right protein
+                            final Protein prot = md5ToProteinMap.get(simpleMatch.getProteinMD5().toUpperCase());
+                            if (prot != null) {
+                                prot.addMatch(i5Match);
+                            } else {
+                                LOGGER.warn("Attempted to store a match in a Protein, but cannot find the protein??? This makes no sense. Possible coding error.");
                             }
-                        } else {
-                            LOGGER.warn("Unable to persist match " + simpleMatch + " as there is no available conversion for signature libarary " + sigLib);
                         }
+                    } else {
+                        LOGGER.warn("Unable to persist match " + simpleMatch + " as there is no available conversion for signature libarary " + sigLib);
                     }
                 }
             }
