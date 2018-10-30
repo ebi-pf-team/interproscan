@@ -71,7 +71,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         myEnvConfig.setReadOnly(true);
         myEnvConfig.setAllowCreate(false);
         myEnvConfig.setLocking(false);
-        myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(256));
+        //myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(256));
 
         storeConfig.setReadOnly(true);
         storeConfig.setAllowCreate(false);
