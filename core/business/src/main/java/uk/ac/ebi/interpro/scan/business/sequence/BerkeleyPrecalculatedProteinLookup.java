@@ -6,10 +6,11 @@ import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyToI5ModelDAO;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupStoreToI5ModelDAO;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -39,7 +40,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      */
     private MatchHttpClient preCalcMatchClient;
 
-    private BerkeleyToI5ModelDAO berkeleyToI5DAO;
+    private LookupStoreToI5ModelDAO lookupStoreToI5ModelDAO;
 
     private String interproscanVersion;
 
@@ -59,8 +60,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     }
 
     @Required
-    public void setBerkeleyToI5DAO(BerkeleyToI5ModelDAO berkeleyToI5DAO) {
-        this.berkeleyToI5DAO = berkeleyToI5DAO;
+    public void setLookupStoreToI5ModelDAO(LookupStoreToI5ModelDAO lookupStoreToI5ModelDAO) {
+        this.lookupStoreToI5ModelDAO = lookupStoreToI5ModelDAO;
     }
 
     /**
@@ -113,7 +114,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 startTime = System.nanoTime();
             }
             lookupMessageStatus = "Get matches of proteins analysed previously";
-            final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(upperMD5);
+            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(upperMD5);
 
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
@@ -121,14 +122,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 lookupTimeMillis = timetaken / 1000000;
             }
 
-            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(10, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
 
-                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
+                LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
-            if (berkeleyMatchXML != null) {
-                berkeleyToI5DAO.populateProteinMatches(protein, berkeleyMatchXML.getMatches(), analysisJobMap);
+            if (kvSequenceEntryXML != null) {
+                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), analysisJobMap);
             }
 
             return protein;
@@ -187,7 +188,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             startTime = System.nanoTime();
 
             lookupMessageStatus = "Get matches of proteins analysed previously";
-            final BerkeleyMatchXML berkeleyMatchXML = preCalcMatchClient.getMatches(md5s);
+            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
 //            Utilities.verboseLog(10, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
 
             long timetaken = System.nanoTime() - startTime;
@@ -196,16 +197,16 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 lookupTimeMillis = timetaken / 1000000;
             }
 
-            Utilities.verboseLog(10, "Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(10, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Time to lookup " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+                LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
             }
             startTime = System.nanoTime();
             // Check if the analysis versions are consistent and then proceed
-            if (isAnalysisVersionConsistent(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap)) {
+            if (isAnalysisVersionConsistent(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap)) {
 //                Utilities.verboseLog(10, "Analysis versions ARE Consistent" );
-                berkeleyToI5DAO.populateProteinMatches(precalculatedProteins, berkeleyMatchXML.getMatches(), analysisJobMap);
+                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap);
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
@@ -217,14 +218,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (timetaken > 0) {
                 lookupTimeMillis = timetaken / 1000000;
             }
-            Utilities.verboseLog(10, "Time to convert to i5 matches " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(10, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             timetaken = System.nanoTime() - startTime;
             lookupTimeMillis = 0;
             if (timetaken > 0) {
                 lookupTimeMillis = timetaken / 1000000;
             }
-            Utilities.verboseLog(10, "Time to convert to i5 matches " + berkeleyMatchXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(10, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             return precalculatedProteins;
 
@@ -270,17 +271,23 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * interproscan, then disable the lookup match service for this batch
      *
      * @param preCalculatedProteins
-     * @param berkeleyMatches
+     * @param kvSequenceEntries
      * @param analysisJobMap
      * @return
      */
-    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<BerkeleyMatch> berkeleyMatches, Map<String, SignatureLibraryRelease> analysisJobMap) {
+    public boolean isAnalysisVersionConsistent(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Collection of BerkeleyMatches of different kinds.
         Map<String, String> lookupAnalysesMap = new HashMap<String, String>();
-        for (BerkeleyMatch berkeleyMatch : berkeleyMatches) {
-            String signatureLibraryReleaseVersion = berkeleyMatch.getSignatureLibraryRelease();
-            final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(berkeleyMatch.getSignatureLibraryName());
-            lookupAnalysesMap.put(sigLib.getName().toUpperCase(), signatureLibraryReleaseVersion);
+        for (KVSequenceEntry kvSequenceEntry : kvSequenceEntries) {
+            Set<String> sequenceHits = kvSequenceEntry.getSequenceHits();
+            for (String sequenceHit :sequenceHits) {
+                LOGGER.debug("csvMatch:" + sequenceHit);
+                SimpleLookupMatch simpleMatch = new SimpleLookupMatch(sequenceHit);
+                LOGGER.debug("simpleMatch " + simpleMatch.toString());
+                String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
+                final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(simpleMatch.getSignatureLibraryName());
+                lookupAnalysesMap.put(sigLib.getName().toUpperCase(), signatureLibraryReleaseVersion);
+            }
         }
         for (String analysisJobName : analysisJobMap.keySet()) {
             if (lookupAnalysesMap.containsKey(analysisJobName.toUpperCase())) {

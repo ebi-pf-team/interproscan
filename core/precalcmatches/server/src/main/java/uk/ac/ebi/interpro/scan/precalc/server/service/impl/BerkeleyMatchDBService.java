@@ -9,7 +9,7 @@ import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 
 import java.io.File;
 
@@ -26,9 +26,11 @@ public class BerkeleyMatchDBService extends AbstractDBService {
 
     private String databasePath;
 
-    private SecondaryIndex<String, Long, BerkeleyMatch> secIDX = null;
+    private SecondaryIndex<String, Long, KVSequenceEntry> secIDX = null;
 
     private int cacheSizeInBytes;
+
+    private int cachePercentInt;
 
     Environment myEnv = null;
     EntityStore store = null;
@@ -36,6 +38,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
     public BerkeleyMatchDBService(String databasePath, int cacheSizeInMegabytes) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
         this.cacheSizeInBytes = cacheSizeInMegabytes * 1024 * 1024;
+        this.cachePercentInt = 65;
         this.databasePath = setDeploymentPath(databasePath);
         System.out.println("Initializing BerkeleyDB Match Database (creating indexes): Please wait...");
         initializeMD5Index();
@@ -59,7 +62,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         shutdown();
     }
 
-    SecondaryIndex<String, Long, BerkeleyMatch> getMD5Index() {
+    SecondaryIndex<String, Long, KVSequenceEntry> getMD5Index() {
         return secIDX;
     }
 
@@ -67,11 +70,12 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         EnvironmentConfig myEnvConfig = new EnvironmentConfig();
         StoreConfig storeConfig = new StoreConfig();
 
-        myEnvConfig.setCacheSize(cacheSizeInBytes);
+        //myEnvConfig.setCacheSize(cacheSizeInBytes);  //maybe we should use the setCachePercent i.e. EnvironmentConfig.MAX_MEMORY_PERCENT.
+        myEnvConfig.setCachePercent(cachePercentInt);
         myEnvConfig.setReadOnly(true);
         myEnvConfig.setAllowCreate(false);
         myEnvConfig.setLocking(false);
-        myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(256));
+        //myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(256));
 
         storeConfig.setReadOnly(true);
         storeConfig.setAllowCreate(false);
@@ -83,7 +87,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         store = new EntityStore(myEnv, "EntityStore", storeConfig);
 
 
-        PrimaryIndex<Long, BerkeleyMatch> primIDX = store.getPrimaryIndex(Long.class, BerkeleyMatch.class);
+        PrimaryIndex<Long, KVSequenceEntry> primIDX = store.getPrimaryIndex(Long.class, KVSequenceEntry.class);
         secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
     }
 

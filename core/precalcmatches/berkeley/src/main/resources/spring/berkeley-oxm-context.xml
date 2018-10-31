@@ -10,10 +10,8 @@
     <bean id="berkeleyJaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound">
             <list>
-                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML</value>
-                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch</value>
-                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation</value>
-                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment</value>
+                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML</value>
+                <value>uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry</value>
             </list>
         </property>
         <property name="marshallerProperties">
