@@ -49,6 +49,13 @@
             <version>${javax.servlet.api.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- to monitor performance -->
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+            <version>1.69.0</version>
+        </dependency>
 
     </dependencies>
     <properties>
