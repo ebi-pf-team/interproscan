@@ -23,8 +23,8 @@ public class PrintsLookupMatchConverter extends LookupMatchConverter<FingerPrint
         locations.add(new FingerPrintsMatch.FingerPrintsLocation(
                 valueOrZero(match.getSequenceStart()),
                 valueOrZero(match.getSequenceEnd()),
+                valueOrZero(match.getLocationEValue()),
                 valueOrZero(match.getSequenceScore()),
-                valueOrZero(match.getLocationEValue()), // TODO Change locationEvalue to locationScore if columns swapped in MV_IPRSCAN for PRINTS?
                 0)); // TODO Implement motif number
 
 //        int locationIndex = -1;

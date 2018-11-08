@@ -21,8 +21,8 @@ public class SimpleLookupMatch {
     public static final int COL_IDX_HMM_LENGTH = 14;
     public static final int COL_IDX_ENV_START = 15;
     public static final int COL_IDX_ENV_END = 16;
-    public static final int COL_IDX_LOC_SCORE = 17;
-    public static final int COL_IDX_LOC_EVALUE = 18;
+    public static final int COL_IDX_LOC_SCORE = 18;//TODO Change to 17 after lookup service rebuild
+    public static final int COL_IDX_LOC_EVALUE = 17;//TODO Change to 18 after lookup service rebuild
     public static final int COL_IDX_SEQ_FEATURE = 19;
 
 
