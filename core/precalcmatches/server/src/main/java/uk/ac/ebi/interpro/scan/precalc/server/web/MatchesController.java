@@ -56,7 +56,7 @@ public class MatchesController {
         List<KVSequenceEntry> matches = matchService.getMatches(Arrays.asList(md5Array));
         long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
         //Integer timeProcessingPartitionSeconds = (int) timeProcessingPartition / 1000;
-        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5Array.length  + " md5s");
+        //System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5Array.length  + " md5s");
 
         KVSequenceEntryXML matchXML = new KVSequenceEntryXML(matches);
         response.setContentType("application/xml");

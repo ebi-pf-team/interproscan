@@ -14,6 +14,8 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import javax.xml.bind.JAXBException;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
@@ -114,7 +116,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 startTime = System.nanoTime();
             }
             lookupMessageStatus = "Get matches of proteins analysed previously";
-            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(upperMD5);
+//            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(upperMD5);
+            final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(upperMD5);
 
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
@@ -188,7 +191,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             startTime = System.nanoTime();
 
             lookupMessageStatus = "Get matches of proteins analysed previously";
-            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
+//            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
+            final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(md5s);
 //            Utilities.verboseLog(10, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
 
             long timetaken = System.nanoTime() - startTime;
@@ -235,6 +239,39 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             return null;
         }
 
+    }
+
+    public KVSequenceEntryXML getMatchesFromLookup(String... md5s) throws IOException, InterruptedException{
+        int count = 0;
+        int maxTries = 3;
+        while(true) {
+            try {
+                KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
+                return kvSequenceEntryXML;
+                // Some Code
+                // break out of loop, or return, on success
+//            } catch (JAXBException e) {  //    also covers    UnmarshalException (JAXBException e) {
+//                // handle exception
+//                Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
+//                if (++count == maxTries) throw e;
+            } catch (IOException e) {
+                // handle exception
+                LOGGER.warn("Lookupmatch server seems busy (IOException) TryCount =  " + count);
+                if (++count == maxTries) throw e;
+            }catch (Exception e) {
+                if (e instanceof JAXBException){
+                    try {
+                        LOGGER.warn("Lookupmatch server seems busy (JAXBException) TryCount =  " + count);
+                        Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
+                    }catch (InterruptedException exc){
+                        throw exc;
+                    }
+                    if (++count == maxTries) throw e;
+                }else {
+                    throw e;
+                }
+            }
+        }
     }
 
     /**
