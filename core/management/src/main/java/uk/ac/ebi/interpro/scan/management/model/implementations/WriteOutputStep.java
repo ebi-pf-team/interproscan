@@ -397,9 +397,28 @@ public class WriteOutputStep extends Step {
         try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
             writeProteinMatches(writer, stepInstance, proteins);
         }
-
-        // Include accompanying TSV version file? If filename already exists it will get replaced
+        //write the site tsv production output
+        //only for CDD and SFLD
+        /*
         final Map<String, String> parameters = stepInstance.getParameters();
+        String analysisJobNames = parameters.get(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY);
+        if (analysisJobNames == null ||
+                analysisJobNames.toLowerCase().contains("cdd") ||
+                analysisJobNames.toLowerCase().contains("sfld")) {
+            final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
+            if (!excludeSites) {
+                Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
+                Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
+                try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
+
+                    writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
+                }
+            }
+        }
+        */
+
+//        // Include accompanying TSV version file? If filename already exists it will get replaced
+//        final Map<String, String> parameters = stepInstance.getParameters();
         final boolean inclTSVVersion = Boolean.TRUE.toString().equals(parameters.get(INCL_TSV_VERSION));
         if (inclTSVVersion) {
             final String tsvVersionFilename = path.toString() + ".version";
@@ -416,6 +435,7 @@ public class WriteOutputStep extends Step {
                 e.printStackTrace();
 
             }
+
         }
     }
 

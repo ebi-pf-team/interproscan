@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.apache.log4j.Logger;
+
+import org.springframework.oxm.UnmarshallingFailureException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -49,6 +51,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     private Long timeLookupError = null;
 
     private Long timeLookupSynchronisationError = null;
+
+    private int totalLookedup = 0;
 
     public BerkeleyPrecalculatedProteinLookup() {
 
@@ -118,6 +122,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             lookupMessageStatus = "Get matches of proteins analysed previously";
 //            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(upperMD5);
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(upperMD5);
+            if (kvSequenceEntryXML == null){
+                Utilities.verboseLog(10, "For this batch, calculate the matches locally - md5 =  " + upperMD5);
+                return null;
+            }
 
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
@@ -195,6 +203,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(md5s);
 //            Utilities.verboseLog(10, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
 
+            //if null is returned from the lookupmatch then may need to be calculated
+            if (kvSequenceEntryXML == null){
+                Utilities.verboseLog(10, "For this batch, calculate the matches locally - analysedMd5s.size =  " + analysedMd5s.size());
+                Utilities.verboseLog(10, "totalLookedup though: " +  totalLookedup);
+                return Collections.emptySet();
+	        }
+            totalLookedup =	totalLookedup + analysedMd5s.size();
+            Utilities.verboseLog(10, "totalLookedup: " +  totalLookedup);
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
             if (timetaken > 0) {
@@ -224,13 +240,6 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             Utilities.verboseLog(10, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
-            timetaken = System.nanoTime() - startTime;
-            lookupTimeMillis = 0;
-            if (timetaken > 0) {
-                lookupTimeMillis = timetaken / 1000000;
-            }
-            Utilities.verboseLog(10, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
-
             return precalculatedProteins;
 
         } catch (Exception e) {
@@ -241,37 +250,41 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     }
 
-    public KVSequenceEntryXML getMatchesFromLookup(String... md5s) throws IOException, InterruptedException{
+    public KVSequenceEntryXML getMatchesFromLookup(String... md5s) throws InterruptedException{
         int count = 0;
-        int maxTries = 3;
+        int maxTries = 4;
         while(true) {
             try {
                 KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
                 return kvSequenceEntryXML;
-                // Some Code
-                // break out of loop, or return, on success
-//            } catch (JAXBException e) {  //    also covers    UnmarshalException (JAXBException e) {
-//                // handle exception
-//                Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
-//                if (++count == maxTries) throw e;
+            } catch (UnmarshallingFailureException e) {  //    also covers    UnmarshalException (JAXBException e) {
+                // handle exception
+                try {
+                        Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
+                }catch (InterruptedException exc){
+                        throw exc;
+                }
+                if (++count == maxTries) {
+		            return null;
+		        }
             } catch (IOException e) {
                 // handle exception
-                LOGGER.warn("Lookupmatch server seems busy (IOException) TryCount =  " + count);
-                if (++count == maxTries) throw e;
+                if (++count == maxTries) break;
             }catch (Exception e) {
                 if (e instanceof JAXBException){
                     try {
-                        LOGGER.warn("Lookupmatch server seems busy (JAXBException) TryCount =  " + count);
                         Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
                     }catch (InterruptedException exc){
                         throw exc;
                     }
-                    if (++count == maxTries) throw e;
+                    if (++count == maxTries) break;
                 }else {
+                    LOGGER.warn("Lookupmatch server: encountered an unspecific error while getting matches ");
                     throw e;
                 }
             }
         }
+        return null;
     }
 
     /**
