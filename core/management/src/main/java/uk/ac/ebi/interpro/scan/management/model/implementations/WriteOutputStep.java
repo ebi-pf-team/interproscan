@@ -418,7 +418,7 @@ public class WriteOutputStep extends Step {
         */
 
 //        // Include accompanying TSV version file? If filename already exists it will get replaced
-//        final Map<String, String> parameters = stepInstance.getParameters();
+        final Map<String, String> parameters = stepInstance.getParameters();
         final boolean inclTSVVersion = Boolean.TRUE.toString().equals(parameters.get(INCL_TSV_VERSION));
         if (inclTSVVersion) {
             final String tsvVersionFilename = path.toString() + ".version";
