@@ -597,8 +597,14 @@ public class Run extends AbstractI5Runner {
             }
 
             // Exclude sites from output?
+            final boolean includeTsvSites = parsedCommandLine.hasOption(I5Option.ENABLE_TSV_RESIDUE_ANNOT.getLongOpt());
+            bbMaster.setIncludeTsvSites(includeTsvSites);
+
+            // Exclude sites from output?
             final boolean excludeSites = parsedCommandLine.hasOption(I5Option.DISABLE_RESIDUE_ANNOT.getLongOpt());
             bbMaster.setExcludeSites(excludeSites);
+
+
 
             // GO terms and/or pathways will also imply IPR lookup
             final boolean mapToGo = parsedCommandLine.hasOption(I5Option.GOTERMS.getLongOpt());
