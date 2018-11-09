@@ -15,6 +15,14 @@ import java.util.List;
 public interface MatchesService {
 
     /**
+     * method to count the number of request made to the server
+     *
+     * @param md5Count
+     * @param timeToGetMatches
+     */
+    void countRequests(int md5Count, long timeToGetMatches);
+
+    /**
      * Web service request for a set of matches, based upon
      * protein MD5 sequence checksums.
      *

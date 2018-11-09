@@ -8,8 +8,14 @@ import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.precalc.server.service.MatchesService;
 
+import uk.ac.ebi.interpro.scan.util.Utilities;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Implementation of service that uses the BerkeleyDB as a backend.
@@ -37,9 +43,23 @@ public class MatchesServiceImpl implements MatchesService {
 
     private String interproscanVersion;
 
+    private Timer timer = new Timer ();
+    private AtomicInteger   totalRequests;
+    private AtomicInteger   md5TotalCount;
+    private AtomicLong  totalTimeToGetMatches;
+
     public MatchesServiceImpl(String interproscanVersion) {
         Assert.notNull(interproscanVersion, "Interproscan version cannot be null");
         this.interproscanVersion = interproscanVersion;
+
+        TimerTask hourlyTask = new TimerTask () {
+            @Override
+            public void run () {
+                resetCountRequests();
+            }
+        };
+        // schedule the task to run starting now and then every hour...
+        timer.schedule (hourlyTask, 0l, 1000*60*60);
     }
 
 
@@ -81,6 +101,22 @@ public class MatchesServiceImpl implements MatchesService {
         }
 
         return matches;
+    }
+
+    public void countRequests(int md5Count, long timeToGetMatches){
+        totalRequests.incrementAndGet();
+        md5TotalCount.addAndGet(md5Count);
+        totalTimeToGetMatches.addAndGet(timeToGetMatches);
+    }
+
+    public void resetCountRequests(){
+       int hourlyTotalRequests = totalRequests.getAndSet(0);
+       int hourlyMd5TotalCount = md5TotalCount.getAndSet(0);
+       long hourlyTotalTimeToGetMatches = totalTimeToGetMatches.getAndSet(0);
+
+       //log the hourly values
+       System.out.println(Utilities.getTimeNow() + " request_count: " + hourlyTotalRequests + " " + hourlyMd5TotalCount  + " " + hourlyTotalTimeToGetMatches);
+
     }
 
     /**

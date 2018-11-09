@@ -53,8 +53,10 @@ public class MatchesController {
                            @RequestParam(value = "md5", required = true) String[] md5Array) {
         long startGetMatches = System.currentTimeMillis();
 //        System.out.println("md5Array: " + Arrays.toString(md5Array));
+        List<String> proteinMD5s = Arrays.asList(md5Array);
         List<KVSequenceEntry> matches = matchService.getMatches(Arrays.asList(md5Array));
         long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+        matchService.countRequests(proteinMD5s.size(), timeToGetMatches);
         //Integer timeProcessingPartitionSeconds = (int) timeProcessingPartition / 1000;
         //System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5Array.length  + " md5s");
 

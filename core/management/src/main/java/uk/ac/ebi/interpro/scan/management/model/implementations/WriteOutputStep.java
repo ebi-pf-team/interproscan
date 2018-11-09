@@ -405,8 +405,8 @@ public class WriteOutputStep extends Step {
         if (analysisJobNames == null ||
                 analysisJobNames.toLowerCase().contains("cdd") ||
                 analysisJobNames.toLowerCase().contains("sfld")) {
-            final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
-            if (!excludeSites) {
+            final boolean includeTsvSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.INCLUDE_TSV_SITES));
+            if (includeTsvSites) {
                 Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
                 Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
