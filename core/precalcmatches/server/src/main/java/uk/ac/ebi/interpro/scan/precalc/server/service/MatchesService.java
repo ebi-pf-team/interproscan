@@ -20,7 +20,14 @@ public interface MatchesService {
      * @param md5Count
      * @param timeToGetMatches
      */
-    void countRequests(int md5Count, long timeToGetMatches);
+    void countMD5Requests(int md5Count, long timeToGetMatches);
+
+    /**
+     *
+     * @param md5Count
+     * @param timeToGetMatches
+     */
+    void countMatchesRequests(int md5Count, long timeToGetMatches);
 
     /**
      * Web service request for a set of matches, based upon
@@ -48,4 +55,6 @@ public interface MatchesService {
      * Cleanly shuts down the Berkeley DB environment.
      */
     void shutdown();
+
+    void setName(String serviceName);
 }
