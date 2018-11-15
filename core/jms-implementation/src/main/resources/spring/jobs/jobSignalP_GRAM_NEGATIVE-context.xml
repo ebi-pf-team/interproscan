@@ -22,7 +22,7 @@
                 <entry key="binary.signalp.path" value-ref="fullPathToSignalPBinary"/>
             </map>
         </property>
-        <property name="doRunLocally" value="true"/>
+        <property name="doRunLocally" value="false"/>
     </bean>
 
     <bean id="fullPathToSignalPBinary" class="java.lang.String">

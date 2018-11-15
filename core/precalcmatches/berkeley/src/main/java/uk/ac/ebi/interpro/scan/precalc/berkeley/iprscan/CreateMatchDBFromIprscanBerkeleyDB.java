@@ -35,29 +35,6 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
     private static final String databaseName = "IPRSCAN";
 
-    //These indices go hand by hand with the 'lookup_tmp_tab' table
-//    private static final int COL_IDX_MD5 = 1;
-//    private static final int COL_IDX_SIG_LIB_NAME = 2;
-//    private static final int COL_IDX_SIG_LIB_RELEASE = 3;
-//    private static final int COL_IDX_SIG_ACCESSION = 4;
-//    private static final int COL_IDX_MODEL_ACCESSION = 5;
-//    private static final int COL_IDX_SCORE = 6;
-//    private static final int COL_IDX_SEQ_SCORE = 7;
-//    private static final int COL_IDX_SEQ_EVALUE = 8;
-//    private static final int COL_IDX_EVALUE = 9;
-//    private static final int COL_IDX_SEQ_START = 10;
-//    private static final int COL_IDX_SEQ_END = 11;
-//    private static final int COL_IDX_HMM_START = 12;
-//    private static final int COL_IDX_HMM_END = 13;
-//    private static final int COL_IDX_HMM_LENGTH = 14;
-//    private static final int COL_IDX_HMM_BOUNDS = 15;
-//    private static final int COL_IDX_ENV_START = 16;
-//    private static final int COL_IDX_ENV_END = 17;
-//    private static final int COL_IDX_SEQ_FEATURE = 18;
-//    private static final int COL_IDX_FRAGMENTS = 19;
-
-
-
     private static String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
@@ -243,12 +220,11 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
                         String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
                         //reformat the fragments to be semi colon delimited
-                        fragments = fragments.replace(",", ";"); //carefull with this one as replace doesnt work in place
+                        fragments = fragments.replace(",", ";");
 
                         String columnDelimiter = ",";
                         StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);
 
-                        kvMatchJoiner.add(proteinMD5);
                         kvMatchJoiner.add(signatureLibraryName);
                         kvMatchJoiner.add(sigLibRelease);
                         kvMatchJoiner.add(signatureAccession);
@@ -266,7 +242,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         kvMatchJoiner.add(kvValueOf(envelopeEnd));
                         kvMatchJoiner.add(kvValueOf(locationEValue));
                         kvMatchJoiner.add(kvValueOf(locationScore));
-                        kvMatchJoiner.add(kvValueOf(seqFeature)); //for hamap, and prosites this columns is also the alighment column
+                        kvMatchJoiner.add(kvValueOf(seqFeature)); //for hamap, and prosites this columns is also the alignment column
 
                         String kvMatch = kvMatchJoiner.toString();
 
