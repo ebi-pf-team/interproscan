@@ -46,7 +46,7 @@
         <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
         <async-supported>true</async-supported>
         <init-param> <param-name>authorized-users</param-name>
-            <param-value>jmadmin1:jmpsswd1</param-value>
+            <param-value>admin1:psswd1</param-value>
         </init-param>
     </filter>
     <filter-mapping>
