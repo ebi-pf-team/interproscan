@@ -33,7 +33,7 @@ public class IprscanMain {
 
         // TODO Allow user to kick of ALL (both MD5 and MATCH) or just one
 
-        /*
+
 
         // we have now this built
 
@@ -48,7 +48,6 @@ public class IprscanMain {
         );
 
 
-        */
         /*
         CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
         matchBuilder.buildDatabase(

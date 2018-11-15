@@ -27,13 +27,17 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Random;
 
 /**
  * Client to query the REST web service for matches
@@ -48,6 +52,8 @@ public class MatchHttpClient {
     private static final Logger LOG = Logger.getLogger(MatchHttpClient.class.getName());
 
     private static final String MD5_PARAMETER = "md5";
+  
+    private boolean lastTestResponse = false;
 
     private String url;
 
@@ -122,6 +128,7 @@ public class MatchHttpClient {
         long startGetMatches = System.currentTimeMillis();
         post.setEntity(encodedParameterEntity);
 
+
         ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
             public KVSequenceEntryXML handleResponse(
                     HttpResponse response) throws IOException {
@@ -134,7 +141,11 @@ public class MatchHttpClient {
 
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
-//                        Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                        if (testXMResponse()){
+//                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
+//                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
+//                        }
                         return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(bis));
                     } finally {
                         if (bis != null) {
@@ -175,9 +186,29 @@ public class MatchHttpClient {
         httpclient.close();
 //        Utilities.verboseLog("matchXML:" + matchXML.toString());
         long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
-        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
+//        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
 
         return matchXML;
+    }
+
+
+
+    public boolean testXMResponse(){
+        boolean testXMResponse = false;
+        String timeNow = Utilities.getTimeNow();
+        //08/11/2018 21:53:50:765
+        String seconds = Character.toString(timeNow.charAt(17));
+        if (seconds.equals("3")){
+            testXMResponse = true;
+        }
+        Random random = new Random();
+        testXMResponse = random.nextBoolean();
+        if (! lastTestResponse){
+            testXMResponse = true;
+        }                
+        Utilities.verboseLog("testXMResponse=" + testXMResponse);
+        lastTestResponse = testXMResponse;
+        return testXMResponse;
     }
 
     /**

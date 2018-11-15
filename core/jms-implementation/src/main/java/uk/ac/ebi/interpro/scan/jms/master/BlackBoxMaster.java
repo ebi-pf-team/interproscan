@@ -16,6 +16,13 @@ public interface BlackBoxMaster extends SimpleBlackBoxMaster {
     void setExcludeSites(boolean excludeSites);
 
     /**
+     * Boolean switch which includes sites in the TSV output.
+     *
+     * @param includeTsvSites Default is false (not activated)
+     */
+    void setIncludeTsvSites(boolean includeTsvSites);
+
+    /**
      * Boolean switch which activates the InterPro lookup.
      *
      * @param mapToInterPro Default is FALSE (not activated)

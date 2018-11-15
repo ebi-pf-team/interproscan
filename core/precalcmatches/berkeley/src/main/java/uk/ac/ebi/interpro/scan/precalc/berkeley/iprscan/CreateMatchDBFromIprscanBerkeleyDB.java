@@ -175,13 +175,15 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 //                        System.out.println(Utilities.getTimeNow() + " signatureLibraryName : # " + COL_IDX_SIG_LIB_NAME + " - " +  signatureLibraryName);
                         if (rs.wasNull() || signatureLibraryName == null) continue;
                         SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
-                        if (signatureLibrary == null
+                        if (signatureLibrary == null){
+				/*
                                 || signatureLibrary.getName().equals(SignatureLibrary.PHOBIUS.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.TMHMM.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_EUK.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName())
                                 || signatureLibrary.getName().equals(SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName())
                                 ){
+				*/
                             continue;
                         }
 
