@@ -28,6 +28,7 @@ then
     exit 1
 fi
 
-"$JAVA" -Xmx2048M -jar berkeley-db-builder.jar "$@"
+#"$JAVA" -Xmx2048M -jar berkeley-db-builder.jar "$@"
+"$JAVA" -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts -XX:+UseCompressedOops -Xms4048M -Xmx22048M -jar berkeley-db-builder.jar "$@"
 
 #end

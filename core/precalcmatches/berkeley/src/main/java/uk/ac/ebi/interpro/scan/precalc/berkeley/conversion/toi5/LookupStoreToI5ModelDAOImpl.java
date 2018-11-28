@@ -51,7 +51,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
     @Transactional(readOnly = true)
     public void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap) {
         String debugString = "";
-        final Map<String, Protein> md5ToProteinMap = new HashMap<String, Protein>(preCalculatedProteins.size());
+        final Map<String, Protein> md5ToProteinMap = new HashMap<>(preCalculatedProteins.size());
         // Populate the lookup map.
         for (Protein protein : preCalculatedProteins) {
             md5ToProteinMap.put(protein.getMd5().toUpperCase(), protein);
@@ -106,10 +106,11 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         // Collection of BerkeleyMatches of different kinds.
         for (KVSequenceEntry lookupMatch : kvSequenceEntries) {
             //now we ahave a list
+            String proteinMD5 = lookupMatch.getProteinMD5();
             Set<String> sequenceHits = lookupMatch.getSequenceHits();
             //possible place to include multiple locations
             for (String sequenceHit :sequenceHits) {
-                SimpleLookupMatch simpleMatch = new SimpleLookupMatch(sequenceHit);
+                SimpleLookupMatch simpleMatch = new SimpleLookupMatch(proteinMD5, sequenceHit);
                 String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
                 final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(simpleMatch.getSignatureLibraryName());
                 //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
@@ -159,7 +160,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 + " signature: " + simpleMatch.getSignatureAccession()
                                 + " library name: " + simpleMatch.getSignatureLibraryName()
                                 //+ " match id: " + simpleMatch.getMatchId()
-                                + " sequence md5: " + simpleMatch.getProteinMD5();
+                                + " sequence md5: " + proteinMD5;
                         LOGGER.warn(warning);
                         continue;
                         //throw new IllegalStateException("Data inconsistency issue. This distribution appears to contain the same signature multiple times: " + berkeleyMatch.getSignatureAccession());
@@ -182,7 +183,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         Match i5Match = matchConverter.convertMatch(simpleMatch, signature);
                         if (i5Match != null) {
                             // Lookup up the right protein
-                            final Protein prot = md5ToProteinMap.get(simpleMatch.getProteinMD5().toUpperCase());
+                            final Protein prot = md5ToProteinMap.get(proteinMD5);
                             if (prot != null) {
                                 prot.addMatch(i5Match);
                             } else {

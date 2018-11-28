@@ -25,11 +25,11 @@
                 <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
                 <entry key="SFLD" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="SMART" value-ref="hmmer2LookupMatchConverter"/>
-                <!--<entry key="SIGNALP_EUK" value-ref="signalpLookupMatchConverter"/>-->
-                <!--<entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpLookupMatchConverter"/>-->
-                <!--<entry key="SIGNALP_GRAM_POSITIVE" value-ref="signalpLookupMatchConverter"/>-->
-                <!--<entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>-->
-                <!--<entry key="TMHMM" value-ref="tmhmmLookupMatchConverter"/>-->
+                <entry key="SIGNALP_EUK" value-ref="signalpLookupMatchConverter"/>
+                <entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpLookupMatchConverter"/>
+                <entry key="SIGNALP_GRAM_POSITIVE" value-ref="signalpLookupMatchConverter"/>
+                <entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>
+                <entry key="TMHMM" value-ref="tmhmmLookupMatchConverter"/>
             </map>
         </property>
     </bean>
@@ -58,7 +58,7 @@
     <bean id="prodomLookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.ProdomLookupMatchConverter"/>
     <bean id="signalpLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.SignalPBerkeleyMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SignalPLookupMatchConverter"/>
     <bean id="phobiusLookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PhobiusLookupMatchConverter"/>
     <bean id="tmhmmLookupMatchConverter"
