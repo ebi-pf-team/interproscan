@@ -84,7 +84,7 @@ public class SimpleLookupMatch {
         envelopeEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_ENV_END - columnOffSet]);
         locationScore = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_SCORE - columnOffSet]);
         locationEValue = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_EVALUE - columnOffSet]);
-        if(lookupMatchTokens.length == 19) {
+        if(lookupMatchTokens.length == 18) {
             seqFeature = lookupMatchTokens[COL_IDX_SEQ_FEATURE - columnOffSet];
         }else{
             seqFeature = "";
