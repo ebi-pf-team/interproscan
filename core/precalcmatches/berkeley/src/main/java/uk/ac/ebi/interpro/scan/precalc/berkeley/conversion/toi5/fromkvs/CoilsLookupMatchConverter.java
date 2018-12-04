@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CoilsLookupMatchConverter extends LookupMatchConverter<CoilsMatch> {
+public class CoilsLookupMatchConverter extends LookupMatchConverter<CoilsMatch, CoilsMatch.CoilsLocation> {
 
     @Override
     public CoilsMatch convertMatch(SimpleLookupMatch match, Signature signature) {

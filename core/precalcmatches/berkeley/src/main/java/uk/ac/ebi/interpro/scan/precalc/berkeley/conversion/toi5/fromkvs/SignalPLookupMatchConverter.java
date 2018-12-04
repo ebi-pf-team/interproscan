@@ -9,7 +9,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SignalPLookupMatchConverter extends LookupMatchConverter<SignalPMatch> {
+public class SignalPLookupMatchConverter extends LookupMatchConverter<SignalPMatch, SignalPMatch.SignalPLocation> {
 
     @Override
     public SignalPMatch convertMatch(SimpleLookupMatch match, Signature signature) {

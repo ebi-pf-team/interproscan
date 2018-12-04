@@ -18,7 +18,7 @@ import java.util.Set;
  * @version $Id$
  * @since 5.19.0-SNAPSHOT
  */
-public class MobiDBLookupMatchConverter extends LookupMatchConverter<MobiDBMatch> {
+public class MobiDBLookupMatchConverter extends LookupMatchConverter<MobiDBMatch, MobiDBMatch.MobiDBLocation> {
 
     private static final Logger LOG = Logger.getLogger(MobiDBLookupMatchConverter.class.getName());
 

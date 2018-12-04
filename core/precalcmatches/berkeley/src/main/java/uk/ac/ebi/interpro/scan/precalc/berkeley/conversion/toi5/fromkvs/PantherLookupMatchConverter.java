@@ -9,7 +9,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMatch> {
+public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMatch, PantherMatch.PantherLocation> {
 
     //TODO: Add the e-value to the match location
     @Override

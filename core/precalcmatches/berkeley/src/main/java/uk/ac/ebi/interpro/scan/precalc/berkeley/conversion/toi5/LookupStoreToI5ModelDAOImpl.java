@@ -108,9 +108,26 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             //now we ahave a list
             String proteinMD5 = lookupMatch.getProteinMD5();
             Set<String> sequenceHits = lookupMatch.getSequenceHits();
-            //possible place to include multiple locations
+
+            // Convert list of matches for current protein into a Map of modelAc -> List of matches for that model on this protein
+            Map<String, List<SimpleLookupMatch>> modelToMatchesMap = new HashMap<>();
             for (String sequenceHit :sequenceHits) {
                 SimpleLookupMatch simpleMatch = new SimpleLookupMatch(proteinMD5, sequenceHit);
+                String modelAc = simpleMatch.getModelAccession();
+                if (modelToMatchesMap.containsKey(modelAc)) {
+                    modelToMatchesMap.get(modelAc).add(simpleMatch);
+                }
+                else {
+                    List<SimpleLookupMatch> matches = new ArrayList<>();
+                    matches.add(simpleMatch);
+                    modelToMatchesMap.put(modelAc, matches);
+                }
+            }
+
+
+            for (List<SimpleLookupMatch> matchesForModel : modelToMatchesMap.values()) {
+                assert matchesForModel.size() > 0;
+                SimpleLookupMatch simpleMatch = matchesForModel.get(0); // Get first match with this modelAc for this protein
                 String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
                 final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(simpleMatch.getSignatureLibraryName());
                 //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
@@ -180,15 +197,26 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                     }
                     LookupMatchConverter matchConverter = signatureLibraryToMatchConverter.get(sigLib);
                     if (matchConverter != null) {
-                        Match i5Match = matchConverter.convertMatch(simpleMatch, signature);
-                        if (i5Match != null) {
-                            // Lookup up the right protein
-                            final Protein prot = md5ToProteinMap.get(proteinMD5);
-                            if (prot != null) {
-                                prot.addMatch(i5Match);
-                            } else {
-                                LOGGER.warn("Attempted to store a match in a Protein, but cannot find the protein??? This makes no sense. Possible coding error.");
+                        // Lookup up the right protein using the MD5
+                        final Protein prot = md5ToProteinMap.get(proteinMD5);
+                        if (prot != null) {
+                            // One or multiple locations for this match on a given protein for this modelAc
+                            if (matchesForModel.size() == 1) {
+                                Match i5Match = matchConverter.convertMatch(simpleMatch, signature);
+                                if (i5Match != null) {
+                                    prot.addMatch(i5Match);
+                                }
                             }
+                            else {
+                                List<Match> i5Matches = matchConverter.convertMatches(matchesForModel, signature);
+                                if (i5Matches != null) {
+                                    for (Match i5Match : i5Matches) {
+                                        prot.addMatch(i5Match);
+                                    }
+                                }
+                            }
+                        } else {
+                            LOGGER.warn("Attempted to store a match in a Protein, but cannot find the protein??? This makes no sense. Possible coding error.");
                         }
                     } else {
                         LOGGER.warn("Unable to persist match " + simpleMatch + " as there is no available conversion for signature libarary " + sigLib);

@@ -9,7 +9,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Hmmer2LookupMatchConverter extends LookupMatchConverter<Hmmer2Match> {
+public class Hmmer2LookupMatchConverter extends LookupMatchConverter<Hmmer2Match, Hmmer2Match.Hmmer2Location> {
 
     public Hmmer2Match convertMatch(SimpleLookupMatch match, Signature signature) {
 

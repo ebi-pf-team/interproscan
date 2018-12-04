@@ -9,7 +9,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProdomLookupMatchConverter extends LookupMatchConverter<BlastProDomMatch> {
+public class ProdomLookupMatchConverter extends LookupMatchConverter<BlastProDomMatch, BlastProDomMatch.BlastProDomLocation> {
 
     @Override
     public BlastProDomMatch convertMatch(SimpleLookupMatch match, Signature signature) {

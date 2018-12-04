@@ -36,32 +36,60 @@
 
 
     <bean id="mobidbLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.MobiDBLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.MobiDBLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="rpsblastLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.RPSBlastLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.RPSBlastLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="printsLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrintsLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrintsLookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
     <bean id="hmmer2LookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer2LookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer2LookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
     <bean id="hmmer3LookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer3LookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer3LookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
     <bean id="coilsLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.CoilsLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.CoilsLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="prositeProfilesLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositeProfilesLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositeProfilesLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="prositePatternsLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositePatternsLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositePatternsLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="pantherLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PantherLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PantherLookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
     <bean id="superfamilyLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SuperfamilyLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SuperfamilyLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="prodomLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.ProdomLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.ProdomLookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
     <bean id="signalpLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SignalPLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SignalPLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="phobiusLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PhobiusLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PhobiusLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
     <bean id="tmhmmLookupMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.TMHMMLookupMatchConverter"/>
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.TMHMMLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
 
 </beans>

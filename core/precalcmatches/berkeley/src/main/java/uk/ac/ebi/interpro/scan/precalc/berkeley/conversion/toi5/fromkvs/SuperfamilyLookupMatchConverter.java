@@ -10,7 +10,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperFamilyHmmer3Match> {
+public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperFamilyHmmer3Match, SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> {
 
     private static final Logger LOG = Logger.getLogger(SuperfamilyLookupMatchConverter.class.getName());
 

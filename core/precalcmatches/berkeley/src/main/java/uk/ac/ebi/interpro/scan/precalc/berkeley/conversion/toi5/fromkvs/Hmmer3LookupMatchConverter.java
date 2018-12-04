@@ -19,7 +19,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match> {
+public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match, Hmmer3Match.Hmmer3Location> {
 
     private static final Logger LOG = Logger.getLogger(Hmmer3LookupMatchConverter.class.getName());
 
