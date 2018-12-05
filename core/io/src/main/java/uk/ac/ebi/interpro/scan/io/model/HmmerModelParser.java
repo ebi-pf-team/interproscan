@@ -100,7 +100,9 @@ public class HmmerModelParser extends AbstractModelFileParser {
                             case 'D':
                                 if (description == null) {
                                     description = extractValue(DESC_LINE, line, 1);
-                                    description = description.replaceAll(NON_ASCII, "???"); // Replace unknown characters
+                                    if (description != null && description.length() > 0) {
+                                        description = description.replaceAll(NON_ASCII, "???"); // Replace unknown characters
+                                    }
                                 }
                                 break;
                             case 'N':
