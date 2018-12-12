@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PrositeProfilesLookupMatchConverter extends LookupMatchConverter<ProfileScanMatch> {
+public class PrositeProfilesLookupMatchConverter extends LookupMatchConverter<ProfileScanMatch, ProfileScanMatch.ProfileScanLocation> {
 
     @Override
     public ProfileScanMatch convertMatch(SimpleLookupMatch match, Signature signature) {

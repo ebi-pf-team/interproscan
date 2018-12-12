@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TMHMMLookupMatchConverter extends LookupMatchConverter<TMHMMMatch> {
+public class TMHMMLookupMatchConverter extends LookupMatchConverter<TMHMMMatch, TMHMMMatch.TMHMMLocation> {
 
     @Override
     public TMHMMMatch convertMatch(SimpleLookupMatch match, Signature signature) {

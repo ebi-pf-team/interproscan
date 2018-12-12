@@ -8,7 +8,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PhobiusLookupMatchConverter extends LookupMatchConverter<PhobiusMatch> {
+public class PhobiusLookupMatchConverter extends LookupMatchConverter<PhobiusMatch, PhobiusMatch.PhobiusLocation> {
 
     @Override
     public PhobiusMatch convertMatch(SimpleLookupMatch match, Signature signature) {

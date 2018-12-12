@@ -1,7 +1,5 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.model;
 
-import java.util.Arrays;
-
 public class SimpleLookupMatch {
     //These indices go hand by hand with the 'lookup_tmp_tab' table
 
@@ -21,8 +19,8 @@ public class SimpleLookupMatch {
     public static final int COL_IDX_HMM_LENGTH = 14;
     public static final int COL_IDX_ENV_START = 15;
     public static final int COL_IDX_ENV_END = 16;
-    public static final int COL_IDX_LOC_SCORE = 18;//TODO Change to 17 after lookup service rebuild
-    public static final int COL_IDX_LOC_EVALUE = 17;//TODO Change to 18 after lookup service rebuild
+    public static final int COL_IDX_LOC_SCORE = 17;
+    public static final int COL_IDX_LOC_EVALUE = 18;
     public static final int COL_IDX_SEQ_FEATURE = 19;
 
 
@@ -46,7 +44,7 @@ public class SimpleLookupMatch {
     Double locationEValue;
     String seqFeature;
 
-    public SimpleLookupMatch(String lookupMatch) {
+    public SimpleLookupMatch(String proteinMD5, String lookupMatch) {
         String [] lookupMatchTokens =  lookupMatch.split(",");
 
 
@@ -55,12 +53,13 @@ public class SimpleLookupMatch {
 //            System.out.println(token);
 //        }
 
-//        String csvmatch = "00006F313F29B29DA473B6DDF28AF744,SMART,7.1,SM00929,SM00929,92,132,92-132-S,85.9,4.9E-21,[],1,43,43,0,0,4.9E-21,85.9,";
+//        String proteinMD5 = "00006F313F29B29DA473B6DDF28AF744";
+//        String csvmatch = "SMART,7.1,SM00929,SM00929,92,132,92-132-S,85.9,4.9E-21,[],1,43,43,0,0,4.9E-21,85.9,";
 //        System.out.println("csvmatch length: " + lookupMatchTokens.length) ;
 
 //        System.out.println("hit: (" + lookupMatchTokens.length + ") " + Arrays.toString(lookupMatchTokens));
-        int columnOffSet = 1;
-        proteinMD5 = lookupMatchTokens[COL_IDX_MD5 - columnOffSet];
+        int columnOffSet = 2; // -1 as zero indexed and -1 as no proteinMD5 in sequence hit tokens
+        this.proteinMD5 = proteinMD5;
         signatureLibraryName = lookupMatchTokens[COL_IDX_SIG_LIB_NAME - columnOffSet];
         sigLibRelease = lookupMatchTokens[COL_IDX_SIG_LIB_RELEASE - columnOffSet];
         signatureAccession = lookupMatchTokens[COL_IDX_SIG_ACCESSION - columnOffSet];
@@ -85,7 +84,7 @@ public class SimpleLookupMatch {
         envelopeEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_ENV_END - columnOffSet]);
         locationScore = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_SCORE - columnOffSet]);
         locationEValue = Double.parseDouble(lookupMatchTokens[COL_IDX_LOC_EVALUE - columnOffSet]);
-        if(lookupMatchTokens.length == 19) {
+        if(lookupMatchTokens.length == 18) {
             seqFeature = lookupMatchTokens[COL_IDX_SEQ_FEATURE - columnOffSet];
         }else{
             seqFeature = "";

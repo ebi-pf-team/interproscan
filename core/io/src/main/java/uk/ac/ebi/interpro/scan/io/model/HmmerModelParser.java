@@ -48,6 +48,8 @@ public class HmmerModelParser extends AbstractModelFileParser {
 
     private static final String END_OF_RECORD = "//";
 
+    private static final String NON_ASCII = "[^\\x00-\\x7F]";
+
 
     @Transactional
     public SignatureLibraryRelease parse() throws IOException {
@@ -98,6 +100,9 @@ public class HmmerModelParser extends AbstractModelFileParser {
                             case 'D':
                                 if (description == null) {
                                     description = extractValue(DESC_LINE, line, 1);
+                                    if (description != null && description.length() > 0) {
+                                        description = description.replaceAll(NON_ASCII, "???"); // Replace unknown characters
+                                    }
                                 }
                                 break;
                             case 'N':

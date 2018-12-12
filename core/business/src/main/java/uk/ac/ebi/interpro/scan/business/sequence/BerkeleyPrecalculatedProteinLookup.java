@@ -329,10 +329,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         // Collection of BerkeleyMatches of different kinds.
         Map<String, String> lookupAnalysesMap = new HashMap<String, String>();
         for (KVSequenceEntry kvSequenceEntry : kvSequenceEntries) {
+            String proteinMD5 = kvSequenceEntry.getProteinMD5();
             Set<String> sequenceHits = kvSequenceEntry.getSequenceHits();
             for (String sequenceHit :sequenceHits) {
                 LOGGER.debug("csvMatch:" + sequenceHit);
-                SimpleLookupMatch simpleMatch = new SimpleLookupMatch(sequenceHit);
+                SimpleLookupMatch simpleMatch = new SimpleLookupMatch(proteinMD5, sequenceHit);
                 LOGGER.debug("simpleMatch " + simpleMatch.toString());
                 String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
                 final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(simpleMatch.getSignatureLibraryName());

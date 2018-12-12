@@ -10,7 +10,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastMatch> {
+public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastMatch, RPSBlastMatch.RPSBlastLocation> {
 
     private static final Logger LOG = Logger.getLogger(RPSBlastLookupMatchConverter.class.getName());
 
