@@ -24,16 +24,20 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Random;
 
 /**
  * Client to query the REST web service for matches
@@ -48,6 +52,8 @@ public class MatchHttpClient {
     private static final Logger LOG = Logger.getLogger(MatchHttpClient.class.getName());
 
     private static final String MD5_PARAMETER = "md5";
+  
+    private boolean lastTestResponse = false;
 
     private String url;
 
@@ -94,7 +100,7 @@ public class MatchHttpClient {
 
     public String getProxyPort() { return proxyPort;  }
 
-    public BerkeleyMatchXML getMatches(String... md5s) throws IOException {
+    public KVSequenceEntryXML getMatches(String... md5s) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Call to MatchHttpClient.getMatches:");
             for (String md5 : md5s) {
@@ -118,11 +124,13 @@ public class MatchHttpClient {
 
         // Using HttpPost to ensure no problems with long URLs.
         HttpPost post = new HttpPost(url + MATCH_SERVICE_PATH);
+
+        long startGetMatches = System.currentTimeMillis();
         post.setEntity(encodedParameterEntity);
 
 
-        ResponseHandler<BerkeleyMatchXML> handler = new ResponseHandler<BerkeleyMatchXML>() {
-            public BerkeleyMatchXML handleResponse(
+        ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
+            public KVSequenceEntryXML handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
 //                Utilities.verboseLog("response:" + response.toString());
@@ -133,8 +141,12 @@ public class MatchHttpClient {
 
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
-//                        Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
-                        return (BerkeleyMatchXML) unmarshaller.unmarshal(new StreamSource(bis));
+//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                        if (testXMResponse()){
+//                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
+//                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
+//                        }
+                        return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(bis));
                     } finally {
                         if (bis != null) {
                             bis.close();
@@ -169,11 +181,34 @@ public class MatchHttpClient {
 
         }
 
-        BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
+        KVSequenceEntryXML matchXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
 //        Utilities.verboseLog("matchXML:" + matchXML.toString());
+        long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+//        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
+
         return matchXML;
+    }
+
+
+
+    public boolean testXMResponse(){
+        boolean testXMResponse = false;
+        String timeNow = Utilities.getTimeNow();
+        //08/11/2018 21:53:50:765
+        String seconds = Character.toString(timeNow.charAt(17));
+        if (seconds.equals("3")){
+            testXMResponse = true;
+        }
+        Random random = new Random();
+        testXMResponse = random.nextBoolean();
+        if (! lastTestResponse){
+            testXMResponse = true;
+        }                
+        Utilities.verboseLog("testXMResponse=" + testXMResponse);
+        lastTestResponse = testXMResponse;
+        return testXMResponse;
     }
 
     /**

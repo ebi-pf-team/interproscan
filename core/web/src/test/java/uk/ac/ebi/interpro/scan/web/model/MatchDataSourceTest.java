@@ -46,7 +46,9 @@ public class MatchDataSourceTest {
     @Test
     public void testSignalPGramNeg() {
         final String name = SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName();
-        final MatchDataSource m = MatchDataSource.parseName(name);
+        MatchDataSource m = MatchDataSource.parseName(name);
+        assertEquals(MatchDataSource.SIGNALP_GRAM_NEGATIVE, m);
+        m = MatchDataSource.parseName("SignalP Gram-negative");
         assertEquals(MatchDataSource.SIGNALP_GRAM_NEGATIVE, m);
     }
 

@@ -69,11 +69,11 @@ def get_hamap_profile(profiles_list_filename):
                        profiles[profile] = [profile_path, seq_id]
                        #print profiles[profile]
                 else:
-                    print ('something wrong ' + line)
+                    print('something wrong ' + line)
                     sys.stderr.write('something wrong ' + line)
                     hit_line = 'not ok - ' + line
-                #append_to_file(temp_err_file, hit_line+'\n') 
-    key_count = len(profiles.keys())
+                #append_to_file(temp_err_file, hit_line+'\n')
+    key_count = len(list(profiles.keys()))
     append_to_file(temp_err_file, 'profile hits: ' + str(key_count) + '\n')
     return profiles
 
@@ -92,6 +92,7 @@ def get_sequences(fasta_file):
                 fasta_dict[seq_id] += line + '\n'
                 if len(line) > 80:
                     raise ValueError('Input fasta file format problem for pfsearch, line length greater than 80 ')
+
     return fasta_dict
 
 def get_sequences_for_profile(key_list, seqs_dict):
@@ -106,7 +107,7 @@ def get_sequences_for_profile(key_list, seqs_dict):
                 sequences += '\n'
 	    #print 'ok', sequences
         else:
-            print ("key not found : " + key)
+            print("key not found : " + key)
 
     #print 'ok', sequences
     return sequences
@@ -123,7 +124,7 @@ def append_to_file(filename, output):
 
 def write_to_file(filename, output):
     with open(filename, 'w') as seq_file:
-        seq_file.write(output)  
+        seq_file.write(output)
 
 def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command_index):
     count = 0
@@ -134,12 +135,12 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
     os.makedirs(temp_dir)
     #prf_half = int(len(profiles) / 2)
     temp_err_file = profiles_list_filename + '-filtered'
-        
-    append_to_file(temp_err_file, 'profile hits in run_pfsearch: ' + str(len(profiles.keys())) + '\n')
 
-    append_to_file(temp_err_file, 'sequence count in run_pfsearch: ' + str(len(seqs_dict.keys())) + '\n')
+    append_to_file(temp_err_file, 'profile hits in run_pfsearch: ' + str(len(list(profiles.keys()))) + '\n')
+
+    append_to_file(temp_err_file, 'sequence count in run_pfsearch: ' + str(len(list(seqs_dict.keys()))) + '\n')
     get_seq_time = 0
-    keys = profiles.keys()
+    keys = list(profiles.keys())
     write_to_file(temp_err_file + '-keys', 'profile keys in run_pfsearch: ' + str(len(keys)) + '\n')
     for prf in profiles:
         prf_seqs = ' '.join(profiles[prf])
@@ -148,7 +149,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
         append_to_file(temp_err_file, prf_out)
         if prf == 'MF_00005':
             #append_to_file(temp_err_file, 'processing MF_00005 \n')
-            mf_output = ' '.join(profiles[prf])            
+            mf_output = ' '.join(profiles[prf])
             #append_to_file(temp_err_file, mf_output)
             #append_to_file(temp_err_file, ' ok \n ')
         sequence_ids = profiles[prf][1:]
@@ -177,7 +178,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
         if not os.path.isfile(profiles[prf][0]):
             #profile not available
             continue
-        output = subprocess.check_output(comd_to_run)
+        output = subprocess.check_output(comd_to_run, universal_newlines=True)
         #append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
         #if prf == 'MF_00005':
         #    append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
@@ -203,8 +204,8 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
 
 if __name__ == "__main__":
 
-    if sys.version_info<(2,7,0):
-        sys.exit("Error: You need python 2.7 or later to run this script")
+    if sys.version_info<(3,0,0):
+        sys.exit("Error: You need python 3.0 or later to run this script")
 
     #deal with arguments that are required
     if len(sys.argv) < 6:
@@ -241,11 +242,11 @@ if __name__ == "__main__":
             #stats_filename = fasta_file + ".stats"
             #run the pfsearch binary
             pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, fasta_file, command_index)
-            sys.stderr.write('prfs: ' + str(count))
+            sys.stderr.write('prfs: ' + str(pfsearch_cmd_run_count))
     except:
-        print (sys.version)
-        print ("Unexpected error: ")
-        print (sys.exc_info())
+        print(sys.version)
+        print("Unexpected error: ")
+        print(sys.exc_info())
 
 
 

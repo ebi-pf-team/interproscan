@@ -32,6 +32,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private DefaultMessageListenerContainer workerQueueJmsContainer;
 
+    private static final int MEGA = 1024 * 1024;
+
     public StandaloneBlackBoxMaster(DefaultMessageListenerContainer workerQueueJmsContainer) {
         this.workerQueueJmsContainer = workerQueueJmsContainer;
     }
@@ -46,6 +48,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         int runStatus = 11;
         if(verboseLog) {
+            Utilities.verboseLog("DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
+            Utilities.verboseLog("DEBUG " + "Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
             Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());

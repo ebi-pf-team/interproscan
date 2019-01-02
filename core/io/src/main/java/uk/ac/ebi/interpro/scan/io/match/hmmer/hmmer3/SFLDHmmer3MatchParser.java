@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +75,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 //    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
 //    private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
-    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)$");
+    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)(\\s+.*)?$");
     /**
      * This interface has a single method that
      * takes the HmmsearchOutputMethod object, containing sequence
@@ -87,6 +88,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
     private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
+    private String sfldHierarchyFilePath;
 
     private SFLDHmmer3MatchParser() {
         signatureLibrary = null;
@@ -111,6 +113,15 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         this.hmmer3ParserSupport = hmmer3ParserSupport;
     }
 
+    public String getSfldHierarchyFilePath() {
+        return sfldHierarchyFilePath;
+    }
+
+    @Required
+    public void setSfldHierarchyFilePath(String sfldHierarchyFilePath) {
+        this.sfldHierarchyFilePath = sfldHierarchyFilePath;
+    }
+
     /**
      * Enum of states that the parser may be in - used to minimise parsing time.
      */
@@ -128,8 +139,13 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
     public MatchSiteData parseMatchesAndSites(InputStream is) throws IOException {
 
         Map<String, RawProtein<SFLDHmmer3RawMatch>> rawProteinMap = new HashMap<>();
+        Map<String, RawProtein<SFLDHmmer3RawMatch>> filtertedRawProteinMap = new HashMap<>();
         MatchData matchData = parseFileInput(is);
         Set<SFLDHmmer3RawMatch> rawMatches = matchData.getMatches();
+
+        Map<String, Set<String>> hierarchyInformation = getHierarchyInformation();
+
+        Utilities.verboseLog("Parsed  match count: " + rawMatches.size());
 
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
@@ -143,21 +159,435 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             }
         }
 
+        int promotedTentativeCount = 0;
+        //deal with overlaps
+        Set<String> seqIds = rawProteinMap.keySet();
+        int nonOverlapCount = 0;
+        for (String key : seqIds) {
+            RawProtein<SFLDHmmer3RawMatch> rawProtein = rawProteinMap.get(key);
+            Collection<SFLDHmmer3RawMatch> proteinRawMatches = rawProtein.getMatches();
+            if (proteinRawMatches.size() == 1) {
+                nonOverlapCount++;
+                continue;
+            } else {
+                //continue;
+                int originalProteinRawMatchesCount = proteinRawMatches.size();
+                Set<SFLDHmmer3RawMatch> resolvedOverlappingMatches = resolveOverlappingMatches(proteinRawMatches, hierarchyInformation);
+                //rawProtein.setMatches(resolvedOverlappingMatches);
+                promotedTentativeCount = resolvedOverlappingMatches.size() - proteinRawMatches.size();
+//                Utilities.verboseLog("Match count: " + promotedTentativeCount + " resolvedOverlappingMatches: " + resolvedOverlappingMatches.size() +
+//                        " proteinRawMatches : " + originalProteinRawMatchesCount);
+                rawProtein.setMatches(resolvedOverlappingMatches);
+                nonOverlapCount += resolvedOverlappingMatches.size();
+
+            }
+        }
+        Utilities.verboseLog("Overlap resolved  match count: " + nonOverlapCount + " from original " + rawMatches.size() + " matches");
+
+        //Utilities.verboseLog("Parsed and Promotted matches ...");
+        int seqIdsCount = seqIds.size();
+        int idxCount = 0;
+        int matchCount = 0;
+        int totalOriginalMatchCount = 0;
+        int totalPromotedRawMatchesCount = 0;
+        for (String key : seqIds) {
+            idxCount++;
+            RawProtein<SFLDHmmer3RawMatch> originalRawProtein = rawProteinMap.get(key);
+            RawProtein<SFLDHmmer3RawMatch> filteredRawProtein = new RawProtein<>(key);
+            Set<SFLDHmmer3RawMatch> initialRawMatches = (HashSet<SFLDHmmer3RawMatch>) originalRawProtein.getMatches();
+
+            //check for overlaps and remove
+            int originalMatchCount = initialRawMatches.size();
+            totalOriginalMatchCount += originalMatchCount;
+            int promotedRawMatchesCount = 0;
+            // start problematic code
+            if (initialRawMatches == null) {
+                LOGGER.error("initialRawMatches == null!! ");
+            }
+            Utilities.verboseLog(15, "idxCount : " + idxCount + " of " + seqIdsCount + " with " + originalMatchCount + " raw matches originalMatchCount");
+            Set<SFLDHmmer3RawMatch> seqPromotedRawMatches = new HashSet<>();
+            for (SFLDHmmer3RawMatch rawMatch : initialRawMatches) {
+                Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
+
+                Set<SFLDHmmer3RawMatch> promotedRawMatches = null;
+                if (parents != null && parents.size() > 0) {
+                    promotedRawMatches = getPromotedRawMatches(rawMatch, parents);
+                    promotedRawMatchesCount = promotedRawMatches.size();
+                    totalPromotedRawMatchesCount += promotedRawMatchesCount;
+                    //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
+                    //filteredRawProtein.addAllMatches(promotedRawMatches);
+                    boolean promotedContainsMatch = false;
+                    boolean matchContainsPromted = false;
+                    SFLDHmmer3RawMatch matchToRemove = null;
+                    for (SFLDHmmer3RawMatch promotedMatch: promotedRawMatches){
+                        for (SFLDHmmer3RawMatch seqPromotedMatch: seqPromotedRawMatches){
+                           if (promotedMatch.getLocationStart() <= seqPromotedMatch.getLocationStart() &&
+                                   promotedMatch.getLocationEnd() >= seqPromotedMatch.getLocationEnd() ){
+                               promotedContainsMatch = true;
+                               matchToRemove = seqPromotedMatch;
+                           }else if (seqPromotedMatch.getLocationStart() <= promotedMatch.getLocationStart() &&
+                                   seqPromotedMatch.getLocationEnd() >= promotedMatch.getLocationEnd() ){
+                               matchContainsPromted = true;
+                               break;
+                               // no need to add the new promoted match
+                           }
+                        }
+                        if (promotedContainsMatch){
+                            seqPromotedRawMatches.remove(matchToRemove);
+                        }
+                        if (matchContainsPromted){
+                            //do nothing
+                            continue;
+                        }else {
+                            seqPromotedRawMatches.add(promotedMatch);
+                        }
+                    }
+
+                    //Utilities.verboseLog("promotedRawMatches:" + promotedRawMatches);
+                }
+                matchCount = originalMatchCount + promotedRawMatchesCount;
+            }
+            if (seqPromotedRawMatches.size() > 0){
+                //Utilities.verboseLog(25, "seqPromotedRawMatches:" + seqPromotedRawMatches);
+                Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = resolveDuplicateMatches(seqPromotedRawMatches);
+                //Utilities.verboseLog(25,"duplicateFreeRawMatches:" + duplicateFreeRawMatches);
+                filteredRawProtein.addAllMatches(duplicateFreeRawMatches);
+
+            }
+            filteredRawProtein.addAllMatches(initialRawMatches);
+            filtertedRawProteinMap.put(key, filteredRawProtein);
+            // end problematic code
+        }
+        Utilities.verboseLog("Original Parsed match count: " + totalOriginalMatchCount);
+        Utilities.verboseLog("Promotted match count: " + totalPromotedRawMatchesCount);
+
+        Map<String, Set<SFLDHmmer3RawMatch>> rawMatchGroups = new HashMap<>();
+        for (RawProtein<SFLDHmmer3RawMatch> rawProtein: filtertedRawProteinMap.values()){
+            String sequenceIdentifier = rawProtein.getProteinIdentifier();
+            Collection <SFLDHmmer3RawMatch> filteredRawMatches =  rawProtein.getMatches();
+            for (SFLDHmmer3RawMatch rawMatch : filteredRawMatches) {
+                String modelAc = rawMatch.getModelId();
+                String key = sequenceIdentifier + "_" + modelAc;
+                if (rawMatchGroups.keySet().contains(key)) {
+                    Set<SFLDHmmer3RawMatch> matchesForKey = rawMatchGroups.get(key);
+                    matchesForKey.add(rawMatch);
+                }else{
+                    Set<SFLDHmmer3RawMatch> matchesForKey =  new HashSet<>();
+                    matchesForKey.add(rawMatch);
+                    rawMatchGroups.put(key, matchesForKey);
+                }
+            }
+        }
+
+        //deal with sites
         Map<String, RawProteinSite<SFLDHmmer3RawSite>> rawProteinSiteMap = new HashMap<>();
         Set<SFLDHmmer3RawSite> rawSites = matchData.getSites();
+        Set<SFLDHmmer3RawSite> filteredRawSites = new HashSet<>();
+
+        int siteCount = rawSites.size();
+        Utilities.verboseLog("Parsed site count: " + siteCount);
+        int promotedSiteCont = 0;
+        int correctSiteCoordinatesCount = 0;
         for (SFLDHmmer3RawSite rawSite : rawSites) {
+            if (siteInMatchLocation(rawSite,  rawMatchGroups)){
+                // add to the sites
+                //filteredRawSites.add(rawSite);
+                String sequenceId = rawSite.getSequenceIdentifier();
+                if (rawProteinSiteMap.containsKey(sequenceId)) {
+                    RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = rawProteinSiteMap.get(sequenceId);
+                    rawProteinSite.addSite(rawSite);
+                } else {
+                    RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = new RawProteinSite<>(sequenceId);
+                    rawProteinSite.addSite(rawSite);
+                    rawProteinSiteMap.put(sequenceId, rawProteinSite);
+                }
+
+                correctSiteCoordinatesCount ++;
+            }else{
+                Utilities.verboseLog("Site NOT withing match location site - " + rawSite.toString());
+            }
+
+            /*
+            There seems to be no good reason to promote sites
+
+            Set<String> parents = hierarchyInformation.get(rawSite.getModelId());
+
+            Set<SFLDHmmer3RawSite> promotedRawSites = null;
+            if (parents != null && parents.size() > 0) {
+                promotedRawSites = getPromotedRawSites(rawSite, parents);
+                promotedSiteCont += promotedRawSites.size();
+                //Utilities.verboseLog( "promotedRawSites count: " + promotedRawSites.size());
+            }
             String sequenceId = rawSite.getSequenceIdentifier();
             if (rawProteinSiteMap.containsKey(sequenceId)) {
                 RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = rawProteinSiteMap.get(sequenceId);
                 rawProteinSite.addSite(rawSite);
+                rawProteinSite.addAllSites(promotedRawSites);
             } else {
                 RawProteinSite<SFLDHmmer3RawSite> rawProteinSite = new RawProteinSite<>(sequenceId);
                 rawProteinSite.addSite(rawSite);
+                rawProteinSite.addAllSites(promotedRawSites);
                 rawProteinSiteMap.put(sequenceId, rawProteinSite);
             }
+            */
         }
-        Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
-        return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+        int totalSiteCount = promotedSiteCont + siteCount;
+        Utilities.verboseLog("Sites within match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
+
+        //promote the SFLD matched to the parents in the hierarchy
+
+        //print the matches with sites
+        Utilities.verboseLog(25,"Matches and sites --- ooo ---");
+        if (Utilities.verboseLogLevel >= 25) {
+            for (RawProtein<SFLDHmmer3RawMatch> rawProtein : filtertedRawProteinMap.values()) {
+                String sequenceIdentifier = rawProtein.getProteinIdentifier();
+                Collection<SFLDHmmer3RawMatch> allRawMatches = rawProtein.getMatches();
+                for (SFLDHmmer3RawMatch rawMatch : allRawMatches) {
+                    StringBuffer outMatch = new StringBuffer("match: ")
+                            .append(sequenceIdentifier).append(" ")
+                            .append(rawMatch.getModelId()).append(" ")
+                            .append(rawMatch.getLocationStart()).append(" ")
+                            .append(rawMatch.getLocationEnd()).append(" ");
+                    Utilities.verboseLog(outMatch.toString());
+                    for (RawProteinSite<SFLDHmmer3RawSite> rawProteinSite : rawProteinSiteMap.values()) {
+                        if (rawProteinSite.getProteinIdentifier().equals(sequenceIdentifier)) {
+                            Set<SFLDHmmer3RawSite> allRawSites = (HashSet<SFLDHmmer3RawSite>) rawProteinSite.getSites();
+                            for (SFLDHmmer3RawSite rawSite : rawSites) {
+                                if (rawSite.getModelId().equals(rawMatch.getModelId())) {
+                                    StringBuffer outSite = new StringBuffer("site: ")
+                                            .append(rawSite.getSequenceIdentifier()).append(" ")
+                                            .append(rawSite.getResidues()).append(" ")
+                                            .append(rawSite.getFirstStart()).append(" ")
+                                            .append(rawSite.getLastEnd());
+                                    Utilities.verboseLog(outSite.toString());
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
+        return new MatchSiteData<>(new HashSet<>(filtertedRawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+    }
+
+    public Set<SFLDHmmer3RawMatch> resolveOverlappingMatches(Collection<SFLDHmmer3RawMatch> rawMatches, Map<String, Set<String>> hierarchyInformation) {
+        // hmm_hit = [hmm_id, description, float(eVal), float(score), location]
+        Set<SFLDHmmer3RawMatch> overlapFreeRawMatches = new HashSet<>();
+
+        Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
+        Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
+        //Utilities.verboseLog("matchesPerModel: " + matchesPerModel.toString());
+        if (matchesPerModel.keySet().size() == 1) {
+            overlapFreeRawMatches.addAll(rawMatches);
+            return overlapFreeRawMatches;
+        }
+        for (String key : matchesPerModel.keySet()) {
+            Set<SFLDHmmer3RawMatch> modelMatches = matchesPerModel.get(key);
+            //SFLDF models are more specific
+            if (key.contains("SFLDF")) {
+                overlapFreeRawMatches.addAll(modelMatches);
+                continue;
+            }
+
+            //Utilities.verboseLog(" modelMatches count: " + modelMatches.size());
+            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
+                boolean overlaps = false;
+                SFLDHmmer3RawMatch baseMatch = modelMatch;
+                Set<String> parents = hierarchyInformation.get(modelMatch.getModelId());
+                for (SFLDHmmer3RawMatch otherMatch : allRawMatches) {
+                    Set<String> otherParents = hierarchyInformation.get(otherMatch.getModelId());
+                    if (modelMatch.equals(otherMatch)) {
+                        continue;
+                    }
+                    if (modelMatch.getModelId().equals(otherMatch.getModelId())) {
+                        continue;
+                    }
+                    String otherParentsStr = "";
+                    if (modelMatch.overlapsWith(otherMatch)) {
+                        if (otherParents != null) {
+                            otherParentsStr = otherParents.toString();
+                        }
+                        //Utilities.verboseLog("modelMatch.overlapsWith otherMatch)  --- check if parents of otherMatch " + otherMatch.getModelId() + " [ " + otherParentsStr + "] contain modelMatch " + modelMatch.getModelId());
+                        if (otherParents != null && otherParents.contains(modelMatch.getModelId())) {
+//                            Utilities.verboseLog("modelMatch does overlapsWith(otherMatch) - modelMatch: " + modelMatch.getModelId()
+//                                    + " otherMatch: " + otherMatch.getModelId());
+                            overlaps = true;
+                            break;
+                        }
+                    }
+                }
+                if (overlaps) {
+                    allRawMatches.remove(modelMatch);
+                } else {
+                    overlapFreeRawMatches.add(modelMatch);
+                }
+            }
+        }
+
+        return overlapFreeRawMatches;
+    }
+
+    public Set<SFLDHmmer3RawMatch> resolveDuplicateMatches(Set<SFLDHmmer3RawMatch> rawMatches){
+        Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = new HashSet<>();
+        Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
+        Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
+        //Utilities.verboseLog("matchesPerModel: " + matchesPerModel.toString());
+        /*if (matchesPerModel.keySet().size() == 1) {
+            duplicateFreeRawMatches.addAll(rawMatches);
+            return overlapFreeRawMatches;
+        }
+        */
+        for (String key : matchesPerModel.keySet()) {
+            Set<SFLDHmmer3RawMatch> modelMatches = matchesPerModel.get(key);
+
+            /* debug
+            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
+
+                //Utilities.verboseLog("raw unfilt match : " + getMatchDetails(modelMatch));
+
+            }
+            */
+
+            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
+                boolean duplicate = false;
+                SFLDHmmer3RawMatch baseMatch = modelMatch;
+                //Utilities.verboseLog("Consider  match: " + getMatchDetails(modelMatch));
+                for (SFLDHmmer3RawMatch otherMatch : allRawMatches) {
+                    //Utilities.verboseLog(20,"Consider against match: " + getMatchDetails(otherMatch));
+                    if (modelMatch.equals(otherMatch) || ! modelMatch.getModelId().equals(otherMatch.getModelId())) {
+                        continue;
+                    }
+
+                    if (modelMatch.getLocationStart() == otherMatch.getLocationStart() && modelMatch.getLocationEnd() == otherMatch.getLocationEnd()) {
+                        if (modelMatch.getScore() <= modelMatch.getScore() ) {
+                           // Utilities.verboseLog(getMatchDetails(modelMatch) + " -- is duplicate .... of ..  -- " + getMatchDetails(otherMatch) );
+                            duplicate = true;
+                            break;
+                            //check hmmstarts and envstarts;
+                        }
+
+                    }
+                }
+                if (duplicate) {
+                    allRawMatches.remove(modelMatch);
+                } else {
+                    duplicateFreeRawMatches.add(modelMatch);
+                }
+            }
+        }
+
+        return duplicateFreeRawMatches;
+    }
+
+    /**
+     *
+     * @param modelMatch
+     * @return
+     */
+    private String getMatchDetails(SFLDHmmer3RawMatch modelMatch){
+        final List<String> mappingFields = new ArrayList<>();
+        mappingFields.add(modelMatch.getSequenceIdentifier());
+        mappingFields.add(modelMatch.getModelId());
+        mappingFields.add(Integer.toString(modelMatch.getLocationStart()));
+        mappingFields.add(Integer.toString(modelMatch.getLocationEnd()));
+        mappingFields.add(Integer.toString(modelMatch.getHmmStart()));
+        mappingFields.add(Integer.toString(modelMatch.getHmmEnd()));
+        mappingFields.add(Integer.toString(modelMatch.getEnvelopeStart()));
+        mappingFields.add(Integer.toString(modelMatch.getEnvelopeEnd()));
+        mappingFields.add(Double.toString(modelMatch.getScore()));
+        mappingFields.add(Double.toString(modelMatch.getEvalue()));
+
+        return mappingFields.toString();
+    }
+
+    /**
+     *
+     * @param rawMatches
+     * @return
+     */
+    public Map<String, Set<SFLDHmmer3RawMatch>> getMatchGroups(Collection<SFLDHmmer3RawMatch> rawMatches) {
+        Map<String, Set<SFLDHmmer3RawMatch>> matchGroups = new HashMap<>();
+        for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
+            String modelAc = rawMatch.getModelId();
+            if (matchGroups.keySet().contains(modelAc)) {
+                Set<SFLDHmmer3RawMatch> modelMatches = matchGroups.get(modelAc);
+                modelMatches.add(rawMatch);
+            } else {
+                Set<SFLDHmmer3RawMatch> modelMatches = new HashSet<>();
+                modelMatches.add(rawMatch);
+                matchGroups.put(modelAc, modelMatches);
+            }
+        }
+        return matchGroups;
+    }
+//
+//    public Map<String, Set<SFLDHmmer3RawMatch>> getMatchGroups(Set<SFLDHmmer3RawMatch> rawMatches) {
+//        Map<String, Set<SFLDHmmer3RawMatch>> matchGroups = new HashMap<>();
+//        for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
+//            String modelAc = rawMatch.getModelId();
+//            if (matchGroups.keySet().contains(modelAc)) {
+//                Set<SFLDHmmer3RawMatch> modelMatches = matchGroups.get(modelAc);
+//                modelMatches.add(rawMatch);
+//            } else {
+//                Set<SFLDHmmer3RawMatch> modelMatches = new HashSet<>();
+//                modelMatches.add(rawMatch);
+//                matchGroups.put(modelAc, modelMatches);
+//            }
+//        }
+//        return matchGroups;
+//    }
+
+    private Set<SFLDHmmer3RawMatch> getPromotedRawMatches(SFLDHmmer3RawMatch rawMatch, Set<String> parents) {
+        Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet();
+        String childModelId = rawMatch.getModelId();
+        //Utilities.verboseLog("Promoted match for " + childModelId + " with parents: " + parents);
+        for (String modelAc : parents) {
+            if (!childModelId.equals(modelAc)) {
+                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
+            }
+        }
+        return promotedRawMatches;
+    }
+
+    public SFLDHmmer3RawSite getRawSite(SFLDHmmer3RawSite rawSite, String modelAc) {
+        //Utilities.verboseLog( "Get promoted sites for : " + rawSite.getModelId() + " modelAc: " + modelAc);
+        SFLDHmmer3RawSite promotedRawSite = new SFLDHmmer3RawSite(rawSite.getSequenceIdentifier(),
+                rawSite.getTitle(), rawSite.getResidues(), modelAc, rawSite.getSignatureLibraryRelease());
+
+        //Utilities.verboseLog("Promoted site for " + rawSite.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawSite);
+        return promotedRawSite;
+    }
+
+    private boolean siteInMatchLocation(SFLDHmmer3RawSite rawSite, Map<String, Set<SFLDHmmer3RawMatch>> rawMatchGroups){
+
+        String key = rawSite.getSequenceIdentifier() + "_" + rawSite.getModelId();
+        int firstStart = rawSite.getFirstStart();
+        int lastEnd = rawSite.getLastEnd();
+        Set<SFLDHmmer3RawMatch> rawMatches = rawMatchGroups.get(key);
+        if (rawMatches != null) {
+            for (SFLDHmmer3RawMatch rawMatch : rawMatches){
+                if (! (firstStart > rawMatch.getLocationEnd() || rawMatch.getLocationStart() > lastEnd )){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+    private Set<SFLDHmmer3RawSite> getPromotedRawSites(SFLDHmmer3RawSite rawSite, Set<String> parents) {
+        Set<SFLDHmmer3RawSite> promotedRawSites = new HashSet();
+        String childModelId = rawSite.getModelId();
+        //Utilities.verboseLog( "Get promoted sites for : " + childModelId + " with parents: " + parents);
+        for (String modelAc : parents) {
+            if (!childModelId.equals(modelAc)) {
+                promotedRawSites.add(getRawSite(rawSite, modelAc));
+            }
+        }
+        return promotedRawSites;
     }
 
     public MatchData parseFileInput(InputStream is) throws IOException {
@@ -183,6 +613,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("line: " + line + "  stage: " + stage.toString());
                 }
+//                Utilities.verboseLog("dealing with line: " + line + "  stage: " + stage.toString());
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
@@ -216,7 +647,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                             stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
                         } else if (domainDataLineMatcher.matches()) {
                             SequenceDomainMatch sequenceDomainMatch = new SequenceDomainMatch(domainDataLineMatcher);
-                            if (checkDomainCoordinates(sequenceDomainMatch)){
+                            if (checkDomainCoordinates(sequenceDomainMatch)) {
                                 //we now have a match and can create a raw match
                                 DomainMatch domainMatch = new DomainMatch(sequenceDomainMatch);
                                 //add the domain match to the search record
@@ -228,7 +659,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                                 hmmer3ParserSupport.addMatch(searchRecord, rawResults);
                                 rawDomainCount += getSequenceMatchCount(searchRecord);
                                 LOGGER.debug(sequenceDomainMatch.toString());
-                            }else{
+                            } else {
                                 throw new ParseException("Domain coordinates error - sequenceId: " + currentSequenceIdentifier + sequenceDomainMatch.toString());
                             }
                         }
@@ -238,18 +669,6 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                             currentSequenceIdentifier = null;
                         }
                         break;
-//                    case LOOKING_FOR_SITE_SECTION:
-//                        // Example: Sites:
-//                        if (line.startsWith(SEQUENCE_SECTION_START)) {
-////                            sites.clear();
-//                            stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
-//                        } else if (line.startsWith(SITE_SECTION_START)) {
-//                            stage = ParsingStage.LOOKING_FOR_SITE_DATA_LINE;
-//                            LOGGER.debug("Site Section ");
-//                        } else {
-//                            throw new ParseException("This line looks like a site header line, but it is not possible to parse the header.", null, line, lineNumber);
-//                        }
-//                        break;
                     case LOOKING_FOR_SITE_DATA_LINE:
                         Matcher sitesDataLineMatcher = SITES_LINE_PATTERN.matcher(line);
                         if (line.startsWith(END_OF_RECORD)) {
@@ -273,16 +692,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
         //TODO consider using the utilities methods
         Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
-        //Utilities.verboseLog(rawResults.values().toString());
-        /*
-        //can be used to check if we have the correct mtahces
-        for (RawProtein<T> rawProtein : rawResults.values()) {
-            for (T rawMatch : rawProtein.getMatches()) {
-                Utilities.verboseLog(rawMatch.toString());
-            }
-        }
-        */
-//       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
+        Utilities.verboseLog(10, " Raw Results: site Count: " + rawSites.size());
 
         for (RawProtein<T> rawProtein : rawResults.values()) {
             rawMatches.addAll((Collection<? extends SFLDHmmer3RawMatch>) rawProtein.getMatches());
@@ -317,24 +727,62 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         }
     }
 
-    public boolean checkDomainCoordinates(SequenceDomainMatch sequenceDomainMatch){
+    public boolean checkDomainCoordinates(SequenceDomainMatch sequenceDomainMatch) {
         boolean domainCoordinatesCorrect = true;
-        if (sequenceDomainMatch.getAliFrom() > sequenceDomainMatch.getAliTo()){
-            domainCoordinatesCorrect = false;
-            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
-                    + " to: " + sequenceDomainMatch.getAliTo() );
-        }
-        if (sequenceDomainMatch.getHmmfrom() > sequenceDomainMatch.getHmmto()){
+        if (sequenceDomainMatch.getAliFrom() > sequenceDomainMatch.getAliTo()) {
             domainCoordinatesCorrect = false;
             LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
                     + " to: " + sequenceDomainMatch.getAliTo());
         }
-        if (sequenceDomainMatch.getEnvFrom() > sequenceDomainMatch.getEnvTo()){
+        if (sequenceDomainMatch.getHmmfrom() > sequenceDomainMatch.getHmmto()) {
+            domainCoordinatesCorrect = false;
+            LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
+                    + " to: " + sequenceDomainMatch.getAliTo());
+        }
+        if (sequenceDomainMatch.getEnvFrom() > sequenceDomainMatch.getEnvTo()) {
             domainCoordinatesCorrect = false;
             LOGGER.error("Domain Aligments coordinates error :- from: " + sequenceDomainMatch.getAliFrom()
                     + " to: " + sequenceDomainMatch.getAliTo());
         }
 
-        return  domainCoordinatesCorrect;
+        return domainCoordinatesCorrect;
     }
+
+
+    /**
+     * get HierarchyInformation information child - parent relationships
+     *
+     * @return sfldHierarchyInformation
+     */
+    public Map<String, Set<String>> getHierarchyInformation() {
+        Map<String, Set<String>> sfldHierarchyInformation = new HashMap<>();
+        try (FileInputStream is = new FileInputStream(sfldHierarchyFilePath)) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                int lineNumber = 0;
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] modelWithParents = line.trim().split(":");
+
+                    if (modelWithParents.length >= 2) {
+                        String modelAc = modelWithParents[0];
+                        String[] allParents = modelWithParents[1].split("\\s+");
+                        Set<String> parents = new HashSet<>();
+                        for (String parent : allParents) {
+                            if (!(parent.trim().isEmpty() || parent.trim().equals(modelAc))) {
+                                parents.add(parent.trim());
+                            }
+                        }
+                        sfldHierarchyInformation.put(modelAc, parents);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sfldHierarchyInformation;
+    }
+
+
 }

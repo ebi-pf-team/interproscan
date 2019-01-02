@@ -33,12 +33,16 @@ public class NewProteinsController {
     @Autowired
     public void setMatchService(MatchesService matchService) {
         this.matchService = matchService;
+        this.matchService.setName("md5check");
     }
 
     @RequestMapping
     public void getProteinsToAnalyse(HttpServletResponse response,
                                      @RequestParam(value = "md5", required = true) String[] md5Array) {
+        long startGetMD5s = System.currentTimeMillis();
         List<String> precalculatedMD5s = matchService.isPrecalculated(Arrays.asList(md5Array));
+        long timeToGetMD5s = System.currentTimeMillis() - startGetMD5s;
+        matchService.countMD5Requests(md5Array.length, timeToGetMD5s);
         response.setContentType("text/tab-separated-values");
         Writer out = null;
         try {

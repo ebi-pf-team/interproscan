@@ -13,25 +13,15 @@
         <@matchLocationPopupMacro.matchLocationPopup matchPopupId=prefix+"-popup-"+matchId proteinAc=proteinAc signature=signature location=location colourClass=colourClass/>
     <#else>
     <#--If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call-->
-    <#if entryAc?? && entryAc?has_content && entryAc!="null">
-        <#--Integrated signature match-->
-        <a id="${prefix}-location-${matchId}"
-           title="${title} ${location.start} - ${location.end}"
-           class="match ${colourClass}"
-           style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
-                   width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
-           href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&entryAc=${entryAc}&start=${location.start?c}&end=${location.end?c}">
-    <#else>
-       <#--Un-integrated signature, therefore has no entryAc associated-->
+    <#--Integrated signature match or un-integrated signature, therefore has no entryAc associated-->
+    <#--Gene3D or SUPERFAMILY where along with the signatureAc we also show the modelAc responsible for the hit-->
+    <#--Sequence features where necessary (e.g. MobiDB)-->
     <a id="${prefix}-location-${matchId}"
        title="${title} ${location.start} - ${location.end}"
        class="match ${colourClass}"
        style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
                width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
-       href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&db=${signature.dataSource.sourceName}&start=${location.start?c}&end=${location.end?c}">
-    </#if>
-        <#--<@locationMacro.location locationSpanId=prefix+"-span-"+matchId proteinLength=proteinLength titlePrefix=title location=location colourClass=colourClass/>-->
+       href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}<#if entryAc?? && entryAc?has_content && entryAc!="null">&entryAc=${entryAc}<#else>&db=${signature.dataSource.sourceName}</#if><#if location.models?? && location.models?has_content && location.models!="null" && signature.ac!=location.models>&model=${location.models}</#if><#if location.feature?? && location.feature?has_content && location.feature!="null">&feature=${location.feature}</#if>">
     </a>
-
     </#if>
 </#macro>

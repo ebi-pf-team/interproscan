@@ -18,6 +18,7 @@
 
 
     <#import "../macros/signature.ftl" as signatureMacro>
+    <#import "../macros/feature.ftl" as featureMacro>
     <#if !standalone>
         <#include "web_menu_javascript.ftl"/>
     </#if>
@@ -115,8 +116,24 @@
                 </div>
             </div>
         </#if>
+    </#if>
 
-        <#--Residue annotation features-->
+        <#if protein.sequenceFeatures?has_content>
+        <h3>Other features</h3>
+        <div class="prot_sum">
+            <div class="bot-row">
+                <div class="bot-row-line-top"></div>
+                <ol class="signatures">
+                    <#list protein.sequenceFeatures as signature>
+                        <@featureMacro.feature proteinAc=proteinAc proteinLength=proteinLength signature=signature entryTypeTitle="Unintegrated" scale=scale entryAc="null" colourClass="uni" />
+                    </#list>
+                </ol>
+                <div class="bot-row-line-bot"></div>
+            </div>
+        </div>
+        </#if>
+
+    <#--Residue annotation features-->
         <#if protein.sites?has_content>
             <#global residueId=0>
             <div id="sites">
@@ -172,10 +189,6 @@
 
         </#if>
 
-
-    <#else>
-        <#-- No matches so the detailed matches section is omitted. -->
-    </#if>
 
 <h3>GO term prediction</h3>
 

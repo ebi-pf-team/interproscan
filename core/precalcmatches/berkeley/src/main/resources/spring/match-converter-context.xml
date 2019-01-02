@@ -4,57 +4,92 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="berkeleyToI5ModelDAO"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyToI5ModelDAOImpl">
+
+    <bean id="lookupStoreToI5ModelDAO"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupStoreToI5ModelDAOImpl">
         <property name="signatureLibraryToMatchConverter">
             <map>
-                <!-- Phobius not in Onion, so no conversion necessary. -->
-                <entry key="MOBIDB_LITE" value-ref="mobidbBerkeleyMatchConverter"/>
-                <entry key="CDD" value-ref="rpsblastBerkeleyMatchConverter"/>
-                <entry key="GENE3D" value-ref="hmmer3BerkeleyMatchConverter"/>
-                <entry key="PFAM" value-ref="hmmer3BerkeleyMatchConverter"/>
-                <entry key="PIRSF" value-ref="hmmer3BerkeleyMatchConverter"/>
-                <entry key="PRINTS" value-ref="fingerPrintsBerkeleyMatchConverter"/>
-                <entry key="TIGRFAM" value-ref="hmmer3BerkeleyMatchConverter"/>
-                <entry key="COILS" value-ref="coilsBerkeleyMatchConverter"/>
-                <entry key="PROSITE_PATTERNS" value-ref="prositePatternsMatchConverter"/>
-                <entry key="PROSITE_PROFILES" value-ref="prositeProfilesMatchConverter"/>
-                <entry key="PANTHER" value-ref="pantherMatchConverter"/>
-                <entry key="SUPERFAMILY" value-ref="superfamilyMatchConverter"/>
-                <entry key="PRODOM" value-ref="prodomMatchConverter"/>
-                <entry key="HAMAP" value-ref="prositeProfilesMatchConverter"/>
-                <entry key="SFLD" value-ref="hmmer3BerkeleyMatchConverter"/>
-                <entry key="SMART" value-ref="hmmer2BerkeleyMatchConverter"/>
-                <entry key="SIGNALP_EUK" value-ref="signalpMatchConverter"/>
-                <entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpMatchConverter"/>
-                <entry key="SIGNALP_GRAM_POSITIVE" value-ref="signalpMatchConverter"/>
+                <entry key="MOBIDB_LITE" value-ref="mobidbLookupMatchConverter"/>
+                <entry key="CDD" value-ref="rpsblastLookupMatchConverter"/>
+                <entry key="GENE3D" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="PFAM" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="PIRSF" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="PRINTS" value-ref="printsLookupMatchConverter"/>
+                <entry key="TIGRFAM" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="COILS" value-ref="coilsLookupMatchConverter"/>
+                <entry key="PROSITE_PATTERNS" value-ref="prositePatternsLookupMatchConverter"/>
+                <entry key="PROSITE_PROFILES" value-ref="prositeProfilesLookupMatchConverter"/>
+                <entry key="PANTHER" value-ref="pantherLookupMatchConverter"/>
+                <entry key="SUPERFAMILY" value-ref="superfamilyLookupMatchConverter"/>
+                <entry key="PRODOM" value-ref="prodomLookupMatchConverter"/>
+                <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
+                <entry key="SFLD" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="SMART" value-ref="hmmer2LookupMatchConverter"/>
+                <entry key="SIGNALP_EUK" value-ref="signalpLookupMatchConverter"/>
+                <entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpLookupMatchConverter"/>
+                <entry key="SIGNALP_GRAM_POSITIVE" value-ref="signalpLookupMatchConverter"/>
+                <entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>
+                <entry key="TMHMM" value-ref="tmhmmLookupMatchConverter"/>
             </map>
         </property>
     </bean>
 
-    <bean id="mobidbBerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.MobiDBBerkeleyMatchConverter"/>
-    <bean id="rpsblastBerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.RPSBlastBerkeleyMatchConverter"/>
-    <bean id="fingerPrintsBerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.FingerPrintsBerkeleyMatchConverter"/>
-    <bean id="hmmer2BerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.Hmmer2BerkeleyMatchConverter"/>
-    <bean id="hmmer3BerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.Hmmer3BerkeleyMatchConverter"/>
-    <bean id="coilsBerkeleyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.CoilsBerkeleyMatchConverter"/>
-    <bean id="prositeProfilesMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.PrositeProfilesBerkeleyMatchConverter"/>
-    <bean id="prositePatternsMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.PrositePatternsBerkeleyMatchConverter"/>
-    <bean id="pantherMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.PantherBerkeleyMatchConverter"/>
-    <bean id="superfamilyMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.SuperfamilyMatchConverter"/>
-    <bean id="prodomMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.ProdomMatchConverter"/>
-    <bean id="signalpMatchConverter"
-          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion.SignalPBerkeleyMatchConverter"/>
+
+    <bean id="mobidbLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.MobiDBLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="rpsblastLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.RPSBlastLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="printsLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrintsLookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
+    <bean id="hmmer2LookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer2LookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
+    <bean id="hmmer3LookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer3LookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
+    <bean id="coilsLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.CoilsLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="prositeProfilesLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositeProfilesLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="prositePatternsLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PrositePatternsLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="pantherLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PantherLookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
+    <bean id="superfamilyLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SuperfamilyLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="prodomLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.ProdomLookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
+    <bean id="signalpLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.SignalPLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="phobiusLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.PhobiusLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
+    <bean id="tmhmmLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.TMHMMLookupMatchConverter">
+        <property name="flattenMatches" value="false"/>
+    </bean>
 
 </beans>

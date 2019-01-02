@@ -87,15 +87,15 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         // Retrieve raw results for protein range.
-        Set<RawProtein<A>> rawMatches = rawMatchDAO.getProteinsByIdRange(
+        Set<RawProtein<A>> rawProteins = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),
                 stepInstance.getTopProtein(),
                 signatureLibraryRelease
         );
 
 
-        Map<String, RawProtein<A>> proteinIdToRawProteinMap = new HashMap<>(rawMatches.size());
-        if (rawMatches.size() == 0) {
+        Map<String, RawProtein<A>> proteinIdToRawProteinMap = new HashMap<>(rawProteins.size());
+        if (rawProteins.size() == 0) {
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
             Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
 
@@ -105,35 +105,38 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
             }
             Utilities.sleep(waitTimeFactor * 1000);
             //try again
-            rawMatches = rawMatchDAO.getProteinsByIdRange(
+            rawProteins = rawMatchDAO.getProteinsByIdRange(
                     stepInstance.getBottomProtein(),
                     stepInstance.getTopProtein(),
                     signatureLibraryRelease
             );
-            Utilities.verboseLog(10, "matches after : " + rawMatches.size());
+            Utilities.verboseLog(10, "proteins after : " + rawProteins.size());
         }
 
         int matchCount = 0;
-        for (final RawProtein rawProtein : rawMatches) {
+        for (RawProtein<A> rawProtein : rawProteins) {
+            proteinIdToRawProteinMap.put(rawProtein.getProteinIdentifier(), rawProtein);
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10, " Retrieved " + rawMatches.size() + " proteins to post-process."
+        Utilities.verboseLog(10, " Retrieved " + rawProteins.size() + " protein(s) to post-process."
                 + " A total of " + matchCount + " raw matches.");
-
-        for (RawProtein<A> rawMatch : rawMatches) {
-            proteinIdToRawProteinMap.put(rawMatch.getProteinIdentifier(), rawMatch);
-        }
 
         Map<String, RawProtein<A>> filteredMatches;
         if (postProcessor == null) {
             // No post processing required, raw matches = filtered matches
             filteredMatches = proteinIdToRawProteinMap;
+            Utilities.verboseLog("No post processing required, raw matches = filtered matches");
         } else {
             // Post processing required
             filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
+            Utilities.verboseLog("Post processing done ...");
         }
 
-        Utilities.verboseLog("filtered matches count: " + filteredMatches.size());
+        matchCount = 0;
+        for (RawProtein<A> rawProtein : filteredMatches.values()) {
+            matchCount += rawProtein.getMatches().size();
+        }
+        Utilities.verboseLog(" Filtered  " + filteredMatches.size() + " protein(s) with  filtered matches count: " + matchCount);
 
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
@@ -146,11 +149,13 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                         signatureLibraryRelease
                 );
                 for (C repRawSite:rawSites) {
-                    Utilities.verboseLog("rep filtered site: " +repRawSite );
+                    Utilities.verboseLog("rep filtered site: " + repRawSite );
                     break;
                 }
+                Utilities.verboseLog("Filtered rawSites count: " + rawSites.size() );
             }
         }
+        Utilities.verboseLog("Filtered matches: " + filteredMatches.values().size() +  "  Filtered sites: " + rawSites.size()  );
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 
         matchCount = 0;

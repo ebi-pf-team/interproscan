@@ -31,7 +31,7 @@ def updateSet(key, new_elem, seq_list):
     return seq_list
 
 def get_all_seqs_dic(all_seqs):
-    print ("Seq count: " + str(len(all_seqs)))
+    print("Seq count: " + str(len(all_seqs)))
     all_seqs_dic = {}
 
     for elem in all_seqs:
@@ -54,7 +54,7 @@ else:
     sys.exit(4)
 
 all_seqs_dic = get_all_seqs_dic(get_sequences(input_file))
-print ("original nucleotide sequence count: " + str(len(all_seqs_dic)))
+print("original nucleotide sequence count: " + str(len(all_seqs_dic)))
 if orfs_filter_size:
     orfs_filter_size = int(orfs_filter_size)
 else:
@@ -70,5 +70,5 @@ with open (output_file, 'w') as outf:
             outf.write('>' + one_seq[0] + '\n' + one_seq[1])
             total_count = total_count + 1
 
-print ("Seq count after filter: " + str(total_count))
+print("Seq count after filter: " + str(total_count))
 

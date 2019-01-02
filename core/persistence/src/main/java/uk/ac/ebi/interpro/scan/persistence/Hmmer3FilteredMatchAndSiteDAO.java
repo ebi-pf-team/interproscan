@@ -103,8 +103,17 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
             }
         }
         // Find the location(s) for each match and create a Match instance
+
         for (String key : matchesByModel.keySet()) {
+            if (key.trim().isEmpty()){
+                LOGGER.warn("Match key is empty : key is " + key);
+                continue;
+            }
+
             SignatureModelHolder holder = modelIdToSignatureMap.get(key);
+            if (holder == null){
+                LOGGER.error("SignatureModelHolder error ... key: " + key + " matchesByModel:- " + matchesByModel.get(key));
+            }
             Signature signature = holder.getSignature();
             Model model = holder.getModel();
             matches.add(getMatch(signature, model, key, matchesByModel, rawSites));

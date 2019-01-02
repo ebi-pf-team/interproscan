@@ -122,12 +122,17 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         LOGGER.info("Creating model accession to signature map...");
         final Map<String, SignatureModelHolder> result = new HashMap<>();
 
-        List<String> modelIDs = new ArrayList<>();
+        Set<String> modelIDsSet = new HashSet<>();
+        int count = 0;
         for (RawProtein<T> rawProtein : rawProteins) {
+//            LOGGER.warn("rawProtein: " + rawProtein.toString());
             for (RawMatch rawMatch : rawProtein.getMatches()) {
-                modelIDs.add(rawMatch.getModelId());
+                modelIDsSet.add(rawMatch.getModelId());
+                count ++;
             }
         }
+        List<String> modelIDs = new ArrayList<>();
+        modelIDs.addAll(modelIDsSet);
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("... for " + modelIDs.size() + " model IDs.");
@@ -171,21 +176,42 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             query.setParameter("version", signatureLibraryRelease);
             @SuppressWarnings("unchecked") List<Object[]> signatureModels = query.getResultList();
 
+            String signatureModelQueryMessage = "SignatureModel query: "
+                    + "accession: " + modelIdsSlice.toString()
+                    + " signatureLibrary: " + signatureLibrary
+                    + " version: " + signatureLibraryRelease;
             if (LOGGER.isDebugEnabled()) {
-                String signatureModelQueryMessage = "SignatureModel query: "
-                        + "accession: " + modelIdsSlice.toString()
-                        + " signatureLibrary: " + signatureLibrary
-                        + " version: " + signatureLibraryRelease;
                 LOGGER.debug(signatureModelQueryMessage);
 //            Utilities.verboseLog(signatureModelQueryMessage);
             }
 
+
+            int modelCount = 0;
             for (Object[] row : signatureModels) {
                 Signature signature = (Signature) row[0];
                 Model model = (Model) row[1];
                 result.put(model.getAccession(), new SignatureModelHolder(signature, model));
+                modelCount ++;
+                if (result.get(model.getAccession()) == null){
+                    LOGGER.warn("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
+                }
             }
+        }
+        //check which models are missing and why?
 
+        List<String> missingModelIDs = new ArrayList<>();
+        Set<String> resultModelIds = result.keySet();
+
+
+        for (String modelID : modelIDsSet){
+            if(! resultModelIds.contains(modelID)){
+                missingModelIDs.add(modelID);
+            }
+        }
+
+        if (missingModelIDs.size() > 0) {
+            LOGGER.warn("Failed to get some of the analaysis models from h2 db: #" + missingModelIDs.size());
+            LOGGER.warn("First missing model : " + missingModelIDs.get(0));
         }
         return result;
     }

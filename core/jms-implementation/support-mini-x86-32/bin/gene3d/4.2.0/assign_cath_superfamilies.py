@@ -2,7 +2,7 @@
 
 
 import sys
-import cPickle as pkl
+import pickle as pkl
 import os
 import itertools
 from collections import defaultdict
@@ -17,14 +17,14 @@ outfile = sys.argv[4]
 
 evalue_coff = 0.001
 
-discontinuous_regs =pkl.load(open(os.path.join(discontinuous_regs_file)))
+discontinuous_regs = pkl.load(open(discontinuous_regs_file, 'rb'), encoding='utf-8')
 
 mode = "with_family"
 if len(sys.argv) > 2:
    mode = sys.argv[2]
 
 
-ofh = None  
+ofh = None
 # if infile.endswith(".gz"):
 #     ofh = csv.writer(gzip.open(infile.replace(".gz", ".csv.gz"),"w"))
 # else:
@@ -60,14 +60,14 @@ for line in open(domain_to_family_map_file):
 #     superfamily= ".".join(vals[1:5])
 #     domain_id =vals[0]
 #     dom_to_fam[domain_id] = superfamily
-        
+
 
 
 def rangesAsList(i, merge_small_gaps=False):
     x=[]
     for start,stop in ranges(i):
         x.append([start, stop])
-     
+
     return x
 
 def getRegionsAsString(regions):
@@ -79,7 +79,7 @@ def getRegionsAsString(regions):
 
 
 def ranges(i):
-    for a, b in itertools.groupby(enumerate(i), lambda (x, y): y - x):
+    for a, b in itertools.groupby(enumerate(i), lambda x_y: x_y[1] - x_y[0]):
         b = list(b)
         yield b[0][1], b[-1][1]
 
@@ -92,37 +92,37 @@ else: ifh = open(infile)
 for line in ifh:
     line = line.rstrip()
     vals =line.split()
-    
+
     if line.startswith("#"):
         if line.startswith("#FIELD"):
-            ofh.writerow(["#domain_id","cath-superfamily"] + vals[1:]) 
-        continue   
-    
-    
-    
-    hmm_id = vals[1] 
-    if hmm_id.startswith("dc_") is False: 
+            ofh.writerow(["#domain_id","cath-superfamily"] + vals[1:])
+        continue
+
+
+
+    hmm_id = vals[1]
+    if hmm_id.startswith("dc_") is False:
         dom = hmm_id.split("-")[0]
         sfam = dom_to_fam.get(dom, "-")
-        
-        if mode =="with_family": 
+
+        if mode =="with_family":
             if len(sfam)==0: continue
-          
+
             evalue = float(vals[-1])
-            
+
             if evalue > evalue_coff: continue
-        
+
         ofh.writerow([dom,sfam] + vals + [""])
         continue
-    
+
     sequence_id, hmm_id, bit_score, start_stop, final_start_stop, alignment_regs,cond_eval, ind_eval = vals
 
     final_start_stop_list=[]
     for i in final_start_stop.split(","):
-        final_start_stop_list.append(map(int,i.split("-")))
+        final_start_stop_list.append(list(map(int,i.split("-"))))
     plup = discontinuous_regs[hmm_id]
-   
-    
+
+
     mda_resolved_aas = set()
     for start,stop in final_start_stop_list:
         mda_resolved_aas |= set(range(start, stop +1))
@@ -132,23 +132,23 @@ for line in ifh:
 
     resi_dom={}
     for areg in alignment_regs.split(";"):
-        hmm_region, seq_region = areg.split(",") 
-        hmm_start, hmm_stop =map(int, hmm_region.split("-"))
-        seq_start, seq_stop =map(int, seq_region.split("-"))
-        seq_pos = range(seq_start, seq_stop +1)
-        
-               
+        hmm_region, seq_region = areg.split(",")
+        hmm_start, hmm_stop = list(map(int, hmm_region.split("-")))
+        seq_start, seq_stop = list(map(int, seq_region.split("-")))
+        seq_pos = list(range(seq_start, seq_stop +1))
+
+
         for c,i in enumerate(range(hmm_start, hmm_stop+1)):
-            
-            dom, resi, ostat = plup.get(i-1, [None,None,None]) #zero indexed 
+
+            dom, resi, ostat = plup.get(i-1, [None,None,None]) #zero indexed
             aa_num = seq_pos[c]
             if aa_num not in mda_resolved_aas: continue
-            
+
             resi_dom[seq_pos[c]]=[dom,ostat]
-            if dom: 
+            if dom:
                 dom_sequence_regs[dom].append(seq_pos[c])
-    #fill 
-    for dom, regs in dom_sequence_regs.items():
+    #fill
+    for dom, regs in list(dom_sequence_regs.items()):
         
         sequence_regs = rangesAsList(regs)
         new_sequence_regs=[]

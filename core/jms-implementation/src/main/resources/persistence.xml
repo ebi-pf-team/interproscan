@@ -7,6 +7,7 @@
     <!-- JPA Persistence unit for HSQLDB - current in-memory database, but may change. -->
     <persistence-unit name="persistenceJms" transaction-type="RESOURCE_LOCAL">
         <!-- Interfaces -->
+        <class>uk.ac.ebi.interpro.scan.model.LocationFragment</class>
         <class>uk.ac.ebi.interpro.scan.model.Location</class>
         <class>uk.ac.ebi.interpro.scan.model.LocationWithSites</class>
         <class>uk.ac.ebi.interpro.scan.model.Match</class>
@@ -71,6 +72,23 @@
         <!--Concrete Sites-->
         <class>uk.ac.ebi.interpro.scan.model.Hmmer3MatchWithSites$Hmmer3LocationWithSites$Hmmer3Site</class>
         <class>uk.ac.ebi.interpro.scan.model.RPSBlastMatch$RPSBlastLocation$RPSBlastSite</class>
+
+        <!-- Location fragments -->
+        <class>uk.ac.ebi.interpro.scan.model.FingerPrintsMatch$FingerPrintsLocation$FingerPrintsLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3MatchWithSites$Hmmer3LocationWithSites$Hmmer3LocationWithSitesFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer3Match$Hmmer3Location$Hmmer3LocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.RPSBlastMatch$RPSBlastLocation$RPSBlastLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.TMHMMMatch$TMHMMLocation$TMHMMLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.SignalPMatch$SignalPLocation$SignalPLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.PantherMatch$PantherLocation$PantherLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.ProfileScanMatch$ProfileScanLocation$ProfileScanLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.BlastProDomMatch$BlastProDomLocation$BlastProDomLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.CoilsMatch$CoilsLocation$CoilsLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.Hmmer2Match$Hmmer2Location$Hmmer2LocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.MobiDBMatch$MobiDBLocation$MobiDBLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.PatternScanMatch$PatternScanLocation$PatternScanLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.PhobiusMatch$PhobiusLocation$PhobiusLocationFragment</class>
+        <class>uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match$SuperFamilyHmmer3Location$SuperFamilyHmmer3LocationFragment</class>
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>

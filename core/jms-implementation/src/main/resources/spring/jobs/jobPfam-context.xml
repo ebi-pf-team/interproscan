@@ -115,6 +115,7 @@
                         <property name="pfamCFile" value="${pfam-clans.path}"/>
                     </bean>
                 </property>
+                <property name="pfamHmmDataPath" value="${pfam-a.dat.path}"/>
             </bean>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>

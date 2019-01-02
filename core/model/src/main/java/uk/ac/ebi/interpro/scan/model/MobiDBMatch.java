@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashSet;
@@ -20,6 +22,8 @@ import java.util.Set;
 @Table(name = "mobidb_match")
 @XmlType(name = "MobiDBMatchType")
 public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
+
+
 
     protected MobiDBMatch() {
     }
@@ -45,6 +49,8 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
     @XmlType(name = "MobiDBLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class MobiDBLocation extends Location {
 
+        String sequenceFeature;
+
         /**
          * Protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -52,7 +58,22 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
         }
 
         public MobiDBLocation(int start, int end) {
-            super(start, end);
+            super(new MobiDBLocationFragment(start, end));
+        }
+
+        public MobiDBLocation(int start, int end, String sequenceFeature) {
+            super(new MobiDBLocationFragment(start, end));
+            setSequenceFeature(sequenceFeature);
+        }
+
+        @XmlAttribute(name = "sequence-feature", required = false)
+        @JsonProperty("sequence-feature")
+        public String getSequenceFeature() {
+            return sequenceFeature;
+        }
+
+        public void setSequenceFeature(String sequenceFeature) {
+            this.sequenceFeature = sequenceFeature;
         }
 
         @Override
@@ -77,6 +98,45 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
         public Object clone() throws CloneNotSupportedException {
             return new MobiDBLocation(this.getStart(), this.getEnd());
         }
+
+        /**
+         * Location fragment of a MobiDB match on a protein sequence
+         */
+        @Entity
+        @Table(name = "mobidb_location_fragment")
+        @XmlType(name = "MobiDBLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class MobiDBLocationFragment extends LocationFragment {
+
+            protected MobiDBLocationFragment() {
+            }
+
+            public MobiDBLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof MobiDBLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(143, 179)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new MobiDBLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
     }
 

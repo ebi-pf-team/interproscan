@@ -24,10 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,7 +144,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
         }
 
 
-        Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap();
+        Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap<>();
 
         if (cathResolverRecordMap != null) {
             Utilities.verboseLog("cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
@@ -198,12 +195,19 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                                 //we dont deal with discontinuous domains currently, or we do??
                                 String[] domainRegions = cathResolverRecord.getResolvedStartsStopsPosition().split(",");
 
+                                final UUID splitGroup = UUID.randomUUID();
+
+                                boolean isDiscontinuous = (domainRegions.length > 1);
+
                                 for (String domainRegion : domainRegions) {
                                     String[] locations = domainRegion.split("-");
                                     int locationStart = Integer.parseInt(locations[0]);
                                     int locationEnd = Integer.parseInt(locations[1]);
 
                                     Gene3dHmmer3RawMatch gene3dHmmer3RawMatch = createRawMatch(signatureLibraryRelease, domTblDomainMatch, cathResolverRecord, modelAccession, locationStart, locationEnd);
+                                    if (isDiscontinuous) {
+                                        gene3dHmmer3RawMatch.setSplitGroup(splitGroup);
+                                    }
                                     String sequenceIdentifier = gene3dHmmer3RawMatch.getSequenceIdentifier();
                                     if (matchData.containsKey(sequenceIdentifier)) {
                                         RawProtein<Gene3dHmmer3RawMatch> rawProtein = matchData.get(sequenceIdentifier);
@@ -234,7 +238,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
 
             //now persists the rawmatches
-            Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = new HashSet<RawProtein<Gene3dHmmer3RawMatch>>(matchData.values());
+            Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = new HashSet<>(matchData.values());
             Utilities.verboseLog("rawProteins # :" + rawProteins.size());
             int count = 0;
             RawMatch represantiveRawMatch = null;
@@ -247,7 +251,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 }
             }
 
-            if (rawProteins != null && rawProteins.size() > 0) {
+            if (rawProteins.size() > 0) {
                 Utilities.verboseLog("Persist Gene3D rawProteins # :" + rawProteins.size());
                 filteredMatchDAO.persist(rawProteins);
                 Long now = System.currentTimeMillis();

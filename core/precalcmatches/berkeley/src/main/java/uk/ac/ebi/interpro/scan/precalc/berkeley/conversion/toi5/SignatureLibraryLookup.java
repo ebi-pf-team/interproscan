@@ -33,6 +33,7 @@ public final class SignatureLibraryLookup {
         // ALL SHOULD BE LOWER CASE. (Any queries will be converted to lower case.)
 
         libraryNameToSignatureLibrary.put("mobidblite", SignatureLibrary.MOBIDB_LITE);
+        libraryNameToSignatureLibrary.put("mobidb_lite", SignatureLibrary.MOBIDB_LITE);
 
         libraryNameToSignatureLibrary.put("sfld", SignatureLibrary.SFLD);
 
@@ -89,9 +90,15 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("prints", SignatureLibrary.PRINTS);
 
         libraryNameToSignatureLibrary.put("hamap", SignatureLibrary.HAMAP);
+
+
+        libraryNameToSignatureLibrary.put("tmhmm", SignatureLibrary.TMHMM);
+
         libraryNameToSignatureLibrary.put("signalp_euk", SignatureLibrary.SIGNALP_EUK);
         libraryNameToSignatureLibrary.put("signalp_gram+", SignatureLibrary.SIGNALP_GRAM_POSITIVE);
         libraryNameToSignatureLibrary.put("signalp_gram-", SignatureLibrary.SIGNALP_GRAM_NEGATIVE);
+        libraryNameToSignatureLibrary.put("signalp_gram-positive", SignatureLibrary.SIGNALP_GRAM_POSITIVE);
+        libraryNameToSignatureLibrary.put("signalp_gram-negative", SignatureLibrary.SIGNALP_GRAM_NEGATIVE);
 
     }
 

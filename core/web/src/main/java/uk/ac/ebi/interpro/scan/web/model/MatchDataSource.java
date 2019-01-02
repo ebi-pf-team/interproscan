@@ -31,13 +31,6 @@ public enum MatchDataSource {
             "http://hamap.expasy.org/",
             "http://hamap.expasy.org/profile/$0"),
 
-    MOBIDB_LITE("MobiDB Lite",
-            "MobiDB is designed to offer a centralized resource for annotations of intrinsic protein disorder.",
-            "http://mobidb.bio.unipd.it/",
-            "http://mobidb.bio.unipd.it/entries/$0"),
-
-    MOBIDB("MobiDB Lite", MOBIDB_LITE.description, MOBIDB_LITE.homeUrl, MOBIDB_LITE.linkUrl),
-
     PANTHER(0,
             "PANTHER HMMs define protein families, and subfamilies modelled on the divergence of function.",
             "http://www.pantherdb.org/",
@@ -147,6 +140,14 @@ public enum MatchDataSource {
 
     // Others
 
+    MOBIDB_LITE("MobiDB Lite",
+            "MobiDB is designed to offer a centralized resource for annotations of intrinsic protein disorder.",
+            "http://mobidb.bio.unipd.it/",
+            "http://mobidb.bio.unipd.it/$0"),
+
+    MOBIDB("MobiDB Lite", MOBIDB_LITE.description, MOBIDB_LITE.homeUrl, MOBIDB_LITE.linkUrl),
+
+
     COILS(0,
             "COILS compares a sequence to a database of known parallel two-stranded coiled-coils and derives a " +
                     "similarity score and then calculates the probability that the sequence will adopt a coiled-coil " +
@@ -171,11 +172,11 @@ public enum MatchDataSource {
             "http://www.cbs.dtu.dk/services/SignalP/",
             "http://www.cbs.dtu.dk/services/SignalP/"),
 
-    SIGNALP_EUK("SignalP euk", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+    SIGNALP_EUK("SignalP Euk", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
 
-    SIGNALP_GRAM_POSITIVE("SignalP Gram+ prok", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+    SIGNALP_GRAM_POSITIVE("SignalP Gram-positive", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
 
-    SIGNALP_GRAM_NEGATIVE("SignalP Gram- prok", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+    SIGNALP_GRAM_NEGATIVE("SignalP Gram-negative", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
 
     // Other
     UNKNOWN;
@@ -271,15 +272,7 @@ public enum MatchDataSource {
 
             // First get the supplied SignatureLibraryRelease "name" in the same format as it would be for the
             // MatchDataSource name that we will later iterate over
-            name = name.toLowerCase().replaceAll("\\s+", ""); // Supplied name to check
-            if (name.contains("_")) {
-                // SignalP is the only SignatureLibraryRelease name to contain an underscore
-                name = name.replaceAll("_", "");
-                if (name.contains("gram")) {
-                    name = name.replaceAll("positive", "+prok");
-                    name = name.replaceAll("negative", "-prok");
-                }
-            }
+            name = cleanName(name);
 
             // TODO Inconsistent? SignatureLibrary (InterProScan) uses "TIGRFAM" and MatchDataSource (InterPro) uses "TIGRFAMS"
             if (name.equals("tigrfam")) {
@@ -295,7 +288,7 @@ public enum MatchDataSource {
                 } else {
                     // E.g. Match "PROSITE profiles" from InterPro database with "ProSiteProfiles" from I5
                     // SignatureLibraryRelease name
-                    mName = mName.replaceAll("\\s+", "");
+                    mName = cleanName(mName);
                     if (name.equals(mName)) {
                         return m;
                     }
@@ -304,6 +297,27 @@ public enum MatchDataSource {
         }
         return UNKNOWN;
     }
+
+    /**
+     * Strip all spaces/underscores/hyphens from lowercase names
+     * @param name
+     * @return
+     */
+    private static String cleanName(final String name) {
+        String output = name.toLowerCase().replaceAll("\\s+", ""); // Supplied name to check
+        output = output.replaceAll("_", "");
+        output = output.replaceAll("-", "");
+        return output;
+    }
+
+    public static boolean isSequenceFeature(MatchDataSource matchDataSource) {
+        return (matchDataSource.equals(COILS)
+                || matchDataSource.equals(MOBIDB) || matchDataSource.equals(MOBIDB_LITE)
+                || matchDataSource.equals(SIGNALP) || matchDataSource.equals(SIGNALP_EUK)
+                || matchDataSource.equals(SIGNALP_GRAM_POSITIVE) || matchDataSource.equals(SIGNALP_GRAM_NEGATIVE)
+                || matchDataSource.equals(PHOBIUS) || matchDataSource.equals(TMHMM));
+    }
+
 
     public static boolean isStructuralFeature(MatchDataSource matchDataSource) {
         return (matchDataSource.equals(CATH) || matchDataSource.equals(SCOP) || matchDataSource.equals(PDB));

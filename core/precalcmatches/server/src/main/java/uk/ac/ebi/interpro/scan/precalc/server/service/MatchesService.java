@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.server.service;
 
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 
 import java.util.List;
 
@@ -15,13 +15,28 @@ import java.util.List;
 public interface MatchesService {
 
     /**
+     * method to count the number of request made to the server
+     *
+     * @param md5Count
+     * @param timeToGetMatches
+     */
+    void countMD5Requests(int md5Count, long timeToGetMatches);
+
+    /**
+     *
+     * @param md5Count
+     * @param timeToGetMatches
+     */
+    void countMatchesRequests(int md5Count, long timeToGetMatches);
+
+    /**
      * Web service request for a set of matches, based upon
      * protein MD5 sequence checksums.
      *
      * @param proteinMD5s md5 checksum of sequences.
      * @return a List of matches for these proteins.
      */
-    List<BerkeleyMatch> getMatches(List<String> proteinMD5s);
+    List<KVSequenceEntry> getMatches(List<String> proteinMD5s);
 
     /**
      * Web service request for a List of protein sequence MD5
@@ -40,4 +55,6 @@ public interface MatchesService {
      * Cleanly shuts down the Berkeley DB environment.
      */
     void shutdown();
+
+    void setName(String serviceName);
 }

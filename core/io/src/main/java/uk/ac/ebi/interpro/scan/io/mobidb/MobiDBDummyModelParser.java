@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.mobidb;
 
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
@@ -33,9 +34,11 @@ public class MobiDBDummyModelParser extends AbstractModelFileParser {
                 this.getSignatureLibrary(),
                 this.getReleaseVersionNumber());
 
+        final Model model = new Model(MOBIDB_SIGNATURE_ACCESSION, MOBIDB_SIGNATURE_NAME, MOBIDB_SIGNATURE_DESC);
         final Signature.Builder builder = new Signature.Builder(MOBIDB_SIGNATURE_ACCESSION);
         final Signature signature = builder.name(MOBIDB_SIGNATURE_NAME)
                 .description(MOBIDB_SIGNATURE_DESC)
+                .model(model)
                 .signatureLibraryRelease(release).build();
 
         release.addSignature(signature);

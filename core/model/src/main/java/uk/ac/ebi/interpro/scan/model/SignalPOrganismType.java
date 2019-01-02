@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public enum SignalPOrganismType {
     EUK("EUK", "euk", "Eukaryotes", "SIGNALP_EUK"),
-    GRAM_POSITIVE("GRAM_POSITIVE", "gram+", "Gram-positive bacteria", "SIGNALP_GRAM+"),
-    GRAM_NEGATIVE("GRAM_NEGATIVE", "gram-", "Gram-negative bacteria", "SIGNALP_GRAM-");
+    GRAM_POSITIVE("GRAM_POSITIVE", "gram+", "Gram-positive bacteria", "SIGNALP_GRAM_POSITIVE"),
+    GRAM_NEGATIVE("GRAM_NEGATIVE", "gram-", "Gram-negative bacteria", "SIGNALP_GRAM_NEGATIVE");
 
     private String typeLongName; // InterProScan type name
     private String typeShortName; // Type as it appears on the binary command line and in the binary output text file

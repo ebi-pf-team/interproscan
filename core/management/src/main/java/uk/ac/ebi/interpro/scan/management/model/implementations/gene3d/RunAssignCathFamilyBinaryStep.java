@@ -113,7 +113,7 @@ public class RunAssignCathFamilyBinaryStep extends RunBinaryStep {
         if (this.getFullPathToPython() != null && ! this.getFullPathToPython().isEmpty()){
             command.add(this.getFullPathToPython());
         }else{
-            command.add("python");
+            command.add("python3");
         }
         command.add(this.getFullPathToBinary());
 //        command.addAll(this.getBinarySwitchesAsList());

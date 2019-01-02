@@ -14,6 +14,7 @@ public interface StepInstanceCreatingStep {
     String COMPLETION_JOB_NAME_KEY = "COMPLETION_JOB_NAME";
     String USE_MATCH_LOOKUP_SERVICE = "USE_MATCH_LOOKUP_SERVICE";
     String EXCLUDE_SITES = "EXCLUDE_SITES";
+    String INCLUDE_TSV_SITES = "INCLUDE_TSV_SITES";
 
 
     void setJobs(Jobs jobs);

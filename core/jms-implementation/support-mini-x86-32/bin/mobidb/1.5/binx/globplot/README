@@ -1,0 +1,32 @@
+Quick install:
+
+-install python2.2+
+-install Biopython from www.biopython.org
+
+-download TISEAN source: http://www.mpipks-dresden.mpg.de/~tisean/archive.html#source
+-compile the TISEAN package and get the sav_gol binary from the TISEAN_2.1/source_c directory,
+move it to the same directory as this archive was extracted to or change the path in
+the SavitzkyGolay routine.
+
+run globplot: ./GlobPlot.py
+
+
+note: only Russell/Linding propensities are currently in the script,
+you can replace them manually or mail and ask me to do it...but these
+parameters are the ones we had best results with!
+
+
+input: sequence_file is a fasta or file with multiple fasta sequences in!
+output: note that the masking is OPPOSITE the one the www servers is giving,
+CAPITAL letters means GlobDom or disorder!
+
+
+
+
+cheers
+r.
+
+GlobPlot & GlobPipe
+Rune Linding
+Copyright (C) 2003
+email: linding@embl.de

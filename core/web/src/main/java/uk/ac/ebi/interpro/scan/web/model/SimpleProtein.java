@@ -240,7 +240,12 @@ public final class SimpleProtein implements Serializable {
         final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
         for (SimpleEntry entry : this.entries) {
             if (!entry.isIntegrated()) {
-                signatures.addAll(entry.getSignatures());
+                for (SimpleSignature signature : entry.getSignatures()) {
+                    if (!MatchDataSource.isSequenceFeature(signature.getDataSource())) {
+                        signatures.add(signature);
+                    }
+                }
+                break;
             }
         }
         Collections.sort(signatures);
@@ -259,6 +264,43 @@ public final class SimpleProtein implements Serializable {
         int resultValue = 0;
         if (getUnintegratedSignatures() != null) {
             resultValue = (getUnintegratedSignatures().size() - 1) * heightPerSignatureLine + globalHeight;
+        }
+        return resultValue;
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
+    public List<SimpleSignature> getSequenceFeatures() {
+        final List<SimpleSignature> signatures = new ArrayList<>();
+        for (SimpleEntry entry : this.entries) {
+            if (!entry.isIntegrated()) {
+                for (SimpleSignature signature : entry.getSignatures()) {
+                    if (MatchDataSource.isSequenceFeature(signature.getDataSource())) {
+                        signatures.add(signature);
+                    }
+                }
+                break;
+            }
+        }
+        Collections.sort(signatures);
+        return signatures;
+    }
+
+    /**
+     * Returns the height in pixel for the un-integrated signatures section within the SVG template.
+     *
+     * @param heightPerSignatureLine
+     * @param globalHeight
+     * @return
+     */
+    public int getSequenceFeaturesComponentHeightForSVG(int heightPerSignatureLine, int globalHeight) {
+        //default
+        int resultValue = 0;
+        if (getSequenceFeatures() != null) {
+            resultValue = (getSequenceFeatures().size() - 1) * heightPerSignatureLine + globalHeight;
         }
         return resultValue;
     }
@@ -425,6 +467,7 @@ public final class SimpleProtein implements Serializable {
             // 2) Create SimpleSignature object
             final Signature signature = match.getSignature();
             final String signatureAc = signature.getAccession();
+            final String signatureModels = match.getSignatureModels();
             final String signatureName = (signature.getName() == null || signature.getName().length() == 0)
                     ? signatureAc
                     : signature.getName();
@@ -460,30 +503,38 @@ public final class SimpleProtein implements Serializable {
 
                 // 4) Create SimpleLocation object
                 final Location location = (Location) o;
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+                String feature = null;
+                if (location instanceof MobiDBMatch.MobiDBLocation) {
+                    feature = ((MobiDBMatch.MobiDBLocation) location).getSequenceFeature();
+                }
 
-                // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
-                simpleSignature.getLocations().add(simpleLocation);
-                // Add location to the list of super matches
-                simpleEntry.getLocations().add(simpleLocation);
+                for (Object p : location.getLocationFragments()) {
+                    final LocationFragment locationFragment = (LocationFragment) p;
+                    // TODO Expand SimpleLocation - add concept of SimpleLocationFragment so the current SimpleLocation is not just an abbreviation of the two concepts
+                    final SimpleLocation simpleLocation = new SimpleLocation(locationFragment.getStart(), locationFragment.getEnd(), signatureModels, feature);
+                    // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
+                    simpleSignature.getLocations().add(simpleLocation);
+                    // Add location to the list of super matches
+                    simpleEntry.getLocations().add(simpleLocation);
 
-                // Add any sites from that location
-                if (location instanceof LocationWithSites) {
-                    final Set<Site> siteSet = ((LocationWithSites) location).getSites();
-                    if (siteSet != null) {
-                        long i = 1L;
-                        for (Site site : siteSet) {
-                            Long siteId = site.getId();
-                            if (siteId == null) {
-                                siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
+                    // Add any sites from that location
+                    if (location instanceof LocationWithSites) {
+                        final Set<Site> siteSet = ((LocationWithSites) location).getSites();
+                        if (siteSet != null) {
+                            long i = 1L;
+                            for (Site site : siteSet) {
+                                Long siteId = site.getId();
+                                if (siteId == null) {
+                                    siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
+                                }
+                                SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
+                                for (SiteLocation siteLocation : site.getSiteLocations()) {
+                                    SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd(), signatureModels));
+                                    simpleSite.addSiteLocation(simpleSiteLocation);
+                                }
+                                simpleProtein.getSites().add(simpleSite);
+                                i++;
                             }
-                            SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
-                            for (SiteLocation siteLocation : site.getSiteLocations()) {
-                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd()));
-                                simpleSite.addSiteLocation(simpleSiteLocation);
-                            }
-                            simpleProtein.getSites().add(simpleSite);
-                            i++;
                         }
                     }
                 }

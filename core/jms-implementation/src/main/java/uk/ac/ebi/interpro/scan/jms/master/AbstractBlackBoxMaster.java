@@ -47,6 +47,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
      */
     protected CleanRunDatabase databaseCleaner;
     private boolean excludeSites = false;
+    private boolean includeTsvSites = false;
     private boolean mapToInterPro = false;
     private boolean mapToGO = false;
     private boolean mapToPathway = false;
@@ -166,6 +167,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(StepInstanceCreatingStep.USE_MATCH_LOOKUP_SERVICE, Boolean.toString(useMatchLookupService));
         params.put(StepInstanceCreatingStep.EXCLUDE_SITES, Boolean.toString(excludeSites));
+        params.put(StepInstanceCreatingStep.INCLUDE_TSV_SITES, Boolean.toString(includeTsvSites));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
@@ -314,6 +316,15 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     @Override
     public void setExcludeSites(boolean excludeSites) {
         this.excludeSites = excludeSites;
+    }
+
+    public boolean isIncludeTsvSites() {
+        return includeTsvSites;
+    }
+
+    @Override
+    public void setIncludeTsvSites(boolean includeTsvSites) {
+        this.includeTsvSites = includeTsvSites;
     }
 
     @Override

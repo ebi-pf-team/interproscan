@@ -74,6 +74,7 @@ public class AnalyseMatchDataResultTest {
                 "6C2CA0E2864B327B",
                 "PTHR10336:SF21",
                 "PTHR10336:SF21",
+                null,
                 "PANTHER",
                 29,
                 1489,
@@ -85,7 +86,8 @@ public class AnalyseMatchDataResultTest {
                 10090,
                 "Mus musculus",
                 "Mus musculus (Mouse)",
-                false));
+                false,
+                ""));
         records.add(new MatchDataRecord("A2AP18",
                 "PLCH2_MOUSE",
                 "1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase eta-2",
@@ -93,6 +95,7 @@ public class AnalyseMatchDataResultTest {
                 "6C2CA0E2864B327B",
                 "PTHR10336",
                 "PTHR10336",
+                null,
                 "PANTHER",
                 29,
                 1489,
@@ -104,9 +107,10 @@ public class AnalyseMatchDataResultTest {
                 10090,
                 "Mus musculus",
                 "Mus musculus (Mouse)",
-                false));
+                false,
+                ""));
 
-        SimpleProtein protein = instance.createSimpleProtein(records);
+        SimpleProtein protein = instance.createSimpleProtein(records, new ArrayList<>());
         assertNotNull(protein);
         List<SimpleEntry> entries = protein.getEntries();
         assertNotNull(entries);

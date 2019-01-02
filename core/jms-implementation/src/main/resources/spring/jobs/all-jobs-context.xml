@@ -240,7 +240,7 @@
                 <ref bean="stepRunGetOrf"/>
             </list>
         </property>
-        <property name="fullPathToPython" value="${python.command}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
         <property name="fullPathToBinary" value="${binary.getorf.parser.path}"/>
         <property name="orfsFilterSize" value="${binary.getorf.parser.filtersize}"/>
         <property name="binarySwitches" value="${getorf.parser.binary.switches}"/>
@@ -345,7 +345,7 @@
     <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
         <property name="interproscanVersion" value="${i5.version}"/>
         <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
-        <property name="berkeleyToI5DAO" ref="berkeleyToI5ModelDAO"/>
+        <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
     </bean>
 
     <bean id="preCalcMatchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">

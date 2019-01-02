@@ -413,22 +413,24 @@ public class StatsUtil {
     }
 
     public void displayNonAcknowledgedSubmittedStepInstances() {
-        String nonAcknowledgedSubmittedStepInstances = "[";
         if (Utilities.verboseLog) {
-            Utilities.verboseLog("Current Non-Acknowledged Submitted StepInstances ");
+            String nonAcknowledgedSubmittedStepInstances = "[";
+            if (Utilities.verboseLog) {
+                Utilities.verboseLog("Current Non-Acknowledged Submitted StepInstances ");
 
-            for (Map.Entry<String, Integer> elem:getNonAcknowledgedSubmittedStepInstancesCounts().entrySet()) {
-                String jobName = (String) elem.getKey();
-                int notDoneCount = (int) elem.getValue();
-                if (notDoneCount > 0) {
-                    String jobMessage = "#:" + notDoneCount; // + ") (rep:" + status;
-                    nonAcknowledgedSubmittedStepInstances += String.format("%s (%s)", jobName, jobMessage)
-                            + ", ";
+                for (Map.Entry<String, Integer> elem : getNonAcknowledgedSubmittedStepInstancesCounts().entrySet()) {
+                    String jobName = (String) elem.getKey();
+                    int notDoneCount = (int) elem.getValue();
+                    if (notDoneCount > 0) {
+                        String jobMessage = "#:" + notDoneCount; // + ") (rep:" + status;
+                        nonAcknowledgedSubmittedStepInstances += String.format("%s (%s)", jobName, jobMessage)
+                                + ", ";
+                    }
                 }
             }
+            nonAcknowledgedSubmittedStepInstances += "]";
+            System.out.println(nonAcknowledgedSubmittedStepInstances);
         }
-        nonAcknowledgedSubmittedStepInstances += "]";
-        System.out.println(nonAcknowledgedSubmittedStepInstances);
     }
 
 
@@ -735,10 +737,11 @@ public class StatsUtil {
             boolean displayRemainingJobs = false;
             Long now = System.currentTimeMillis();
             Long timeSinceLastReport = now - progressReportTime;
-            if (timeSinceLastReport > 1200000) {
+
+            if (timeSinceLastReport > 3600000) {
                 displayProgress = true;
                 progressCounter++;
-                if (progressCounter > 3) {
+                if (progressCounter > 4) {
                     displayRemainingJobs = true;
                 }
             }
@@ -758,41 +761,53 @@ public class StatsUtil {
                 progressCounter = 4;
             } else if (progress > 0.9 && progressCounter >= 4) {
                 changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-                if (timeSinceLastReport > 1800000 && changeSinceLastReport > 0) {
+                if (timeSinceLastReport > 3600000 && changeSinceLastReport > 0) {
                     displayProgress = true;
                     previousUnfinishedJobs = unfinishedJobs;
                     progressCounter++;
                 }
             }
-            if (forceDisplayProgress) {
-                displayProgress = true;
+            if (forceDisplayProgress && ! displayProgress) {
+                int multiplier = 2;
+                int intervalTime = 3600000 * (progressCounter / multiplier);
+                if (progressCounter >= 5 && timeSinceLastReport > intervalTime) {
+                    displayProgress = true;
+                    progressCounter++;
+                    forceDisplayProgress = false;
+                }
             }
             if (displayProgress) {
                 progressReportTime = System.currentTimeMillis();
                 // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
                 actualProgress = Math.floor(progress * 100);
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
-                Set<String> nonAckStepInstances = new HashSet<>();
+                if (Utilities.verboseLog) {
+                    Set<String> nonAckStepInstances = new HashSet<>();
 
-                //for (StepInstance stepinstance: getNonAcknowledgedSubmittedStepInstances()):
+                    //for (StepInstance stepinstance: getNonAcknowledgedSubmittedStepInstances()):
 
-                Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances: ");
-                displayNonAcknowledgedSubmittedStepInstances();
-                displayRunningJobs();
-                if (displayRemainingJobs) {
-                    displayAllAvailableJobs();
-                }
+                    Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances: ");
+                    displayNonAcknowledgedSubmittedStepInstances();
+                    displayRunningJobs();
+                    if (displayRemainingJobs) {
+                        //displayAllAvailableJobs(); TODO refactor
+                        if (unfinishedJobs > 1) {
+                            Utilities.verboseLog("allAvailableJobs uniq count:" + allAvailableJobs.size());
+                        }
+                        //
+                    }
 
-                int connectionCount = 9999; //statsMessageListener.getConsumers();
-                changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-                if (changeSinceLastReport > 0) {
-                    previousUnfinishedJobs = unfinishedJobs;
-                }
-                previousUnfinishedJobs = unfinishedJobs; // maybe the above conditional is superfluous
+                    int connectionCount = 9999; //statsMessageListener.getConsumers();
+                    changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                    if (changeSinceLastReport > 0) {
+                        previousUnfinishedJobs = unfinishedJobs;
+                    }
+                    previousUnfinishedJobs = unfinishedJobs; // maybe the above conditional is superfluous
 
-                String debugProgressString = " #:t" + masterTotalJobs + " :l" + unfinishedJobs + " change: " + changeSinceLastReport + " :c" + connectionCount;
-                Utilities.verboseLog("debugProgressString: " + debugProgressString);
+                    String debugProgressString = " #:t" + masterTotalJobs + " :l" + unfinishedJobs + " change: " + changeSinceLastReport + " :c" + connectionCount;
+                    Utilities.verboseLog("debugProgressString: " + debugProgressString);
 //                LOGGER.debug(statsMessageListener.getStats());
+                }
             }
         }
     }
