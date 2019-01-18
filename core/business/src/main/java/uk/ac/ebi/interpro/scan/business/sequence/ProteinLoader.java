@@ -159,7 +159,6 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 }
             } else {
                 //there are no matches or we are not using the lookup match service
-                //
 
                 for (Protein protein : proteinsAwaitingPrecalcLookup) {
                     addProteinToBatch(protein);
@@ -250,7 +249,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             LOGGER.debug("Top precalc protein: " + topPrecalcProteinId);
         }
 
-        sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
+        sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId, proteinLookup != null, null);
         // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
     }
@@ -263,6 +262,31 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             System.out.println("Available matches will be retrieved from the pre-calculated match lookup service.\n\n" +
                     "Matches for any sequences that are not represented in the lookup service will be calculated locally.");
         }
+    }
+
+
+
+    public void storeAll2KV(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
+        }
+        //TODO: do notify() run this step when lookupProteins() is disabled
+        //complicated logic here
+        long bottom = 1l;
+        long top = bottom + parsedProteins.size();
+        //TODO check again
+        List<Protein> storedProteins = proteinDAO.getProteins(); //original was proteinDAO.getProteins(bottom, top);
+        Long count = 0L;
+        //SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+        for (Protein protein : storedProteins) {
+            count++;
+            String sequenceId = Long.toString(protein.getId());
+            if (count == 1 || count == 10){
+                Utilities.verboseLog("sequenceId = " + sequenceId);
+            }
+            proteinDAO.insert(sequenceId, protein);
+        }
+        Utilities.verboseLog("Completed storing " + count + " parsed proteins into KV store, top=" + top);
     }
 
     /**

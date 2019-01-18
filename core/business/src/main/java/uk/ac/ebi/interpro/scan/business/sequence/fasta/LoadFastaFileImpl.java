@@ -36,10 +36,11 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     private SequenceLoader<T> sequenceLoader;
 
+    String levelDBStoreRoot;
+
     protected String inputType = "Protein";
 
     protected static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
-
 
     public void setInputType(String inputType) {
         this.inputType = inputType;
@@ -51,6 +52,10 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         this.sequenceLoader = sequenceLoader;
     }
 
+//    @Override
+    public void setLevelDBStoreRoot(String levelDBStoreRoot) {
+        this.levelDBStoreRoot = levelDBStoreRoot;
+    }
 
     @Override
     @Transactional
@@ -67,7 +72,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
             final Set<T> parsedMolecules = new HashSet<>();
 
-            Utilities.verboseLog("Start Parsing  input file stream of - " + inputType +  " - sequences");
+            Utilities.verboseLog("start Parsing  input file stream");
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.length() > 0) {
@@ -148,15 +153,15 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
 
-            Utilities.verboseLog("Parsed Molecules (" + inputType + " sequences) : " + parsedMolecules.size());
+            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
 
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
             sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
-            Utilities.verboseLog("Store parsed " + inputType + " sequences (processed lookup): " + parsedMolecules.size());
+            Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
             sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
-            Utilities.verboseLog("Store and persist the " + inputType + " sequences ...  completed");
+            Utilities.verboseLog("Store and persist the sequences ...  completed");
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         }
@@ -188,3 +193,4 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     protected abstract void addToMoleculeCollection(String sequence, final String currentId, final Set<T> parsedMolecules);
 }
+//todo edit

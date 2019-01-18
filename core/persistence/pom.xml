@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.32-71.0</version>
+        <version>5.33-72.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-persistence</artifactId>
-    <version>5.32-71.0</version>
+    <version>5.33-72.0</version>
 
     <packaging>jar</packaging>
 
@@ -37,19 +37,19 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.32-71.0</version>
+            <version>5.33-72.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.32-71.0</version>
+            <version>5.33-72.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.32-71.0</version>
+            <version>5.33-72.0</version>
         </dependency>
 
         <dependency>
@@ -65,6 +65,19 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
+
+        <!--< leveldb dependecnies>-->
+        <dependency>
+            <groupId>org.iq80.leveldb</groupId>
+            <artifactId>leveldb</artifactId>
+            <version>0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
+
 
         <!--
         === All dependcies below here are TEST scope only. ===

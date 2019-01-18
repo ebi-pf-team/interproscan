@@ -43,6 +43,8 @@
         <property name="jobList">
             <list>
                 <ref bean="jobLoadFromFasta"/>
+                <ref bean="jobMatchLookup"/>
+                <ref bean="jobFinaliseInitialSteps"/>
                 <ref bean="jobLoadNucleicAcidSequence"/>
                 <ref bean="jobLoadFromUniParc"/>
                 <ref bean="jobWriteOutput"/>
@@ -120,6 +122,8 @@
 
     <!--<import resource="all-jobs-context.xml"/>-->
 
+
+
     <!-- ######################## JOB: job-load-from-fasta ############################  -->
     <bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="Load proteins from a fasta file and create required JobInstance objects"/>
@@ -128,19 +132,119 @@
 
 
     <!-- STEP 1 -->
-    <bean id="stepLoadFromFasta"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">
+    <bean id="stepLoadFromFastaIntoDB"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadIntoDBStep"
+    >
         <property name="job" ref="jobLoadFromFasta"/>
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+
         <property name="stepDescription"
-                  value="Load proteins from a fasta file and create required JobInstance objects"/>
+                  value="Load proteins from a fasta file and load into DB before creating required JobInstance objects"/>
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="2"/>
         <property name="serialGroup" value="LOAD_PROTEINS"/>
-        <property name="fastaFileLoader" ref="proteinFastaFileLoader"/>
+        <property name="fastaFileLoader" ref="proteinFastaFileLoaderIntoDB"/>
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
+
+    <!-- STEP 2 -->
+
+    <!--<bean id="stepLoadFromFasta"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep"-->
+    <!--&gt;-->
+        <!--<property name="job" ref="jobLoadFromFasta"/>-->
+        <!--<property name="dependsUpon" ref="stepLoadFromFasta2DB"/>-->
+        <!--&lt;!&ndash; This step has no dependencies, so will be scheduled first for its associated job. &ndash;&gt;-->
+        <!--<property name="stepDescription"-->
+                  <!--value="Load proteins from a fasta file and create required JobInstance objects"/>-->
+        <!--<property name="createStepInstancesForNewProteins" value="false"/>-->
+        <!--<property name="retries" value="2"/>-->
+        <!--<property name="serialGroup" value="LOAD_PROTEINS"/>-->
+        <!--<property name="fastaFileLoader" ref="proteinFastaFileLoader"/>-->
+        <!--<property name="jobs" ref="jobs"/>-->
+        <!--<property name="stepInstanceDAO" ref="stepInstanceDAO"/>-->
+    <!--</bean>-->
+
+    <!-- ######################## JOB: job-load-from-fasta ############################  -->
+    <bean id="jobMatchLookup" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Lookup matches from the  lookup match service"/>
+        <property name="analysis" value="false"/>
+    </bean>
+
+    <!-- STEP 1 -->
+
+    <bean id="stepMatchLookup"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.MatchLookupStep">
+        <property name="job" ref="jobMatchLookup"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"
+                  value="Lookup matches from the lookup match server and persist the match objects"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="1"/>
+        <!--<property name="serialGroup" value="MATCH_LOOKUP"/>-->
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="interproscanVersion" value="${i5.version}"/>
+        <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
+        <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
+        <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
+        <property name="proteinInsertBatchSizeNoLookup" value="${precalculated.match.protein.insert.batch.size.nolookup}"/>
+        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
+        <!--<property name="precalculatedProteinLookup" ref="precalculatedProteinLookupV2"/>-->
+    </bean>
+
+
+    <bean id="jobFinaliseInitialSteps" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Finalise and cleanup after loading the sequences and fetching matches from the lookup match service
+        and create required JobInstance objects"/>
+        <property name="analysis" value="false"/>
+    </bean>
+
+    <!-- STEP 1 -->
+
+    <bean id="stepFinaliseInitialSteps"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FinaliseInitialSetupStep">
+        <property name="job" ref="jobFinaliseInitialSteps"/>
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription"
+                  value="Load proteins from a fasta file and create required JobInstance objects"/>
+        <property name="dependsUpon" ref="stepMatchLookup"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="1"/>
+        <property name="serialGroup" value="MATCH_LOOKUP"/>
+        <property name="jobs" ref="jobs"/>
+        <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
+        <property name="finaliseInitialSetupTasks" ref="finaliseInitialSetupTasks"/>
+        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
+
+        <!--<property name="completionJob" ref="jobWriteOutput"/>-->
+    </bean>
+
+    <!-- old entry -->
+
+    <!--&lt;!&ndash; ######################## JOB: job-load-from-fasta ############################  &ndash;&gt;-->
+    <!--<bean id="jobLoadFromFasta" class="uk.ac.ebi.interpro.scan.management.model.Job">-->
+        <!--<property name="description" value="Load proteins from a fasta file and create required JobInstance objects"/>-->
+        <!--<property name="analysis" value="false"/>-->
+    <!--</bean>-->
+
+
+    <!--&lt;!&ndash; STEP 1 &ndash;&gt;-->
+    <!--<bean id="stepLoadFromFasta"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FastaFileLoadStep">-->
+        <!--<property name="job" ref="jobLoadFromFasta"/>-->
+        <!--&lt;!&ndash; This step has no dependencies, so will be scheduled first for its associated job. &ndash;&gt;-->
+        <!--<property name="stepDescription"-->
+                  <!--value="Load proteins from a fasta file and create required JobInstance objects"/>-->
+        <!--<property name="createStepInstancesForNewProteins" value="false"/>-->
+        <!--<property name="retries" value="2"/>-->
+        <!--<property name="serialGroup" value="LOAD_PROTEINS"/>-->
+        <!--<property name="fastaFileLoader" ref="proteinFastaFileLoader"/>-->
+        <!--<property name="jobs" ref="jobs"/>-->
+        <!--<property name="stepInstanceDAO" ref="stepInstanceDAO"/>-->
+    <!--</bean>-->
 
 
 
@@ -337,12 +441,37 @@
     <bean id="getOrfDescriptionLineParser"
           class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
 
+    <bean id="proteinFastaFileLoaderIntoDB" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileIntoDBImpl">
+        <property name="sequenceLoader" ref="proteinLoader"/>
+        <property name="levelDBStoreRoot" value="testLevelDB"/>
+         <!--TODO check -->
+        <property name="proteinDAO" ref="proteinDAO"/>
+
+    </bean>
+
+    <bean id="finaliseInitialSetupTasks" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks">
+        <property name="sequenceLoader" ref="proteinLoader"/>
+        <!--TODO check -->
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit"/>
+    </bean>
+
+    <!--<bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">-->
+        <!--<property name="sequenceLoader" ref="proteinLoader"/>-->
+    <!--</bean>-->
+
     <bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">
         <property name="sequenceLoader" ref="proteinLoader"/>
         <property name="inputType" value="Protein"/>
     </bean>
 
     <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
+        <property name="interproscanVersion" value="${i5.version}"/>
+        <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
+        <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
+    </bean>
+
+    <bean id="precalculatedProteinLookupV2" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookupV2">
         <property name="interproscanVersion" value="${i5.version}"/>
         <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
         <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
@@ -371,6 +500,9 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.StepCreationSequenceLoadListener">
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="completionJob" ref="jobWriteOutput"/>
+        <property name="matchLookupJob" ref="jobMatchLookup"/>
+        <property name="finaliseInitialStepsJob" ref="jobFinaliseInitialSteps"/>
+        <property name="initialSetupSteps" value="false"/>
         <property name="jobs" ref="jobs"/>
     </bean>
 
@@ -381,6 +513,22 @@
                 <value>n</value>
             </set>
         </constructor-arg>
+    </bean>
+
+
+    <!-- protein that have no matches in the lookup service-->
+    <bean id="proteinsWithoutLookupHit" class="org.eclipse.jetty.util.ConcurrentHashSet">
+    </bean>
+
+    <bean id="kvStoreProteins"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="levelDBStore" value="kvProteinDB"/>
+    </bean>
+
+    <bean id="kvStoreMatches"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <property name="levelDBStore" value="kvMatchDB"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

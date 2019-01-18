@@ -23,7 +23,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> extends GenericDAOImpl<U, Long> implements FilteredMatchDAO<T, U> {
+public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> extends GenericKVDAOImpl<U> implements FilteredMatchDAO<T, U> {
 
     private static final Logger LOGGER = Logger.getLogger(FilteredMatchDAOImpl.class.getName());
 

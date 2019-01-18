@@ -19,12 +19,15 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import org.iq80.leveldb.WriteBatch;
+import org.iq80.leveldb.DBException;
+
 import javax.persistence.Query;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -37,7 +40,7 @@ import java.util.*;
  *
  * @author Phil Jones, EMBL-EBI
  */
-public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements ProteinDAO {
+public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements ProteinDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinDAOImpl.class.getName());
 
@@ -47,6 +50,10 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * sub-classes of the Match class, allowing them to be queried in turn.
      */
     private static final List<String> CONCRETE_MATCH_CLASSES = new ArrayList<String>();
+
+    private Set<Protein> proteinsWithoutLookupHit;
+
+    Map<Long, Protein> proteinIdsWithoutLookupHit;
 
     static {
         final Reflections reflections = new Reflections("uk.ac.ebi.interpro.scan.model");
@@ -65,6 +72,105 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     public ProteinDAOImpl() {
         super(Protein.class);
     }
+
+
+    //new methods utisiling the KV api
+    @Transactional
+    public void persist(final Map<String, Protein> keyToProteinMap) {
+        try {
+            WriteBatch batch = levelDBStore.getLevelDBStore().createWriteBatch();
+            try {
+                for (Map.Entry<String, Protein> entry : keyToProteinMap.entrySet()) {
+                    String key = entry.getKey();
+                    Protein protein = entry.getValue();
+                    byte[] byteKey = dbStore.serialize(key);
+                    byte[] data = dbStore.serialize(protein);
+                    batch.put(byteKey, data);
+                }
+
+                /**
+                 * do batch operation with sync option.
+                 */
+                levelDBStore.getLevelDBStore().write(batch);
+                //levelDBStore.getLevelDBStore().write(batch, SYNC_WRITE_OPTION);
+
+                LOGGER.info("data flushed to kv db .... " + levelDBStore.getDbName());
+
+            } finally {
+                // close the batch
+                try {
+                    batch.close();
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (DBException e) {
+            new IOException(e).printStackTrace();
+            //throw new IOException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void insert(String key, Protein protein) {
+        dbStore.put(key, dbStore.serialize(protein));
+        //return protein;
+    }
+
+    @Transactional
+    public void persist(byte[] key, byte[] protein) {
+        dbStore.put(key, protein);
+    }
+
+    @Transactional
+    public Protein getProtein(String key) {
+        return dbStore.asProtein(dbStore.get(key));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Protein> getProteins() {
+        List<Protein> proteins = new ArrayList<Protein>();
+        Collection<byte[]> allByteProteins = dbStore.getAllElements().values();
+        for (byte[] byteProtein : allByteProteins) {
+            Protein protein = dbStore.asProtein(byteProtein);
+            proteins.add(protein);
+        }
+        return proteins;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Protein> getKeyToProteinMap() {
+        Map<String, Protein> keyToProteinMap = new HashMap<>();
+        Map<byte[], byte[]> allByteProteins = dbStore.getAllElements();
+        Iterator it = allByteProteins.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            String key = dbStore.asString((byte[]) pair.getKey());
+            Protein protein = dbStore.asProtein((byte[]) pair.getValue());
+            //Utilities.verboseLog(" key:" + key + " protein: " + protein.getId());
+            keyToProteinMap.put(key, protein);
+        }
+        return keyToProteinMap;
+    }
+
+    public void setProteinsWithoutLookupHit(Set<Protein> proteinsWithoutLookupHit) {
+        this.proteinsWithoutLookupHit = proteinsWithoutLookupHit;
+    }
+
+    @Transactional
+    public Set<Protein> getProteinsWithoutLookupHit() {
+        return proteinsWithoutLookupHit;
+    }
+
+    public void setProteinIdsWithoutLookupHit(Map<Long, Protein> proteinIdsWithoutLookupHit) {
+        this.proteinIdsWithoutLookupHit = proteinIdsWithoutLookupHit;
+    }
+
+    public Map<Long, Protein> getProteinIdsWithoutLookupHit() {
+        return proteinIdsWithoutLookupHit;
+    }
+
+//the old methods that may have to be refactored
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
@@ -112,6 +218,22 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
             }
         }
         return matchingProteins;
+    }
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public List<Protein> getProteinsWithoutLookupHitBetweenIds(long bottom, long top) {
+        Query query = entityManager.createQuery("select p from Protein p where p.id >= :bottom and p.id <= :top");
+        query.setParameter("bottom", bottom);
+        query.setParameter("top", top);
+        List<Protein> proteins = (List<Protein>) query.getResultList();
+        List<Protein> proteinsWithoutLookupHitBetweenIds = new ArrayList<>();
+        for (Protein protein: proteins){
+            if(proteinIdsWithoutLookupHit.containsKey(protein.getId())){
+                proteinsWithoutLookupHitBetweenIds.add(protein);
+            }
+        }
+        return proteinsWithoutLookupHitBetweenIds;
     }
 
 

@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Antony Quinn
  * @version $Id$
  */
-public interface FilteredMatchDAO<T extends RawMatch, U extends Match> extends GenericDAO<U, Long> {
+public interface FilteredMatchDAO<T extends RawMatch, U extends Match> extends GenericKVDAO<U> {
 
     /**
      * Persists filtered protein matches.

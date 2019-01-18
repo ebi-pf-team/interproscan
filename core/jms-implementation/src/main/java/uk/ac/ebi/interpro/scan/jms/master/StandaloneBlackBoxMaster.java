@@ -256,6 +256,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             systemExit(999);
         } catch (Exception e) {
             LOGGER.error("Exception thrown by StandaloneBlackBoxMaster: ", e);
+            e.printStackTrace(); //TODO fro debug only remove in production
             systemExit(999);
         }
 

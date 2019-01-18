@@ -16,6 +16,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiv
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
+import uk.ac.ebi.interpro.scan.persistence.WriteOutputMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.BufferedWriter;
@@ -45,6 +46,8 @@ public class WriteOutputStep extends Step {
     private ProteinDAO proteinDAO;
 
     private ProteinXrefDAO proteinXrefDAO;
+
+    private WriteOutputMatchDAO writeOutputMatchDAO;
 
     //Output writer
     private XmlWriter xmlWriter;

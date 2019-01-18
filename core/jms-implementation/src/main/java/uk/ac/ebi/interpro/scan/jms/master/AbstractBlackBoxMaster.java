@@ -147,6 +147,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
         processOutputFormats(params, this.outputFormats);
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
+        params.put(StepInstanceCreatingStep.MATCH_LOOKUP_JOB_NAME_KEY, "jobMatchLookup");
+        params.put(StepInstanceCreatingStep.WORKER_NUMBER_KEY, Integer.toString(getConcurrentInVmWorkerCount()));
+        params.put(StepInstanceCreatingStep.FINALISE_INITIAL_STEPS_JOB_NAME_KEY, "jobFinaliseInitialSteps");
+
         params.put(WriteOutputStep.INCL_TSV_VERSION, Boolean.toString(this.inclTSVVersion));
 
         String outputBaseName;

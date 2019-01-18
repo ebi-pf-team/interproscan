@@ -64,7 +64,13 @@ public class WriteFastaFileStep extends Step {
             LOGGER.info("Starting step with Id " + this.getId());
         }
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
-        final List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        final List<Protein> proteins;
+        if (doRunLocally) {
+            proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        }else {
+            proteins = proteinDAO.getProteinsWithoutLookupHitBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+        }
+
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
         }

@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,7 @@ public abstract class AbstractStepInstanceCreator {
      */
     protected List<StepInstance> createStepInstances(Step step, Long bottomProteinId, Long topProteinId) {
         final List<StepInstance> stepInstances = new ArrayList<StepInstance>();
+        LOGGER.warn("step.getMaxProteins(): " + step.getMaxProteins());
         final long sliceSize = (step.getMaxProteins() == null)
                 ? topProteinId - bottomProteinId + 1    // No maximum number of proteins, so all of them!
                 : step.getMaxProteins();                // Limit to the slice size.
@@ -112,6 +114,7 @@ public abstract class AbstractStepInstanceCreator {
      */
     protected void addDependenciesAndStore(Map<Step, List<StepInstance>> stepToStepInstances) {
         // Add the dependencies to the StepInstances.
+
         for (Step step : stepToStepInstances.keySet()) {
             for (StepInstance stepInstance : stepToStepInstances.get(step)) {
                 final List<Step> dependsUpon = stepInstance.getStep(jobs).getDependsUpon();

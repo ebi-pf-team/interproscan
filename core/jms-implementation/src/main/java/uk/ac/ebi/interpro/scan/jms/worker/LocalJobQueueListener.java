@@ -55,7 +55,7 @@ public class LocalJobQueueListener implements MessageListener {
     }
 
     public void setJobCount(int jobCount) {
-        this.jobCount = new AtomicInteger (jobCount);
+        this.jobCount = new AtomicInteger(jobCount);
     }
 
     public void setLocalJmsTemplate(JmsTemplate localJmsTemplate) {
@@ -114,14 +114,14 @@ public class LocalJobQueueListener implements MessageListener {
         jobCount.incrementAndGet();
         int localCount = jobCount.get();
         String timeNow = Utilities.getTimeNow();
-	    long threadId = Thread.currentThread().getId();
-        if(localCount == 1){
+        long threadId = Thread.currentThread().getId();
+        if (localCount == 1) {
             Utilities.verboseLog("first transaction ... ");
         }
-        if (inVmworkerNumber == 0){
+        if (inVmworkerNumber == 0) {
             if (controller != null) {
                 setInVmworkerNumber(controller.getInVmWorkeNumber());
-            }else{
+            } else {
                 try {
                     setInVmworkerNumber(message.getJMSMessageID().hashCode());
                 } catch (JMSException e) {
@@ -150,6 +150,7 @@ public class LocalJobQueueListener implements MessageListener {
             }
             LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID() + " cmd:  " + message.toString());
             LOGGER.info("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            Utilities.verboseLog(10, "Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
             if (!(message instanceof ObjectMessage)) {
                 LOGGER.error("Received a message of an unknown type (non-ObjectMessage)");
@@ -157,7 +158,6 @@ public class LocalJobQueueListener implements MessageListener {
             }
             final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
             final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
-
 
 
             if (stepExecution == null) {
@@ -171,7 +171,7 @@ public class LocalJobQueueListener implements MessageListener {
             // acknowledging the message, the Master will know to re-run the StepInstance.
             try {
 
-                stepName =  stepExecution.getStepInstance().getStepId();
+                stepName = stepExecution.getStepInstance().getStepId();
                 Long stepId = stepExecution.getStepInstance().getId();
                 String proteinRange = stepExecution.getStepInstance().getBottomProtein() + "-" + stepExecution.getStepInstance().getTopProtein();
                 messageName = stepName + ": " + proteinRange;
@@ -179,30 +179,37 @@ public class LocalJobQueueListener implements MessageListener {
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
 //                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
-                if (Utilities.verboseLogLevel > 2) {
-                    Utilities.verboseLog("thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
-                            + " - stepInstanceId = " + stepId
-                            + "\n stepInstance: " + stepExecution.getStepInstance().toString());
-                }
+
+                Utilities.verboseLog(10, "thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
+                        + " - stepInstanceId = " + stepId
+                        + "\n stepInstance: " + stepExecution.getStepInstance().toString());
+
                 //the following code was used to test high memory worker creation, might still be useful later
 //                if (controller != null && ! testFailOnce){
 //                    testFailOnce = true;
 //                    throw new IllegalStateException("Exception for testing ....");
 //                }
                 stepExecutor.executeInTransaction(stepExecution, message);
-                final long executionTime =   System.currentTimeMillis() - now;
-                if(Utilities.verboseLogLevel > 2){
-                    Utilities.verboseLog("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
-                    Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
-                }
+
+                final long executionTime = System.currentTimeMillis() - now;
+
+                Utilities.verboseLog(10, "thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+                Utilities.verboseLog(10, "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+
+                LOGGER.debug("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+
                 statsUtil.jobFinished(messageName);
-                Utilities.verboseLog("Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);                
+                Utilities.verboseLog(10,"Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
 
             } catch (Exception e) {
                 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
                 LOGGER.error("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
 
+                LOGGER.error("The exception is :");
+                e.printStackTrace();  //TODO only for testing
+
+                LOGGER.error("2. The exception is :" + e.toString());
                 LOGGER.error("StepExecution with errors - stepName: " + stepName);
 
                 // Something went wrong in the execution - try to send back failure
@@ -235,14 +242,14 @@ public class LocalJobQueueListener implements MessageListener {
 //                controller.workerState.addLocallyCompletedJob(message);
             }
         }
-        if(localCount == 1){
+        if (localCount == 1) {
             Utilities.verboseLog("first transaction ... done");
             Utilities.verboseLog("InterProScan analyses continue ....");
         }
 
     }
 
-    public void getCurrentInVmWorkers(){
+    public void getCurrentInVmWorkers() {
 
     }
 
