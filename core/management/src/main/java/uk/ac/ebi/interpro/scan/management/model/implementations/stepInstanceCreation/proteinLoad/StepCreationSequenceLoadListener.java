@@ -101,13 +101,16 @@ public class StepCreationSequenceLoadListener
             Utilities.verboseLog("Range of protein database IDs for which analysis StepInstances need to be created: " + bottomNewSequenceId + " - " + topNewSequenceId);
             Utilities.verboseLog("Range of protein database IDs for which NO StepInstances need to be created: " + bottomPrecalculatedSequenceId + " - " + topPrecalculatedSequenceId);
             Utilities.verboseLog("Range of protein database IDs for which the COMPLETION StepInstances need to be created: " + bottomProteinId + " - " + topProteinId);
+            int idsWithoutLookupHitSize = 0;
             if (idsWithoutLookupHit != null) {
-                int idsWithoutLookupHitSize = idsWithoutLookupHit.size();
+                idsWithoutLookupHitSize = idsWithoutLookupHit.size();
                 Utilities.verboseLog("Protein without Lookup Hit (" + idsWithoutLookupHit.size() + ") range: " + idsWithoutLookupHit.get(0) + " - "
                         + idsWithoutLookupHit.get(idsWithoutLookupHitSize -1));
             }else{
                 Utilities.verboseLog("idsWithoutLookupHit is NULL");
             }
+            int percentageOfProteinsinLookup = (topProteinId.intValue() - idsWithoutLookupHitSize) *  100 / topProteinId.intValue();
+            Utilities.verboseLog("Lookup hits: " + percentageOfProteinsinLookup +  "% of the input sequences are in the Lookup Match Server");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Completion Job:" + completionJob);
 
