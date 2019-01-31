@@ -129,15 +129,16 @@ public class Signature implements Serializable {
     @JsonIgnore
     private Map<String, Model> models = new HashMap<String, Model>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature", fetch = FetchType.EAGER)
+    //@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
     @BatchSize(size=4000)
     @JsonManagedReference
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
-    @ElementCollection
-//    @ElementCollection(fetch = FetchType.EAGER)
+//    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
     @BatchSize(size=4000)
@@ -146,7 +147,8 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER) // lets try eager here
+//    @ManyToOne(optional = true, fetch = FetchType.LAZY) //why lazy??
 //    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
     @JsonManagedReference
     private Entry entry;

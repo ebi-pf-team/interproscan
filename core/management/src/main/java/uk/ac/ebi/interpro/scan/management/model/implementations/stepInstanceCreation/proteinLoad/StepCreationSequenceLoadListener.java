@@ -32,12 +32,17 @@ public class StepCreationSequenceLoadListener
 
 
     private Job completionJob;
+    private Job prepareOutputJob;
     private Job matchLookupJob;
     private Job finaliseInitialStepsJob;
     private boolean initialSetupSteps;
 
     public void setCompletionJob(Job completionJob) {
         this.completionJob = completionJob;
+    }
+
+    public void setPrepareOutputJob(Job prepareOutputJob) {
+        this.prepareOutputJob = prepareOutputJob;
     }
 
     public void setMatchLookupJob(Job matchLookupJob) {
@@ -58,10 +63,11 @@ public class StepCreationSequenceLoadListener
     public StepCreationSequenceLoadListener() {
     }
 
-    public StepCreationSequenceLoadListener(Jobs analysisJobs, Job completionJob,  Job matchLookupJob, Job finaliseInitialStepsJob, boolean initialSetupSteps,  Map<String, String> parameters) {
+    public StepCreationSequenceLoadListener(Jobs analysisJobs, Job completionJob, Job prepareOutputJob, Job matchLookupJob, Job finaliseInitialStepsJob, boolean initialSetupSteps,  Map<String, String> parameters) {
         this.parameters = parameters;
         this.jobs = analysisJobs;
         this.completionJob = completionJob;
+        this.prepareOutputJob = prepareOutputJob;
         this.matchLookupJob = matchLookupJob;
         this.finaliseInitialStepsJob = finaliseInitialStepsJob;
         this.initialSetupSteps = initialSetupSteps;
@@ -71,6 +77,7 @@ public class StepCreationSequenceLoadListener
         this.parameters = parameters;
         this.jobs = analysisJobs;
         this.completionJob = null;
+        this.prepareOutputJob = null;
         this.matchLookupJob = null;
         this.finaliseInitialStepsJob = null;
         this.initialSetupSteps = false;
@@ -97,6 +104,8 @@ public class StepCreationSequenceLoadListener
             final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
 
             final List<StepInstance> completionStepInstances = new ArrayList<StepInstance>();
+
+            final List<StepInstance> prepareOutputStepInstances = new ArrayList<StepInstance>();
 
             Utilities.verboseLog("Range of protein database IDs for which analysis StepInstances need to be created: " + bottomNewSequenceId + " - " + topNewSequenceId);
             Utilities.verboseLog("Range of protein database IDs for which NO StepInstances need to be created: " + bottomPrecalculatedSequenceId + " - " + topPrecalculatedSequenceId);
@@ -125,14 +134,60 @@ public class StepCreationSequenceLoadListener
                 LOGGER.debug("Range of protein database IDs for which the COMPLETION StepInstances need to be created: " + bottomProteinId + " - " + topProteinId);
             }
 
+            int workerNumber = Integer.parseInt(this.parameters.get(StepInstanceCreatingStep.WORKER_NUMBER_KEY));
+
             if (completionJob != null && ! initialSetupSteps) {
                 LOGGER.debug("Have a completion Job.");
                 LOGGER.warn("Have a completionJob Job: " + completionJob);
+                //TODO this is temp for now
+
+                if(prepareOutputJob != null){
+                    LOGGER.warn("Have a PrepareOutputJob Job :" + prepareOutputJob);
+                    //round this number to nearest thousand
+                    int rawMaxProteins = (int) (topProteinId / workerNumber);
+
+                    if (rawMaxProteins < 1){
+                        LOGGER.warn("rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins);
+                        rawMaxProteins = 1;
+                    }
+                    int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
+                    LOGGER.warn("workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
+                    LOGGER.warn("Create prepare output jobs for this run ...");
+
+                    for (Step step : prepareOutputJob.getSteps()) {
+                        //StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
+                        step.setMaxProteins(maxProteins);
+
+                        final List<StepInstance> jobStepInstances = createStepInstances(step, bottomProteinId, topProteinId);
+                        for (StepInstance jobStepInstance:jobStepInstances ){
+//                        if(jobStepInstance.getParameters() == null){
+//                            LOGGER.warn("MatchLookup Parameters is NULL : " );
+//                        }
+                            jobStepInstance.addParameters(parameters);
+//                        LOGGER.warn("MatchLookup Parameters: " + jobStepInstance.getParameters().toString());
+                        }
+                        stepToStepInstances.put(step, jobStepInstances);
+                        prepareOutputStepInstances.addAll(jobStepInstances);
+                        Utilities.verboseLog("Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances");
+                    }
+                }else{
+                    LOGGER.warn("PrepareOutputJob Job is NULL ");
+                }
+
+
                 for (Step step : completionJob.getSteps()) {
                     StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     stepInstance.addParameters(parameters);
                     completionStepInstances.add(stepInstance);
                 }
+                //add dependencies
+                for (StepInstance jobStepInstance : prepareOutputStepInstances) {
+                    for (StepInstance completionStepInstance : completionStepInstances) {
+                        completionStepInstance.addDependentStepInstance(jobStepInstance);
+                    }
+                }
+
+
             }
 
             // We will always have the FiniliseStepsJobs
@@ -141,7 +196,7 @@ public class StepCreationSequenceLoadListener
             if (matchLookupJob != null) {
                 LOGGER.debug("Have a matchLookupJob Job.");
                 LOGGER.warn("Have a matchLookupJob Job: " + matchLookupJob);
-                int workerNumber = Integer.parseInt(this.parameters.get(StepInstanceCreatingStep.WORKER_NUMBER_KEY));
+
                 //round this number to nearest thousand
                 int rawMaxProteins = (int) (topProteinId / workerNumber);
 
@@ -240,8 +295,11 @@ public class StepCreationSequenceLoadListener
                                 final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewSequenceId, topNewSequenceId);
                                 stepToStepInstances.put(step, jobStepInstances);
                                 for (StepInstance jobStepInstance : jobStepInstances) {
-                                    for (StepInstance completionStepInstance : completionStepInstances) {
-                                        completionStepInstance.addDependentStepInstance(jobStepInstance);
+//                                    for (StepInstance completionStepInstance : completionStepInstances) {
+//                                        completionStepInstance.addDependentStepInstance(jobStepInstance);
+//                                    }
+                                    for (StepInstance prepareOutputStepInstance : prepareOutputStepInstances) {
+                                        prepareOutputStepInstance.addDependentStepInstance(jobStepInstance);
                                     }
                                 }
                             }

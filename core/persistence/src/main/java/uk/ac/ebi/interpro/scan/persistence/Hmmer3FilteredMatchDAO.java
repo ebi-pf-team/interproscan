@@ -1,15 +1,19 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
+import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * HMMER3 filtered match data access object.
@@ -54,6 +58,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
             Collection<Hmmer3Match> filteredMatches = Hmmer3RawMatch.getMatches(rp.getMatches(), modelAccessionToSignatureMap);
 
             int matchLocationCount = 0;
+            String signatureLibraryKey = null;
             for (Hmmer3Match match : filteredMatches) {
                 for (T rawMatch: rp.getMatches()){
                     if (! isLocationWithinRange(protein, rawMatch)){
@@ -64,11 +69,26 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                     }
                 }
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
-                entityManager.persist(match);
+
+                //entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
+                if(signatureLibraryKey == null){
+                    signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+                }
             }
+            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+            //matchDAO.persist(dbKey, protein.getMatches());
+
             //TODO use a different utility function
             //System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }
+    }
+
+    public void hibernateInitialise(Hmmer3Match match){
+        //*****Initialize goxrefs and pathwayxrefs collections *******
+        Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
+        Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
+        match.getSignature().getEntry().getPathwayXRefs().size();
+        match.getSignature().getEntry().getGoXRefs().size();
     }
 }

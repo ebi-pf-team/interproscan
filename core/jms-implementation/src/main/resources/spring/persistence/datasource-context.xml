@@ -28,6 +28,12 @@
         <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
     </bean>
 
+    <bean id="matchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.MatchDAOImpl">
+        <property name="levelDBStore" ref="kvStoreMatches"/>
+        <property name="dbStore" ref="kvStoreMatches"/>
+    </bean>
+
     <bean id="signatureDAO"
           class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
     </bean>

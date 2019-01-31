@@ -7,6 +7,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -103,6 +105,7 @@ public class Entry implements Serializable {
             name = "ENTRY_GO_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "GO_XREF_ID"))
+//    @Fetch(FetchMode.JOIN)
     @JsonManagedReference
     private Set<GoXref> goXRefs = new HashSet<GoXref>();
 
@@ -113,6 +116,7 @@ public class Entry implements Serializable {
             name = "ENTRY_PATHWAY_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "PATHWAY_XREF_ID"))
+//    @Fetch(FetchMode.JOIN)
     @JsonManagedReference
     private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 

@@ -47,6 +47,7 @@
                 <ref bean="jobFinaliseInitialSteps"/>
                 <ref bean="jobLoadNucleicAcidSequence"/>
                 <ref bean="jobLoadFromUniParc"/>
+                <ref bean="jobPrepareForOutput"/>
                 <ref bean="jobWriteOutput"/>
 
                 <!-- Analyses -->

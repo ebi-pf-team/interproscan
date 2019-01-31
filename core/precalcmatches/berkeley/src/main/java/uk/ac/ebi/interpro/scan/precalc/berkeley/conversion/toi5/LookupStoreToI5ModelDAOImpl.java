@@ -1,12 +1,15 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +29,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
     protected EntityManager entityManager;
 
+    protected MatchDAO matchDAO;
+
     @PersistenceContext
     protected void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -34,6 +39,11 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
     @Required
     public void setSignatureLibraryToMatchConverter(Map<SignatureLibrary, LookupMatchConverter> signatureLibraryToMatchConverter) {
         this.signatureLibraryToMatchConverter = signatureLibraryToMatchConverter;
+    }
+
+    @Required
+    public void setMatchDAO(MatchDAO matchDAO) {
+        this.matchDAO = matchDAO;
     }
 
     /**
@@ -62,6 +72,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("analysisJobMap: " + analysisJobMap);
         }
+        final Map<String, Set<Match>> protteinToMatchesMap = new HashMap<>();
+
         //Mapping between SignatureLibrary and the version number, e.g key=PIRSF,value=2.84
         Map<SignatureLibrary, String> librariesToAnalyse = null;
 
@@ -104,6 +116,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         }
 
         // Collection of BerkeleyMatches of different kinds.
+        String exampleKey  = null;
         for (KVSequenceEntry lookupMatch : kvSequenceEntries) {
             //now we ahave a list
             String proteinMD5 = lookupMatch.getProteinMD5();
@@ -135,6 +148,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         || sigLib.getName().equals(SignatureLibrary.SFLD.getName())) {
                     continue;
                 }
+                SignatureLibrary signatureLibraryKey = sigLib;
                 if (LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())) {
                     LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
                 }
@@ -199,20 +213,37 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                     if (matchConverter != null) {
                         // Lookup up the right protein using the MD5
                         final Protein prot = md5ToProteinMap.get(proteinMD5);
+                        final String dbKey = Long.toString(prot.getId()) + signatureLibraryKey.getName();
+                        exampleKey = dbKey;
+//                        Utilities.verboseLog("dbKey: " + dbKey);
                         if (prot != null) {
                             // One or multiple locations for this match on a given protein for this modelAc
                             if (matchesForModel.size() == 1) {
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, signature);
                                 if (i5Match != null) {
                                     prot.addMatch(i5Match);
+                                    //*****Initialize goxrefs and pathwayxrefs collections *******
+                                    Hibernate.initialize(i5Match.getSignature().getEntry().getPathwayXRefs());
+                                    Hibernate.initialize(i5Match.getSignature().getEntry().getGoXRefs());
+                                    i5Match.getSignature().getEntry().getPathwayXRefs().size();
+                                    i5Match.getSignature().getEntry().getGoXRefs().size();
+
+                                    Set<Match> matchSet = new HashSet<>();
+                                    matchSet.add(i5Match);
+                                    //Utilities.verboseLog("Persist to kvMatchStore: key " + dbKey + " singleton match : " + matchSet.size());
+                                    matchDAO.persist(dbKey, matchSet);
                                 }
                             }
                             else {
                                 List<Match> i5Matches = matchConverter.convertMatches(matchesForModel, signature);
                                 if (i5Matches != null) {
+
                                     for (Match i5Match : i5Matches) {
                                         prot.addMatch(i5Match);
                                     }
+                                    Set<Match> matchSet = new HashSet<>(i5Matches);
+                                    //Utilities.verboseLog("Persist to kvMatchStore: key " + dbKey + " matches : " + matchSet.size());
+                                    matchDAO.persist(dbKey, matchSet);
                                 }
                             }
                         } else {
@@ -224,5 +255,25 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 }
             }
         }
+        Utilities.verboseLog("exampleKey: " + exampleKey);
+    }
+
+
+    void persist(Protein protein, Match match){
+//        Utilities.verboseLog("proteinId: " + protein.getId() + " DBSTORE: " + matchDAO.getDbStore().getDbName()
+//                + ", DB Store  = " + matchDAO.getDbStore().getKVDBStore()
+//                + ", DB Store type = " + matchDAO.getDbStore().getKVDBType());
+
+        matchDAO.persist(protein.getMd5(), match);
+        //matchDAO.persist("test1", match);
+
+    }
+
+    @Override
+    public void checkMatchDAO() {
+        Utilities.verboseLog(matchDAO.getDbStore().toString());
+        Utilities.verboseLog( " DBSTORE: " + matchDAO.getDbStore().getDbName()
+                + ", DB Store type = " + matchDAO.getDbStore().getKVDBStore()
+                + ", DB Store type = " + matchDAO.getDbStore().getKVDBType());
     }
 }

@@ -20,4 +20,6 @@ public interface LookupStoreToI5ModelDAO {
     void populateProteinMatches(Protein nonPersistedProtein, List<KVSequenceEntry> kvSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap);
 
     void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap);
+
+    void checkMatchDAO();
 }

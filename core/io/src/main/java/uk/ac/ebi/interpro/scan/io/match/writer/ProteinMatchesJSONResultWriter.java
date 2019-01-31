@@ -25,21 +25,35 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
 
     protected BufferedWriter fileWriter;
 
+    ObjectMapper mapper;
+    ObjectWriter objectWriter;
+
     protected DateFormat dmyFormat;
     protected static final Charset characterSet = Charset.defaultCharset();
 
-    public ProteinMatchesJSONResultWriter(Path path) throws IOException {
+    public ProteinMatchesJSONResultWriter(Path path, boolean isSlimOutput) throws IOException {
         this.fileWriter = Files.newBufferedWriter(path, characterSet);
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
+        mapper = new ObjectMapper();
+        objectWriter = (isSlimOutput ? mapper.writer() : mapper.writerWithDefaultPrettyPrinter());
+
     }
 
+    public void header(String interProScanVersion) throws IOException{
+        fileWriter.write("{\n \"interproscan-version\": \"" + interProScanVersion + "\",\n");
+        fileWriter.write("\"results\": [ ");
+    }
 
+    public void footer() throws IOException{
+        fileWriter.write(" ]\n");
+        fileWriter.write("}\n");
+    }
     /**
      * Writes out a set of proteins to a JSON file
      *
      * @throws IOException in the event of I/O problem writing out the file.
      */
-    public void write(final IMatchesHolder matchesHolder, final String sequenceType, final boolean isSlimOutput) throws IOException {
+    public void write(final IMatchesHolder matchesHolder,  final String sequenceType, final boolean isSlimOutput) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false); // E.g. matches for un-integrated signatures have no InterPro entry assigned
 
@@ -76,6 +90,17 @@ public class ProteinMatchesJSONResultWriter implements AutoCloseable {
         }
         fileWriter.write(" ]\n");
         fileWriter.write("}\n");
+    }
+
+    public int write(OutputListElement protein) throws IOException {
+        String json = objectWriter.writeValueAsString(protein);
+        fileWriter.write(json);
+        return 0;
+    }
+
+    public int write(String outputString) throws IOException {
+        fileWriter.write(outputString);
+        return 0;
     }
 
     public void close() throws IOException {

@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import org.hibernate.Hibernate;
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -228,8 +229,14 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 //                System.out.println("location:" + location.toString());
             }
             if (match != null) {
-//                System.out.println("match: " + match.toString());
+                System.out.println("match: " + match.toString());
                 // find a better way of displaying debug in model classes
+                //hibernate initialise
+                Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
+                Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
+                match.getSignature().getEntry().getPathwayXRefs().size();
+                match.getSignature().getEntry().getGoXRefs().size();
+                match.getSignature().getCrossReferences();
                 int count = 0;
             }
 

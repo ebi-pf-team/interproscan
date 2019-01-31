@@ -49,6 +49,9 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
     List<Protein> getProteins();
 
     @Transactional(readOnly = true)
+    List<Protein> getProteins(long bottom, long top);
+
+    @Transactional(readOnly = true)
     Map<String, Protein> getKeyToProteinMap();
 
     void setProteinIdsWithoutLookupHit(Map<Long, Protein> proteinIdsWithoutLookupHit);

@@ -19,6 +19,8 @@ import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 import uk.ac.ebi.interpro.scan.persistence.WriteOutputMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -183,7 +185,10 @@ public class WriteOutputStep extends Step {
         Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
 
         Long timeNow = System.currentTimeMillis();
-        List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
+        //List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+
+        List<Protein> proteins = new ArrayList<>();
 
         Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
                 + " time taken to get proteins: "
@@ -204,28 +209,28 @@ public class WriteOutputStep extends Step {
                 }
                 switch (outputFormat) {
                     case TSV:
-                        outputToTSV(outputPath, stepInstance, proteins);
+                        outputToTSV(outputPath, stepInstance);
                         break;
                     case TSV_PRO:
-                        outputToTSVPRO(outputPath, stepInstance, proteins);
+                        outputToTSVPRO(outputPath, stepInstance);
                         break;
                     case XML:
-                        outputToXML(outputPath, stepInstance, sequenceType, proteins, false);
+                        outputToXML(outputPath, stepInstance, sequenceType, false);
                         break;
                     case XML_SLIM:
-                        outputToXML(outputPath, stepInstance, sequenceType, proteins, true);
+                        outputToXML(outputPath, stepInstance, sequenceType, true);
                         break;
                     case JSON:
-                        outputToJSON(outputPath, stepInstance, sequenceType, proteins, false);
+                        outputToJSON(outputPath, stepInstance, sequenceType, false);
                         break;
                     case JSON_SLIM:
-                        outputToJSON(outputPath, stepInstance, sequenceType, proteins, true);
+                        outputToJSON(outputPath, stepInstance, sequenceType, true);
                         break;
                     case GFF3:
-                        outputToGFF(outputPath, stepInstance, sequenceType, proteins);
+                        outputToGFF(outputPath, stepInstance, sequenceType);
                         break;
                     case GFF3_PARTIAL:
-                        outputToGFFPartial(outputPath, stepInstance, proteins);
+                        outputToGFFPartial(outputPath, stepInstance);
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
@@ -344,26 +349,110 @@ public class WriteOutputStep extends Step {
         return outputPath;
     }
 
-    private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+    private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
-        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
 
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
-        xmlWriter.writeMatches(outputPath, matchesHolder);
+        //Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
+        //xmlWriter.writeMatches(outputPath, matchesHolder);
+
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
+        try (ProteinMatchesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesXMLJAXBFragmentsResultWriter(outputPath, isSlimOutput)) {
+            //writer.header(interProScanVersion);
+            if (bottomProteinId != null && topProteinId != null) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
+                }
+                Utilities.verboseLog(10, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
+                int count = 0;
+                writer.header(interProScanVersion);
+                for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
+                    String proteinKey = Long.toString(proteinIndex);
+                    Protein protein = proteinDAO.getProtein(proteinKey);
+                    if (protein == null || protein.getMatches().isEmpty()) {
+                        continue;
+                    }
+                    Set<Match> matches = protein.getMatches();
+
+                    for (Match match : matches){
+                        StringBuilder matchBuilder = new StringBuilder();
+                        matchBuilder.append(protein.getId()).append(" ")
+                                .append(protein.getMd5()).append(" ")
+                                .append(match.getSignature().getSignatureLibraryRelease().getLibrary().getName()).append(" ");
+
+                        System.out.println("matchBuilder: " +  matchBuilder);
+                    }
+                    writer.write(protein, sequenceType, isSlimOutput);
+                    count++;
+                    if (count < proteinIndex) {
+                        writer.write(","); // More proteins/nucleotide sequences to follow
+                    }
+                    //print one protein then break
+                    //break;
+                }
+            }
+            writer.close();
+        }catch (JAXBException e){
+            e.printStackTrace();
+        }catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) throws IOException {
+    private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
-        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, proteins, isSlimOutput);
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
 
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
-        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath)) {
-            writer.write(matchesHolder, sequenceType, isSlimOutput);
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
+            //old way??
+            //writer.write(matchesHolder, proteinDAO, sequenceType, isSlimOutput);
+
         }
+        //Try writing to JSOn from this module
+
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
+        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
+        final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
+        //writer.setMapToInterProEntries(mapToInterProEntries);
+        //writer.setMapToGO(mapToGO);
+       // writer.setMapToPathway(mapToPathway);
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
+            writer.header(interProScanVersion);
+            if (bottomProteinId != null && topProteinId != null) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
+                }
+                Utilities.verboseLog(10, " WriteOutputStep -JSON new " + " There are " + topProteinId + " proteins.");
+                int count = 0;
+                for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
+                    String proteinKey = Long.toString(proteinIndex);
+                    Protein protein = proteinDAO.getProtein(proteinKey);
+                    if (protein == null || protein.getMatches().isEmpty()) {
+                        continue;
+                    }
+                    writer.write(protein);
+                    count++;
+                    if (count < proteinIndex) {
+                        writer.write(","); // More proteins/nucleotide sequences to follow
+                    }
+                }
+            }
+            writer.footer();
+        }
+
     }
 
-    private IMatchesHolder getMatchesHolder(StepInstance stepInstance, String sequenceType, List<Protein> proteins, boolean isSlimOutput) {
-        IMatchesHolder matchesHolder;
+    private IMatchesHolder getMatchesHolder(StepInstance stepInstance, String sequenceType, boolean isSlimOutput) {
+        IMatchesHolder matchesHolder = null;
+        /*
         if (sequenceType.equalsIgnoreCase("n")) {
             matchesHolder = new NucleicAcidMatchesHolder(interProScanVersion);
         } else {
@@ -391,14 +480,14 @@ public class WriteOutputStep extends Step {
             // Include all proteins in the output, whether they have any matches or not
             matchesHolder.addProteins(proteins);
         }
+        */
         return matchesHolder;
     }
 
     private void outputToTSV(final Path path,
-                             final StepInstance stepInstance,
-                             final List<Protein> proteins) throws IOException {
+                             final StepInstance stepInstance ) throws IOException {
         try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
-            writeProteinMatches(writer, stepInstance, proteins);
+            writeProteinMatches(writer, stepInstance);
         }
         //write the site tsv production output
         //only for CDD and SFLD
@@ -414,7 +503,7 @@ public class WriteOutputStep extends Step {
                 Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
 
-                    writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
+                    writeProteinMatches(tsvSitesWriter, stepInstance);
                 }
             }
         }
@@ -441,11 +530,10 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSVPRO(final Path path,
-                             final StepInstance stepInstance,
-                             final List<Protein> proteins) throws IOException {
+                             final StepInstance stepInstance) throws IOException {
         //first write the tsv production output
         try (ProteinMatchesTSVProResultWriter writer = new ProteinMatchesTSVProResultWriter(path)) {
-            writeProteinMatches(writer, stepInstance, proteins);
+            writeProteinMatches(writer, stepInstance);
         }
         //write the site tsv production output
         //only for CDD and SFLD
@@ -460,13 +548,13 @@ public class WriteOutputStep extends Step {
                 Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
 
-                    writeProteinMatches(tsvSitesWriter, stepInstance, proteins);
+                    writeProteinMatches(tsvSitesWriter, stepInstance);
                 }
             }
         }
     }
 
-    private void outputToGFF(Path path, StepInstance stepInstance, String sequenceType, List<Protein> proteins) throws IOException {
+    private void outputToGFF(Path path, StepInstance stepInstance, String sequenceType) throws IOException {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
@@ -477,7 +565,7 @@ public class WriteOutputStep extends Step {
             }
 
             //This step writes features (protein matches) into the GFF file
-            writeProteinMatches(writer, stepInstance, proteins);
+            writeProteinMatches(writer, stepInstance);
             //This step writes FASTA sequence at the end of the GFF file
             writeFASTASequences(writer);
         } finally {
@@ -487,9 +575,9 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void outputToGFFPartial(Path path, StepInstance stepInstance, List<Protein> proteins) throws IOException {
+    private void outputToGFFPartial(Path path, StepInstance stepInstance) throws IOException {
         try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false)) {
-            writeProteinMatches(writer, stepInstance, proteins);
+            writeProteinMatches(writer, stepInstance);
         }
 
     }
@@ -579,8 +667,11 @@ public class WriteOutputStep extends Step {
         }
     }
 
-    private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance, List<Protein> proteins) throws IOException {
+    private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance) throws IOException {
         Utilities.verboseLog(10, " WriteOutputStep - outputToTSV-etc ");
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
         final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
@@ -588,13 +679,18 @@ public class WriteOutputStep extends Step {
         writer.setMapToInterProEntries(mapToInterProEntries);
         writer.setMapToGO(mapToGO);
         writer.setMapToPathway(mapToPathway);
-        if (proteins != null) {
+        if (bottomProteinId != null && topProteinId != null) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Loaded " + proteins.size() + " proteins.");
+                LOGGER.info("Load " + topProteinId + " proteins from the db.");
             }
-            Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + "Loaded " + proteins.size() + " proteins.");
+            Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + " There are " + topProteinId + " proteins.");
             int count = 0;
-            for (Protein protein : proteins) {
+            for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
+                String proteinKey = Long.toString(proteinIndex);
+                Protein protein = proteinDAO.getProtein(proteinKey);
+                if(protein == null || protein.getMatches().isEmpty()){
+                    continue;
+                }
                 writer.write(protein);
                 count++;
                 if (count % 40000 == 0) {

@@ -32,6 +32,8 @@
                 <entry key="TMHMM" value-ref="tmhmmLookupMatchConverter"/>
             </map>
         </property>
+        <property name="matchDAO" ref="matchDAO"/>
+
     </bean>
 
 

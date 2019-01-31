@@ -246,6 +246,10 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
 
                 Job completionJob = jobs.getJobById(completionJobName);
+
+                final String prepareOutputJobName = stepInstance.getParameters().get(PREPARE_OUTPUT_JOB_NAME_KEY);
+                Job prepareOutputJob = jobs.getJobById(prepareOutputJobName);
+
                 final String matchLookupJobName = stepInstance.getParameters().get(MATCH_LOOKUP_JOB_NAME_KEY);
                 Job matchLookupJob = jobs.getJobById(matchLookupJobName);
 
@@ -255,7 +259,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 boolean  initialSetupSteps = false;
 
                 StepCreationSequenceLoadListener sequenceLoadListener =
-                        new StepCreationSequenceLoadListener(analysisJobs, completionJob, matchLookupJob, finalInitialJob, initialSetupSteps, stepInstance.getParameters());
+                        new StepCreationSequenceLoadListener(analysisJobs, completionJob, prepareOutputJob,  matchLookupJob, finalInitialJob, initialSetupSteps, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
                 fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
