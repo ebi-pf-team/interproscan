@@ -26,6 +26,8 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherN
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
+import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
+
 import java.io.File;
 import java.io.FilePermission;
 import java.io.IOException;
@@ -139,7 +141,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.32-71.0";
+            String i5Version = "5.33-72.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
@@ -362,6 +364,16 @@ public class Run extends AbstractI5Runner {
 
 
                 }
+
+                // configure the KVStores
+                LevelDBStore kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
+                System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
+                LevelDBStore kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
+                System.out.println(Utilities.getTimeNow() + "kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
+                LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
+                System.out.println(Utilities.getTimeNow() + "kvStoreMatches  name : " + kvStoreMatches.getDbName());
+                configureKVStores(kvStoreProteins,  kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
+
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
                     //deal with panther  stepPantherHMM3RunPantherScore
                     //this maynot be necessary anymore
@@ -1283,6 +1295,23 @@ public class Run extends AbstractI5Runner {
                 }
             }
         }
+    }
+
+
+    public static void configureKVStores(LevelDBStore kvStoreProteins,  LevelDBStore kvStoreProteinsOther,  LevelDBStore kvStoreMatches, String tempDir ){
+        String kvstoreDir = "kvstore";
+        String kvstoreBase = tempDir + File.separator + kvstoreDir;
+        String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
+        LOGGER.warn(" kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
+        kvStoreProteins.setLevelDBStore(kvStoreProteinsDBPath);
+
+        String kvStoreProteinsOtherDBPath = kvstoreBase + File.separator +  kvStoreProteinsOther.getDbName();
+        LOGGER.warn("kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
+        kvStoreProteinsOther.setLevelDBStore(kvStoreProteinsOtherDBPath);
+
+        String kvStoreMatchesDBPath = kvstoreBase + File.separator + kvStoreMatches.getDbName();
+        LOGGER.warn("kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
+        kvStoreMatches.setLevelDBStore(kvStoreMatchesDBPath);
     }
 
     private static boolean isInvalid(final Mode mode, final CommandLine commandline) {

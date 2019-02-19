@@ -144,6 +144,8 @@
 
     <bean id="tmhmmFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImpl">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM"/>
+        <!--<property name="dbStore" ref="kvStoreMatches"/>-->
+        <!--<property name="matchDAO" ref="matchDAO"/>-->
     </bean>
 
     <bean id="tmhmmSignatureLibraryReleaseVersion" class="java.lang.String">

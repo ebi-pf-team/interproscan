@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -58,6 +59,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             Signature currentSignature = null;
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
+            String signatureLibraryKey = null;
             for (PantherRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
@@ -109,6 +111,9 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmLength(), HmmBounds.parseSymbol(rawMatch.getHmmBounds()),
                         rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
                 lastRawMatch = rawMatch;
+                if(signatureLibraryKey == null){
+                    signatureLibraryKey = currentSignature.getSignatureLibraryRelease().getLibrary().getName();
+                }
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
@@ -122,6 +127,15 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                 );
                 protein.addMatch(match);
                 entityManager.persist(match);       // Persist the last one
+            }
+            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+            Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+            Set <Match> proteinMatches = protein.getMatches();
+            if (proteinMatches != null || proteinMatches.isEmpty()) {
+                Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                Set<Match> matchSet = new HashSet<>(); // the protein.get Matches is a persistentSet, but we want a hashset
+                matchSet.addAll(proteinMatches);
+                matchDAO.persist(dbKey, matchSet);
             }
         }
     }

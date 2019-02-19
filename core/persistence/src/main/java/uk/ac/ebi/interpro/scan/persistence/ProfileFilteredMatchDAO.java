@@ -1,16 +1,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -38,14 +34,27 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
     @Transactional
     public void persist(Collection<RawProtein<T>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
+        SignatureLibrary signatureLibrary = null;
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+
             for (T rawMatch : rawProtein.getMatches()) {
                 SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
                 Signature signature = holder.getSignature();
+                if(signatureLibrary == null) {
+                    signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
+                }
                 ProfileScanMatch match = buildMatch(signature, rawMatch);
+                //hibernateInitialise
+                hibernateInitialise(match);
                 protein.addMatch(match);
                 entityManager.persist(match);
+            }
+            Set<Match> proteinMatches = protein.getMatches();
+            if (! proteinMatches.isEmpty()) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
+                Set<Match> matchSet = new HashSet<>(proteinMatches);
+                matchDAO.persist(dbKey, matchSet);
             }
         }
     }

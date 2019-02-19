@@ -24,6 +24,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -66,9 +68,10 @@ public abstract class Location<T extends LocationFragment> implements Serializab
     @JsonBackReference
     private Match match;
 
-    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = LocationFragment.class, mappedBy = "location")
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = LocationFragment.class, mappedBy = "location",  fetch = FetchType.EAGER)
     @BatchSize(size=4000)
     //@XmlElement(name = "location-fragments")
+//    @Fetch(FetchMode.JOIN)
     @JsonManagedReference
     private Set<T> locationFragments = new LinkedHashSet<>();
 

@@ -96,6 +96,8 @@
         <property name="phobiusMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOImpl">
                 <constructor-arg ref="latestPhobiusSignatureLibraryRelease"/>
+                <!--<property name="dbStore" ref="kvStoreMatches"/>-->
+                <!--<property name="matchDAO" ref="matchDAO"/>-->
             </bean>
         </property>
         <property name="parser">

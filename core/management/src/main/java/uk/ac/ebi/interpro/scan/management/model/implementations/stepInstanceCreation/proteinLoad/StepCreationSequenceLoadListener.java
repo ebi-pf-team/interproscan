@@ -271,6 +271,7 @@ public class StepCreationSequenceLoadListener
             if (bottomNewSequenceId != null && topNewSequenceId != null) {
                 if(! useMatchLookupService){
                     LOGGER.warn("Not useMatchLookupService  so create jobs for all analyses.");
+
                 }
                 if(idsWithoutLookupHit != null){
                     LOGGER.warn("idsWithoutLookupHit is NOT NULL, so create jobs for all analyses.");
@@ -281,10 +282,12 @@ public class StepCreationSequenceLoadListener
                     //These jobs are flagged with 'doRunLocally'=TRUE
                     //or when we have idsWithoutLookupHit
                     //or when we are not using the lookup service
-                    if (job.isDoRunLocally() || idsWithoutLookupHit != null) {
+
+                    if (job.isDoRunLocally() || idsWithoutLookupHit != null || (! useMatchLookupService)) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
                         }
+
                         Utilities.verboseLog("Job for which StepInstances are being created: " + job.getId());
                         for (Step step : job.getSteps()) {
                             if (step.isCreateStepInstancesForNewProteins()) {
@@ -292,6 +295,7 @@ public class StepCreationSequenceLoadListener
                                     LOGGER.debug("Creating StepInstance for step " + step.getId() + " protein range " + bottomNewSequenceId + " - " + topNewSequenceId);
                                 }
                                 Utilities.verboseLog("Creating StepInstance for step " + step.getId() + " protein range " + bottomNewSequenceId + " - " + topNewSequenceId);
+                                step.setUseMatchLookupService(useMatchLookupService);
                                 final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewSequenceId, topNewSequenceId);
                                 stepToStepInstances.put(step, jobStepInstances);
                                 for (StepInstance jobStepInstance : jobStepInstances) {

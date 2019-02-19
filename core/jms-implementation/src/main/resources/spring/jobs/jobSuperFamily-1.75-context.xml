@@ -90,6 +90,8 @@
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl">
                 <constructor-arg value="1.75"/>
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
         <property name="parser">

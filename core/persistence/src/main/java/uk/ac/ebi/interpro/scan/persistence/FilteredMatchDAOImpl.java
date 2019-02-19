@@ -1,12 +1,14 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -27,6 +29,12 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 
     private static final Logger LOGGER = Logger.getLogger(FilteredMatchDAOImpl.class.getName());
 
+    //TODO remove this after testing
+    //Test if this removes the errors
+
+    protected MatchDAO matchDAO;
+
+
     /**
      * Sets the class of the model that the DOA instance handles.
      * Note that this has been set up to use constructor injection
@@ -41,6 +49,21 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
     public FilteredMatchDAOImpl(Class<U> modelClass) {
         super(modelClass);
     }
+
+    public void setMatchDAO(MatchDAO matchDAO) {
+        this.matchDAO = matchDAO;
+    }
+
+    @Override
+    public void persist(String key, Set<Match> matches) {
+        //check if this is valid
+        if(dbStore == null){
+            LOGGER.error("Dbstore is null");
+        }
+        byte[] byteMatches = dbStore.serialize((HashSet<Match>) matches);
+        dbStore.put(key,byteMatches);
+    }
+
 
     /**
      * Persists filtered protein matches.
@@ -210,7 +233,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         }
 
         if (missingModelIDs.size() > 0) {
-            LOGGER.warn("Failed to get some of the analaysis models from h2 db: #" + missingModelIDs.size());
+            LOGGER.warn("Failed to get some of the analaysis models from h2 db: # " + missingModelIDs.size());
             LOGGER.warn("First missing model : " + missingModelIDs.get(0));
         }
         return result;
@@ -283,4 +306,16 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
     }
 
 
+    public void hibernateInitialise(Match match){
+        //*****Initialize goxrefs and pathwayxrefs collections *******
+        if (match.getSignature().getEntry() != null) {
+            Utilities.verboseLog("entry: " + match.getSignature().getEntry().getAccession());
+            Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
+            Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
+            Utilities.verboseLog("PathwayXRefs: " + match.getSignature().getEntry().getPathwayXRefs().size());
+            Utilities.verboseLog("GoXRefs: " + match.getSignature().getEntry().getGoXRefs().size());
+        }
+
+
+    }
 }

@@ -113,7 +113,10 @@
             </bean>
         </property>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrositeProfileFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO"/>
     </bean>

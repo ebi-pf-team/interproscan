@@ -110,6 +110,8 @@
         <property name="rawMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SignalPFilteredMatchDAOImpl">
                 <constructor-arg ref="latestSignalPEukSignatureLibraryRelease"/>
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
         <property name="parser">

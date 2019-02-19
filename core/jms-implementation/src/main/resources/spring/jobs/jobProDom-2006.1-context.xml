@@ -68,6 +68,8 @@
         <property name="rawMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
                 <constructor-arg value="2006.1"/>
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
         <property name="parser">

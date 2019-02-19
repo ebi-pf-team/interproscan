@@ -152,7 +152,10 @@
         </property>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="retries" value="3"/>
     </bean>

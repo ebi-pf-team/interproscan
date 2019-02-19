@@ -136,7 +136,10 @@
             </bean>
         </property>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
     </bean>

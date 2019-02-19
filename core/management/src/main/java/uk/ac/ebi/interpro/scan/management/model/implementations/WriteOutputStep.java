@@ -381,8 +381,24 @@ public class WriteOutputStep extends Step {
                         matchBuilder.append(protein.getId()).append(" ")
                                 .append(protein.getMd5()).append(" ")
                                 .append(match.getSignature().getSignatureLibraryRelease().getLibrary().getName()).append(" ");
+                        Entry matchEntry = match.getSignature().getEntry();
+                        if(matchEntry!= null){
+                            //check goterms 
+                              //check pathways
+                            matchBuilder.append("-- entry: ").append(matchEntry.getAccession());
+                            matchEntry.getGoXRefs();
+                            if(matchEntry.getGoXRefs() != null) {
+                                matchEntry.getGoXRefs().size();
+                            }
+                            matchEntry.getPathwayXRefs();
+                            if(matchEntry.getPathwayXRefs() != null) {
+                                matchEntry.getPathwayXRefs().size();
+                            }
+                        }else{
+                            matchBuilder.append("-- entry i NULL");
+                        }
+                        //System.out.println("matchBuilder:  "  + matchBuilder );
 
-                        System.out.println("matchBuilder: " +  matchBuilder);
                     }
                     writer.write(protein, sequenceType, isSlimOutput);
                     count++;

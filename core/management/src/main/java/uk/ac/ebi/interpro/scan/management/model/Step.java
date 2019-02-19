@@ -48,6 +48,8 @@ public abstract class Step implements BeanNameAware {
 
     protected boolean doRunLocally = false;
 
+    protected boolean useMatchLookupService = true;
+
     /**
      * Number of retries
      */
@@ -146,6 +148,14 @@ public abstract class Step implements BeanNameAware {
 
     public void setDoRunLocally(boolean doRunLocally) {
         this.doRunLocally = doRunLocally;
+    }
+
+    public boolean isUseMatchLookupService() {
+        return useMatchLookupService;
+    }
+
+    public void setUseMatchLookupService(boolean useMatchLookupService) {
+        this.useMatchLookupService = useMatchLookupService;
     }
 
     public Integer getMaxProteins() {

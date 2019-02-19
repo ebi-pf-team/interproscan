@@ -69,6 +69,8 @@
         <property name="matchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.CoilsFilteredMatchDAOImpl">
                 <constructor-arg ref="latestCoilsSignatureLibraryRelease"/>
+                <!--<property name="dbStore" ref="kvStoreMatches"/>-->
+                <!--<property name="matchDAO" ref="matchDAO"/>-->
             </bean>
         </property>
         <property name="serialGroup" value="PARSE_COILS"/>

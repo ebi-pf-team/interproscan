@@ -65,7 +65,7 @@ public class WriteFastaFileStep extends Step {
         }
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
         final List<Protein> proteins;
-        if (doRunLocally) {
+        if (doRunLocally || (! useMatchLookupService)) {
             proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
         }else {
             proteins = proteinDAO.getProteinsWithoutLookupHitBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());

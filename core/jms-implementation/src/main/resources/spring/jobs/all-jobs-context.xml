@@ -524,12 +524,18 @@
     <bean id="kvStoreProteins"
           class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
         <!-- TODO inject this value, so rleative to jobStep directory-->
-        <property name="levelDBStore" value="kvProteinDB"/>
+        <property name="dbName" value="proteinDB"/>
+    </bean>
+
+    <bean id="kvStoreProteinsOther"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinOtherDB"/>
     </bean>
 
     <bean id="kvStoreMatches"
           class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
-        <property name="levelDBStore" value="kvMatchDB"/>
+        <property name="dbName" value="matchDB"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
