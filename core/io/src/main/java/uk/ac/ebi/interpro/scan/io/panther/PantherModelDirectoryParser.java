@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
@@ -148,6 +149,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
         BufferedReader reader = null;
         int lineNumber = 0;
+        int pantherFamilies = 0;
 //        System.out.println("names tab is: " + namesTabFile.getAbsolutePath());
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(namesTabFile)));
@@ -156,23 +158,27 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 line = line.trim();
                 lineNumber++;
                 if (line.length() > 0 && line.startsWith("PTHR")) {
-                    String[] columns = line.split("\t");
-                    if (columns.length == 2) {
-                        String familyId = columns[0];
-                        familyId = familyId.replace(".mod", "");
-                        //family Id is a super family
-                        if (familyId.contains(".mag")) {
-                            familyId = familyId.replace(".mag", "");
-                        }
-                        //family Id is a sub family
-                        else {
-                            familyId = familyId.replace(".", ":");
-                        }
-                        String familyName = columns[1];
-                        result.put(familyId, familyName);
-                    } else {
-                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + "columns!");
+                    String[] columns = line.split("\t", 2);  //so that we have at most two strings
+                    String familyId = columns[0];
+                    familyId = familyId.replace(".mod", "");
+                    //family Id is a super family
+                    if (familyId.contains(".mag")) {
+                        familyId = familyId.replace(".mag", "");
                     }
+                    //family Id is a sub family
+                    else {
+                        familyId = familyId.replace(".", ":");
+                    }
+
+                    String familyName = "";
+                    if (columns.length == 2) {  //we also have a family name
+                        familyName = columns[1];
+                    } else {  //we done have a family name
+                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + " columns!" + "columns: " + columns);
+                    }
+                    pantherFamilies ++;
+                    result.put(familyId, familyName);
+                    Utilities.verboseLog("familyId: " +familyId + " familyName: " + familyName);
                 } else {
                     LOGGER.warn("Unexpected start of line: " + line);
                 }
@@ -193,6 +199,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             LOGGER.info(result.size() + " entries created in the map.");
         }
 
+        Utilities.verboseLog("pantherFamilies #: " + pantherFamilies);
         return result;
     }
 
