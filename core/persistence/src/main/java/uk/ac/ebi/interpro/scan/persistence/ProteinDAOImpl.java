@@ -18,13 +18,18 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import org.iq80.leveldb.DB;
+
 import org.iq80.leveldb.WriteBatch;
 import org.iq80.leveldb.DBException;
+import uk.ac.ebi.interpro.scan.persistence.kvstore.KVDB;
+import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
 
 import javax.persistence.Query;
 import java.io.IOException;
@@ -50,6 +55,8 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
      * sub-classes of the Match class, allowing them to be queried in turn.
      */
     private static final List<String> CONCRETE_MATCH_CLASSES = new ArrayList<String>();
+
+    protected KVDB proteinsNotInLookupDB;
 
     private Set<Protein> proteinsWithoutLookupHit;
 
@@ -77,8 +84,9 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
     //new methods utisiling the KV api
     @Transactional
     public void persist(final Map<String, Protein> keyToProteinMap) {
+        /*
         try {
-            WriteBatch batch = levelDBStore.getLevelDBStore().createWriteBatch();
+            WriteBatch batch = dbStore.getLevelDBStore().createWriteBatch();
             try {
                 for (Map.Entry<String, Protein> entry : keyToProteinMap.entrySet()) {
                     String key = entry.getKey();
@@ -88,13 +96,12 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
                     batch.put(byteKey, data);
                 }
 
-                /**
-                 * do batch operation with sync option.
-                 */
-                levelDBStore.getLevelDBStore().write(batch);
+                // do batch operation with sync option.
+
+                dbStore.getLevelDBStore().write(batch);
                 //levelDBStore.getLevelDBStore().write(batch, SYNC_WRITE_OPTION);
 
-                LOGGER.info("data flushed to kv db .... " + levelDBStore.getDbName());
+                LOGGER.info("data flushed to kv db .... " + dbStore.getDbName());
 
             } finally {
                 // close the batch
@@ -108,6 +115,8 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
             new IOException(e).printStackTrace();
             //throw new IOException(e);
         }
+
+        */
     }
 
     @Transactional
@@ -118,17 +127,42 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
     }
 
     @Transactional
+    @Override
+    public void insertProteinNotInLookup(String key, Protein protein) {
+        proteinsNotInLookupDB.put(key, dbStore.serialize(protein));
+        //return protein;
+    }
+
+    @Transactional
     public void persist(byte[] key, byte[] protein) {
         dbStore.put(key, protein);
     }
 
     @Transactional
+    public void persistProteinNotInLookup(byte[] key, byte[] protein) {
+        proteinsNotInLookupDB.put(key, protein);
+    }
+
+    @Transactional
     public Protein getProtein(String key) {
-        return dbStore.asProtein(dbStore.get(key));
+        byte[] byteProtein = dbStore.get(key);
+        if(byteProtein != null) {
+            return dbStore.asProtein(byteProtein);
+        }
+        return null;
+    }
+
+    @Transactional
+    public Protein getProteinNotInLookup(String key) {
+        byte[] byteProtein = proteinsNotInLookupDB.get(key);
+        if(byteProtein != null) {
+            return proteinsNotInLookupDB.asProtein(byteProtein);
+        }
+        return null;
     }
 
     @Transactional(readOnly = true)
-    public List<Protein> getProteins() {
+    public List<Protein> getProteins() throws Exception{
         List<Protein> proteins = new ArrayList<Protein>();
         Collection<byte[]> allByteProteins = dbStore.getAllElements().values();
         for (byte[] byteProtein : allByteProteins) {
@@ -139,7 +173,18 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Protein> getKeyToProteinMap() {
+    public List<Protein> getProteinsNotInLookup() throws Exception{
+        List<Protein> proteins = new ArrayList<Protein>();
+        Collection<byte[]> allByteProteins = proteinsNotInLookupDB.getAllElements().values();
+        for (byte[] byteProtein : allByteProteins) {
+            Protein protein = proteinsNotInLookupDB.asProtein(byteProtein);
+            proteins.add(protein);
+        }
+        return proteins;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Protein> getKeyToProteinMap()  throws Exception{
         Map<String, Protein> keyToProteinMap = new HashMap<>();
         Map<byte[], byte[]> allByteProteins = dbStore.getAllElements();
         Iterator it = allByteProteins.entrySet().iterator();
@@ -152,6 +197,8 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
         }
         return keyToProteinMap;
     }
+
+
 
     public void setProteinsWithoutLookupHit(Set<Protein> proteinsWithoutLookupHit) {
         this.proteinsWithoutLookupHit = proteinsWithoutLookupHit;
@@ -168,6 +215,38 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
 
     public Map<Long, Protein> getProteinIdsWithoutLookupHit() {
         return proteinIdsWithoutLookupHit;
+    }
+
+    public KVDB getProteinsNotInLookupDB() {
+        return proteinsNotInLookupDB;
+    }
+
+    @Required
+    public void setProteinsNotInLookupDB(KVDB proteinsNotInLookupDB) {
+        this.proteinsNotInLookupDB = proteinsNotInLookupDB;
+
+    }
+
+    public void checkKVDBStores(){
+        System.out.println("Main Store: " + dbStore.getKVDBStore());
+        System.out.println("Secondary Store: " + proteinsNotInLookupDB.getKVDBStore());
+
+        if(this.proteinsNotInLookupDB == null){
+            LOGGER.warn("proteinsNotInLookupDB == null");
+        }else{
+            if (! (proteinsNotInLookupDB.getLevelDBStore() == null)){
+                LOGGER.warn("proteinsNotInLookupDB LevelDBStore NOT NULL");
+            }else{
+                LOGGER.warn("proteinsNotInLookupDB is NULL - storename: " +  proteinsNotInLookupDB.getKVDBStore() +
+                        " dbmane: " + proteinsNotInLookupDB.getDbName());
+            }
+        }
+        LOGGER.warn(proteinsNotInLookupDB.toString());
+    }
+
+    public DB getLevelDBStore(){
+
+        return proteinsNotInLookupDB.getLevelDBStore();
     }
 
     //the old methods that may have to be refactored

@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.*;
 
@@ -79,6 +80,8 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
 //                throw new IllegalStateException("Protein did not have only one RPSBlast match! " +
 //                        "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
 //            }
+            String signatureLibraryKey = null;
+            Set <Match> proteinMatches =  new HashSet<>();
             for (T rawMatch : rawMatches) {
                 // RPSBlast matches consist of a YES/NO result, therefore there will
                 // only ever be 1 raw match for each protein, but never mind!
@@ -128,11 +131,23 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("rpsBlast match: " + match);
                 }
-                protein.addMatch(match);
+                //protein.addMatch(match);
                 //if (LOGGER.isDebugEnabled()) {
                     //LOGGER.debug("Protein with match: " + protein);
                 //}
-                entityManager.persist(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+                if(signatureLibraryKey == null){
+                    signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+                }
+            }
+
+            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+            //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+
+            if (! proteinMatches.isEmpty()) {
+                //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

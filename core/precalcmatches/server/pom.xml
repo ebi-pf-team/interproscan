@@ -85,6 +85,7 @@
                 <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
                 <berkeleydb.path.md5>${basedir}/src/test/resources/berk_md5</berkeleydb.path.md5>
                 <berkeleydb.path.matches>${basedir}/src/test/resources/berk_match</berkeleydb.path.matches>
+                <berkeleydb.path.sites>${basedir}/src/test/resources/berk_site</berkeleydb.path.sites>
             </properties>
 
             <build>
@@ -158,6 +159,7 @@
                 <deployment.folder>deploy</deployment.folder>
                 <berkeleydb.path.md5>deploy/data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>deploy/data/match_db</berkeleydb.path.matches>
+                <berkeleydb.path.sites>deploy/data/site_db</berkeleydb.path.sites>
             </properties>
         </profile>
 
@@ -175,6 +177,7 @@
                 <deployment.folder>deploy</deployment.folder>
                 <berkeleydb.path.md5>deploy/data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>deploy/data/match_db</berkeleydb.path.matches>
+                <berkeleydb.path.sites>deploy/data/site_db</berkeleydb.path.sites>
             </properties>
         </profile>
 
@@ -251,6 +254,7 @@
                 <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
                 <berkeleydb.path.md5>data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>data/match_db</berkeleydb.path.matches>
+                <berkeleydb.path.sites>data/site_db</berkeleydb.path.sites>
             </properties>
 
             <build>

@@ -1,4 +1,4 @@
-#!/ebi/extserv/bin/perl/bin/perl
+#!/usr/bin/env perl
 
 # $Id: ProDomBlast3i.pl,v 1.2 2005/04/27 16:43:42 tuco Exp $
 # $Log: ProDomBlast3i.pl,v $

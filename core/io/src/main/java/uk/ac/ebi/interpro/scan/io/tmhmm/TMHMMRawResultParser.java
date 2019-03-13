@@ -1,10 +1,12 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
-import uk.ac.ebi.interpro.scan.model.TMHMMSignature;
+import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.io.ParseException;
+import uk.ac.ebi.interpro.scan.io.match.MatchParser;
+import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.TMHMMRawMatch;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,20 +41,66 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public final class TMHMMRawResultParser {
+public final class TMHMMRawResultParser implements MatchParser<TMHMMRawMatch> {
 
     private static final Pattern PREDICTION_LINE_PATTERN = Pattern.compile("%pred N[B]?[(]?[0][)]?:[ ,a-zA-Z0-9]*");
 
     private static final Logger LOGGER = Logger.getLogger(TMHMMRawResultParser.class.getName());
 
-    private final SignatureLibraryRelease signatureLibraryRelease;
+    //private final SignatureLibraryRelease signatureLibraryRelease;
 
-    public TMHMMRawResultParser(SignatureLibraryRelease signatureLibraryRelease) {
+    private SignatureLibrary signatureLibrary;
+    private  String signatureLibraryRelease;
+
+    public TMHMMRawResultParser() {
+        super();
+    }
+
+    public TMHMMRawResultParser(SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        this.signatureLibrary = signatureLibrary;
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
 
-    public Set<TMHMMProtein> parse(InputStream is) throws IOException {
-        final Map<String, Set<TMHMMMatch>> proteinIdToMatchMap = new HashMap<String, Set<TMHMMMatch>>();
+    public SignatureLibrary getSignatureLibrary() {
+        return signatureLibrary;
+    }
+
+    public void setSignatureLibrary(SignatureLibrary signatureLibrary) {
+        this.signatureLibrary = signatureLibrary;
+    }
+
+    public String getSignatureLibraryRelease() {
+        return signatureLibraryRelease;
+    }
+
+    @Required
+    public void setSignatureLibraryRelease(String signatureLibraryRelease) {
+        this.signatureLibraryRelease = signatureLibraryRelease;
+    }
+
+    public  Set<RawProtein<TMHMMRawMatch>>  parse(InputStream is) throws IOException {
+
+        Map<String, RawProtein<TMHMMRawMatch>> matchData = new HashMap<>();
+
+        Set<TMHMMRawMatch> rawMatches = parseFileInput(is);
+
+        for (TMHMMRawMatch rawMatch : rawMatches) {
+            String sequenceId = rawMatch.getSequenceIdentifier();
+            if (matchData.containsKey(sequenceId)) {
+                RawProtein<TMHMMRawMatch> rawProtein = matchData.get(sequenceId);
+                rawProtein.addMatch(rawMatch);
+            } else {
+                RawProtein<TMHMMRawMatch> rawProtein = new RawProtein<>(sequenceId);
+                rawProtein.addMatch(rawMatch);
+                matchData.put(sequenceId, rawProtein);
+            }
+        }
+
+        return new HashSet<>(matchData.values());
+    }
+
+    Set<TMHMMRawMatch>  parseFileInput(InputStream is) throws IOException, ParseException {
+        Set<TMHMMRawMatch> matches = new HashSet<>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
@@ -65,7 +113,34 @@ public final class TMHMMRawResultParser {
                         LOGGER.debug("New result for a given protein sequence with ID " + protSeqIdentifier + " found.");
                         LOGGER.debug("Processing transmembrane regions...");
                     }
-                    parseTransmembraneRegions(proteinIdToMatchMap, protSeqIdentifier, reader.readLine());
+                    line =  reader.readLine();
+                    if (line != null && line.length() > 0) {
+                        if (PREDICTION_LINE_PATTERN.matcher(line).matches()) {
+                            int colonIndex = line.indexOf(":");
+                            line = line.substring(colonIndex + 1).trim();
+                            String[] proteinRegions = line.split(", ");
+                            for (String proteinRegion1 : proteinRegions) {
+                                String proteinRegion = proteinRegion1.trim();
+                                if (proteinRegion != null) {
+                                    String[] list = proteinRegion.split(" ");
+                                    if (list.length != 3) {
+                                        LOGGER.warn("Couldn't parse transmembrane region out of: " + Arrays.toString(list) + ". The array should look like this [M, 200, 222] and should be of length 3.");
+                                        continue;
+                                    } else {
+                                        String signature = list[0].trim();
+                                        if (signature.equals("M")) {
+                                            int startPos = Integer.parseInt(list[1].trim());
+                                            int endPos = Integer.parseInt(list[2].trim());
+                                            matches.add(new TMHMMRawMatch(protSeqIdentifier, TMHMMSignature.MEMBRANE.getAccession(),
+                                                    SignatureLibrary.TMHMM, signatureLibraryRelease, startPos, endPos));
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            LOGGER.warn("Unexpected format within prediction line - " + line);
+                        }
+                    }
                 }
             }
         } catch (IOException io) {
@@ -75,30 +150,9 @@ public final class TMHMMRawResultParser {
                 reader.close();
             }
         }
-        return createProteinsWithMatches(proteinIdToMatchMap);
+        return matches;
     }
 
-    private Set<TMHMMProtein> createProteinsWithMatches(Map<String, Set<TMHMMMatch>> seqIdMatchMap) {
-        Set<TMHMMProtein> result = new HashSet<TMHMMProtein>();
-        for (String id : seqIdMatchMap.keySet()) {
-            //Create a new protein
-            TMHMMProtein protein = new TMHMMProtein(id);
-            //Add matches to protein
-            Set<TMHMMMatch> matches = seqIdMatchMap.get(id);
-            protein.addAllMatches(matches);
-            //Add new protein to result map
-            result.add(protein);
-            //
-            if (LOGGER.isDebugEnabled()) {
-                for (TMHMMMatch match : matches) {
-                    for (TMHMMMatch.TMHMMLocation location : match.getLocations()) {
-                        LOGGER.debug(id + "    " + location.getPrediction() + " " + location.getStart() + " " + location.getEnd() + " " + location.getScore());
-                    }
-                }
-            }
-        }
-        return result;
-    }
 
     /**
      * Parses trans membrane protein regions out of the following line:
@@ -128,6 +182,7 @@ public final class TMHMMRawResultParser {
                                 int startPos = Integer.parseInt(list[1].trim());
                                 int endPos = Integer.parseInt(list[2].trim());
                                 saveTmhmmMatch(proteinIdToMatchMap, protSeqIdentifier, startPos, endPos, TMHMMSignature.MEMBRANE);
+
                             }
                         }
                     }
@@ -156,11 +211,12 @@ public final class TMHMMRawResultParser {
     }
 
     private TMHMMMatch createNewTmhmmMatch(TMHMMSignature prediction, Set<TMHMMMatch.TMHMMLocation> locations) {
-        Signature signature = new Signature.Builder(prediction.getAccession()).
-                description(prediction.getShortDesc()).
-                signatureLibraryRelease(signatureLibraryRelease).
-                build();
-        String signatureModel = signature.getAccession();
-        return new TMHMMMatch(signature, signatureModel, locations);
+//        Signature signature = new Signature.Builder(prediction.getAccession()).
+//                description(prediction.getShortDesc()).
+//                signatureLibraryRelease(signatureLibraryRelease).
+//                build();
+//        String signatureModel = signature.getAccession();
+//        return new TMHMMMatch(signature, signatureModel, locations);
+        return null;
     }
 }

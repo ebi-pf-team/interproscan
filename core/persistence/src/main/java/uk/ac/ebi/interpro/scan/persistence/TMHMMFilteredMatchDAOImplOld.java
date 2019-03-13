@@ -16,13 +16,13 @@ import java.util.*;
  * @version $Id$
  * @since 1.0
  */
-public class TMHMMFilteredMatchDAOImpl extends GenericDAOImpl<TMHMMMatch, Long> implements TMHMMFilteredMatchDAO {
+public class TMHMMFilteredMatchDAOImplOld extends GenericDAOImpl<TMHMMMatch, Long> implements TMHMMFilteredMatchDAOOld {
 
-    private static final Logger LOGGER = Logger.getLogger(TMHMMFilteredMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TMHMMFilteredMatchDAOImplOld.class.getName());
 
     private final SignatureLibraryRelease signatureLibraryRelease;
 
-    public TMHMMFilteredMatchDAOImpl(SignatureLibraryRelease signatureLibraryRelease) {
+    public TMHMMFilteredMatchDAOImplOld(SignatureLibraryRelease signatureLibraryRelease) {
         super(TMHMMMatch.class);
         this.signatureLibraryRelease = signatureLibraryRelease;
     }

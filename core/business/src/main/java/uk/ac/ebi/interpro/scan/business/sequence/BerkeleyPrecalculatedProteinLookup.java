@@ -140,7 +140,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
             if (kvSequenceEntryXML != null) {
-                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), analysisJobMap);
+                boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
+                KVSequenceEntryXML kvSitesSequenceEntryXML = null;
+                if(includeCDDorSFLD){
+                    Utilities.verboseLog("lookup Sites ... ");
+                    kvSitesSequenceEntryXML = getSitesFromLookup(upperMD5);
+                    Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
+                }
+                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
             }
 
             return protein;
@@ -224,9 +231,16 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             startTime = System.nanoTime();
             // Check if the analysis versions are consistent and then proceed
+            boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
+            KVSequenceEntryXML kvSitesSequenceEntryXML = null;
+            if(includeCDDorSFLD){
+                Utilities.verboseLog("lookup Sites ... ");
+                kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
+                Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
+            }
             if (isAnalysisVersionConsistent(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap)) {
 //                Utilities.verboseLog(10, "Analysis versions ARE Consistent" );
-                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap);
+                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
@@ -286,6 +300,46 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         }
         return null;
     }
+
+
+    public KVSequenceEntryXML getSitesFromLookup(String... md5s) throws InterruptedException {
+        int count = 0;
+        int maxTries = 4;
+        while (true) {
+            try {
+                KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getSites(md5s);
+                return kvSequenceEntryXML;
+            } catch (UnmarshallingFailureException e) {  //    also covers    UnmarshalException (JAXBException e) {
+                // handle exception
+                try {
+                    Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
+                } catch (InterruptedException exc) {
+                    throw exc;
+                }
+                if (++count == maxTries) {
+                    return null;
+                }
+            } catch (IOException e) {
+                // handle exception
+                if (++count == maxTries) break;
+            } catch (Exception e) {
+                if (e instanceof JAXBException) {
+                    try {
+                        Thread.sleep(10 * 1000);  //wait for 10 seconds before trying again
+                    } catch (InterruptedException exc) {
+                        throw exc;
+                    }
+                    if (++count == maxTries) break;
+                } else {
+                    LOGGER.warn("Lookupmatch server: encountered an unspecific error while getting matches ");
+                    throw e;
+                }
+            }
+        }
+        return null;
+    }
+
+
 
     /**
      * Utility method to confirm if this service is working.
@@ -356,6 +410,23 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
         }
         return true;
+    }
+
+    /**
+     *  include fetching CDD or SFLD sites
+     *
+     * @param analysisJobMap
+     * @return
+     */
+    private boolean includeCDDorSFLD(Map<String, SignatureLibraryRelease> analysisJobMap){
+        for (SignatureLibraryRelease sigLibrelease : analysisJobMap.values()) {
+            if (sigLibrelease.getLibrary().getName().startsWith("CDD") ||
+                    sigLibrelease.getLibrary().getName().startsWith("SFLD")){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void displayLookupError(Exception e, String lookupMessageStatus) {

@@ -314,6 +314,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
             Utilities.verboseLog("PathwayXRefs: " + match.getSignature().getEntry().getPathwayXRefs().size());
             Utilities.verboseLog("GoXRefs: " + match.getSignature().getEntry().getGoXRefs().size());
+            Hibernate.initialize(match.getSignature().getCrossReferences());
+            Utilities.verboseLog("getCrossReferences: " + match.getSignature().getCrossReferences().size());
         }
 
 

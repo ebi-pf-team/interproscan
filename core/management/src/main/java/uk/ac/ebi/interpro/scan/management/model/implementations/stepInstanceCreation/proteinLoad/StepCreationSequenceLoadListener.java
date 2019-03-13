@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.AbstractStepInstanceCreator;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
+import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
@@ -273,8 +274,22 @@ public class StepCreationSequenceLoadListener
                     LOGGER.warn("Not useMatchLookupService  so create jobs for all analyses.");
 
                 }
+                int newSlicePercentage= 0;
                 if(idsWithoutLookupHit != null){
                     LOGGER.warn("idsWithoutLookupHit is NOT NULL, so create jobs for all analyses.");
+                    int idsWithoutLookupHitCount = idsWithoutLookupHit.size();
+                    int percentageOfProteinsinLookupRounded = 0;
+                    int allProteinCount = topProteinId.intValue();
+                    percentageOfProteinsinLookupRounded = (percentageOfProteinsinLookup / 10 ) * 10;
+                    int percentageOfProteinsNotinLookup = 100 - percentageOfProteinsinLookupRounded;
+
+                    if (percentageOfProteinsNotinLookup > 30){
+                        newSlicePercentage = 100 + percentageOfProteinsinLookupRounded - 20;
+                    }else{
+                        newSlicePercentage = 100;
+                    }
+                    LOGGER.warn("newSlicePercentage :  " + newSlicePercentage);
+                    LOGGER.warn("percentageOfProteinsNotinLookup :  " + percentageOfProteinsNotinLookup);
                 }
 
                 for (Job job : jobs.getJobList()) {
@@ -296,6 +311,20 @@ public class StepCreationSequenceLoadListener
                                 }
                                 Utilities.verboseLog("Creating StepInstance for step " + step.getId() + " protein range " + bottomNewSequenceId + " - " + topNewSequenceId);
                                 step.setUseMatchLookupService(useMatchLookupService);
+                                LOGGER.warn("Old protein slice : " + step.getMaxProteins());
+                                int maxProteins = step.getMaxProteins() * newSlicePercentage / 100;
+                                LOGGER.warn("New protein slice : " + step.getMaxProteins() * newSlicePercentage / 100);
+                                boolean changeMaxProteins = false;
+                                if( (! job.isDoRunLocally()) && (useMatchLookupService && idsWithoutLookupHit != null)) {
+                                    if (newSlicePercentage >= 120 && maxProteins >= step.getMaxProteins()) {
+                                        LOGGER.warn("New protein slice : " + newSlicePercentage + ", maxProteins: " + maxProteins);
+                                        changeMaxProteins = true;
+                                        step.setMaxProteins(maxProteins);
+                                    }
+                                }
+                                if (! changeMaxProteins){
+                                    LOGGER.warn("maxProteins NOT changed as not all conditions were met ");
+                                }
                                 final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewSequenceId, topNewSequenceId);
                                 stepToStepInstances.put(step, jobStepInstances);
                                 for (StepInstance jobStepInstance : jobStepInstances) {
@@ -403,5 +432,24 @@ public class StepCreationSequenceLoadListener
         long newSlice = 1l;
 
         return newSlice;
+    }
+
+    private boolean checkSignalPSequenceCounts(int sliceSize, long topProteinId){
+        int count = 0;
+        long bottomProteinId = 1;
+
+        for (long bottom = bottomProteinId; bottom <= topProteinId; bottom += sliceSize) {
+            final long top = Math.min(topProteinId, bottom + sliceSize - 1);
+
+            for (long proteinId = bottom; proteinId <= top; proteinId++) {
+                //Protein proteinNotInLookup = proteinDAO.getProteinNotInLookup(Long.toString(proteinId));
+                Protein proteinNotInLookup = null;
+                if (proteinNotInLookup != null) {
+                    count++;
+                }
+            }
+        }
+
+        return true;
     }
 }

@@ -35,7 +35,7 @@ public class PrositePatternFilteredMatchDAO
         SignatureLibrary signatureLibrary = null;
         for (RawProtein<ProSitePatternRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
-
+            Set<Match> proteinMatches = new HashSet<>();
             for (ProSitePatternRawMatch rawMatch : rawProtein.getMatches()) {
 
                 SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
@@ -47,15 +47,15 @@ public class PrositePatternFilteredMatchDAO
                 PatternScanMatch match = buildMatch(signature, rawMatch);
                 //hibernateInitialise
                 hibernateInitialise(match);
-                protein.addMatch(match);
-                entityManager.persist(match);
+
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
 
             }
-            Set<Match> proteinMatches = protein.getMatches();
             if (! proteinMatches.isEmpty()) {
                 final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
-                Set<Match> matchSet = new HashSet<>(proteinMatches);
-                matchDAO.persist(dbKey, matchSet);
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
 

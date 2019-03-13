@@ -39,6 +39,15 @@ public interface MatchesService {
     List<KVSequenceEntry> getMatches(List<String> proteinMD5s);
 
     /**
+     * Web service request for a set of sites, based upon
+     * protein MD5 sequence checksums.
+     *
+     * @param proteinMD5s md5 checksum of sequences.
+     * @return a List of site matches for these proteins.
+     */
+    List<KVSequenceEntry> getSites(List<String> proteinMD5s);
+
+    /**
      * Web service request for a List of protein sequence MD5
      * checksums where the protein sequence has been run through
      * the analysis pipeline and so should NOT be recalculated

@@ -266,7 +266,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
 
 
-    public void storeAll2KV(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
+    public void storeAll2KV(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) throws Exception {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
         }

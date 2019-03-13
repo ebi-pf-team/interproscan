@@ -22,7 +22,7 @@ public class MobiDBLookupMatchConverter extends LookupMatchConverter<MobiDBMatch
 
     private static final Logger LOG = Logger.getLogger(MobiDBLookupMatchConverter.class.getName());
 
-    public MobiDBMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public MobiDBMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
         Set<MobiDBMatch.MobiDBLocation> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());

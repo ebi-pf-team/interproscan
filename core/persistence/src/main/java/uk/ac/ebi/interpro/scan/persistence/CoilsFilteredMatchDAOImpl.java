@@ -15,7 +15,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.0
  */
-public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> implements CoilsFilteredMatchDAO {
+public class CoilsFilteredMatchDAOImpl extends CoilsFilteredMatchDAO {
 
     private String coilsReleaseVersion;
 
@@ -28,8 +28,15 @@ public class CoilsFilteredMatchDAOImpl extends GenericDAOImpl<CoilsMatch, Long> 
      * Model class specific sub-classes should define a no-argument constructor
      * that calls this constructor with the appropriate class.
      */
+
+    public CoilsFilteredMatchDAOImpl( ) {
+//        SignatureLibraryRelease signatureLibraryRelease = nul;
+        super(null);
+    }
+
     public CoilsFilteredMatchDAOImpl(String version) {
-        super(CoilsMatch.class);
+        super(null);
+
         this.coilsReleaseVersion = version;
     }
 

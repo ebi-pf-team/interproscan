@@ -18,6 +18,9 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
+
+import org.iq80.leveldb.DB;
 
 import java.util.*;
 
@@ -40,19 +43,31 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
     void insert(String key, Protein protein);
 
     @Transactional
+    void insertProteinNotInLookup(String key, Protein protein);
+
+    @Transactional
     void persist(byte[] key, byte[] protein);
+
+    @Transactional
+    void persistProteinNotInLookup(byte[] key, byte[] protein);
 
     @Transactional
     Protein getProtein(String key);
 
+    @Transactional
+    Protein getProteinNotInLookup(String key);
+
     @Transactional(readOnly = true)
-    List<Protein> getProteins();
+    List<Protein> getProteins() throws Exception;
+
+    @Transactional(readOnly = true)
+    List<Protein> getProteinsNotInLookup() throws Exception;
 
     @Transactional(readOnly = true)
     List<Protein> getProteins(long bottom, long top);
 
     @Transactional(readOnly = true)
-    Map<String, Protein> getKeyToProteinMap();
+    Map<String, Protein> getKeyToProteinMap() throws Exception;
 
     void setProteinIdsWithoutLookupHit(Map<Long, Protein> proteinIdsWithoutLookupHit);
 
@@ -60,6 +75,10 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
     Set<Protein> getProteinsWithoutLookupHit();
 
     List<Protein> getProteinsWithoutLookupHitBetweenIds(long bottom, long top);
+
+    void checkKVDBStores();
+
+    DB getLevelDBStore();
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.

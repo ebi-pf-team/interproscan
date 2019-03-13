@@ -3,18 +3,25 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.SiteLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupSite;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastMatch, RPSBlastMatch.RPSBlastLocation> {
 
     private static final Logger LOG = Logger.getLogger(RPSBlastLookupMatchConverter.class.getName());
 
-    public RPSBlastMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public RPSBlastMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
+
+        final String signatureLibraryName = match.getSignatureLibraryName();
+        final String signatureAccession = match.getSignatureAccession();
 
         Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
@@ -22,9 +29,47 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
         Double score = valueOrZero(match.getLocationScore());
         Double eValue = valueOrZero(match.getLocationEValue());
         // TODO Add sites to lookup service
-        locations.add(new RPSBlastMatch.RPSBlastLocation(locationStart, locationEnd, score, eValue, null));
+        //Set<String> sequenceSiteHits = new HashSet<>();  //just for prototyping
+
+        Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
+        //Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = convertSites(match.getProteinMD5(), sequenceSiteHits);
+        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = new HashSet<>();
+        for (String siteDescription : mapSiteLocations.keySet()){
+            RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteDescription, mapSiteLocations.get(siteDescription));
+            sites.add(site);
+        }
+
+        locations.add(new RPSBlastMatch.RPSBlastLocation(locationStart, locationEnd, score, eValue, sites));
 
         return new RPSBlastMatch(signature, match.getModelAccession(), locations);
+    }
+
+
+    private Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> convertSites(String md5, Set<String> sequenceSiteHits ){
+        Map<String, Set<SiteLocation>> mapSiteLocations = new HashMap();
+        for (String sequenceSiteHit : sequenceSiteHits) {
+            //SFLD,4,SFLDS00029,5,347,3,C,105,105, description
+            SimpleLookupSite simpleLookupSite =  new SimpleLookupSite(md5, sequenceSiteHit);
+            String siteDescription = simpleLookupSite.getDescription();
+            Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
+            SiteLocation siteLocation = new SiteLocation(simpleLookupSite.getResidue(), simpleLookupSite.getResidueStart(), simpleLookupSite.getResidueEnd());
+            if(siteLocations != null){
+                siteLocations.add(siteLocation);
+            }else{
+                siteLocations = new HashSet<>();
+                siteLocations.add(siteLocation);
+            }
+            mapSiteLocations.put(siteDescription, siteLocations);
+
+        }
+        Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = new HashSet<>();
+        for (String siteDescription : mapSiteLocations.keySet()){
+            RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteDescription, mapSiteLocations.get(siteDescription));
+            sites.add(site);
+        }
+
+
+        return sites;
     }
 
 }

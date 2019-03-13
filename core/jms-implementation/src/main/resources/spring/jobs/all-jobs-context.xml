@@ -476,6 +476,7 @@
         <property name="interproscanVersion" value="${i5.version}"/>
         <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
         <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
     <bean id="preCalcMatchClient" class="uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient">
@@ -525,6 +526,12 @@
           class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
         <!-- TODO inject this value, so rleative to jobStep directory-->
         <property name="dbName" value="proteinDB"/>
+    </bean>
+
+    <bean id="kvStoreProteinsNotInLookup"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinNotInLookupDB"/>
     </bean>
 
     <bean id="kvStoreProteinsOther"

@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.persistence.Transient;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,21 +66,53 @@ public class WriteFastaFileStep extends Step {
         }
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePathTemplate);
         final List<Protein> proteins;
-        if (doRunLocally || (! useMatchLookupService)) {
-            proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        }else {
-            proteins = proteinDAO.getProteinsWithoutLookupHitBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-        }
 
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
-        }
         try {
+            if (doRunLocally || (! useMatchLookupService)) {
+                proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            }else {
+                //TODO this is getting completed to filter nonlookup up proteins
+
+                //final List<Protein> proteinsInRange = proteinDAO.getProteinsWithoutLookupHitBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+                //final List<Protein>  proteinsNotInLookup = proteinDAO.getProteinsNotInLookup();
+                //System.out.println("proteinsNotInLookup size: " + proteinsNotInLookup.size());
+                long bottomProtein = stepInstance.getBottomProtein();
+                long topProtein = stepInstance.getTopProtein();
+                proteins = new ArrayList<>();
+                int count = 0;
+                for(long proteinId = bottomProtein; proteinId <= topProtein; proteinId ++) {
+                    //Protein protein = proteinDAO.getProtein(Long.toString(proteinId));
+                    Protein proteinNotInLookup = proteinDAO.getProteinNotInLookup(Long.toString(proteinId));
+                    if (proteinNotInLookup != null) {
+                        //System.out.println("write sequence id : " + proteinId + " real id from kv: " + proteinNotInLookup.getId());
+                        proteins.add(proteinNotInLookup);
+                        count ++;
+                    }
+                }
+                long maxProteins = topProtein - bottomProtein;
+
+                System.out.println(stepInstance.getStepId() + "["+  bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " +  count + " of possible " + (maxProteins + 1) );
+                 /*   for (Protein protein : proteinsNotInLookup) {
+                        System.out.println("write sequence id : " + protein.getId());
+                        Protein protein = proteinDAO.getProtein(protein.getId().toString());
+                        if (protein.getId() >= stepInstance.getBottomProtein() && protein.getId() <= stepInstance.getTopProtein()) {
+                            proteins.add(protein);
+                        }
+                    }
+                  */
+
+            }
+
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Writing " + proteins.size() + " proteins to FASTA file...");
+            }
             fastaFileWriter.writeFastaFile(proteins, fastaFilePathName);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
         } catch (FastaFileWriter.FastaFileWritingException e) {
             throw new IllegalStateException("FastaFileWriter.FastaFileWritingException thrown when attempting to write a fasta file to " + fastaFilePathName, e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Step with Id " + this.getId() + " finished.");

@@ -1,24 +1,18 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-
-
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.dbstore.BerkeleyDBStore;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupSite;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.*;
-import java.util.TreeSet;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.Collections;
+import java.util.TreeSet;
 
 
 /**
@@ -26,29 +20,25 @@ import java.util.Collections;
  *
  * @author Phil Jones
  * @author Maxim Scheremetjew
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
 
 
-public class CreateMatchDBFromIprscanBerkeleyDB {
+public class CreateSiteDBFromIprscanBerkeleyDB {
 
     private static final String databaseName = "IPRSCAN";
 
     private static String QUERY_TEMPORARY_TABLE =
-            "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
-                    "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
-                    "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
-                    "SEQ_FEATURE" +
-                    "       from  lookup_tmp_tab ";
+            "select  /*+ PARALLEL */  " +
+                    "PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
+                    "SIGNATURE_ACCESSION, LOC_START, LOC_END, NUM_SITES, RESIDUE, " +
+                    "RESIDUE_START, RESIDUE_END, DESCRIPTION " +
+                    "       from  lookup_site_tab  partition (partitionName) " +
+                    "       where upi_range = ? " +
+                    "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, LOC_START, LOC_END";
 
-                    //"       where upi_range = ? " +
-                    //"       order by  PROTEIN_MD5";
-    /*
-    "       from  lookup_tmp_tab  partition (partitionName) " +
-            "       where upi_range = ? " +
-            "       order by  PROTEIN_MD5";
-    */
 
     public static void main(String[] args) {
         if (args.length < 4) {
@@ -64,7 +54,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
             fetchSize =  Integer.parseInt(args[5]);
         }
 
-        CreateMatchDBFromIprscanBerkeleyDB instance = new CreateMatchDBFromIprscanBerkeleyDB();
+        CreateSiteDBFromIprscanBerkeleyDB instance = new CreateSiteDBFromIprscanBerkeleyDB();
 
         instance.buildDatabase(directoryPath,
                 databaseUrl,
@@ -103,7 +93,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                 File[] directoryContents = lookupMatchDBDirectory.listFiles();
                 if (directoryContents != null && directoryContents.length > 0) {
                     //System.out.println("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanBerkeleyDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
-                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMatchDBFromIprscanBerkeleyDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
+                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateSiteDBFromIprscanBerkeleyDB.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
                 }
                 if (!lookupMatchDBDirectory.canWrite()) {
                     throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
@@ -139,9 +129,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
                         ps.setFetchSize(fetchSize);
                         System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
-                        //ps.setString(1, partitionName);
-                        //ps.setString(1, partitionName);
-
+                        ps.setString(1, partitionName);
                         //ps.setString(2, partitionName);
                         //System.out.println(Utilities.getTimeNow() + "sql:" + ps.toString());
                         try (ResultSet rs = ps.executeQuery()) {
@@ -154,7 +142,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                             while (rs.next()) {
 
                                 // Only process if the SignatureLibraryName is recognised.
-                                final String signatureLibraryName = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_NAME);
+                                final String signatureLibraryName = rs.getString(SimpleLookupSite.COL_IDX_SIG_LIB_NAME);
 //                        System.out.println(Utilities.getTimeNow() + " signatureLibraryName : # " + COL_IDX_SIG_LIB_NAME + " - " +  signatureLibraryName);
                                 if (rs.wasNull() || signatureLibraryName == null) continue;
                                 SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
@@ -171,62 +159,41 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                                 }
 
                                 // Now collect rest of the data and test for mandatory fields.
-                                final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
+                                final int locationStart = rs.getInt(SimpleLookupSite.COL_IDX_LOC_START);
 //                        System.out.println(Utilities.getTimeNow() + " sequenceStart : # " + COL_IDX_SEQ_START + " - " +  sequenceStart);
                                 if (rs.wasNull()) continue;
 
-                                final int sequenceEnd = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_END);
+                                final int locationEnd = rs.getInt(SimpleLookupSite.COL_IDX_LOC_END);
 //                        System.out.println(Utilities.getTimeNow() + " sequenceEnd : # " + COL_IDX_SEQ_END + " - " +  sequenceEnd);
                                 if (rs.wasNull()) continue;
 
-                                final String proteinMD5 = rs.getString(SimpleLookupMatch.COL_IDX_MD5);
+                                // have the md5 in uppercase
+                                final String proteinMD5 = rs.getString(SimpleLookupSite.COL_IDX_MD5).toUpperCase();
 //                        System.out.println(Utilities.getTimeNow() + " proteinMD5 : # " + COL_IDX_MD5 + " - " +  proteinMD5);
                                 if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                                final String sigLibRelease = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_RELEASE);
+                                final String sigLibRelease = rs.getString(SimpleLookupSite.COL_IDX_SIG_LIB_RELEASE);
                                 if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
 
-                                final String signatureAccession = rs.getString(SimpleLookupMatch.COL_IDX_SIG_ACCESSION);
+                                final String signatureAccession = rs.getString(SimpleLookupSite.COL_IDX_SIG_ACCESSION);
                                 if (signatureAccession == null || signatureAccession.length() == 0) continue;
 
-                                final String modelAccession = rs.getString(SimpleLookupMatch.COL_IDX_MODEL_ACCESSION);
-                                if (modelAccession == null || modelAccession.length() == 0) continue;
 
-                                Integer hmmStart = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_START);
-                                if (rs.wasNull()) hmmStart = null;
+                                Integer numSites = rs.getInt(SimpleLookupSite.COL_IDX_NUM_SITES);
+                                if (rs.wasNull()) numSites = null;
 
-                                Integer hmmEnd = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_END);
-                                if (rs.wasNull()) hmmEnd = null;
+                                String residue = rs.getString(SimpleLookupSite.COL_IDX_RESIDUE);
+                                if (rs.wasNull()) residue = null;
 
-                                Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
-                                if (rs.wasNull()) hmmLength = null;
+                                Integer residueStart = rs.getInt(SimpleLookupSite.COL_IDX_RESIDUE_START);
+                                if (rs.wasNull()) residueStart = null;
 
-                                String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
+                                Integer residueEnd = rs.getInt(SimpleLookupSite.COL_IDX_RESIDUE_END);
+                                if (rs.wasNull()) residueEnd = null;
 
-                                Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
-                                if (rs.wasNull()) sequenceScore = null;
+                                String description = rs.getString(SimpleLookupSite.COL_IDX_DESCRIPTION);
+                                if (rs.wasNull()) description = null;
 
-                                Double sequenceEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_EVALUE);
-                                if (rs.wasNull()) sequenceEValue = null;
-
-                                Double locationScore = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_SCORE);
-                                if (rs.wasNull()) locationScore = null;
-
-                                Double locationEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_EVALUE);
-                                if (rs.wasNull()) {
-                                    locationEValue = null;
-                                }
-
-                                Integer envelopeStart = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_START);
-                                if (rs.wasNull()) envelopeStart = null;
-
-                                Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
-                                if (rs.wasNull()) envelopeEnd = null;
-
-                                String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
-                                String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
-                                //reformat the fragments to be semi colon delimited
-                                fragments = fragments.replace(",", ";");
 
                                 String columnDelimiter = ",";
                                 StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);
@@ -234,21 +201,12 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                                 kvMatchJoiner.add(signatureLibraryName);
                                 kvMatchJoiner.add(sigLibRelease);
                                 kvMatchJoiner.add(signatureAccession);
-                                kvMatchJoiner.add(modelAccession);
-                                kvMatchJoiner.add(kvValueOf(sequenceStart));
-                                kvMatchJoiner.add(kvValueOf(sequenceEnd));
-                                kvMatchJoiner.add(fragments);
-                                kvMatchJoiner.add(kvValueOf(sequenceScore));
-                                kvMatchJoiner.add(kvValueOf(sequenceEValue));
-                                kvMatchJoiner.add(kvValueOf(hmmBounds));
-                                kvMatchJoiner.add(kvValueOf(hmmStart));
-                                kvMatchJoiner.add(kvValueOf(hmmEnd));
-                                kvMatchJoiner.add(kvValueOf(hmmLength));
-                                kvMatchJoiner.add(kvValueOf(envelopeStart));
-                                kvMatchJoiner.add(kvValueOf(envelopeEnd));
-                                kvMatchJoiner.add(kvValueOf(locationScore));
-                                kvMatchJoiner.add(kvValueOf(locationEValue));
-                                kvMatchJoiner.add(kvValueOf(seqFeature)); //for hamap, and prosites this columns is also the alignment column
+                                kvMatchJoiner.add(kvValueOf(locationStart));
+                                kvMatchJoiner.add(kvValueOf(locationEnd));
+                                kvMatchJoiner.add(kvValueOf(numSites));
+                                kvMatchJoiner.add(kvValueOf(residue));
+                                kvMatchJoiner.add(kvValueOf(residueStart));
+                                kvMatchJoiner.add(kvValueOf(residueEnd));
 
                                 String kvMatch = kvMatchJoiner.toString();
 
@@ -314,9 +272,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         e.printStackTrace();
                         throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
                     }
-                    break;  //TODO remove
+
+                    System.out.println("Finished building BerkeleyDB.");
                 }
-                System.out.println("Finished building BerkeleyDB.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -328,17 +286,20 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
         Set <String> partitionNames = new TreeSet<>();
 
         //tmp_lookup_tmp_tab_part
-        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' ORDER BY PARTITION_NAME";
+        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_SITE_TAB' ORDER BY PARTITION_NAME";
 //        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME <= 'UPI00002' ORDER BY PARTITION_NAME";
 
+        int count = 0;
         try {
             PreparedStatement ps = connection.prepareStatement(partitionQuery);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String partitionName = rs.getString(1);
-                //if (partitionName.startsWith("UPI0001")){
+                //partitionNames.add(partitionName);
+
+                if (partitionName.startsWith("UPI0001")){
                     partitionNames.add(partitionName);;
-                //}
+                }
             }
         } catch (SQLException e) {
             throw new IllegalStateException("SQLException thrown by IPRSCAN", e);

@@ -53,6 +53,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
+
             Set<PantherMatch.PantherLocation> locations = null;
             String currentSignatureAc = null;
             SignatureModelHolder holder = null;
@@ -60,6 +61,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
             String signatureLibraryKey = null;
+            Set <Match> proteinMatches =  new HashSet<>();
             for (PantherRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
@@ -69,7 +71,8 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     if (currentSignatureAc != null) {
                         // Not the first...
                         if (match != null) {
-                            entityManager.persist(match);  // Persist the previous one.
+                            //entityManager.persist(match);  // Persist the previous one.
+
                         }
                         match = new PantherMatch(
                                 currentSignature,
@@ -79,7 +82,8 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                                 lastRawMatch.getFamilyName(),
                                 lastRawMatch.getScore()
                         );
-                        protein.addMatch(match);
+                        //protein.addMatch(match); //may not be needed
+                        proteinMatches.add(match);
                     }
                     // Reset everything
                     locations = new HashSet<>();
@@ -125,17 +129,16 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         lastRawMatch.getFamilyName(),
                         lastRawMatch.getScore()
                 );
-                protein.addMatch(match);
-                entityManager.persist(match);       // Persist the last one
+                //protein.addMatch(match);  //may not be needed
+                proteinMatches.add(match);
+                //entityManager.persist(match);       // Persist the last one
             }
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-            Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
-            Set <Match> proteinMatches = protein.getMatches();
-            if (proteinMatches != null || proteinMatches.isEmpty()) {
-                Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
-                Set<Match> matchSet = new HashSet<>(); // the protein.get Matches is a persistentSet, but we want a hashset
-                matchSet.addAll(proteinMatches);
-                matchDAO.persist(dbKey, matchSet);
+            //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+
+            if (proteinMatches != null && ! proteinMatches.isEmpty()) {
+                //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

@@ -37,7 +37,7 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
         SignatureLibrary signatureLibrary = null;
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
-
+            Set<Match> proteinMatches = new HashSet<>();
             for (T rawMatch : rawProtein.getMatches()) {
                 SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
                 Signature signature = holder.getSignature();
@@ -47,14 +47,13 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
                 ProfileScanMatch match = buildMatch(signature, rawMatch);
                 //hibernateInitialise
                 hibernateInitialise(match);
-                protein.addMatch(match);
-                entityManager.persist(match);
-            }
-            Set<Match> proteinMatches = protein.getMatches();
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+           }
             if (! proteinMatches.isEmpty()) {
                 final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
-                Set<Match> matchSet = new HashSet<>(proteinMatches);
-                matchDAO.persist(dbKey, matchSet);
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

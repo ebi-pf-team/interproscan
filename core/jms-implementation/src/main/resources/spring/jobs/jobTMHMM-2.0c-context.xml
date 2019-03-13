@@ -136,7 +136,7 @@
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM-2.0c"/>
     </bean>
 
-    <bean id="tmhmmFilteredMatchDAO-2.0c" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImpl">
+    <bean id="tmhmmFilteredMatchDAO-2.0c" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImplOld">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM-2.0c"/>
     </bean>
 

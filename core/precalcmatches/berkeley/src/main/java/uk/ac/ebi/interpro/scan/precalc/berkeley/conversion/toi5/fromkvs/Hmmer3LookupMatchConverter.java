@@ -23,7 +23,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
 
     private static final Logger LOG = Logger.getLogger(Hmmer3LookupMatchConverter.class.getName());
 
-    public Hmmer3Match convertMatch(SimpleLookupMatch match, Signature signature) {
+    public Hmmer3Match convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
         final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;

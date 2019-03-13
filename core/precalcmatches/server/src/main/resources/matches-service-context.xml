@@ -14,6 +14,10 @@
         <constructor-arg value="${berkeleydb.path.matches}"/>
     </bean>
 
+    <bean id="berkeleySiteDBService" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleySiteDBService">
+        <constructor-arg value="${berkeleydb.path.sites}"/>
+    </bean>
+
     <bean id="berkeleyMD5Service" class="uk.ac.ebi.interpro.scan.precalc.server.service.impl.BerkeleyMD5DBService">
         <constructor-arg value="${berkeleydb.path.md5}"/>
     </bean>

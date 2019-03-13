@@ -63,6 +63,8 @@ public class MatchHttpClient {
 
     private final Jaxb2Marshaller unmarshaller;
 
+    public static final String SITE_SERVICE_PATH = "/sites";
+
     public static final String MATCH_SERVICE_PATH = "/matches";
 
     public static final String PROTEINS_TO_ANALYSE_SERVICE_PATH = "/isPrecalculated";
@@ -189,6 +191,105 @@ public class MatchHttpClient {
 //        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
 
         return matchXML;
+    }
+
+
+    /**
+     *  get the site matches for CDD and SFLD fro thelookup service
+     *
+     * @param md5s
+     * @return
+     * @throws IOException
+     */
+    public KVSequenceEntryXML getSites(String... md5s) throws IOException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Call to MatchHttpClient.getMatches:");
+            for (String md5 : md5s) {
+                LOG.debug("Protein match requested for MD5: " + md5);
+            }
+        }
+
+        if (url == null || url.isEmpty()) {
+            throw new IllegalStateException("The url must be set for the MatchHttpClient.getMatches method to function");
+        }
+
+
+//        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+        for (String md5 : md5s) {
+            qparams.add(new BasicNameValuePair(MD5_PARAMETER, md5));
+        }
+        UrlEncodedFormEntity encodedParameterEntity;
+        encodedParameterEntity = new UrlEncodedFormEntity(qparams, "UTF-8");
+
+        // Using HttpPost to ensure no problems with long URLs.
+        HttpPost post = new HttpPost(url + SITE_SERVICE_PATH);
+
+        long startGetMatches = System.currentTimeMillis();
+        post.setEntity(encodedParameterEntity);
+
+
+        ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
+            public KVSequenceEntryXML handleResponse(
+                    HttpResponse response) throws IOException {
+                HttpEntity responseEntity = response.getEntity();
+//                Utilities.verboseLog("response:" + response.toString());
+//                Utilities.verboseLog("responseEntity:" + responseEntity.toString());
+                if (responseEntity != null) {
+                    // Stream in the response to the unmarshaller
+                    BufferedInputStream bis = null;
+
+                    try {
+                        bis = new BufferedInputStream(responseEntity.getContent());
+//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                        if (testXMResponse()){
+//                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
+//                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
+//                        }
+                        return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(bis));
+                    } finally {
+                        if (bis != null) {
+                            bis.close();
+                        }
+                    }
+                }
+                return null;
+            }
+        };
+        //set the proxy if needed
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getMatches: " + proxyHost + ":" + proxyPort);
+
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpclient = getClient(proxy);
+
+            //httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            //httpclient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet("http://localhost/");
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try {
+                //do something
+            } finally {
+                response.close();
+            }
+
+            //try use newer API as ConnRoutePNames is deprecated
+//            CloseableHttpClient client = HttpClients.custom()
+//                .setRoutePlanner(
+//                     new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+//                .build();
+
+        }
+
+        KVSequenceEntryXML siteXML = httpclient.execute(post, handler);
+//        httpclient.getConnectionManager().shutdown();
+        httpclient.close();
+//        Utilities.verboseLog("matchXML:" + matchXML.toString());
+        long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+//        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
+
+        return siteXML;
     }
 
 

@@ -12,7 +12,7 @@ public class PrintsLookupMatchConverter extends LookupMatchConverter<FingerPrint
 
     private static final Logger LOG = Logger.getLogger(PrintsLookupMatchConverter.class.getName());
 
-    public FingerPrintsMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public FingerPrintsMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
         if (match == null || signature == null) {
             return null;
@@ -43,7 +43,7 @@ public class PrintsLookupMatchConverter extends LookupMatchConverter<FingerPrint
     }
 
     @Override
-    public List<FingerPrintsMatch> convertMatches(List<SimpleLookupMatch> simpleLookupMatches, Signature signature) {
+    public List<FingerPrintsMatch> convertMatches(List<SimpleLookupMatch> simpleLookupMatches, Set<String> sequenceSiteHits, Signature signature) {
         List<FingerPrintsMatch> matches = new ArrayList<>();
         if (simpleLookupMatches != null && simpleLookupMatches.size() > 0) {
             // Get ready to put all locations against a single match (check that all items in the list have the same

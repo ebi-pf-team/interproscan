@@ -16,7 +16,7 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
 
     //TODO: Add the e-value to the match location
     @Override
-    public SuperFamilyHmmer3Match convertMatch(SimpleLookupMatch match, Signature signature) {
+    public SuperFamilyHmmer3Match convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }

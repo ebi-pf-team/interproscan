@@ -98,6 +98,7 @@ public abstract class AbstractStepInstanceCreator {
         final long sliceSize = (step.getMaxProteins() == null)
                 ? topProteinId - bottomProteinId + 1    // No maximum number of proteins, so all of them!
                 : step.getMaxProteins();                // Limit to the slice size.
+
         // Make StepInstances for the appropriate slice size.
         for (long bottom = bottomProteinId; bottom <= topProteinId; bottom += sliceSize) {
             final long top = Math.min(topProteinId, bottom + sliceSize - 1);

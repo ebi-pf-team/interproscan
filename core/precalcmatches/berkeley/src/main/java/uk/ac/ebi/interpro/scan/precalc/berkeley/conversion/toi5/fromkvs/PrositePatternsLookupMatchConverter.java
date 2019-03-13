@@ -11,7 +11,7 @@ import java.util.Set;
 public class PrositePatternsLookupMatchConverter extends LookupMatchConverter<PatternScanMatch, PatternScanMatch.PatternScanLocation> {
 
     @Override
-    public PatternScanMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public PatternScanMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         Set<PatternScanMatch.PatternScanLocation> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
         int locationEnd = valueOrZero(match.getSequenceEnd());

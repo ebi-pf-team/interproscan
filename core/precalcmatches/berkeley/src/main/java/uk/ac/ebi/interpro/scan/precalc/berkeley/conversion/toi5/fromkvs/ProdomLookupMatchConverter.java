@@ -12,7 +12,7 @@ import java.util.Set;
 public class ProdomLookupMatchConverter extends LookupMatchConverter<BlastProDomMatch, BlastProDomMatch.BlastProDomLocation> {
 
     @Override
-    public BlastProDomMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public BlastProDomMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }
