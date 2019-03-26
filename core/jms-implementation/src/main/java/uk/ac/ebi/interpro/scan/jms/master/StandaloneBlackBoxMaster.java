@@ -96,6 +96,18 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
                 + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
 
+        workerQueueJmsContainer.shutdown();
+        if(! workerQueueJmsContainer.isRunning()){
+            Utilities.verboseLog(" the workerQueueJmsContainer is shutdown ...");
+        }
+        workerQueueJmsContainer.afterPropertiesSet();
+        workerQueueJmsContainer.start();
+
+        Utilities.verboseLog("After Stop Start --- inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
+                + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+                + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
+                + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
+
         long nowAfterLoadingDatabase = now;
         try {
             loadInMemoryDatabase();
