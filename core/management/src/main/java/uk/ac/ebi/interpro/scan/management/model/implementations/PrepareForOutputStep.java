@@ -3,9 +3,7 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.Match;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
@@ -31,6 +29,8 @@ public class PrepareForOutputStep extends Step {
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
+
         String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
         Utilities.verboseLog("starting PrepareForOutputStep :" + proteinRange);
         Long bottomProteinId = stepInstance.getBottomProtein();
@@ -81,9 +81,23 @@ public class PrepareForOutputStep extends Step {
             proteinRawCount ++;
             String proteinKey = Long.toString(proteinIndex);
             Protein protein = proteinDAO.getProtein(proteinKey);
+            Protein proteinWithXref = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+            //Protein protein = proteinWithXref;
+
+            //Utilities.verboseLog("proteinWithXref: \n" +  proteinWithXref.toString());
+            for (OpenReadingFrame orf : proteinWithXref.getOpenReadingFrames()) {
+                //Utilities.verboseLog("OpenReadingFrame: \n" +  orf.toString());
+                NucleotideSequence seq = orf.getNucleotideSequence();
+                //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
+                if (seq != null) {
+                    nucleotideSequences.add(seq);
+                }
+            }
+
             if(protein != null){
                 proteinCount ++;
             }
+
             for(String signatureLibraryName: signatureLibraryNames){
                 final String dbKey = proteinKey + signatureLibraryName;
                 Set<Match> matches = matchDAO.getMatchSet(dbKey);
@@ -105,10 +119,17 @@ public class PrepareForOutputStep extends Step {
             }
             //store protein back in kv store
             proteinDAO.persist(proteinKey, protein);
+
+
+
             //keyToProteinMap.put(key, protein);
         }
 
+        if(nucleotideSequences.size() > 0) {
+            Utilities.verboseLog("nucleotideSequences : \n" + nucleotideSequences.iterator().next());
+        }
 
+        Utilities.verboseLog("nucleotideSequences size: " +  nucleotideSequences.size());
 
        // Map<String, Set<Match>> matchesForEachProtein = matchDAO.getMatchesForEachProtein();
 

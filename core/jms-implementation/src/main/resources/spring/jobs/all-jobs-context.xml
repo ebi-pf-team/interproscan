@@ -477,6 +477,7 @@
         <property name="levelDBStoreRoot" value="testLevelDB"/>
          <!--TODO check -->
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="getOrfOutput" value="false"/>
 
     </bean>
 
@@ -485,7 +486,10 @@
         <property name="levelDBStoreRoot" value="testLevelDB"/>
         <!--TODO check -->
         <property name="proteinDAO" ref="proteinDAO"/>
-
+        <property name="getOrfOutput" value="true"/>
+        <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+        <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
+        <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
     </bean>
 
     <bean id="finaliseInitialSetupTasks" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks">

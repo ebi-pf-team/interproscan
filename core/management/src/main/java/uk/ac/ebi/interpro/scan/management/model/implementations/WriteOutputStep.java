@@ -368,6 +368,7 @@ public class WriteOutputStep extends Step {
                 Utilities.verboseLog(10, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
                 int count = 0;
                 writer.header(interProScanVersion);
+                final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
                     String proteinKey = Long.toString(proteinIndex);
                     Protein protein = proteinDAO.getProtein(proteinKey);
@@ -405,9 +406,20 @@ public class WriteOutputStep extends Step {
                     if (count < proteinIndex) {
                         writer.write(","); // More proteins/nucleotide sequences to follow
                     }
+                    for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
+                        Utilities.verboseLog("OpenReadingFrame: " +  orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                        NucleotideSequence seq = orf.getNucleotideSequence();
+                        //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
+                        if (seq != null) {
+                            nucleotideSequences.add(seq);
+                            writer.write(seq, sequenceType, isSlimOutput);
+                        }
+                    }
+
                     //print one protein then break
                     //break;
                 }
+                Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
             }
             writer.close();
         }catch (JAXBException e){

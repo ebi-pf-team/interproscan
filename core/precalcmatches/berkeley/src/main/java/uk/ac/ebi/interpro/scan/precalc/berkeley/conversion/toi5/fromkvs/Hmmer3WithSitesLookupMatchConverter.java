@@ -60,16 +60,21 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
 
         Utilities.verboseLog(" locationFragments : " + locationFragments.size());
 
-        Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
-        Utilities.verboseLog("mapSiteLocations: " + mapSiteLocations.keySet());
         Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> sites = new HashSet<>();
+        if (sequenceSiteHits != null) {
+            if (sequenceSiteHits.size() > 0) {
+                Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
+                Utilities.verboseLog("mapSiteLocations: " + mapSiteLocations.keySet());
 
-        for (String siteDescription : mapSiteLocations.keySet()){
-            Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite(
-                    siteDescription, mapSiteLocations.get(siteDescription));
-            sites.add(site);
+
+
+                for (String siteDescription : mapSiteLocations.keySet()) {
+                    Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite(
+                            siteDescription, mapSiteLocations.get(siteDescription));
+                    sites.add(site);
+                }
+            }
         }
-
         Utilities.verboseLog(" sites : " + sites.size());
 
         Hmmer3MatchWithSites.Hmmer3LocationWithSites location = new Hmmer3MatchWithSites.Hmmer3LocationWithSites(

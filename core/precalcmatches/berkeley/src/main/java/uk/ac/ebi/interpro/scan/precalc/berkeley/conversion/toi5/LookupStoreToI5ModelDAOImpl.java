@@ -189,7 +189,9 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 // Second check: Analysis library has been request with the right release version -> -appl PIRSF-2.84
                 if (librariesToAnalyse == null || (librariesToAnalyse.containsKey(sigLib) && librariesToAnalyse.get(sigLib).equals(signatureLibraryReleaseVersion))) {
                     // Retrieve Signature to match
-                    debugString = "Check match for : " + sigLib + "-" + signatureLibraryReleaseVersion;
+                    debugString = "Check matches for : " + sigLib + "-" + signatureLibraryReleaseVersion;
+                    Utilities.verboseLog(10, debugString);
+
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(debugString);
                     }
@@ -198,6 +200,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                     sigQuery.setParameter("library", sigLib);
 
                     sigQuery.setParameter("version", signatureLibraryReleaseVersion);
+
+                    Utilities.verboseLog(10, " parameters : - " + sigQuery.getParameters().toString());
 
                     debugString = "Execute sigQuery : " + sigQuery.toString();
                     Utilities.verboseLog(10, debugString);
@@ -254,7 +258,17 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                             //Utilities.verboseLog(10, "consider dbKey:  " + dbKey + " matchesForModel: " + matchesForModel.size() );
                             if (matchesForModel.size() == 1) {
                                 Utilities.verboseLog(10, "Convert match for:  " + simpleMatch.getProteinMD5());
+                                Utilities.verboseLog(10, "simpleMatch : " + simpleMatch.toString()  +  " signature:  " + signature.getName() );
+                                if (sequenceSiteHits != null) {
+                                    Utilities.verboseLog(10, " \n sequenceSiteHits  size: " + sequenceSiteHits.size());
+                                    Utilities.verboseLog(10, " \n sequenceSiteHits  :" + sequenceSiteHits.toString());
+                                }else{
+                                    Utilities.verboseLog(10, " \n sequenceSiteHits  is NULL:");
+                                }
+
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
+                                Utilities.verboseLog("i5Match :-  " + i5Match);
+
                                 if (i5Match != null) {
                                     prot.addMatch(i5Match);
                                     //*****Initialize goxrefs and pathwayxrefs collections *******

@@ -31,14 +31,15 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
     private static final String databaseName = "IPRSCAN";
 
     private static String QUERY_TEMPORARY_TABLE =
-            "select  /*+ PARALLEL */  " +
+            "select  /*+ PARALLEL (6) */  " +
                     "PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, LOC_START, LOC_END, NUM_SITES, RESIDUE, " +
                     "RESIDUE_START, RESIDUE_END, DESCRIPTION " +
-                    "       from  lookup_site_tab  partition (partitionName) " +
+                    "       from  LOOKUP_SITE_TMP_TAB  partition (partitionName) " +
                     "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, LOC_START, LOC_END";
 
+    private static String QUERY_ENABLE_DML = "alter session enable parallel dml";
 
     public static void main(String[] args) {
         if (args.length < 4) {
@@ -114,6 +115,10 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                 long locationFragmentCount = 0, proteinMD5Count = 0, matchCount = 0;
                 int partitionCount = 0;
 
+
+                try (PreparedStatement psParallelDML = connection.prepareStatement(QUERY_ENABLE_DML)) {
+                    boolean executeParallelDML = psParallelDML.execute();
+                }
                 for (String partitionName : partitionNames) {
                     partitionCount++;
 //                    if (partitionName.compareTo("UPI00085") <= 0){
@@ -268,6 +273,7 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                         System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " matches");
                         //lookupMatchDB.close();  not needed as used the autocloseable
                         lookupMatchDB.getEntityStore().sync();
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                         throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
@@ -286,7 +292,7 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
         Set <String> partitionNames = new TreeSet<>();
 
         //tmp_lookup_tmp_tab_part
-        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_SITE_TAB' ORDER BY PARTITION_NAME";
+        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_SITE_TMP_TAB' ORDER BY PARTITION_NAME";
 //        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME <= 'UPI00002' ORDER BY PARTITION_NAME";
 
         int count = 0;
@@ -295,11 +301,10 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String partitionName = rs.getString(1);
-                //partitionNames.add(partitionName);
-
-                if (partitionName.startsWith("UPI0001")){
-                    partitionNames.add(partitionName);;
-                }
+                partitionNames.add(partitionName);
+//                if (partitionName.startsWith("UPI0001")){
+//                    partitionNames.add(partitionName);;
+//                }
             }
         } catch (SQLException e) {
             throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
