@@ -167,6 +167,9 @@ public abstract class Site implements Serializable, Cloneable {
                 } else if (s instanceof Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site) {
                     hmmer3Sites.add((Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site) s);
                 } else {
+                    System.out.println("check the type: ");
+                    System.out.println(s.getClass().getName());
+                    System.out.println(s.getClass().getSimpleName());
                     throw new IllegalArgumentException("Unrecognised Site class: " + s);
                 }
             }

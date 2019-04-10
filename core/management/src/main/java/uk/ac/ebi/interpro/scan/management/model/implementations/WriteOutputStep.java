@@ -349,8 +349,13 @@ public class WriteOutputStep extends Step {
         return outputPath;
     }
 
+
     private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
         Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
+        if (! sequenceType.equalsIgnoreCase("p")){
+            outputNTToXML(outputPath, stepInstance, sequenceType, isSlimOutput);
+            return;
+        }
         IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
 
         //Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
@@ -429,6 +434,93 @@ public class WriteOutputStep extends Step {
         }
 
     }
+
+    private void outputNTToXML(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
+        if (! sequenceType.equalsIgnoreCase("n")){
+            return;
+        }
+        Utilities.verboseLog(10, " WriteOutputStep - outputNTToXML " );
+        IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
+
+        //Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
+        //xmlWriter.writeMatches(outputPath, matchesHolder);
+
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
+        try (ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter(outputPath, isSlimOutput)) {
+            //writer.header(interProScanVersion);
+            if (bottomProteinId != null && topProteinId != null) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
+                }
+                Utilities.verboseLog(10, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
+                int count = 0;
+                writer.header(interProScanVersion);
+                final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
+                for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
+                    String proteinKey = Long.toString(proteinIndex);
+                    Protein protein = proteinDAO.getProtein(proteinKey);
+                    if (protein == null || protein.getMatches().isEmpty()) {
+                        continue;
+                    }
+                    Set<Match> matches = protein.getMatches();
+
+                    for (Match match : matches){
+                        StringBuilder matchBuilder = new StringBuilder();
+                        matchBuilder.append(protein.getId()).append(" ")
+                                .append(protein.getMd5()).append(" ")
+                                .append(match.getSignature().getSignatureLibraryRelease().getLibrary().getName()).append(" ");
+                        Entry matchEntry = match.getSignature().getEntry();
+                        if(matchEntry!= null){
+                            //check goterms
+                            //check pathways
+                            matchBuilder.append("-- entry: ").append(matchEntry.getAccession());
+                            matchEntry.getGoXRefs();
+                            if(matchEntry.getGoXRefs() != null) {
+                                matchEntry.getGoXRefs().size();
+                            }
+                            matchEntry.getPathwayXRefs();
+                            if(matchEntry.getPathwayXRefs() != null) {
+                                matchEntry.getPathwayXRefs().size();
+                            }
+                        }else{
+                            matchBuilder.append("-- entry i NULL");
+                        }
+                        //System.out.println("matchBuilder:  "  + matchBuilder );
+
+                    }
+                    //writer.write(protein, sequenceType, isSlimOutput);
+                    count++;
+                    if (count < proteinIndex) {
+                        writer.write(","); // More proteins/nucleotide sequences to follow
+                    }
+                    for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
+                        Utilities.verboseLog("OpenReadingFrame: " +  orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                        NucleotideSequence seq = orf.getNucleotideSequence();
+                        //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
+                        if (seq != null) {
+                            nucleotideSequences.add(seq);
+                            seq.getOpenReadingFrames();
+                            seq.getCrossReferences();
+                            writer.write(seq, sequenceType, isSlimOutput);
+                        }
+                    }
+
+                    //print one protein then break
+                    //break;
+                }
+                Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
+            }
+            writer.close();
+        }catch (JAXBException e){
+            e.printStackTrace();
+        }catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
