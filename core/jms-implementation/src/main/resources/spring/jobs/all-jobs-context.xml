@@ -620,6 +620,11 @@
         <property name="dbName" value="matchDB"/>
     </bean>
 
+    <bean id="kvStoreNucleotides"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <property name="dbName" value="NucleotideDB"/>
+    </bean>
+
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
 </beans>

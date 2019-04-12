@@ -376,7 +376,11 @@ public class Run extends AbstractI5Runner {
                 System.out.println(Utilities.getTimeNow() + "kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
                 LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
                 System.out.println(Utilities.getTimeNow() + "kvStoreMatches  name : " + kvStoreMatches.getDbName());
-                configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
+                //configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
+
+                LevelDBStore kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
+                System.out.println(Utilities.getTimeNow() + "kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
+                configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches,  kvStoreNucleotides, workingTemporaryDirectory );
 
                 System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
                 ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
@@ -1306,7 +1310,8 @@ public class Run extends AbstractI5Runner {
     }
 
 
-    public static void configureKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup,  LevelDBStore kvStoreProteinsOther,  LevelDBStore kvStoreMatches, String tempDir ){
+    public static void configureKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup,  LevelDBStore kvStoreProteinsOther,
+                                         LevelDBStore kvStoreMatches,  LevelDBStore kvStoreNucleotides, String tempDir ){
         String kvstoreDir = "kvstore";
         String kvstoreBase = tempDir + File.separator + kvstoreDir;
         String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
@@ -1324,6 +1329,11 @@ public class Run extends AbstractI5Runner {
         String kvStoreMatchesDBPath = kvstoreBase + File.separator + kvStoreMatches.getDbName();
         LOGGER.warn("kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
         kvStoreMatches.setLevelDBStore(kvStoreMatchesDBPath);
+
+        String kvStoreNucleotidesDBPath = kvstoreBase + File.separator + kvStoreNucleotides.getDbName();
+        LOGGER.warn("kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
+        kvStoreNucleotides.setLevelDBStore(kvStoreNucleotidesDBPath);
+
     }
 
     private static boolean isInvalid(final Mode mode, final CommandLine commandline) {

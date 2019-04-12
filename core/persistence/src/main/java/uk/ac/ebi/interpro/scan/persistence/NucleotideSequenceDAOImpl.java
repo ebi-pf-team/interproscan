@@ -17,7 +17,7 @@ import java.util.*;
  *         Date: 21/06/11
  *         Time: 16:43
  */
-public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence, Long> implements NucleotideSequenceDAO {
+public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequence> implements NucleotideSequenceDAO {
 
     private static final Logger LOGGER = Logger.getLogger(NucleotideSequenceDAOImpl.class.getName());
 
@@ -32,6 +32,21 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
      */
     public NucleotideSequenceDAOImpl() {
         super(NucleotideSequence.class);
+    }
+
+    @Override
+    public Set<NucleotideSequence> getNucleotideSequences() {
+        Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
+        try {
+            Map<byte[], byte[]> byteNucleotideSequenceMap = getDbStore().getAllElements();
+            for (byte [] byteNucleotideSequence: byteNucleotideSequenceMap.values()){
+                NucleotideSequence nucleotideSequence = getDbStore().asNucleotideSequence(byteNucleotideSequence);
+                nucleotideSequences.add(nucleotideSequence);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return nucleotideSequences;
     }
 
     /**
@@ -134,6 +149,25 @@ public class NucleotideSequenceDAOImpl extends GenericDAOImpl<NucleotideSequence
         @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return list;
+        }
+        return null;
+    }
+
+    /**
+     * SELECT * FROM NUCLEOTIDE_SEQUENCE s;
+     *      where id = given_id
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public NucleotideSequence getNucleotideSequence(Long nucleotideSequenceID) {
+        final Query query =
+                entityManager.createQuery(
+                        "SELECT s FROM NucleotideSequence s where id = :id");
+        query.setParameter("id", nucleotideSequenceID);
+        @SuppressWarnings("unchecked") List<NucleotideSequence> list = query.getResultList();
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
         }
         return null;
     }

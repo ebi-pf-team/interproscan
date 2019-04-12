@@ -12,16 +12,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.Result;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,19 +47,20 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
     private Jaxb2Marshaller jaxb2Marshaller;
     private Marshaller marshaller;
 
+    Path xmlPath;
 
     BufferedWriter bufferedWriter;
     BufferedOutputStream bos;
     protected DateFormat dmyFormat;
     protected static final Charset characterSet = Charset.defaultCharset();
 
-    public ProteinMatchesXMLJAXBFragmentsResultWriter(Path path, boolean isSlimOutput) throws IOException, XMLStreamException, JAXBException {
+    public ProteinMatchesXMLJAXBFragmentsResultWriter(Path path, Class classToBind, boolean isSlimOutput) throws IOException, XMLStreamException, JAXBException {
 
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         //
         try {
-
+            this.xmlPath = path;
             bos = new BufferedOutputStream(Files.newOutputStream(path));
             bufferedWriter = Files.newBufferedWriter(path, characterSet);
 
@@ -77,9 +77,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
             e.printStackTrace();
         }
 
-
-
-        this.jaxbContext = JAXBContext.newInstance(Protein.class);
+        this.jaxbContext = JAXBContext.newInstance(classToBind);
         //this.jaxbContext = JAXBContext.newInstance(NucleotideSequence.class);
         this.marshaller = jaxbContext.createMarshaller();
 
@@ -98,10 +96,11 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
 
     }
 
-    public void header(String interProScanVersion) throws  XMLStreamException {
+    public void header(String interProScanVersion, String localname) throws XMLStreamException, IOException {
        // writer.setDefaultNamespace("http://www.ebi.ac.uk");
         writer.writeStartDocument();
-        writer.writeStartElement("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", "protein-matches");
+        //bufferedWriter.write("\n");
+        writer.writeStartElement("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", localname);
         writer.writeAttribute("interProScanVersion", interProScanVersion);
         writer.writeNamespace("", "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
         //writer.writeStartElement("protein-matches");
@@ -126,6 +125,30 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
         writer.close();
         System.out.println("");
         //bufferedWriter.close();
+
+        Transformer transformer = null;
+
+        try {
+            BufferedReader buf = Files.newBufferedReader(xmlPath, characterSet);
+            String newPathName = xmlPath.toAbsolutePath().toString() + ".transform";
+            String line = buf.readLine();
+            StringBuilder sb = new StringBuilder();
+            while(line != null){
+                sb.append(line).append("\n");
+                line = buf.readLine();
+            }
+            String xmlFileAsString = sb.toString();
+
+            transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.transform(new StreamSource(new StringReader(xmlFileAsString))
+                    ,new StreamResult(new File(newPathName)));
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
     }
     /**
      * Writes out a set of proteins to a JSON file

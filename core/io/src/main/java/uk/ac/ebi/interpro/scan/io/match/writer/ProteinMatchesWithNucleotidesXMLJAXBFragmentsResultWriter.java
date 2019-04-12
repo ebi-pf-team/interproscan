@@ -163,6 +163,14 @@ public class ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter implement
 
     }
 
+    public String marshal(final OutputListElement outputListElement) throws JAXBException {
+        StringWriter tmpWriter = new StringWriter();
+        StreamResult result = new StreamResult(tmpWriter);
+        this.marshaller.marshal(outputListElement, result);
+        String xml = tmpWriter.toString();
+        return xml;
+
+    }
     public void footer() throws IOException{
 
     }

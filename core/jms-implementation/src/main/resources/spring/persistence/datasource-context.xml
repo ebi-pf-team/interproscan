@@ -70,7 +70,9 @@
           class="uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAOImpl"/>
 
     <bean id="nucleotideSequenceDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl"/>
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl">
+        <property name="dbStore" ref="kvStoreNucleotides"/>
+    </bean>
 
     <bean id="nucleotideSequenceXrefDAO"
           class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAOImpl"/>
