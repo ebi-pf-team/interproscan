@@ -127,6 +127,10 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             Utilities.verboseLog("minNumberOfCPUCores: " + minNumberOfCPUCores
                     + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
         }
+        Utilities.verboseLog("New values --- inVmWorkers min: " + localQueueJmsContainerFatMaster.getConcurrentConsumers()
+                + " max: " + localQueueJmsContainerFatMaster.getMaxConcurrentConsumers()
+                + " schedlued: " + localQueueJmsContainerFatMaster.getScheduledConsumerCount()
+                + " active: " + localQueueJmsContainerFatMaster.getActiveConsumerCount()  );
 
         localQueueJmsContainerFatMaster.shutdown();
         if(! localQueueJmsContainerFatMaster.isRunning()){
@@ -134,6 +138,11 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         }
         localQueueJmsContainerFatMaster.afterPropertiesSet();
         localQueueJmsContainerFatMaster.start();
+
+        Utilities.verboseLog("After Stop Start --- inVmWorkers min: " + localQueueJmsContainerFatMaster.getConcurrentConsumers()
+                + " max: " + localQueueJmsContainerFatMaster.getMaxConcurrentConsumers()
+                + " schedlued: " + localQueueJmsContainerFatMaster.getScheduledConsumerCount()
+                + " active: " + localQueueJmsContainerFatMaster.getActiveConsumerCount()  );
 
         try {
             loadInMemoryDatabase();
