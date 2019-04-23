@@ -240,6 +240,8 @@ public class Run extends AbstractI5Runner {
                         // Print out available jobs
                         SignatureLibraryRelease slr = job.getLibraryRelease();
                         analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription())); // LEAVE as System.out
+                        String jobId = job.getId();
+                        System.out.print("jobId : " + jobId);
                     }
                     if (deactivatedJobs.size() > 0) {
                         analysesHelpInformation.add("\nDeactivated analyses:\n");

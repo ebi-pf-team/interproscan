@@ -64,6 +64,16 @@ public class Jobs {
         return new Jobs(analysisJobs);
     }
 
+    public Jobs getActiveNonDeprecatedAnalysisJobs() {
+        List<Job> analysisJobs = new ArrayList<Job>();
+        for (Job job : jobMap.values()) {
+            if (job.isAnalysis() && job.isActive() &&  ! job.isDeprecated()) {
+                analysisJobs.add(job);
+            }
+        }
+        return new Jobs(analysisJobs);
+    }
+
 
     public List<Job> getJobList() {
         return new ArrayList<Job>(jobMap.values());

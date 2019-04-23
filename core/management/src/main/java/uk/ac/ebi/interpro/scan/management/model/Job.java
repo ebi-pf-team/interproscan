@@ -64,6 +64,11 @@ public class Job implements Serializable, BeanNameAware {
     private boolean active = true;
 
     /**
+     *   This boolean flag tests if the job is deprecated.
+     */
+    private boolean deprecated = false;
+
+    /**
      * List of steps.  this is transient so they don't all get shoved
      * over the wire when each StepExecution is run.
      */
@@ -165,5 +170,13 @@ public class Job implements Serializable, BeanNameAware {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
     }
 }

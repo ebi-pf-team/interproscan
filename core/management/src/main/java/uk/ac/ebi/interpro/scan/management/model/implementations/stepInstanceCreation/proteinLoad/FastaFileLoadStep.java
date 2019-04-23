@@ -184,6 +184,10 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
                     analysisJobs = jobs.getActiveAnalysisJobs();
+                    Utilities.verboseLog("ActiveAnalysisJobs: " + analysisJobs.toString());
+                    analysisJobs = jobs.getActiveNonDeprecatedAnalysisJobs();
+                    Utilities.verboseLog("ActiveNonDeprecatedAnalysisJobs: " + analysisJobs.toString());
+
                     List<String> analysisJobIdList = analysisJobs.getJobIdList();
                     StringBuilder analysisJobNamesBuilder = new StringBuilder();
                     for (String jobName : analysisJobIdList) {
