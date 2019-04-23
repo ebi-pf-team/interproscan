@@ -221,7 +221,7 @@ public class Run extends AbstractI5Runner {
 
             // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
             String[] analysesToRun = null;
-
+            String[] depreactedAnalysesToRun  = null;
 
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
                 Jobs jobs = (Jobs) ctx.getBean("jobs");
@@ -264,6 +264,9 @@ public class Run extends AbstractI5Runner {
                 }
 
                 try {
+                    depreactedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
+                    System.out.println("depreactedAnalysesToRun :" + depreactedAnalysesToRun);
+                    
                     analysesToRun = getApplications(parsedCommandLine, jobs);
                     if (LOGGER.isDebugEnabled()){
                         StringBuilder analysisItems = new StringBuilder();
@@ -1044,6 +1047,111 @@ public class Run extends AbstractI5Runner {
         }
         return result;
     }
+
+    public static String[] getDeprecatedApplications(CommandLine parsedCommandLine, Jobs allJobs) throws InvalidInputException {
+        List<String> deprecatedAnalysesToRun = new ArrayList<String>();
+        String[] inc_analyses = null;
+        if (parsedCommandLine.hasOption(I5Option.INC_ANALYSES.getLongOpt())) {
+            inc_analyses = parsedCommandLine.getOptionValues(I5Option.INC_ANALYSES.getLongOpt());
+        }
+        if (inc_analyses != null && inc_analyses.length > 0) {
+
+            // To build a set of error messages relating to the inputs (invalid inputs only)
+            Set<String> inputErrorMessages = new HashSet<String>();
+
+            // Check the input matches the expected regex and build a user entered member database -> version number map
+            Map<String, String> userAnalysesMap = new HashMap<String, String>();
+            final Pattern applNameRegex = Pattern.compile("^[a-zA-Z0-9_-]+"); // E.g. "PIRSF", "Gene3d", "SignalP-GRAM_NEGATIVE"
+            final Pattern applVersionRegex = Pattern.compile("\\d[0-9a-zA-Z._]*$"); // E.g. "3.01", "2.0c", "3", "2017_10"
+
+            for (int i = 0; i < inc_analyses.length; i++) {
+                final String parsedAnalysis = inc_analyses[i]; // E.g. "PIRSF", "PIRSF-3.01"
+                String applName;
+                String applVersion = null; // Could remain NULL if no specific version number specified by the user
+                if (parsedAnalysis.endsWith("-")) {
+                    inputErrorMessages.add(parsedAnalysis + " not a valid input.");
+                    continue;
+                }
+                int lastHyphen = parsedAnalysis.lastIndexOf('-');
+                if (lastHyphen == -1 || !Character.isDigit(parsedAnalysis.charAt(lastHyphen + 1))) {
+                    // No specific version number specified by the user
+                    applName = parsedAnalysis;
+                }
+                else {
+                    applName = parsedAnalysis.substring(0, lastHyphen);
+                    applVersion = parsedAnalysis.substring(lastHyphen + 1);
+                }
+                final Matcher m1 = applNameRegex.matcher(applName);
+
+                if (m1.matches() && (applVersion == null || applVersionRegex.matcher(applVersion).matches())) {
+                    if (applName.equalsIgnoreCase("SignalP")) {
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), applVersion);
+                    }
+                    else {
+                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
+                    }
+                }
+                else {
+                    inputErrorMessages.add(parsedAnalysis + " not a valid input.");
+                }
+            }
+            if (inputErrorMessages.size() > 0) {
+                throw new InvalidInputException(inputErrorMessages);
+            }
+
+            //User specified jobs
+
+            // Now check the user entered analysis versions actually exists
+            for (Map.Entry<String, String> mapEntry : userAnalysesMap.entrySet()) {
+                String userApplName = mapEntry.getKey();
+                String userApplVersion = mapEntry.getValue();
+                boolean found = false;
+
+                for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
+                    SignatureLibraryRelease slr = job.getLibraryRelease();
+                    String applName = slr.getLibrary().getName();
+                    String applVersion = slr.getVersion();
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("SignatureLibraryRelease: " + applName + ", " + applVersion);
+                    }
+                    if (applName.equalsIgnoreCase(userApplName)) {
+                        // This analysis name exists, what about the version?
+                        if (userApplVersion == null) {
+                            // User didn't specify a version, just use the latest (active) version for this analysis
+                            // Exactly one version of each member database analysis should be active at a time (TODO write unit test for that)
+                            if (job.isActive()) {
+                                deprecatedAnalysesToRun.add(job.getId());
+                                job.setDeprecated(false);
+                                found = true;
+                                break; // Found it!
+                            }
+                        }
+                        else if (applVersion.equalsIgnoreCase(userApplVersion)) {
+                            deprecatedAnalysesToRun.add(job.getId());
+                            job.setDeprecated(false);
+                            found = true;
+                            break; // Found it!
+                        }
+
+                    }
+                }
+                if (!found) {
+                    // Didn't find the user specified analysis version
+                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-"+userApplVersion) + " does not exist or is deactivated.");
+                }
+            }
+            if (inputErrorMessages.size() > 0) {
+                throw new InvalidInputException(inputErrorMessages);
+            }
+        }
+
+        return StringUtils.toStringArray(deprecatedAnalysesToRun);
+
+
+    }
+
 
     public static String[] getApplications(CommandLine parsedCommandLine, Jobs allJobs) throws InvalidInputException {
 
