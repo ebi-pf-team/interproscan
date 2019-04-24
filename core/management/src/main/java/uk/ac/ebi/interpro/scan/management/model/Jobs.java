@@ -30,6 +30,8 @@ public class Jobs {
     /* Represents all deactivated jobs (most of the time licensed analysis with no specified path to the binary) */
     final Map<Job, JobStatusWrapper> deactivatedJobs = new HashMap<Job, JobStatusWrapper>();
 
+    final Map<Job, JobStatusWrapper> deprecatedJobs = new HashMap<Job, JobStatusWrapper>();
+
     private Map<String, Step> stepMap;
 
     private final Object stepMapLocker = new Object();
@@ -136,6 +138,9 @@ public class Jobs {
         return deactivatedJobs;
     }
 
+    public Map<Job, JobStatusWrapper> getDeprecatedJobs() {
+        return deprecatedJobs;
+    }
 
     private void preProcessJobs(List<Job> jobList) {
         for (Job jobListItem : jobList) {
@@ -153,6 +158,11 @@ public class Jobs {
         //Check which jobs are active
         if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.ACTIVE)) {
             jobMap.put(job.getId(), job);
+            //Check which jobs are depracated
+            if (job.isDeprecated()) {
+                deprecatedJobs.put(job, jobStatusWrapper);
+            }
+
         }
         //Check which jobs are deactivated
         else if (jobStatusWrapper.getJobStatus().equals(JobStatusWrapper.JobStatus.DEACTIVATED)) {

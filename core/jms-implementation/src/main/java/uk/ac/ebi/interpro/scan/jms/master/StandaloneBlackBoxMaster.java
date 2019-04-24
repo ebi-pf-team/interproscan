@@ -131,6 +131,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             //slowSteps.add("stepPrositeProfilesRunBinary");
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
+            int allowedWaitTimeMultiplier = 0;
             boolean controlledLogging = false;
             while (!shutdownCalled) {
                 boolean completed = true;
@@ -253,11 +254,25 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 }
                 if(completed
                         && totalUnfinishedStepInstances == 0 ){
-                    Utilities.verboseLog("Should be finished: stepInstanceDAO.count() " + totalStepInstances
-                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
-                            + " minimumStepsExpected : " + minimumStepsExpected
-                            + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
-                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
+                    if(allowedWaitTimeMultiplier % 25 == 0) {
+                        Utilities.verboseLog("Should be finished: stepInstanceDAO.count() " + totalStepInstances
+                                + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                                + " minimumStepsExpected : " + minimumStepsExpected
+                                + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                                + " unfinishedSteps " + totalUnfinishedStepInstances);
+                    }
+                    if (totalStepInstances > stepInstancesCreatedByLoadStep){
+                        //Utilities.verboseLog("chances are all the steps have been completed, so wait for five second then break");
+                        allowedWaitTimeMultiplier ++;
+                    }else{
+                        Utilities.verboseLog("Should be finished: ...but rest");
+                        allowedWaitTimeMultiplier = 0;
+                    }
+
+                    if (allowedWaitTimeMultiplier > 50){
+                        Utilities.verboseLog("chances are all the steps have been completed, so wait for five second then break .. allowedWaitTimeMultiplier" + allowedWaitTimeMultiplier);
+                        break;
+                    }
                 }
                 //for standalone es mode this should be < 200
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
