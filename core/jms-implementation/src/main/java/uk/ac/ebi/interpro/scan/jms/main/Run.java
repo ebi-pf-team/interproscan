@@ -1295,13 +1295,6 @@ public class Run extends AbstractI5Runner {
         if (parsedCommandLine.hasOption(I5Option.EXC_ANALYSES.getLongOpt())) {
             exclude_analyses = parsedCommandLine.getOptionValues(I5Option.EXC_ANALYSES.getLongOpt());
             exclude_analyses = tidyOptionsArray(exclude_analyses);
-            System.out.println("exclude_analyses: ");
-            for (String analysisName: exclude_analyses){
-                System.out.print(analysisName + " ");
-            }
-        }
-        if(exclude_analyses != null) {
-            System.out.println("exclude_analyses: " + exclude_analyses.length);
         }
 
         if (exclude_analyses != null && exclude_analyses.length > 0) {
@@ -1344,8 +1337,6 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
 
-            System.out.println("addApplVersionToUserMap: " + userAnalysesMap.toString());
-
             //User specified jobs
 
             // Now check the user entered analysis versions actually exists
@@ -1362,7 +1353,6 @@ public class Run extends AbstractI5Runner {
                         LOGGER.debug("SignatureLibraryRelease: " + applName + ", " + applVersion);
                     }
                     if (applName.equalsIgnoreCase(userApplName)) {
-                        System.out.println("deprecate .... " + userApplName);
                         // This analysis name exists, what about the version?
                         if (userApplVersion == null) {
                             // User didn't specify a version, just use the latest (active) version for this analysis
