@@ -13,6 +13,8 @@
 
 #include "sfld.h"
 
+#define SFLD_POSTPROCESSOR_VERSION "1.1"
+
 struct family // one per SFLD accession
 {
     char *name; // feature name
