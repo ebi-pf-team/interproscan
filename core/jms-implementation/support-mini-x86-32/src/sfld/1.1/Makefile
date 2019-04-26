@@ -9,7 +9,7 @@ CFLAGS = -I${EASEL_DIR} -O2
 LDFLAGS = -L${EASEL_DIR}
 LDLIBS = -leasel -lm
 
-all: sfld_preprocess sfld_postprocess
+all: sfld_postprocess
 
 clean:
-	rm -f sfld_preprocess sfld_postprocess
+	rm -f sfld_postprocess
