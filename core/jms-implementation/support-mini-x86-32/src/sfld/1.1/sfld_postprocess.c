@@ -394,12 +394,11 @@ void get_options_post(int argc, char **argv, int *only_matches, char **hmmer_out
     {
         {"help",         no_argument,       0,  'h' },
         {"version",      no_argument,       0,  'v' },
-        {"hmmerpath",    required_argument, 0,  'p' }, // path to hmm* binaries (overrides $HMMER_PATH)
-        {"format",       required_argument, 0,  'f' }, // Not yet implemented - output text format
+        {"format",       required_argument, 0,  'f' }, // output text format
         {"dom",          required_argument, 0,  'd' }, // HMMER dom table (prefixed with $SFLD_OUTPUT if set)
         {"alignments",   required_argument, 0,  'a' }, // SFLD alignments (prefixed with $SFLD_OUTPUT if set)
-        {"hmmer-out",    required_argument, 0,  'O' }, // SFLD alignments (prefixed with $SFLD_OUTPUT if set)
-        {"site-info",    required_argument, 0,  's' }, // Sequence [target] database
+        {"hmmer-out",    required_argument, 0,  'O' }, // HMMER output file (prefixed with $SFLD_OUTPUT if set)
+        {"site-info",    required_argument, 0,  's' }, // SFLD sites file
         {"output",       required_argument, 0,  'o' }, // Output file (otherwise STDOUT)
         {0,              0,                 0,   0  }
     };
@@ -600,7 +599,6 @@ void show_help(char *progname)
    printf("Post-process results of HMMER search on SFLD HMMs\n");
    printf("Usage %s: options:\n", progname);
    printf("\t--version     | -v         show program version\n");
-   printf("\t--hmmerpath   | -p PATH    path to hmm* binaries (overrides $HMMER_PATH)\n");
    printf("\t--alignments  | -a         HMMER alignment file\n");
    printf("\t--dom         | -d         HMMER domtblout file\n");
    printf("\t--hmmer-out   | -O         HMMER output file\n");
