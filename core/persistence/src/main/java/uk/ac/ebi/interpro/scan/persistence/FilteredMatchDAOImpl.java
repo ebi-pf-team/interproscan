@@ -320,4 +320,20 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
 
 
     }
+
+    public void updateMatch(Match match){
+        Entry matchEntry = match.getSignature().getEntry();
+        if(matchEntry!= null) {
+            //check goterms
+            //check pathways
+            matchEntry.getGoXRefs();
+            if (matchEntry.getGoXRefs() != null) {
+                matchEntry.getGoXRefs().size();
+            }
+            matchEntry.getPathwayXRefs();
+            if (matchEntry.getPathwayXRefs() != null) {
+                matchEntry.getPathwayXRefs().size();
+            }
+        }
+    }
 }

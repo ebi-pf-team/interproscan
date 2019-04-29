@@ -89,6 +89,7 @@ public class ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter implement
 
         this.jaxb2Marshaller =  new Jaxb2Marshaller();
 
+
         this.marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         this.marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         System.out.println("jaxb.formatted.output.. 1: " + this.marshaller.getProperty("jaxb.formatted.output"));

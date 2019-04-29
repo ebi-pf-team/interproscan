@@ -65,6 +65,10 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
                 Set<Match> proteinMatches = new HashSet(filteredMatches);
                 String signatureLibraryKey = proteinMatches.iterator().next().getSignature().getSignatureLibraryRelease().getLibrary().getName();
                 final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
                 matchDAO.persist(dbKey, proteinMatches);
             }
 

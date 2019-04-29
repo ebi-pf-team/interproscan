@@ -5,6 +5,7 @@ import org.hibernate.Hibernate;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesJSONResultWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter;
+import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
@@ -97,6 +98,18 @@ public class PrepareForOutputStep extends Step {
         */
         int proteinRawCount = 0;
         Protein exampleProtein = null;
+
+        try {
+            simulateMarshalling(stepInstance, "p");
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        if (! sequenceType.equalsIgnoreCase("p")){
+//            return;
+//        }
+
         for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
             proteinRawCount ++;
             String proteinKey = Long.toString(proteinIndex);
@@ -137,12 +150,7 @@ public class PrepareForOutputStep extends Step {
                 //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
                 if (seq != null) {
                     nucleotideSequences.add(seq);
-                    String key = seq.getMd5();
-                    seq.getCrossReferences();
-                    Set <OpenReadingFrame> orfs = seq.getOpenReadingFrames();
-                    seq.getOpenReadingFrames().size();
                     nucleotideSequenceIds.add(seq.getId()); //store the Id
-
 //                    Hibernate.initialize(seq);
 //                    nucleotideSequenceDAO.persist(key, seq);
                 }
@@ -156,17 +164,20 @@ public class PrepareForOutputStep extends Step {
             //keyToProteinMap.put(key, protein);
         }
 
+
         if(nucleotideSequences.size() > 0) {
             //Utilities.verboseLog("nucleotideSequences : \n" + nucleotideSequences.iterator().next());
             try {
                 //outputNTToXML(stepInstance, "n", nucleotideSequences);
                 outputToXML(stepInstance, "n", nucleotideSequenceIds);
-                outputToJSON(stepInstance, "n", nucleotideSequences);
+                //outputToJSON(stepInstance, "n", nucleotideSequences);
             } catch (IOException e) {
                 LOGGER.error("Error writing to xml");
                 e.printStackTrace();
             }
         }
+
+
 
         Utilities.verboseLog("nucleotideSequences size: " +  nucleotideSequences.size());
 
@@ -217,6 +228,87 @@ public class PrepareForOutputStep extends Step {
         return proteinsinRange;
     }
 
+
+    private void simulateMarshalling( StepInstance stepInstance, String sequenceType) throws IOException {
+        if (! sequenceType.equalsIgnoreCase("p")){
+            return;
+        }
+        final boolean isSlimOutput = false;
+        final String interProScanVersion = "5-34";
+
+        Path outputPath = getFinalPath(stepInstance, FileOutputFormat.XML);
+        Utilities.verboseLog(10, " Prepare For OutputStep - output proteins to XML: " + outputPath );
+
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Load " + topProteinId + " proteins from the db.");
+        }
+        Utilities.verboseLog(10, " WriteOutputStep - proteins XML new " + " There are " + topProteinId + " proteins.");
+        int count = 0;
+
+        //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
+
+
+        int proteinCount = 0;
+        int matchCount = 0;
+
+        try (ProteinMatchesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesXMLJAXBFragmentsResultWriter(outputPath, Protein.class, isSlimOutput)) {
+            //writer.header(interProScanVersion);
+            writer.header(interProScanVersion,   "protein-matches");
+            Set<String> signatureLibraryNames = new HashSet<>();
+
+            for (SignatureLibrary sig: SignatureLibrary.values() ){
+                signatureLibraryNames.add(sig.getName());
+            }
+
+            for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
+                String proteinKey = Long.toString(proteinIndex);
+                Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+                //Protein protein = proteinDAO.getProtein(proteinKey);
+                if(protein != null){
+                    proteinCount ++;
+                }
+
+                for(String signatureLibraryName: signatureLibraryNames){
+                    final String dbKey = proteinKey + signatureLibraryName;
+                    Set<Match> matches = matchDAO.getMatchSet(dbKey);
+                    if (matches != null){
+                        //Utilities.verboseLog("Get matches for protein  id: " + protein.getId() +  " dbKey (matchKey): " + dbKey);
+                        for(Match match: matches){
+                            match.getSignature().getCrossReferences();
+                            //match.getSignature().getEntry();
+                            //try update with cross refs etc
+                            //updateMatch(match);
+                            protein.addMatch(match);
+                            matchCount ++;
+                        }
+                    }
+                }
+
+                String xmlProtein = writer.marshal(protein);
+                protein.getOpenReadingFrames().size();
+
+                for(Match i5Match: protein.getMatches()){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+
+                proteinDAO.persist(proteinKey, protein);
+
+                //Utilities.verboseLog(10, " xmlProtein:" + xmlProtein);
+            }
+            writer.close();
+        }catch (JAXBException e){
+            e.printStackTrace();
+        }catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     private void outputToXML( StepInstance stepInstance, String sequenceType, Set<Long> nucleotideSequenceIds) throws IOException {
         if (! sequenceType.equalsIgnoreCase("n")){
             return;
@@ -246,7 +338,7 @@ public class PrepareForOutputStep extends Step {
                     String xmlNucleotideSequence = writer.marshal(nucleotideSequence);
                     String key = nucleotideSequence.getMd5();
                     nucleotideSequenceDAO.persist(key, nucleotideSequence);
-                    Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- " +  xmlNucleotideSequence);
+                    //Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
                 }
 
                 Utilities.verboseLog("WriteOutPut nucleotideSequenceIds size: " +  nucleotideSequenceIds.size());
@@ -451,6 +543,22 @@ public class PrepareForOutputStep extends Step {
 
         }
         return outputPath;
+    }
+
+    public void updateMatch(Match match){
+        Entry matchEntry = match.getSignature().getEntry();
+        if(matchEntry!= null) {
+            //check goterms
+            //check pathways
+            matchEntry.getGoXRefs();
+            if (matchEntry.getGoXRefs() != null) {
+                matchEntry.getGoXRefs().size();
+            }
+            matchEntry.getPathwayXRefs();
+            if (matchEntry.getPathwayXRefs() != null) {
+                matchEntry.getPathwayXRefs().size();
+            }
+        }
     }
 
 

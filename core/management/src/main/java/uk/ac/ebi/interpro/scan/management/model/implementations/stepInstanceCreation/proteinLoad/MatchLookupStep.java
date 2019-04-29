@@ -226,7 +226,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
 
             Thread lookupThread = new Thread(precalculatedProteinLookup);
 
-            System.out.println("Starting Thread..." + precalculatedProteinLookup.hashCode());
+            System.out.println("Starting Thread... precalculatedProteinLookup - " + precalculatedProteinLookup.hashCode());
 
             try {
                 lookupThread.start();

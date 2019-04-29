@@ -95,6 +95,10 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
             }
             if(! proteinMatches.isEmpty()) {
                 final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
                 matchDAO.persist(dbKey, proteinMatches);
             }
         }

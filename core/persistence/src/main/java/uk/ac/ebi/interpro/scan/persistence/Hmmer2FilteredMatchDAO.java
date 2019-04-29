@@ -57,6 +57,10 @@ abstract class Hmmer2FilteredMatchDAO<T extends Hmmer2RawMatch>
             }
             if(! filteredMatches.isEmpty()) {
                 final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
                 matchDAO.persist(dbKey, proteinMatches);
             }
         }

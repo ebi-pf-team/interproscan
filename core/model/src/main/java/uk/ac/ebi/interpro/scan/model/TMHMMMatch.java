@@ -27,9 +27,13 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
 
     public TMHMMMatch(Signature signature, String signatureModels, Set<TMHMMLocation> locations) {
         super(signature, signatureModels, locations);
+
+        /*
         if (!TMHMMSignature.isValidSignature(signature)) {
             throw new IllegalArgumentException("The Signature object being used for this TMHMM does not appear to be a valid TMHMM signature.");
         }
+        */
+        
     }
 
     public Object clone() throws CloneNotSupportedException {

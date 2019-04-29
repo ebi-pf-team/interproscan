@@ -357,6 +357,7 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
             lookupMessageStatus = "Check MD5s of proteins analysed previously";
             final List<String> analysedMd5s = preCalcMatchClient.getMD5sOfProteinsAlreadyAnalysed(md5s);
 
+            Utilities.verboseLog(10, "GOt MD5sOfProteinsAlreadyAnalysed :" + analysedMd5s.size());
             // Check if NONE have been pre-calculated - if so, return empty set.
             if (analysedMd5s == null || analysedMd5s.size() == 0) {
                 return Collections.emptySet();
@@ -379,8 +380,9 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
 
             lookupMessageStatus = "Get matches of proteins analysed previously";
 //            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
+            Utilities.verboseLog(10, "getMatchesFromLookup .. " );
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(md5s);
-//            Utilities.verboseLog(10, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
+            Utilities.verboseLog(10, "berkeleyMatchXML: " + kvSequenceEntryXML.getMatches().toString());
 
             //if null is returned from the lookupmatch then may need to be calculated
             if (kvSequenceEntryXML == null) {
@@ -409,17 +411,33 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
             Utilities.verboseLog(10, "Now check the version consistency : for " + precalculatedProteinsCount + " precalculatedProteins");
             //should we get CDD or SFLD sites
             boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
+            Utilities.verboseLog("include CDD or SFLD:  ... " + includeCDDorSFLD);
             KVSequenceEntryXML kvSitesSequenceEntryXML = null;
+
+            //Avoid null lists and go for empty lists
+            List<KVSequenceEntry> kvSequenceEntrySites = new ArrayList<>();
             if(includeCDDorSFLD){
-                Utilities.verboseLog("lookup Sites ... ");
+                Utilities.verboseLog("Now lookup Sites ... ");
                 kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
-                Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.getMatches().size() + " -- " + kvSitesSequenceEntryXML.getMatches().toString());
+                if(kvSitesSequenceEntryXML != null){
+                    kvSequenceEntrySites = kvSitesSequenceEntryXML.getMatches();
+                }
+                Utilities.verboseLog("lookup Sites XML:" + kvSequenceEntrySites.size() + " -- " + kvSequenceEntrySites.toString());
+            }
+
+            List<KVSequenceEntry> kvSequenceEntryMatches = new ArrayList<>();;
+
+            if(kvSequenceEntryXML != null) {
+                kvSequenceEntryMatches = kvSequenceEntryXML.getMatches();
             }
 
             if (isAnalysisVersionConsistent(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap)) {
-//                Utilities.verboseLog(10, "Analysis versions ARE Consistent" );
-                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
-                Utilities.verboseLog(10, "PopulateProteinMatches:  " + precalculatedProteins.size() );
+                if(kvSequenceEntryMatches != null && kvSequenceEntrySites != null) {
+                    Utilities.verboseLog(10, "Analysis versions ARE Consistent ..  populateProteinMatches : kvSequenceEntryMatches " + kvSequenceEntryMatches.size() +
+                            " kvSequenceEntrySites: " + kvSequenceEntrySites.size());
+                }
+                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
+                Utilities.verboseLog(10, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size() );
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
@@ -596,7 +614,7 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
                 }
             }
         }
-        Utilities.verboseLog("AnalysisVersion Consistent  ...");
+        Utilities.verboseLog("Analysis Version is Consistent  ...");
         return true;
     }
 

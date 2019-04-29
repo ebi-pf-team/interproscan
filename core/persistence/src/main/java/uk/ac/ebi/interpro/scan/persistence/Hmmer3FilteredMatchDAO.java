@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.model.Entry;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -75,6 +76,10 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
 
             if(! (filteredMatches == null && filteredMatches.isEmpty())) {
                 Set<Match> proteinMatches = new HashSet(filteredMatches);
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
                 final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
                 matchDAO.persist(dbKey, proteinMatches);
             }

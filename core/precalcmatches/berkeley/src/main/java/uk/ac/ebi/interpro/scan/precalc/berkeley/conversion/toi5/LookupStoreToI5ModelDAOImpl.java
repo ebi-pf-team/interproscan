@@ -61,6 +61,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
     @Transactional(readOnly = true)
     public void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeCDDorSFLD) {
         String debugString = "";
+
+        Utilities.verboseLog(10, "Start  populateProteinMatches:  preCalculatedProteins: " + preCalculatedProteins.size()); // +  " kvSequenceEntries: "  + kvSequenceEntries.size() );
         final Map<String, Protein> md5ToProteinMap = new HashMap<>(preCalculatedProteins.size());
         // Populate the lookup map.
         for (Protein protein : preCalculatedProteins) {
@@ -115,10 +117,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 //        LOGGER.debug("From librariesToAnalyse: " + jobsToAnalyse);
         }
 
-        Map<String,  KVSequenceEntry> mapKVSequenceEntry = getMapKVSequenceEntry(kvSiteSequenceEntries);
+        Map<String,  KVSequenceEntry> mapKVSequenceEntryForSites = getMapKVSequenceEntry(kvSiteSequenceEntries);
 
         // Collection of BerkeleyMatches of different kinds.
-        Utilities.verboseLog(10, "Start PopulateProteinMatches:  kvSequenceEntries : " + kvSequenceEntries.size() );
+        Utilities.verboseLog(10, "Start comvert look matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size() );
         String exampleKey  = null;
         for (KVSequenceEntry lookupMatch : kvSequenceEntries) {
             //now we ahave a list
@@ -127,7 +129,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             Set<String> sequenceHits = lookupMatch.getSequenceHits();
 
             //deal with cdd and sfld sites
-            KVSequenceEntry siteSequenceEntry = mapKVSequenceEntry.get(proteinMD5);
+            KVSequenceEntry siteSequenceEntry = mapKVSequenceEntryForSites.get(proteinMD5);
             Set<String> sequenceSiteHits = null;
             if(siteSequenceEntry != null) {
                sequenceSiteHits = siteSequenceEntry.getSequenceHits();

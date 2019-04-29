@@ -112,7 +112,7 @@ public class Signature implements Serializable {
     private String abstractText;
 
     //TODO: Switch back to eager loading after schema update (loading entries to database)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     // TODO: This needs to be ManyToMany so that a Signature can be re-used across releases.
     @BatchSize(size=4000)
     @JsonManagedReference

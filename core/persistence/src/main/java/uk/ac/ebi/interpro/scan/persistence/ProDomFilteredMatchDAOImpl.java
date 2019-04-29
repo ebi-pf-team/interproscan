@@ -115,6 +115,10 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
 
             if (! proteinMatches.isEmpty()) {
                 Utilities.verboseLog("persist Prodom matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
                 matchDAO.persist(dbKey, proteinMatches);
             }
         }

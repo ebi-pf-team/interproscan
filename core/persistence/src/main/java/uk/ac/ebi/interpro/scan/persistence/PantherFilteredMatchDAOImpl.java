@@ -138,6 +138,10 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
 
             if (proteinMatches != null && ! proteinMatches.isEmpty()) {
                 //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
                 matchDAO.persist(dbKey, proteinMatches);
             }
         }

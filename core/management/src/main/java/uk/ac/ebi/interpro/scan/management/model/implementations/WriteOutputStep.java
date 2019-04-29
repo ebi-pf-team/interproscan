@@ -543,9 +543,7 @@ public class WriteOutputStep extends Step {
                     Utilities.verboseLog(10, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
                     int count = 0;
 
-                   
                     for (NucleotideSequence nucleotideSequence :nucleotideSequences){
-
                         writer.write(nucleotideSequence);
                         count++;
                         if (count < nucleotideSequences.size()) {

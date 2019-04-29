@@ -64,6 +64,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
     @JsonBackReference
     private Protein protein;
 
+    //TEST - TODO check again
+    //cascade = CascadeType.ALL does not work
     @ManyToOne(optional = false)
     @JoinColumn(name = "SIGNATURE_ID", referencedColumnName = "ID")
     private Signature signature;
