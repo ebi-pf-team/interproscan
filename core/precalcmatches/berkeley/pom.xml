@@ -5,12 +5,12 @@
     <parent>
         <artifactId>precalcmatches</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.34-73.0</version>
+        <version>5.35-74.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>berkeley</artifactId>
-    <version>5.34-73.0</version>
+    <version>5.35-74.0</version>
 
     <name>Precalculated Match Lookup - BerkeleyDB</name>
 
