@@ -18,6 +18,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -101,6 +102,8 @@ public class PrepareForOutputStep extends Step {
 
         try {
             simulateMarshalling(stepInstance, "p");
+            //if()
+            processNucleotideSequences(stepInstance);
             return;
         } catch (IOException e) {
             e.printStackTrace();
@@ -229,6 +232,64 @@ public class PrepareForOutputStep extends Step {
     }
 
 
+    private void processNucleotideSequences( StepInstance stepInstance){
+        //
+        //should we deal with nucleotides here
+        //Utilities.verboseLog("proteinWithXref: \n" +  proteinWithXref.toString());
+        final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
+
+        final Set<Long> nucleotideSequenceIds = new HashSet<>();
+
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
+        int proteinCount = 0;
+
+
+            Set<String> signatureLibraryNames = new HashSet<>();
+
+            for (SignatureLibrary sig: SignatureLibrary.values() ){
+                signatureLibraryNames.add(sig.getName());
+            }
+
+            for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++) {
+                String proteinKey = Long.toString(proteinIndex);
+                Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+                //Protein protein = proteinDAO.getProtein(proteinKey);
+                if (protein != null) {
+                    proteinCount++;
+                }
+                for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
+                    //Utilities.verboseLog("OpenReadingFrame: \n" +  orf.toString());
+                    NucleotideSequence seq = orf.getNucleotideSequence();
+                    //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
+                    if (seq != null) {
+                        nucleotideSequences.add(seq);
+                        nucleotideSequenceIds.add(seq.getId()); //store the Id
+                        //                    Hibernate.initialize(seq);
+                        //                    nucleotideSequenceDAO.persist(key, seq);
+                    }
+                }
+            }
+
+            if(nucleotideSequences.size() > 0) {
+                //Utilities.verboseLog("nucleotideSequences : \n" + nucleotideSequences.iterator().next());
+                try {
+                    //outputNTToXML(stepInstance, "n", nucleotideSequences);
+                    outputToXML(stepInstance, "n", nucleotideSequenceIds);
+                    //outputToJSON(stepInstance, "n", nucleotideSequences);
+                } catch (IOException e) {
+                    LOGGER.error("Error writing to xml");
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            Utilities.verboseLog("nucleotideSequences size: " +  nucleotideSequences.size());
+    }
+
+
     private void simulateMarshalling( StepInstance stepInstance, String sequenceType) throws IOException {
         if (! sequenceType.equalsIgnoreCase("p")){
             return;
@@ -298,6 +359,7 @@ public class PrepareForOutputStep extends Step {
                 proteinDAO.persist(proteinKey, protein);
 
                 //Utilities.verboseLog(10, " xmlProtein:" + xmlProtein);
+
             }
             writer.close();
         }catch (JAXBException e){
@@ -306,6 +368,8 @@ public class PrepareForOutputStep extends Step {
             e.printStackTrace();
         }
 
+        //remove the temp xmls file
+        deleteTmpMarshallingFile(outputPath);
     }
 
 
@@ -322,7 +386,7 @@ public class PrepareForOutputStep extends Step {
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
 
-        try (ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter(outputPath, isSlimOutput)) {
+        try (ProteinMatchesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesXMLJAXBFragmentsResultWriter(outputPath, NucleotideSequence.class, isSlimOutput)) {
             //writer.header(interProScanVersion);
             if (! nucleotideSequenceIds.isEmpty()) {
 
@@ -331,7 +395,7 @@ public class PrepareForOutputStep extends Step {
                 }
                 Utilities.verboseLog(10, " WriteOutputStep -NT XML new " + " There are " + topProteinId + " proteins.");
                 int count = 0;
-                writer.header(interProScanVersion);
+                writer.header(interProScanVersion,   "nucleotide-sequence-matches");
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId :nucleotideSequenceIds){
                     NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSequenceId);
@@ -344,12 +408,14 @@ public class PrepareForOutputStep extends Step {
                 Utilities.verboseLog("WriteOutPut nucleotideSequenceIds size: " +  nucleotideSequenceIds.size());
             }
             writer.close();
+
         }catch (JAXBException e){
             e.printStackTrace();
         }catch (XMLStreamException e) {
             e.printStackTrace();
         }
-
+        //delete the tmp xml file
+        deleteTmpMarshallingFile(outputPath);
     }
 
 
@@ -468,7 +534,7 @@ public class PrepareForOutputStep extends Step {
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
-        filePathName = filePathName + ".nt";
+        filePathName = filePathName + ".initial.tmp";
 
         Path outputPath = getPathName(explicitPath, filePathName, fileOutputFormat);
         return outputPath;
@@ -558,6 +624,20 @@ public class PrepareForOutputStep extends Step {
             if (matchEntry.getPathwayXRefs() != null) {
                 matchEntry.getPathwayXRefs().size();
             }
+        }
+    }
+
+    private void deleteTmpMarshallingFile(Path outputPath){
+        final String outputFilePathName = outputPath.toAbsolutePath().toString();
+        LOGGER.warn("Deleting temp xml file:  " + outputFilePathName);
+        File file = new File(outputFilePathName);
+        if (file.exists()) {
+            if (!file.delete()) {
+                LOGGER.error("Unable to delete the file located at " + outputFilePathName);
+                throw new IllegalStateException("Unable to delete the file located at " + outputFilePathName);
+            }
+        }else{
+            LOGGER.warn("File not found, file located at " + outputFilePathName);
         }
     }
 

@@ -464,16 +464,17 @@ public class WriteOutputStep extends Step {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
-                Utilities.verboseLog(10, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
+                Utilities.verboseLog(10, " WriteOutputStep nucleotideSequences -XML new " + " There are " + topProteinId + " proteins.");
                 int count = 0;
                 writer.header(interProScanVersion, "nucleotide-sequence-matches");
 
                 final Set<NucleotideSequence> nucleotideSequences = nucleotideSequenceDAO.getNucleotideSequences();
                 for(NucleotideSequence  nucleotideSequence : nucleotideSequences ){
+                    count ++;
                     writer.write(nucleotideSequence, sequenceType, isSlimOutput);
                 }
 
-                Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
+                Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size() + " and count : " + count);
             }
             writer.close();
         }catch (JAXBException e){

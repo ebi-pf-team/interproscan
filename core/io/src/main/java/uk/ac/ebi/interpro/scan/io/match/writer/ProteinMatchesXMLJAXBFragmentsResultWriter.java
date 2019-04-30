@@ -21,9 +21,11 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.*;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -152,6 +154,12 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.transform(new StreamSource(new StringReader(xmlFileAsString))
                     ,new StreamResult(new File(newPathName)));
+            //rename the new file
+            LOGGER.warn("Moving/Renaming the xmls file temp xml file:  " + newPathName + " with " + xmlFileAsString);
+            Path sourcePath = Paths.get(newPathName);
+            Path targetPath = Paths.get(xmlPath.toAbsolutePath().toString());
+            Files.move(sourcePath, targetPath, REPLACE_EXISTING);
+
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
         } catch (TransformerException e) {
