@@ -224,9 +224,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     public int getMinimumStepsExpected(){
         int analysesCount = 1;
         if (analyses != null) {
+            Utilities.verboseLog("analyses != null:  " + analyses.toString());
             analysesCount = analyses.length;
         }else{
-            analysesCount = jobs.getActiveAnalysisJobs().getJobIdList().size();
+            analysesCount = jobs.getActiveNonDeprecatedAnalysisJobs().getJobIdList().size();
         }
         Utilities.verboseLog("analysesCount :  " + analysesCount);
         int minimumStepForEachAnalysis = 0;

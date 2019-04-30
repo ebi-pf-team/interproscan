@@ -31,6 +31,6 @@ public class JobStatusWrapper {
     }
 
     public enum JobStatus {
-        ACTIVE, DEACTIVATED, UNKNOWN
+        ACTIVE, DEACTIVATED, DEPREACTED, UNKNOWN
     }
 }

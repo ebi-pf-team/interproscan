@@ -16,7 +16,8 @@
         <property name="maxConcurrentConsumers" value="${maxnumber.of.embedded.workers}"/>
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
-        <property name="autoStartup" value="true"/>
+        <property name="autoStartup" value="false"/>
+        <!--<property name="autoStartup" value="true"/>-->
     </bean>
 
     <!--<bean id="amqEmbeddedWorkerJmsContainerThinMaster" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
