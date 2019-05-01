@@ -65,7 +65,7 @@ public class TMHMMFilteredMatchDAO extends FilteredMatchDAOImpl<TMHMMRawMatch, T
 
 //                Utilities.verboseLog(rawMatch.toString());
                 TMHMMMatch match = buildMatch(rawMatch, signature);
-                Utilities.verboseLog("TMHMM match:" + match.toString());
+
                 proteinMatches.add(match);
                 //entityManager.persist(match);
                 //if(signatureLibraryKey == null) {
@@ -136,16 +136,16 @@ public class TMHMMFilteredMatchDAO extends FilteredMatchDAOImpl<TMHMMRawMatch, T
             return signature;
         } else if (retrievedSignatures.size() > 1) {
             // Error detected - more than one Signature record for this release of TMHMM
-            System.out.println("There is more than one Signature record  (found " + retrievedSignatures.size() + ")  for version " + tmhmmReleaseVersion + " of TMHMM in the database.");
+            //System.out.println("There is more than one Signature record  (found " + retrievedSignatures.size() + ")  for version " + tmhmmReleaseVersion + " of TMHMM in the database.");
             for(Signature rsignature: retrievedSignatures){
-                System.out.println("TMHMM signature: " + rsignature.toString());
+                //System.out.println("TMHMM signature: " + rsignature.toString());
 
                 if(rsignature.getAccession().equals(prediction.getAccession())){
-                    System.out.println("Found TMHMM signature accession match : " + rsignature.getId());
+                    //System.out.println("Found TMHMM signature accession match : " + rsignature.getId());
                     return rsignature;
                 }
             }
-            throw new IllegalStateException("There is more than one Signature record  (found " + retrievedSignatures.size() + ")  for version " + tmhmmReleaseVersion + " of TMHMM in the database.");
+            throw new IllegalStateException("There is more than one Signature record  (found " + retrievedSignatures.size() + ")  for version " + tmhmmReleaseVersion + " of TMHMM in the database, but could find one that matches with the raw match prediction.");
         } else {
             // return the previously persisted Signature.
             return retrievedSignatures.get(0);

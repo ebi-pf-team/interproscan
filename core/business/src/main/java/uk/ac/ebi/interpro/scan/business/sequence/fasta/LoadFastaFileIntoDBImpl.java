@@ -220,12 +220,12 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 protein.getCrossReferences();
                 protein.getOpenReadingFrames();
                 for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
-                    Utilities.verboseLog("OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                    Utilities.verboseLog(20, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
                     NucleotideSequence seq = orf.getNucleotideSequence();
                     //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
                     if (seq != null) {
-                        Utilities.verboseLog("getCrossReferences().size" + seq.getCrossReferences().size());
-                        Utilities.verboseLog("getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
+                        Utilities.verboseLog(20, "getCrossReferences().size" + seq.getCrossReferences().size());
+                        Utilities.verboseLog(20, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
                     }
                 }
                 proteinDAO.insert(sequenceId, protein);

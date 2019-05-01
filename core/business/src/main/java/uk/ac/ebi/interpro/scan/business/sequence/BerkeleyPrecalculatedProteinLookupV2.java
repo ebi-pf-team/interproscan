@@ -298,17 +298,16 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
             Utilities.verboseLog(10, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
-
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
             if (kvSequenceEntryXML != null) {
                 boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
                 KVSequenceEntryXML kvSitesSequenceEntryXML = null;
                 if(includeCDDorSFLD){
-                    Utilities.verboseLog("lookup Sites ... ");
+                    Utilities.verboseLog(30, "lookup Sites ... ");
                     kvSitesSequenceEntryXML = getSitesFromLookup(upperMD5);
                     //Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
-                    Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.getMatches().size() + " -- " + kvSitesSequenceEntryXML.getMatches().toString());
+                    Utilities.verboseLog(30, "lookup Sites XML:" + kvSitesSequenceEntryXML.getMatches().size() + " -- " + kvSitesSequenceEntryXML.getMatches().toString());
                 }
                 lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
             }
@@ -382,17 +381,17 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
 //            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
             Utilities.verboseLog(10, "getMatchesFromLookup .. " );
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(md5s);
-            Utilities.verboseLog(10, "berkeleyMatchXML: " + kvSequenceEntryXML.getMatches().toString());
+            Utilities.verboseLog(20, "berkeleyMatchXML: " + kvSequenceEntryXML.getMatches().toString());
 
             //if null is returned from the lookupmatch then may need to be calculated
             if (kvSequenceEntryXML == null) {
-                Utilities.verboseLog(10, "For this batch, calculate the matches locally - analysedMd5s.size =  " + analysedMd5s.size());
-                Utilities.verboseLog(10, "totalLookedup though: " + totalLookedup);
+                Utilities.verboseLog(20, "For this batch, calculate the matches locally - analysedMd5s.size =  " + analysedMd5s.size());
+                Utilities.verboseLog(20, "totalLookedup though: " + totalLookedup);
                 return Collections.emptySet();
             }
 
             totalLookedup = totalLookedup + analysedMd5s.size();
-            Utilities.verboseLog(10, "totalLookedup: " + totalLookedup);
+            Utilities.verboseLog(10, "TotalLookedup: " + totalLookedup);
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
             if (timetaken > 0) {
@@ -417,12 +416,12 @@ public class BerkeleyPrecalculatedProteinLookupV2 implements PrecalculatedProtei
             //Avoid null lists and go for empty lists
             List<KVSequenceEntry> kvSequenceEntrySites = new ArrayList<>();
             if(includeCDDorSFLD){
-                Utilities.verboseLog("Now lookup Sites ... ");
+                Utilities.verboseLog(30, "Now lookup Sites ... ");
                 kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
                 if(kvSitesSequenceEntryXML != null){
                     kvSequenceEntrySites = kvSitesSequenceEntryXML.getMatches();
                 }
-                Utilities.verboseLog("lookup Sites XML:" + kvSequenceEntrySites.size() + " -- " + kvSequenceEntrySites.toString());
+                Utilities.verboseLog(30, "lookup Sites XML:" + kvSequenceEntrySites.size() + " -- " + kvSequenceEntrySites.toString());
             }
 
             List<KVSequenceEntry> kvSequenceEntryMatches = new ArrayList<>();;

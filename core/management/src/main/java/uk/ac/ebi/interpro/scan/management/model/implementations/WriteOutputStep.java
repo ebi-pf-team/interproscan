@@ -420,7 +420,7 @@ public class WriteOutputStep extends Step {
                         writer.write(","); // More proteins/nucleotide sequences to follow
                     }
                     for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
-                        Utilities.verboseLog("OpenReadingFrame: " +  orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                        Utilities.verboseLog(20, "OpenReadingFrame: " +  orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
                         NucleotideSequence seq = orf.getNucleotideSequence();
                         //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
                         if (seq != null) {

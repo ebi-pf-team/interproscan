@@ -141,6 +141,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
         try {
             BufferedReader buf = Files.newBufferedReader(xmlPath, characterSet);
             String newPathName = xmlPath.toAbsolutePath().toString() + ".transform";
+            /*
             String line = buf.readLine();
             StringBuilder sb = new StringBuilder();
             while(line != null){
@@ -149,15 +150,20 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
             }
             String xmlFileAsString = sb.toString();
 
+            */
+
             transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            transformer.transform(new StreamSource(new StringReader(xmlFileAsString))
+            //transformer.transform(new StreamSource(new StringReader(xmlFileAsString))
+            transformer.transform(new StreamSource(buf)
                     ,new StreamResult(new File(newPathName)));
             //rename the new file
-            LOGGER.warn("Moving/Renaming the xmls file temp xml file:  " + newPathName + " with " + xmlFileAsString);
+
             Path sourcePath = Paths.get(newPathName);
             Path targetPath = Paths.get(xmlPath.toAbsolutePath().toString());
+            LOGGER.warn("Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
+                    + " - with - " + targetPath.toAbsolutePath().toString());
             Files.move(sourcePath, targetPath, REPLACE_EXISTING);
 
         } catch (TransformerConfigurationException e) {
