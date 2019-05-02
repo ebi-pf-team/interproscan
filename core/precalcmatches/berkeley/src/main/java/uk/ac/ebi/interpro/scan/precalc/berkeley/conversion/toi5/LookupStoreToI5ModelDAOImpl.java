@@ -259,17 +259,17 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                             // One or multiple locations for this match on a given protein for this modelAc
                             //Utilities.verboseLog(10, "consider dbKey:  " + dbKey + " matchesForModel: " + matchesForModel.size() );
                             if (matchesForModel.size() == 1) {
-                                Utilities.verboseLog(10, "Convert match for:  " + simpleMatch.getProteinMD5());
-                                Utilities.verboseLog(10, "simpleMatch : " + simpleMatch.toString()  +  " signature:  " + signature.getName() );
+                                Utilities.verboseLog(30, "Convert match for:  " + simpleMatch.getProteinMD5());
+                                Utilities.verboseLog(30, "simpleMatch : " + simpleMatch.toString()  +  " signature:  " + signature.getName() );
                                 if (sequenceSiteHits != null) {
-                                    Utilities.verboseLog(10, " \n sequenceSiteHits  size: " + sequenceSiteHits.size());
-                                    Utilities.verboseLog(10, " \n sequenceSiteHits  :" + sequenceSiteHits.toString());
+                                    Utilities.verboseLog(30, " \n sequenceSiteHits  size: " + sequenceSiteHits.size());
+                                    Utilities.verboseLog(30, " \n sequenceSiteHits  :" + sequenceSiteHits.toString());
                                 }else{
-                                    Utilities.verboseLog(10, " \n sequenceSiteHits  is NULL:");
+                                    Utilities.verboseLog(30, " \n sequenceSiteHits  is NULL:");
                                 }
 
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
-                                Utilities.verboseLog("i5Match :-  " + i5Match);
+                                Utilities.verboseLog(30,"i5Match :-  " + i5Match);
 
                                 if (i5Match != null) {
                                     prot.addMatch(i5Match);
@@ -284,12 +284,12 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     Set<Match> matchSet = new HashSet<>();
                                     updateMatch(i5Match);
                                     matchSet.add(i5Match);
-                                    Utilities.verboseLog("Persist to kvMatchStore: key " + dbKey + " singleton match : " + matchSet.size());
+                                    Utilities.verboseLog(30,"Persist to kvMatchStore: key " + dbKey + " singleton match : " + matchSet.size());
                                     matchDAO.persist(dbKey, matchSet);
                                 }
                             }
                             else {
-                                Utilities.verboseLog(10, "Convert matches for:  " + simpleMatch.getProteinMD5() + " -- " + matchesForModel.size());
+                                Utilities.verboseLog(30, "Convert matches for:  " + simpleMatch.getProteinMD5() + " -- " + matchesForModel.size());
                                 List<Match> i5Matches = matchConverter.convertMatches(matchesForModel, sequenceSiteHits, signature);
                                 if (i5Matches != null) {
 
@@ -298,14 +298,14 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                         prot.addMatch(i5Match);
                                     }
                                     Set<Match> matchSet = new HashSet<>(i5Matches);
-                                    Utilities.verboseLog("Persist to kvMatchStore: key " + dbKey + " matches : " + matchSet.size());
+                                    Utilities.verboseLog(30, "Persist to kvMatchStore: key " + dbKey + " matches : " + matchSet.size());
                                     matchDAO.persist(dbKey, matchSet);
                                 }
                             }
                         } else {
                             LOGGER.warn("Attempted to store a match in a Protein, but cannot find the protein??? This makes no sense. Possible coding error.");
                         }
-                        Utilities.verboseLog(10, "protein:  " + prot.getId() + " dbkey: " + dbKey );
+                        Utilities.verboseLog(30, "protein:  " + prot.getId() + " dbkey: " + dbKey );
                     } else {
                         LOGGER.warn("Unable to persist match " + simpleMatch + " as there is no available conversion for signature libarary " + sigLib);
                     }

@@ -35,6 +35,8 @@ public class PrepareForOutputStep extends Step {
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
+    public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
+
     public void setProteinDAO(ProteinDAO proteinDAO) {
         this.proteinDAO = proteinDAO;
     }
@@ -80,7 +82,14 @@ public class PrepareForOutputStep extends Step {
             Utilities.verboseLog("Pre-marshall the proteins ...");
             simulateMarshalling(stepInstance, "p");
             Utilities.verboseLog("Pre-marshall the nucleotide sequences ...");
-            processNucleotideSequences(stepInstance);
+            final Map<String, String> parameters = stepInstance.getParameters();
+            final String sequenceType = parameters.get(SEQUENCE_TYPE);
+            if(sequenceType.equalsIgnoreCase("n")) {
+                Utilities.verboseLog("Dealing with nucleotide sequences ... , so pre-marshalling required");
+                processNucleotideSequences(stepInstance);
+            }else{
+                Utilities.verboseLog("Dealing with proteins  ... , so pre-marshalling already done");
+            }
             Utilities.verboseLog("Completed prepraring the protein range  ..." + proteinRange);
         } catch (IOException e) {
             e.printStackTrace();
@@ -321,7 +330,9 @@ public class PrepareForOutputStep extends Step {
                     }
                 }
 
-                String xmlProtein = writer.marshal(protein);
+                //TDO Temp check what breaks if you dont do pre-marshalling
+                //String xmlProtein = writer.marshal(protein);
+
                 protein.getOpenReadingFrames().size();
 
                 for(Match i5Match: protein.getMatches()){

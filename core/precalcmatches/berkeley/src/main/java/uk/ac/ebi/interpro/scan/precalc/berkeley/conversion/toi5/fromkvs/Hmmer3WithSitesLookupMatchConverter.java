@@ -25,7 +25,7 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
 
     public Hmmer3MatchWithSites convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
-        Utilities.verboseLog(" Hmmer3WithSitesLookupMatchConverter for " + match.getProteinMD5() +  " start: " + match.getSequenceStart() +  " end:" + match.getSequenceEnd());
+        Utilities.verboseLog(30, " Hmmer3WithSitesLookupMatchConverter for " + match.getProteinMD5() +  " start: " + match.getSequenceStart() +  " end:" + match.getSequenceEnd());
         final String signatureLibraryName = match.getSignatureLibraryName();
         final String signatureAccession = match.getSignatureAccession();
 
@@ -58,7 +58,7 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
 
         final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
 
-        Utilities.verboseLog(" locationFragments : " + locationFragments.size());
+        Utilities.verboseLog(30, " locationFragments : " + locationFragments.size());
 
         //Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> sites = new HashSet<>();
         Set<HmmerLocationWithSites.HmmerSite> sites = new HashSet<>();
@@ -66,7 +66,7 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
         if (sequenceSiteHits != null) {
             if (sequenceSiteHits.size() > 0) {
                 Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
-                Utilities.verboseLog("mapSiteLocations: " + mapSiteLocations.keySet());
+                Utilities.verboseLog(30, "mapSiteLocations: " + mapSiteLocations.keySet());
 
 
 
@@ -77,7 +77,7 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
                 }
             }
         }
-        Utilities.verboseLog(" sites : " + sites.size());
+        Utilities.verboseLog(30," sites : " + sites.size());
 
         Hmmer3MatchWithSites.Hmmer3LocationWithSites location = new Hmmer3MatchWithSites.Hmmer3LocationWithSites(
                 locationStart,
@@ -93,11 +93,11 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
                 sites
         );
 
-        Utilities.verboseLog(" location : " + location);
+        Utilities.verboseLog(30," location : " + location);
         Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations = new HashSet<>();
         locations.add(location);
 
-        Utilities.verboseLog(" now create SFLD match ");
+        Utilities.verboseLog(30, " now create SFLD match ");
 
         return new Hmmer3MatchWithSites(signature,
                 match.getModelAccession(),

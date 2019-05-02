@@ -68,7 +68,7 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
 
 
     protected Map<String, Set<SiteLocation>> getSiteLocationsMap(String md5, Set<String> sequenceSiteHits, String signatureLibraryName,  String signatureAccession ){
-        Utilities.verboseLog("getSiteLocationsMap: " + sequenceSiteHits.size());
+        Utilities.verboseLog(30, "getSiteLocationsMap: " + sequenceSiteHits.size());
 
         Map<String, Set<SiteLocation>> mapSiteLocations = new HashMap();
         try {
@@ -77,7 +77,7 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                 SimpleLookupSite simpleLookupSite = new SimpleLookupSite(md5, sequenceSiteHit);
                 String siteDescription = simpleLookupSite.getDescription();
                 if (siteDescription == null){
-                    LOGGER.warn("null description ....");
+                    Utilities.verboseLog(30, "null description ....");
                 }
                 Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
                 if (simpleLookupSite.getSignatureLibraryName().equals(signatureLibraryName) && simpleLookupSite.getSignatureAccession().equals(signatureAccession)) {
@@ -89,7 +89,7 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                         siteLocations.add(siteLocation);
                     }
                     mapSiteLocations.put(siteDescription, siteLocations);
-                    Utilities.verboseLog("siteLocation ...: " + siteLocation.toString());
+                    Utilities.verboseLog(30,"siteLocation ...: " + siteLocation.toString());
                 }
             }
         }catch (Exception e){

@@ -20,7 +20,7 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
     private static final Logger LOG = Logger.getLogger(RPSBlastLookupMatchConverter.class.getName());
 
     public RPSBlastMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
-        Utilities.verboseLog(" RPSBlastLookupMatchConverter for " + match.getProteinMD5() + " start: " + match.getSequenceStart() + " end:" + match.getSequenceEnd());
+        Utilities.verboseLog(30, " RPSBlastLookupMatchConverter for " + match.getProteinMD5() + " start: " + match.getSequenceStart() + " end:" + match.getSequenceEnd());
 
         final String signatureLibraryName = match.getSignatureLibraryName();
         final String signatureAccession = match.getSignatureAccession();
@@ -34,7 +34,7 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
         //Set<String> sequenceSiteHits = new HashSet<>();  //just for prototyping
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = null;
         if (sequenceSiteHits != null && sequenceSiteHits.size() > 0) {
-            Utilities.verboseLog("Sites not null ... get sitelocations");
+            Utilities.verboseLog(30, "Sites not null ... get sitelocations");
             sites = new HashSet<>();
             Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
             //Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = convertSites(match.getProteinMD5(), sequenceSiteHits);
@@ -45,10 +45,10 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
             }
 
         }else{
-            Utilities.verboseLog("Sites is null ... ");
+            Utilities.verboseLog(30, "Sites is null ... ");
 
         }
-        Utilities.verboseLog("Sites  ... " + sites);
+        Utilities.verboseLog(30, "Sites  ... " + sites);
         locations.add(new RPSBlastMatch.RPSBlastLocation(locationStart, locationEnd, score, eValue, sites));
 
         return new RPSBlastMatch(signature, match.getModelAccession(), locations);
