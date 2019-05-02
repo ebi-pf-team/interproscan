@@ -308,8 +308,8 @@ public class PrepareForOutputStep extends Step {
 
             for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
                 String proteinKey = Long.toString(proteinIndex);
-                Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
-                //Protein protein = proteinDAO.getProtein(proteinKey);
+                //Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+                Protein protein = proteinDAO.getProtein(proteinKey);
                 if(protein != null){
                     proteinCount ++;
                 }

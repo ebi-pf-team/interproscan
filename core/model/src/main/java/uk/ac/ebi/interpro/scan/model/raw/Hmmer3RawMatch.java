@@ -229,7 +229,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 //                System.out.println("location:" + location.toString());
             }
             if (match != null) {
-                System.out.println("match: " + match.toString());
+                //System.out.println("match: " + match.toString());
                 // find a better way of displaying debug in model classes
                 //hibernate initialise
                 /*
