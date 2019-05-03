@@ -163,7 +163,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
                 SimpleLookupMatch simpleMatch = matchesForModel.get(0); // Get first match with this modelAc for this protein
 
-                Utilities.verboseLog(10, "matchesForModel - first match:  " + simpleMatch.toString());
+                //Utilities.verboseLog(10, "matchesForModel - first match:  " + simpleMatch.toString());
 
                 String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
                 //Utilities.verboseLog(10, "simpleMatch:  " + simpleMatch.toString() );
@@ -177,9 +177,9 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 if (LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())) {
                     LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
                 }
-                debugString = "sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion;
+                debugString = "sigLib: " + sigLib + "vversion: " + signatureLibraryReleaseVersion;
                 debugString += "\n librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib);
-                Utilities.verboseLog(10, debugString);
+                Utilities.verboseLog(20, debugString);
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);

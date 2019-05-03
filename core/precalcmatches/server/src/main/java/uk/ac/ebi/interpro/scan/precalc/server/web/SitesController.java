@@ -59,7 +59,7 @@ public class SitesController {
         //Integer timeProcessingPartitionSeconds = (int) timeProcessingPartition / 1000;
         System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetSiteMatches + " millis to get  site matches  for  " + md5Array.length  + " md5s");
 
-        System.out.println(Utilities.getTimeNow() + "sites: " + sites);
+        System.out.println(Utilities.getTimeNow() + "sites count: " + sites.size());
         KVSequenceEntryXML siteXML = new KVSequenceEntryXML(sites);
         response.setContentType("application/xml");
         Writer out = null;

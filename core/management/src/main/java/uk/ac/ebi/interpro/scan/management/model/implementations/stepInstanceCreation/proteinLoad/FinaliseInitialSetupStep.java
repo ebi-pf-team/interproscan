@@ -168,7 +168,26 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
         finaliseInitialSetupTasks.execute(sequenceLoadListener, analysisJobMap,  useMatchLookupService);
+
         Utilities.verboseLog(10, "  FinaliseInitialSetupStep Step - done");
+
+        //should we sleep just to make sure changes that are  made on the filesystem kvstore are available for the next step
+
+        if (topProtein > 16000) {
+            int waitTime = (topProtein.intValue() / 32000 ) * 15 * 1000;
+            if(  getNfsDelayMilliseconds() < waitTime) {
+                if (waitTime > 90 * 1000) {
+                    waitTime = 90 * 1000;
+                }
+                Utilities.sleep(waitTime);
+            }else {
+                delayForNfs();
+            }
+            Utilities.verboseLog(10, "  FinaliseStep - Slept for at least " + waitTime + " millis");
+        }else{
+            Utilities.verboseLog(10, " FinaliseStep - no waiting for the kvstore matchDB ");
+        }
+
     }
 
 }

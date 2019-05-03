@@ -199,6 +199,10 @@ public abstract class Step implements BeanNameAware {
         this.nfsDelayMilliseconds = nfsDelayMilliseconds;
     }
 
+    public int getNfsDelayMilliseconds(){
+        return nfsDelayMilliseconds;
+    }
+
     @Required
     public void setRetries(int retries) {
         this.retries = retries;

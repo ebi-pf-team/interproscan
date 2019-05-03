@@ -213,12 +213,15 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
             //then load into KV store using the sequenceIds
             //TODO get rid of lists that would baloon the memory usage
-            //List<Protein> storedProteins = proteinDAO.getProteins(bottomProteinId, topProteinId);
+            List<Protein> storedProteins = proteinDAO.getProteins(bottomProteinId, topProteinId);
             int count = 0;
             Long proteinIdIndex = bottomProteinId;
-            for (long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex ++) {
-                count++;
-                Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+            //for (long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex ++) {
+            //    count++;
+            //    String proteinKey = Long.toString(proteinIndex);
+            //    //Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+            //    Protein protein = proteinDAO.getProtein(proteinKey);
+            for(Protein protein : storedProteins ){
                 String sequenceId = Long.toString(protein.getId());
 
                 protein.getCrossReferences();
@@ -234,6 +237,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                     }
                 }
                 proteinDAO.insert(sequenceId, protein);
+                count ++;
             }
             Utilities.verboseLog("Stored " + count + " parsed sequences into KVDB: " + levelDBStoreName);
 
