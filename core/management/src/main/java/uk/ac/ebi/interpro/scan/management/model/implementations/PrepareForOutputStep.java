@@ -19,6 +19,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -285,6 +286,8 @@ public class PrepareForOutputStep extends Step {
 
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
+        Long proteinsConsidered = topProteinId - bottomProteinId;
+
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Load " + topProteinId + " proteins from the db.");
@@ -316,7 +319,35 @@ public class PrepareForOutputStep extends Step {
 
                 for(String signatureLibraryName: signatureLibraryNames){
                     final String dbKey = proteinKey + signatureLibraryName;
-                    Set<Match> matches = matchDAO.getMatchSet(dbKey);
+
+                    Set<Match> matches = null;
+                    //try this say three times
+                    int tryCount = 0;
+                    while(tryCount <= 3) {
+                        try {
+                            matches = matchDAO.getMatchSet(dbKey);
+                        } catch (Exception exception) {
+                            //dont recover but sleep for a few seconds and try again
+                            Utilities.verboseLog("Exception type: " + exception.getClass());
+                            exception.printStackTrace();
+                            if (tryCount >=  3){
+                                throw new IllegalStateException("Failed to get matches from the DB for key " + dbKey);
+                            }
+                            //how long to wait for files to be available ??
+                            int waitTime = (proteinsConsidered.intValue() / 8000 ) * 60 * 1000;
+                            if(  getNfsDelayMilliseconds() < waitTime) {
+                                if (waitTime > 120 * 1000) {
+                                    waitTime = 120 * 1000;
+                                }
+                                Utilities.sleep(waitTime);
+                            }else {
+                                delayForNfs();
+                            }
+                            Utilities.verboseLog(10, "  Prepare for output - Slept for at least " + waitTime + " millis");
+                        }
+                        tryCount ++;
+                    }
+
                     if (matches != null){
                         //Utilities.verboseLog("Get matches for protein  id: " + protein.getId() +  " dbKey (matchKey): " + dbKey);
                         for(Match match: matches){

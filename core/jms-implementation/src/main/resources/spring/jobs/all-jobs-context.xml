@@ -192,7 +192,7 @@
         <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
         <property name="proteinInsertBatchSize" value="${precalculated.match.protein.insert.batch.size}"/>
         <property name="proteinInsertBatchSizeNoLookup" value="${precalculated.match.protein.insert.batch.size.nolookup}"/>
-        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
+        <!--<property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />-->
         <!--<property name="precalculatedProteinLookup" ref="precalculatedProteinLookupV2"/>-->
     </bean>
 
@@ -218,7 +218,7 @@
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
         <property name="finaliseInitialSetupTasks" ref="finaliseInitialSetupTasks"/>
-        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
+        <!--<property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />-->
 
         <!--<property name="completionJob" ref="jobWriteOutput"/>-->
     </bean>
@@ -496,7 +496,7 @@
         <property name="sequenceLoader" ref="proteinLoader"/>
         <!--TODO check -->
         <property name="proteinDAO" ref="proteinDAO"/>
-        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit"/>
+        <!--<property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit"/>-->
     </bean>
 
     <!--<bean id="proteinFastaFileLoader" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadProteinFastaFile">-->

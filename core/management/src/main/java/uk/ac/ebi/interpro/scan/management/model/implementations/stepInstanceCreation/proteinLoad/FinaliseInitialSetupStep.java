@@ -33,9 +33,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
     protected Jobs jobs;
     protected StepInstanceDAO stepInstanceDAO;
 
-    private Set<Protein> proteinsWithoutLookupHit;
-
-    @Required
+     @Required
     public void setJobs(Jobs jobs) {
         this.jobs = jobs;
     }
@@ -49,11 +47,6 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
     public void setFinaliseInitialSetupTasks(FinaliseInitialSetupTasks finaliseInitialSetupTasks) {
         this.finaliseInitialSetupTasks = finaliseInitialSetupTasks;
     }
-
-    public void setProteinsWithoutLookupHit(Set<Protein> proteinsWithoutLookupHit) {
-        this.proteinsWithoutLookupHit = proteinsWithoutLookupHit;
-    }
-
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -161,8 +154,6 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
 
         boolean  initialSetupSteps = false;
 
-        Utilities.verboseLog(10, " FinaliseStep. proteinsWithoutLookupHit   size: " + proteinsWithoutLookupHit.size());
-
         StepCreationSequenceLoadListener sequenceLoadListener =
                 new StepCreationSequenceLoadListener(analysisJobs, completionJob, prepareOutputJob, matchLookupJob, finalInitialJob, initialSetupSteps, stepInstance.getParameters());
         sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
@@ -174,10 +165,12 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         //should we sleep just to make sure changes that are  made on the filesystem kvstore are available for the next step
 
         if (topProtein > 16000) {
-            int waitTime = (topProtein.intValue() / 32000 ) * 15 * 1000;
+            int waitTime = (topProtein.intValue() / 32000 ) * 30 * 1000;
             if(  getNfsDelayMilliseconds() < waitTime) {
-                if (waitTime > 90 * 1000) {
-                    waitTime = 90 * 1000;
+                if (waitTime > 120 * 1000) {
+                    //leave as it is for now, but we might need to have a cut off
+                    waitTime = 120 * 1000;
+
                 }
                 Utilities.sleep(waitTime);
             }else {
@@ -185,7 +178,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             }
             Utilities.verboseLog(10, "  FinaliseStep - Slept for at least " + waitTime + " millis");
         }else{
-            Utilities.verboseLog(10, " FinaliseStep - no waiting for the kvstore matchDB ");
+            Utilities.verboseLog(10, " FinaliseStep - no waiting for the kvstore matchDB as protein count is < 16000: count = " + topProtein);
         }
 
     }

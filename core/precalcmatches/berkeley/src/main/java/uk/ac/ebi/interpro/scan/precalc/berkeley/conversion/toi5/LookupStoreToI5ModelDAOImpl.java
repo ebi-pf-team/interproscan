@@ -120,7 +120,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         Map<String,  KVSequenceEntry> mapKVSequenceEntryForSites = getMapKVSequenceEntry(kvSiteSequenceEntries);
 
         // Collection of BerkeleyMatches of different kinds.
-        Utilities.verboseLog(10, "Start comvert look matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size() );
+        Utilities.verboseLog(10, "Start comvert lookup matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size() );
         String exampleKey  = null;
         for (KVSequenceEntry lookupMatch : kvSequenceEntries) {
             //now we ahave a list
@@ -132,8 +132,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             KVSequenceEntry siteSequenceEntry = mapKVSequenceEntryForSites.get(proteinMD5);
             Set<String> sequenceSiteHits = null;
             if(siteSequenceEntry != null) {
-               sequenceSiteHits = siteSequenceEntry.getSequenceHits();
-                Utilities.verboseLog(10, "SequenceSiteHits : " + sequenceSiteHits.size() );
+                sequenceSiteHits = siteSequenceEntry.getSequenceHits();
+                Utilities.verboseLog(40, "SequenceSiteHits : " + sequenceSiteHits.size() );
             }
 
             //Utilities.verboseLog(10, "consider proteinMD5:  " + proteinMD5 );
@@ -152,14 +152,14 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 }
             }
 
-            Utilities.verboseLog(10, "modelToMatchesMap size:  " + modelToMatchesMap.values().size() );
+            Utilities.verboseLog(40, "modelToMatchesMap size:  " + modelToMatchesMap.values().size() );
 
             //we have to get all the matches and not just the first match
-            Utilities.verboseLog(10, "modelToMatchesMap size:  " + modelToMatchesMap.values().size() );
+            Utilities.verboseLog(40, "modelToMatchesMap size:  " + modelToMatchesMap.values().size() );
             for (List<SimpleLookupMatch> matchesForModel : modelToMatchesMap.values()) {
                 assert matchesForModel.size() > 0;
 
-                Utilities.verboseLog(10, "matchesForModel - size:  " + matchesForModel.size());
+                Utilities.verboseLog(40, "matchesForModel - size:  " + matchesForModel.size());
 
                 SimpleLookupMatch simpleMatch = matchesForModel.get(0); // Get first match with this modelAc for this protein
 
@@ -171,7 +171,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
                 if (sigLib.getName().equals(SignatureLibrary.CDD.getName())
                         || sigLib.getName().equals(SignatureLibrary.SFLD.getName())) {
-                    Utilities.verboseLog(10, "SFLD or CDD match found: " + simpleMatch.toString());;
+                    Utilities.verboseLog(40, "SFLD or CDD match found: " + simpleMatch.toString());;
                 }
                 SignatureLibrary signatureLibraryKey = sigLib;
                 if (LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())) {
@@ -179,7 +179,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 }
                 debugString = "sigLib: " + sigLib + "vversion: " + signatureLibraryReleaseVersion;
                 debugString += "\n librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib);
-                Utilities.verboseLog(20, debugString);
+                Utilities.verboseLog(40, debugString);
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
@@ -192,7 +192,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 if (librariesToAnalyse == null || (librariesToAnalyse.containsKey(sigLib) && librariesToAnalyse.get(sigLib).equals(signatureLibraryReleaseVersion))) {
                     // Retrieve Signature to match
                     debugString = "Check matches for : " + sigLib + "-" + signatureLibraryReleaseVersion;
-                    Utilities.verboseLog(10, debugString);
+                    Utilities.verboseLog(40, debugString);
 
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(debugString);
@@ -203,10 +203,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
                     sigQuery.setParameter("version", signatureLibraryReleaseVersion);
 
-                    Utilities.verboseLog(10, " parameters : - " + sigQuery.getParameters().toString());
+                    //Utilities.verboseLog(10, " parameters : - " + sigQuery.getParameters().toString());
 
                     debugString = "Execute sigQuery : " + sigQuery.toString();
-                    Utilities.verboseLog(10, debugString);
+                    //Utilities.verboseLog(10, debugString);
 //                    List<Signature> signatures = null;
                     @SuppressWarnings("unchecked")  List<Signature> signatures  = sigQuery.getResultList();
 //                        signatures = sigQuery.getResultList();
@@ -250,7 +250,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
                     if (matchConverter != null) {
                         // Lookup up the right protein using the MD5
-                        Utilities.verboseLog(10, "matchConverter: is not null " );
+                        //Utilities.verboseLog(10, "matchConverter: is not null " );
                         final Protein prot = md5ToProteinMap.get(proteinMD5);
                         final String dbKey = Long.toString(prot.getId()) + signatureLibraryKey.getName();
                         exampleKey = dbKey;
@@ -307,12 +307,13 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         }
                         Utilities.verboseLog(30, "protein:  " + prot.getId() + " dbkey: " + dbKey );
                     } else {
+                        Utilities.verboseLog(10, "matchConverter: is NULL " );
                         LOGGER.warn("Unable to persist match " + simpleMatch + " as there is no available conversion for signature libarary " + sigLib);
                     }
                 }
             }
         }
-        Utilities.verboseLog("exampleKey: " + exampleKey);
+        Utilities.verboseLog(30, "exampleKey: " + exampleKey);
     }
 
 

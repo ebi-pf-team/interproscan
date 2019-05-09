@@ -65,10 +65,6 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
 
     final private ConcurrentHashSet<Protein> proteinsAwaitingPersistence = new ConcurrentHashSet<>();
 
-    final private ConcurrentHashSet<Protein> precalculatedProteins = new ConcurrentHashSet<>();
-
-    private ConcurrentHashSet<Protein> proteinsWithoutLookupHit;
-
     private Long bottomProteinId;
 
     private Long topProteinId;
@@ -114,9 +110,6 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
         this.interproscanVersion = interproscanVersion;
     }
 
-    public void setProteinsWithoutLookupHit(ConcurrentHashSet<Protein> proteinsWithoutLookupHit) {
-        this.proteinsWithoutLookupHit = proteinsWithoutLookupHit;
-    }
 
     /**
      * This method is called to execute the action that the StepInstance must perform.
@@ -282,7 +275,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
         try {
             List<Protein> proteinsNotInLookup = proteinDAO.getProteinsNotInLookup();
             int proteinsNotInLookupCount = proteinsNotInLookup.size();
-            Utilities.verboseLog(10, "1. proteinsNotInLookupCount :  "  + proteinsNotInLookupCount);
+            Utilities.verboseLog(10, "1. ProteinsNotInLookupCount :  "  + proteinsNotInLookupCount);
         } catch (Exception e) {
             e.printStackTrace();
         }

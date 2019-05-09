@@ -25,7 +25,6 @@ public class FinaliseInitialSetupTasks {
 
     private ProteinDAO proteinDAO;
 
-    private Set<Protein> proteinsWithoutLookupHit;
 
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
@@ -37,11 +36,7 @@ public class FinaliseInitialSetupTasks {
         this.sequenceLoader = sequenceLoader;
     }
 
-    public void setProteinsWithoutLookupHit(Set<Protein> proteinsWithoutLookupHit) {
-        this.proteinsWithoutLookupHit = proteinsWithoutLookupHit;
-    }
-
-    @Transactional
+     @Transactional
     public void execute(SequenceLoadListener sequenceLoaderListener, Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered FinaliseInitialSetupTasks execute method");
