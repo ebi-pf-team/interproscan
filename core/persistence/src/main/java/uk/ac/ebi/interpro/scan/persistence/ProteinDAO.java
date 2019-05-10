@@ -51,10 +51,10 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
     @Transactional
     void persistProteinNotInLookup(byte[] key, byte[] protein);
 
-    @Transactional
+    @Transactional(readOnly = true)
     Protein getProtein(String key);
 
-    @Transactional
+    @Transactional(readOnly = true)
     Protein getProteinNotInLookup(String key);
 
     @Transactional(readOnly = true)
@@ -108,6 +108,9 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
      */
     @Transactional(readOnly = true)
     List<Protein> getProteinsByIds(Set<Long> proteinIds);
+
+    @Transactional(readOnly = true)
+    Protein getProteinById(Long proteinId);
 
     /**
      * Inserts new Proteins.

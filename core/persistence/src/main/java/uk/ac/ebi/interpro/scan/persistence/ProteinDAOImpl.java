@@ -348,6 +348,16 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
         return (List<Protein>) query.getResultList();
     }
 
+    @Transactional(readOnly = true)
+    public Protein getProteinById(Long proteinId) {
+        Protein protein = null;
+        if (proteinId != null) {
+            Query query = entityManager.createQuery("select p from Protein p where p.id = :id");
+            query.setParameter("id", proteinId);
+            protein = (Protein) query.getSingleResult();
+        }
+        return protein;
+    }
 
     @Transactional(readOnly = true)
     public List<Protein> getProteinsByIds(Set<Long> proteinIds) {

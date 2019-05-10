@@ -73,11 +73,7 @@ public class FinaliseInitialSetupTasks {
             proteinDAO.setProteinIdsWithoutLookupHit(proteinIdsWithoutLookupHit);
         }else{
             Utilities.verboseLog("FinaliseInitialSetupTasks dont use lookup .. useMatchLookupService: " + useMatchLookupService);
-
         }
-
-
-
 
         //TODO this is for testing, we need to revisit this approach later
         // we still need some kind of control when we have proteins in the lookup service ??
@@ -88,7 +84,6 @@ public class FinaliseInitialSetupTasks {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         int proteinsNotInLookupCount = proteinsNotInLookup.size();
 

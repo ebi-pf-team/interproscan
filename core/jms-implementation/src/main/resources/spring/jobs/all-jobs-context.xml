@@ -508,13 +508,13 @@
         <property name="inputType" value="Protein"/>
     </bean>
 
-    <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
+    <bean id="precalculatedLookup" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup">
         <property name="interproscanVersion" value="${i5.version}"/>
         <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
         <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>
     </bean>
 
-    <bean id="precalculatedProteinLookupV2" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookupV2">
+    <bean id="precalculatedProteinLookupV2" class="uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup">
         <property name="interproscanVersion" value="${i5.version}"/>
         <property name="preCalcMatchClient" ref="preCalcMatchClient"/>
         <property name="lookupStoreToI5ModelDAO" ref="lookupStoreToI5ModelDAO"/>

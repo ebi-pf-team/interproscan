@@ -213,7 +213,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
             //then load into KV store using the sequenceIds
             //TODO get rid of lists that would baloon the memory usage
-            List<Protein> storedProteins = proteinDAO.getProteins(bottomProteinId, topProteinId);
+            //List<Protein> storedProteins = proteinDAO.getProteins(bottomProteinId, topProteinId);
             int count = 0;
             Long proteinIdIndex = bottomProteinId;
             //for (long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex ++) {
@@ -221,23 +221,30 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             //    String proteinKey = Long.toString(proteinIndex);
             //    //Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
             //    Protein protein = proteinDAO.getProtein(proteinKey);
-            for(Protein protein : storedProteins ){
-                String sequenceId = Long.toString(protein.getId());
 
-                protein.getCrossReferences();
-                protein.getOpenReadingFrames();
+            int sliceSize = 10000;  //should this be higher?
+            for (long bottomProteinOnSlice = bottomProteinId; bottomProteinOnSlice <= topProteinId; bottomProteinOnSlice += sliceSize) {
+                final long topProteinOnSlice = Math.min(topProteinId, bottomProteinOnSlice + sliceSize - 1);
+                List<Protein> storedProteins = proteinDAO.getProteinsBetweenIds(bottomProteinOnSlice, topProteinOnSlice);
 
-                for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
-                    Utilities.verboseLog(20, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
-                    NucleotideSequence seq = orf.getNucleotideSequence();
-                    //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
-                    if (seq != null) {
-                        Utilities.verboseLog(20, "getCrossReferences().size" + seq.getCrossReferences().size());
-                        Utilities.verboseLog(20, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
+                for (Protein protein : storedProteins) {
+                    String sequenceId = Long.toString(protein.getId());
+
+                    protein.getCrossReferences();
+                    protein.getOpenReadingFrames();
+
+                    for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
+                        Utilities.verboseLog(30, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                        NucleotideSequence seq = orf.getNucleotideSequence();
+                        //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
+                        if (seq != null) {
+                            Utilities.verboseLog(30, "getCrossReferences().size" + seq.getCrossReferences().size());
+                            Utilities.verboseLog(30, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
+                        }
                     }
+                    proteinDAO.insert(sequenceId, protein);
+                    count++;
                 }
-                proteinDAO.insert(sequenceId, protein);
-                count ++;
             }
             Utilities.verboseLog("Stored " + count + " parsed sequences into KVDB: " + levelDBStoreName);
 

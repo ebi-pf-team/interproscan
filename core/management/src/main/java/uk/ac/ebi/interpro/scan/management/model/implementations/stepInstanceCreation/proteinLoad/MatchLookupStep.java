@@ -4,9 +4,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
-import uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookupV2;
-import uk.ac.ebi.interpro.scan.business.sequence.PrecalculatedProteinLookup;
-import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
+import uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup;
 import uk.ac.ebi.interpro.scan.management.dao.StepInstanceDAO;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
@@ -21,13 +19,6 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupStoreToI5M
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -131,8 +122,6 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
             LOGGER.debug("Match Lookup Step (" + bottomProtein + "-" + topProtein + ")");
         }
 
-
-
         // get the analysisJob Map, this looks like the thrid time we are doing this so refactor and have a function call instead??
         Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<>();
         String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
@@ -209,8 +198,8 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
             //            final PrecalculatedProteinLookup precalculatedProteinLookup ;
 
 
-            final BerkeleyPrecalculatedProteinLookupV2 precalculatedProteinLookup =
-                    new BerkeleyPrecalculatedProteinLookupV2(proteins,
+            final BerkeleyPrecalculatedProteinLookup precalculatedProteinLookup =
+                    new BerkeleyPrecalculatedProteinLookup(proteins,
                             proteinRanges, proteinDAO, lookupStoreToI5ModelDAO, preCalcMatchClient);
             precalculatedProteinLookup.setAnalysisJobMap(analysisJobMap);
             precalculatedProteinLookup.setInterproscanVersion(interproscanVersion);
