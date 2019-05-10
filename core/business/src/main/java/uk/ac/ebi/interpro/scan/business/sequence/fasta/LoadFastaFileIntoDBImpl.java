@@ -202,8 +202,12 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             //Load in the h2DB  first
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(parsedMolecules);
 
+
+
             Long bottomProteinId = persistedProteins.updateBottomProteinId(null);
             Long topProteinId = persistedProteins.updateTopProteinId(null);
+
+            Utilities.verboseLog("Persisted " + topProteinId + " Molecules (sequences)");
 
             if(isGetOrfOutput){
                 Utilities.verboseLog("Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);

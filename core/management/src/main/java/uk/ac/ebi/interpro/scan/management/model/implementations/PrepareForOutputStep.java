@@ -300,9 +300,9 @@ public class PrepareForOutputStep extends Step {
         int proteinCount = 0;
         int matchCount = 0;
 
-        try (ProteinMatchesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesXMLJAXBFragmentsResultWriter(outputPath, Protein.class, isSlimOutput)) {
+        //try (ProteinMatchesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesXMLJAXBFragmentsResultWriter(outputPath, Protein.class, isSlimOutput)) {
             //writer.header(interProScanVersion);
-            writer.header(interProScanVersion,   "protein-matches");
+            //writer.header(interProScanVersion,   "protein-matches");
             Set<String> signatureLibraryNames = new HashSet<>();
 
             for (SignatureLibrary sig: SignatureLibrary.values() ){
@@ -373,11 +373,11 @@ public class PrepareForOutputStep extends Step {
 
                 proteinDAO.persist(proteinKey, protein);
             }
-        }catch (JAXBException e){
-            e.printStackTrace();
-        }catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
+        //}catch (JAXBException e){
+        //    e.printStackTrace();
+        //}catch (XMLStreamException e) {
+        //    e.printStackTrace();
+        //}
 
         //remove the temp xmls file
         deleteTmpMarshallingFile(outputPath);
