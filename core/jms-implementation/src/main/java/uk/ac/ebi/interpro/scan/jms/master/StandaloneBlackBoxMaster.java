@@ -224,28 +224,44 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 // Close down (break out of loop) if the analyses are all complete.
                 // The final clause checks that the protein load steps have been created so
                 // i5 doesn't finish prematurely.
+                boolean writeOutputStepCompleted = false;
+                writeOutputStepCompleted = Utilities.isWriteOutputStepCompleted();
+
+
+                int submittedStepInstancesCount = statsUtil.getSubmittedStepInstancesCount();
                 if (completed
-                        && totalStepInstances == statsUtil.getSubmittedStepInstancesCount()
-                        && statsUtil.getSubmittedStepInstancesCount() >= minimumStepsExpected
+                        && totalStepInstances == submittedStepInstancesCount
+                        && submittedStepInstancesCount >= minimumStepsExpected
                         && totalUnfinishedStepInstances == 0
                         && totalStepInstances > stepInstancesCreatedByLoadStep
-                        && totalStepInstances >= minimumStepsExpected) {
+                        && totalStepInstances >= minimumStepsExpected
+                        && writeOutputStepCompleted) {
                     Utilities.verboseLog("stepInstanceDAO.count() " + totalStepInstances
                             + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                             + " minimumStepsExpected : " + minimumStepsExpected
-                            + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
                             +  " unfinishedSteps " + totalUnfinishedStepInstances);
 
                     runStatus = 0;
                     break;
                 }
                 if(completed
-                        && totalUnfinishedStepInstances == 0 ){
-                    Utilities.verboseLog("Should be finished: stepInstanceDAO.count() " + totalStepInstances
+                        && totalUnfinishedStepInstances == 0
+                        && writeOutputStepCompleted) {
+                    Utilities.verboseLog("1 Should be finished: stepInstanceDAO.count() " + totalStepInstances
                             + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                             + " minimumStepsExpected : " + minimumStepsExpected
-                            + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
                             +  " unfinishedSteps " + totalUnfinishedStepInstances);
+                    Thread.sleep(1 * 1000);
+                }
+                if(writeOutputStepCompleted){
+                    Utilities.verboseLog("2 Should be finished: stepInstanceDAO.count() " + totalStepInstances
+                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                            + " minimumStepsExpected : " + minimumStepsExpected
+                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
+                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
+                    Thread.sleep(30* 1000);
                 }
                 //for standalone es mode this should be < 200
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.

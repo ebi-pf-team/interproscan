@@ -267,6 +267,10 @@ public class WriteOutputStep extends Step {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Step with Id " + this.getId() + " finished.");
         }
+        //set that this process has finished
+        Utilities.verboseLog("WriteOutput Step with Id " + this.getId() + " finished.");
+        Utilities.setWriteOutputStepCompleted(true);
+        Utilities.verboseLog("writeOutputStepCompleted: " + Utilities.isWriteOutputStepCompleted());
     }
 
     private void cleanUpWorkingDir(final String temporaryFileDirectory) {

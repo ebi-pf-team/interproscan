@@ -353,7 +353,7 @@ public class StatsUtil {
     }
 
     public int getSubmittedStepInstancesCount() {
-        Utilities.verboseLog(" getSubmittedStepInstancesCounts:");
+        //Utilities.verboseLog(" getSubmittedStepInstancesCounts:");
         int uniqStepCount = 0;
         int stepCount = 0;
         for (Map.Entry<String, Map<String, String>> elem:submittedStepInstances.entrySet()) {
@@ -365,7 +365,7 @@ public class StatsUtil {
             Utilities.verboseLog(" Originals: stepCount " + stepCount + " uniq stepCount: " + uniqStepCount);
             stepCount = uniqStepCount;
         }
-        Utilities.verboseLog(" getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
+        Utilities.verboseLog(30, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
         return stepCount;
     }
 

@@ -28,12 +28,18 @@ public class Utilities {
 
     public static Boolean lookupMatchVersionProblemMessageDisplayed = false;
 
+
+
+    static boolean  writeOutputStepCompleted = false;
+
     public static int sequenceCount = 0;
 
     public static volatile Boolean useHmmsearch;
+
     public static final Object useHmmsearchLock = new Object();
 
     public static int logBase = 10;
+
 
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
@@ -41,6 +47,14 @@ public class Utilities {
             sb.append((char) ((int) (Math.random() * 26) + 97));
         }
         return sb.toString();
+    }
+
+    public static boolean isWriteOutputStepCompleted() {
+        return writeOutputStepCompleted;
+    }
+
+    public static void setWriteOutputStepCompleted(boolean hasWriteOutputStepCompleted) {
+        writeOutputStepCompleted = hasWriteOutputStepCompleted;
     }
 
     /**
