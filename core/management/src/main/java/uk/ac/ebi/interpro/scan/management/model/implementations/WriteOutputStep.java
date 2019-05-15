@@ -17,7 +17,6 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
-import uk.ac.ebi.interpro.scan.persistence.WriteOutputMatchDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.bind.JAXBException;
@@ -51,8 +50,6 @@ public class WriteOutputStep extends Step {
     private ProteinXrefDAO proteinXrefDAO;
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
-
-    private WriteOutputMatchDAO writeOutputMatchDAO;
 
     //Output writer
     private XmlWriter xmlWriter;

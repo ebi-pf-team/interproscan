@@ -33,7 +33,7 @@ JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | { read X; printf '%s' "${
 JAVA_MAJOR_VERSION=${JAVA_VERSION%%.*}
 JAVA_MINOR_VERSION=${JAVA_VERSION#*.}
 JAVA_MINOR_VERSION=${JAVA_MINOR_VERSION%%.*}
-if [[ "${JAVA_MAJOR_VERSION}" -le "1" || "${JAVA_MINOR_VERSION}" -ge "11" ]];
+if [[ "${JAVA_MAJOR_VERSION}" -ne "1" || "${JAVA_MINOR_VERSION}" -ne "8" ]];
 then
     printf 'Java version 1.8 is required to run InterProScan.\n'
     printf 'Detected version %s.%s\n' "${JAVA_MAJOR_VERSION}" "${JAVA_MINOR_VERSION}"
@@ -64,11 +64,9 @@ fi
 #    exit 1
 #fi
 
-#"$JAVA" \
-
-/home/nuka/sw/jdk1.8.0_60/bin/java \
+"$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts \
 -XX:+UseFastAccessorMethods -Xms1028M -Xmx6072M \
 -jar  interproscan-5.jar $@ -u $USER_DIR
 
-#end 
+#end
