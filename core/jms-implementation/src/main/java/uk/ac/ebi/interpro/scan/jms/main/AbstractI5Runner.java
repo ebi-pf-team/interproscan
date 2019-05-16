@@ -24,6 +24,9 @@ public class AbstractI5Runner {
     private static final Logger LOGGER = Logger.getLogger(AbstractI5Runner.class.getName());
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
+    static {
+        HELP_FORMATTER.setWidth(120);
+    }
     private static final String HELP_MESSAGE_TITLE =
             "java -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts " +
                     "-XX:+UseFastAccessorMethods -Xms128M -Xmx2048M -jar interproscan-5.jar";
