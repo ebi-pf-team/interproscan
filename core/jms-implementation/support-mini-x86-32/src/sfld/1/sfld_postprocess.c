@@ -219,8 +219,8 @@ void identify_site_matches(char *aln_fn, struct family *families, int n_families
             nfam++;
         }
         if (rv != eslOK) {
-	    fprintf(stderr, "Error reading alignment from '%s'\n", aln_fn);
-	    exit(1);
+            fprintf(stderr, "Error reading alignment from '%s'\n", aln_fn);
+            exit(1);
         }
         if (families[nfam].n_features > 0) {
             get_site_matches(families[nfam], msa, site_hits, n_site_hits, no_hits, n_no_hits);
@@ -367,7 +367,7 @@ void get_options_post(int argc, char **argv, int *only_matches, char **hmmer_pat
     static struct option long_options[] =
     {
         {"help",         no_argument,       0,  'h' },
-     // {"onlymatches",  no_argument,       0,  'm' }, //
+        {"version",      no_argument,       0,  'v' },
         {"hmmerpath",    required_argument, 0,  'p' }, // path to hmm* binaries (overrides $HMMER_PATH)
         {"format",       required_argument, 0,  'f' }, // Not yet implemented - output text format
         {"dom",          required_argument, 0,  'd' }, // HMMER dom table (prefixed with $SFLD_OUTPUT if set)
@@ -381,7 +381,7 @@ void get_options_post(int argc, char **argv, int *only_matches, char **hmmer_pat
     int opt;
     char *path;
 
-    while ((opt = getopt_long(argc, argv,"p:a:f:d:O:s:o:mh", 
+    while ((opt = getopt_long(argc, argv,"p:a:f:d:O:s:o:mhv",
                    long_options, &long_index )) != -1) {
         switch (opt) {
              case 'm' : *only_matches = 1;
@@ -414,6 +414,11 @@ void get_options_post(int argc, char **argv, int *only_matches, char **hmmer_pat
                  break;
              case 'h' : {
                         show_help(argv[0]);
+                        exit(0);
+             }
+                 break;
+             case 'v' : {
+                        printf("%s\n", SFLD_POSTPROCESSOR_VERSION);
                         exit(0);
              }
                  break;
@@ -488,7 +493,7 @@ void read_domtblout(char *fn, struct hmmer_dom **hits, int *n_hits)
             *hits = (struct hmmer_dom *)realloc(*hits, n_alloc * sizeof(struct hmmer_dom));
         }
         parse_hmmer_dom(*hits + (*n_hits)++, line);
-	getline(&line, &r, fp);
+        getline(&line, &r, fp);
     }
     *hits = (struct hmmer_dom *)realloc(*hits, *n_hits * sizeof(struct hmmer_dom));
 
@@ -572,8 +577,8 @@ void show_help(char *progname)
 {
    printf("Post-process results of HMMER search on SFLD HMMs\n");
    printf("Usage %s: options:\n", progname);
-// printf("\t--onlymatches | -m         only print the sequences that match the HMM and pass the SFLD residue post-processing (otherwise print all)\n");
    printf("\t--nosearch    | -S         don't run search if output files exist\n");
+   printf("\t--version     | -v         show program version\n");
    printf("\t--hmmerpath   | -p PATH    path to hmm* binaries (overrides $HMMER_PATH)\n");
    printf("\t--alignments  | -a         HMMER alignment file\n");
    printf("\t--dom         | -d         HMMER domtblout file\n");
@@ -623,14 +628,14 @@ void read_site_data(char *fn, int *n_fam, struct family **families)
                     exit(1);
                 }
                 p = line + 5;
-		l = index(p, ' ');
+                l = index(p, ' ');
                 (*families)[nf].feature_name[f] = strndup(p, l - p);
                 p = l + 1;
                 sscanf(p, "%d %n", &(*families)[nf].n_sites[f], &nc);
                 (*families)[nf].site[f] = (int *)malloc((*families)[nf].n_sites[f] * sizeof(int));
                 (*families)[nf].residue[f] = (char *)malloc((*families)[nf].n_sites[f] * sizeof(int));
                 p += nc;
-		for (s = 0; s < (*families)[nf].n_sites[f]; s++) {
+                for (s = 0; s < (*families)[nf].n_sites[f]; s++) {
                     sscanf(p, "%c %d %n", &(*families)[nf].residue[f][s], &(*families)[nf].site[f][s], &nc);
                     p += nc;
                 }

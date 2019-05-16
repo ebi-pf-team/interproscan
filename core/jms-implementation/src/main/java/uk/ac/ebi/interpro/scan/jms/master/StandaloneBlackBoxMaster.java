@@ -96,6 +96,18 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
                 + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
 
+        workerQueueJmsContainer.shutdown();
+        if(! workerQueueJmsContainer.isRunning()){
+            Utilities.verboseLog(" the workerQueueJmsContainer is shutdown ...");
+        }
+        workerQueueJmsContainer.afterPropertiesSet();
+        workerQueueJmsContainer.start();
+
+        Utilities.verboseLog("After Stop Start --- inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
+                + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+                + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
+                + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
+
         long nowAfterLoadingDatabase = now;
         try {
             loadInMemoryDatabase();
@@ -119,6 +131,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             //slowSteps.add("stepPrositeProfilesRunBinary");
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
+            int allowedWaitTimeMultiplier = 0;
             boolean controlledLogging = false;
             while (!shutdownCalled) {
                 boolean completed = true;
@@ -248,21 +261,34 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 if(completed
                         && totalUnfinishedStepInstances == 0
                         && writeOutputStepCompleted) {
-                    Utilities.verboseLog("1 Should be finished: stepInstanceDAO.count() " + totalStepInstances
-                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
-                            + " minimumStepsExpected : " + minimumStepsExpected
-                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
-                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
-                    Thread.sleep(1 * 1000);
+                    if(allowedWaitTimeMultiplier % 25 == 0) {
+                        Utilities.verboseLog("Should be finished: stepInstanceDAO.count() " + totalStepInstances
+                                + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                                + " minimumStepsExpected : " + minimumStepsExpected
+                                + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                                + " unfinishedSteps " + totalUnfinishedStepInstances);
+                    }
+                    if (totalStepInstances > stepInstancesCreatedByLoadStep){
+                        //Utilities.verboseLog("chances are all the steps have been completed, so wait for five second then break");
+                        allowedWaitTimeMultiplier ++;
+                    }else{
+                        Utilities.verboseLog("Should be finished: ...but rest");
+                        allowedWaitTimeMultiplier = 0;
+                    }
+
+                    if (allowedWaitTimeMultiplier > 50){
+                        Utilities.verboseLog("chances are all the steps have been completed, so wait for five second then break .. allowedWaitTimeMultiplier" + allowedWaitTimeMultiplier);
+                        break;
+                    }
                 }
-                if(writeOutputStepCompleted){
-                    Utilities.verboseLog("2 Should be finished: stepInstanceDAO.count() " + totalStepInstances
-                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
-                            + " minimumStepsExpected : " + minimumStepsExpected
-                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
-                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
-                    Thread.sleep(30* 1000);
-                }
+//                if(writeOutputStepCompleted){
+//                    Utilities.verboseLog("2 Should be finished: stepInstanceDAO.count() " + totalStepInstances
+//                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+//                            + " minimumStepsExpected : " + minimumStepsExpected
+//                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
+//                            +  " unfinishedSteps " + totalUnfinishedStepInstances);
+//                    Thread.sleep(30* 1000);
+//                }
                 //for standalone es mode this should be < 200
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
             }

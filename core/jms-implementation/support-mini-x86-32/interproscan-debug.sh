@@ -41,29 +41,6 @@ then
     exit 1
 fi
 
-# Check Python is installed
-
-#PYTHON=$(type -p python)
-#if [[ "$PYTHON" == "" ]]; then
-#    printf 'Python not found. Please install Python 3\n'
-#    printf 'and place it on your path,\n'
-#    printf 'or edit the interproscan.sh script to refer to your Python installation.\n'.
-#    exit 1
-#fi
-
-# Check Python version is supported
-
-#PYTHON_VERSION=$("$PYTHON" -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
-#PYTHON_MAJOR_VERSION=${PYTHON_VERSION%%.*}
-#PYTHON_MINOR_VERSION=${PYTHON_VERSION#*.}
-#if [[ "${PYTHON_MAJOR_VERSION}" != "3" ]];
-#then
-#    printf 'Python version 3 is required to run InterProScan.\n'
-#    printf 'Detected version %s.%s\n' "${PYTHON_MAJOR_VERSION}" "${PYTHON_MINOR_VERSION}"
-#    printf 'Please install the correct version.\n'
-#    exit 1
-#fi
-
 "$JAVA" -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=localhost:5005,suspend=y \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts \
 -XX:+UseFastAccessorMethods -Xms128M -Xmx2048M \

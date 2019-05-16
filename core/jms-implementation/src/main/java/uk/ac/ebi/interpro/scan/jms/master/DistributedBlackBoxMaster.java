@@ -119,6 +119,31 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             Utilities.verboseLog("DEBUG " + "Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
             Utilities.verboseLog("DEBUG " + "tcpUri: " + tcpUri);
         }
+        //handle concurrent workers configuration
+        if (! (getMaxConcurrentInVmWorkerCount() == localQueueJmsContainerFatMaster.getMaxConcurrentConsumers())){
+            int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
+            localQueueJmsContainerFatMaster.setConcurrentConsumers(minNumberOfCPUCores);
+            localQueueJmsContainerFatMaster.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
+            Utilities.verboseLog("minNumberOfCPUCores: " + minNumberOfCPUCores
+                    + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
+        }
+        Utilities.verboseLog("New values --- inVmWorkers min: " + localQueueJmsContainerFatMaster.getConcurrentConsumers()
+                + " max: " + localQueueJmsContainerFatMaster.getMaxConcurrentConsumers()
+                + " schedlued: " + localQueueJmsContainerFatMaster.getScheduledConsumerCount()
+                + " active: " + localQueueJmsContainerFatMaster.getActiveConsumerCount()  );
+
+        localQueueJmsContainerFatMaster.shutdown();
+        if(! localQueueJmsContainerFatMaster.isRunning()){
+            Utilities.verboseLog(" the localQueueJmsContainerFatMaster is shutdown ...");
+        }
+        localQueueJmsContainerFatMaster.afterPropertiesSet();
+        localQueueJmsContainerFatMaster.start();
+
+        Utilities.verboseLog("After Stop Start --- inVmWorkers min: " + localQueueJmsContainerFatMaster.getConcurrentConsumers()
+                + " max: " + localQueueJmsContainerFatMaster.getMaxConcurrentConsumers()
+                + " schedlued: " + localQueueJmsContainerFatMaster.getScheduledConsumerCount()
+                + " active: " + localQueueJmsContainerFatMaster.getActiveConsumerCount()  );
+
         try {
             loadInMemoryDatabase();
 
