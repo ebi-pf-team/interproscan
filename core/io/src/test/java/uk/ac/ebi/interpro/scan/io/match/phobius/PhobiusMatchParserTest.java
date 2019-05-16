@@ -3,12 +3,13 @@ package uk.ac.ebi.interpro.scan.io.match.phobius;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
-import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
 import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
+import uk.ac.ebi.interpro.scan.model.raw.PhobiusRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -30,31 +31,37 @@ public class PhobiusMatchParserTest extends TestCase {
     @Test
     public void testParserEfficiency() throws IOException {
         logMemUsage("Before parse: ");
-        InputStream is = PhobiusMatchParserTest.class.getClassLoader().getResourceAsStream(TEST_FILE_PATH);
         PhobiusMatchParser parser = new PhobiusMatchParser();
-        Set<PhobiusProtein> results = parser.parse(is, TEST_FILE_PATH);
-        is.close();
+        Set<RawProtein<PhobiusRawMatch>> results;
+        try (InputStream is = PhobiusMatchParserTest.class.getClassLoader().getResourceAsStream(TEST_FILE_PATH)) {
+            results = parser.parse(is);
+        }
         logMemUsage("After parse: ");
         LOGGER.debug("Protein count: " + results.size());
-        for (PhobiusProtein protein : results) {
-            assertTrue("The protein should be one or both of TM and SP.", protein.isSP() || protein.isTM());
-            // Now test that those two methods work properly!
-            // Determine that all the included proteins contain
-            // valid features only.
-            boolean isSignal = false;
-            boolean isTM = false;
-//            LOGGER.debug(protein.toString());
-            for (PhobiusFeature feature : protein.getFeatures()) {
-                if (PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == feature.getFeatureType() ||
-                        PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == feature.getFeatureType() ||
-                        PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == feature.getFeatureType()) {
+        for (RawProtein<PhobiusRawMatch> protein : results) {
+            assertNotNull(protein.getProteinIdentifier());
+            Collection<PhobiusRawMatch> matches = protein.getMatches();
+            assertNotNull(matches);
+            assertNotNull(protein.getProteinIdentifier());
+            assertTrue(matches.size() > 0);
+            for (PhobiusRawMatch match : matches) {
+                assertTrue("The protein should be one or both of TM and SP.", match.isSP() || match.isTM());
+                // Now test that those two methods work properly!
+                // Determine that all the included proteins contain
+                // valid features only.
+                PhobiusFeatureType type = match.getFeatureType();
+                boolean isSignal = false;
+                boolean isTM = false;
+                if (PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == type ||
+                        PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == type ||
+                        PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == type) {
                     isSignal = true;
                 }
-                if (PhobiusFeatureType.TRANSMEMBRANE == feature.getFeatureType()) {
+                if (PhobiusFeatureType.TRANSMEMBRANE == type) {
                     isTM = true;
                 }
+                assertTrue("The methods PhobiusProtein.isSP and / or PhobiusProtein.isTM are not returning expected results.", isSignal || isTM);
             }
-            assertTrue("The methods PhobiusProtein.isSP and / or PhobiusProtein.isTM are not returning expected results.", isSignal || isTM);
         }
     }
 
