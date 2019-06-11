@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Location of a match.
@@ -14,6 +16,7 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
     private final int end;
     private String models = null; // Required for Gene3D and SUPERFAMILY
     private String feature = null; // For sequence features only (MobiDB)
+    private Set<SimpleLocationFragment> fragments;
 
     public SimpleLocation(int start, int end, String models, String feature) {
         this(start, end, models);
@@ -36,6 +39,17 @@ public final class SimpleLocation implements Comparable<SimpleLocation>, Seriali
 
     public int getEnd() {
         return end;
+    }
+
+    public Set<SimpleLocationFragment> getFragments() {
+        return fragments;
+    }
+
+    public void addFragment(SimpleLocationFragment fragment) {
+        if (fragments == null) {
+            fragments = new HashSet<>();
+        }
+        fragments.add(fragment);
     }
 
     public String getModels() {

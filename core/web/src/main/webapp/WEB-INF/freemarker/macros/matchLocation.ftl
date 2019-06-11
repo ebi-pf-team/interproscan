@@ -16,12 +16,12 @@
     <#--Integrated signature match or un-integrated signature, therefore has no entryAc associated-->
     <#--Gene3D or SUPERFAMILY where along with the signatureAc we also show the modelAc responsible for the hit-->
     <#--Sequence features where necessary (e.g. MobiDB)-->
-    <a id="${prefix}-location-${matchId}"
+    <a id="${prefix}-location-${matchId?c}"
        title="${title} ${location.start} - ${location.end}"
        class="match ${colourClass}"
        style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
                width: ${(((location.end - location.start + 1) / proteinLength) * 100)?c}%;"
-       href="/interpro/popup/match?id=${prefix}-popup-${matchId}&proteinAc=${proteinAc}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}<#if entryAc?? && entryAc?has_content && entryAc!="null">&entryAc=${entryAc}<#else>&db=${signature.dataSource.sourceName}</#if><#if location.models?? && location.models?has_content && location.models!="null" && signature.ac!=location.models>&model=${location.models}</#if><#if location.feature?? && location.feature?has_content && location.feature!="null">&feature=${location.feature}</#if>">
+       href="/interpro/popup/match?id=${prefix}-popup-${matchId?c}&proteinAc=${proteinAc}&methodAc=${signature.ac}&start=${location.start?c}&end=${location.end?c}<#if entryAc?? && entryAc?has_content && entryAc!="null">&entryAc=${entryAc}<#else>&db=${signature.dataSource.sourceName}</#if><#if location.models?? && location.models?has_content && location.models!="null" && signature.ac!=location.models>&model=${location.models}</#if><#if location.feature?? && location.feature?has_content && location.feature!="null">&feature=${location.feature}</#if>">
     </a>
     </#if>
 </#macro>

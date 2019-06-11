@@ -32,8 +32,8 @@ e.g. "PROSITE_PROFILES" becomes "prosite-profiles" -->
     <#if viewId?? && viewId?has_content>
         <#assign prefix=viewId+"-"+prefix>
     </#if>
-    <a id="${prefix}-location-${residueId}"
-       href="/interpro/popup/residue?id=${prefix}-popup-${residueId}&proteinAc=${proteinAc}&siteId=${site.id?c}&residue=${title}&start=${locationObj.start?c}&end=${locationObj.end?c}"
+    <a id="${prefix}-location-${residueId?c}"
+       href="/interpro/popup/residue?id=${prefix}-popup-${residueId?c}&proteinAc=${proteinAc}&siteId=${site.id?c}&residue=${title}&start=${locationObj.start?c}&end=${locationObj.end?c}"
        title="${title} ${locationObj.start} - ${locationObj.end}"
        class="match ${colourClass}"
        style="left:  ${((locationObj.start - 1) / proteinLength) * 100}%;
