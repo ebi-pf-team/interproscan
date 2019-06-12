@@ -4,16 +4,16 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="htmlWriter"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter">
-        <property name="freeMarkerConfig" ref="freeMarkerConfigHtmlWriter"/>
-        <property name="applicationContextConfigLocation" value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>
-        <property name="freeMarkerTemplate" value="views/protein.ftl"/>
-        <property name="entryHierarchyBeanId" value="entryHierarchy"/>
-        <property name="htmlResourcesDir" value="data/freemarker/resources"/>
-        <property name="tempDirectory" value="temp/"/>
-        <property name="interproscanVersion" value="${i5.version}"/>
-    </bean>
+    <!--<bean id="htmlWriter"-->
+          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter">-->
+        <!--<property name="freeMarkerConfig" ref="freeMarkerConfigHtmlWriter"/>-->
+        <!--<property name="applicationContextConfigLocation" value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>-->
+        <!--<property name="freeMarkerTemplate" value="views/protein.ftl"/>-->
+        <!--<property name="entryHierarchyBeanId" value="entryHierarchy"/>-->
+        <!--<property name="htmlResourcesDir" value="data/freemarker/resources"/>-->
+        <!--<property name="tempDirectory" value="temp/"/>-->
+        <!--<property name="interproscanVersion" value="${i5.version}"/>-->
+    <!--</bean>-->
 
     <bean id="defaultWrapperHtmlWriter" class="freemarker.template.DefaultObjectWrapper"/>
 

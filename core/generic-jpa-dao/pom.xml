@@ -52,15 +52,19 @@
             <artifactId>hibernate-c3p0</artifactId>
             <version>${hibernate.entity.manager.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>c3p0</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0.version}</version>
         </dependency>
 
+
+        <!--<dependency>-->
+
         <!-- Test database implementation (in memory for Junit tests) -->
         <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
             <scope>test</scope>

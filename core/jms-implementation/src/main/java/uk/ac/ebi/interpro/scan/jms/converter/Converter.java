@@ -80,12 +80,12 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         this.marshaller = marshaller;
     }
 
-    @Required
+//    @Required
     public void setSvgResultWriter(ProteinMatchesSVGResultWriter svgResultWriter) {
         this.svgResultWriter = svgResultWriter;
     }
 
-    @Required
+//    @Required
     public void setHtmlResultWriter(ProteinMatchesHTMLResultWriter htmlResultWriter) {
         this.htmlResultWriter = htmlResultWriter;
     }
@@ -175,8 +175,8 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
         setupTemporaryDirectory();
 
-        svgResultWriter.setTempDirectory(temporaryDirectory);
-        htmlResultWriter.setTempDirectory(temporaryDirectory);
+
+
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("The CONVERT mode is using the following settings...");
@@ -237,11 +237,13 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
+                    htmlResultWriter.setTempDirectory(temporaryDirectory);
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
+                    svgResultWriter.setTempDirectory(temporaryDirectory);
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.SVG);
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");

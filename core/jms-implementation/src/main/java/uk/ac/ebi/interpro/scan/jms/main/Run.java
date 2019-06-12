@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import uk.ac.ebi.interpro.scan.io.ExternallySetLocationTemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
@@ -218,6 +219,18 @@ public class Run extends AbstractI5Runner {
             }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
+
+            //deal with active mq
+            //System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","uk.ac.ebi.interpro.scan.management.model.StepExecution");
+            //System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","*");
+
+//            String contextFile = mode.getContextXML();
+//            XmlWebApplicationContext context = new XmlWebApplicationContext();
+//            context.setConfigLocation(contextFile);
+//            context.setServletContext(request.getServletContext());
+//            context.refresh();
+//
+//            final AbstractApplicationContext ctx = context;
 
             // The command-line distributed mode selects a random port number for communications.
             // This block selects the random port number and sets it on the broker.
@@ -1539,6 +1552,7 @@ public class Run extends AbstractI5Runner {
 
             tc.setUri(new URI(uriString));
             broker.addConnector(tc);
+
 
             //
             broker.start();

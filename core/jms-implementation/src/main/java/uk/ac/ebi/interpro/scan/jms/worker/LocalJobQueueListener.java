@@ -156,6 +156,7 @@ public class LocalJobQueueListener implements MessageListener {
                 LOGGER.error("Received a message of an unknown type (non-ObjectMessage)");
                 return;
             }
+
             final ObjectMessage stepExecutionMessage = (ObjectMessage) message;
             final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
 
@@ -228,6 +229,7 @@ public class LocalJobQueueListener implements MessageListener {
 
         } catch (JMSException e) {
             LOGGER.error("JMSException thrown in MessageListener.", e);
+            e.printStackTrace();
             if (controller != null) {
                 controller.handleFailure(LocalJobQueueListener.class.getName());
             }

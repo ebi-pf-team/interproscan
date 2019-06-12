@@ -104,7 +104,9 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
 
     public void close() {
         try {
-            levelDBStore.close();
+            if (levelDBStore != null) {
+                levelDBStore.close();
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

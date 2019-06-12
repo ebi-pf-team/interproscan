@@ -88,12 +88,12 @@ public class WriteOutputStep extends Step {
         this.compressHtmlAndSVGOutput = compressHtmlAndSVGOutput;
     }
 
-    @Required
+//    @Required
     public void setHtmlResultWriter(ProteinMatchesHTMLResultWriter htmlResultWriter) {
         this.htmlResultWriter = htmlResultWriter;
     }
 
-    @Required
+//    @Required
     public void setSvgResultWriter(ProteinMatchesSVGResultWriter svgResultWriter) {
         this.svgResultWriter = svgResultWriter;
     }

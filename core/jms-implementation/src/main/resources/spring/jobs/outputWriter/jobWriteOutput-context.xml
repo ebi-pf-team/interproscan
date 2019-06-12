@@ -49,8 +49,8 @@
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="interProScanVersion" value="${i5.version}"/>
         <property name="xmlWriter" ref="xmlWriter"/>
-        <property name="htmlResultWriter" ref="htmlWriter"/>
-        <property name="svgResultWriter" ref="svgWriter"/>
+        <!--<property name="htmlResultWriter" ref="htmlWriter"/>-->
+        <!--<property name="svgResultWriter" ref="svgWriter"/>-->
         <property name="xrefDao" ref="xrefDAO"/>
         <!--If set to TRUE, SVG graphical output files will be archived into one tar ball-->
         <property name="archiveSVGOutput" value="${archiveSVGOutput}"/>

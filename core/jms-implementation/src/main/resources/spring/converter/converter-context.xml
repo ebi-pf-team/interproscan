@@ -13,8 +13,8 @@
 
     <bean id="convert" class="uk.ac.ebi.interpro.scan.jms.converter.Converter">
         <property name="marshaller" ref="interproMarshaller"/>
-        <property name="htmlResultWriter" ref="htmlWriter"/>
-        <property name="svgResultWriter" ref="svgWriter"/>
+        <!--<property name="htmlResultWriter" ref="htmlWriter"/>-->
+        <!--<property name="svgResultWriter" ref="svgWriter"/>-->
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="temporaryDirectory" value="${temporary.file.directory}"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>

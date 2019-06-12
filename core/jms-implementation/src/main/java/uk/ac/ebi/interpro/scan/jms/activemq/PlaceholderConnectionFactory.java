@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.jms.activemq;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.JMSContext;
 
 /**
  * @author Phil Jones
@@ -24,4 +25,30 @@ public class PlaceholderConnectionFactory implements ConnectionFactory {
     public Connection createConnection(String userName, String password) throws JMSException {
         return null;
     }
+
+    @Override
+    public JMSContext createContext(){
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(String userName,
+                             String password){
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(String userName,
+                                    String password,
+                                    int sessionMode){
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(int sessionMode){
+        return null;
+    }
+
+
+
 }
