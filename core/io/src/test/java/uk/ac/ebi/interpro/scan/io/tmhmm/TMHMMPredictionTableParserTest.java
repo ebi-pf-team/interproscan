@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test of the PantherModelDirectoryParser class.
@@ -19,7 +19,7 @@ public class TMHMMPredictionTableParserTest {
 
     private TMHMMPredictionTableParser parser;
 
-    @Before
+    @BeforeAll
     public void setUp() {
         parser = new TMHMMPredictionTableParser(new SignatureLibraryRelease(SignatureLibrary.TMHMM, "2.5.1"));
     }

@@ -1,7 +1,10 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
@@ -26,58 +29,58 @@ public class XrefParserTest {
         */
         //
         nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("Wilf");
-        Assert.assertNull(nucleotideSequenceXref.getDatabaseName());
-        Assert.assertEquals("Wilf", nucleotideSequenceXref.getName());
-        Assert.assertEquals("Wilf", nucleotideSequenceXref.getIdentifier());
-        Assert.assertNull(nucleotideSequenceXref.getDatabaseName());
+        assertNull(nucleotideSequenceXref.getDatabaseName());
+        assertEquals("Wilf", nucleotideSequenceXref.getName());
+        assertEquals("Wilf", nucleotideSequenceXref.getIdentifier());
+        assertNull(nucleotideSequenceXref.getDatabaseName());
         //
         nucleotideSequenceXref = XrefParser.getNucleotideSequenceXref("reverse translation of P22298");
-        Assert.assertNull(nucleotideSequenceXref.getDatabaseName());
-        Assert.assertEquals("reverse", nucleotideSequenceXref.getIdentifier());
-        Assert.assertEquals("reverse translation of P22298", nucleotideSequenceXref.getName());
+        assertNull(nucleotideSequenceXref.getDatabaseName());
+        assertEquals("reverse", nucleotideSequenceXref.getIdentifier());
+        assertEquals("reverse translation of P22298", nucleotideSequenceXref.getName());
     }
 
     @Test
     public void testGetProteinXref() {
         //tr
         ProteinXref proteinXref = XrefParser.getProteinXref("tr|A2VDN9|A2VDN9_BOVIN KIAA0020 protein OS=Bos taurus GN=KIAA0020 PE=2 SV=1");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("tr|A2VDN9|A2VDN9_BOVIN", proteinXref.getIdentifier());
-        Assert.assertEquals("tr|A2VDN9|A2VDN9_BOVIN KIAA0020 protein OS=Bos taurus GN=KIAA0020 PE=2 SV=1", proteinXref.getName());
-        Assert.assertEquals("KIAA0020 protein OS=Bos taurus GN=KIAA0020 PE=2 SV=1", proteinXref.getDescription());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("tr|A2VDN9|A2VDN9_BOVIN", proteinXref.getIdentifier());
+        assertEquals("tr|A2VDN9|A2VDN9_BOVIN KIAA0020 protein OS=Bos taurus GN=KIAA0020 PE=2 SV=1", proteinXref.getName());
+        assertEquals("KIAA0020 protein OS=Bos taurus GN=KIAA0020 PE=2 SV=1", proteinXref.getDescription());
         //sp
         proteinXref = XrefParser.getProteinXref("sp|Q8I6R7|ACN2_ACAGO Acanthoscurrin-2 (Fragment) OS=Acanthoscurria gomesiana GN=acantho2 PE=1 SV=1");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("sp|Q8I6R7|ACN2_ACAGO", proteinXref.getIdentifier());
-        Assert.assertEquals("sp|Q8I6R7|ACN2_ACAGO Acanthoscurrin-2 (Fragment) OS=Acanthoscurria gomesiana GN=acantho2 PE=1 SV=1", proteinXref.getName());
-        Assert.assertEquals("Acanthoscurrin-2 (Fragment) OS=Acanthoscurria gomesiana GN=acantho2 PE=1 SV=1", proteinXref.getDescription());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("sp|Q8I6R7|ACN2_ACAGO", proteinXref.getIdentifier());
+        assertEquals("sp|Q8I6R7|ACN2_ACAGO Acanthoscurrin-2 (Fragment) OS=Acanthoscurria gomesiana GN=acantho2 PE=1 SV=1", proteinXref.getName());
+        assertEquals("Acanthoscurrin-2 (Fragment) OS=Acanthoscurria gomesiana GN=acantho2 PE=1 SV=1", proteinXref.getDescription());
         //ref
         proteinXref = XrefParser.getProteinXref("gi|6679827|ref|NP_032062.1| protein fosB [Mus musculus]");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("gi|6679827|ref|NP_032062.1|", proteinXref.getIdentifier());
-        Assert.assertEquals("gi|6679827|ref|NP_032062.1| protein fosB [Mus musculus]", proteinXref.getName());
-        Assert.assertEquals("protein fosB [Mus musculus]", proteinXref.getDescription());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("gi|6679827|ref|NP_032062.1|", proteinXref.getIdentifier());
+        assertEquals("gi|6679827|ref|NP_032062.1| protein fosB [Mus musculus]", proteinXref.getName());
+        assertEquals("protein fosB [Mus musculus]", proteinXref.getDescription());
         //EMBL
         proteinXref = XrefParser.getProteinXref("gi|49457155|emb|CAG46898.1| FOSB [Homo sapiens]");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("gi|49457155|emb|CAG46898.1|", proteinXref.getIdentifier());
-        Assert.assertEquals("gi|49457155|emb|CAG46898.1| FOSB [Homo sapiens]", proteinXref.getName());
-        Assert.assertEquals("FOSB [Homo sapiens]", proteinXref.getDescription());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("gi|49457155|emb|CAG46898.1|", proteinXref.getIdentifier());
+        assertEquals("gi|49457155|emb|CAG46898.1| FOSB [Homo sapiens]", proteinXref.getName());
+        assertEquals("FOSB [Homo sapiens]", proteinXref.getDescription());
         //GeneBank
         proteinXref = XrefParser.getProteinXref("gi|351706989|gb|EHB09908.1| Protein fosB [Heterocephalus glaber]");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("gi|351706989|gb|EHB09908.1|", proteinXref.getIdentifier());
-        Assert.assertEquals("gi|351706989|gb|EHB09908.1| Protein fosB [Heterocephalus glaber]", proteinXref.getName());
-        Assert.assertEquals("Protein fosB [Heterocephalus glaber]", proteinXref.getDescription());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("gi|351706989|gb|EHB09908.1|", proteinXref.getIdentifier());
+        assertEquals("gi|351706989|gb|EHB09908.1| Protein fosB [Heterocephalus glaber]", proteinXref.getName());
+        assertEquals("Protein fosB [Heterocephalus glaber]", proteinXref.getDescription());
         //
         proteinXref = XrefParser.getProteinXref("Wilf");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("Wilf", proteinXref.getName());
-        Assert.assertEquals("Wilf", proteinXref.getIdentifier());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("Wilf", proteinXref.getName());
+        assertEquals("Wilf", proteinXref.getIdentifier());
         //
         proteinXref = XrefParser.getProteinXref("reverse translation of P22298");
-        Assert.assertNull(proteinXref.getDatabaseName());
-        Assert.assertEquals("reverse", proteinXref.getIdentifier());
-        Assert.assertEquals("reverse translation of P22298", proteinXref.getName());
+        assertNull(proteinXref.getDatabaseName());
+        assertEquals("reverse", proteinXref.getIdentifier());
+        assertEquals("reverse translation of P22298", proteinXref.getName());
     }
 }

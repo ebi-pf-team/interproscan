@@ -2,8 +2,8 @@ package uk.ac.ebi.interpro.scan.io.match.prosite;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
@@ -20,7 +20,7 @@ import java.util.Set;
  */
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class PrositeMatchParserTest extends TestCase {
 

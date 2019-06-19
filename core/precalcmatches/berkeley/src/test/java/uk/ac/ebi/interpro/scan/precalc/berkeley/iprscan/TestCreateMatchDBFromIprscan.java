@@ -1,12 +1,17 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
 
 /**
  * Tests.

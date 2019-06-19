@@ -1,8 +1,15 @@
 package uk.ac.ebi.interpro.scan.io.cdd;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
@@ -14,9 +21,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
 
 /**
  * Tests createMatch method of CDDMatchParser class.
@@ -33,7 +38,7 @@ public class CDDMatchParserTest {
 
     private CDDMatchParser instance;
 
-    @Before
+    @BeforeAll
     public void setUp() {
         instance = new CDDMatchParser();
     }

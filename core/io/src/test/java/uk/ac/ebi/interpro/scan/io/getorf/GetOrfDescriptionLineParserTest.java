@@ -1,8 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.getorf;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceReader;
@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests {@link uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser}.
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class GetOrfDescriptionLineParserTest {
 
@@ -37,7 +37,7 @@ public class GetOrfDescriptionLineParserTest {
 
     private Set<OpenReadingFrame> orfs;
 
-    @Before
+    @BeforeAll
     public void init() {
         orfs = new HashSet<OpenReadingFrame>();
         orfs.add(new OpenReadingFrame(10, 1100, NucleotideSequenceStrand.SENSE));

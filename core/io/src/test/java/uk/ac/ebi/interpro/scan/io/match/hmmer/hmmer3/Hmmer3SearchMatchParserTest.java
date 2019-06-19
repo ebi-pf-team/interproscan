@@ -1,11 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -17,8 +19,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link Hmmer3SearchMatchParser}
@@ -27,7 +29,7 @@ import static org.junit.Assert.assertTrue;
  * @author Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class Hmmer3SearchMatchParserTest {
 
@@ -54,7 +56,7 @@ public class Hmmer3SearchMatchParserTest {
     private org.springframework.core.io.Resource emptyAlignmentLineFile;
 
     @Test
-    @Ignore// As of Gene3d 4.2.0, no longer applies
+    @Disabled // As of Gene3d 4.2.0, no longer applies
     public void testGene3DParser() throws IOException {
         final Set<String> expected = new HashSet<String>(Arrays.asList(
                 "HP0834:24M2I9M1D9M1D2M2D10M7I42M7D16M5D12M1I24M",
@@ -69,7 +71,7 @@ public class Hmmer3SearchMatchParserTest {
                 actual.add(m.getSequenceIdentifier() + ":" + m.getAlignedRegions());
             }
         }
-        assertEquals("Expected matches not found", expected, actual);
+        assertEquals( expected, actual, "Expected matches not found");
     }
 
     @Test
@@ -91,11 +93,11 @@ public class Hmmer3SearchMatchParserTest {
                         m.getLocationScore());
             }
         }
-        assertEquals("Expected matches not found", expected, actual);
+        assertEquals( expected, actual, "Expected matches not found");
     }
 
     @Test
-    @Ignore// As of Gene3d 4.2.0, no longer applies
+    @Disabled // As of Gene3d 4.2.0, no longer applies
     public void testEmptyAlignmentLine() throws IOException {
 
         final Set<String> expected = new HashSet<String>(Arrays.asList(
@@ -113,11 +115,11 @@ public class Hmmer3SearchMatchParserTest {
             }
         }
 
-        assertEquals("Expected alignments not found", expected, actual);
+        assertEquals(expected, actual, "Expected alignments not found");
     }
 
     @Test
-    @Ignore("Currently need to have an entire hmm library in the classpath, so this needs to be switched on manually.  Note that the location / name of the hmm linbrary and the hmm results file should be set in the test context.xml file src/test/resources/uk/ac/ebi/interpro/scan/io/match/hmmer/hmmer3/Hmmer3SearchMatchParserTest-context.xml")
+    @Disabled("Currently need to have an entire hmm library in the classpath, so this needs to be switched on manually.  Note that the location / name of the hmm linbrary and the hmm results file should be set in the test context.xml file src/test/resources/uk/ac/ebi/interpro/scan/io/match/hmmer/hmmer3/Hmmer3SearchMatchParserTest-context.xml")
     public void testPfamParser() throws IOException {
         parse(pfamParser, pfamFile.getInputStream());
     }
@@ -128,7 +130,7 @@ public class Hmmer3SearchMatchParserTest {
         Set<RawProtein<T>> proteins = null;
         try {
             proteins = parser.parse(is);
-            assertTrue("Must be at least one protein in collection", proteins.size() > 0);
+            assertTrue( proteins.size() > 0, "Must be at least one protein in collection");
         }
         finally {
             is.close();

@@ -1,8 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.serialization;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class ObjectSerializerDeserializerTest {
 

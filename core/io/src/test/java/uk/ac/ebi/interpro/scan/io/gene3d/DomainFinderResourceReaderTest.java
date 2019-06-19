@@ -1,8 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.runner.RunWith;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -20,7 +20,7 @@ import uk.ac.ebi.interpro.scan.io.ResourceReader;
  * @author  Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class DomainFinderResourceReaderTest {
 

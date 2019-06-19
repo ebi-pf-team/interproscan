@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -37,6 +38,8 @@ import java.util.regex.Matcher;
  * @since 1.0
  */
 public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
+
+    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParser.class.getName());
 
     private SignatureLibrary signatureLibrary;
     private  String signatureLibraryRelease;
@@ -146,7 +149,11 @@ public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
                                             PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == featureType ||
                                             PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == featureType;
                             isSP =  isSP || signalFeature;
+                            LOGGER.debug("isSP : " + isSP + " signalFeature: " + signalFeature);
+                            LOGGER.debug("featureType : " + featureType + " PhobiusFeatureType.TRANSMEMBRANE : " + PhobiusFeatureType.TRANSMEMBRANE);
                             isTM =  isTM || PhobiusFeatureType.TRANSMEMBRANE == featureType;
+                            LOGGER.debug("isTM : " + isTM);
+
                         }
                         phobiusRawMatch = new PhobiusRawMatch(currentProteinAccession, featureType.getAccession(), signatureLibrary, signatureLibraryRelease, start, stop, featureType, isSP, isTM);
                         matchesPerProtein.add(phobiusRawMatch);
@@ -161,5 +168,16 @@ public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
             }
         }
         return matches;
+    }
+
+    public boolean isSignalFeature(PhobiusFeatureType featureType){
+        return PhobiusFeatureType.SIGNAL_PEPTIDE == featureType ||
+                PhobiusFeatureType.SIGNAL_PEPTIDE_C_REGION == featureType ||
+                PhobiusFeatureType.SIGNAL_PEPTIDE_N_REGION == featureType ||
+                PhobiusFeatureType.SIGNAL_PEPTIDE_H_REGION == featureType;
+    }
+
+    public boolean isTransmembraneFeature(PhobiusFeatureType featureType){
+        return PhobiusFeatureType.TRANSMEMBRANE == featureType;
     }
 }

@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.panther;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -11,9 +11,9 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test of the PantherModelDirectoryParser class.
@@ -26,7 +26,7 @@ public class PantherModelDirectoryParserTest {
 
     private PantherModelDirectoryParser parser;
 
-    @Before
+    @BeforeAll
     public void setUp() {
         parser = new PantherModelDirectoryParser();
     }

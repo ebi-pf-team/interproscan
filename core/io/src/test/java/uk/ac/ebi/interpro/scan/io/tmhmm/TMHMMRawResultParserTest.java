@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -15,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link TMHMMRawResultParser}.
@@ -28,7 +29,7 @@ public class TMHMMRawResultParserTest {
 
     private TMHMMRawResultParser parser;
 
-    @Before
+    @BeforeAll
     public void setUp() {
         parser = new TMHMMRawResultParser(SignatureLibrary.TMHMM, "2.5.1");
     }
@@ -36,12 +37,12 @@ public class TMHMMRawResultParserTest {
     @Test
     public void testParse() throws IOException {
         Resource fileResource = new ClassPathResource("uk/ac/ebi/interpro/scan/io/tmhmm/rawResultOutputFile.txt");
-        assertNotNull("File resource is NULL!", fileResource);
-        assertTrue("File resource does not exist!", fileResource.exists());
+        assertNotNull( fileResource, "File resource is NULL!");
+        assertTrue(fileResource.exists(), "File resource does not exist!" );
         InputStream is = fileResource.getInputStream();
-        assertNotNull("Input stream is NULL!", is);
+        assertNotNull(is, "Input stream is NULL!");
         Set<RawProtein<TMHMMRawMatch>> proteins = parser.parse(is);
-        assertEquals("Size of protein set differs from the expected one!", 4, proteins.size());
+        assertEquals( 4, proteins.size(), "Size of protein set differs from the expected one!");
         for (RawProtein<TMHMMRawMatch> protein : proteins) {
             Collection<TMHMMRawMatch> matches = protein.getMatches();
             assertNotNull(matches);
@@ -57,16 +58,16 @@ public class TMHMMRawResultParserTest {
                 checkMatches(matches, protein.getProteinIdentifier(), Arrays.asList(200, 234, 271, 314, 356, 391, 412, 438), Arrays.asList(222, 256, 293, 336, 378, 408, 431, 455));
             }
             else {
-                assertTrue("Unexpected protein with " + protein.getMatches().size() + " match(es) found!", false);
+                assertTrue( false, "Unexpected protein with " + protein.getMatches().size() + " match(es) found!");
             }
         }
     }
 
     private void checkMatches(Collection<TMHMMRawMatch> matches, String proteinIdentifier, List<Integer> startPositions, List<Integer> endPositions) {
         for (TMHMMRawMatch match : matches) {
-            assertTrue("Start position " + match.getLocationStart() + " is not part of the set of expected start positions!", startPositions.contains(match.getLocationStart()));
-            assertTrue("End position " + match.getLocationEnd() + " is not part of the set of expected end positions!", endPositions.contains(match.getLocationEnd()));
-            assertEquals("TMhelix", match.getModelId());
+            assertTrue(startPositions.contains(match.getLocationStart()), "Start position " + match.getLocationStart() + " is not part of the set of expected start positions!");
+            assertTrue(endPositions.contains(match.getLocationEnd()), "End position " + match.getLocationEnd() + " is not part of the set of expected end positions!");
+            assertEquals(match.getModelId(), "TMhelix");
             assertEquals(SignatureLibrary.TMHMM, match.getSignatureLibrary());
             assertEquals(proteinIdentifier, match.getSequenceIdentifier());
         }
