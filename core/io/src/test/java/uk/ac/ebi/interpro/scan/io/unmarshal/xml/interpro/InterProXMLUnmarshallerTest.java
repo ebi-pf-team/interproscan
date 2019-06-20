@@ -1,11 +1,14 @@
 package uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import uk.ac.ebi.interpro.scan.io.serialization.ObjectSerializerDeserializer;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
@@ -27,7 +30,7 @@ import java.util.zip.ZipInputStream;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@ExtendWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class InterProXMLUnmarshallerTest {
 
@@ -61,7 +64,7 @@ public class InterProXMLUnmarshallerTest {
      * @throws ClassNotFoundException
      */
     @Test
-    @Ignore("Slow and memory intensive - turn on only to rebuild the InterPro / GO mapping file (each InterPro release)")
+    @Disabled("Slow and memory intensive - turn on only to rebuild the InterPro / GO mapping file (each InterPro release)")
     public void testUnmarshallerAndSerialization()
             throws IOException, XMLStreamException, ClassNotFoundException {
         BufferedInputStream bis = null;
@@ -83,7 +86,7 @@ public class InterProXMLUnmarshallerTest {
             // Serialize back in and cheque for equality.
             Map<SignatureLibrary, SignatureLibraryIntegratedMethods> retrievedData = serializerDeserializer.deserialize();
 
-            Assert.assertTrue(unmarshalledData.equals(retrievedData));
+            assertTrue(unmarshalledData.equals(retrievedData));
 
         } finally {
             if (bis != null) bis.close();

@@ -1,13 +1,19 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.TMHMMRawMatch;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Test class for {@link TMHMMRawResultParser}.
@@ -29,9 +35,9 @@ public class TMHMMRawResultParserTest {
 
     private TMHMMRawResultParser parser;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
-        parser = new TMHMMRawResultParser(SignatureLibrary.TMHMM, "2.5.1");
+        parser = new TMHMMRawResultParser(SignatureLibrary.TMHMM, "2.0c");
     }
 
     @Test
@@ -41,6 +47,9 @@ public class TMHMMRawResultParserTest {
         assertTrue(fileResource.exists(), "File resource does not exist!" );
         InputStream is = fileResource.getInputStream();
         assertNotNull(is, "Input stream is NULL!");
+        TMHMMRawResultParser parser2 = new TMHMMRawResultParser(SignatureLibrary.TMHMM, "2.0c");
+        assertNotNull( parser2, "TMHMM Parser is NULL!");
+        assertNotNull( parser, "TMHMM Parser is NULL!");
         Set<RawProtein<TMHMMRawMatch>> proteins = parser.parse(is);
         assertEquals( 4, proteins.size(), "Size of protein set differs from the expected one!");
         for (RawProtein<TMHMMRawMatch> protein : proteins) {

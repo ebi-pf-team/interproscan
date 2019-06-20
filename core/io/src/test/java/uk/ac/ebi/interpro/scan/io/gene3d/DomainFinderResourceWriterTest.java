@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
 import junitx.framework.FileAssert;
+
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.annotation.Resource;
@@ -17,9 +19,10 @@ import uk.ac.ebi.interpro.scan.io.ResourceWriter;
  * Tests {@link uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderResourceWriter}.
  *
  * @author  Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  */
-@ExtendWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class DomainFinderResourceWriterTest {
 

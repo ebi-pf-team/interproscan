@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.junit.Test;
+
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
 
@@ -8,13 +8,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 
 /**
  * Test for DistributedBlackBoxMaster.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -62,13 +65,13 @@ public class TestAmqInterProScanMaster {
         Map<String, String> params = new HashMap<String, String>();
         String[] outputFormats = new String[]{"gff3"};
         master.processOutputFormats(params, outputFormats);
-        assertEquals("gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "gff3");
         //Run the test for an empty parameter
         outputFormats = null;
         master.processOutputFormats(params, outputFormats);
-        assertEquals("tsv,xml,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "tsv,xml,gff3");
         outputFormats = new String[]{};
         master.processOutputFormats(params, outputFormats);
-        assertEquals("tsv,xml,gff3", params.get(WriteOutputStep.OUTPUT_FILE_FORMATS));
+        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "tsv,xml,gff3");
     }
 }

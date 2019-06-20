@@ -1,11 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -21,7 +23,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
  * @author  Antony Quinn
  * @version $Id$
  */
-@ExtendWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class FastaSequenceReaderTest {
 
@@ -61,14 +63,19 @@ public class FastaSequenceReaderTest {
         assertEquals( BRCA1_MD5, proteins.get(BRCA1_MD5).getMd5(), "Incorrect MD5");
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test //(expected=IllegalStateException.class)
     public void readMissingIdFile() throws IOException {
-        read(missingIdFile);
+        assertThrows(IllegalStateException.class, () -> {
+            read(missingIdFile);
+        });
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test //(expected=IllegalArgumentException.class)
     public void readMissingSequenceFile() throws IOException {
-        read(missingSequenceFile);
+        assertThrows(IllegalArgumentException.class, () -> {
+            read(missingSequenceFile);
+        });
+
     }
 
     private Map<String, Protein> read(org.springframework.core.io.Resource resource) throws IOException {

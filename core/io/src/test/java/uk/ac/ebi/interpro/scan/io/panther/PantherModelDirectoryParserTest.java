@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.panther;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -26,14 +26,16 @@ public class PantherModelDirectoryParserTest {
 
     private PantherModelDirectoryParser parser;
 
-    @BeforeAll
+    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/12.0";
+    private static final String PANTHER_TEST_VERSION = "12.0";
+    private static final String PANTHER_TEST_NAMES_TAB_FILE = "names.tab";
+
+    @BeforeEach
     public void setUp() {
         parser = new PantherModelDirectoryParser();
     }
 
-    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/12.0";
-    private static final String PANTHER_TEST_VERSION = "12.0";
-    private static final String PANTHER_TEST_NAMES_TAB_FILE = "names.tab";
+
 
 
     @Test

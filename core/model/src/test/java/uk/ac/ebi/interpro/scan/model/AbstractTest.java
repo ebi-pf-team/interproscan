@@ -16,8 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +34,7 @@ import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
  * Utility class for running XmlUnit tests.
  *
  * @author  Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  * @since   1.0
  * @see     org.custommonkey.xmlunit.XMLUnit
@@ -74,20 +75,20 @@ abstract class AbstractTest<T> extends AbstractXmlTest<T> {
                 LOGGER.debug("Inserting: " + expectedObject);
             }
             dao.insert(expectedObject);
-            assertEquals(key, 1, dao.retrieveAll().size());
+            assertEquals(1, dao.retrieveAll().size(), key);
             // Retrieve
             Long pk = retriever.getPrimaryKey(expectedObject);
             if (isDebugEnabled) {
                 LOGGER.debug("Retrieving: " + pk);
             }
             T actualObject = retriever.getObjectByPrimaryKey(dao, pk);
-            assertEquals(key, expectedObject, actualObject);
+            assertEquals(expectedObject, actualObject, key);
             // Delete
             if (isDebugEnabled) {
                 LOGGER.debug("Deleting: " + actualObject);
             }
             dao.delete(actualObject);
-            assertEquals(key, 0, dao.retrieveAll().size());
+            assertEquals(0, dao.retrieveAll().size(), key);
         }
     }
 
@@ -112,11 +113,11 @@ abstract class AbstractTest<T> extends AbstractXmlTest<T> {
                 // Convert XML to object
                 T actualObject = unmarshal(expectedXml);
                 LOGGER.debug(actualObject);
-                assertEquals(key, expectedObject, actualObject);
+                assertEquals(expectedObject, actualObject, key);
                 // ... and back again
                 String actualXml = marshal(actualObject);
                 LOGGER.debug(key + " (actual object XML):\n" + actualXml);
-                assertXmlEquals(key, expectedXml, actualXml);
+                assertXmlEquals(expectedXml, actualXml, key);
                 // Validate against XML schema
                 validate(actualXml);
             }

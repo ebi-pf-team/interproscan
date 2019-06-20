@@ -1,11 +1,14 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -13,15 +16,16 @@ import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+
 
 /**
  * Unit tests for {@link RawMatchDAO}.
  *
  * @author Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class RawMatchDAOTest {
 
@@ -51,11 +55,11 @@ public class RawMatchDAOTest {
     @Resource
     RawMatchDAO<Gene3dHmmer3RawMatch> dao;
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void deleteAll() {
         dao.deleteAll();
-        assertEquals("Could not delete all proteins", Long.valueOf(0), dao.count());
+        assertEquals(Long.valueOf(0), dao.count(), "Could not delete all proteins");
     }
 
     @Test

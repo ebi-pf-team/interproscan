@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.io.cdd;
 
 import org.apache.log4j.Logger;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -38,7 +38,7 @@ public class CDDMatchParserTest {
 
     private CDDMatchParser instance;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
         instance = new CDDMatchParser();
     }

@@ -1,10 +1,14 @@
 package uk.ac.ebi.interpro.scan.io.getorf;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceReader;
 import uk.ac.ebi.interpro.scan.io.sequence.SequenceReader;
 import uk.ac.ebi.interpro.scan.io.sequence.SequenceRecord;
@@ -16,16 +20,16 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Tests {@link uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser}.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  * @version $Id$
  */
-@ExtendWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class GetOrfDescriptionLineParserTest {
 
@@ -37,15 +41,15 @@ public class GetOrfDescriptionLineParserTest {
 
     private Set<OpenReadingFrame> orfs;
 
-    @BeforeAll
+    @BeforeEach
     public void init() {
         orfs = new HashSet<OpenReadingFrame>();
         orfs.add(new OpenReadingFrame(10, 1100, NucleotideSequenceStrand.SENSE));
         orfs.add(new OpenReadingFrame(50, 400, NucleotideSequenceStrand.ANTISENSE));
         orfs.add(new OpenReadingFrame(1, 230, NucleotideSequenceStrand.SENSE));
         orfs.add(new OpenReadingFrame(10, 230, NucleotideSequenceStrand.ANTISENSE));
-        assertNotNull("Parser shouldn't be NULL before running test.", parser);
-        assertNotNull("GetORF test file doesn't exist!", getOrfTestFile);
+        assertNotNull(parser, "Parser shouldn't be NULL before running test.");
+        assertNotNull(getOrfTestFile,"GetORF test file doesn't exist!");
     }
 
     @Test
@@ -53,8 +57,8 @@ public class GetOrfDescriptionLineParserTest {
         final Set<String> descriptions = read(getOrfTestFile);
         for (String description : descriptions) {
             OpenReadingFrame orf = parser.createORFFromParsingResult(description);
-            assertNotNull("ORF result shouldn't be NULL!", orf);
-            assertTrue("ORF (" + orf.getStrand() + ") " + orf.getStart() + ":" + orf.getEnd() + " should be an item of the result set!", orfs.contains(orf));
+            assertNotNull( orf, "ORF result shouldn't be NULL!");
+            assertTrue( orfs.contains(orf), "ORF (" + orf.getStrand() + ") " + orf.getStart() + ":" + orf.getEnd() + " should be an item of the result set!");
         }
     }
 

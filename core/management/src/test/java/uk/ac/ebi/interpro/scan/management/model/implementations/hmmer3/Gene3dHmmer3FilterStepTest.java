@@ -1,10 +1,10 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author  Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public final class Gene3dHmmer3FilterStepTest {
 
@@ -56,7 +56,7 @@ public final class Gene3dHmmer3FilterStepTest {
     Gene3dRawMatchFilter filter;
 
     @Test
-    @Ignore("Relies on DomainFinder binary")
+    @Disabled("Relies on DomainFinder binary")
     public void testFilter() {
         RawProtein<Gene3dHmmer3RawMatch> p = new RawProtein<Gene3dHmmer3RawMatch>(SEQ_ID);
         p.addMatch(match);

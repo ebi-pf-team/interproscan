@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
@@ -19,7 +21,7 @@ public class TMHMMPredictionTableParserTest {
 
     private TMHMMPredictionTableParser parser;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
         parser = new TMHMMPredictionTableParser(new SignatureLibraryRelease(SignatureLibrary.TMHMM, "2.5.1"));
     }

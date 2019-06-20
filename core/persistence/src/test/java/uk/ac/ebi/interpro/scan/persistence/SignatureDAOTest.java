@@ -16,13 +16,17 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Signature;
 
@@ -32,8 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -42,8 +44,9 @@ import static org.junit.Assert.assertNotNull;
  * Time: 11:26:27
  *
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SignatureDAOTest {
 
@@ -56,18 +59,18 @@ public class SignatureDAOTest {
         this.dao = dao;
     }
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void emptySignatureTable(){
         dao.deleteAll();
-        assertEquals("There should be no Signatures in the Signature table following a call to dao.deleteAll", LONG_ZERO, dao.count());
+        assertEquals(LONG_ZERO, dao.count(),"There should be no Signatures in the Signature table following a call to dao.deleteAll");
     }
 
-    //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
-    @Ignore
+    //TODO: Investigate GenericJDBCException and remove @Disabled label when fixed
+    @Disabled
     @Test
     public void storeAndRetrieveSignature(){
-        //TODO: Why calling it explicitly, if we use @Before and @After annotation
+        //TODO: Why calling it explicitly, if we use @BeforeEach and @After annotation
         //emptySignatureTable();
         Signature signature = new Signature
                 .Builder(SIGNATURE_ACCESSION)
@@ -76,7 +79,7 @@ public class SignatureDAOTest {
                 .type(SIGNATURE_TYPE)
                 .abstractText(SIGNATURE_ABSTRACT)
                 .build();
-        assertNotNull("The dao has not been injected and is null.", dao);
+        assertNotNull(dao, "The dao has not been injected and is null.");
         // Persist the Signature
         dao.insert(signature);
 
@@ -85,7 +88,7 @@ public class SignatureDAOTest {
 
         // Check there are two stored signatures.
         List<Signature> shouldContainTwo = dao.retrieveAll();
-        assertEquals("There should be two signatures in the database.", 2, shouldContainTwo.size());
+        assertEquals(2, shouldContainTwo.size(), "There should be two signatures in the database.");
 
 
         // Get the assigned primary key
@@ -93,7 +96,7 @@ public class SignatureDAOTest {
 
         // Now retrieve it using read method
         Signature retrievedSignature = dao.read(pk);
-        assertNotNull("No signature has been retrieved.", retrievedSignature);
+        assertNotNull(retrievedSignature, "No signature has been retrieved.");
         assertEquals(SIGNATURE_ACCESSION, retrievedSignature.getAccession());
         assertEquals(SIGNATURE_NAME, retrievedSignature.getName());
         assertEquals(SIGNATURE_DESCRIPTION, retrievedSignature.getDescription());
@@ -102,7 +105,7 @@ public class SignatureDAOTest {
 
         // Test getSignatureAndMethodsDeep, specific to the SignatureDAO object!
         retrievedSignature = ((SignatureDAO)dao).getSignatureAndMethodsDeep(pk);
-        assertNotNull("No signature has been retrieved.", retrievedSignature);
+        assertNotNull(retrievedSignature, "No signature has been retrieved.");
         assertEquals(SIGNATURE_ACCESSION, retrievedSignature.getAccession());
         assertEquals(SIGNATURE_NAME, retrievedSignature.getName());
         assertEquals(SIGNATURE_DESCRIPTION, retrievedSignature.getDescription());
@@ -114,15 +117,15 @@ public class SignatureDAOTest {
         signatureAcs.add("PF02316");
         signatureAcs.add("Dummy");
         Collection<Signature> retrievedSignatures = ((SignatureDAO)dao).getSignaturesAndMethodsDeep(signatureAcs);
-        assertNotNull("No signatures have been retrieved.", retrievedSignatures);
-        assertEquals("Expected 2 signatures to be returned by query", 2, retrievedSignatures.size());
+        assertNotNull(retrievedSignatures, "No signatures have been retrieved.");
+        assertEquals(2, retrievedSignatures.size(), "Expected 2 signatures to be returned by query");
 
         // Finally delete it.
         dao.delete(retrievedSignature);
 
         // And check it is gone.
         List<Signature> shouldContainOne = dao.retrieveAll();
-        assertEquals("There should be one in the database.", 1, shouldContainOne.size());
+        assertEquals(1, shouldContainOne.size(), "There should be one in the database.");
     }
 
 

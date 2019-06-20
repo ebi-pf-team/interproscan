@@ -1,9 +1,17 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.prints;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -16,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -24,7 +32,7 @@ import static org.junit.Assert.*;
  * @since 1.0
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class PrintsPostProcessingTest {
 

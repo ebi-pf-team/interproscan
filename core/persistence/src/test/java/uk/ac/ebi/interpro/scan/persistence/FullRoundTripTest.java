@@ -3,14 +3,23 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.apache.log4j.Logger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import org.xml.sax.SAXException;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -23,7 +32,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import static junit.framework.TestCase.*;
 
 /**
  * Performs a full round-trip test of persistence
@@ -31,12 +39,14 @@ import static junit.framework.TestCase.*;
  *
  * @author Phil Jones
  * @author Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  * @see org.custommonkey.xmlunit.XMLUnit
  * @since 1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
+@Disabled
 public class FullRoundTripTest {
 
     private static final Logger LOGGER = Logger.getLogger(FullRoundTripTest.class.getName());
@@ -92,7 +102,7 @@ public class FullRoundTripTest {
     /**
      * Initializes XMLUnit so white space and comments are ignored.
      */
-    @Before
+    @BeforeEach
     public void initializeXmlUnit() {
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
@@ -102,8 +112,8 @@ public class FullRoundTripTest {
     /**
      * Test of <signature/> xml round trip.
      */
-    //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
-    @Ignore
+    //TODO: Investigate GenericJDBCException and remove @Disabled label when fixed
+    @Disabled
     @Test
     public void newSignatureRoundTrip() {
         ObjectRetriever<Signature, SignatureDAO> retriever = new ObjectRetriever<Signature, SignatureDAO>() {
@@ -162,21 +172,21 @@ public class FullRoundTripTest {
                     LOGGER.error("\nNot identical: ROUND-TRIP, UNPERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + unpersistedOutputXml);
                     LOGGER.error("\ntoString(): \n\n" + persistableObject.toString());
                 }
-                assertTrue("Round trip XML (not persistence) should be similar." + myDiff, myDiff.similar());
-                assertTrue("Round trip XML (not persistence) should be identical." + myDiff, myDiff.identical());
+                assertTrue(myDiff.similar(), "Round trip XML (not persistence) should be similar." + myDiff);
+                assertTrue(myDiff.identical(), "Round trip XML (not persistence) should be identical." + myDiff);
 
                 // Now persist the Signature
                 dao.insert(persistableObject);
 
                 // Retrieve its primary key
                 Long id = retriever.getPrimaryKey(persistableObject);
-                assertNotNull("The stored persistableObject should not have a null primary key·", id);
+                assertNotNull(id, "The stored persistableObject should not have a null primary key·");
                 LOGGER.debug("Primary key of persisted object (mid round-trip following insert): " + id);
                 // And retrieve into a new reference
                 T retrievedPersistable = retriever.getObjectByPrimaryKey(dao, id);
 
-                assertNotNull("The retrieved object should not be null", retrievedPersistable);
-                assertEquals("The retrieved object should be equal to the original persistableObject.", persistableObject, retrievedPersistable);
+                assertNotNull(retrievedPersistable, "The retrieved object should not be null");
+                assertEquals(persistableObject, retrievedPersistable, "The retrieved object should be equal to the original persistableObject.");
 
                 // Finally unmarshall the retrieved persistableObject and compare the XML.
                 String persistedOutputXML = marshal(marshaller, retrievedPersistable);
@@ -187,8 +197,8 @@ public class FullRoundTripTest {
                     LOGGER.error("\nNot identical: ROUND-TRIP, PERSISTED:\n====================\nInput XML:\n" + inputXml + "\n\nOutput XML:\n" + persistedOutputXML);
 
                 }
-                assertTrue("Round trip XML (persisted) should be similar." + myDiff, myDiff.similar());
-                assertTrue("Round trip XML (persisted) should be identical." + myDiff, myDiff.identical());
+                assertTrue(myDiff.similar(), "Round trip XML (persisted) should be similar." + myDiff);
+                assertTrue(myDiff.identical(), "Round trip XML (persisted) should be identical." + myDiff);
 
 
             } catch (IOException e) {

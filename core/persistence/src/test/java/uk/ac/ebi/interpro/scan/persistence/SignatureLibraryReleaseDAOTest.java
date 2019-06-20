@@ -1,13 +1,17 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.junit.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -17,16 +21,15 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
- * User: pjones
+ * @author P Jones
+ * @author Gift Nuka
  * Date: 10-Jun-2010
  * Time: 17:54:38
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SignatureLibraryReleaseDAOTest {
 
@@ -39,25 +42,25 @@ public class SignatureLibraryReleaseDAOTest {
 //        this.dao = dao;
 //    }
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void emptySignatureLibraryReleaseTable() {
         dao.deleteAll();
-        Assert.assertEquals("There should be no Releases in the SignatureLibraryRelease table following a call to dao.deleteAll", LONG_ZERO, dao.count());
+        assertEquals(LONG_ZERO, dao.count(), "There should be no Releases in the SignatureLibraryRelease table following a call to dao.deleteAll");
     }
 
     /**
      * The method being tested should return true if a specific version of
      * a member database release has already been persisted.
      */
-    //TODO: Investigate GenericJDBCException and remove @Ignore label when fixed
-    @Ignore
+    //TODO: Investigate GenericJDBCException and remove @Disabled label when fixed
+    @Disabled
     @Test
     public void testIsReleaseAlreadyPersisted() {
 
         final SignatureLibrary testLibrary = SignatureLibrary.PRINTS;
         final String testVersion = "1.0";
-        //TODO: Why calling it explicitly, if we use @Before and @After annotation
+        //TODO: Why calling it explicitly, if we use @BeforeEach and @After annotation
         //emptySignatureLibraryReleaseTable();
         assertFalse(dao.isReleaseAlreadyPersisted(testLibrary, testVersion));
         SignatureLibraryRelease sigLib1 = new SignatureLibraryRelease(testLibrary, testVersion, createSignature());

@@ -1,16 +1,19 @@
 package uk.ac.ebi.interpro.scan.jms.main;
 
-import org.junit.Test;
+
 import uk.ac.ebi.interpro.scan.management.model.Job;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
-
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Will test some of the static main run class methods.
  *
  * @author Maxim Scheremetjew
+ * @author Gift Nuka
  */
 public class TestRun {
 
@@ -42,18 +45,18 @@ public class TestRun {
         final List<Job> realJobs = new ArrayList<Job>(loadDummyJobs(true));
         //Test the method
         Map<String, Set<Job>> actualMap = Run.getRealAnalysesNames(parsedAnalyses, realJobs);
-        assertTrue("We should get jobs for 2 analyses.", actualMap.size() == 2);
-        assertEquals("We should get 1 job for PIRSF (default job only).", 1, actualMap.get("pirsf").size());
-        assertEquals("We should get 1 job for Pfam.", 1, actualMap.get("pfam-27.0").size());
+        assertTrue(actualMap.size() == 2,"We should get jobs for 2 analyses.");
+        assertEquals(1, actualMap.get("pirsf").size(),"We should get 1 job for PIRSF (default job only).");
+        assertEquals(1, actualMap.get("pfam-27.0").size(), "We should get 1 job for Pfam.");
 
         //Define test method input
         parsedAnalyses = new String[]{"pirsf-2.84", "pfam-27.0"};
         //Test the method
         actualMap = Run.getRealAnalysesNames(parsedAnalyses, realJobs);
-        assertEquals("We should get 2 jobs for 2 keys.", 2, actualMap.size());
-        assertNull("We should get 0 jobs for key pirsf.", actualMap.get("pirsf"));
-        assertEquals("We should get 1 job for Pfam.", 1, actualMap.get("pfam-27.0").size());
-        assertEquals("We should get 1 job for pirsf-2.84.", 1, actualMap.get("pirsf-2.84").size());
+        assertEquals(2, actualMap.size(), "We should get 2 jobs for 2 keys.");
+        assertNull(actualMap.get("pirsf"), "We should get 0 jobs for key pirsf.");
+        assertEquals(1, actualMap.get("pfam-27.0").size(), "We should get 1 job for Pfam.");
+        assertEquals(1, actualMap.get("pirsf-2.84").size(), "We should get 1 job for pirsf-2.84.");
     }
 
     private Set<Job> loadDummyJobs(boolean includePfam) {

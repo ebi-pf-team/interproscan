@@ -1,9 +1,12 @@
 package uk.ac.ebi.interpro.scan.jms.main;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
+ * @author Gift Nuka
+ *
  * Unit tests for the ./interproscan.sh "-mode X" command-line input option.
  */
 public class TestRunModeOption {
@@ -14,7 +17,7 @@ public class TestRunModeOption {
     @Test
     public void testDefault() {
         Mode mode = Run.getMode(null);
-        Assert.assertEquals(Mode.STANDALONE, mode);
+        assertEquals(Mode.STANDALONE, mode);
     }
 
     /**
@@ -23,7 +26,7 @@ public class TestRunModeOption {
     @Test
     public void testConvertLowercase() {
         Mode mode = Run.getMode("convert");
-        Assert.assertEquals(Mode.CONVERT, mode);
+        assertEquals(Mode.CONVERT, mode);
     }
 
     /**
@@ -32,16 +35,19 @@ public class TestRunModeOption {
     @Test
     public void testConvertUppercase() {
         Mode mode = Run.getMode("CONVERT");
-        Assert.assertEquals(Mode.CONVERT, mode);
+        assertEquals(Mode.CONVERT, mode);
     }
 
     /**
      * Invalid option.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test //(expected = IllegalArgumentException.class)
     public void testInvalidOption() {
-        Mode mode = Run.getMode("thismodedoesnotexist");
-        Assert.fail("Invalid option should have failed, but didn't, found: " + (mode.name() == null ? "NULL" : mode.name()));
+        //Mode mode = null;
+        assertThrows(IllegalArgumentException.class,  () -> {
+            Mode mode = Run.getMode("thismodedoesnotexist");
+        }, "Invalid option should have failed, but didn't, found: " + "(mode.name() == null ? "+"NULL" + " : mode.name())");
+
     }
 
 }

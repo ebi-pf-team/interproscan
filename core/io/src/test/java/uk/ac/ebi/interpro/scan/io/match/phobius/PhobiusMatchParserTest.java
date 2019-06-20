@@ -54,15 +54,15 @@ public class PhobiusMatchParserTest  {
             assertTrue(matches.size() > 0);
             boolean isSignal = false;
             boolean isTM = false;
+            StringBuilder sPnTMWarningMessage = new StringBuilder();
             for (PhobiusRawMatch match : matches) {
-                LOGGER.warn("match check : " + match.toString());
+                //LOGGER.warn("match check : " + match.toString());
                 if (match.isSP() || match.isTM()) {
 
                     assertTrue( (match.isSP() || match.isTM()), "The protein should be one or both of TM and SP.");
                 } else {
-                    LOGGER.warn("match : " + match.toString());
-                    LOGGER.warn("match is not SignalP nor TM... check this test again");
-                    assertTrue( match.isSP() || match.isTM(), "The protein should be one or both of TM and SP.");
+                    sPnTMWarningMessage.append("match not SP or TM: " + match.toString()).append("\n");
+                    assertFalse( match.isSP() || match.isTM(), "The protein should be one or both of TM and SP.");
                 }
                 // Now test that those two methods work properly!
                 // Determine that all the included proteins contain
@@ -79,13 +79,14 @@ public class PhobiusMatchParserTest  {
                 if (PhobiusFeatureType.TRANSMEMBRANE == type) {
                     isTM = true;
                 }
-                LOGGER.warn("PhobiusFeatureType: + " + type.toString());
+                //LOGGER.warn("PhobiusFeatureType: + " + type.toString());
             }
             if (isSignal || isTM) {
                 assertTrue(isSignal || isTM, "The methods PhobiusProtein.isSP and / or PhobiusProtein.isTM are not returning expected results.");
             } else {
                 assertFalse(isSignal || isTM, "The methods PhobiusProtein.isSP and / or PhobiusProtein.isTM are FALSE.. need to check if this is okay.");
-                LOGGER.warn("The methods PhobiusProtein.isSP and / or PhobiusProtein.isTM are FALSE.. need to check if this is okay.");
+                LOGGER.warn("The methods PhobiusProtein.isSP and / or PhobiusProtein.isTM are FALSE.. need to check if this is okay. \n"
+                        + sPnTMWarningMessage.toString());
             }
 
 

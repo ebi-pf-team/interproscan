@@ -19,11 +19,12 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test cases for {@link ProteinMatchesHolder}
@@ -39,7 +40,7 @@ import static org.junit.Assert.assertEquals;
  * @author Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder> {
 
@@ -52,7 +53,7 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         // Copy
         ProteinMatchesHolder copy = (ProteinMatchesHolder) SerializationUtils.clone(original);
         // Should be equal
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original, copy, "Original and copy should be equal");
         // Print
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(original);
@@ -60,9 +61,9 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         }
     }
 
-    // TODO: Fix UnsupportedOperationException -- the @Ignore annotation was added in June 2011 (http://tinyurl.com/6tq8nz4), yet the comment is not correct -- the SignatureLibraryRelease element does *not* cause the exception  
+    // TODO: Fix UnsupportedOperationException -- the @Disable annotation was added in June 2011 (http://tinyurl.com/6tq8nz4), yet the comment is not correct -- the SignatureLibraryRelease element does *not* cause the exception  
     @Test
-    @Ignore("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
+    @Disabled("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
     public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(ProteinMatchesHolder.class);
         super.testXmlRoundTrip();

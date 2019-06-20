@@ -1,11 +1,13 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import uk.ac.ebi.interpro.scan.jms.master.BlackBoxMaster;
 
 import javax.annotation.Resource;
@@ -17,7 +19,7 @@ import javax.annotation.Resource;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class TestActiveMQ {
 
@@ -28,7 +30,7 @@ public class TestActiveMQ {
 
 
     @Test
-    @Ignore("Needs to be reconfigured.")
+    @Disabled("Needs to be reconfigured.")
     public void testEmbeddedSystem() {
         LOGGER.debug("If this test fails, check that the test database located in /src/test/resources/interpro.h2.db is up-to-date with " +
                 "the current schema.  If not, the easiest way to create a new empty database is to use the installer " +

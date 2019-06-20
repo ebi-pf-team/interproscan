@@ -123,12 +123,29 @@
         <!--
         === All dependencies below here are TEST scope only. ===
         -->
+        <!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-core -->
         <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
             <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-legacy</artifactId>
+            <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!--<dependency>-->
+            <!--<groupId>xmlunit</groupId>-->
+            <!--<artifactId>xmlunit</artifactId>-->
+            <!--<version>${xmlunit.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
         <!-- JAXB tests -->
 

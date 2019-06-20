@@ -1,10 +1,10 @@
 package uk.ac.ebi.interpro.scan.management;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static org.junit.Assert.*;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.junit.jupiter.api.Assertions.*;
 
 import javax.annotation.Resource;
 
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * @version $Id$
  * @since 1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class BeanNameAwareTest {
 
@@ -31,6 +31,6 @@ public class BeanNameAwareTest {
 
     @Test
     public void testSetNameMethod(){
-        assertTrue ("The BeanNameAware interface does not set the bean id.", "testId".equals(testBean.getId()));
+        assertTrue ("testId".equals(testBean.getId()), "The BeanNameAware interface does not set the bean id.");
     }
 }

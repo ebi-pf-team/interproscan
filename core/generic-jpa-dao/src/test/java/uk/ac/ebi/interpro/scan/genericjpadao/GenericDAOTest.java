@@ -80,15 +80,8 @@ public class GenericDAOTest {
         if(dao == null){
             assertNull(dao, " DAO is NULL");
         }
-        /*
-        TODO this is temp, todelete
-        else{
-            System.out.println("WARN .... ");
-        }
         dao.deleteAll();
         assertEquals(Long_0, dao.count(), "There should be no proteins in the Protein table following a call to dao.deleteAll");
-
-        */
     }
 
     /**

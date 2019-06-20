@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 
-//import org.junit.Ignore;
+//import org.junit.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
  * Test of the Phobius Filtered Match DAO class.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
@@ -41,10 +42,10 @@ public class PhobiusFilteredMatchDAOTest {
 
     private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAOTest.class.getName());
 
-    @Resource(name = "phobiusDAO")
+    @Resource //(name = "phobiusDAO")
     private PhobiusFilteredMatchDAO phobiusDAO;
 
-    @Resource(name = "proteinDAO")
+    @Resource //(name = "proteinDAO")
     private ProteinDAO proteinDAO;
 
     private static final String[] SEQUENCES = new String[]{

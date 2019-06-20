@@ -1,13 +1,13 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Represents Unit test for {@link Jobs}.
@@ -36,9 +36,9 @@ public class JobStatusCheckerTest {
         job3.setMandatoryParameters(mandatoryParams);
 
         Jobs jobs = new Jobs();
-        assertEquals("Job status of job 1 should be ACTIVE!", JobStatusChecker.getJobStatus(job1).getJobStatus(), JobStatusWrapper.JobStatus.ACTIVE);
-        assertEquals("Job status of job 2 should be ACTIVE!", JobStatusChecker.getJobStatus(job2).getJobStatus(), JobStatusWrapper.JobStatus.ACTIVE);
-        assertEquals("Job status of job 3 should be DEACTIVATED!", JobStatusChecker.getJobStatus(job3).getJobStatus(), JobStatusWrapper.JobStatus.DEACTIVATED);
+        assertEquals(JobStatusChecker.getJobStatus(job1).getJobStatus(), JobStatusWrapper.JobStatus.ACTIVE, "Job status of job 1 should be ACTIVE!");
+        assertEquals(JobStatusChecker.getJobStatus(job2).getJobStatus(), JobStatusWrapper.JobStatus.ACTIVE, "Job status of job 2 should be ACTIVE!");
+        assertEquals(JobStatusChecker.getJobStatus(job3).getJobStatus(), JobStatusWrapper.JobStatus.DEACTIVATED, "Job status of job 3 should be DEACTIVATED!");
 
         List<Job> jobsList = new ArrayList<Job>();
         jobsList.add(job1);
@@ -47,7 +47,7 @@ public class JobStatusCheckerTest {
         jobs = new Jobs(jobsList, true);
         assertNotNull(jobs.getJobList());
         assertEquals(2, jobs.getJobList().size());
-        assertTrue("Job1 should exist in the job list!", jobs.getJobList().contains(job1));
-        assertTrue("Job2 should exist in the job list!", jobs.getJobList().contains(job2));
+        assertTrue(jobs.getJobList().contains(job1), "Job1 should exist in the job list!");
+        assertTrue(jobs.getJobList().contains(job2), "Job2 should exist in the job list!");
     }
 }

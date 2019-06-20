@@ -1,11 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class GFFResultWriterForNucSeqsTest {
 
     private Map<String, String> identifierToSeqMap;
 
-    @BeforeAll
+    @BeforeEach
     public void init() {
         identifierToSeqMap = new TreeMap<String, String>(new ProteinMatchesGFFResultWriter.Gff3FastaSeqIdComparator());
     }

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.ContextConfiguration;
 
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
@@ -16,7 +16,7 @@ import uk.ac.ebi.interpro.scan.io.gene3d.DomainFinderRecord;
  * @author  Antony Quinn
  * @version $Id$
  */
-@ExtendWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class DomainFinderRecordTest {
 

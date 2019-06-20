@@ -19,11 +19,15 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -31,14 +35,15 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test cases for {@link uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder}
  *
  * @author Maxim Scheremetjew
+ * @author Gift Nuka
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class NucleicAcidMatchesHolderTest extends AbstractTest<NucleicAcidMatchesHolder> {
 
@@ -51,7 +56,7 @@ public class NucleicAcidMatchesHolderTest extends AbstractTest<NucleicAcidMatche
         // Copy
         NucleicAcidMatchesHolder copy = (NucleicAcidMatchesHolder) SerializationUtils.clone(original);
         // Should be equal
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original, copy,"Original and copy should be equal");
         // Print
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(original.toString());
@@ -60,7 +65,7 @@ public class NucleicAcidMatchesHolderTest extends AbstractTest<NucleicAcidMatche
     }
 
     @Test
-    @Ignore("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
+    @Disabled("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
     public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(NucleicAcidMatchesHolder.class);
         super.testXmlRoundTrip();

@@ -18,17 +18,19 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link uk.ac.ebi.interpro.scan.model.PathwayXref.PathwayDatabase}
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  */
 public class PathwayXrefTest {
 
@@ -85,9 +87,9 @@ public class PathwayXrefTest {
         //Test special cases
         try {
             actual = PathwayXref.PathwayDatabase.parseDatabaseCode('?');
-            assertNull("Unexpected behaviour. Method call should throw an exception!", actual);
+            assertNull(actual, "Unexpected behaviour. Method call should throw an exception!");
         } catch (IllegalArgumentException e) {
-            assertNull("That is expected behaviour.", null);
+            assertNull(null,"That is expected behaviour.");
         }
     }
 
@@ -100,9 +102,9 @@ public class PathwayXrefTest {
         instance1.addEntry(entry_instance1);
         instance2.addEntry(entry_instance2);
 
-        assertNull("Id of instance 1 should be null!", instance1.getId());
-        assertNull("Id of instance 2 should be null!", instance2.getId());
-        assertNotSame("Identifier should be not the same!", instance1.getIdentifier(), instance2.getIdentifier());
+        assertNull( instance1.getId(),"Id of instance 1 should be null!");
+        assertNull( instance2.getId(), "Id of instance 2 should be null!");
+        assertNotSame( instance1.getIdentifier(), instance2.getIdentifier(), "Identifier should be not the same!");
         assertFalse(instance1.equals(instance2));
         //
         PathwayXref instance3 = new PathwayXref("id_1", "name_1", PathwayXref.PathwayDatabase.REACTOME.getDatabaseName());

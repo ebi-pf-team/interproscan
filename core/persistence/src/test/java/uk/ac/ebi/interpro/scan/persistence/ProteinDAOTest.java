@@ -17,14 +17,20 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
@@ -32,7 +38,6 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
 
-import static junit.framework.TestCase.*;
 
 /**
  * Developed using IntelliJ IDEA.
@@ -42,9 +47,9 @@ import static junit.framework.TestCase.*;
  *
  * @author Phil Jones, EMBL-EBI
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-@Ignore("Does not work on all OS.")
+@Disabled("Does not work on all OS.")
 public class ProteinDAOTest {
 
     /**
@@ -70,11 +75,11 @@ public class ProteinDAOTest {
         this.dao = dao;
     }
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void emptyProteinTable() {
         dao.deleteAll();
-        assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", LONG_ZERO, dao.count());
+        assertEquals(LONG_ZERO, dao.count(), "There should be no proteins in the Protein table following a call to dao.deleteAll");
     }
 
     /**
@@ -87,20 +92,20 @@ public class ProteinDAOTest {
      * .delete(Protein protein)
      */
     @Test
-    @Ignore("Does not work on all OS.")
+    @Disabled("Does not work on all OS.")
     public void storeAndRetrieveProtein() {
         emptyProteinTable();
         Protein protein = new Protein(GOOD);
-        assertNotNull("The ProteinDAOImpl object should be not-null.", dao);
+        assertNotNull(dao, "The ProteinDAOImpl object should be not-null.");
         dao.insert(protein);
         Long id = protein.getId();
-        assertEquals("The count of proteins in the database is not correct.", LONG_ONE, dao.count());
+        assertEquals(LONG_ONE, dao.count(), "The count of proteins in the database is not correct.");
         Protein retrievedProtein = dao.read(id);
-        assertEquals("The protein sequence of the retrieved object is not the same as the original object.", protein.getSequence(), retrievedProtein.getSequence());
+        assertEquals(protein.getSequence(), retrievedProtein.getSequence(), "The protein sequence of the retrieved object is not the same as the original object.");
         dao.delete(retrievedProtein);
         List<Protein> retrievedProteinList = dao.retrieveAll();
-        assertEquals("There should be no proteins in the database, following removal of the single protein that was added.", 0, retrievedProteinList.size());
-        assertEquals("The count of proteins in the database is not correct.", LONG_ZERO, dao.count());
+        assertEquals(0, retrievedProteinList.size(), "There should be no proteins in the database, following removal of the single protein that was added.");
+        assertEquals(LONG_ZERO, dao.count(), "The count of proteins in the database is not correct.");
         emptyProteinTable();
     }
 
@@ -113,28 +118,28 @@ public class ProteinDAOTest {
      * method in relation to XrefSequenceIdentifier objects
      */
     @Test
-    @Ignore("Does not work on all OS.")
+    @Disabled("Does not work on all OS.")
     public void storeAndRetrieveProteinWithXrefs() {
         emptyProteinTable();
         Protein protein = new Protein(GOOD);
         // First of all, insert the protein not including Xrefs.
         dao.insert(protein);
         Long id = protein.getId();
-        assertNotNull("The protein ID (following persistence) should not be null", id);
+        assertNotNull(id, "The protein ID (following persistence) should not be null");
         addXrefsToProtein(protein, ACCESSIONS);
         dao.update(protein);
         Long idAfterUpdate = protein.getId();
-        assertEquals("The protein ID following update should be the same as before update", id, idAfterUpdate);
+        assertEquals(id, idAfterUpdate, "The protein ID following update should be the same as before update");
         Protein firstRetrievedProtein = dao.getProteinAndCrossReferencesByProteinId(id);
         // Check the retrieved protein
-        assertNotNull("The retrieved protein should not be null", firstRetrievedProtein);
-        assertEquals("The protein sequence of the retrieved object is not the same as the original object.", protein.getSequence(), firstRetrievedProtein.getSequence());
-        assertEquals("The protein ID of the retrieved object should be the same as after the initial insert", id, firstRetrievedProtein.getId());
+        assertNotNull(firstRetrievedProtein, "The retrieved protein should not be null");
+        assertEquals(protein.getSequence(), firstRetrievedProtein.getSequence(), "The protein sequence of the retrieved object is not the same as the original object.");
+        assertEquals(id, firstRetrievedProtein.getId(), "The protein ID of the retrieved object should be the same as after the initial insert");
 
         // Check the number and content of the cross references.
         Set<ProteinXref> retrievedXRefs = firstRetrievedProtein.getCrossReferences();
-        assertNotNull("The cross reference collection should not be null", retrievedXRefs);
-        assertEquals("There should be " + ACCESSIONS.length + " cross references.", ACCESSIONS.length, retrievedXRefs.size());
+        assertNotNull(retrievedXRefs, "The cross reference collection should not be null");
+        assertEquals(ACCESSIONS.length, retrievedXRefs.size(), "There should be " + ACCESSIONS.length + " cross references.");
         for (String accession : ACCESSIONS) {
             boolean foundAccession = false;
             for (ProteinXref ident : retrievedXRefs) {
@@ -153,8 +158,8 @@ public class ProteinDAOTest {
 
         // Retrieve the protein from the database again and check it has no Xrefs.
         Protein secondRetrievedProtein = dao.getProteinAndCrossReferencesByProteinId(id);
-        assertNotNull("The second retrieved protein should not be null", secondRetrievedProtein);
-        assertEquals("The second retrieved protein should have " + (ACCESSIONS.length + 1) + " cross references.", (ACCESSIONS.length + 1), secondRetrievedProtein.getCrossReferences().size());
+        assertNotNull(secondRetrievedProtein, "The second retrieved protein should not be null");
+        assertEquals((ACCESSIONS.length + 1), secondRetrievedProtein.getCrossReferences().size(), "The second retrieved protein should have " + (ACCESSIONS.length + 1) + " cross references.");
     }
 
 
@@ -173,7 +178,7 @@ public class ProteinDAOTest {
         // First of all, insert the protein not including Xrefs.
         dao.insert(protein1);
         Long id = protein1.getId();
-        assertNotNull("The protein ID (following persistence) should not be null", id);
+        assertNotNull(id,"The protein ID (following persistence) should not be null");
         addXrefsToProtein(protein1, ACCESSIONS);
         addXrefsToProtein(protein2, ACCESSIONS_2);
 
@@ -219,7 +224,7 @@ public class ProteinDAOTest {
                 maxPrimaryKey = protein.getId();
             }
         }
-        assertEquals("The maximum primary key is not as expected", maxPrimaryKey, dao.getMaximumPrimaryKey());
+        assertEquals(maxPrimaryKey, dao.getMaximumPrimaryKey(),"The maximum primary key is not as expected");
     }
 
     /**
@@ -241,12 +246,12 @@ public class ProteinDAOTest {
                 minPrimaryKey = protein.getId();
             }
         }
-        assertEquals("The difference between the highest and lowest primary key values is not as expected.", (proteinSequences.length - 1), maxPrimaryKey - minPrimaryKey);
+        assertEquals((proteinSequences.length - 1), maxPrimaryKey - minPrimaryKey, "The difference between the highest and lowest primary key values is not as expected.");
         List<Protein> retrievedProteins = dao.getProteinsBetweenIds(minPrimaryKey, maxPrimaryKey);
-        assertEquals("The wrong number of proteins were returned from the database.", proteinSequences.length, retrievedProteins.size());
+        assertEquals(proteinSequences.length, retrievedProteins.size(), "The wrong number of proteins were returned from the database.");
 
         // Now build a new, smaller slice and see if a smaller number of proteins are returned.
         retrievedProteins = dao.getProteinsBetweenIds(minPrimaryKey + 1, maxPrimaryKey - 1);
-        assertEquals("The wrong number of proteins returned from the database for the smaller slice.", (proteinSequences.length - 2), retrievedProteins.size());
+        assertEquals((proteinSequences.length - 2), retrievedProteins.size(), "The wrong number of proteins returned from the database for the smaller slice.");
     }
 }
