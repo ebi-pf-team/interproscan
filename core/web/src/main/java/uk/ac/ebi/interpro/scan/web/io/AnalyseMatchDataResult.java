@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.web.io;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.web.model.*;
 
 import java.util.*;
@@ -124,6 +125,8 @@ public class AnalyseMatchDataResult {
                 if (entryType == null) {
                     throw new IllegalStateException("Cannot convert entry type String " + entryTypeString + " to an EntryType object.");
                 }
+                final int posFrom = record.getPosFrom();
+                final int posTo = record.getPosTo();
 
                 String fragments = record.getFragments();
                 if (fragments == null || fragments.isEmpty()) {
@@ -131,48 +134,50 @@ public class AnalyseMatchDataResult {
                     fragments = record.getPosFrom() + "-" + record.getPosTo() + "-S";
                 }
 
+                // Need to eventually associate this match location with the existing SimpleProtein object
+                SimpleLocation location = new SimpleLocation(posFrom, posTo, models);
+
                 for (String frag : fragments.split(",")) {
 
                     final String[] fragArray = frag.split("-");
                     if (fragArray.length != 3) {
                         throw new IllegalStateException("Location fragments in unexpected format");
                     }
-                    final int posFrom = Integer.parseInt(fragArray[0]);
-                    final int posTo = Integer.parseInt(fragArray[1]);
+                    final int fragFrom = Integer.parseInt(fragArray[0]);
+                    final int fragTo = Integer.parseInt(fragArray[1]);
+                    final String dcStatus = fragArray[2];
+                    SimpleLocationFragment fragment = new SimpleLocationFragment(fragFrom, fragTo, DCStatus.parseSymbol(dcStatus));
+                    location.addFragment(fragment);
+                }
+                // Has this entry already been added to the protein?
+                List<SimpleEntry> entries = protein.getAllEntries();
+                SimpleEntry newEntry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
+                if (entries.contains(newEntry)) {
+                    // Entry already exists
+                    SimpleEntry entry = entries.get(entries.indexOf(newEntry));
 
-                    // Need to eventually associate this match location with the existing SimpleProtein object
-                    SimpleLocation location = new SimpleLocation(posFrom, posTo, models);
-
-                    // Has this entry already been added to the protein?
-                    List<SimpleEntry> entries = protein.getAllEntries();
-                    SimpleEntry newEntry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
-                    if (entries.contains(newEntry)) {
-                        // Entry already exists
-                        SimpleEntry entry = entries.get(entries.indexOf(newEntry));
-
-                        // Has this signature already been added to the entry?
-                        Map<String, SimpleSignature> signatures = entry.getSignaturesMap();
-                        if (signatures.containsKey(methodAc)) {
-                            // Signature already exists
-                            SimpleSignature signature = signatures.get(methodAc);
-                            signature.addLocation(location);
-                        } else {
-                            // New signature for this entry, add it to the map
-                            SimpleSignature signature =
-                                    new SimpleSignature(methodAc, methodName, methodDatabase);
-                            signature.addLocation(location);
-                            signatures.put(methodAc, signature);
-                        }
-
+                    // Has this signature already been added to the entry?
+                    Map<String, SimpleSignature> signatures = entry.getSignaturesMap();
+                    if (signatures.containsKey(methodAc)) {
+                        // Signature already exists
+                        SimpleSignature signature = signatures.get(methodAc);
+                        signature.addLocation(location);
                     } else {
-                        // New entry for this protein, add it to the map
-                        SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
+                        // New signature for this entry, add it to the map
                         SimpleSignature signature =
                                 new SimpleSignature(methodAc, methodName, methodDatabase);
                         signature.addLocation(location);
-                        entry.getSignaturesMap().put(methodAc, signature);
-                        entries.add(entry);
+                        signatures.put(methodAc, signature);
                     }
+
+                } else {
+                    // New entry for this protein, add it to the map
+                    SimpleEntry entry = new SimpleEntry(entryAc, entryShortName, entryName, entryType, entryHierarchy);
+                    SimpleSignature signature =
+                            new SimpleSignature(methodAc, methodName, methodDatabase);
+                    signature.addLocation(location);
+                    entry.getSignaturesMap().put(methodAc, signature);
+                    entries.add(entry);
                 }
             }
         }

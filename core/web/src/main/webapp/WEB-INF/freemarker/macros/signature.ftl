@@ -9,14 +9,16 @@
     <div class="matches">
 
         <#list signature.locations as location>
-            <#assign locationId=locationId + 1>
-            <#assign dbClass>
-            <#-- Make the data source name lowercase and replace whitespace and underscores with hyphens,
-        e.g. "PROSITE_PROFILES" becomes "prosite-profiles" -->
-            ${signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
-            </#assign>
-            <#assign dbClass=dbClass?trim>
-            <@matchLocationMacro.matchLocation matchId=locationId proteinAc=proteinAc proteinLength=proteinLength signature=signature location=location entryAc=entryAc colourClass=dbClass+" "+colourClass/>
+            <#list location.fragments as fragment>
+                <#assign locationId=locationId + 1>
+                <#assign dbClass>
+                <#-- Make the data source name lowercase and replace whitespace and underscores with hyphens,
+            e.g. "PROSITE_PROFILES" becomes "prosite-profiles" -->
+                ${signature.dataSource?lower_case?replace(" ","-")?replace("_","-")}
+                </#assign>
+                <#assign dbClass=dbClass?trim>
+                <@matchLocationMacro.matchLocation matchId=locationId proteinAc=proteinAc proteinLength=proteinLength signature=signature location=fragment entryAc=entryAc colourClass=dbClass+" "+colourClass/>
+            </#list>
         </#list>
 
     <#--Draw in scale markers for this line-->
