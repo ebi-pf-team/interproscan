@@ -24,7 +24,7 @@
     <!--<tx:annotation-driven mode="aspectj"/>-->
 
     <!-- DAO Beans -->
-    <!-- this looks like a duplicate -->
+     <!--this looks like a duplicate -->
     <!--<bean id="proteinDAO"-->
           <!--class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">-->
         <!--<property name="proteinsNotInLookupDB" ref="kvStoreProteinsNotInLookup"/>-->

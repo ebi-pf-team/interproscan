@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+    <!-- JPA Configuration -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="testPersistence"/>
+    </bean>
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <!-- JPA Transaction Setup -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="phobiusFilteredMatchDAOTest" class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOTest"/>
+
+    <tx:annotation-driven/>  
+
+    <bean id="dao" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch"/>
+    </bean>
+
+    <bean id="phobiusFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAO">
+        <!--<constructor-arg value="1.0"/>-->
+        <constructor-arg ref="signatureLibraryReleasePhobius"/>
+        <property name="dbStore" ref="kvStoreMatches"/>
+        <property name="matchDAO" ref="matchDAO"/>
+    </bean>
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="signatureLibraryReleasePhobius" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PHOBIUS"/>
+        <constructor-arg type="java.lang.String" ref="latestPhobiusSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="latestPhobiusSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="1.0"/>
+        <!--<constructor-arg value="${phobius.signature.library.release}"/>-->
+    </bean>
+
+
+</beans>

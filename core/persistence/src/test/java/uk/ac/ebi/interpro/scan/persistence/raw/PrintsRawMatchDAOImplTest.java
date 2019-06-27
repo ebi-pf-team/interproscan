@@ -53,13 +53,13 @@ public class PrintsRawMatchDAOImplTest {
     );
 
     @Resource
-    PrintsRawMatchDAO dao;
+    PrintsRawMatchDAO printsRawMatchDAO;
 
     @BeforeEach
     @AfterEach
     public void deleteAll() {
-        dao.deleteAll();
-        assertEquals(Long.valueOf(0), dao.count(), "Could not delete all PrintsRawMatch objects from the database.");
+        printsRawMatchDAO.deleteAll();
+        assertEquals(Long.valueOf(0), printsRawMatchDAO.count(), "Could not delete all PrintsRawMatch objects from the database.");
     }
 
     @Test
@@ -77,12 +77,12 @@ public class PrintsRawMatchDAOImplTest {
             matchesToPersist.add(cloneRawMatch(referenceMatch));
         }
 
-        dao.insert(matchesToPersist);
+        printsRawMatchDAO.insert(matchesToPersist);
 
-        assertEquals(new Long(matchesToPersist.size()), dao.count(), "Unexpected number of stored PrintsRawMatch objects");
+        assertEquals(new Long(matchesToPersist.size()), printsRawMatchDAO.count(), "Unexpected number of stored PrintsRawMatch objects");
 
         // Retrieve the raw matches using the DAO method used in PRINTS post-processing and check they are the same.
-        Map<String, RawProtein<PrintsRawMatch>> retrievedRawProteins = dao.getRawMatchesForProteinIdsInRange(minProteinId, maxProteinId, SIG_DB_VERSION);
+        Map<String, RawProtein<PrintsRawMatch>> retrievedRawProteins = printsRawMatchDAO.getRawMatchesForProteinIdsInRange(minProteinId, maxProteinId, SIG_DB_VERSION);
 
         assertNotNull(retrievedRawProteins);
         assertEquals(2, retrievedRawProteins.size(), "Unexpected number of RawProtein objects returned");

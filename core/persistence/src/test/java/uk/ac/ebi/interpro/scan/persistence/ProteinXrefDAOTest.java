@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import org.junit.jupiter.api.Disabled;
+
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
@@ -25,12 +27,13 @@ import java.util.List;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
+//@Disabled ("TODO remove after removing the errors")
 public class ProteinXrefDAOTest {
 
-    @Resource
+    @Resource //(name = "proteinDAO")
     private ProteinDAO proteinDAO;
 
-    @Resource
+    @Resource (name = "proteinXrefDAO")
     private ProteinXrefDAO proteinXrefDAO;
 
     @Test

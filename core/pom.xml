@@ -150,17 +150,50 @@
             <version>${log4j.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>log4j</groupId>-->
             <!--<artifactId>log4j</artifactId>-->
             <!--<version>1.2.14</version>-->
         <!--</dependency>-->
 
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+            <!--<version>${slf4j.version}</version>-->
+        <!--</dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-simple</artifactId>-->
+            <!--<version>${slf4j.version}</version>-->
+            <!--&lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-nop</artifactId>-->
+            <!--<version>${slf4j.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-jdk14</artifactId>-->
+            <!--<version>${slf4j.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-logging</groupId>
@@ -273,12 +306,28 @@
         </dependency>
 
         <!-- Use surefire -->
-        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${maven-surefire-plugin.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        -->
     </dependencies>
 
     <repositories>
@@ -319,18 +368,24 @@
 
 
             <!--surefire plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.junit.platform</groupId>-->
-                        <!--<artifactId>junit-platform-surefire-provider</artifactId>-->
-                        <!--<version>1.3.2</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>${maven-surefire-plugin.version}</version>-->
+            <!--</plugin>-->
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>${maven-surefire-plugin.version}</version>-->
+                <!--&lt;!&ndash;<dependencies>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<dependency>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<groupId>org.junit.platform</groupId>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<artifactId>junit-platform-surefire-provider</artifactId>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<version>1.3.2</version>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</dependency>&ndash;&gt;-->
+                <!--&lt;!&ndash;</dependencies>&ndash;&gt;-->
+            <!--</plugin>-->
 
             <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->
             <plugin>
