@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io.svg;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 
@@ -9,6 +9,7 @@ import java.awt.*;
  * TODO: Description
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -25,24 +26,24 @@ public class FamilyHierachySvgElementBuilderTest {
         int hierarchyLevel = 1;
         int rowCounter = 1;
         Point newCoordinate = instance.getNewCoordinate(coordinate, hierarchyLevel, rowCounter, rightShift, downShift);
-        Assert.assertEquals(10, newCoordinate.x);
-        Assert.assertEquals(10, newCoordinate.y);
+        assertEquals(10, newCoordinate.x);
+        assertEquals(10, newCoordinate.y);
         //
         hierarchyLevel = 2;
         rowCounter = 1;
         newCoordinate = instance.getNewCoordinate(coordinate, hierarchyLevel, rowCounter, rightShift, downShift);
-        Assert.assertEquals(20, newCoordinate.x);
-        Assert.assertEquals(10, newCoordinate.y);
+        assertEquals(20, newCoordinate.x);
+        assertEquals(10, newCoordinate.y);
         //
         hierarchyLevel = 2;
         rowCounter = 5;
         newCoordinate = instance.getNewCoordinate(coordinate, hierarchyLevel, rowCounter, rightShift, downShift);
-        Assert.assertEquals(20, newCoordinate.x);
-        Assert.assertEquals(50, newCoordinate.y);
+        assertEquals(20, newCoordinate.x);
+        assertEquals(50, newCoordinate.y);
         //
         rowCounter = 5;
         newCoordinate = instance.getNewCoordinate(coordinate, null, rowCounter, rightShift, downShift);
-        Assert.assertEquals(10, newCoordinate.x);
-        Assert.assertEquals(50, newCoordinate.y);
+        assertEquals(10, newCoordinate.x);
+        assertEquals(50, newCoordinate.y);
     }
 }

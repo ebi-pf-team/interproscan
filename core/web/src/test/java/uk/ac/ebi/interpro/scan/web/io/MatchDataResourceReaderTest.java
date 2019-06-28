@@ -1,17 +1,20 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
 
 /**
  * Tests for {@link MatchDataResourceReader}
@@ -19,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
  * @author Matthew Fraser
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class MatchDataResourceReaderTest {
 
@@ -33,6 +36,6 @@ public class MatchDataResourceReaderTest {
     public void testRead() throws IOException {
         Collection<MatchDataRecord> result = reader.read(file);
         assertNotNull(result);
-        assertEquals("Size should be 28.", 28, result.size());
+        assertEquals(28, result.size(), "Size should be 28.");
     }
 }

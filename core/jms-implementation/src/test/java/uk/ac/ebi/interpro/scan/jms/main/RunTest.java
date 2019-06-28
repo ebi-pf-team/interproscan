@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author Maxim Scheremetjew
  * @author Gift Nuka
  */
-public class TestRun {
+public class RunTest {
 
     @Test
     public void checkAnalysisJobsVersionsTest() {

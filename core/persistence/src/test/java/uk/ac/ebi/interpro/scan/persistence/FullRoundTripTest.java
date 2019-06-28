@@ -46,7 +46,7 @@ import java.io.Writer;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
-@Disabled
+//@Disabled
 public class FullRoundTripTest {
 
     private static final Logger LOGGER = Logger.getLogger(FullRoundTripTest.class.getName());

@@ -1,12 +1,16 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.junit.Assert;
+
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.annotation.Resource;
@@ -19,7 +23,7 @@ import java.util.List;
  *         Time: 15:31
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class CondensedViewTest {
 
@@ -29,7 +33,7 @@ public class CondensedViewTest {
     private static final Logger LOG = Logger.getLogger(CondensedViewTest.class.getName());
 
     @Test
-    @Ignore
+    @Disabled
     public void testCondensedView() {
         final SimpleProtein protein = new SimpleProtein("P99999", "A_PROTEIN", "This is a protein", 400, "ABCDEF123456789", "23948239", 9606, "Homo sapiens", "Homo sapiens (Human)",false);
 
@@ -98,7 +102,7 @@ public class CondensedViewTest {
         ssms.add(ssm10);
 
         CondensedView condensedView = new CondensedView(proteinLength, ssms);
-        Assert.assertNotNull(condensedView);
+        assertNotNull(condensedView);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(ssms);
@@ -110,6 +114,6 @@ public class CondensedViewTest {
         }
 
         // Check 10 is condensed down to 4 once hierarchy and position are taken into account
-        Assert.assertEquals(4, condensedView.getNumSuperMatchBlobs());
+        assertEquals(4, condensedView.getNumSuperMatchBlobs());
     }
 }

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * Unit tests for the ./interproscan.sh "-mode X" command-line input option.
  */
-public class TestRunModeOption {
+public class RunModeOptionTest {
 
     /**
      * Default option.

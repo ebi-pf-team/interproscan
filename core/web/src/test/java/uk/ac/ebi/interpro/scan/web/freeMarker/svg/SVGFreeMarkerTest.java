@@ -2,13 +2,22 @@ package uk.ac.ebi.interpro.scan.web.freeMarker.svg;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.*;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
@@ -23,16 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests FreeMarker SVG generation.
  *
  * @author Maxim Scheremetjew
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SVGFreeMarkerTest {
 
@@ -43,12 +49,12 @@ public class SVGFreeMarkerTest {
     private CreateSimpleProteinFromMatchData matchData;
 
     @Test
-    @Ignore
+    @Disabled
     public void testSVGFileCreation() throws IOException, TemplateException {
         //Set FreeMarker template loading directory using Springs class path resource
         String directoryForTemplateLoading = "uk/ac/ebi/interpro/scan/web/freeMarker/svg";
         Resource resource = new ClassPathResource(directoryForTemplateLoading);
-        assertNotNull("Can not find template loading directory!", resource);
+        assertNotNull(resource, "Can not find template loading directory!");
 
         //Set up FreeMarker configuration
         Configuration cfg = new Configuration();

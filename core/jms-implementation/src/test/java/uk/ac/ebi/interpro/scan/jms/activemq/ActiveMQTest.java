@@ -16,14 +16,16 @@ import javax.annotation.Resource;
  * Currently a stub for testing the ActiveMQ setup.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
-public class TestActiveMQ {
+@Disabled("Needs to be reconfigured.")
+public class ActiveMQTest {
 
-    private static final Logger LOGGER = Logger.getLogger(TestActiveMQ.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ActiveMQTest.class.getName());
 
     @Resource
     private BlackBoxMaster amqstandalone;

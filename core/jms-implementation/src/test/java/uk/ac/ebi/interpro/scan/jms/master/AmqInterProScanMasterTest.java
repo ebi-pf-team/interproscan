@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class TestAmqInterProScanMaster {
+public class AmqInterProScanMasterTest {
 
     private BlackBoxMaster master;
 

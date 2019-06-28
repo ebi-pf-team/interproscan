@@ -24,9 +24,9 @@ import javax.annotation.Resource;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 @Disabled
-public class TestInstaller {
+public class InstallerTest {
 
-    private static final Logger LOGGER = Logger.getLogger(TestInstaller.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(InstallerTest.class.getName());
 
     @Resource
     private Installer installer;

@@ -1,10 +1,10 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.annotation.Resource;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for {@link SimpleEntry}
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SimpleEntryTest {
 
@@ -32,7 +32,7 @@ public class SimpleEntryTest {
     private static SimpleEntry entry1;
 
     // TODO Change to @BeforeClass
-    @Before
+    @BeforeEach
     public void init() {
         // All tests compare another entry with this one
         entry1 = new SimpleEntry("IPR011992", "EF-hand-like_dom", "EF-hand-like domain", EntryType.DOMAIN, this.entryHierarchy);
