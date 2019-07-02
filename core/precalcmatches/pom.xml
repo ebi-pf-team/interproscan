@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <!--<module>berkeley</module>-->
+        <module>berkeley</module>
         <!--<module>server</module>-->
         <module>precalc-match-client</module>
     </modules>
