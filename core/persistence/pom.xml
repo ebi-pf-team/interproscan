@@ -58,13 +58,13 @@
             <version>${spring.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.oracle.jdbc</groupId>
-            <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>${oracle.jdbc.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.oracle.jdbc</groupId>-->
+            <!--<artifactId>com.springsource.oracle.jdbc</artifactId>-->
+            <!--<version>${oracle.jdbc.version}</version>-->
+            <!--<scope>compile</scope>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
 
         <!--
         === All dependcies below here are TEST scope only. ===
