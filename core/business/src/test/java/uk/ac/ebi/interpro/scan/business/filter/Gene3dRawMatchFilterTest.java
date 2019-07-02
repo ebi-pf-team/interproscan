@@ -24,6 +24,7 @@ import java.util.*;
  * Tests {@link Gene3dRawMatchFilter}.
  *
  * @author Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  */
 @ExtendWith(SpringExtension.class)

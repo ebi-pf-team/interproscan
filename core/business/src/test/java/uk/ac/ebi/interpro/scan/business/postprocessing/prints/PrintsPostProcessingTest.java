@@ -28,6 +28,7 @@ import java.util.Map;
 
 /**
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
