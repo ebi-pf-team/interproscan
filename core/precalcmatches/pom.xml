@@ -16,7 +16,7 @@
 
     <modules>
         <module>berkeley</module>
-        <!--<module>server</module>-->
+        <module>server</module>
         <module>precalc-match-client</module>
     </modules>
 
