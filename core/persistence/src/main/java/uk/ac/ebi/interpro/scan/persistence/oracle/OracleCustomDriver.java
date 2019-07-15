@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence.oracle;
 
-import oracle.jdbc.OracleDriver;
+//import oracle.jdbc.OracleDriver;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +15,16 @@ import java.util.Properties;
  *  @author Craig McAnulla
  * @version $Id$
  */
+public class OracleCustomDriver {
+
+    /**
+     * *
+     *      * TODO remove this after the relase
+     *
 public class OracleCustomDriver extends OracleDriver{
+
+
+
 
     public OracleCustomDriver() {
         super();
@@ -31,5 +40,6 @@ public class OracleCustomDriver extends OracleDriver{
         return super.connect(s, properties);
     }
 
+     */
 
 }

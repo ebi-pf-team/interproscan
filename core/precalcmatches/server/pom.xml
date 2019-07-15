@@ -5,12 +5,12 @@
     <parent>
         <artifactId>precalcmatches</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.35-74.0</version>
+        <version>5.36-75.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
-    <version>5.35-74.0</version>
+    <version>5.36-75.0</version>
     <name>interpro-match-lookup</name>
     <packaging>war</packaging>
 
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>berkeley</artifactId>
-            <version>5.35-74.0</version>
+            <version>5.36-75.0</version>
         </dependency>
 
         <dependency>
@@ -94,6 +94,7 @@
                     <plugin>
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>maven-jetty-plugin</artifactId>
+                        <!--<version>9.4.19.v20190610</version>-->
                         <version>6.1.26</version>
                         <!-- Set up the context path and the default port -->
                         <configuration>

@@ -41,8 +41,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
                     "SEQ_FEATURE" +
                     "       from  lookup_tmp_tab  partition (partitionName) " +
-                    "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5";
+                    //"       where upi_range = ? " +
+                    //"       order by  PROTEIN_MD5";
 
 
     public static void main(String[] args) {
@@ -134,7 +135,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
                         ps.setFetchSize(fetchSize);
                         System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
-                        ps.setString(1, partitionName);
+                        //ps.setString(1, partitionName);
                         //ps.setString(2, partitionName);
                         //System.out.println(Utilities.getTimeNow() + "sql:" + ps.toString());
                         try (ResultSet rs = ps.executeQuery()) {

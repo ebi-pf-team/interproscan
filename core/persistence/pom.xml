@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.35-74.0</version>
+        <version>5.36-75.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-persistence</artifactId>
-    <version>5.35-74.0</version>
+    <version>5.36-75.0</version>
 
     <packaging>jar</packaging>
 
@@ -37,19 +37,19 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.35-74.0</version>
+            <version>5.36-75.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-io</artifactId>
-            <version>5.35-74.0</version>
+            <version>5.36-75.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
-            <version>5.35-74.0</version>
+            <version>5.36-75.0</version>
         </dependency>
 
         <dependency>
@@ -58,13 +58,13 @@
             <version>${spring.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.oracle.jdbc</groupId>
-            <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>${oracle.jdbc.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.oracle.jdbc</groupId>-->
+            <!--<artifactId>com.springsource.oracle.jdbc</artifactId>-->
+            <!--<version>${oracle.jdbc.version}</version>-->
+            <!--<scope>compile</scope>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
 
         <!--
         === All dependcies below here are TEST scope only. ===
