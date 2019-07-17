@@ -46,7 +46,7 @@ public class AbstractI5Runner {
 
     protected static void printVersion(String version, String buildType) {
         System.out.println("InterProScan version " + version);
-        System.out.println("InterProScan " + buildType + " build " + " (requires  Java 1.8)");
+        System.out.println("InterProScan " + buildType + " build " + " (requires Java 11)");
     }
 
     protected static void printStringList(ArrayList<String> infoList) {

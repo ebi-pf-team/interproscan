@@ -1,13 +1,11 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.sfld;
 
-import org.apache.commons.collections.functors.ExceptionClosure;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
