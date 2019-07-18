@@ -11,7 +11,6 @@
             <param-name>contextConfigLocation</param-name>
             <param-value>
                 /WEB-INF/spring/app-config.xml
-                /WEB-INF/spring/spring-security.xml
             </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
@@ -32,7 +31,6 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/spring/app-config.xml
-            /WEB-INF/spring/spring-security.xml
         </param-value>
     </context-param>
 
@@ -40,19 +38,5 @@
     <welcome-file-list>
         <welcome-file></welcome-file>
     </welcome-file-list>
-
-    <!-- Spring Security -->
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>
-            org.springframework.web.filter.DelegatingFilterProxy
-        </filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
 
 </web-app>
