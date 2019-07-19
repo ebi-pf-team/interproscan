@@ -23,6 +23,11 @@
         </repository>
     </repositories>
 
+    <properties>
+        <jetty.version>9.4.19.v20190610</jetty.version>
+        <i5.version>${project.version}</i5.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
@@ -74,9 +79,7 @@
 
 
     </dependencies>
-    <properties>
-        <i5.version>${project.version}</i5.version>
-    </properties>
+
 
     <build>
         <resources>
@@ -109,17 +112,16 @@
                     <!-- For further info on how to config the jetty plugin please visit...-->
                     <!-- http://docs.codehaus.org/display/JETTY/Maven+Jetty+Plugin-->
                     <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
+                        <groupId>org.eclipse.jetty</groupId>
                         <artifactId>maven-jetty-plugin</artifactId>
-                        <version>9.4.19.v20190610</version>
-                        <!--<version>6.1.26</version>-->
+                        <version>${jetty.version}</version>
                         <!-- Set up the context path and the default port -->
                         <configuration>
                             <webAppConfig>
                                 <contextPath>/i5</contextPath>
                             </webAppConfig>
                             <connectors>
-                                <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                                <connector implementation="org.eclipse.jetty.nio.SelectChannelConnector">
                                     <port>8092</port>
                                     <maxIdleTime>60000</maxIdleTime>
                                 </connector>
@@ -130,13 +132,14 @@
                             <dependency>
                                 <groupId>org.eclipse.jetty</groupId>
                                 <artifactId>jetty-server</artifactId>
-                                <version>9.4.19.v20190610</version>
+                                <version>${jetty.version}</version>
                             </dependency>
                             <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-jsp -->
                             <dependency>
                                 <groupId>org.eclipse.jetty</groupId>
                                 <artifactId>jetty-jsp</artifactId>
-                                <version>9.2.28.v20190418</version>
+                                <version>${jetty.version}</version>
+                                <!--<version>9.2.28.v20190418</version>-->
                             </dependency>
 
                             <!--<dependency>-->
@@ -291,6 +294,41 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${mvn.war.version}</version>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/</directory>
+                                    <includes>
+                                        <include>matches-service-context.xml</include>
+                                    </includes>
+                                    <targetPath>WEB-INF/</targetPath>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <!--Set version explicitly if get errors on Windows:-->
+                        <version>${jetty.version}</version>
+                        <configuration>
+                            <war>${project.build.directory}/jetty-i5-lookup.war</war>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.ow2.asm</groupId>
+                                <artifactId>asm</artifactId>
+                                <version>7.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+
+                    <plugin>
                         <groupId>org.simplericity.jettyconsole</groupId>
                         <artifactId>jetty-console-maven-plugin</artifactId>
                         <version>1.53</version>
@@ -316,30 +354,22 @@
                                         <additionalDependency>
                                             <artifactId>jetty-console-startstop-plugin</artifactId>
                                         </additionalDependency>
+                                        <additionalDependency>
+                                            <artifactId>jetty-console-startstop-plugin</artifactId>
+                                        </additionalDependency>
                                     </additionalDependencies>
                                 </configuration>
                             </execution>
                         </executions>
-
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.ow2.asm</groupId>
+                                <artifactId>asm</artifactId>
+                                <version>7.1</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
 
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>${mvn.war.version}</version>
-                        <configuration>
-                            <webResources>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                    <includes>
-                                        <include>matches-service-context.xml</include>
-                                    </includes>
-                                    <targetPath>WEB-INF/</targetPath>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>

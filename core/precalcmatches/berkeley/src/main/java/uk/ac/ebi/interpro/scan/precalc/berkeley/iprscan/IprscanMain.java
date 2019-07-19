@@ -40,7 +40,6 @@ public class IprscanMain {
 
         //md5
 
-        /*
 
         CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
         md5Builder.buildDatabase(
@@ -52,7 +51,7 @@ public class IprscanMain {
                 fetchSize
         );
 
-        */
+
 
         //matches
         CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();

@@ -103,7 +103,7 @@ public class FinaliseInitialSetupTasks {
 
         sequenceLoaderListener.sequencesLoaded(bottomProteinId, topProteinId, bottomPrecalculatedSequenceId, topPrecalculatedSequenceId, useMatchLookupService, idsWithoutLookupHit);
         //sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
-        LOGGER.info("FinaliseInitialSetupTasks ...  completed");
+        Utilities.verboseLog("FinaliseInitialSetupTasks ...  completed");
         Utilities.verboseLog("FinaliseInitialSetupTasks ...  completed");
 
     }

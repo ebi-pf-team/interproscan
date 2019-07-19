@@ -152,7 +152,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
                 }
-                LOGGER.warn("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
+                Utilities.verboseLog(20, "Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
             }
         }
         if (LOGGER.isDebugEnabled()) {

@@ -76,7 +76,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<>();
         Jobs analysisJobs;
         if (analysisJobNames == null) {
-            LOGGER.warn(" analysisJobNames is NULL - "  + analysisJobNames);
+            Utilities.verboseLog(20," analysisJobNames is NULL - "  + analysisJobNames);
             analysisJobs = jobs.getActiveAnalysisJobs();
             List<String> analysisJobIdList = analysisJobs.getJobIdList();
             StringBuilder analysisJobNamesBuilder = new StringBuilder();
@@ -88,7 +88,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             }
             analysisJobNames = analysisJobNamesBuilder.toString();
         } else {
-            LOGGER.warn(" analysisJobNames is NOT NULL - "  + analysisJobNames);
+            Utilities.verboseLog(20," analysisJobNames is NOT NULL - "  + analysisJobNames);
             analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
         }
         if (LOGGER.isDebugEnabled()) {
@@ -103,7 +103,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
                 }
-                LOGGER.warn("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
+                Utilities.verboseLog(20, "Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
             }
         }
         if (LOGGER.isDebugEnabled()) {

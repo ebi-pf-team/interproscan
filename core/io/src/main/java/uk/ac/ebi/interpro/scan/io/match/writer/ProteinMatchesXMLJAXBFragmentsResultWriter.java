@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -162,7 +163,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
 
             Path sourcePath = Paths.get(newPathName);
             Path targetPath = Paths.get(xmlPath.toAbsolutePath().toString());
-            LOGGER.warn("Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
+            Utilities.verboseLog(20,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
                     + " - with - " + targetPath.toAbsolutePath().toString());
             Files.move(sourcePath, targetPath, REPLACE_EXISTING);
 
