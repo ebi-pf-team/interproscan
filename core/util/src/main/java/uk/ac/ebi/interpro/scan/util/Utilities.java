@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 
+import java.util.EnumSet;
+
 /**
  * @author Gift Nuka
  *
@@ -527,4 +529,23 @@ public class Utilities {
         }
     }
 
+
+    public enum LogLevel {
+        ALL (10,	"All levels including custom levels."),
+        TRACE(20, "Designates fine-grained informational events that are most useful to debug an application"),
+        DEBUG(20, "Designates fine-grained informational events that are most useful to debug an application"),
+        INFO(30, "Designates informational messages that highlight the progress of the application at coarse-grained level"),
+        WARN(40, "Designates potentially harmful situations"),
+        ERROR(50, "	Designates error events that might still allow the application to continue running"),
+        FATAL(60, "Designates very severe error events that will presumably lead the application to abort"),
+        OFF(0, "The highest possible rank and is intended to turn off logging");
+
+        Integer logLevel;
+        String description;
+
+        LogLevel(Integer logLevel, String description) {
+            this.logLevel = logLevel;
+            this.description = description;
+        }
+    }
 }
