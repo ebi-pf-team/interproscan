@@ -52,6 +52,12 @@
             <artifactId>xmlunit-core</artifactId>
             <version>${xmlunit.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->

@@ -24,7 +24,8 @@
     </repositories>
 
     <properties>
-        <jetty.version>9.4.19.v20190610</jetty.version>
+        <!--<jetty.version>9.4.19.v20190610</jetty.version>-->
+        <jetty.version>9.4.16.v20190411</jetty.version>
         <i5.version>${project.version}</i5.version>
     </properties>
 
@@ -311,22 +312,22 @@
                         </configuration>
                     </plugin>
 
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <!--Set version explicitly if get errors on Windows:-->
-                        <version>${jetty.version}</version>
-                        <configuration>
-                            <war>${project.build.directory}/jetty-i5-lookup.war</war>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm</artifactId>
-                                <version>7.1</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
+                    <!--<plugin>-->
+                        <!--<groupId>org.eclipse.jetty</groupId>-->
+                        <!--<artifactId>jetty-maven-plugin</artifactId>-->
+                        <!--&lt;!&ndash;Set version explicitly if get errors on Windows:&ndash;&gt;-->
+                        <!--<version>${jetty.version}</version>-->
+                        <!--<configuration>-->
+                            <!--<war>${project.build.directory}/jetty-i5-lookup.war</war>-->
+                        <!--</configuration>-->
+                        <!--<dependencies>-->
+                            <!--<dependency>-->
+                                <!--<groupId>org.ow2.asm</groupId>-->
+                                <!--<artifactId>asm</artifactId>-->
+                                <!--<version>7.1</version>-->
+                            <!--</dependency>-->
+                        <!--</dependencies>-->
+                    <!--</plugin>-->
 
                     <plugin>
                         <groupId>org.simplericity.jettyconsole</groupId>
