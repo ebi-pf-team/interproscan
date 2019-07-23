@@ -22,28 +22,26 @@ export EMBOSS_DATA=bin/nucleotide
 
 JAVA=$(type -p java)
 if [[ "$JAVA" == "" ]]; then
-    printf 'Java not found. Please install Java 1.8 and place it on your path,\n'
+    printf 'Java not found. Please install Java 11 and place it on your path,\n'
     printf 'or edit the interproscan.sh script to refer to your Java installation.\n'.
     exit 1
 fi
 
 # Check Java version is supported
 
-JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | { read X; printf '%s' "${X#*\"}"; } )
-JAVA_MAJOR_VERSION=${JAVA_VERSION%%.*}
-JAVA_MINOR_VERSION=${JAVA_VERSION#*.}
-JAVA_MINOR_VERSION=${JAVA_MINOR_VERSION%%.*}
-if [[ "${JAVA_MAJOR_VERSION}" -ne "1" || "${JAVA_MINOR_VERSION}" -ne "8" ]];
+JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | head -n 1 | awk -F '"' '{print $2}' )
+JAVA_MAJOR_VERSION="$( cut -d ';' -f 1 <<< "$JAVA_VERSION" )"
+if [[ "${JAVA_MAJOR_VERSION}" -ne "11" ]];
 then
-    printf 'Java version 1.8 is required to run InterProScan.\n'
-    printf 'Detected version %s.%s\n' "${JAVA_MAJOR_VERSION}" "${JAVA_MINOR_VERSION}"
+    printf 'Java version 11 is required to run InterProScan.\n'
+    printf 'Detected version %s.%s\n' "${JAVA_MAJOR_VERSION}"
     printf 'Please install the correct version.\n'
     exit 1
 fi
 
 "$JAVA" -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=localhost:5005,suspend=y \
--XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts \
--XX:+UseFastAccessorMethods -Xms128M -Xmx2048M \
+-XX:+UseParallelGC -XX:ParallelGCThreads=4 \
+-Xms128M -Xmx2048M \
 -jar interproscan-5.jar "$@" -u $USER_DIR
 
 #end
