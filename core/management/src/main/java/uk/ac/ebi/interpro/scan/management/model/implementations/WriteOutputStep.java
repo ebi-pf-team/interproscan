@@ -88,12 +88,12 @@ public class WriteOutputStep extends Step {
         this.compressHtmlAndSVGOutput = compressHtmlAndSVGOutput;
     }
 
-//    @Required
+    @Required
     public void setHtmlResultWriter(ProteinMatchesHTMLResultWriter htmlResultWriter) {
         this.htmlResultWriter = htmlResultWriter;
     }
 
-//    @Required
+    @Required
     public void setSvgResultWriter(ProteinMatchesSVGResultWriter svgResultWriter) {
         this.svgResultWriter = svgResultWriter;
     }
@@ -240,6 +240,9 @@ public class WriteOutputStep extends Step {
                     case HTML:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
+                            if (htmlResultWriter == null){
+                                throw new IllegalStateException("htmlResultWriter is null ");
+                            }
                             htmlResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
                         outputToHTML(outputPath, proteins);
