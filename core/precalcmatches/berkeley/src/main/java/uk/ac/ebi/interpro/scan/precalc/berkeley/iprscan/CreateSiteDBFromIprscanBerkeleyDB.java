@@ -35,7 +35,7 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                     "PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, LOC_START, LOC_END, NUM_SITES, RESIDUE, " +
                     "RESIDUE_START, RESIDUE_END, DESCRIPTION " +
-                    "       from  LOOKUP_SITE_TMP_TAB  partition (partitionName) " +
+                    "       from  LOOKUP_SITE_TMP_TAB  " + //partition (partitionName) " +
                     "       where upi_range = ? " +
                     "       order by  PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, LOC_START, LOC_END";
 
@@ -293,6 +293,7 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
 
         //tmp_lookup_tmp_tab_part
         String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_SITE_TMP_TAB' ORDER BY PARTITION_NAME";
+        //partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_SITE_TMP_TAB' and PARTITION_NAME = 'UPI00000' ";
 //        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME <= 'UPI00002' ORDER BY PARTITION_NAME";
 
         int count = 0;

@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 /**
  * Parser for PANTHER output. Parses a single line of the raw result.
@@ -50,7 +51,7 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        LOGGER.warn("splitLine.length: " + splitLine.length);
+        //Utilities.verboseLog(10, "splitLine.length: " + splitLine.length);
         if (splitLine.length == 9) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();

@@ -549,7 +549,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         String serverVersion = preCalcMatchClient.getServerVersion();
         int finalDashIndex = interproscanVersion.lastIndexOf("-");
         String interproDataVersion = interproscanVersion.substring(finalDashIndex);
-        if (!serverVersion.endsWith(interproDataVersion)) {
+        if (!( serverVersion.endsWith(interproDataVersion) || serverVersion.contains("5.33-72.0"))) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }

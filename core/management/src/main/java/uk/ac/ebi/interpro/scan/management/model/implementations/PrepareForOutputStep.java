@@ -640,7 +640,7 @@ public class PrepareForOutputStep extends Step {
 
     private void deleteTmpMarshallingFile(Path outputPath){
         final String outputFilePathName = outputPath.toAbsolutePath().toString();
-        LOGGER.warn("Deleting temp xml file:  " + outputFilePathName);
+        Utilities.verboseLog(20,"Deleting temp xml file:  " + outputFilePathName);
         File file = new File(outputFilePathName);
         if (file.exists()) {
             if (!file.delete()) {
