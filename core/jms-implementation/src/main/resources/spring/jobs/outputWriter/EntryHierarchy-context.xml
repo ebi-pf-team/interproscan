@@ -7,14 +7,13 @@
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init"
-          scope="singleton">
+    <bean name="entryHierarchy" class="uk.ac.ebi.interpro.scan.web.io.EntryHierarchy" init-method="init">
         <property name="entryColourPropertiesFile">
-            <util:properties location="classpath:/data/entry_colours.properties"/>
+            <util:properties location="classpath:entry_colours.properties"/>
         </property>
         <property name="entryHierarchyDataResource">
             <bean class="org.springframework.core.io.ClassPathResource">
-                <constructor-arg value="data/entry_hierarchy.csv"/>
+                <constructor-arg value="entry_hierarchy.csv"/>
             </bean>
         </property>
         <property name="entryHierarchyDataResourceReader">
@@ -25,7 +24,7 @@
         </property>
         <property name="entryToGoDataResource">
             <bean class="org.springframework.core.io.ClassPathResource">
-                <constructor-arg value="data/entry_to_go.psv"/>
+                <constructor-arg value="entry_to_go.psv"/>
             </bean>
         </property>
     </bean>

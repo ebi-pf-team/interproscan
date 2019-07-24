@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.web.io;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.web.model.EntryHierarchyData;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
@@ -18,6 +19,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
+@Component
 public class EntryHierarchy implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(EntryHierarchy.class.getName());

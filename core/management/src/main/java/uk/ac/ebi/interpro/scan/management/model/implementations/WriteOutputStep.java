@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.io.match.writer.*;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.writer.GraphicalOutputResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
@@ -18,6 +19,7 @@ import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -66,6 +68,8 @@ public class WriteOutputStep extends Step {
     private boolean archiveSVGOutput = true;
 
     private boolean excludeSites;
+
+    private EntryHierarchy entryHierarchy;
 
     private String interProScanVersion;
 
@@ -133,6 +137,11 @@ public class WriteOutputStep extends Step {
         this.interProScanVersion = interProScanVersion;
     }
 
+    @Required
+    public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
+        this.entryHierarchy = entryHierarchy;
+    }
+
     /**
      * Sets/persists new unique protein xref identifiers in cases where they are non unique (same ID, different sequences).
      */
@@ -189,16 +198,6 @@ public class WriteOutputStep extends Step {
         Utilities.sleep(waitTimeFactor * 1000);                 //1000 milliseconds is one second.
         Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
 
-        Long timeNow = System.currentTimeMillis();
-
-        //List<Protein> proteins = proteinDAO.getProteinsAndMatchesAndCrossReferencesBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-
-        List<Protein> proteins = new ArrayList<>();
-
-        Utilities.verboseLog(10, " WriteOutputStep - proteins to writeout: " + proteins.size()
-                + " time taken to get proteins: "
-                + (System.currentTimeMillis() - timeNow)
-                + " millis");
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
             LOGGER.debug("Setting unique protein cross references (Please note this function is only performed if the input sequences are proteins)...");
@@ -245,14 +244,14 @@ public class WriteOutputStep extends Step {
                             }
                             htmlResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToHTML(outputPath, proteins);
+                        outputToHTML(outputPath, stepInstance);
                         break;
                     case SVG:
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             svgResultWriter.setTempDirectory(temporaryFileDirectory);
                         }
-                        outputToSVG(outputPath, proteins);
+                        outputToSVG(outputPath, stepInstance);
                         break;
                     default:
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
@@ -697,13 +696,10 @@ public class WriteOutputStep extends Step {
     }
 
 
-    private void outputToHTML(final Path path, final List<Protein> proteins) throws IOException {
+    private void outputToHTML(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
-        if (proteins != null && proteins.size() > 0) {
-            for (Protein protein : proteins) {
-                htmlResultWriter.write(protein);
-            }
-            List<Path> resultFiles = htmlResultWriter.getResultFiles();
+        writeGraphicalProteinMatches(htmlResultWriter, stepInstance);
+        List<Path> resultFiles = htmlResultWriter.getResultFiles();
             // E.g. resultFiles =
             // - data/freemarker/resources
             //   - data/freemarker/resources/images
@@ -716,7 +712,6 @@ public class WriteOutputStep extends Step {
             // ...
 
             buildTarArchive(path, resultFiles);
-        }
     }
 
     /**
@@ -731,17 +726,14 @@ public class WriteOutputStep extends Step {
      * @param proteins  Set of result proteins.
      * @throws IOException
      */
-    private void outputToSVG(final Path path, final List<Protein> proteins) throws IOException {
+    private void outputToSVG(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
-        if (proteins != null && proteins.size() > 0) {
             //If the archive mode is switched off single SVG files should be written to the global output directory
             if (!archiveSVGOutput) {
                 final String outputDirPath = path.toAbsolutePath().toString();
                 svgResultWriter.setTempDirectory(outputDirPath);
             }
-            for (Protein protein : proteins) {
-                svgResultWriter.write(protein);
-            }
+        writeGraphicalProteinMatches(svgResultWriter, stepInstance);
             if (archiveSVGOutput) {
                 List<Path> resultFiles = svgResultWriter.getResultFiles();
                 // E.g. resultFiles =
@@ -751,7 +743,6 @@ public class WriteOutputStep extends Step {
 
                 buildTarArchive(path, resultFiles);
             }
-        }
     }
 
     private void buildTarArchive(Path path, List<Path> resultFiles) throws IOException {
@@ -806,6 +797,32 @@ public class WriteOutputStep extends Step {
                     continue;
                 }
                 writer.write(protein);
+                count++;
+                if (count % 40000 == 0) {
+                    Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins");
+                }
+            }
+        }
+    }
+
+    private void writeGraphicalProteinMatches(GraphicalOutputResultWriter writer, StepInstance stepInstance) throws IOException {
+        Utilities.verboseLog(10, " WriteOutputStep - outputToTSV-etc ");
+        Long bottomProteinId = stepInstance.getBottomProtein();
+        Long topProteinId = stepInstance.getTopProtein();
+
+        if (bottomProteinId != null && topProteinId != null) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Load " + topProteinId + " proteins from the db.");
+            }
+            Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + " There are " + topProteinId + " proteins.");
+            int count = 0;
+            for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
+                String proteinKey = Long.toString(proteinIndex);
+                Protein protein = proteinDAO.getProtein(proteinKey);
+                if(protein == null || protein.getMatches().isEmpty()){
+                    continue;
+                }
+                writer.write(protein, entryHierarchy);
                 count++;
                 if (count % 40000 == 0) {
                     Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins");

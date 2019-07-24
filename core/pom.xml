@@ -99,7 +99,6 @@
 
         <!-- Dependency versions -->
         <spring.version>5.1.6.RELEASE</spring.version>
-        <spring.security.version>5.1.5.RELEASE</spring.security.version>
         <hibernate.entity.manager.version>5.4.2.Final</hibernate.entity.manager.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <groovy.version>2.5.7</groovy.version>
