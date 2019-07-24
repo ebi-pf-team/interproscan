@@ -6,6 +6,7 @@ import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
 
 import java.io.*;
@@ -40,8 +41,8 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
      * @throws IOException
      * @throws TemplateException
      */
-    public String write(CondensedView condensedView, boolean showFullInfo) throws IOException, TemplateException {
-        return write(condensedView, null, showFullInfo);
+    public String write(CondensedView condensedView, final EntryHierarchy entryHierarchy, boolean showFullInfo) throws IOException, TemplateException {
+        return write(condensedView, entryHierarchy, null, showFullInfo);
     }
 
     /**
@@ -54,16 +55,12 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
      * @throws IOException
      * @throws TemplateException
      */
-    public String write(CondensedView condensedView, String viewId, boolean showFullInfo) throws IOException, TemplateException {
+    public String write(CondensedView condensedView, final EntryHierarchy entryHierarchy, String viewId, boolean showFullInfo) throws IOException, TemplateException {
         if (viewId == null) {
             viewId = "";
         }
-        if (condensedView != null) {
-            // Don't need the hierarchy information to render an empty condensed view
-            checkEntryHierarchy();
-        }
         //Build model for FreeMarker
-        final SimpleHash model = buildModelMap(condensedView, viewId, showFullInfo);
+        final SimpleHash model = buildModelMap(condensedView, entryHierarchy, viewId, showFullInfo);
         try (StringWriter stringWriter = new StringWriter() ){
             try (Writer writer = new BufferedWriter(stringWriter)) {
                 final Template temp = freeMarkerConfig.getTemplate(freeMarkerTemplate);
@@ -74,7 +71,7 @@ public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
         }
     }
 
-    private SimpleHash buildModelMap(final CondensedView condensedView, final String viewId, final boolean showFullInfo) {
+    private SimpleHash buildModelMap(final CondensedView condensedView, final EntryHierarchy entryHierarchy, final String viewId, final boolean showFullInfo) {
         final SimpleHash model = new SimpleHash();
         if (condensedView != null) {
             int proteinLength = condensedView.getProteinLength();

@@ -39,8 +39,8 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
      * @return the number of rows printed (i.e. the number of Locations on Matches).
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
-    public int write(final Protein protein) throws IOException {
-        checkEntryHierarchy();
+    @Override
+    public int write(final Protein protein, final EntryHierarchy entryHierarchy) throws IOException {
 
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {

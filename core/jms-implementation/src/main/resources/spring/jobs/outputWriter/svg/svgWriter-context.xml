@@ -2,16 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--Bean definition for the SVG writer-->
     <bean id="svgWriter"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter">
         <property name="freeMarkerConfig" ref="freeMarkerConfigSvgWriter"/>
-        <property name="applicationContextConfigLocation" value="file:data/freemarker/WEB-INF/spring/app-config.xml"/>
         <!--<property name="file" value=""/>-->
         <property name="freeMarkerTemplate" value="svg-protein-view.ftl"/>
-        <property name="entryHierarchyBeanId" value="entryHierarchy"/>
         <property name="tempDirectory" value="temp/"/>
         <property name="interproscanVersion" value="${i5.version}"/>
     </bean>

@@ -6,6 +6,7 @@
 
     <!--Imports-->
     <import resource="classpath:/spring/persistence/datasource-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/EntryHierarchy-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/xml/xmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/html/htmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/svg/svgWriter-context.xml"/>
@@ -57,6 +58,7 @@
         <!--If set to TRUE, the archive will be compressed as well-->
         <property name="compressHtmlAndSVGOutput" value="true"/>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <property name="entryHierarchy" ref="entryHierarchy"/>
     </bean>
 
 </beans>
