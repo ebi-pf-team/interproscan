@@ -78,6 +78,20 @@
             <version>2.19.3</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.simplericity.jettyconsole/jetty-console -->
+        <!--<dependency>-->
+            <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+            <!--<artifactId>jetty-console</artifactId>-->
+            <!--<version>1.60</version>-->
+            <!--&lt;!&ndash;<type>pom</type>&ndash;&gt;-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+            <!--<artifactId>jetty-console</artifactId>-->
+            <!--<version>1.61</version>-->
+        <!--</dependency>-->
+
         <!--<dependency>-->
             <!--<groupId>org.ow2.asm</groupId>-->
             <!--<artifactId>asm</artifactId>-->
@@ -354,6 +368,7 @@
 
                     <plugin>
                         <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+                        <!--<artifactId>jetty-console</artifactId>-->
                         <groupId>org.fcrepo</groupId>
                         <artifactId>jetty-console-maven-plugin</artifactId>
                         <version>1.61</version>
