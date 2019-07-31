@@ -16,8 +16,15 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+//import org.custommonkey.xmlunit.*;
+//import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+
 import org.custommonkey.xmlunit.*;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+
+//import org.xmlunit.*;
+//import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.w3c.dom.Element;
@@ -32,7 +39,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Utility class for running XmlUnit tests.
@@ -53,7 +60,7 @@ abstract class AbstractXmlTest<T> {
     private org.springframework.core.io.Resource schema;
 
     static {
-        // Ignore comments and whitespace when comparing XML
+        // Disable comments and whitespace when comparing XML
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setIgnoreAttributeOrder(true);
@@ -68,12 +75,12 @@ abstract class AbstractXmlTest<T> {
         assertTrue(unmarshaller.supports(c));
     }
 
-    protected void assertXmlEquals(String key, String expectedXml, String actualXml) throws IOException, SAXException {
+    protected void assertXmlEquals( String expectedXml, String actualXml, String key) throws IOException, SAXException {
         Diff diff = new Diff(expectedXml, actualXml);
         // Order of attributes and elements is not important
         diff.overrideElementQualifier(new RecursiveElementNameAndAttributeQualifier());
         String message = key + ": " + diff.toString() + "\nExpected:\n" + expectedXml + "\n\nActual:\n" + actualXml;
-        assertTrue(message, diff.similar());
+        assertTrue(diff.similar(), message);
     }
 
     protected String marshal(T object) throws IOException  {

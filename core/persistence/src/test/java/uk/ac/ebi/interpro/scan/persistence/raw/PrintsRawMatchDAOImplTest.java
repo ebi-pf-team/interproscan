@@ -1,12 +1,17 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -16,15 +21,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+
 
 /**
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class PrintsRawMatchDAOImplTest {
 
@@ -47,13 +53,13 @@ public class PrintsRawMatchDAOImplTest {
     );
 
     @Resource
-    PrintsRawMatchDAO dao;
+    PrintsRawMatchDAO printsRawMatchDAO;
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void deleteAll() {
-        dao.deleteAll();
-        assertEquals("Could not delete all PrintsRawMatch objects from the database.", Long.valueOf(0), dao.count());
+        printsRawMatchDAO.deleteAll();
+        assertEquals(Long.valueOf(0), printsRawMatchDAO.count(), "Could not delete all PrintsRawMatch objects from the database.");
     }
 
     @Test
@@ -71,22 +77,22 @@ public class PrintsRawMatchDAOImplTest {
             matchesToPersist.add(cloneRawMatch(referenceMatch));
         }
 
-        dao.insert(matchesToPersist);
+        printsRawMatchDAO.insert(matchesToPersist);
 
-        assertEquals("Unexpected number of stored PrintsRawMatch objects", new Long(matchesToPersist.size()), dao.count());
+        assertEquals(new Long(matchesToPersist.size()), printsRawMatchDAO.count(), "Unexpected number of stored PrintsRawMatch objects");
 
         // Retrieve the raw matches using the DAO method used in PRINTS post-processing and check they are the same.
-        Map<String, RawProtein<PrintsRawMatch>> retrievedRawProteins = dao.getRawMatchesForProteinIdsInRange(minProteinId, maxProteinId, SIG_DB_VERSION);
+        Map<String, RawProtein<PrintsRawMatch>> retrievedRawProteins = printsRawMatchDAO.getRawMatchesForProteinIdsInRange(minProteinId, maxProteinId, SIG_DB_VERSION);
 
         assertNotNull(retrievedRawProteins);
-        assertEquals("Unexpected number of RawProtein objects returned", 2, retrievedRawProteins.size());
+        assertEquals(2, retrievedRawProteins.size(), "Unexpected number of RawProtein objects returned");
 
         boolean oneHundred = false, two = false;
         for (String key : retrievedRawProteins.keySet()) {
             oneHundred |= "100".equals(key);
             two |= "2".equals(key);
         }
-        assertTrue("Expected protein keys not found in key set.", oneHundred && two);
+        assertTrue(oneHundred && two, "Expected protein keys not found in key set.");
         oneHundred = two = false;
         final List<PrintsRawMatch> unseenRawMatches = new ArrayList<PrintsRawMatch>(REFERENCE_MATCHES.size());
         unseenRawMatches.addAll(REFERENCE_MATCHES);
@@ -95,13 +101,13 @@ public class PrintsRawMatchDAOImplTest {
             two |= "2".equals(retrievedRawProtein.getProteinIdentifier());
 
             for (PrintsRawMatch retrievedRawMatch : retrievedRawProtein.getMatches()) {
-                assertTrue("One of the matches retrieved from the database is not recognised.", unseenRawMatches.contains(retrievedRawMatch));
+                assertTrue(unseenRawMatches.contains(retrievedRawMatch), "One of the matches retrieved from the database is not recognised.");
                 unseenRawMatches.remove(retrievedRawMatch);
             }
         }
         LOGGER.debug("unseenRawMatches = " + unseenRawMatches);
-        assertTrue("Not all of the reference matches were retrieved from the database.", unseenRawMatches.isEmpty());
-        assertTrue("Expected protein keys not found in value set.", oneHundred && two);
+        assertTrue(unseenRawMatches.isEmpty(), "Not all of the reference matches were retrieved from the database.");
+        assertTrue(oneHundred && two, "Expected protein keys not found in value set.");
 
     }
 

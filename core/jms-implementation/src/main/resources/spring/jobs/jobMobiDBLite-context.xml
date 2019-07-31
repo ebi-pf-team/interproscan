@@ -107,6 +107,8 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="mobidbFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.MobiDBFilteredMatchDAO">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseMobiDB"/>
+        <property name="dbStore" ref="kvStoreMatches"/>
+        <property name="matchDAO" ref="matchDAO"/>
     </bean>
 
     <bean id="signatureLibraryReleaseMobiDB" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">

@@ -38,6 +38,8 @@ public class MatchesServiceImpl implements MatchesService {
      */
     private BerkeleyMatchDBService berkeleyMatchDBService;
 
+    private BerkeleySiteDBService berkeleySiteDBService;
+
     /**
      * Primary index to allow the BerkeleyDB MD5 database to be
      * queried by MD5.
@@ -56,6 +58,11 @@ public class MatchesServiceImpl implements MatchesService {
     private AtomicInteger   totalRequests;
     private AtomicInteger   md5TotalCount;
     private AtomicLong  totalTimeToGetMatches;
+
+    private AtomicInteger   sitesTotalRequests;
+    private AtomicInteger   sitesTotalCount;
+    private AtomicLong  totalTimeToGetSites;
+
     private ReentrantLock lock;
 
     public MatchesServiceImpl(String interproscanVersion) {
@@ -72,6 +79,11 @@ public class MatchesServiceImpl implements MatchesService {
         totalRequests = new AtomicInteger();
         md5TotalCount = new AtomicInteger();
         totalTimeToGetMatches  = new AtomicLong();
+
+        sitesTotalRequests = new AtomicInteger();
+        sitesTotalCount = new AtomicInteger();
+        totalTimeToGetSites  = new AtomicLong();
+
         lock = new ReentrantLock();
 
         TimerTask hourlyTask = new TimerTask () {
@@ -89,6 +101,11 @@ public class MatchesServiceImpl implements MatchesService {
     @Autowired
     public void setBerkeleyMatchDBService(BerkeleyMatchDBService berkeleyMatchDBService) {
         this.berkeleyMatchDBService = berkeleyMatchDBService;
+    }
+
+    @Autowired
+    public void setBerkeleySiteDBService(BerkeleySiteDBService berkeleySiteDBService) {
+        this.berkeleySiteDBService = berkeleySiteDBService;
     }
 
     @Autowired
@@ -140,6 +157,37 @@ public class MatchesServiceImpl implements MatchesService {
         md5TotalCount.addAndGet(md5Count);
         totalTimeToGetMatches.addAndGet(timeToGetMatches);
     }
+
+    /**
+     * Web service request for a set of sites, based upon
+     * protein MD5 sequence checksums.
+     *
+     * @param proteinMD5s md5 checksum of sequences.
+     * @return a List of site matches for these proteins.
+     */
+    public List<KVSequenceEntry> getSites(List<String> proteinMD5s) {
+        Assert.notNull(berkeleySiteDBService.getMD5Index(), "The MD5 index must not be null.");
+        List<KVSequenceEntry> sites = new ArrayList<>();
+
+        for (String md5 : proteinMD5s) {
+            EntityCursor<KVSequenceEntry> siteCursor = null;
+            try {
+                siteCursor = berkeleySiteDBService.getMD5Index().entities(md5, true, md5, true);
+
+                KVSequenceEntry currentMatch;
+                while ((currentMatch = siteCursor.next()) != null) {
+                    sites.add(currentMatch);
+                }
+            } finally {
+                if (siteCursor != null) {
+                    siteCursor.close();
+                }
+            }
+        }
+
+        return sites;
+    }
+
 
     @Override
     public void countMD5Requests(int md5Count, long timeToGetMatches){
@@ -251,6 +299,7 @@ public class MatchesServiceImpl implements MatchesService {
     public void shutdown() {
         berkeleyMatchDBService.shutdown();
         berkeleyMD5Service.shutdown();
+        berkeleySiteDBService.shutdown();
     }
 
 

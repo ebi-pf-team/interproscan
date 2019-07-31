@@ -11,7 +11,7 @@ import java.util.Set;
 public class CoilsLookupMatchConverter extends LookupMatchConverter<CoilsMatch, CoilsMatch.CoilsLocation> {
 
     @Override
-    public CoilsMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public CoilsMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }

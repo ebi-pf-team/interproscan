@@ -1,10 +1,12 @@
 package uk.ac.ebi.interpro.scan.io.serialization;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -13,10 +15,11 @@ import java.io.IOException;
  * Test the object serializer / deserializer
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class ObjectSerializerDeserializerTest {
 
@@ -31,7 +34,7 @@ public class ObjectSerializerDeserializerTest {
         String testObject = "Ho, ho, ho";
         serializerDeserializer.serialize(testObject);
         String deserializedObject = serializerDeserializer.deserialize();
-        Assert.assertTrue(testObject.equals(deserializedObject));
+        assertTrue(testObject.equals(deserializedObject));
     }
 
     @Test
@@ -40,7 +43,7 @@ public class ObjectSerializerDeserializerTest {
         String testObject = "Ho, ho, ho";
         serializerDeserializerGzip.serialize(testObject);
         String deserializedObject = serializerDeserializerGzip.deserialize();
-        Assert.assertTrue(testObject.equals(deserializedObject));
+        assertTrue(testObject.equals(deserializedObject));
     }
 
 

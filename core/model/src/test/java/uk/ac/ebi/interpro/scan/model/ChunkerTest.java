@@ -1,7 +1,12 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import junit.framework.TestCase;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,10 +19,11 @@ import static uk.ac.ebi.interpro.scan.model.Chunker.CHUNK_SIZE;
  * Tests for boundary errors on the Chunker implementation.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class ChunkerTest extends TestCase {
+public class ChunkerTest {
 
     private static final Chunker CHUNKER = ChunkerSingleton.getInstance();
 

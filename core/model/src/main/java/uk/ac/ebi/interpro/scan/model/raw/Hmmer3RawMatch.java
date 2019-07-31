@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import org.hibernate.Hibernate;
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -228,8 +229,17 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 //                System.out.println("location:" + location.toString());
             }
             if (match != null) {
-//                System.out.println("match: " + match.toString());
+                //System.out.println("match: " + match.toString());
                 // find a better way of displaying debug in model classes
+                //hibernate initialise
+                /*
+                Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
+                Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
+                match.getSignature().getEntry().getPathwayXRefs().size();
+                match.getSignature().getEntry().getGoXRefs().size();
+                match.getSignature().getCrossReferences();
+                */
+                updateMatch(match);
                 int count = 0;
             }
 
@@ -302,6 +312,23 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static void updateMatch(Match match){
+        Entry matchEntry = match.getSignature().getEntry();
+        if(matchEntry!= null) {
+            //check goterms
+            //check pathways
+            matchEntry.getGoXRefs();
+            if (matchEntry.getGoXRefs() != null) {
+                matchEntry.getGoXRefs().size();
+            }
+            matchEntry.getPathwayXRefs();
+            if (matchEntry.getPathwayXRefs() != null) {
+                matchEntry.getPathwayXRefs().size();
+            }
+            match.getSignature().getCrossReferences();
+        }
     }
 
 }

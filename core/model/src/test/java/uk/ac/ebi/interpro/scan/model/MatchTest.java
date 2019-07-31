@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import junit.framework.TestCase;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,9 +14,10 @@ import java.util.Set;
  *
  * @author  Antony Quinn
  * @author  Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  */
-public class MatchTest extends TestCase {
+public class MatchTest {
 
     // TODO: Write test code for all sub-classes of Match
 

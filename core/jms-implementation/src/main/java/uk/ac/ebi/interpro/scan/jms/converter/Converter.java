@@ -15,6 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -70,6 +71,8 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private String interproscanVersion;
 
+    private EntryHierarchy entryHierarchy;
+
     @Required
     public void setInterproscanVersion(String interproscanVersion) {
         this.interproscanVersion = interproscanVersion;
@@ -101,6 +104,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
     public void setExplicitOutputFilename(String explicitFileName) {
         this.explicitFileName = explicitFileName;
         this.isExplicitFileNameSet = true;
+    }
+
+    @Required
+    public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
+        this.entryHierarchy = entryHierarchy;
     }
 
     public void setOutputFormats(String[] outputFormats) {
@@ -175,9 +183,6 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
         setupTemporaryDirectory();
 
-        svgResultWriter.setTempDirectory(temporaryDirectory);
-        htmlResultWriter.setTempDirectory(temporaryDirectory);
-
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("The CONVERT mode is using the following settings...");
             LOGGER.info("Input file: " + inputFile.getAbsolutePath());
@@ -237,11 +242,13 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
+                    htmlResultWriter.setTempDirectory(temporaryDirectory);
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
+                    svgResultWriter.setTempDirectory(temporaryDirectory);
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.SVG);
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
@@ -345,7 +352,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                               final Collection<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
-                htmlResultWriter.write(protein);
+                htmlResultWriter.write(protein, entryHierarchy);
             }
             List<Path> resultFiles = htmlResultWriter.getResultFiles();
             buildTarArchive(path, resultFiles);
@@ -368,7 +375,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 try {
-                    svgResultWriter.write(protein);
+                    svgResultWriter.write(protein, entryHierarchy);
                 } catch (IOException e) {
                     LOGGER.error("Cannot write SVG output file!", e);
                 }

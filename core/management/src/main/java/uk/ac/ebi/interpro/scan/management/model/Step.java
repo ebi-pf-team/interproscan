@@ -46,6 +46,9 @@ public abstract class Step implements BeanNameAware {
 
     protected boolean requiresDatabaseAccess = true;
 
+    protected boolean doRunLocally = false;
+
+    protected boolean useMatchLookupService = true;
 
     /**
      * Number of retries
@@ -139,6 +142,22 @@ public abstract class Step implements BeanNameAware {
         this.requiresDatabaseAccess = requiresDatabaseAccess;
     }
 
+    public boolean isDoRunLocally() {
+        return doRunLocally;
+    }
+
+    public void setDoRunLocally(boolean doRunLocally) {
+        this.doRunLocally = doRunLocally;
+    }
+
+    public boolean isUseMatchLookupService() {
+        return useMatchLookupService;
+    }
+
+    public void setUseMatchLookupService(boolean useMatchLookupService) {
+        this.useMatchLookupService = useMatchLookupService;
+    }
+
     public Integer getMaxProteins() {
         return maxProteins;
     }
@@ -178,6 +197,10 @@ public abstract class Step implements BeanNameAware {
 
     public void setNfsDelayMilliseconds(int nfsDelayMilliseconds) {
         this.nfsDelayMilliseconds = nfsDelayMilliseconds;
+    }
+
+    public int getNfsDelayMilliseconds(){
+        return nfsDelayMilliseconds;
     }
 
     @Required

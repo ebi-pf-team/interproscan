@@ -11,7 +11,7 @@
         <property name="description" value="Prediction of CDD domains in Proteins"/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseCDD"/>
-        <property name="doRunLocally" value="true"/>
+        <!--<property name="doRunLocally" value="true"/>-->
         <property name="active" value="true" />
     </bean>
 
@@ -20,6 +20,7 @@
         <property name="maxProteins" value="${analysis.max.sequence.count.CDD}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
+        <property name="doRunLocally" value="true"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
@@ -125,7 +126,10 @@
             </bean>
         </property>
         <property name="filteredMatchAndSiteDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.CDDFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="cddRawMatchDAO"/>

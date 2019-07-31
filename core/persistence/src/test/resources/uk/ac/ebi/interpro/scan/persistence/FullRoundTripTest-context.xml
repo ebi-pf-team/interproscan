@@ -12,6 +12,32 @@
     <!-- Test stuff - move to a different spring-config.xml file. -->
     <bean id="fullRoundTripTest" class="uk.ac.ebi.interpro.scan.persistence.FullRoundTripTest"/>
 
+    <bean id="proteinDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">
+        <property name="proteinsNotInLookupDB" ref="kvStoreProteinsNotInLookup"/>
+        <property name="dbStore" ref="kvStoreProteins"/>
+    </bean>
+
+
+    <!--<bean id="matchDAO"-->
+    <!--class="uk.ac.ebi.interpro.scan.persistence.MatchDAOImpl">-->
+    <!--<property name="dbStore" ref="kvStoreMatches"/>-->
+    <!--</bean>-->
+
+
+    <bean id="kvStoreProteins"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinDB"/>
+    </bean>
+
+    <bean id="kvStoreProteinsNotInLookup"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinNotInLookupDB"/>
+    </bean>
+
+
     <bean id="signature_jaxb2" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound" value="uk.ac.ebi.interpro.scan.model.Signature"/>
         <property name="marshallerProperties">

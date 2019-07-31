@@ -11,7 +11,7 @@ import java.util.Set;
 public class TMHMMLookupMatchConverter extends LookupMatchConverter<TMHMMMatch, TMHMMMatch.TMHMMLocation> {
 
     @Override
-    public TMHMMMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public TMHMMMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }

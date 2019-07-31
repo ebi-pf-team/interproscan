@@ -1,7 +1,11 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,6 +16,7 @@ import java.util.Set;
  * User: pjones
  *
  * @author Phil Jones
+ * @author Gift Nuka
  */
 public class MatchCloneTest {
 
@@ -56,17 +61,17 @@ public class MatchCloneTest {
 
         count = 0;
         for (Match match : p1.getMatches()) {
-            Assert.assertEquals(p1, match.getProtein());
+            assertEquals(p1, match.getProtein());
             count++;
         }
 
-        Assert.assertEquals(matchCount, count);
+        assertEquals(matchCount, count);
         // Clone the matches
         final Set<Match> clonedMatches = new HashSet<Match>(p1.getMatches().size());
         for (Match match : p1.getMatches()) {
             try {
                 final Match clonedMatch = (Match) match.clone();
-                Assert.assertFalse(match == clonedMatch);
+                assertFalse(match == clonedMatch);
                 clonedMatches.add(clonedMatch);
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
@@ -77,10 +82,10 @@ public class MatchCloneTest {
         final Protein p2 = new Protein("REASDXRASDXRSAE", clonedMatches, Collections.singleton(px1));
 
 
-        Assert.assertNotNull(p1.getMatches());
-        Assert.assertNotNull(p2.getMatches());
+        assertNotNull(p1.getMatches());
+        assertNotNull(p2.getMatches());
 
-        Assert.assertTrue(!p1.equals(p2));
+        assertTrue(!p1.equals(p2));
         count = 0;
 
         boolean foundPhobius = false;
@@ -88,67 +93,67 @@ public class MatchCloneTest {
         boolean foundCoils = false;
 
         for (Match match : p2.getMatches()) {
-            Assert.assertEquals(p2, match.getProtein());
+            assertEquals(p2, match.getProtein());
             count++;
             if (match instanceof PhobiusMatch) {
                 foundPhobius = true;
-                Assert.assertFalse(phob1Match == match);
-                Assert.assertFalse(phob1Match.getLocations().iterator().next() == ((PhobiusMatch) match).getLocations().iterator().next());
-                Assert.assertTrue(phob1Match.getSignature() == match.getSignature());
-                Assert.assertTrue(phob1Match.getSignatureModels() == match.getSignatureModels());
-                Assert.assertTrue(phob1Match.getLocations().size() == ((PhobiusMatch) match).getLocations().size());
+                assertFalse(phob1Match == match);
+                assertFalse(phob1Match.getLocations().iterator().next() == ((PhobiusMatch) match).getLocations().iterator().next());
+                assertTrue(phob1Match.getSignature() == match.getSignature());
+                assertTrue(phob1Match.getSignatureModels() == match.getSignatureModels());
+                assertTrue(phob1Match.getLocations().size() == ((PhobiusMatch) match).getLocations().size());
                 PhobiusMatch.PhobiusLocation clonedLocation = ((PhobiusMatch) match).getLocations().iterator().next();
-                Assert.assertFalse(phob1Location == clonedLocation);
-                Assert.assertTrue(phob1Location.getStart() == clonedLocation.getStart());
-                Assert.assertTrue(phob1Location.getEnd() == clonedLocation.getEnd());
+                assertFalse(phob1Location == clonedLocation);
+                assertTrue(phob1Location.getStart() == clonedLocation.getStart());
+                assertTrue(phob1Location.getEnd() == clonedLocation.getEnd());
             } else if (match instanceof Hmmer3Match) {
                 foundPfam = true;
-                Assert.assertFalse(pfamMatch == match);
+                assertFalse(pfamMatch == match);
                 Hmmer3Match clonedMatch = (Hmmer3Match) match;
-                Assert.assertFalse(pfamMatch.getLocations().iterator().next() == clonedMatch.getLocations().iterator().next());
-                Assert.assertTrue(pfamMatch.getSignature() == clonedMatch.getSignature());
-                Assert.assertTrue(pfamMatch.getSignatureModels() == clonedMatch.getSignatureModels());
-                Assert.assertTrue(pfamMatch.getEvalue() == clonedMatch.getEvalue());
-                Assert.assertTrue(pfamMatch.getScore() == clonedMatch.getScore());
-                Assert.assertTrue(pfamMatch.getLocations().size() == clonedMatch.getLocations().size());
+                assertFalse(pfamMatch.getLocations().iterator().next() == clonedMatch.getLocations().iterator().next());
+                assertTrue(pfamMatch.getSignature() == clonedMatch.getSignature());
+                assertTrue(pfamMatch.getSignatureModels() == clonedMatch.getSignatureModels());
+                assertTrue(pfamMatch.getEvalue() == clonedMatch.getEvalue());
+                assertTrue(pfamMatch.getScore() == clonedMatch.getScore());
+                assertTrue(pfamMatch.getLocations().size() == clonedMatch.getLocations().size());
                 Hmmer3Match.Hmmer3Location clonedLocation = clonedMatch.getLocations().iterator().next();
-                Assert.assertFalse(pfamLocation == clonedLocation);
-                Assert.assertTrue(pfamLocation.getStart() == clonedLocation.getStart());
-                Assert.assertTrue(pfamLocation.getEnd() == clonedLocation.getEnd());
-                Assert.assertTrue(pfamLocation.getEnvelopeStart() == clonedLocation.getEnvelopeStart());
-                Assert.assertTrue(pfamLocation.getEnvelopeEnd() == clonedLocation.getEnvelopeEnd());
-                Assert.assertEquals(pfamLocation.getHmmBounds(), clonedLocation.getHmmBounds());
-                Assert.assertTrue(pfamLocation.getEvalue() == clonedLocation.getEvalue());
-                Assert.assertTrue(pfamLocation.getHmmStart() == clonedLocation.getHmmStart());
-                Assert.assertTrue(pfamLocation.getHmmEnd() == clonedLocation.getHmmEnd());
-                Assert.assertTrue(pfamLocation.getHmmLength() == clonedLocation.getHmmLength());
+                assertFalse(pfamLocation == clonedLocation);
+                assertTrue(pfamLocation.getStart() == clonedLocation.getStart());
+                assertTrue(pfamLocation.getEnd() == clonedLocation.getEnd());
+                assertTrue(pfamLocation.getEnvelopeStart() == clonedLocation.getEnvelopeStart());
+                assertTrue(pfamLocation.getEnvelopeEnd() == clonedLocation.getEnvelopeEnd());
+                assertEquals(pfamLocation.getHmmBounds(), clonedLocation.getHmmBounds());
+                assertTrue(pfamLocation.getEvalue() == clonedLocation.getEvalue());
+                assertTrue(pfamLocation.getHmmStart() == clonedLocation.getHmmStart());
+                assertTrue(pfamLocation.getHmmEnd() == clonedLocation.getHmmEnd());
+                assertTrue(pfamLocation.getHmmLength() == clonedLocation.getHmmLength());
             } else if (match instanceof CoilsMatch) {
                 foundCoils = true;
-                Assert.assertFalse(coilsMatch == match);
-                Assert.assertFalse(coilsMatch.getLocations().iterator().next() == ((CoilsMatch) match).getLocations().iterator().next());
-                Assert.assertTrue(coilsMatch.getSignature() == match.getSignature());
-                Assert.assertTrue(coilsMatch.getSignatureModels() == match.getSignatureModels());
-                Assert.assertTrue(coilsMatch.getLocations().size() == ((CoilsMatch) match).getLocations().size());
+                assertFalse(coilsMatch == match);
+                assertFalse(coilsMatch.getLocations().iterator().next() == ((CoilsMatch) match).getLocations().iterator().next());
+                assertTrue(coilsMatch.getSignature() == match.getSignature());
+                assertTrue(coilsMatch.getSignatureModels() == match.getSignatureModels());
+                assertTrue(coilsMatch.getLocations().size() == ((CoilsMatch) match).getLocations().size());
                 CoilsMatch.CoilsLocation clonedLocation = ((CoilsMatch) match).getLocations().iterator().next();
-                Assert.assertFalse(coilsLocation == clonedLocation);
-                Assert.assertTrue(coilsLocation.getStart() == clonedLocation.getStart());
-                Assert.assertTrue(coilsLocation.getEnd() == clonedLocation.getEnd());
+                assertFalse(coilsLocation == clonedLocation);
+                assertTrue(coilsLocation.getStart() == clonedLocation.getStart());
+                assertTrue(coilsLocation.getEnd() == clonedLocation.getEnd());
             }
         }
 
-        Assert.assertTrue(foundPfam);
-        Assert.assertTrue(foundPhobius);
-        Assert.assertTrue(foundCoils);
+        assertTrue(foundPfam);
+        assertTrue(foundPhobius);
+        assertTrue(foundCoils);
 
-        Assert.assertEquals(matchCount, count);
+        assertEquals(matchCount, count);
 
         count = 0;
         for (Match match : p1.getMatches()) {
-            Assert.assertEquals(p1, match.getProtein());
+            assertEquals(p1, match.getProtein());
             count++;
         }
 
-        Assert.assertEquals(matchCount, count);
+        assertEquals(matchCount, count);
 
 
     }

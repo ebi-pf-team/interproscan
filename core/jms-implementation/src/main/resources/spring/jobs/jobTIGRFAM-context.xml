@@ -103,7 +103,10 @@
         <property name="signatureLibraryRelease" ref="tigrfamSignatureLibraryReleaseVersion"/>
         <property name="stepDescription" value="Stores raw matches as filtered matches."/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer3FilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer3FilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO"/>

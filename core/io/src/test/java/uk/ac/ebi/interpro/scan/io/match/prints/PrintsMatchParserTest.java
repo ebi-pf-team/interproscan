@@ -8,10 +8,11 @@ package uk.ac.ebi.interpro.scan.io.match.prints;
  *
  */
 
-import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,10 +25,11 @@ import java.util.Map;
  * Tests the PhobiusMatchParser, specifically looking at memory usage.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
-public class PrintsMatchParserTest extends TestCase {
+public class PrintsMatchParserTest  {
 
     private static final Logger LOGGER = Logger.getLogger(PrintsMatchParserTest.class.getName());
 
@@ -44,10 +46,10 @@ public class PrintsMatchParserTest extends TestCase {
      */
 
     @Test
-    @Ignore("Needs to be reimplemented")
+    @Disabled("Needs to be reimplemented")
     public void testParserEfficiency() throws IOException {
         /*
-        logMemUsage("Before parse: ");
+        logMemUsage("BeforeAll parse: ");
         InputStream is = PrintsMatchParserTest.class.getClassLoader().getResourceAsStream(CUTOFF_FILE_PATH);
         Map evalCutoffs;
         try {

@@ -1,11 +1,9 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 
 import freemarker.template.Configuration;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import java.io.IOException;
@@ -35,14 +33,6 @@ public abstract class GraphicalOutputResultWriter {
 
     protected String freeMarkerTemplate;
 
-    protected AbstractApplicationContext appContext;
-
-    protected EntryHierarchy entryHierarchy;
-
-    protected static final Object EH_LOCK = new Object();
-
-    protected String entryHierarchyBeanId;
-
     /* Please read the class comment if you are concerned about thread-safety.*/
     protected final List<Path> resultFiles = new ArrayList<>();
 
@@ -55,22 +45,9 @@ public abstract class GraphicalOutputResultWriter {
         this.interproscanVersion = interproscanVersion;
     }
 
-
-    @Required
-    public void setEntryHierarchyBeanId(String entryHierarchyBeanId) {
-        this.entryHierarchyBeanId = entryHierarchyBeanId;
-    }
-
     @Required
     public void setFreeMarkerConfig(Configuration freeMarkerConfig) {
         this.freeMarkerConfig = freeMarkerConfig;
-    }
-
-    @Required
-    public void setApplicationContextConfigLocation(String applicationContextConfigLocation) {
-        if (applicationContextConfigLocation != null) {
-            this.appContext = new FileSystemXmlApplicationContext(applicationContextConfigLocation);
-        }
     }
 
     @Required
@@ -87,22 +64,6 @@ public abstract class GraphicalOutputResultWriter {
         return resultFiles;
     }
 
-    protected void checkEntryHierarchy() {
-        if (entryHierarchy == null) {
-            synchronized (EH_LOCK) {
-                if (entryHierarchy == null) {
-                    if (appContext != null && entryHierarchyBeanId != null) {
-                        this.entryHierarchy = (EntryHierarchy) appContext.getBean(entryHierarchyBeanId);
-                    } else {
-                        if (LOGGER.isEnabledFor(Level.WARN)) {
-                            LOGGER.warn("Application context or entry hierarchy bean aren't initialised successfully!");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     protected void checkTempDirectory(String tempDirectory) throws IOException {
         Path tempFileDirectory = Paths.get(tempDirectory);
         if (!Files.exists(tempFileDirectory)) {
@@ -117,6 +78,10 @@ public abstract class GraphicalOutputResultWriter {
                 LOGGER.debug("Temp directory " + tempDirectory + " already exists, no need to create one.");
             }
         }
+    }
+
+    public int write(final Protein protein, final EntryHierarchy entryHierarchy) throws IOException {
+        return 0; // Default
     }
 
 }

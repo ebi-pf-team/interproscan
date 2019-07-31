@@ -1,10 +1,19 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawProteinSite;
@@ -17,8 +26,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
 /**
  * Tests for {@link SFLDHmmer3MatchParser}
  *
@@ -26,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SFLDHmmer3MatchParserTest {
 
@@ -36,6 +43,8 @@ public class SFLDHmmer3MatchParserTest {
     @Resource
     private SFLDHmmer3MatchParser<SFLDHmmer3RawMatch> sfldParser;
 
+    private static final String SFLD_HIERARCHY_FILE_PATH = "data/sfld/sfld_hierarchy_flat.txt";
+
     @Resource
     private org.springframework.core.io.Resource sfldFile;
 
@@ -43,6 +52,11 @@ public class SFLDHmmer3MatchParserTest {
     public void testSFLDParser() throws IOException {
 
         InputStream is = sfldFile.getInputStream();
+
+        String sfld_hierarchy_flat_file = SFLDHmmer3MatchParserTest.class.getClassLoader().getResource(SFLD_HIERARCHY_FILE_PATH).getFile(); //getResourceAsStream(SFLD_HIERARCHY_FILE_PATH);
+
+        LOGGER.warn("sfld_hierarchy_flat_file: " + sfld_hierarchy_flat_file);
+        sfldParser.setSfldHierarchyFilePath(sfld_hierarchy_flat_file);
 
         MatchSiteData result = sfldParser.parseMatchesAndSites(is);
         if (LOGGER.isDebugEnabled()) {

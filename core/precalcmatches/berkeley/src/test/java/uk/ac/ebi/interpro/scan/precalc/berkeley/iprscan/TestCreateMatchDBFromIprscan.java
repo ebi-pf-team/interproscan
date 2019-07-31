@@ -1,12 +1,19 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
+
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocationFragment;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
 
 /**
  * Tests.
@@ -24,13 +31,15 @@ public class TestCreateMatchDBFromIprscan {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @Ignore
+    @Test //(expected = IllegalArgumentException.class)
+    @Disabled
     public void check2() {
         final String fragments = "10-20-S,34-32-S";
-        Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
+        assertThrows(IllegalArgumentException.class, () -> {
+            Set<BerkeleyLocationFragment> locationFragments = CreateMatchDBFromIprscan.parseLocationFragments(fragments);
+        }, "Test should have failed but didn't");
+
         // Should have thrown an exception
-        fail("Test should have failed but didn't");
     }
 
     @Test

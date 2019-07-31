@@ -6,9 +6,31 @@
 
     <!--Imports-->
     <import resource="classpath:/spring/persistence/datasource-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/EntryHierarchy-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/xml/xmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/html/htmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/svg/svgWriter-context.xml"/>
+
+    <!-- ######################## JOB: PrepareForOutput ############################  -->
+    <bean id="jobPrepareForOutput" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="Prepare proteins for output for proteins when analysis finished"/>
+        <property name="analysis" value="false"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepPrepareForOutput" class="uk.ac.ebi.interpro.scan.management.model.implementations.PrepareForOutputStep">
+        <property name="job" ref="jobPrepareForOutput"/>
+        <!-- This step is made dependent on the steps created by the protein load listener -->
+        <property name="stepDescription" value="Prepare proteins for output of the completed analysis"/>
+        <property name="createStepInstancesForNewProteins" value="false"/>
+        <property name="retries" value="0"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="matchDAO" ref="matchDAO"/>
+        <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+
+    </bean>
+
+
 
     <!-- ######################## JOB: writeOut ############################  -->
     <bean id="jobWriteOutput" class="uk.ac.ebi.interpro.scan.management.model.Job">
@@ -24,6 +46,7 @@
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="0"/>
         <property name="proteinDAO" ref="proteinDAO"/>
+        <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="interProScanVersion" value="${i5.version}"/>
         <property name="xmlWriter" ref="xmlWriter"/>
@@ -35,6 +58,7 @@
         <!--If set to TRUE, the archive will be compressed as well-->
         <property name="compressHtmlAndSVGOutput" value="true"/>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <property name="entryHierarchy" ref="entryHierarchy"/>
     </bean>
 
 </beans>

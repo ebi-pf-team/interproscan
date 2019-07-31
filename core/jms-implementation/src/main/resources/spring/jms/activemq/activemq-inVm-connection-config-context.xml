@@ -25,6 +25,8 @@
         <!-- brokerURL, You may have different IP or port -->
         <property name="brokerURL" value="vm://localhost?create=false"/>
         <property name="prefetchPolicy" ref="prefetchPolicy"/>
+        <property name="trustedPackages" value="*" />
+        <!--<property name="trustedPackages" value="uk.ac.ebi.interpro.scan.*" />-->
         <!--<constructor-arg value="tcp://${jms.broker.host.name}:${jms.broker.port.number}" />-->
         <!--<constructor-arg  value="vm://localhostJMSBroker?create=false" />-->
         <!--<property name=""-->

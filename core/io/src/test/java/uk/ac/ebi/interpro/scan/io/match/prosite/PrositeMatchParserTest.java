@@ -1,11 +1,16 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
-import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -15,14 +20,15 @@ import java.util.Set;
 
 /**
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-public class PrositeMatchParserTest extends TestCase {
+public class PrositeMatchParserTest {
 
     private static final Logger LOGGER = Logger.getLogger(PrositeMatchParserTest.class.getName());
 

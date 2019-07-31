@@ -78,11 +78,13 @@ public class NucleotideSequence implements OutputListElement, Serializable {
     @Column(nullable = false, unique = true, updatable = false, length = 32)
     private String md5;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotideSequence")
+    //@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "nucleotideSequence")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "nucleotideSequence")
     @BatchSize(size=4000)
     private final Set<OpenReadingFrame> orfs = new HashSet<OpenReadingFrame>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sequence")
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sequence")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "sequence")
     @BatchSize(size=4000)
     private final Set<NucleotideSequenceXref> xrefs = new HashSet<NucleotideSequenceXref>();
 

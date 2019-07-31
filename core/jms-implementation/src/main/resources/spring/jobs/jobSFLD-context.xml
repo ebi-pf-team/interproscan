@@ -10,7 +10,7 @@
     <bean id="jobSFLD" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="SFLDs are protein families based on Hidden Markov Models or HMMs"/>
         <property name="analysis" value="true"/>
-        <property name="doRunLocally" value="true"/>
+        <!--<property name="doRunLocally" value="true"/>-->
         <property name="libraryRelease" ref="signatureLibraryReleaseSFLD"/>
     </bean>
 
@@ -19,6 +19,7 @@
         <property name="maxProteins" value="${analysis.max.sequence.count.SFLD}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
+        <property name="doRunLocally" value="true"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
@@ -135,7 +136,10 @@
         <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
         <!--<property name="postProcessor"/> No post processing required-->
         <property name="filteredMatchAndSiteDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>

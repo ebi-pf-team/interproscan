@@ -61,12 +61,26 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
             Collection<Hmmer3MatchWithSites> filteredMatches =
                     getMatchesWithSites(rp.getMatches(), seqIdToRawSitesMap.get(rp.getProteinIdentifier()), modelAccessionToSignatureMap);
 
+            if(! (filteredMatches == null && filteredMatches.isEmpty())) {
+                Set<Match> proteinMatches = new HashSet(filteredMatches);
+                String signatureLibraryKey = proteinMatches.iterator().next().getSignature().getSignatureLibraryRelease().getLibrary().getName();
+                final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
+            }
+
+            /*
             int matchLocationCount = 0;
             for (Hmmer3MatchWithSites match : filteredMatches) {
                 protein.addMatch(match); // Adds protein to match (yes, I know it doesn't look that way!)
                 entityManager.persist(match);
                 matchLocationCount += match.getLocations().size();
             }
+            */
+
             //TODO use a different utitlity function
             //System.out.println(" Filtered Match locations size : - " + matchLocationCount);
         }

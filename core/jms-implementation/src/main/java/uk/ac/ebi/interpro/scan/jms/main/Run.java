@@ -16,15 +16,16 @@ import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.exception.InvalidInputException;
 import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
-import uk.ac.ebi.interpro.scan.jms.stats.SystemInfo;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
-import uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherNewBinaryStep;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+
+import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
 
 import java.io.File;
 import java.io.FilePermission;
@@ -216,6 +217,18 @@ public class Run extends AbstractI5Runner {
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
 
+            //deal with active mq
+            //System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","uk.ac.ebi.interpro.scan.management.model.StepExecution");
+            //System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","*");
+
+//            String contextFile = mode.getContextXML();
+//            XmlWebApplicationContext context = new XmlWebApplicationContext();
+//            context.setConfigLocation(contextFile);
+//            context.setServletContext(request.getServletContext());
+//            context.refresh();
+//
+//            final AbstractApplicationContext ctx = context;
+
             // The command-line distributed mode selects a random port number for communications.
             // This block selects the random port number and sets it on the broker.
 
@@ -384,6 +397,27 @@ public class Run extends AbstractI5Runner {
 
 
                 }
+
+                // configure the KVStores
+                LevelDBStore kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
+                System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
+                LevelDBStore kvStoreProteinsNotInLookup = (LevelDBStore) ctx.getBean("kvStoreProteinsNotInLookup");
+                System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name : " + kvStoreProteinsNotInLookup.getDbName());
+
+                LevelDBStore kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
+                System.out.println(Utilities.getTimeNow() + "kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
+                LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
+                System.out.println(Utilities.getTimeNow() + "kvStoreMatches  name : " + kvStoreMatches.getDbName());
+                //configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
+
+                LevelDBStore kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
+                System.out.println(Utilities.getTimeNow() + "kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
+                configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches,  kvStoreNucleotides, workingTemporaryDirectory );
+
+                System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
+                ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
+                proteinDAO.checkKVDBStores();
+
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
                     //deal with panther  stepPantherHMM3RunPantherScore
                     //this maynot be necessary anymore
@@ -608,7 +642,6 @@ public class Run extends AbstractI5Runner {
                     ((DistributedBlackBoxMaster) master).setMaxConcurrentInVmWorkerCount(numberOfCPUCores);
                 }
             }
-
 
 
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
@@ -1065,7 +1098,6 @@ public class Run extends AbstractI5Runner {
         return result;
     }
 
-
     public static String[] getApplications(CommandLine parsedCommandLine, Jobs allJobs) throws InvalidInputException {
 
         // To build a list of each analysis and the version specified (valid inputs only)
@@ -1518,6 +1550,7 @@ public class Run extends AbstractI5Runner {
             tc.setUri(new URI(uriString));
             broker.addConnector(tc);
 
+
             //
             broker.start();
             if (LOGGER.isInfoEnabled()) {
@@ -1564,6 +1597,33 @@ public class Run extends AbstractI5Runner {
                 }
             }
         }
+    }
+
+
+    public static void configureKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup,  LevelDBStore kvStoreProteinsOther,
+                                         LevelDBStore kvStoreMatches,  LevelDBStore kvStoreNucleotides, String tempDir ){
+        String kvstoreDir = "kvstore";
+        String kvstoreBase = tempDir + File.separator + kvstoreDir;
+        String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
+        LOGGER.warn(" kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
+        kvStoreProteins.setLevelDBStore(kvStoreProteinsDBPath);
+
+        String kvStoreProteinsNotInLookupDBPath = kvstoreBase + File.separator + kvStoreProteinsNotInLookup.getDbName();
+        LOGGER.warn(" kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
+        kvStoreProteinsNotInLookup.setLevelDBStore(kvStoreProteinsNotInLookupDBPath);
+
+        String kvStoreProteinsOtherDBPath = kvstoreBase + File.separator +  kvStoreProteinsOther.getDbName();
+        LOGGER.warn("kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
+        kvStoreProteinsOther.setLevelDBStore(kvStoreProteinsOtherDBPath);
+
+        String kvStoreMatchesDBPath = kvstoreBase + File.separator + kvStoreMatches.getDbName();
+        LOGGER.warn("kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
+        kvStoreMatches.setLevelDBStore(kvStoreMatchesDBPath);
+
+        String kvStoreNucleotidesDBPath = kvstoreBase + File.separator + kvStoreNucleotides.getDbName();
+        LOGGER.warn("kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
+        kvStoreNucleotides.setLevelDBStore(kvStoreNucleotidesDBPath);
+
     }
 
     private static boolean isInvalid(final Mode mode, final CommandLine commandline) {

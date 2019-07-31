@@ -22,12 +22,13 @@ public class IprscanMain {
         }
         String matchDBPath = args[0];
         String md5DBPath = args[1];
-        String databaseUrl = args[2];
-        String databaseUsername = args[3];
-        String databasePassword = args[4];
-        String maxUPI = args[5];
+        String siteDBPath = args[2];
+        String databaseUrl = args[3];
+        String databaseUsername = args[4];
+        String databasePassword = args[5];
+        String maxUPI = args[6];
         int fetchSize = 100000;
-        if (args.length >= 7) {
+        if (args.length >= 8) {
             fetchSize = Integer.parseInt(args[6]);
         }
 
@@ -36,6 +37,9 @@ public class IprscanMain {
 
 
         // we have now this built
+
+        //md5
+
 
         CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
         md5Builder.buildDatabase(
@@ -48,18 +52,8 @@ public class IprscanMain {
         );
 
 
-        /*
-        CreateMatchDBFromIprscan matchBuilder = new CreateMatchDBFromIprscan();
-        matchBuilder.buildDatabase(
-                matchDBPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI
-        );
 
-        */
-
+        //matches
         CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();
         matchBuilder.buildDatabase(
                 matchDBPath,
@@ -69,6 +63,20 @@ public class IprscanMain {
                 maxUPI,
                 fetchSize
         );
+
+
+        //sites
+        CreateSiteDBFromIprscanBerkeleyDB siteMatchBuilder = new CreateSiteDBFromIprscanBerkeleyDB();
+        siteMatchBuilder.buildDatabase(
+                siteDBPath,
+                databaseUrl,
+                databaseUsername,
+                databasePassword,
+                maxUPI,
+                fetchSize
+        );
+
+
 
     }
 }

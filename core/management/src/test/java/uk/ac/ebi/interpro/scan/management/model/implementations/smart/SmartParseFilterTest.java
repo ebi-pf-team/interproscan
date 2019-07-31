@@ -1,10 +1,14 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
@@ -22,8 +26,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
 
 /**
  * Tests {@link HmmPfamParser<SmartRawMatch>} and {@link SmartPostProcessing}.
@@ -32,7 +35,8 @@ import static org.junit.Assert.assertNotNull;
  * @version $Id$
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Disabled
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SmartParseFilterTest {
 
@@ -79,7 +83,7 @@ public class SmartParseFilterTest {
     private Long expectedFilteredMatches;
 
     @Test
-    @Ignore("This test appears to be reproducing some testing already run in the business module.")
+    @Disabled("This test appears to be reproducing some testing already run in the business module.")
     public void testFilter() throws IOException {
 
         // Parse and store raw matches

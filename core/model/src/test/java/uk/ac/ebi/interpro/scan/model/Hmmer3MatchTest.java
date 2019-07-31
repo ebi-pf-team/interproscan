@@ -18,28 +18,38 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Before;
-import org.junit.Test;
-import org.apache.commons.lang.SerializationUtils;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import org.apache.commons.lang.SerializationUtils;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Set;
 
-import static org.junit.Assert.*;
 
 /**
  * Tests cases for {@link Hmmer3Match}.
  *
  * @author  Antony Quinn
  * @author  Phil Jones
+ * @author Gift Nuka
+ *
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
 
@@ -48,7 +58,7 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
     private Hmmer3Match originalMatch;
     private HmmerLocation originalLocation;
 
-    @Before
+    @BeforeEach
     public void init() {
         originalLocation =
                 new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE, 1, 2, false, DCStatus.CONTINUOUS);
@@ -76,20 +86,20 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
     public void testMatchEquals() {
         Hmmer3Match original = originalMatch;
         Hmmer3Match copy = (Hmmer3Match)SerializationUtils.clone(original);
-        assertEquals("Original should equal itself", original, original);
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original, original, "Original should equal itself");
+        assertEquals( original, copy, "Original and copy should be equal");
         @SuppressWarnings("unchecked") Set<Hmmer3Match.Hmmer3Location> locationsCopy =
                 (Set<Hmmer3Match.Hmmer3Location>) SerializationUtils.
                         clone(new HashSet<>(original.getLocations()));
         Hmmer3Match badCopy = new Hmmer3Match(new Signature("1", "A"), "1", 1, 2, locationsCopy);
-        assertFalse("Original and copy should not be equal", original.equals(badCopy));
+        assertFalse(original.equals(badCopy), "Original and copy should not be equal");
         // Test sets
         Set<Match> originalSet = new HashSet<Match>();
         Set<Match> copySet     = new HashSet<Match>();
         originalSet.add(original);
         copySet.add(copy);
-        assertEquals("Original set should equal itself", originalSet, originalSet);
-        assertEquals("Original and copy sets should be equal", originalSet, copySet);
+        assertEquals( originalSet, originalSet, "Original set should equal itself");
+        assertEquals( originalSet, copySet, "Original and copy sets should be equal");
     }
 
     /**
@@ -99,10 +109,10 @@ public class Hmmer3MatchTest extends AbstractXmlTest<Protein> {
     public void testLocationEquals() {
         HmmerLocation original = originalLocation;
         HmmerLocation copy = (HmmerLocation)SerializationUtils.clone(original);
-        assertEquals("Original should equal itself", original, original);
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original, original, "Original should equal itself");
+        assertEquals( original, copy, "Original and copy should be equal");
         copy = new Hmmer3Match.Hmmer3Location(1, 2, 3, 4, 5, 6, 7, HmmBounds.COMPLETE, 7, 8, false, DCStatus.CONTINUOUS);
-        assertFalse("Original and copy should not be equal", original.equals(copy));
+        assertFalse( original.equals(copy), "Original and copy should not be equal");
     }
     
 }

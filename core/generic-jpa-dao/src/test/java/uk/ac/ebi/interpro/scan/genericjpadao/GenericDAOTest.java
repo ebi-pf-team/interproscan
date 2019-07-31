@@ -16,15 +16,23 @@
 
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-import static org.junit.Assert.*;
+
 
 /**
  * Developed using IntelliJ IDEA.
@@ -33,8 +41,10 @@ import static org.junit.Assert.*;
  * Time: 10:11:05
  *
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class GenericDAOTest {
 
@@ -67,8 +77,11 @@ public class GenericDAOTest {
      * Methods GenericDAO   .deleteAll()
      */
     private void emptyTable() {
+        if(dao == null){
+            assertNull(dao, " DAO is NULL");
+        }
         dao.deleteAll();
-        assertEquals("There should be no proteins in the Protein table following a call to dao.deleteAll", Long_0, dao.count());
+        assertEquals(Long_0, dao.count(), "There should be no proteins in the Protein table following a call to dao.deleteAll");
     }
 
     /**
@@ -78,16 +91,16 @@ public class GenericDAOTest {
      * .read(PK primaryKey)
      */
     @Test
-    public void storeAndRetrieveObject() {
+    public void testStoreAndRetrieveObject() {
         emptyTable();
         ModelObject persistable = new ModelObject(INITIAL_VALUE);
         dao.insert(persistable);
-        assertNotNull("The primary key for the persisted object should not be null", persistable.getId());
+        assertNotNull(persistable.getId(), "The primary key for the persisted object should not be null");
         Long primaryKey = persistable.getId();
 
         // Test
         ModelObject retrievedPersistable = dao.read(primaryKey);
-        assertEquals("The value stored is not the same as the original value set.", persistable, retrievedPersistable);
+        assertEquals( persistable, retrievedPersistable, "The value stored is not the same as the original value set.");
     }
 
     /**
@@ -98,18 +111,30 @@ public class GenericDAOTest {
      * .read(PK primaryKey)
      */
     @Test
-    public void modifyAndRetrieveObject() {
+    public void testModifyAndRetrieveObject() {
         emptyTable();
         ModelObject persistable = new ModelObject(INITIAL_VALUE);
         dao.insert(persistable);
         ModelObject retrieved = dao.read(persistable.getId());
-        assertEquals("The initially set value is not as expected.", INITIAL_VALUE, retrieved.getTestFieldOne());
+        assertEquals( INITIAL_VALUE, retrieved.getTestFieldOne(), "The initially set value is not as expected.");
         retrieved.setTestFieldOne(MODIFIED_VALUE);
         dao.update(retrieved);
         ModelObject retrievedAfterMod = dao.read(persistable.getId());
-        assertEquals("The modified value is not as expected following retrieval from the database.", MODIFIED_VALUE, retrievedAfterMod.getTestFieldOne());
-        assertEquals("There should only be one record in the table after these changes.", Long_1, dao.count());
+        assertEquals( MODIFIED_VALUE, retrievedAfterMod.getTestFieldOne(), "The modified value is not as expected following retrieval from the database.");
+        assertEquals( Long_1, dao.count(), "There should only be one record in the table after these changes.");
     }
+
+
+    /**
+     *
+     */
+    @Test
+    public void testCheckDAO(){
+        int digitOne = 1;
+        assertTrue(digitOne == 1, " DAO is NULL");
+        //assertNull(dao, " DAO is NULL");
+    }
+
 
     /**
      * Exercises GenericDAO .count()
@@ -128,12 +153,12 @@ public class GenericDAOTest {
                 maxPrimaryKey = persistable.getId();
             }
         }
-        assertEquals("The maxium primary key reported is not as expected", maxPrimaryKey, dao.getMaximumPrimaryKey());
-        assertEquals("The number of stored objects is not as expected", new Long(ARRAY_OF_VALUES.length), dao.count());
+        assertEquals( maxPrimaryKey, dao.getMaximumPrimaryKey(), "The maxium primary key reported is not as expected");
+        assertEquals( new Long(ARRAY_OF_VALUES.length), dao.count(), "The number of stored objects is not as expected");
         List<ModelObject> retrievedObjects = dao.retrieveAll();
-        assertEquals("The number of retrieved objects does not equal the number stored.", ARRAY_OF_VALUES.length, retrievedObjects.size());
+        assertEquals( ARRAY_OF_VALUES.length, retrievedObjects.size(), "The number of retrieved objects does not equal the number stored.");
         for (ModelObject retrieved : retrievedObjects) {
-            assertNotNull("The List of retrieved objects should not contain any null objects", retrieved);
+            assertNotNull( retrieved, "The List of retrieved objects should not contain any null objects");
         }
     }
 
@@ -147,7 +172,7 @@ public class GenericDAOTest {
     @Test
     public void testNestedTransactionRollback() {
         emptyTable();
-        assertEquals("The number of stored objects is not as expected", Long_0, dao.count());
+        assertEquals( Long_0, dao.count(), "The number of stored objects is not as expected");
         boolean exceptionThrown = false;
         try {
             dao.nestedTransaction(true);
@@ -155,9 +180,9 @@ public class GenericDAOTest {
         catch (Exception e) {    // This should be thrown
             exceptionThrown = true;
         }
-        assertTrue("An Exception should have been thrown by the nestedTransaction method, which attempts to insert a null value in a non-null column.", exceptionThrown);
+        assertTrue( exceptionThrown, "An Exception should have been thrown by the nestedTransaction method, which attempts to insert a null value in a non-null column.");
         // Now check that there are no objects in the database.
-        assertEquals("There should be no objects in the database following a rollback.", Long_0, dao.count());
+        assertEquals( Long_0, dao.count(), "There should be no objects in the database following a rollback.");
     }
 
     /**
@@ -170,7 +195,7 @@ public class GenericDAOTest {
     @Test
     public void testNestedTransactionCommit() {
         emptyTable();
-        assertEquals("The number of stored objects is not as expected", Long_0, dao.count());
+        assertEquals( Long_0, dao.count(), "The number of stored objects is not as expected");
         boolean exceptionThrown = false;
         try {
             dao.nestedTransaction(false);
@@ -178,9 +203,9 @@ public class GenericDAOTest {
         catch (Exception e) {    // This should NOT be thrown
             exceptionThrown = true;
         }
-        assertFalse("An Exception should not have been thrown by the nestedTransaction method.", exceptionThrown);
+        assertFalse( exceptionThrown, "An Exception should not have been thrown by the nestedTransaction method.");
         // Now check that there are 3 objects in the database.
-        assertEquals("There should be 3 objects in the database following a commit.", Long_3, dao.count());
+        assertEquals( Long_3, dao.count(), "There should be 3 objects in the database following a commit.");
     }
 
     /**
@@ -228,13 +253,13 @@ public class GenericDAOTest {
         if (toDelete != null) {
             Long primaryKeyOfDeletable = toDelete.getId();
 
-            assertEquals("All of the objects should be present prior to deleteion.", new Long(ARRAY_OF_VALUES.length), dao.count());
+            assertEquals( new Long(ARRAY_OF_VALUES.length), dao.count(), "All of the objects should be present prior to deleteion.");
             // Now delete one of the objects.
             dao.delete(toDelete);
-            assertEquals("One of the inserted objects has been removed, so the count should be decremented.", new Long(ARRAY_OF_VALUES.length - 1), dao.count());
+            assertEquals( new Long(ARRAY_OF_VALUES.length - 1), dao.count(), "One of the inserted objects has been removed, so the count should be decremented.");
 
             ModelObject shouldBeNull = dao.read(primaryKeyOfDeletable);
-            assertNull("The primary key of the deleted object should return null.", shouldBeNull);
+            assertNull( shouldBeNull, "The primary key of the deleted object should return null.");
         } else {
             fail("There should be an object to delete, however the expected reference is null");
         }

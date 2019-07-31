@@ -18,18 +18,18 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test cases for {@link Signature}
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
  * @version $Id$
  * @since   1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SignatureTest extends AbstractXmlTest<Signature> {
 
@@ -93,7 +93,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
         }
 
         String actualXml = marshal(actual);
-        assertXmlEquals("Whitespace test", expectedXml, actualXml);
+        assertXmlEquals(expectedXml, actualXml, "Whitespace test");
 
         if (LOGGER.isDebugEnabled())    {
             LOGGER.debug(actualXml);
@@ -186,8 +186,8 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
         String actualXml = super.marshal(actualObject);
 
         // Check
-        assertEquals("Objects do not match", expectedObject, actualObject);
-        assertXmlEquals("XML does not match", expectedXml, actualXml);
+        assertEquals(expectedObject, actualObject, "Objects do not match");
+        assertXmlEquals( expectedXml, actualXml, "XML does not match");
 
     }
 

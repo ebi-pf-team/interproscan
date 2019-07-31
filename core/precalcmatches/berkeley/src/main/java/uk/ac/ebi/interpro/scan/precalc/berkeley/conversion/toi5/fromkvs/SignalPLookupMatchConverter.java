@@ -12,7 +12,7 @@ import java.util.Set;
 public class SignalPLookupMatchConverter extends LookupMatchConverter<SignalPMatch, SignalPMatch.SignalPLocation> {
 
     @Override
-    public SignalPMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public SignalPMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }

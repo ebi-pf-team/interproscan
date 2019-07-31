@@ -13,7 +13,7 @@ public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMat
 
     //TODO: Add the e-value to the match location
     @Override
-    public PantherMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public PantherMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }

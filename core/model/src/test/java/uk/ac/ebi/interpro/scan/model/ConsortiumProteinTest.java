@@ -16,10 +16,10 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -30,10 +30,12 @@ import java.util.Set;
  * InterPro Consortium-specific tests cases for {@link uk.ac.ebi.interpro.scan.model.Protein}.
  *
  * @author  Antony Quinn
+ * @author Gift Nuka
+ *
  * @version $Id$
  * @since   1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class ConsortiumProteinTest extends AbstractTest<Protein> {
 

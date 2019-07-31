@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Filtered match data access object.
@@ -17,7 +18,11 @@ import java.util.Map;
  * @author Antony Quinn
  * @version $Id$
  */
-public interface FilteredMatchDAO<T extends RawMatch, U extends Match> extends GenericDAO<U, Long> {
+public interface FilteredMatchDAO<T extends RawMatch, U extends Match> extends GenericKVDAO<U> {
+
+    void hibernateInitialise(Match match);
+
+    void persist(String key, Set<Match> matches);
 
     /**
      * Persists filtered protein matches.

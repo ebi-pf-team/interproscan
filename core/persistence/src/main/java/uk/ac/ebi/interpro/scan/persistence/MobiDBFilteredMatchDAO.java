@@ -7,10 +7,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import javax.persistence.Query;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -56,15 +53,29 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
 //        public void persist(Collection<RawProtein<MobiDBRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
         Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
+        String signatureLibraryKey = null;
         for (RawProtein<MobiDBRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+            Set<Match> proteinMatches = new HashSet();
+
             for (MobiDBRawMatch rawMatch : rawProtein.getMatches()) {
                 Signature signature = loadPersistedSignature();
 //                Utilities.verboseLog(rawMatch.toString());
                 MobiDBMatch match = buildMatch(signature, rawMatch);
 //                Utilities.verboseLog("MobiDb match:" + match.toString());
-                protein.addMatch(match);
-                entityManager.persist(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+                if(signatureLibraryKey == null) {
+                    signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+                }
+            }
+            if(! proteinMatches.isEmpty()) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

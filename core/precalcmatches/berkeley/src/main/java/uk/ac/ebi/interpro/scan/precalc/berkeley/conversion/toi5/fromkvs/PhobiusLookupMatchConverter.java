@@ -11,7 +11,7 @@ import java.util.Set;
 public class PhobiusLookupMatchConverter extends LookupMatchConverter<PhobiusMatch, PhobiusMatch.PhobiusLocation> {
 
     @Override
-    public PhobiusMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public PhobiusMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         if (match == null || signature == null) {
             return null;
         }

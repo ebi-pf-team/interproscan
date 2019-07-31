@@ -1,9 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.superfamily.match;
 
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
@@ -20,7 +22,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0
  */
-public class SuperFamilyMatchParserTest extends TestCase {
+public class SuperFamilyMatchParserTest {
     private static final Logger LOGGER = Logger.getLogger(SuperFamilyMatchParserTest.class.getName());
 
     private static final String TEST_FILE_NAME = "src/test/resources/data/superfamily/perlBinaryOutput.ass";
@@ -37,7 +39,7 @@ public class SuperFamilyMatchParserTest extends TestCase {
         Set<RawProtein<SuperFamilyHmmer3RawMatch>> actualResult = parser.parse(inputStream);
 
         // Compare actual result with expected result
-        Assert.assertEquals(5, actualResult.size());
+        assertEquals(5, actualResult.size());
 
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein: actualResult) {
             int numMatches = rawProtein.getMatches().size();
@@ -45,19 +47,19 @@ public class SuperFamilyMatchParserTest extends TestCase {
                 int proteinId = Integer.parseInt(rawProtein.getProteinIdentifier());
                 switch (proteinId) {
                     case 1:
-                        Assert.assertEquals(4, numMatches);
+                        assertEquals(4, numMatches);
                         break;
                     case 2:
-                        Assert.assertEquals(7, numMatches);
+                        assertEquals(7, numMatches);
                         break;
                     case 4:
-                        Assert.assertEquals(3, numMatches);
+                        assertEquals(3, numMatches);
                         break;
                     case 5:
-                        Assert.assertEquals(1, numMatches);
+                        assertEquals(1, numMatches);
                         break;
                     case 6:
-                        Assert.assertEquals(3, numMatches);
+                        assertEquals(3, numMatches);
                         break;
                     default:
                         fail("Unexpected result - " + numMatches + " found for protein " + proteinId);

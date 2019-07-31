@@ -1,12 +1,15 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import junit.framework.TestCase;
+
 import org.apache.commons.lang.SerializationUtils;
-import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Tests cases for {@link SuperFamilyHmmer3Match}.
@@ -15,7 +18,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class SuperFamilyHmmer3MatchTest extends TestCase {
+public class SuperFamilyHmmer3MatchTest {
 
     /**
      * Tests the equivalent() method works as expected
@@ -31,20 +34,20 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
                 ))
         );
         SuperFamilyHmmer3Match copy = (SuperFamilyHmmer3Match)SerializationUtils.clone(original);
-        assertEquals("Original should equal itself", original, original);
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original, original, "Original should equal itself");
+        assertEquals( original, copy, "Original and copy should be equal");
         @SuppressWarnings("unchecked") Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locationsCopy =
                 (Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>) SerializationUtils.
                         clone(new HashSet<>(original.getLocations()));
         SuperFamilyHmmer3Match badCopy = new SuperFamilyHmmer3Match(new Signature("1", "A"), "1", 1, locationsCopy);
-        assertFalse("Original and copy should not be equal", original.equals(badCopy));
+        assertFalse( original.equals(badCopy), "Original and copy should not be equal");
         // Test sets
         Set<Match> originalSet = new HashSet<>();
         Set<Match> copySet     = new HashSet<>();
         originalSet.add(original);
         copySet.add(copy);
-        assertEquals("Original set should equal itself", originalSet, originalSet);
-        assertEquals("Original and copy sets should be equal", originalSet, copySet);
+        assertEquals( originalSet, originalSet, "Original set should equal itself");
+        assertEquals( originalSet, copySet, "Original and copy sets should be equal");
     }
 
     /**
@@ -55,9 +58,9 @@ public class SuperFamilyHmmer3MatchTest extends TestCase {
         SuperFamilyHmmer3Match.SuperFamilyHmmer3Location original =
                 new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(3, 107), 100);
         SuperFamilyHmmer3Match.SuperFamilyHmmer3Location copy = (SuperFamilyHmmer3Match.SuperFamilyHmmer3Location)SerializationUtils.clone(original);
-        assertEquals("Original should equal itself", original, original);
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals(original, original, "Original should equal itself");
+        assertEquals( original, copy, "Original and copy should be equal");
         copy = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(1, 2), 5);
-        assertFalse("Original and copy should not be equal", original.equals(copy));
+        assertFalse( original.equals(copy), "Original and copy should not be equal");
     }
 }

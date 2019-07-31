@@ -1,16 +1,17 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.model.Location;
-import uk.ac.ebi.interpro.scan.model.Match;
-import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupSite;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class LookupMatchConverter<T extends Match, U extends Location> {
+
+    private static final Logger LOGGER = Logger.getLogger(LookupStoreToI5ModelDAOImpl.class.getName());
 
     private boolean flattenMatches;
 
@@ -19,9 +20,9 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
         this.flattenMatches = flattenMatches;
     }
 
-    public abstract T convertMatch(SimpleLookupMatch simpleLookupMatch, Signature signature);
+    public abstract T convertMatch(SimpleLookupMatch simpleLookupMatch, Set<String> sequenceSiteHits, Signature signature);
 
-    public List<T> convertMatches(List<SimpleLookupMatch> simpleLookupMatches, Signature signature) {
+    public List<T> convertMatches(List<SimpleLookupMatch> simpleLookupMatches, Set<String> sequenceSiteHits, Signature signature) {
         List<T> matches = new ArrayList<>();
         if (simpleLookupMatches != null && simpleLookupMatches.size() > 0) {
             //String signatureAc = signature.getAccession();
@@ -40,7 +41,7 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                                     + simpleMatch.getModelAccession()
                                     + " does not match previous model " + signatureModels);
                     }
-                    T match = convertMatch(simpleMatch, signature);
+                    T match = convertMatch(simpleMatch, sequenceSiteHits, signature);
                     if (firstMatch == null) {
                         firstMatch = match;
                     }
@@ -57,12 +58,44 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                 // Keep each hit as a separate match, each with it's own single location.
                 for (SimpleLookupMatch simpleMatch : simpleLookupMatches) {
                     checkSignatureAc(signature, simpleMatch);
-                    T match = convertMatch(simpleMatch, signature);
+                    T match = convertMatch(simpleMatch, sequenceSiteHits, signature);
                     matches.add(match); // Multiple matches each with one location
                 }
             }
         }
         return matches;
+    }
+
+
+    protected Map<String, Set<SiteLocation>> getSiteLocationsMap(String md5, Set<String> sequenceSiteHits, String signatureLibraryName,  String signatureAccession ){
+        Utilities.verboseLog(30, "getSiteLocationsMap: " + sequenceSiteHits.size());
+
+        Map<String, Set<SiteLocation>> mapSiteLocations = new HashMap();
+        try {
+            for (String sequenceSiteHit : sequenceSiteHits) {
+                //SFLD,4,SFLDS00029,5,347,3,C,105,105, description
+                SimpleLookupSite simpleLookupSite = new SimpleLookupSite(md5, sequenceSiteHit);
+                String siteDescription = simpleLookupSite.getDescription();
+                if (siteDescription == null){
+                    Utilities.verboseLog(30, "null description ....");
+                }
+                Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
+                if (simpleLookupSite.getSignatureLibraryName().equals(signatureLibraryName) && simpleLookupSite.getSignatureAccession().equals(signatureAccession)) {
+                    SiteLocation siteLocation = new SiteLocation(simpleLookupSite.getResidue(), simpleLookupSite.getResidueStart(), simpleLookupSite.getResidueEnd());
+                    if (siteLocations != null) {
+                        siteLocations.add(siteLocation);
+                    } else {
+                        siteLocations = new HashSet<>();
+                        siteLocations.add(siteLocation);
+                    }
+                    mapSiteLocations.put(siteDescription, siteLocations);
+                    Utilities.verboseLog(30,"siteLocation ...: " + siteLocation.toString());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return mapSiteLocations;
     }
 
     protected void checkSignatureAc(Signature signature, SimpleLookupMatch simpleMatch) {

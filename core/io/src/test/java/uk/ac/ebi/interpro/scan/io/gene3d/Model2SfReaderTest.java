@@ -1,10 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.annotation.Resource;
@@ -12,7 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+
 
 /**
  * Tests {@link Model2SfReader}.
@@ -20,7 +23,7 @@ import static org.junit.Assert.assertEquals;
  * @author Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class Model2SfReaderTest {
 
@@ -28,7 +31,7 @@ public class Model2SfReaderTest {
     private org.springframework.core.io.Resource file;
 
     @Test
-    @Ignore("This test needs re-writing to fit in with the change to the Model2SfReader class.")
+    @Disabled("This test needs re-writing to fit in with the change to the Model2SfReader class.")
     public void testRead() throws IOException {
         Model2SfReader reader = new Model2SfReader();
         reader.setModelFiles(file);

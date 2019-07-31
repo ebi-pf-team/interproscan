@@ -1,10 +1,14 @@
 package uk.ac.ebi.interpro.scan.business.filter;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import uk.ac.ebi.interpro.scan.io.AbstractResourceReader;
 import uk.ac.ebi.interpro.scan.model.PersistenceConversion;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
@@ -14,15 +18,16 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+
 
 /**
  * Tests {@link Gene3dRawMatchFilter}.
  *
  * @author Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public final class Gene3dRawMatchFilterTest {
 

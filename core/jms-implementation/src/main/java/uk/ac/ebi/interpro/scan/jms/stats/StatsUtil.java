@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
-import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -8,10 +7,8 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import javax.jms.*;
 import javax.jms.Queue;
-import javax.management.MBeanServer;
-import java.io.IOException;
+import javax.jms.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -353,7 +350,7 @@ public class StatsUtil {
     }
 
     public int getSubmittedStepInstancesCount() {
-        Utilities.verboseLog(" getSubmittedStepInstancesCounts:");
+        //Utilities.verboseLog(" getSubmittedStepInstancesCounts:");
         int uniqStepCount = 0;
         int stepCount = 0;
         for (Map.Entry<String, Map<String, String>> elem:submittedStepInstances.entrySet()) {
@@ -365,7 +362,7 @@ public class StatsUtil {
             Utilities.verboseLog(" Originals: stepCount " + stepCount + " uniq stepCount: " + uniqStepCount);
             stepCount = uniqStepCount;
         }
-        Utilities.verboseLog(" getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
+        Utilities.verboseLog(30, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
         return stepCount;
     }
 
@@ -925,27 +922,5 @@ public class StatsUtil {
 
     }
 
-    /**
-     * get memeory utilisation from the JvM
-     */
-    public void getJVMMemory() {
-
-        // init code
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        HotSpotDiagnosticMXBean diagBean;
-        try {
-            diagBean = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
-            // loop code
-            // add some code to figure if we have passed some threshold, then
-            LOGGER.debug("Memory diagnostic options: " + diagBean.getDiagnosticOptions().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-//        File heapFile = new File(outputDir, "heap-" + curThreshold + ".hprof");
-//        log.info("Dumping heap file " + heapFile.getAbsolutePath());
-//        diagBean.dumpHeap(heapFile.getAbsolutePath(), true);
-    }
 
 }

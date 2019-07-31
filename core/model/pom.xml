@@ -61,11 +61,31 @@
             <version>${jaxb-api.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-api.version}</version>
+            <!--<version>2.4.0-b180608.0325</version>-->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
         <!--Jackson JSON support-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.8.6</version>
+            <version>2.9.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.9.8</version>
         </dependency>
 
         <!-- Apache Commons -->
@@ -79,28 +99,80 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernate.entity.manager.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <!--<exclusion>-->
+                    <!--<groupId>javax.xml.bind</groupId>-->
+                    <!--<artifactId>jaxb-api</artifactId>-->
+                <!--</exclusion>-->
+            </exclusions>
         </dependency>
         <!-- Don't use in-built hibernate connection pooling (not for production use). Use c3p0 connection pool instead -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
             <version>${hibernate.entity.manager.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.mchange</groupId>
+                    <artifactId>c3p0</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+
+
         <dependency>
-            <groupId>c3p0</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0.version}</version>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>c3p0</groupId>-->
+            <!--<artifactId>c3p0</artifactId>-->
+            <!--<version>${c3p0.version}</version>-->
+        <!--</dependency>-->
+
         <!--
         === All dependencies below here are TEST scope only. ===
         -->
+        <!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-core -->
         <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>${xmlunit.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-legacy</artifactId>
             <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>
+
+
+        <!--<dependency>-->
+            <!--<groupId>xmlunit</groupId>-->
+            <!--<artifactId>xmlunit</artifactId>-->
+            <!--<version>${xmlunit.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
         <!-- JAXB tests -->
 
@@ -128,13 +200,21 @@
         </dependency>
 
         <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jvnet-nexus-staging</id>
+            <url>http://maven.java.net/content/repositories/staging/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 
     <build>
         <testResources>
@@ -154,6 +234,7 @@
                 <filtering>false</filtering>
             </testResource>
         </testResources>
+
         <plugins>
             <!--
                 schemagen: generate XML schema from source code using Ant task
@@ -164,54 +245,56 @@
                   java com.sun.tools.jxc.SchemaGenerator -cp target/classes/
                                                          src/main/java/uk/ac/ebi/impact/model/ModelDatabaseRelease.java
              -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <id>generate-xml-schema</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <target>
-                                <property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>
-                                <property name="latest.interpro.schema.version" value="3.0"/>
-                                <mkdir dir="${project.build.schema.dir}"/>
-                                <taskdef name="schemagen"
-                                         classname="com.sun.tools.jxc.SchemaGenTask"
-                                         classpathref="maven.plugin.classpath"/>
-                                <schemagen srcdir="${project.build.sourceDirectory}/uk/ac/ebi/interpro/scan/model"
-                                           destdir="${project.build.schema.dir}"
-                                           classpathref="maven.compile.classpath"
-                                           includeantruntime="false">
-                                    <include name = "*.java"/>
-                                    <exclude name="package-info.java"/>
-                                    <!-- Following does not work: -->
-                                    <!--<schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd" />-->
-                                </schemagen>
-                                <!-- 'schema' child element does not work, so have to rename file by hand -->
-                                <move file="${project.build.schema.dir}/schema1.xsd"
-                                      tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-jxc</artifactId>
-                        <version>2.2.11</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-runtime</artifactId>
-                        <version>2.2.11</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-antrun-plugin</artifactId>-->
+                <!--<version>1.8</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>generate-xml-schema</id>-->
+                        <!--<phase>compile</phase>-->
+                        <!--<configuration>-->
+                            <!--<target>-->
+                                <!--<property name="project.build.schema.dir" value="${project.build.directory}/schemas/"/>-->
+                                <!--<property name="latest.interpro.schema.version" value="3.0"/>-->
+                                <!--<mkdir dir="${project.build.schema.dir}"/>-->
+                                <!--<taskdef name="schemagen"-->
+                                         <!--classname="com.sun.tools.jxc.SchemaGenTask"-->
+                                         <!--classpathref="maven.plugin.classpath"/>-->
+                                <!--<schemagen srcdir="${project.build.sourceDirectory}/uk/ac/ebi/interpro/scan/model"-->
+                                           <!--destdir="${project.build.schema.dir}"-->
+                                           <!--classpathref="maven.compile.classpath"-->
+                                           <!--includeantruntime="false">-->
+                                    <!--<include name = "*.java"/>-->
+                                    <!--<exclude name="package-info.java"/>-->
+                                    <!--&lt;!&ndash; Following does not work: &ndash;&gt;-->
+                                    <!--&lt;!&ndash;<schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd" />&ndash;&gt;-->
+                                <!--</schemagen>-->
+                                <!--&lt;!&ndash; 'schema' child element does not work, so have to rename file by hand &ndash;&gt;-->
+                                <!--<move file="${project.build.schema.dir}/schema1.xsd"-->
+                                      <!--tofile="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd"/>-->
+                            <!--</target>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>org.glassfish.jaxb</groupId>-->
+                        <!--<artifactId>jaxb-jxc</artifactId>-->
+                        <!--<version>2.4.0-b180830.0438</version>-->
+                    <!--</dependency>-->
+                    <!--<dependency>-->
+                        <!--<groupId>org.glassfish.jaxb</groupId>-->
+                        <!--<artifactId>jaxb-runtime</artifactId>-->
+                        <!--<version>2.4.0-b180830.0438</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+            <!--</plugin>-->
+
         </plugins>
     </build>
 

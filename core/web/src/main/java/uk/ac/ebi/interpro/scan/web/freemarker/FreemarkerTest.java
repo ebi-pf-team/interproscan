@@ -6,10 +6,10 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.CreateSimpleProteinFromMatchData;
@@ -60,7 +60,8 @@ public class FreemarkerTest {
         variables.put("js_resource_protein_jquery_cookie", "resources/javascript/jquery/jquery.cookie.js");
         cfg.setAllSharedVariables(new SimpleHash(variables, new DefaultObjectWrapper()));
 
-        final AbstractApplicationContext ctx = new FileSystemXmlApplicationContext(pathToAppContextFile);
+        final AbstractApplicationContext ctx = new XmlWebApplicationContext();
+        ((XmlWebApplicationContext) ctx).setConfigLocation(pathToAppContextFile);
 //        Get beans from context file
         EntryHierarchy entryHierarchy = (EntryHierarchy) ctx.getBean("entryHierarchy");
         Jaxb2Marshaller marshaller = (Jaxb2Marshaller) ctx.getBean("jaxb2");

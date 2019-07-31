@@ -1,12 +1,16 @@
 package uk.ac.ebi.interpro.scan.jms.persistence.test;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.model.Entry;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.persistence.EntryDAO;
@@ -17,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Simple test class to run persistence performance tests on several DAOs. Decided to put it here because all
@@ -27,9 +30,9 @@ import static org.junit.Assert.assertNotNull;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-@Ignore
+@Disabled
 public class HibernateAnnotationTest {
 
     private final Logger log = Logger.getLogger(HibernateAnnotationTest.class.getName());
@@ -188,11 +191,11 @@ public class HibernateAnnotationTest {
         for (int i = 0; i < 100; i++) {
             Entry entry1 = new Entry.Builder("IPR011991").description(bigDescription).build();
             descLen = entry1.getDescription().length();
-            Assert.assertEquals(14000, descLen);
+            assertEquals(14000, descLen);
 
             Signature signature = new Signature.Builder("PF00003").description(bigDescription).build();
             descLen = signature.getDescription().length();
-            Assert.assertEquals(14000, descLen);
+            assertEquals(14000, descLen);
         }
     }
 

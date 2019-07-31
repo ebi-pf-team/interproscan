@@ -1,15 +1,10 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.DCStatus;
+import uk.ac.ebi.interpro.scan.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.Model;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.LocationFragment;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
@@ -131,7 +126,8 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                 }
                 matchCount++;
             }
-
+            Set<Match> proteinMatches = new HashSet();
+            String signatureLibraryKey = null;
             for (SuperFamilyHmmer3Match match : splitGroupToMatch.values()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("superfamily match: " + match);
@@ -141,8 +137,20 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
 //                        + "locations size: " + match.getLocations().size()
 //                        + " \nProtein with match: " + protein.getId());
 
-                protein.addMatch(match);
-                entityManager.persist(match);
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+                if(signatureLibraryKey == null) {
+                    signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+                }
+            }
+            if(! proteinMatches.isEmpty()) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

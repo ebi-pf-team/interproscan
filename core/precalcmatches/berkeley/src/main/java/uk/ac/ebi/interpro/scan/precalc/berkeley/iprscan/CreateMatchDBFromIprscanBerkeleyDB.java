@@ -35,15 +35,27 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
     private static final String databaseName = "IPRSCAN";
 
+    private static String QUERY_ENABLE_DML = "alter session enable parallel dml";
+    
     private static String QUERY_TEMPORARY_TABLE =
-            "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
+            "select  /*+ PARALLEL (8) */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
                     "SEQ_FEATURE" +
+
                     "       from  lookup_tmp_tab  partition (partitionName) " +
-                    "       order by  PROTEIN_MD5";
+                    //"       order by  PROTEIN_MD5";
                     //"       where upi_range = ? " +
                     //"       order by  PROTEIN_MD5";
+
+                    //"       from  lookup_tmp_tab " +
+                    "       where upi_range = ? " +
+                    "       order by  upi_range, PROTEIN_MD5";
+    /*
+    "       from  lookup_tmp_tab  partition (partitionName) " +
+            "       where upi_range = ? " +
+            "       order by  PROTEIN_MD5";
+    */
 
 
     public static void main(String[] args) {
@@ -120,6 +132,10 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                 long locationFragmentCount = 0, proteinMD5Count = 0, matchCount = 0;
                 int partitionCount = 0;
 
+                try (PreparedStatement psParallelDML = connection.prepareStatement(QUERY_ENABLE_DML)) {
+                    boolean executeParallelDML = psParallelDML.execute();
+                }
+
                 for (String partitionName : partitionNames) {
                     partitionCount++;
 //                    if (partitionName.compareTo("UPI00085") <= 0){
@@ -136,6 +152,10 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         ps.setFetchSize(fetchSize);
                         System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
                         //ps.setString(1, partitionName);
+
+                        ps.setString(1, partitionName);
+                        //ps.setString(1, partitionName);
+
                         //ps.setString(2, partitionName);
                         //System.out.println(Utilities.getTimeNow() + "sql:" + ps.toString());
                         try (ResultSet rs = ps.executeQuery()) {
@@ -143,7 +163,6 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                             System.out.println(Utilities.getTimeNow() + "  " + String.valueOf((endExecuteQueryMillis - startPartition) / 1000) + " seconds to process query");
                             //BerkeleyMatch match = null;
                             KVSequenceEntry match = null;
-
 
                             while (rs.next()) {
 
@@ -308,9 +327,8 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         e.printStackTrace();
                         throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
                     }
-
-                    System.out.println("Finished building BerkeleyDB.");
                 }
+                System.out.println("Finished building BerkeleyDB.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -323,6 +341,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
 
         //tmp_lookup_tmp_tab_part
         String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' ORDER BY PARTITION_NAME";
+        //String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME = 'UPI00000' ";
 //        String partitionQuery = "SELECT PARTITION_NAME  FROM ALL_TAB_PARTITIONS     where table_name = 'LOOKUP_TMP_TAB' and PARTITION_NAME <= 'UPI00002' ORDER BY PARTITION_NAME";
 
         try {
@@ -330,7 +349,9 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String partitionName = rs.getString(1);
-                partitionNames.add(partitionName);
+                //if (partitionName.startsWith("UPI0001")){
+                partitionNames.add(partitionName);;
+                //}
             }
         } catch (SQLException e) {
             throw new IllegalStateException("SQLException thrown by IPRSCAN", e);

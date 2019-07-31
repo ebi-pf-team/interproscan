@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -52,12 +53,15 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
+
             Set<PantherMatch.PantherLocation> locations = null;
             String currentSignatureAc = null;
             SignatureModelHolder holder = null;
             Signature currentSignature = null;
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
+            String signatureLibraryKey = null;
+            Set <Match> proteinMatches =  new HashSet<>();
             for (PantherRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
@@ -67,7 +71,8 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     if (currentSignatureAc != null) {
                         // Not the first...
                         if (match != null) {
-                            entityManager.persist(match);  // Persist the previous one.
+                            //entityManager.persist(match);  // Persist the previous one.
+
                         }
                         match = new PantherMatch(
                                 currentSignature,
@@ -77,7 +82,8 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                                 lastRawMatch.getFamilyName(),
                                 lastRawMatch.getScore()
                         );
-                        protein.addMatch(match);
+                        //protein.addMatch(match); //may not be needed
+                        proteinMatches.add(match);
                     }
                     // Reset everything
                     locations = new HashSet<>();
@@ -109,6 +115,9 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmLength(), HmmBounds.parseSymbol(rawMatch.getHmmBounds()),
                         rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
                 lastRawMatch = rawMatch;
+                if(signatureLibraryKey == null){
+                    signatureLibraryKey = currentSignature.getSignatureLibraryRelease().getLibrary().getName();
+                }
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
@@ -120,8 +129,20 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         lastRawMatch.getFamilyName(),
                         lastRawMatch.getScore()
                 );
-                protein.addMatch(match);
-                entityManager.persist(match);       // Persist the last one
+                //protein.addMatch(match);  //may not be needed
+                proteinMatches.add(match);
+                //entityManager.persist(match);       // Persist the last one
+            }
+            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+            //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+
+            if (proteinMatches != null && ! proteinMatches.isEmpty()) {
+                //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

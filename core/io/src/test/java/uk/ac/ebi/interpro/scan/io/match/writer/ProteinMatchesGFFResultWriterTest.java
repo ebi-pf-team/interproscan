@@ -1,7 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
+
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.IOException;
@@ -12,6 +16,7 @@ import java.util.*;
  * Test for ProteinMatchesGFFResultWriter.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -21,38 +26,38 @@ public class ProteinMatchesGFFResultWriterTest {
     public void testGetValidGFF3SeqId() throws IOException {
         String expected = "tr|A2VDN9|A2VDN9_BOVIN_KIAA0020_protein_OSBos_taurus_GNKIAA0020_PE2_SV1";
         String actual = GFFResultWriterForNucSeqs.getValidGFF3SeqId("tr|A2VDN9|A2VDN9_BOVIN KIAA0020 protein OS=Bos taurus GN=KIAA0020 PE=2 SV=1");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
         //
         expected = "ENA|AACH01000026|AACH01000026.1_Saccharomyces_mikatae_IFO_1815_YM4906-Contig2858_whole_genome_shotgun_sequence.";
         actual = GFFResultWriterForNucSeqs.getValidGFF3SeqId("ENA|AACH01000026|AACH01000026.1 Saccharomyces mikatae IFO 1815 YM4906-Contig2858, whole genome shotgun sequence.");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
         //
         expected = "P22298";
         actual = GFFResultWriterForNucSeqs.getValidGFF3SeqId("P22298");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
         //
         expected = "reverse_translation_of_A2VDN9";
         actual = GFFResultWriterForNucSeqs.getValidGFF3SeqId("reverse translation of A2VDN9");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void testGetValidGFF3AttributeName() throws IOException {
         String expected = "test";
         String actual = GFFResultWriterForNucSeqs.getValidGFF3AttributeName("test");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
         //
         expected = "test%2Ctest";
         actual = GFFResultWriterForNucSeqs.getValidGFF3AttributeName("test,test");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
         //
         expected = "test%3Dtest";
         actual = GFFResultWriterForNucSeqs.getValidGFF3AttributeName("test=test");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
         //
         expected = "test%3Btest";
         actual = GFFResultWriterForNucSeqs.getValidGFF3AttributeName("test;test");
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -61,25 +66,25 @@ public class ProteinMatchesGFFResultWriterTest {
         String expected = "test";
         //
         String actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
-        Assert.assertEquals(message, expected, actual);
+        assertEquals( expected, actual,message);
         //
         expected = "test12121test";
         actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
-        Assert.assertEquals(message, expected, actual);
+        assertEquals(expected, actual, message);
         //
         expected = "test12121.:^*$@!+_?-|";
         actual = expected.replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
-        Assert.assertEquals(message, expected, actual);
+        assertEquals(expected, actual,message);
         //Not allowed characters check
         expected = "test";
         actual = "test%".replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
-        Assert.assertEquals(message, expected, actual);
+        assertEquals(expected, actual, message);
         //
         actual = "test[]".replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
-        Assert.assertEquals(message, expected, actual);
+        assertEquals(expected, actual, message);
         //
         actual = "test ".replaceAll(GFFResultWriterForNucSeqs.SEQID_DISALLOWED_CHAR_PATTERN.pattern(), "");
-        Assert.assertEquals(message, expected, actual);
+        assertEquals(expected, actual, message);
     }
 
     /**
@@ -162,7 +167,7 @@ public class ProteinMatchesGFFResultWriterTest {
         writer.processMatches(matches, "target", "12 May 2012", protein, "P00000");
 
         Map<String, String> identifierToSequence = writer.getIdentifierToSeqMap();
-        Assert.assertEquals(5, identifierToSequence.size());
+        assertEquals(5, identifierToSequence.size());
         Map<String, String> unseenIdentifiers = new HashMap<>();
         unseenIdentifiers.put("match$1_1_16", "ABCDEFGHIJKLMNOP");
         unseenIdentifiers.put("match$1_1_17", "ABCDEFGHIJKLMNOP");
@@ -172,11 +177,11 @@ public class ProteinMatchesGFFResultWriterTest {
 
         for (String identifier : identifierToSequence.keySet()) {
             String expectedSequence = unseenIdentifiers.get(identifier);
-            Assert.assertNotNull(expectedSequence);
-            Assert.assertFalse(expectedSequence.isEmpty());
-            Assert.assertEquals(expectedSequence, identifierToSequence.get(identifier));
+            assertNotNull(expectedSequence);
+            assertFalse(expectedSequence.isEmpty());
+            assertEquals(expectedSequence, identifierToSequence.get(identifier));
             unseenIdentifiers.remove(identifier);
         }
-        Assert.assertEquals("Not all of the expected matches have been seen.", 0, unseenIdentifiers.size());
+        assertEquals( 0, unseenIdentifiers.size(), "Not all of the expected matches have been seen.");
     }
 }

@@ -41,7 +41,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class LocationWithSites<T extends Site, U extends LocationFragment> extends Location {
 
-    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location")
+    @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Site.class, mappedBy = "location", fetch = FetchType.EAGER)
     @BatchSize(size=4000)
     @JsonManagedReference
     protected Set<T> sites = new HashSet<>();

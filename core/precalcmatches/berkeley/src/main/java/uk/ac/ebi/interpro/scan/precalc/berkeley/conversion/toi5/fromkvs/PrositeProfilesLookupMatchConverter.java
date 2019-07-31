@@ -11,7 +11,7 @@ import java.util.Set;
 public class PrositeProfilesLookupMatchConverter extends LookupMatchConverter<ProfileScanMatch, ProfileScanMatch.ProfileScanLocation> {
 
     @Override
-    public ProfileScanMatch convertMatch(SimpleLookupMatch match, Signature signature) {
+    public ProfileScanMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         Set<ProfileScanMatch.ProfileScanLocation> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
         int locationEnd = valueOrZero(match.getSequenceEnd());

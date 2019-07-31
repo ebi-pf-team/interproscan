@@ -1,11 +1,19 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
@@ -20,7 +28,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SimpleProteinTest {
 
@@ -45,7 +53,7 @@ public class SimpleProteinTest {
     private final String signatureName = "B12-binding";
     private final String signatureAccession = "PF02310";
 
-    @Before
+    @BeforeEach
     public void initBeforeEachTest() {
         //Instantiate protein object
         this.testProtein = new Protein(PROTEIN_SEQ);
@@ -59,12 +67,12 @@ public class SimpleProteinTest {
         this.locations.add(hmmer2Location2);
 
         //Simple sanity checks
-        Assert.assertEquals(PROTEIN_SEQ, testProtein.getSequence());
-        Assert.assertEquals(proteinXrefIdentifier, testProteinXref.getIdentifier());
-        Assert.assertEquals(3, hmmer2Location1.getStart());
-        Assert.assertEquals(107, hmmer2Location1.getEnd());
-        Assert.assertEquals(120, hmmer2Location2.getStart());
-        Assert.assertEquals(310, hmmer2Location2.getEnd());
+        assertEquals(PROTEIN_SEQ, testProtein.getSequence());
+        assertEquals(proteinXrefIdentifier, testProteinXref.getIdentifier());
+        assertEquals(3, hmmer2Location1.getStart());
+        assertEquals(107, hmmer2Location1.getEnd());
+        assertEquals(120, hmmer2Location2.getStart());
+        assertEquals(310, hmmer2Location2.getEnd());
     }
 
     @Test
@@ -73,75 +81,75 @@ public class SimpleProteinTest {
         testMatch = testProtein.addMatch(new Hmmer2Match(new Signature(signatureAccession, signatureName), signatureAccession, 0.035, 3.7e-9, locations));
 
         //Simple sanity checks
-        Assert.assertNotNull(testMatch.getSignature());
-        Assert.assertEquals(signatureName, testMatch.getSignature().getName());
-        Assert.assertEquals(signatureAccession, testMatch.getSignature().getAccession());
-        Assert.assertNotNull(testMatch.getLocations());
-        Assert.assertEquals(2, testMatch.getLocations().size());
-        Assert.assertTrue(testMatch.getLocations().contains(hmmer2Location1));
-        Assert.assertTrue(testMatch.getLocations().contains(hmmer2Location2));
+        assertNotNull(testMatch.getSignature());
+        assertEquals(signatureName, testMatch.getSignature().getName());
+        assertEquals(signatureAccession, testMatch.getSignature().getAccession());
+        assertNotNull(testMatch.getLocations());
+        assertEquals(2, testMatch.getLocations().size());
+        assertTrue(testMatch.getLocations().contains(hmmer2Location1));
+        assertTrue(testMatch.getLocations().contains(hmmer2Location2));
 
         //Finally, test the valueOf method
         SimpleProtein simpleProtein = SimpleProtein.valueOf(testProtein, testProteinXref, entryHierarchy);
 
         //Test simple attributes
-        Assert.assertNotNull(simpleProtein);
-        Assert.assertEquals(proteinXrefIdentifier, simpleProtein.getAc());
-        Assert.assertEquals("Unknown", simpleProtein.getId());
-        Assert.assertEquals("Unknown", simpleProtein.getName());
-        Assert.assertEquals(testProtein.getSequenceLength(), simpleProtein.getLength());
-        Assert.assertEquals(testProtein.getMd5(), simpleProtein.getMd5());
-        Assert.assertEquals("Unknown", simpleProtein.getCrc64());
-        Assert.assertEquals("Unknown", simpleProtein.getTaxScienceName());
-        Assert.assertEquals("Unknown", simpleProtein.getTaxFullName());
-        Assert.assertFalse(simpleProtein.isProteinFragment());
+        assertNotNull(simpleProtein);
+        assertEquals(proteinXrefIdentifier, simpleProtein.getAc());
+        assertEquals(simpleProtein.getId(), "Unknown");
+        assertEquals(simpleProtein.getName(), "Unknown");
+        assertEquals(testProtein.getSequenceLength(), simpleProtein.getLength());
+        assertEquals(testProtein.getMd5(), simpleProtein.getMd5());
+        assertEquals(simpleProtein.getCrc64(), "Unknown");
+        assertEquals(simpleProtein.getTaxScienceName(), "Unknown");
+        assertEquals(simpleProtein.getTaxFullName(), "Unknown");
+        assertFalse(simpleProtein.isProteinFragment());
 
         //Start to test complex attributes
         //First, check all entries
-        Assert.assertEquals(1, simpleProtein.getAllEntries().size());
+        assertEquals(1, simpleProtein.getAllEntries().size());
         //Second, check for integrated entries (there shouldn't be any)
-        Assert.assertEquals(0, simpleProtein.getEntries().size());
+        assertEquals(0, simpleProtein.getEntries().size());
         //Third, check for un-integrated entries
-        Assert.assertEquals(1, simpleProtein.getUnintegratedSignatures().size());
+        assertEquals(1, simpleProtein.getUnintegratedSignatures().size());
 
         //Compare signature and simple signature attributes
         SimpleSignature simpleSignature = simpleProtein.getUnintegratedSignatures().get(0);
-        Assert.assertEquals(testMatch.getSignature().getAccession(), simpleSignature.getAc());
-        Assert.assertEquals(testMatch.getSignature().getName(), simpleSignature.getName());
-        Assert.assertEquals(MatchDataSource.UNKNOWN.name(), simpleSignature.getDataSource().getName());
+        assertEquals(testMatch.getSignature().getAccession(), simpleSignature.getAc());
+        assertEquals(testMatch.getSignature().getName(), simpleSignature.getName());
+        assertEquals(MatchDataSource.UNKNOWN.name(), simpleSignature.getDataSource().getName());
 
         //Test simple signature locations
-        Assert.assertNotNull(simpleSignature.getLocations());
-        Assert.assertEquals(2, simpleSignature.getLocations().size());
+        assertNotNull(simpleSignature.getLocations());
+        assertEquals(2, simpleSignature.getLocations().size());
         for (SimpleLocation simpleLocation : simpleSignature.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
-                Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
-                Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
             }
         }
         //Test simple entry
-        Assert.assertNull("Entry signature isn't null! But the following tests require, that the signature entry is NULL.", testMatch.getSignature().getEntry());
+        assertNull(testMatch.getSignature().getEntry(), "Entry signature isn't null! But the following tests require, that the signature entry is NULL.");
         SimpleEntry simpleEntry = simpleProtein.getAllEntries().get(0);
-        Assert.assertEquals("", simpleEntry.getAc());
-        Assert.assertEquals("Unintegrated", simpleEntry.getShortName());
-        Assert.assertEquals("Unintegrated", simpleEntry.getName());
-        Assert.assertEquals(EntryType.UNKNOWN, simpleEntry.getType());
-        Assert.assertEquals(entryHierarchy.getEntryHierarchyData(proteinXrefIdentifier), simpleEntry.getHierarchyData());
-        Assert.assertEquals(entryHierarchy.getHierarchyLevel(proteinXrefIdentifier), simpleEntry.getHierarchyLevel());
+        assertEquals("", simpleEntry.getAc());
+        assertEquals("Unintegrated", simpleEntry.getShortName());
+        assertEquals("Unintegrated", simpleEntry.getName());
+        assertEquals(EntryType.UNKNOWN, simpleEntry.getType());
+        assertEquals(entryHierarchy.getEntryHierarchyData(proteinXrefIdentifier), simpleEntry.getHierarchyData());
+        assertEquals(entryHierarchy.getHierarchyLevel(proteinXrefIdentifier), simpleEntry.getHierarchyLevel());
 
         //Test simple entry locations
-        Assert.assertNotNull(simpleEntry.getLocations());
-        Assert.assertEquals(2, simpleEntry.getLocations().size());
+        assertNotNull(simpleEntry.getLocations());
+        assertEquals(2, simpleEntry.getLocations().size());
         for (SimpleLocation simpleLocation : simpleEntry.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
-                Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
-                Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
             }
         }
-        Assert.assertEquals(1, simpleEntry.getSignaturesMap().size());
-        Assert.assertTrue(simpleEntry.getSignaturesMap().containsValue(simpleSignature));
+        assertEquals(1, simpleEntry.getSignaturesMap().size());
+        assertTrue(simpleEntry.getSignaturesMap().containsValue(simpleSignature));
     }
 
     @Test
@@ -160,57 +168,57 @@ public class SimpleProteinTest {
         SimpleProtein simpleProtein = SimpleProtein.valueOf(testProtein, testProteinXref, entryHierarchy);
 
         //Test simple attributes
-        Assert.assertNotNull(simpleProtein);
-        Assert.assertEquals(proteinXrefIdentifier, simpleProtein.getAc());
-        Assert.assertEquals("Unknown", simpleProtein.getId());
-        Assert.assertEquals("Unknown", simpleProtein.getName());
-        Assert.assertEquals(testProtein.getSequenceLength(), simpleProtein.getLength());
-        Assert.assertEquals(testProtein.getMd5(), simpleProtein.getMd5());
-        Assert.assertEquals("Unknown", simpleProtein.getCrc64());
-        Assert.assertEquals("Unknown", simpleProtein.getTaxScienceName());
-        Assert.assertEquals("Unknown", simpleProtein.getTaxFullName());
-        Assert.assertFalse(simpleProtein.isProteinFragment());
+        assertNotNull(simpleProtein);
+        assertEquals(proteinXrefIdentifier, simpleProtein.getAc());
+        assertEquals(simpleProtein.getId(), "Unknown");
+        assertEquals(simpleProtein.getName(), "Unknown");
+        assertEquals(testProtein.getSequenceLength(), simpleProtein.getLength());
+        assertEquals(testProtein.getMd5(), simpleProtein.getMd5());
+        assertEquals(simpleProtein.getCrc64(), "Unknown");
+        assertEquals(simpleProtein.getTaxScienceName(), "Unknown");
+        assertEquals(simpleProtein.getTaxFullName(), "Unknown");
+        assertFalse(simpleProtein.isProteinFragment());
 
         //Start to test complex attributes
         //First, check all entries
-        Assert.assertEquals(1, simpleProtein.getAllEntries().size());
+        assertEquals(1, simpleProtein.getAllEntries().size());
         //Second, check for integrated entries (there shouldn't be any)
-        Assert.assertEquals(1, simpleProtein.getEntries().size());
+        assertEquals(1, simpleProtein.getEntries().size());
         //Third, check for un-integrated entries
-        Assert.assertEquals(0, simpleProtein.getUnintegratedSignatures().size());
+        assertEquals(0, simpleProtein.getUnintegratedSignatures().size());
 
         //Test simple entry
-        Assert.assertNotNull("Entry signature is null! But the following tests require, that the signature entry is NOT NULL.", testMatch.getSignature().getEntry());
+        assertNotNull(testMatch.getSignature().getEntry(), "Entry signature is null! But the following tests require, that the signature entry is NOT NULL.");
         SimpleEntry simpleEntry = simpleProtein.getAllEntries().get(0);
-        Assert.assertEquals("IPR011364", simpleEntry.getAc());
-        Assert.assertEquals("BRCA1", simpleEntry.getShortName());
-        Assert.assertEquals("BRCA1", simpleEntry.getName());
-        Assert.assertEquals(EntryType.FAMILY, simpleEntry.getType());
-        Assert.assertEquals(entryHierarchy.getEntryHierarchyData(simpleEntry.getAc()), simpleEntry.getHierarchyData());
-        Assert.assertEquals(entryHierarchy.getHierarchyLevel(simpleEntry.getAc()), simpleEntry.getHierarchyLevel());
-        Assert.assertEquals(1, simpleEntry.getSignaturesMap().size());
+        assertEquals(simpleEntry.getAc(), "IPR011364");
+        assertEquals(simpleEntry.getShortName(), "BRCA1");
+        assertEquals(simpleEntry.getName(), "BRCA1");
+        assertEquals(EntryType.FAMILY, simpleEntry.getType());
+        assertEquals(entryHierarchy.getEntryHierarchyData(simpleEntry.getAc()), simpleEntry.getHierarchyData());
+        assertEquals(entryHierarchy.getHierarchyLevel(simpleEntry.getAc()), simpleEntry.getHierarchyLevel());
+        assertEquals(1, simpleEntry.getSignaturesMap().size());
 
         //Test simple entry locations
-        Assert.assertNotNull(simpleEntry.getLocations());
-        Assert.assertEquals(2, simpleEntry.getLocations().size());
+        assertNotNull(simpleEntry.getLocations());
+        assertEquals(2, simpleEntry.getLocations().size());
         for (SimpleLocation simpleLocation : simpleEntry.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
-                Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
-                Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
             }
         }
 
         //Test simple signature locations
         SimpleSignature simpleSignature = simpleEntry.getSignaturesMap().get("PTHR13763-PANTHER");
-        Assert.assertNotNull(simpleSignature);
-        Assert.assertNotNull(simpleSignature.getLocations());
-        Assert.assertEquals(2, simpleSignature.getLocations().size());
+        assertNotNull(simpleSignature);
+        assertNotNull(simpleSignature.getLocations());
+        assertEquals(2, simpleSignature.getLocations().size());
         for (SimpleLocation simpleLocation : simpleSignature.getLocations()) {
             if (simpleLocation.getLength() == hmmer2Location1.getStart()) {
-                Assert.assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location1.getEnd(), simpleLocation.getEnd());
             } else if (simpleLocation.getLength() == hmmer2Location2.getStart()) {
-                Assert.assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
+                assertEquals(hmmer2Location2.getEnd(), simpleLocation.getEnd());
             }
         }
     }

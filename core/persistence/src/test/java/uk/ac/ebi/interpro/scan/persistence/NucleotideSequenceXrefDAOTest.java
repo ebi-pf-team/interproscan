@@ -1,10 +1,13 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 
@@ -15,8 +18,9 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  *
  * @author Maxim Scheremetjew, EMBL-EBI
+ * @author Gift Nuka
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class NucleotideSequenceXrefDAOTest {
 
@@ -48,9 +52,9 @@ public class NucleotideSequenceXrefDAOTest {
         // Retrieve a List of non-unique sequences - should contain just Q12345.
 
         List<String> nonUniqueXrefs = nucleotideSequenceXrefDAO.getNonUniqueXrefs();
-        Assert.assertNotNull(nonUniqueXrefs);
-        Assert.assertEquals(1, nonUniqueXrefs.size());
+        assertNotNull(nonUniqueXrefs);
+        assertEquals(1, nonUniqueXrefs.size());
         String nonUnique = nonUniqueXrefs.get(0);
-        Assert.assertEquals(identifier1, nonUnique);
+        assertEquals(identifier1, nonUnique);
     }
 }

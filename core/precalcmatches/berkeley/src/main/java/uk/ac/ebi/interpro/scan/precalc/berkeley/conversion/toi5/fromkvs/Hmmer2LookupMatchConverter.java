@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Hmmer2LookupMatchConverter extends LookupMatchConverter<Hmmer2Match, Hmmer2Match.Hmmer2Location> {
 
-    public Hmmer2Match convertMatch(SimpleLookupMatch match, Signature signature) {
+    public Hmmer2Match convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
         final HmmBounds bounds;
         if (match.getHmmBounds() == null || match.getHmmBounds().isEmpty()) {

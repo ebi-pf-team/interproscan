@@ -51,8 +51,8 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
      * @throws IOException
      * @throws TemplateException
      */
-    public String write(final SimpleProtein simpleProtein) throws IOException, TemplateException {
-        return write(simpleProtein, true);
+    public String write(final SimpleProtein simpleProtein, final EntryHierarchy entryHierarchy) throws IOException, TemplateException {
+        return write(simpleProtein, entryHierarchy, true);
     }
 
     /**
@@ -64,9 +64,8 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
      * @throws IOException
      * @throws TemplateException
      */
-    public String write(final SimpleProtein simpleProtein, final boolean standalone) throws IOException, TemplateException {
+    public String write(final SimpleProtein simpleProtein, final EntryHierarchy entryHierarchy, final boolean standalone) throws IOException, TemplateException {
         if (simpleProtein != null) {
-            checkEntryHierarchy();
             //Build model for FreeMarker
             final SimpleHash model = buildModelMap(simpleProtein, entryHierarchy, standalone);
             Writer writer = null;
@@ -93,8 +92,9 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
      * @return the number of rows printed (i.e. the number of Locations on Matches).
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
-    public int write(final Protein protein) throws IOException {
-        return write(protein, true);
+    @Override
+    public int write(final Protein protein, final EntryHierarchy entryHierarchy) throws IOException {
+        return write(protein, entryHierarchy, true);
     }
 
     /**
@@ -105,8 +105,7 @@ public class ProteinMatchesHTMLResultWriter extends GraphicalOutputResultWriter 
      * @return the number of rows printed (i.e. the number of Locations on Matches).
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
-    public int write(final Protein protein, final boolean standalone) throws IOException {
-        checkEntryHierarchy();
+    public int write(final Protein protein, final EntryHierarchy entryHierarchy, final boolean standalone) throws IOException {
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {
                 final SimpleProtein simpleProtein = SimpleProtein.valueOf(protein, xref, entryHierarchy);

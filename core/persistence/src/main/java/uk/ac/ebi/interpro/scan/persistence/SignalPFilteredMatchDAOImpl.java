@@ -2,10 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.SignalPMatch;
-import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
-import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SignalPRawMatch;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
@@ -52,6 +49,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
      */
     @Transactional
     public void persist(Collection<RawProtein<SignalPRawMatch>> rawProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+        String signatureLibraryKey = null;
         for (RawProtein<SignalPRawMatch> rawProtein : rawProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -64,6 +62,7 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
                 throw new IllegalStateException("Protein did not have only one SignalP match! " +
                         "[protein ID= " + rawProtein.getProteinIdentifier() + "]");
             }
+            Set<Match> proteinMatches = new HashSet();
             for (SignalPRawMatch rawMatch : rawMatches) {
                 // SignalP matches consist of a YES/NO result, therefore there will
                 // only ever be 1 raw match for each protein, but never mind!
@@ -87,8 +86,20 @@ public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRaw
                         )
                 );
                 SignalPMatch match = new SignalPMatch(signature, rawMatch.getModelId(), organismType, locations);
-                protein.addMatch(match);
-                entityManager.persist(match);
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+                if(signatureLibraryKey == null) {
+                    signatureLibraryKey = signature.getSignatureLibraryRelease().getLibrary().getName();
+                }
+            }
+            if(! proteinMatches.isEmpty()) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

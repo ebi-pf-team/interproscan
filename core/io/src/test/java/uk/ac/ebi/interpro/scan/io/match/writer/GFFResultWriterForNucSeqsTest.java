@@ -1,8 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,7 @@ public class GFFResultWriterForNucSeqsTest {
 
     private Map<String, String> identifierToSeqMap;
 
-    @Before
+    @BeforeEach
     public void init() {
         identifierToSeqMap = new TreeMap<String, String>(new ProteinMatchesGFFResultWriter.Gff3FastaSeqIdComparator());
     }
@@ -31,8 +34,8 @@ public class GFFResultWriterForNucSeqsTest {
      */
     @Test
     public void testGff3FastaSeqIdComparator() {
-        Assert.assertNotNull("Tree map shouldn't be NULL!", identifierToSeqMap);
-        Assert.assertEquals("Tree map should be empty!", 0, identifierToSeqMap.size());
+        assertNotNull( identifierToSeqMap,"Tree map shouldn't be NULL!");
+        assertEquals( 0, identifierToSeqMap.size(), "Tree map should be empty!");
         //target sequences - map values represent the index after sorting
         identifierToSeqMap.put("LLLLL", "5");
         identifierToSeqMap.put("ABCDE", "4");
@@ -52,7 +55,7 @@ public class GFFResultWriterForNucSeqsTest {
         identifierToSeqMap.put(matchString + "8_15_20", "10");
         identifierToSeqMap.put(matchString + "8_1_10", "9");
         //
-        Assert.assertEquals("Size of tree map incorrect", 14, identifierToSeqMap.size());
+        assertEquals(14, identifierToSeqMap.size(), "Size of tree map incorrect");
 
         //Copy values into a list and check if they are corrected indexed
         List<String> indexList = new ArrayList<String>();
@@ -61,7 +64,7 @@ public class GFFResultWriterForNucSeqsTest {
         }
 
         for (int i = 0; i < indexList.size(); i++) {
-            Assert.assertEquals("Index and value should be the same!", i, Integer.parseInt(indexList.get(i)));
+            assertEquals( i, Integer.parseInt(indexList.get(i)), "Index and value should be the same!");
         }
     }
 }

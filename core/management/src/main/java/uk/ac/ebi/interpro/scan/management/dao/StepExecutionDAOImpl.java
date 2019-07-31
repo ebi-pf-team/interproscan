@@ -107,7 +107,7 @@ public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> 
         dirtyStepExec.refresh(freshStepExecution);
         entityManager.merge(dirtyStepExec);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Updated Dirty StepExection.");
+            LOGGER.debug("Updated Dirty StepExection." + freshStepExecution.getId());
         }
     }
 }

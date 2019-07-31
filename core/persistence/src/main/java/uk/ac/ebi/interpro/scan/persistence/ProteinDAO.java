@@ -17,13 +17,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.iq80.leveldb.DB;
+
+import java.util.*;
 
 /**
  * Interface that defines additional functionality for Protein Data Access.
@@ -33,8 +32,53 @@ import java.util.Set;
  * Time: 13:24:50
  *
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
  */
-public interface ProteinDAO extends GenericDAO<Protein, Long> {
+public interface ProteinDAO extends GenericKVDAO<Protein> {
+
+    @Transactional
+    void persist(final Map<String, Protein> keyToProteinMap);
+
+    @Transactional
+    void insert(String key, Protein protein);
+
+    @Transactional
+    void insertProteinNotInLookup(String key, Protein protein);
+
+    @Transactional
+    void persist(byte[] key, byte[] protein);
+
+    @Transactional
+    void persistProteinNotInLookup(byte[] key, byte[] protein);
+
+    @Transactional(readOnly = true)
+    Protein getProtein(String key);
+
+    @Transactional(readOnly = true)
+    Protein getProteinNotInLookup(String key);
+
+    @Transactional(readOnly = true)
+    List<Protein> getProteins() throws Exception;
+
+    @Transactional(readOnly = true)
+    List<Protein> getProteinsNotInLookup() throws Exception;
+
+    @Transactional(readOnly = true)
+    List<Protein> getProteins(long bottom, long top);
+
+    @Transactional(readOnly = true)
+    Map<String, Protein> getKeyToProteinMap() throws Exception;
+
+    void setProteinIdsWithoutLookupHit(Map<Long, Protein> proteinIdsWithoutLookupHit);
+
+    @Transactional
+    Set<Protein> getProteinsWithoutLookupHit();
+
+    List<Protein> getProteinsWithoutLookupHitBetweenIds(long bottom, long top);
+
+    void checkKVDBStores();
+
+    DB getLevelDBStore();
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
@@ -64,6 +108,9 @@ public interface ProteinDAO extends GenericDAO<Protein, Long> {
      */
     @Transactional(readOnly = true)
     List<Protein> getProteinsByIds(Set<Long> proteinIds);
+
+    @Transactional(readOnly = true)
+    Protein getProteinById(Long proteinId);
 
     /**
      * Inserts new Proteins.

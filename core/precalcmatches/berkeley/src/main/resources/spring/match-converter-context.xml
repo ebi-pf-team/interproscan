@@ -23,7 +23,7 @@
                 <entry key="SUPERFAMILY" value-ref="superfamilyLookupMatchConverter"/>
                 <entry key="PRODOM" value-ref="prodomLookupMatchConverter"/>
                 <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
-                <entry key="SFLD" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="SFLD" value-ref="hmmer3WithSitesLookupMatchConverter"/>
                 <entry key="SMART" value-ref="hmmer2LookupMatchConverter"/>
                 <entry key="SIGNALP_EUK" value-ref="signalpLookupMatchConverter"/>
                 <entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpLookupMatchConverter"/>
@@ -32,6 +32,8 @@
                 <entry key="TMHMM" value-ref="tmhmmLookupMatchConverter"/>
             </map>
         </property>
+        <property name="matchDAO" ref="matchDAO"/>
+
     </bean>
 
 
@@ -53,6 +55,10 @@
     </bean>
     <bean id="hmmer3LookupMatchConverter"
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer3LookupMatchConverter">
+        <property name="flattenMatches" value="true"/>
+    </bean>
+    <bean id="hmmer3WithSitesLookupMatchConverter"
+          class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs.Hmmer3WithSitesLookupMatchConverter">
         <property name="flattenMatches" value="true"/>
     </bean>
     <bean id="coilsLookupMatchConverter"

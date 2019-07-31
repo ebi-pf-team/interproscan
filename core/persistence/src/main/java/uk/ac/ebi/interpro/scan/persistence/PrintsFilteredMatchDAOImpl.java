@@ -3,11 +3,13 @@ package uk.ac.ebi.interpro.scan.persistence;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
+import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.*;
 
@@ -62,6 +64,8 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
             final TreeSet<PrintsRawMatch> sortedMatches = new TreeSet<PrintsRawMatch>(PRINTS_RAW_MATCH_COMPARATOR);
             sortedMatches.addAll(rawProtein.getMatches());
             FingerPrintsMatch match = null;
+            String signatureLibraryKey = null;
+            Set <Match> proteinMatches =  new HashSet<>();
             for (PrintsRawMatch rawMatch : sortedMatches) {
                 if (rawMatch == null) {
                     continue;
@@ -72,10 +76,11 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
 
                         // Not the first (because the currentSignatureAc is not null)
                         if (match != null) {
-                            entityManager.persist(match); // Persist the previous one...
+                            //entityManager.persist(match); // Persist the previous one...
                         }
                         match = new FingerPrintsMatch(currentSignature, currentSignatureAc, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
-                        protein.addMatch(match);   // Sets the protein on the match.
+                        //protein.addMatch(match);   // Sets the protein on the match.
+                        proteinMatches.add(match);
                     }
                     // Reset everything
                     locations = new HashSet<FingerPrintsMatch.FingerPrintsLocation>();
@@ -96,12 +101,27 @@ public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMa
                         )
                 );
                 lastRawMatch = rawMatch;
+                if(signatureLibraryKey == null){
+                    signatureLibraryKey = currentSignature.getSignatureLibraryRelease().getLibrary().getName();
+                }
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
                 match = new FingerPrintsMatch(currentSignature, currentSignatureAc, lastRawMatch.getEvalue(), lastRawMatch.getGraphscan(), locations);
-                protein.addMatch(match);   // Sets the protein on the match.
-                entityManager.persist(match);
+                //protein.addMatch(match);   // Sets the protein on the match.
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+            }
+            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+            //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+
+            if (proteinMatches != null && ! proteinMatches.isEmpty()) {
+                //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }
