@@ -369,6 +369,7 @@ public class Run extends AbstractI5Runner {
                 //get temp directory for cleanup
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
                         || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
+                    //|| mode.equals(Mode.CONVERT)
                     final AbstractMaster master = (AbstractMaster) runnable;
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(Utilities.getTimeNow() + " 1. Checking working Temporary Directory -master.getTemporaryDirectory() : " + master.getTemporaryDirectory());
@@ -398,25 +399,31 @@ public class Run extends AbstractI5Runner {
 
                 }
 
-                // configure the KVStores
-                LevelDBStore kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
-                System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
-                LevelDBStore kvStoreProteinsNotInLookup = (LevelDBStore) ctx.getBean("kvStoreProteinsNotInLookup");
-                System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name : " + kvStoreProteinsNotInLookup.getDbName());
+                if (! workingTemporaryDirectory.isEmpty() ) {
+                    // configure the KVStores
+                    LevelDBStore kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
+                    System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
+                    LevelDBStore kvStoreProteinsNotInLookup = (LevelDBStore) ctx.getBean("kvStoreProteinsNotInLookup");
+                    System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name : " + kvStoreProteinsNotInLookup.getDbName());
 
-                LevelDBStore kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
-                System.out.println(Utilities.getTimeNow() + "kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
-                LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
-                System.out.println(Utilities.getTimeNow() + "kvStoreMatches  name : " + kvStoreMatches.getDbName());
-                //configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
+                    LevelDBStore kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
+                    System.out.println(Utilities.getTimeNow() + "kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
+                    LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
+                    System.out.println(Utilities.getTimeNow() + "kvStoreMatches  name : " + kvStoreMatches.getDbName());
+                    //configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
 
-                LevelDBStore kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
-                System.out.println(Utilities.getTimeNow() + "kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
-                configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches,  kvStoreNucleotides, workingTemporaryDirectory );
+                    LevelDBStore kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
+                    System.out.println(Utilities.getTimeNow() + "kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
 
-                System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
-                ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
-                proteinDAO.checkKVDBStores();
+                    System.out.println(Utilities.getTimeNow() + "workingTemporaryDirectory  : " + workingTemporaryDirectory);
+                    configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+
+                    System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
+
+                    ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
+                    proteinDAO.checkKVDBStores();
+
+                }
 
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
                     //deal with panther  stepPantherHMM3RunPantherScore

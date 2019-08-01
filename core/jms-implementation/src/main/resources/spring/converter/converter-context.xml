@@ -11,6 +11,7 @@
     <import resource="classpath:/spring/jobs/outputWriter/html/htmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/svg/svgWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/EntryHierarchy-context.xml"/>
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
     <bean id="convert" class="uk.ac.ebi.interpro.scan.jms.converter.Converter">
         <property name="marshaller" ref="interproMarshaller"/>
