@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * TODO: Description
+ * TODO: Description....
+ *
+ * Well am not sure this test is still required
  *
  * @author Phil Jones
  * @author Gift Nuka
@@ -21,6 +23,7 @@ import java.sql.SQLException;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
+@Disabled("looks like ithas never really been swicthed on... .")
 public class SeedAlignmentPersisterTest {
 
     @Resource
