@@ -26,7 +26,7 @@
         <#assign prefix=viewId+"-"+prefix>
     </#if>
     <a id="${prefix}-location-${supermatchId}"
-       href="/interpro/popup/supermatch?id=${prefix}-popup-${supermatchId}&entryAcs=${entryAcs}&start=${locationObj.start?c}&end=${locationObj.end?c}"
+       href="/interpro/legacy/popup/supermatch?id=${prefix}-popup-${supermatchId}&entryAcs=${entryAcs}&start=${locationObj.start?c}&end=${locationObj.end?c}"
        title="${title} ${locationObj.start} - ${locationObj.end}"
        class="match ${colourClass}"
        style="left:  ${(((locationObj.start - 1) / proteinLength) * 100)?c}%;

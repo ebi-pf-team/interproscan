@@ -29,7 +29,7 @@
 <#else>
 <#--If using this HTML in the InterPro website, get the hierarchy popup through an AJAX call-->
 <a id="match-location-${structMatchId?c}"
-   href="/interpro/popup/struct-match?id=match-popup-${structMatchId?c}&proteinAc=${proteinAc}&db=${databaseName}&start=${location.start?c}&end=${location.end?c}"
+   href="/interpro/legacy/popup/struct-match?id=match-popup-${structMatchId?c}&proteinAc=${proteinAc}&db=${databaseName}&start=${location.start?c}&end=${location.end?c}"
    title="${title} ${location.start} - ${location.end}"
    class="match ${databaseName}"
    style="left:  ${(((location.start - 1) / proteinLength) * 100)?c}%;
