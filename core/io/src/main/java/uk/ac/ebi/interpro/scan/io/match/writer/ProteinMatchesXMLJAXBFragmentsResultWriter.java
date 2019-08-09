@@ -166,6 +166,8 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
             Utilities.verboseLog(20,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
                     + " - with - " + targetPath.toAbsolutePath().toString());
             Files.move(sourcePath, targetPath, REPLACE_EXISTING);
+            LOGGER.warn("Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
+                    "                    - with - " + targetPath.toAbsolutePath().toString());
 
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();

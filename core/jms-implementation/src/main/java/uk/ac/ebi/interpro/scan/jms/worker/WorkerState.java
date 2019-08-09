@@ -9,6 +9,7 @@ package uk.ac.ebi.interpro.scan.jms.worker;
  *
  */
 
+import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
@@ -19,6 +20,7 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import java.io.File;
 import java.io.Serializable;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -128,7 +130,15 @@ public class WorkerState implements Serializable {
     public void addNonFinishedJob(Message message){
         try {
             LOGGER.debug("addNonFinishedJob: " + message.getJMSMessageID());
-            ObjectMessage stepExecutionMessage = (ObjectMessage) message;
+            ObjectMessage stepExecutionMessage1 = (ObjectMessage) message;
+            ActiveMQObjectMessage stepExecutionMessage = (ActiveMQObjectMessage) message;
+            List<String> trustedPackages = new ArrayList();
+            trustedPackages.add("uk.ac.ebi.interpro.scan.*");
+            trustedPackages.add("*");
+            stepExecutionMessage.setTrustedPackages(trustedPackages);
+            //stepExecutionMessage.setTrustAllPackages(true);
+            //activeMQObjectMessage.settr
+
             final StepExecution stepExecution = (StepExecution) stepExecutionMessage.getObject();
             this.nonFinishedJobs.put(stepExecution.getStepInstance().getId(), stepExecution);
             this.allJobs.add(stepExecution);
@@ -362,7 +372,20 @@ public class WorkerState implements Serializable {
         int result = (int) (timeAliveMillis ^ (timeAliveMillis >>> 32));
         result = 31 * result + (logDir != null ? logDir.hashCode() : 0);
         result = 31 * result + (masterTcpUri != null ? masterTcpUri.hashCode() : 0);
+        if(hostName == null){
+            try {
+               String localhostname = java.net.InetAddress.getLocalHost().getHostName();
+                String fullHostName = java.net.InetAddress.getLocalHost().getCanonicalHostName();
+                hostName = localhostname;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
         result = 31 * result + hostName.hashCode();
+        if(workerIdentification == null){
+            workerIdentification = UUID.randomUUID();
+        }
+        UUID.randomUUID();
         result = 31 * result + workerIdentification.hashCode();
         result = 31 * result + (exceptionThrown != null ? exceptionThrown.hashCode() : 0);
         return result;

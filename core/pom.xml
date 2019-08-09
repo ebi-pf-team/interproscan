@@ -107,7 +107,7 @@
         <commons-lang3.version>3.9</commons-lang3.version>
         <!--<mysql.version>5.1.12</mysql.version>-->
         <slf4j.version>1.7.26</slf4j.version>
-        <log4j.version>2.11.2</log4j.version>
+        <log4j.version>2.12.0</log4j.version>
         <xmlunit.version>2.6.2</xmlunit.version>
         <httpclient.version>4.5.9</httpclient.version>
         <!--<jaxb-api.version>2.3.2</jaxb-api.version>-->
@@ -137,7 +137,7 @@
         <module>web</module>
         <module>management</module>
         <module>jms-implementation</module>
-        <module>precalcmatches</module>
+         <module>precalcmatches</module>
     </modules>
 
     <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
@@ -151,6 +151,15 @@
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+            <type>pom</type>
+        </dependency>
+
 
         <!--<dependency>-->
             <!--<groupId>org.apache.logging.log4j</groupId>-->

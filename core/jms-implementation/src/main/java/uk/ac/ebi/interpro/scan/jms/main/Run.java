@@ -4,8 +4,17 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+
+
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
@@ -53,7 +62,7 @@ import java.util.regex.Pattern;
 
 public class Run extends AbstractI5Runner {
 
-    private static final Logger LOGGER = Logger.getLogger(Run.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Run.class.getName());
 
     /**
      * This is the REAL set of options that the Run class will accept
@@ -116,7 +125,7 @@ public class Run extends AbstractI5Runner {
 
         try {
             //change Loglevel
-//            changeLogLevel("DEBUG");
+            changeLogLevel("DEBUG");
 
             // parse the command line arguments
             CommandLine parsedCommandLine = parser.parse(COMMAND_LINE_OPTIONS, args);
@@ -407,15 +416,15 @@ public class Run extends AbstractI5Runner {
                     System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name : " + kvStoreProteinsNotInLookup.getDbName());
 
                     LevelDBStore kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
-                    System.out.println(Utilities.getTimeNow() + "kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
+                    System.out.println(Utilities.getTimeNow() + " kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
                     LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
-                    System.out.println(Utilities.getTimeNow() + "kvStoreMatches  name : " + kvStoreMatches.getDbName());
+                    System.out.println(Utilities.getTimeNow() + " kvStoreMatches  name : " + kvStoreMatches.getDbName());
                     //configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
 
                     LevelDBStore kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
-                    System.out.println(Utilities.getTimeNow() + "kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
+                    System.out.println(Utilities.getTimeNow() + " kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
 
-                    System.out.println(Utilities.getTimeNow() + "workingTemporaryDirectory  : " + workingTemporaryDirectory);
+                    System.out.println(Utilities.getTimeNow() + " workingTemporaryDirectory  : " + workingTemporaryDirectory);
                     configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
 
                     System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
@@ -1651,6 +1660,30 @@ public class Run extends AbstractI5Runner {
     }
 
     public static void changeLogLevel(String logLevel){
+        //LogManager.getRootLogger().setLevel(Level.WARN);
+        /*
+        LoggerContext loggerCtx = (LoggerContext) LogManager.getContext(false);
+        Configuration config = loggerCtx.getConfiguration();
+        LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+        loggerConfig.setLevel(Level.WARN);
+        loggerCtx.updateLoggers();
+
+        */
+
+        // org.apache.logging.log4j.core.config.Configurator;
+
+        Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.WARN);
+        Configurator.setLevel("org.apache.activemq", Level.WARN);
+//        Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.DEBUG);
+
+        // You can also set the root logger:
+        Configurator.setRootLevel(Level.WARN);
+
+        org.apache.log4j.LogManager.getRootLogger().setLevel(org.apache.log4j.Level.WARN);
+//        org.apache.log4j.LogManager.getRootLogger().setLevel("uk.ac.ebi.interpro.scan", org.apache.log4j.Level.WARN);
+
+        return;
+        /*
         Logger root = Logger.getLogger("uk.ac.ebi.interpro.scan");
         //setting the logging level according to input
         if ("FATAL".equalsIgnoreCase(logLevel)) {
@@ -1662,6 +1695,7 @@ public class Run extends AbstractI5Runner {
         }else if ("DEBUG".equalsIgnoreCase(logLevel)) {
             root.setLevel(Level.DEBUG);
         }
+        */
     }
 
     /**
@@ -1673,7 +1707,8 @@ public class Run extends AbstractI5Runner {
     private static void deleteWorkingTemporaryDirectory(String dirPath) throws IOException {
         File dir = new File(dirPath);
         try {
-            FileUtils.deleteDirectory(dir);
+            //FileUtils.deleteDirectory(dir);
+            FileUtils.forceDelete(dir);
         }catch (IOException e) {
             LOGGER.warn("At run completion, unable to delete temporary directory " + dir.getAbsolutePath());
         }

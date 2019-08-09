@@ -376,14 +376,33 @@ public class StatsUtil {
 
     public Set<String> getNonAcknowledgedSubmittedStepInstances() {
         Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
-        Set ids = submittedStepInstances.entrySet();
+        Set  ids =  submittedStepInstances.entrySet();
         Set<String> nonAcknowledgedStepInstances = new TreeSet<String>();
-        Utilities.verboseLog(" submittedStepInstances:" + ids.size());
+        Utilities.verboseLog(" submittedStepInstances: " + ids.size());
 
-        for (Object entry : submittedStepInstances.entrySet()) {
-            if (!((Map.Entry<Integer, String>) entry).getValue().contains("Done")) {
-                nonAcknowledgedStepInstances.add(((Map.Entry<Integer, String>) entry).getValue());
+        for (String submittedStepInstanceKey : submittedStepInstances.keySet()) {
+            Map<String, String> submittedStepInstanceValue = (Map<String, String>) submittedStepInstances.get(submittedStepInstanceKey);
+            Utilities.verboseLog(30," submittedStepInstanceValue: its a map : " + submittedStepInstanceKey + " --> " + submittedStepInstanceValue.toString());
+
+
+            Set <String> keySet = submittedStepInstanceValue.keySet();
+            for (String newKey : keySet){
+                String stepInstanceEntryValues = submittedStepInstanceValue.get(newKey);
+                Utilities.verboseLog(30,"key : " + submittedStepInstanceKey + "[" + newKey + "] -> stepInstanceEntryValues:  " + stepInstanceEntryValues);
+                nonAcknowledgedStepInstances.add(submittedStepInstanceKey + " - " + newKey + " - " + stepInstanceEntryValues);
             }
+            /*
+            Map.Entry<String, String> submittedStepInstance = (Map.Entry<String, String>) entryObject;
+            Utilities.verboseLog(" submittedStepInstance: " + submittedStepInstance.toString());
+            String stepInstanceName = submittedStepInstance.getKey();
+            String stepInstanceStatus = submittedStepInstance.getValue();
+            if (stepInstanceStatus.contains("Done")) {
+            //if (!((Map.Entry<Integer, String>) entry).getValue().contains("Done")) {
+                Utilities.verboseLog(" nonAcknowledgedStepInstance: " + stepInstanceName);
+                nonAcknowledgedStepInstances.add(stepInstanceName);
+            }
+            */
+
         }
         return nonAcknowledgedStepInstances;
     }

@@ -283,6 +283,7 @@ public class PrepareForOutputStep extends Step {
 
         Path outputPath = getFinalPath(stepInstance, FileOutputFormat.XML);
         Utilities.verboseLog(10, " Prepare For OutputStep - prepare to output proteins for XML: " + outputPath );
+        LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
 
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();

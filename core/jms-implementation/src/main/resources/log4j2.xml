@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE log4j:configuration PUBLIC "-//LOGGER" "log4j.dtd">-->
+<!--<!DOCTYPE log4j:configuration PUBLIC "-//log4j/log4j Configuration//EN" "log4j.dtd">-->
+
+<!--<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">-->
+
+<!--&lt;!&ndash; Appenders &ndash;&gt;-->
+<!--&lt;!&ndash; Console appender &ndash;&gt;-->
+<!--<appender name="consoleappender" class="org.apache.log4j.ConsoleAppender">-->
+<!--<param name="Target" value="System.out"/>-->
+<!--<layout class="org.apache.log4j.PatternLayout">-->
+<!--<param name="ConversionPattern" value="%d [%t] [%C:%L] %p - %m%n"/>-->
+<!--</layout>-->
+<!--</appender>-->
+
+<!--&lt;!&ndash; File appender &ndash;&gt;-->
+<!--<appender name="fileappender" class="org.apache.log4j.RollingFileAppender">-->
+<!--<param name="File" value="${log4j.log.file}"/>-->
+<!--<param name="Append" value="true"/>-->
+<!--<param name="MaxFileSize" value="2MB"/>-->
+<!--<param name="MaxBackupIndex" value="10"/>-->
+<!--<layout class="org.apache.log4j.PatternLayout">-->
+<!--<param name="ConversionPattern" value="%d [%t] [%C:%L] %p - %m%n"/>-->
+<!--</layout>-->
+<!--</appender>-->
+
+<!--<logger name="org.apache.activemq.broker.TransportConnection">-->
+<!--<level value="error"/>-->
+<!--</logger>-->
+
+<!--<logger name="org.apache.activemq.transport.failover.FailoverTransport">-->
+<!--<level value="error"/>-->
+<!--</logger>-->
+
+<!--<logger name="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+<!--<level value="error"/>-->
+<!--</logger>-->
+
+<!--&lt;!&ndash;<logger name="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">&ndash;&gt;-->
+<!--&lt;!&ndash;<level value="error"/>&ndash;&gt;-->
+<!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<logger name="uk.ac.ebi.interpro.scan.jms">&ndash;&gt;-->
+<!--&lt;!&ndash;<level value="debug"/>&ndash;&gt;-->
+<!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<logger name="uk.ac.ebi.interpro.scan.management.model.implementations">&ndash;&gt;-->
+<!--&lt;!&ndash;<level value="debug"/>&ndash;&gt;-->
+<!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<logger name="uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFileImpl">&ndash;&gt;-->
+<!--&lt;!&ndash;<level value="debug" />&ndash;&gt;-->
+<!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<logger name="uk.ac.ebi.interpro.scan">&ndash;&gt;-->
+<!--&lt;!&ndash;<level value="debug" />&ndash;&gt;-->
+<!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+<!--<logger name="uk.ac.ebi.interpro.scan">-->
+<!--<level value="warn" />-->
+<!--</logger>-->
+
+
+<!--&lt;!&ndash; Root Logger &ndash;&gt;-->
+<!--&lt;!&ndash;<logger name="">&ndash;&gt;-->
+<!--<root>-->
+<!--<priority value="warn"/>-->
+<!--<appender-ref ref="consoleappender"/>-->
+<!--</root>-->
+<!--&lt;!&ndash;</logger>&ndash;&gt;-->
+
+<!--</log4j:configuration>-->
+
+<Configuration status="WARN" strict="true">
+
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <!-- Console appender -->
+
+        <Console name="consoleappender" target="SYSTEM_OUT">
+            <!--class="org.apache.logging.log4j.core.appender.ConsoleAppender">-->
+            <!--<param name="Target" value="System.out"/>-->
+            <PatternLayout pattern="%d [%t] [%C:%L] %p - %m%n"/>
+        </Console>
+    </Appenders>
+
+
+    <Loggers>
+        <!-- avoid duplicated logs with additivity=false -->
+        <Logger name="uk.ac.ebi.interpro.scan" level="WARN" additivity="false">
+            <AppenderRef ref="consoleappender"/>
+        </Logger>
+
+        <!--<Root level="WARN">-->
+            <!--<AppenderRef ref="consoleappender"/>-->
+        <!--</Root>-->
+        <Root level="ERROR" additivity="false">
+            <AppenderRef level="WARN" ref="LogToConsole" />
+        </Root>
+    </Loggers>
+
+</Configuration>
