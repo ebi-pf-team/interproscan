@@ -6,6 +6,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,8 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
             return null;
         }
 
+        Utilities.verboseLog(10, "Considering hit:" + match.toString());
+
         Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
         int locationEnd = valueOrZero(match.getSequenceEnd());
@@ -28,12 +31,14 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
 
         String [] fragmentsTokens =  match.getFragments().split(";");
         final Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment> locationFragments = new HashSet<>(fragmentsTokens.length);
+
         for(String fragmentsToken: fragmentsTokens){
             String [] fragmentCoordinates =  fragmentsToken.split("-");
             int fragStart = valueOrZero(Integer.parseInt(fragmentCoordinates[0]));
             int fragEnd = valueOrZero(Integer.parseInt(fragmentCoordinates[1]));
             String dcStatus = fragmentCoordinates[2];
             locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
+            Utilities.verboseLog(10, "LocationFragments:" + locationFragments.toString());
         }
 
         locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
@@ -42,12 +47,15 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
                 locationFragments,
                 hmmLength
         ));
+        Utilities.verboseLog(10, "Locations:" + locations.toString());
 
-        return new SuperFamilyHmmer3Match(
+        SuperFamilyHmmer3Match superFamilyHmmer3Match = new SuperFamilyHmmer3Match(
                 signature,
                 match.getModelAccession(),
                 valueOrZero(match.getSequenceEValue()),
                 locations
         );
+        Utilities.verboseLog(10, "superFamilyHmmer3Match:" + superFamilyHmmer3Match.toString());
+        return superFamilyHmmer3Match;
     }
 }

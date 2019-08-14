@@ -269,7 +269,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 }
 
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
-                                Utilities.verboseLog(30,"i5Match :-  " + i5Match);
+                                Utilities.verboseLog(10,"i5 Lookup Converted Match :-  " + i5Match);
 
                                 if (i5Match != null) {
                                     prot.addMatch(i5Match);
@@ -286,6 +286,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     matchSet.add(i5Match);
                                     Utilities.verboseLog(30,"Persist to kvMatchStore: key " + dbKey + " singleton match : " + matchSet.size());
                                     matchDAO.persist(dbKey, matchSet);
+                                }
+                                else{
+                                    LOGGER.warn("i5 Lookup Converted Match is NULL");
+                                    Utilities.verboseLog("i5 Lookup Converted Match is NULL");
                                 }
                             }
                             else {

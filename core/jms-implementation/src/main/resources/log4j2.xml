@@ -89,7 +89,7 @@
 
     <Loggers>
         <!-- avoid duplicated logs with additivity=false -->
-        <Logger name="uk.ac.ebi.interpro.scan" level="WARN" additivity="false">
+        <Logger name="uk.ac.ebi.interpro.scan" level="DEBUG" additivity="false">
             <AppenderRef ref="consoleappender"/>
         </Logger>
 

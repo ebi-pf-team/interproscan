@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,8 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
     private static final Logger LOG = Logger.getLogger(Hmmer3LookupMatchConverter.class.getName());
 
     public Hmmer3Match convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
+
+        Utilities.verboseLog(10, "Considering hit:" + match.toString());
 
         final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;
@@ -51,6 +54,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
             int fragEnd = valueOrZero(Integer.parseInt(fragmentCoordinates[1]));
             String dcStatus = fragmentCoordinates[2];
             locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
+            Utilities.verboseLog(10, "LocationFragments:" + locationFragments.toString());
         }
 
         final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
@@ -69,6 +73,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
                 postProcessed,
                 locationFragments
         ));
+        Utilities.verboseLog(10, "Locations:" + locations.toString());
 
 //                public Hmmer3Location(int start, int end, double score, double evalue,
 //        int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,

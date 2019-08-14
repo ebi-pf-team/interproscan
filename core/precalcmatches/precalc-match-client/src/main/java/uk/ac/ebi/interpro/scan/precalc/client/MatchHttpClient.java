@@ -52,7 +52,7 @@ public class MatchHttpClient {
     private static final Logger LOG = Logger.getLogger(MatchHttpClient.class.getName());
 
     private static final String MD5_PARAMETER = "md5";
-  
+
     private boolean lastTestResponse = false;
 
     private String url;
@@ -88,19 +88,25 @@ public class MatchHttpClient {
         this.url = url;
     }
 
-    public String getUrl() { return url;    }
+    public String getUrl() {
+        return url;
+    }
 
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
-    public String getProxyHost() { return proxyHost;   }
+    public String getProxyHost() {
+        return proxyHost;
+    }
 
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
 
-    public String getProxyPort() { return proxyPort;  }
+    public String getProxyPort() {
+        return proxyPort;
+    }
 
     public KVSequenceEntryXML getMatches(String... md5s) throws IOException {
         if (LOG.isDebugEnabled()) {
@@ -195,7 +201,7 @@ public class MatchHttpClient {
 
 
     /**
-     *  get the site matches for CDD and SFLD fro thelookup service
+     * get the site matches for CDD and SFLD fro thelookup service
      *
      * @param md5s
      * @return
@@ -293,20 +299,19 @@ public class MatchHttpClient {
     }
 
 
-
-    public boolean testXMResponse(){
+    public boolean testXMResponse() {
         boolean testXMResponse = false;
         String timeNow = Utilities.getTimeNow();
         //08/11/2018 21:53:50:765
         String seconds = Character.toString(timeNow.charAt(17));
-        if (seconds.equals("3")){
+        if (seconds.equals("3")) {
             testXMResponse = true;
         }
         Random random = new Random();
         testXMResponse = random.nextBoolean();
-        if (! lastTestResponse){
+        if (!lastTestResponse) {
             testXMResponse = true;
-        }                
+        }
         Utilities.verboseLog("testXMResponse=" + testXMResponse);
         lastTestResponse = testXMResponse;
         return testXMResponse;
@@ -382,59 +387,64 @@ public class MatchHttpClient {
 
     public String getServerVersion() throws IOException {
 
-            LOG.debug("Call to MatchHttpClient.getServerVersion:");
+        LOG.debug("Call to MatchHttpClient.getServerVersion:");
 
-            if (url == null || url.isEmpty()) {
-                throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
-            }
+        if (url == null || url.isEmpty()) {
+            throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
+        }
 
-            CloseableHttpClient httpclient = getClient();
+        String serverVersion = "5.33-72.0"; //TODO this is for TEM and testing only as the server with the correct versionis not yet ready;
 
-            // Use HttpGet as the URL will be very short
-            HttpGet get = new HttpGet(url + VERSION_PATH);
+        if (! url.isEmpty()){
+            return serverVersion;
+        }
+        CloseableHttpClient httpclient = getClient();
+
+        // Use HttpGet as the URL will be very short
+        HttpGet get = new HttpGet(url + VERSION_PATH);
 
 
-            ResponseHandler<String> handler = new ResponseHandler<String>() {
-                public String handleResponse(
-                        HttpResponse response) throws IOException {
-                    String serverVersion = "";
-                    HttpEntity responseEntity = response.getEntity();
-                    if (responseEntity != null) {
+        ResponseHandler<String> handler = new ResponseHandler<String>() {
+            public String handleResponse(
+                    HttpResponse response) throws IOException {
+                String  serverVersion = "";
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
 
-                        // Stream in the response
-                        BufferedReader reader = null;
-                        try {
-                            reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
-                            String line;
-                            line = reader.readLine().trim();
-                            if (!line.isEmpty()) {
-                                    serverVersion  = line;
-                            }
-
-                        } finally {
-                            if (reader != null) {
-                                reader.close();
-                            }
+                    // Stream in the response
+                    BufferedReader reader = null;
+                    try {
+                        reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
+                        String line;
+                        line = reader.readLine().trim();
+                        if (!line.isEmpty()) {
+                            serverVersion = line;
                         }
 
-                        if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
-                            serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
-                        }  else {
-                            throw new IOException("Could not determine server version");
+                    } finally {
+                        if (reader != null) {
+                            reader.close();
                         }
+                    }
+
+                    if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
+                        serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
+                    } else {
+                        throw new IOException("Could not determine server version");
+                    }
                 }
-                    return serverVersion;
+                return serverVersion;
             }
-            };
+        };
 
         //set the proxy if needed
-        if(isProxyEnabled()){
-            LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost+":"+proxyPort);
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost + ":" + proxyPort);
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
             httpclient = getClient(proxy);
         }
 
-        String serverVersion = httpclient.execute(get, handler);
+        serverVersion = httpclient.execute(get, handler);
         httpclient.close();
         //httpclient.getConnectionManager().shutdown();
         return serverVersion;
@@ -447,7 +457,7 @@ public class MatchHttpClient {
      * @return
      */
     public boolean isConfigured() {
-        LOG.debug("lookup url: " + url );
+        LOG.debug("lookup url: " + url);
         return url != null && !url.isEmpty();
     }
 
@@ -456,7 +466,7 @@ public class MatchHttpClient {
      * if enabled configure the system properties
      */
     public boolean isProxyEnabled() {
-        LOG.debug("proxy Host: " + proxyHost + " proxyPort: " + proxyPort );
+        LOG.debug("proxy Host: " + proxyHost + " proxyPort: " + proxyPort);
         //set the proxy if needed
         if (proxyHost == null || proxyHost.isEmpty() || proxyPort == null || proxyPort.isEmpty()) {
 //            System.setProperty("proxySet", "true");
@@ -473,7 +483,7 @@ public class MatchHttpClient {
         return httpclient;
     }
 
-    public CloseableHttpClient getClient(HttpHost proxy){
+    public CloseableHttpClient getClient(HttpHost proxy) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         CloseableHttpClient httpclient = HttpClients.custom()
 //                .setConnectionManager(connManager)
@@ -487,7 +497,7 @@ public class MatchHttpClient {
 
     }
 
-    public CloseableHttpClient getClient(HttpHost proxy, CredentialsProvider credsProvider ) throws  Exception {
+    public CloseableHttpClient getClient(HttpHost proxy, CredentialsProvider credsProvider) throws Exception {
         CredentialsProvider credsProvider2 = new BasicCredentialsProvider();
         credsProvider2.setCredentials(
                 new AuthScope("localhost", 8080),
