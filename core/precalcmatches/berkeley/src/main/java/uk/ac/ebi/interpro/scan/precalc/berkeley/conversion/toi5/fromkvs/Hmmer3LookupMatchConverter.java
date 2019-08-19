@@ -78,13 +78,16 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
 //                public Hmmer3Location(int start, int end, double score, double evalue,
 //        int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
 //        int envelopeStart, int envelopeEnd, boolean postProcessed, Set<Hmmer3LocationFragment> locationFragments)
-        return new Hmmer3Match(
+        Hmmer3Match hmmer3Match = new Hmmer3Match(
                 signature,
                 match.getModelAccession(),
                 valueOrZero(match.getSequenceScore()),
                 valueOrZero(match.getSequenceEValue()),
                 locations
         );
+        Utilities.verboseLog(10, "hmmer3Match:" + hmmer3Match.toString());
+
+        return hmmer3Match;
     }
 
 }

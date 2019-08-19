@@ -352,6 +352,8 @@ public class PrepareForOutputStep extends Step {
                     if (matches != null){
                         //Utilities.verboseLog("Get matches for protein  id: " + protein.getId() +  " dbKey (matchKey): " + dbKey);
                         for(Match match: matches){
+                            String accession = match.getSignature().getAccession();
+                            Utilities.verboseLog(10, "dbKey :" + dbKey + " - " + accession ); //+ " - match: " + match.getLocations()) ;
                             match.getSignature().getCrossReferences();
                             //match.getSignature().getEntry();
                             //try update with cross refs etc

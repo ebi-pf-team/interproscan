@@ -42,15 +42,14 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
                     "SEQ_FEATURE" +
-
                     "       from  lookup_tmp_tab  partition (partitionName) " +
-                    //"       order by  PROTEIN_MD5";
+                    "       order by  upi_range, PROTEIN_MD5";
                     //"       where upi_range = ? " +
                     //"       order by  PROTEIN_MD5";
 
                     //"       from  lookup_tmp_tab " +
-                    "       where upi_range = ? " +
-                    "       order by  upi_range, PROTEIN_MD5";
+//                    "       where upi_range = ? " +
+//                    "       order by  upi_range, PROTEIN_MD5";
     /*
     "       from  lookup_tmp_tab  partition (partitionName) " +
             "       where upi_range = ? " +

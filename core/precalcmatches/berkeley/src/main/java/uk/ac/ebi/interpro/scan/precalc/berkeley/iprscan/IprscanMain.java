@@ -66,6 +66,7 @@ public class IprscanMain {
 
 
         //sites
+        /*
         CreateSiteDBFromIprscanBerkeleyDB siteMatchBuilder = new CreateSiteDBFromIprscanBerkeleyDB();
         siteMatchBuilder.buildDatabase(
                 siteDBPath,
@@ -76,6 +77,7 @@ public class IprscanMain {
                 fetchSize
         );
 
+        */
 
 
     }

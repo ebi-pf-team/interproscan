@@ -33,8 +33,8 @@ public class CreateMD5ListFromIprscan {
 //                    "  order by protein_md5";
 
     private static final String MD5_QUERY =
-      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 where upi <= 'UPI00000FFFFF' order by protein_md5"; //UPI0003F7AADD
-//      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
+//      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 where upi <= 'UPI00000FFFFF' order by protein_md5"; //UPI0003F7AADD
+      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
 
 
     public static void main(String[] args) {

@@ -166,6 +166,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 //Utilities.verboseLog(10, "matchesForModel - first match:  " + simpleMatch.toString());
 
                 String signatureLibraryReleaseVersion = simpleMatch.getSigLibRelease();
+
                 //Utilities.verboseLog(10, "simpleMatch:  " + simpleMatch.toString() );
                 final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(simpleMatch.getSignatureLibraryName());
                 //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
@@ -268,8 +269,11 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     Utilities.verboseLog(30, " \n sequenceSiteHits  is NULL:");
                                 }
 
+                                Utilities.verboseLog(10,"Lookup Match :-  " + simpleMatch.getProteinMD5() + "  "
+                                        + simpleMatch.getSequenceStart() + " - " + simpleMatch.getSequenceEnd());
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
                                 Utilities.verboseLog(10,"i5 Lookup Converted Match :-  " + i5Match);
+                                System.out.println("----");
 
                                 if (i5Match != null) {
                                     prot.addMatch(i5Match);
@@ -284,7 +288,9 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     Set<Match> matchSet = new HashSet<>();
                                     updateMatch(i5Match);
                                     matchSet.add(i5Match);
-                                    Utilities.verboseLog(30,"Persist to kvMatchStore: key " + dbKey + " singleton match : " + matchSet.size());
+                                    String coordinates = getCoordinates(i5Match);
+                                    Utilities.verboseLog(30,"Persist to kvMatchStore: key " + dbKey + " singleton match: " +
+                                            coordinates + " match size: " + matchSet.size());
                                     matchDAO.persist(dbKey, matchSet);
                                 }
                                 else{
@@ -298,12 +304,18 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 if (i5Matches != null) {
 
                                     for (Match i5Match : i5Matches) {
-                                        updateMatch(i5Match);
                                         prot.addMatch(i5Match);
+                                        updateMatch(i5Match);
+                                        String accession = i5Match.getSignature().getAccession();
+                                        Utilities.verboseLog(10, "Converted Match dbKey : " + dbKey + " - " + accession );
+                                        //i5Match.getLocations()
+                                        String coordinates = getCoordinates(i5Match);
+                                        Utilities.verboseLog(10,"i5 Lookup Converted Match (from a set) :-  " + accession  + " " + coordinates );
+                                        //prot.addMatch(i5Match); try to reverse the order in which the above two statments are being executed
                                     }
                                     Set<Match> matchSet = new HashSet<>(i5Matches);
                                     Utilities.verboseLog(30, "Persist to kvMatchStore: key " + dbKey + " matches : " + matchSet.size());
-                                    matchDAO.persist(dbKey, matchSet);
+                                    persistMatch(matchSet, dbKey);
                                 }
                             }
                         } else {
@@ -331,6 +343,54 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
     }
 
+    /**
+     * deal with the case where matches for the sequence are already in the db
+     *
+     * @param matches
+     * @param dbKey
+     * @return
+     */
+    public boolean persistMatch(Set<Match> matches, String dbKey){
+        Set<Match> matchSet = matchDAO.getMatchSet(dbKey);
+        if (matchSet == null) {
+            Utilities.verboseLog(20,"set new matches " + dbKey + " matches size : " + matches.size());
+            matchSet = matches;
+        }else{
+            int oldMatchSetSize = matchSet.size();
+            Utilities.verboseLog(20,"Found matches for this key key " + dbKey + " oldMatchSetSize : " + oldMatchSetSize + " new matchSet size : " + matchSet.size());
+            matchSet.addAll(matches);
+        }
+        Utilities.verboseLog(30,"Persist to Converetd lkpup Matches to kvMatchStore: key " + dbKey + " match count:  : " + matchSet.size());
+        matchDAO.persist(dbKey, matchSet);
+        Set<Match> matchSet2 = matchDAO.getMatchSet(dbKey);
+        Utilities.verboseLog(30,"kvMatchStore MatchSet: key " + dbKey + " match count:  : " + matchSet2.size());
+        return true; // ??
+    }
+
+    public String  getCoordinates(Match i5Match){
+        StringBuilder coordinates = new StringBuilder();
+        Set<Location> locations = i5Match.getLocations();
+        Integer start = null;
+        Integer end = null;
+        for (Location location: locations){
+            if (start == null){
+                start = location.getStart();
+            } else if (start > location.getStart()){
+                start = location.getStart();
+            }
+            if (end == null){
+                end = location.getEnd();
+            } else if (end < location.getEnd()){
+                end = location.getEnd();
+            }
+        }
+        coordinates.append("[").
+                append(start).
+                append("-").
+                append(end).
+                append("]");
+        return coordinates.toString();
+    }
 
     public void updateMatch(Match match){
         Entry matchEntry = match.getSignature().getEntry();

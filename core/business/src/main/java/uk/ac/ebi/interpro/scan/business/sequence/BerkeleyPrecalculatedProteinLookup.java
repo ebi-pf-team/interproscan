@@ -603,6 +603,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                         LOGGER.debug("Different versions of  " + analysisJobName + " running ");
                     }
                     Utilities.verboseLog("Different versions of  " + analysisJobName + " running ");
+
                     return false;
                 }
             }
