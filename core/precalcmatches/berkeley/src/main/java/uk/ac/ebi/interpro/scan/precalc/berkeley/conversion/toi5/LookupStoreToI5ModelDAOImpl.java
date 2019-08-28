@@ -156,6 +156,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
             //we have to get all the matches and not just the first match
             Utilities.verboseLog(40, "modelToMatchesMap size:  " + modelToMatchesMap.values().size() );
+            int simpleMatchCount = 0;
             for (List<SimpleLookupMatch> matchesForModel : modelToMatchesMap.values()) {
                 assert matchesForModel.size() > 0;
 
@@ -259,6 +260,17 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         if (prot != null) {
                             // One or multiple locations for this match on a given protein for this modelAc
                             //Utilities.verboseLog(10, "consider dbKey:  " + dbKey + " matchesForModel: " + matchesForModel.size() );
+                            simpleMatchCount ++;
+                            Utilities.verboseLog(40, "simpleMatchCount :  " + simpleMatchCount + " signatureAc: " + simpleMatch.getSignatureAccession() +
+                                    " expected matches: " + matchesForModel.size());
+                            for (SimpleLookupMatch simpleLookupMatchDisplay: matchesForModel){
+                                Utilities.verboseLog("simpleLookupMatchDisplay: \n" +
+                                        " sequence: " + prot.getId() +
+                                        " md5: " + simpleLookupMatchDisplay.getProteinMD5() +
+                                        " location: " + simpleLookupMatchDisplay.getSequenceStart() + " - " + simpleLookupMatchDisplay.getSequenceEnd() +
+                                        " fragments: " + simpleLookupMatchDisplay.getFragments()) ;
+                            }
+
                             if (matchesForModel.size() == 1) {
                                 Utilities.verboseLog(30, "Convert match for:  " + simpleMatch.getProteinMD5());
                                 Utilities.verboseLog(30, "simpleMatch : " + simpleMatch.toString()  +  " signature:  " + signature.getName() );
@@ -273,7 +285,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                         + simpleMatch.getSequenceStart() + " - " + simpleMatch.getSequenceEnd());
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
                                 Utilities.verboseLog(10,"i5 Lookup Converted Match :-  " + i5Match);
-                                System.out.println("----");
+                                Utilities.verboseLog(40,"----");
 
                                 if (i5Match != null) {
                                     prot.addMatch(i5Match);
@@ -291,7 +303,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     String coordinates = getCoordinates(i5Match);
                                     Utilities.verboseLog(30,"Persist to kvMatchStore: key " + dbKey + " singleton match: " +
                                             coordinates + " match size: " + matchSet.size());
-                                    matchDAO.persist(dbKey, matchSet);
+                                    //matchDAO.persist(dbKey, matchSet);
+                                    persistMatch(matchSet, dbKey);
                                 }
                                 else{
                                     LOGGER.warn("i5 Lookup Converted Match is NULL");
@@ -351,19 +364,27 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
      * @return
      */
     public boolean persistMatch(Set<Match> matches, String dbKey){
+        Utilities.verboseLog(20,"Start persistMatch  " + dbKey + " matches size : " + matches.size());
         Set<Match> matchSet = matchDAO.getMatchSet(dbKey);
+        StringBuffer superfamilyCheck = new StringBuffer("Superfamily check: ");
         if (matchSet == null) {
             Utilities.verboseLog(20,"set new matches " + dbKey + " matches size : " + matches.size());
             matchSet = matches;
+            superfamilyCheck.append(" matchset is Null - ");
         }else{
             int oldMatchSetSize = matchSet.size();
             Utilities.verboseLog(20,"Found matches for this key key " + dbKey + " oldMatchSetSize : " + oldMatchSetSize + " new matchSet size : " + matchSet.size());
             matchSet.addAll(matches);
+            superfamilyCheck.append(" matchset has " + oldMatchSetSize + " matches already");
+            superfamilyCheck.append(" matchset has " + oldMatchSetSize + " matches already");
         }
+        superfamilyCheck.append(" - added " + matches.size() + " matches");
         Utilities.verboseLog(30,"Persist to Converetd lkpup Matches to kvMatchStore: key " + dbKey + " match count:  : " + matchSet.size());
         matchDAO.persist(dbKey, matchSet);
         Set<Match> matchSet2 = matchDAO.getMatchSet(dbKey);
-        Utilities.verboseLog(30,"kvMatchStore MatchSet: key " + dbKey + " match count:  : " + matchSet2.size());
+        superfamilyCheck.append(" final matchCount = " + matchSet2.size());
+        Utilities.verboseLog(40, superfamilyCheck.toString());
+        Utilities.verboseLog(20,"End persistMatch  - kvMatchStore MatchSet: key " + dbKey + " match count:  : " + matchSet2.size());
         return true; // ??
     }
 

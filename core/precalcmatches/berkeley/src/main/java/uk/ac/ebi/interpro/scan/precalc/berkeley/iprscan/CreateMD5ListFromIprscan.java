@@ -122,7 +122,7 @@ public class CreateMD5ListFromIprscan {
                 // Store last protein
                 primIDX.put(protein);
                 proteinCount++;
-                if (proteinCount % 500000 == 0) {
+                if (proteinCount % 5000000 == 0) {
                     System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
                 }
             }

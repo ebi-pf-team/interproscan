@@ -152,7 +152,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
                         //ps.setString(1, partitionName);
 
-                        ps.setString(1, partitionName);
+                        //ps.setString(1, partitionName);
                         //ps.setString(1, partitionName);
 
                         //ps.setString(2, partitionName);
