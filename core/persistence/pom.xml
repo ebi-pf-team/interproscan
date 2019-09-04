@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb</artifactId>
-            <version>0.11</version>
+            <version>0.12</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

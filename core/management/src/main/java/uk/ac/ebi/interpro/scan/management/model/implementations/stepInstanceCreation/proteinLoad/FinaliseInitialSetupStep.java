@@ -133,7 +133,8 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             LOGGER.debug(analysesDisplayStr + analysesToDisplay.toString());
         }
 
-        System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
+        //TODO check if this should be disabled
+        //System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
 
         final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
         Job completionJob = jobs.getJobById(completionJobName);

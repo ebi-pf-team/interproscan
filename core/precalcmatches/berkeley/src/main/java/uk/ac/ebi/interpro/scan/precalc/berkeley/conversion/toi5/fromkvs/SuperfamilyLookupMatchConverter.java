@@ -22,7 +22,7 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
             return null;
         }
 
-        Utilities.verboseLog(10, "Considering hit:" + match.toString());
+        Utilities.verboseLog(20, "Considering hit:" + match.toString());
 
         Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<>(1);
         int locationStart = valueOrZero(match.getSequenceStart());
@@ -38,7 +38,7 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
             int fragEnd = valueOrZero(Integer.parseInt(fragmentCoordinates[1]));
             String dcStatus = fragmentCoordinates[2];
             locationFragments.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
-            Utilities.verboseLog(10, "LocationFragments:" + locationFragments.toString());
+            Utilities.verboseLog(40, "LocationFragments:" + locationFragments.toString());
         }
 
         locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(
@@ -47,7 +47,7 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
                 locationFragments,
                 hmmLength
         ));
-        Utilities.verboseLog(10, "Locations:" + locations.toString());
+        Utilities.verboseLog(40, "Locations:" + locations.toString());
 
         SuperFamilyHmmer3Match superFamilyHmmer3Match = new SuperFamilyHmmer3Match(
                 signature,
@@ -55,7 +55,7 @@ public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperF
                 valueOrZero(match.getSequenceEValue()),
                 locations
         );
-        Utilities.verboseLog(10, "superFamilyHmmer3Match:" + superFamilyHmmer3Match.toString());
+        Utilities.verboseLog(40, "superFamilyHmmer3Match:" + superFamilyHmmer3Match.toString());
         return superFamilyHmmer3Match;
     }
 }

@@ -58,6 +58,7 @@ public class PrepareForOutputStep extends Step {
 
         String proteinRange = "[" + stepInstance.getBottomProtein() + "_" + stepInstance.getTopProtein() + "]";
         Utilities.verboseLog("Starting PrepareForOutputStep :" + proteinRange);
+
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
 
@@ -66,6 +67,8 @@ public class PrepareForOutputStep extends Step {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting step with Id " + this.getId());
         }
+
+        Utilities.verboseLog(10, "temporaryFileDirectory: " + temporaryFileDirectory);
 
         int proteinCount = 0;
         int matchCount = 0;
@@ -81,13 +84,13 @@ public class PrepareForOutputStep extends Step {
 
         try {
             Utilities.verboseLog("Pre-marshall the proteins ...");
-            simulateMarshalling(stepInstance, "p");
+            simulateMarshalling(stepInstance, "p", temporaryFileDirectory);
             Utilities.verboseLog("Pre-marshall the nucleotide sequences ...");
             final Map<String, String> parameters = stepInstance.getParameters();
             final String sequenceType = parameters.get(SEQUENCE_TYPE);
             if(sequenceType.equalsIgnoreCase("n")) {
                 Utilities.verboseLog("Dealing with nucleotide sequences ... , so pre-marshalling required");
-                processNucleotideSequences(stepInstance);
+                processNucleotideSequences(stepInstance, temporaryFileDirectory);
             }else{
                 Utilities.verboseLog("Dealing with proteins  ... , so pre-marshalling already done");
             }
@@ -218,7 +221,7 @@ public class PrepareForOutputStep extends Step {
     }
 
 
-    private void processNucleotideSequences( StepInstance stepInstance){
+    private void processNucleotideSequences( StepInstance stepInstance, String temporaryFileDirectory){
         //
         //should we deal with nucleotides here
         //Utilities.verboseLog("proteinWithXref: \n" +  proteinWithXref.toString());
@@ -230,7 +233,6 @@ public class PrepareForOutputStep extends Step {
         Long topProteinId = stepInstance.getTopProtein();
 
         int proteinCount = 0;
-
 
             Set<String> signatureLibraryNames = new HashSet<>();
 
@@ -262,7 +264,7 @@ public class PrepareForOutputStep extends Step {
                 //Utilities.verboseLog("nucleotideSequences : \n" + nucleotideSequences.iterator().next());
                 try {
                     //outputNTToXML(stepInstance, "n", nucleotideSequences);
-                    outputToXML(stepInstance, "n", nucleotideSequenceIds);
+                    outputToXML(stepInstance, "n", nucleotideSequenceIds, temporaryFileDirectory);
                     //outputToJSON(stepInstance, "n", nucleotideSequences);
                 } catch (IOException e) {
                     LOGGER.error("Error writing to xml");
@@ -274,14 +276,15 @@ public class PrepareForOutputStep extends Step {
     }
 
 
-    private void simulateMarshalling( StepInstance stepInstance, String sequenceType) throws IOException {
+    private void simulateMarshalling( StepInstance stepInstance, String sequenceType, String temporaryFileDirectory) throws IOException {
         if (! sequenceType.equalsIgnoreCase("p")){
             return;
         }
         final boolean isSlimOutput = false;
         final String interProScanVersion = "5-34";
 
-        Path outputPath = getFinalPath(stepInstance, FileOutputFormat.XML);
+        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
+
         Utilities.verboseLog(10, " Prepare For OutputStep - prepare to output proteins for XML: " + outputPath );
         LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
 
@@ -353,7 +356,7 @@ public class PrepareForOutputStep extends Step {
                         //Utilities.verboseLog("Get matches for protein  id: " + protein.getId() +  " dbKey (matchKey): " + dbKey);
                         for(Match match: matches){
                             String accession = match.getSignature().getAccession();
-                            Utilities.verboseLog(10, "dbKey :" + dbKey + " - " + accession ); //+ " - match: " + match.getLocations()) ;
+                            Utilities.verboseLog(20, "dbKey :" + dbKey + " - " + accession ); //+ " - match: " + match.getLocations()) ;
                             match.getSignature().getCrossReferences();
                             //match.getSignature().getEntry();
                             //try update with cross refs etc
@@ -387,15 +390,16 @@ public class PrepareForOutputStep extends Step {
     }
 
 
-    private void outputToXML( StepInstance stepInstance, String sequenceType, Set<Long> nucleotideSequenceIds) throws IOException {
+    private void outputToXML( StepInstance stepInstance, String sequenceType, Set<Long> nucleotideSequenceIds, String temporaryFileDirectory) throws IOException {
         if (! sequenceType.equalsIgnoreCase("n")){
             return;
         }
         final boolean isSlimOutput = false;
         final String interProScanVersion = "5-34";
 
-        Path outputPath = getFinalPath(stepInstance, FileOutputFormat.XML);
+        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
         Utilities.verboseLog(10, " Prepare For OutputStep - output Nucleotide sequences to XML: " + outputPath );
+
 
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
@@ -433,14 +437,14 @@ public class PrepareForOutputStep extends Step {
 
 
 
-    private void outputNTToXML( StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences) throws IOException {
+    private void outputNTToXML( StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences, String temporaryFileDirectory) throws IOException {
         if (! sequenceType.equalsIgnoreCase("n")){
             return;
         }
         final boolean isSlimOutput = false;
         final String interProScanVersion = "5-34";
 
-        Path outputPath = getFinalPath(stepInstance, FileOutputFormat.XML);
+        Path outputPath = getFinalPath(stepInstance,temporaryFileDirectory, FileOutputFormat.XML);
         Utilities.verboseLog(10, " Prepare For OutputStep - outputNTToXML: " + outputPath );
 
         Long bottomProteinId = stepInstance.getBottomProtein();
@@ -483,7 +487,7 @@ public class PrepareForOutputStep extends Step {
 
 
 
-    private void outputToJSON(StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences) throws IOException {
+    private void outputToJSON(StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences, String temporaryFileDirectory) throws IOException {
         Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
 
         boolean isSlimOutput = false;
@@ -499,7 +503,7 @@ public class PrepareForOutputStep extends Step {
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
 
-        Path outputPath = getFinalPath(stepInstance, FileOutputFormat.JSON);
+        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.JSON);
 
         final Map<String, String> parameters = stepInstance.getParameters();
         //final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
@@ -532,10 +536,12 @@ public class PrepareForOutputStep extends Step {
 
     }
 
-    Path getFinalPath(StepInstance stepInstance, FileOutputFormat fileOutputFormat){
+    Path getFinalPath(StepInstance stepInstance, String temporaryFileDirectory, FileOutputFormat fileOutputFormat){
+        //stepInstance.buildFullyQualifiedFilePath();
+
         final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
         final Map<String, String> parameters = stepInstance.getParameters();
-        final boolean explicitPath = parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
+        final boolean explicitPath = false; //parameters.containsKey(OUTPUT_EXPLICIT_FILE_PATH_KEY);
 
         final String OUTPUT_FILE_FORMATS = "OUTPUT_FORMATS";
 
@@ -546,6 +552,16 @@ public class PrepareForOutputStep extends Step {
         String filePathName = (explicitPath)
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
+
+        Utilities.verboseLog("filePathName: " + filePathName);
+
+        String sequenceLabel = "prot";
+        final String sequenceType = parameters.get(SEQUENCE_TYPE);
+        if(sequenceType.equalsIgnoreCase("n")) {
+            sequenceLabel = "nt";
+        }
+
+        filePathName = temporaryFileDirectory + File.separator + sequenceLabel + ".prepare"; //overwite the filepath as these files are temp so they should be in the temp folder
 
         String proteinRange = stepInstance.getBottomProtein() + "_" + stepInstance.getTopProtein();
         filePathName = filePathName + "." + proteinRange + ".tmp";
@@ -645,7 +661,11 @@ public class PrepareForOutputStep extends Step {
         final String outputFilePathName = outputPath.toAbsolutePath().toString();
         Utilities.verboseLog(20,"Deleting temp xml file:  " + outputFilePathName);
         File file = new File(outputFilePathName);
+        if (file.exists()){
+            return;
+        }
         if (file.exists()) {
+            LOGGER.warn("PrepareForOutput File is located at " + outputFilePathName);
             if (!file.delete()) {
                 LOGGER.error("Unable to delete the file located at " + outputFilePathName);
                 throw new IllegalStateException("Unable to delete the file located at " + outputFilePathName);

@@ -299,12 +299,13 @@ public class Run extends AbstractI5Runner {
                 }
 
                 try {
+                    System.out.println("Deal with depreactedAnalysesToRun and excludedAnalyses");
                     depreactedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
-                    //System.out.println("depreacted Analyses To Run :" + depreactedAnalysesToRun.toString());
+                    System.out.println("depreacted Analyses To Run :" + depreactedAnalysesToRun.toString());
 
                     excludedAnalyses = getExcludedApplications(parsedCommandLine, jobs);
 
-                    //System.out.println("excludedAnalyses Analyses  :" + excludedAnalyses.toString());
+                    System.out.println("excludedAnalyses Analyses  :" + excludedAnalyses.toString());
 
                     analysesToRun = getApplications(parsedCommandLine, jobs);
                     if (LOGGER.isDebugEnabled()){
@@ -1330,7 +1331,7 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
         }
-
+        System.out.println("deprecatedAnalysesToRun: " + deprecatedAnalysesToRun.toString());
         return StringUtils.toStringArray(deprecatedAnalysesToRun);
 
 
@@ -1430,7 +1431,7 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
         }
-
+        System.out.println("excludedAnalyses : " + excludedAnalyses.toString());
         return StringUtils.toStringArray(excludedAnalyses);
 
 

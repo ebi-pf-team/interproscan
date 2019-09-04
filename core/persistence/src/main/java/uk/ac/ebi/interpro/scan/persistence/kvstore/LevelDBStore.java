@@ -6,6 +6,7 @@ import org.iq80.leveldb.Options;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,8 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
     public void put(String key, byte[] data) {
         //System.out.println(dbName  +": put [key byte ] key:" + key);
         byte[] byteKey = serialize(key);
-        levelDBStore.put(byteKey, data);
+        //levelDBStore.put(byteKey, data);
+        put(byteKey, data);
     }
 
     /**
@@ -68,7 +70,32 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
      */
     public void put(byte[] key, byte[] data) {
         //System.out.println(dbName  +":put [byte byte ] key :" + key);
-        levelDBStore.put(key, data);
+        //levelDBStore.put(key, data);
+
+
+        //due to compression etc, the insert might fail
+        for (int retries = 0;; retries++) {
+            try{
+                levelDBStore.put(key, data);
+                break; //otherwise its an infinite loop
+            } catch (Exception exception) {
+                if (exception instanceof FileNotFoundException ) {
+                    if (retries > 3) {
+                        exception.printStackTrace();  //TODO  for debug ??
+                        throw new IllegalStateException("Problem inserting data into the DBStore: FileNotFoundException :- " + exception);
+                    } else {
+                        try {
+                            Thread.sleep(2 * 1000); // cool off, then try again
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    throw new IllegalStateException("Problem inserting data into the DBStore " + exception);
+                }
+            }
+        }
+
     }
 
     /**

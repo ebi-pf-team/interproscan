@@ -60,6 +60,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
     @Override
     @Transactional
     public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener,Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
+        sequenceLoader.setDisplayLookupMessage(true);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         int sequencesParsed = 0;

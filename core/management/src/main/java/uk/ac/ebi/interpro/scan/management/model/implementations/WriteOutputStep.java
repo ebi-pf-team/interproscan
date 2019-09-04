@@ -388,7 +388,13 @@ public class WriteOutputStep extends Step {
                 for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
                     String proteinKey = Long.toString(proteinIndex);
                     Protein protein = proteinDAO.getProtein(proteinKey);
-                    if (protein == null || protein.getMatches().isEmpty()) {
+                    if (protein == null ) {
+                        LOGGER.warn("protein with id  " + proteinIndex + " was null");
+                        continue;
+                        //something is wrong as we should get a null protein
+                    }
+                    if (isSlimOutput && protein.getMatches().isEmpty()) {
+                        //dont display proteins that dont have matches
                         continue;
                     }
                     Set<Match> matches = protein.getMatches();
@@ -523,7 +529,8 @@ public class WriteOutputStep extends Step {
                     for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
                         String proteinKey = Long.toString(proteinIndex);
                         Protein protein = proteinDAO.getProtein(proteinKey);
-                        if (protein == null || protein.getMatches().isEmpty()) {
+                        if (protein == null) {
+                            LOGGER.warn("protein with id  " + proteinIndex + " was null");
                             continue;
                         }
                         writer.write(protein);

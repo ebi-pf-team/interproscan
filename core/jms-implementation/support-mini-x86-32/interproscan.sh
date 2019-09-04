@@ -49,7 +49,7 @@ fi
 
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4  \
- -Xms1028M -Xmx2056M \
+ -Xms1028M -Xmx8056M \
 -jar  interproscan-5.jar $@ -u $USER_DIR
 
 #end

@@ -116,6 +116,10 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
 
     }
 
+    public  void setDisplayLookupMessage(boolean useMatchLookupService){
+        // Currently a no-op
+    }
+
     public void setUseMatchLookupService(boolean useMatchLookupService) {
         // Currently a no-op, as there is no lookup service for nucleotide sequence matches.
     }

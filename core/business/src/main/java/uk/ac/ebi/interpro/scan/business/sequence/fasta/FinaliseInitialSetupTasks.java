@@ -38,6 +38,7 @@ public class FinaliseInitialSetupTasks {
 
      @Transactional
     public void execute(SequenceLoadListener sequenceLoaderListener, Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
+        sequenceLoader.setDisplayLookupMessage(false);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered FinaliseInitialSetupTasks execute method");
         Utilities.verboseLog("Entered FinaliseInitialSetupTasks execute method");

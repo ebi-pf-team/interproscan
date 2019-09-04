@@ -264,7 +264,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                             Utilities.verboseLog(40, "simpleMatchCount :  " + simpleMatchCount + " signatureAc: " + simpleMatch.getSignatureAccession() +
                                     " expected matches: " + matchesForModel.size());
                             for (SimpleLookupMatch simpleLookupMatchDisplay: matchesForModel){
-                                Utilities.verboseLog("simpleLookupMatchDisplay: \n" +
+                                Utilities.verboseLog(20, "simpleLookupMatchDisplay: \n" +
                                         " sequence: " + prot.getId() +
                                         " md5: " + simpleLookupMatchDisplay.getProteinMD5() +
                                         " location: " + simpleLookupMatchDisplay.getSequenceStart() + " - " + simpleLookupMatchDisplay.getSequenceEnd() +
@@ -284,7 +284,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 Utilities.verboseLog(10,"Lookup Match :-  " + simpleMatch.getProteinMD5() + "  "
                                         + simpleMatch.getSequenceStart() + " - " + simpleMatch.getSequenceEnd());
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
-                                Utilities.verboseLog(10,"i5 Lookup Converted Match :-  " + i5Match);
+                                Utilities.verboseLog(40,"i5 Lookup Converted Match :-  " + i5Match);
                                 Utilities.verboseLog(40,"----");
 
                                 if (i5Match != null) {

@@ -186,7 +186,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
             LOGGER.debug(analysesDisplayStr + analysesToDisplay.toString());
         }
 
-        System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
+        //System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
 
         boolean useMatchLookupService = true;
         if (stepInstance.getParameters().containsKey(USE_MATCH_LOOKUP_SERVICE)) {

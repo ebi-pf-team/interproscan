@@ -95,7 +95,8 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
     @Override
     @Transactional
     public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener,Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
-        sequenceLoader.setUseMatchLookupService(useMatchLookupService);
+        sequenceLoader.setDisplayLookupMessage(true);
+        sequenceLoader.setUseMatchLookupService(useMatchLookupService); //set lookup and display message
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         Utilities.verboseLog("Entered LoadFastaFileImpl.loadSequences() method");
         int sequencesParsed = 0;

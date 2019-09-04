@@ -570,7 +570,7 @@
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
         <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
-        <property name="useMatchLookupService" value="false"/>
+        <property name="useMatchLookupService"  value="false" />
     </bean>
 
     <bean id="proteinLoadListener"

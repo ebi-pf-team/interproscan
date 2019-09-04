@@ -141,6 +141,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         //check the kv stores in proteinDAO
         proteinDAO.checkKVDBStores();
 
+        int oldProgressMeter = 0;
         for (Protein protein : proteins) {
             count++;
             if (proteinsAwaitingPrecalcLookup == null) {
@@ -189,6 +190,16 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
                 // All dealt with, so clear.
                 proteinsAwaitingPrecalcLookup.clear();
+            }
+            int progressMeter = count * 100 / proteinsCount;
+            if (progressMeter % 20 == 0 && progressMeter != oldProgressMeter){
+                if (progressMeter % 40 == 0 ) {
+                    System.out.println(Utilities.getTimeNow() + " LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                } else {
+
+                    Utilities.verboseLog(10, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                }
+                oldProgressMeter = progressMeter;
             }
 
         }
