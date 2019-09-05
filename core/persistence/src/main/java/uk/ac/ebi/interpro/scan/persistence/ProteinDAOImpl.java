@@ -30,6 +30,7 @@ import org.iq80.leveldb.WriteBatch;
 import org.iq80.leveldb.DBException;
 import uk.ac.ebi.interpro.scan.persistence.kvstore.KVDB;
 import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.io.IOException;
@@ -228,25 +229,30 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
     }
 
     public void checkKVDBStores(){
-        System.out.println("Main Store: " + dbStore.getKVDBStore());
-        System.out.println("Secondary Store: " + proteinsNotInLookupDB.getKVDBStore());
+        Utilities.verboseLog(10, "Main Store: " + dbStore.getKVDBStore());
+        Utilities.verboseLog(10,"Secondary Store: " + proteinsNotInLookupDB.getKVDBStore());
 
         if(this.proteinsNotInLookupDB == null){
             LOGGER.warn("proteinsNotInLookupDB == null");
         }else{
             if (! (proteinsNotInLookupDB.getLevelDBStore() == null)){
-                LOGGER.warn("proteinsNotInLookupDB LevelDBStore NOT NULL");
+                Utilities.verboseLog("proteinsNotInLookupDB LevelDBStore is NOT NULL");
             }else{
                 LOGGER.warn("proteinsNotInLookupDB is NULL - storename: " +  proteinsNotInLookupDB.getKVDBStore() +
                         " dbmane: " + proteinsNotInLookupDB.getDbName());
             }
         }
-        LOGGER.warn(proteinsNotInLookupDB.toString());
+        Utilities.verboseLog(10, proteinsNotInLookupDB.toString());
     }
 
     public DB getLevelDBStore(){
 
         return proteinsNotInLookupDB.getLevelDBStore();
+    }
+
+    public void closeKVDBStores(){
+        dbStore.close();
+        proteinsNotInLookupDB.close();
     }
 
     //the old methods that may have to be refactored

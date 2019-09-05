@@ -15,6 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAO;
@@ -52,6 +53,8 @@ public class WriteOutputStep extends Step {
     private ProteinXrefDAO proteinXrefDAO;
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
+
+    private MatchDAO matchDAO;
 
     //Output writer
     private XmlWriter xmlWriter;
@@ -125,6 +128,10 @@ public class WriteOutputStep extends Step {
     @Required
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
         this.nucleotideSequenceDAO = nucleotideSequenceDAO;
+    }
+
+    public void setMatchDAO(MatchDAO matchDAO) {
+        this.matchDAO = matchDAO;
     }
 
     @Required
@@ -262,6 +269,14 @@ public class WriteOutputStep extends Step {
             }
         }
 
+        //close the kvStores
+
+        nucleotideSequenceDAO.getDbStore().close();
+
+        proteinDAO.closeKVDBStores();
+
+        matchDAO.getDbStore().close();
+
         cleanUpWorkingDir(temporaryFileDirectory);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Step with Id " + this.getId() + " finished.");
@@ -281,9 +296,15 @@ public class WriteOutputStep extends Step {
             final String workingDirectory = temporaryFileDirectory.substring(0, temporaryFileDirectory.lastIndexOf(File.separatorChar));
             File file = new File(workingDirectory);
             try {
-                FileUtils.deleteDirectory(file);
+                if (file.exists()) {
+                    LOGGER.warn("temporaryFileDirectory exists, so delete: ");
+                    // FileUtils.deleteDirectory(file);
+                    FileUtils.forceDelete(file);
+                }
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
+                LOGGER.warn("ExceptionMessage: " + e.getMessage());
+                e.printStackTrace();
             }
         } else {
             LOGGER.debug("Files in temporaryFileDirectory not deleted since  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);

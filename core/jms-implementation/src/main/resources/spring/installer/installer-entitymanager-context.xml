@@ -26,6 +26,7 @@
                     * turns camelHump wording into underscore_spaced
                     Otherwise, it is not Oracle specific in any way, so will work fine with any RDBMS. -->
                 <entry key="hibernate.physical_naming_strategy" value="uk.ac.ebi.interpro.scan.model.hibernate.OraclePhysicalNamingStrategy"/>
+                <entry key="hibernate.id.new_generator_mappings" value="${hibernate.id.new_generator_mappings}"/>
                 <!--c3p0 connection pool-->
                 <entry key="hibernate.c3p0.min_size" value="${hibernate.c3p0.min_size}"/>
                 <entry key="hibernate.c3p0.max_size" value="${hibernate.c3p0.max_size}"/>

@@ -134,14 +134,15 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
     public void close() throws XMLStreamException, IOException {
         writer.writeEndDocument();
         writer.close();
-        System.out.println("");
+        //System.out.println("");
         //bufferedWriter.close();
 
+        Utilities.verboseLog(20, "Format the xML file --");
         Transformer transformer = null;
 
         try {
             BufferedReader buf = Files.newBufferedReader(xmlPath, characterSet);
-            String newPathName = xmlPath.toAbsolutePath().toString() + ".transform";
+            String newPathName = xmlPath.toAbsolutePath().toString() + ".tmp.noindent";
             /*
             String line = buf.readLine();
             StringBuilder sb = new StringBuilder();
@@ -166,7 +167,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
             Utilities.verboseLog(20,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
                     + " - with - " + targetPath.toAbsolutePath().toString());
             Files.move(sourcePath, targetPath, REPLACE_EXISTING);
-            LOGGER.warn("Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
+            Utilities.verboseLog(20,"Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
                     "                    - with - " + targetPath.toAbsolutePath().toString());
 
         } catch (TransformerConfigurationException e) {

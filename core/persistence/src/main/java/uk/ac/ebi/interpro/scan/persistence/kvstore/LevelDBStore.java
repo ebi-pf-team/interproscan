@@ -37,9 +37,9 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
         try {
             setKVDBStore(levelDBStorePath, dbName, dbType);
             this.levelDBStore = factory.open(new File(levelDBStorePath), options);
-            Utilities.verboseLog("Configured this LevelDb Store: " + levelDBStorePath);
-            System.out.println("Configured this LevelDb Store: " + levelDBStorePath);
-            System.out.println(toString());
+            Utilities.verboseLog(10,"Configured this LevelDb Store: " + levelDBStorePath);
+            //System.out.println("Configured this LevelDb Store: " + levelDBStorePath);
+            Utilities.verboseLog(10, toString());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

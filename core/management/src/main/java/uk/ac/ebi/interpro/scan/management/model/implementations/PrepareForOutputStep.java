@@ -281,12 +281,12 @@ public class PrepareForOutputStep extends Step {
             return;
         }
         final boolean isSlimOutput = false;
-        final String interProScanVersion = "5-34";
+        //final String interProScanVersion = "5-34";
 
         Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
 
         Utilities.verboseLog(10, " Prepare For OutputStep - prepare to output proteins for XML: " + outputPath );
-        LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
+        //LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
 
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();

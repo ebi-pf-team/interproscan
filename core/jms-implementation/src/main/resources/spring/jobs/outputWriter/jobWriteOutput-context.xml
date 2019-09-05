@@ -47,6 +47,7 @@
         <property name="retries" value="0"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+        <property name="matchDAO" ref="matchDAO"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
         <property name="interProScanVersion" value="${i5.version}"/>
         <property name="xmlWriter" ref="xmlWriter"/>

@@ -299,13 +299,13 @@ public class Run extends AbstractI5Runner {
                 }
 
                 try {
-                    System.out.println("Deal with depreactedAnalysesToRun and excludedAnalyses");
+                    //System.out.println("Deal with depreactedAnalysesToRun and excludedAnalyses");
                     depreactedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
-                    System.out.println("depreacted Analyses To Run :" + depreactedAnalysesToRun.toString());
+                    //System.out.println("depreacted Analyses To Run :" + Arrays.asList(depreactedAnalysesToRun).toString());
 
                     excludedAnalyses = getExcludedApplications(parsedCommandLine, jobs);
 
-                    System.out.println("excludedAnalyses Analyses  :" + excludedAnalyses.toString());
+                    //System.out.println("excludedAnalyses Analyses  :" + Arrays.asList(excludedAnalyses).toString());
 
                     analysesToRun = getApplications(parsedCommandLine, jobs);
                     if (LOGGER.isDebugEnabled()){
@@ -409,26 +409,32 @@ public class Run extends AbstractI5Runner {
 
                 }
 
+                LevelDBStore kvStoreProteins= null;
+                LevelDBStore kvStoreProteinsNotInLookup = null;
+                LevelDBStore kvStoreProteinsOther = null;
+                LevelDBStore kvStoreMatches =  null;
+                LevelDBStore kvStoreNucleotides = null;
+
                 if (! workingTemporaryDirectory.isEmpty() ) {
                     // configure the KVStores
-                    LevelDBStore kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
-                    System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
-                    LevelDBStore kvStoreProteinsNotInLookup = (LevelDBStore) ctx.getBean("kvStoreProteinsNotInLookup");
-                    System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name : " + kvStoreProteinsNotInLookup.getDbName());
+                    kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
+                    //System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
+                    kvStoreProteinsNotInLookup = (LevelDBStore) ctx.getBean("kvStoreProteinsNotInLookup");
+                    //System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name : " + kvStoreProteinsNotInLookup.getDbName());
 
-                    LevelDBStore kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
-                    System.out.println(Utilities.getTimeNow() + " kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
-                    LevelDBStore kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
-                    System.out.println(Utilities.getTimeNow() + " kvStoreMatches  name : " + kvStoreMatches.getDbName());
+                    kvStoreProteinsOther = (LevelDBStore) ctx.getBean("kvStoreProteinsOther");
+                    //System.out.println(Utilities.getTimeNow() + " kvStoreProteinsOther  name : " + kvStoreProteinsOther.getDbName());
+                    kvStoreMatches = (LevelDBStore) ctx.getBean("kvStoreMatches");
+                    //System.out.println(Utilities.getTimeNow() + " kvStoreMatches  name : " + kvStoreMatches.getDbName());
                     //configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther,  kvStoreMatches, workingTemporaryDirectory );
 
-                    LevelDBStore kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
-                    System.out.println(Utilities.getTimeNow() + " kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
+                    kvStoreNucleotides = (LevelDBStore) ctx.getBean("kvStoreNucleotides");
+                    //System.out.println(Utilities.getTimeNow() + " kvStoreNucleotides  name : " + kvStoreNucleotides.getDbName());
 
-                    System.out.println(Utilities.getTimeNow() + " workingTemporaryDirectory  : " + workingTemporaryDirectory);
+                    //System.out.println(Utilities.getTimeNow() + " workingTemporaryDirectory  : " + workingTemporaryDirectory);
                     configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
 
-                    System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
+                    //System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
 
                     ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
                     proteinDAO.checkKVDBStores();
@@ -448,6 +454,7 @@ public class Run extends AbstractI5Runner {
 
 
                 runnable.run();
+                closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
 
             }
 
@@ -1331,7 +1338,7 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
         }
-        System.out.println("deprecatedAnalysesToRun: " + deprecatedAnalysesToRun.toString());
+        //System.out.println("deprecatedAnalysesToRun: " + deprecatedAnalysesToRun.toString());
         return StringUtils.toStringArray(deprecatedAnalysesToRun);
 
 
@@ -1431,7 +1438,7 @@ public class Run extends AbstractI5Runner {
                 throw new InvalidInputException(inputErrorMessages);
             }
         }
-        System.out.println("excludedAnalyses : " + excludedAnalyses.toString());
+        //System.out.println("excludedAnalyses : " + excludedAnalyses.toString());
         return StringUtils.toStringArray(excludedAnalyses);
 
 
@@ -1622,26 +1629,41 @@ public class Run extends AbstractI5Runner {
         String kvstoreDir = "kvstore";
         String kvstoreBase = tempDir + File.separator + kvstoreDir;
         String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
-        LOGGER.warn(" kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
+        Utilities.verboseLog(10, " kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
         kvStoreProteins.setLevelDBStore(kvStoreProteinsDBPath);
 
         String kvStoreProteinsNotInLookupDBPath = kvstoreBase + File.separator + kvStoreProteinsNotInLookup.getDbName();
-        LOGGER.warn(" kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
+        Utilities.verboseLog(10, " kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
         kvStoreProteinsNotInLookup.setLevelDBStore(kvStoreProteinsNotInLookupDBPath);
 
-        String kvStoreProteinsOtherDBPath = kvstoreBase + File.separator +  kvStoreProteinsOther.getDbName();
-        LOGGER.warn("kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
-        kvStoreProteinsOther.setLevelDBStore(kvStoreProteinsOtherDBPath);
+        //String kvStoreProteinsOtherDBPath = kvstoreBase + File.separator +  kvStoreProteinsOther.getDbName();
+        //Utilities.verboseLog(10, "kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
+        //kvStoreProteinsOther.setLevelDBStore(kvStoreProteinsOtherDBPath);
 
         String kvStoreMatchesDBPath = kvstoreBase + File.separator + kvStoreMatches.getDbName();
-        LOGGER.warn("kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
+        Utilities.verboseLog(10, "kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
         kvStoreMatches.setLevelDBStore(kvStoreMatchesDBPath);
 
         String kvStoreNucleotidesDBPath = kvstoreBase + File.separator + kvStoreNucleotides.getDbName();
-        LOGGER.warn("kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
+        Utilities.verboseLog(10, "kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
         kvStoreNucleotides.setLevelDBStore(kvStoreNucleotidesDBPath);
 
     }
+
+    public static void closeKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup,  LevelDBStore kvStoreProteinsOther,
+                                         LevelDBStore kvStoreMatches,  LevelDBStore kvStoreNucleotides, String tempDir ){
+        kvStoreProteins.close();
+
+        kvStoreProteinsNotInLookup.close();
+
+        //kvStoreProteinsOther.close();
+
+        kvStoreMatches.close();
+
+        kvStoreNucleotides.close();
+
+    }
+
 
     private static boolean isInvalid(final Mode mode, final CommandLine commandline) {
         Option[] options = commandline.getOptions();
@@ -1675,6 +1697,7 @@ public class Run extends AbstractI5Runner {
 
         Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.WARN);
         Configurator.setLevel("org.apache.activemq", Level.WARN);
+        //Configurator.setLevel("org.hibernate.boot", Level.ERROR);  // check if its possoble to configure to not diplsay the WARNING
 //        Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.DEBUG);
 
         // You can also set the root logger:
@@ -1711,7 +1734,7 @@ public class Run extends AbstractI5Runner {
             //FileUtils.deleteDirectory(dir);
             FileUtils.forceDelete(dir);
         }catch (IOException e) {
-            LOGGER.warn("At run completion, unable to delete temporary directory " + dir.getAbsolutePath());
+            LOGGER.warn("At Run completion, unable to delete temporary directory " + dir.getAbsolutePath());
         }
     }
 
@@ -1726,10 +1749,11 @@ public class Run extends AbstractI5Runner {
             try {
                 if(new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
+                    LOGGER.warn("TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
                     deleteWorkingTemporaryDirectory(temporaryFileDirectory);
                 }
             } catch (IOException e) {
-                LOGGER.warn("At run completion, unable to delete temporary working directory " + temporaryFileDirectory);
+                LOGGER.warn("At Run completion, unable to delete temporary working directory " + temporaryFileDirectory);
                 e.printStackTrace();
             }
         }else {

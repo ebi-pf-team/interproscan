@@ -218,7 +218,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
-                //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));

@@ -281,9 +281,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf(File.separatorChar));
             File file = new File(workingDirectory);
             try {
-                FileUtils.deleteDirectory(file);
+                //FileUtils.deleteDirectory(file);
+                FileUtils.forceDelete(file);
             }catch (IOException e) {
                 LOGGER.warn("At convert completion, unable to delete temporary directory " + file.getAbsolutePath());
+                e.printStackTrace();
             }
         }
 

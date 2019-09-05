@@ -78,6 +78,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         if (analysisJobNames == null) {
             Utilities.verboseLog(20," analysisJobNames is NULL - "  + analysisJobNames);
             analysisJobs = jobs.getActiveAnalysisJobs();
+            analysisJobs = jobs.getActiveNonDeprecatedAnalysisJobs();
             List<String> analysisJobIdList = analysisJobs.getJobIdList();
             StringBuilder analysisJobNamesBuilder = new StringBuilder();
             for (String jobName : analysisJobIdList) {

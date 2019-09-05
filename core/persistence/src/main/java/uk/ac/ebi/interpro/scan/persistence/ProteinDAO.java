@@ -80,6 +80,8 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
 
     DB getLevelDBStore();
 
+    void closeKVDBStores();
+
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
      *

@@ -193,6 +193,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
                     analysisJobs = jobs.getActiveAnalysisJobs();
+                    analysisJobs = jobs.getActiveNonDeprecatedAnalysisJobs();
                     List<String> analysisJobIdList = analysisJobs.getJobIdList();
                     StringBuilder analysisJobNamesBuilder = new StringBuilder();
                     for (String jobName : analysisJobIdList) {
@@ -226,6 +227,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
                 //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                Utilities.verboseLog(10,analysesPrintOutStr + Arrays.asList(analysisJobNames));
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
@@ -252,7 +254,6 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
 
                 System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
 
-
                 Job completionJob = jobs.getJobById(completionJobName);
 
                 final String prepareOutputJobName = stepInstance.getParameters().get(PREPARE_OUTPUT_JOB_NAME_KEY);
@@ -266,7 +267,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 Job finalInitialJob = jobs.getJobById(finalInitialJobName);
 
                 if(! useMatchLookupService){
-                    LOGGER.warn("useMatchLookupService  is " + useMatchLookupService );
+                    Utilities.verboseLog(10, "useMatchLookupService  is " + useMatchLookupService );
                     matchLookupJob = null;
                 }
 
