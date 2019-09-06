@@ -1697,7 +1697,7 @@ public class Run extends AbstractI5Runner {
 
         Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.WARN);
         Configurator.setLevel("org.apache.activemq", Level.WARN);
-        //Configurator.setLevel("org.hibernate.boot", Level.ERROR);  // check if its possoble to configure to not diplsay the WARNING
+        Configurator.setLevel("org.hibernate.boot", Level.ERROR);  // check if its possoble to configure to not diplsay the WARNING
 //        Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.DEBUG);
 
         // You can also set the root logger:
