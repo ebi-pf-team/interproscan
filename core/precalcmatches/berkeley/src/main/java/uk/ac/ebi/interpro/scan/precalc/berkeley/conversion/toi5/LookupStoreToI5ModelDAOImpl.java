@@ -432,6 +432,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
     private Map<String,  KVSequenceEntry> getMapKVSequenceEntry(List<KVSequenceEntry> kvSiteSequenceEntries){
         Map<String,  KVSequenceEntry> mapKVSequenceEntry = new HashMap<>();
         for (KVSequenceEntry kvSequenceEntry: kvSiteSequenceEntries){
+            if(mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()) != null){
+                LOGGER.warn("We already have the sites for : " +  kvSequenceEntry.getProteinMD5());
+                LOGGER.warn("kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString();
+            }
             mapKVSequenceEntry.put(kvSequenceEntry.getProteinMD5(), kvSequenceEntry);
         }
 
