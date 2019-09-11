@@ -97,7 +97,7 @@ public class KVSequenceEntry implements Serializable{
 
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("KVSequenceEntry");
+        sb.append("{KVSequenceEntry");
         sb.append(" MD5 ").append(this.proteinMD5);
         for (String hit: this.sequenceHits) {
             sb.append(" \n ");

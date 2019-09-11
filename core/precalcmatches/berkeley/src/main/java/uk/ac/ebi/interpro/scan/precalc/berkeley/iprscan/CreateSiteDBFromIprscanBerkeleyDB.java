@@ -212,6 +212,7 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                                 kvMatchJoiner.add(kvValueOf(residue));
                                 kvMatchJoiner.add(kvValueOf(residueStart));
                                 kvMatchJoiner.add(kvValueOf(residueEnd));
+                                kvMatchJoiner.add(kvValueOf(description));
 
                                 String kvMatch = kvMatchJoiner.toString();
 

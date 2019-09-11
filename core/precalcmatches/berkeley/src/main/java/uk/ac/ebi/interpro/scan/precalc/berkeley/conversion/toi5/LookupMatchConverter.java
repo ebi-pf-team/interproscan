@@ -71,31 +71,47 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
         Utilities.verboseLog(30, "getSiteLocationsMap: " + sequenceSiteHits.size());
 
         Map<String, Set<SiteLocation>> mapSiteLocations = new HashMap();
+        //Map<SiteLocation, String> siteLocationsDescptions = new HashMap();
+
+        int siteCount = 0;
         try {
             for (String sequenceSiteHit : sequenceSiteHits) {
+
                 //SFLD,4,SFLDS00029,5,347,3,C,105,105, description
                 SimpleLookupSite simpleLookupSite = new SimpleLookupSite(md5, sequenceSiteHit);
-                String siteDescription = simpleLookupSite.getDescription();
-                if (siteDescription == null){
-                    Utilities.verboseLog(30, "null description ....");
-                }
-                Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
+
                 if (simpleLookupSite.getSignatureLibraryName().equals(signatureLibraryName) && simpleLookupSite.getSignatureAccession().equals(signatureAccession)) {
+                    siteCount ++;
+                    String siteDescription = simpleLookupSite.getDescription();
+                    if (siteDescription == null){
+                        Utilities.verboseLog(30, "null description ....");
+                        siteDescription = "nullDescription"; //this has to be dealth with specially as having null as a key is not a good idea
+                    }
+                    Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
                     SiteLocation siteLocation = new SiteLocation(simpleLookupSite.getResidue(), simpleLookupSite.getResidueStart(), simpleLookupSite.getResidueEnd());
+
                     if (siteLocations != null) {
+                        if (siteLocations.contains(siteLocation)){
+                            LOGGER.warn("Duplicate site location: " + siteLocation);
+                        }
                         siteLocations.add(siteLocation);
                     } else {
                         siteLocations = new HashSet<>();
                         siteLocations.add(siteLocation);
                     }
                     mapSiteLocations.put(siteDescription, siteLocations);
-                    Utilities.verboseLog(30,"siteLocation ...: " + siteLocation.toString());
+
+                    Utilities.verboseLog(30,"siteLocation ...: " + siteLocation.toString() + " description: " + siteDescription);
+                    //siteLocationsDescptions.put(siteLocation, siteDescription);
                 }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
+        Utilities.verboseLog(30,"Processed for md5 - " + md5 + " accession - " + signatureAccession + " : " + siteCount
+                + " of " + sequenceSiteHits.size() +  " site Locations with max of " + mapSiteLocations.keySet().size() + " descriptions");
         return mapSiteLocations;
+        //return siteLocationsDescptions;
     }
 
     protected void checkSignatureAc(Signature signature, SimpleLookupMatch simpleMatch) {

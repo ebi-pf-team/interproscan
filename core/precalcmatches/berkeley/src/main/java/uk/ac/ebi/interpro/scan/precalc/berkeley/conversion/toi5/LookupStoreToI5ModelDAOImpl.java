@@ -117,7 +117,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 //        LOGGER.debug("From librariesToAnalyse: " + jobsToAnalyse);
         }
 
-        Map<String,  KVSequenceEntry> mapKVSequenceEntryForSites = getMapKVSequenceEntry(kvSiteSequenceEntries);
+        Map<String,   List<KVSequenceEntry>> mapKVSequenceEntryForSites = getMapKVSequenceEntry(kvSiteSequenceEntries);
 
         // Collection of BerkeleyMatches of different kinds.
         Utilities.verboseLog(10, "Start comvert lookup matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size() );
@@ -129,10 +129,13 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             Set<String> sequenceHits = lookupMatch.getSequenceHits();
 
             //deal with cdd and sfld sites
-            KVSequenceEntry siteSequenceEntry = mapKVSequenceEntryForSites.get(proteinMD5);
+            List<KVSequenceEntry> siteSequenceEntryList = mapKVSequenceEntryForSites.get(proteinMD5);
             Set<String> sequenceSiteHits = null;
-            if(siteSequenceEntry != null) {
-                sequenceSiteHits = siteSequenceEntry.getSequenceHits();
+            if(siteSequenceEntryList != null) {
+                sequenceSiteHits = new HashSet<>();
+                for (KVSequenceEntry siteSequenceEntry: siteSequenceEntryList) {
+                    sequenceSiteHits.addAll(siteSequenceEntry.getSequenceHits());
+                }
                 Utilities.verboseLog(40, "SequenceSiteHits : " + sequenceSiteHits.size() );
             }
 
@@ -429,14 +432,18 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         }
     }
 
-    private Map<String,  KVSequenceEntry> getMapKVSequenceEntry(List<KVSequenceEntry> kvSiteSequenceEntries){
-        Map<String,  KVSequenceEntry> mapKVSequenceEntry = new HashMap<>();
+    private Map<String,   List<KVSequenceEntry>> getMapKVSequenceEntry(List<KVSequenceEntry> kvSiteSequenceEntries){
+        Map<String,  List<KVSequenceEntry>> mapKVSequenceEntry = new HashMap<>();
         for (KVSequenceEntry kvSequenceEntry: kvSiteSequenceEntries){
-            if(mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()) != null){
+            List<KVSequenceEntry> kvSequenceEntryList =  mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5());
+            if( kvSequenceEntryList != null){
                 LOGGER.warn("We already have the sites for : " +  kvSequenceEntry.getProteinMD5());
-                LOGGER.warn("kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString();
+                LOGGER.warn("kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString());
+            }else{
+                kvSequenceEntryList = new ArrayList<>();
             }
-            mapKVSequenceEntry.put(kvSequenceEntry.getProteinMD5(), kvSequenceEntry);
+            kvSequenceEntryList.add(kvSequenceEntry);
+            mapKVSequenceEntry.put(kvSequenceEntry.getProteinMD5(), kvSequenceEntryList);
         }
 
         return mapKVSequenceEntry;

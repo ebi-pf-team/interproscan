@@ -33,22 +33,30 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
         // TODO Add sites to lookup service
         //Set<String> sequenceSiteHits = new HashSet<>();  //just for prototyping
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = null;
+        int siteCount = 0;
         if (sequenceSiteHits != null && sequenceSiteHits.size() > 0) {
             Utilities.verboseLog(30, "Sites not null ... get sitelocations");
             sites = new HashSet<>();
             Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
             //Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = convertSites(match.getProteinMD5(), sequenceSiteHits);
+            //for (SiteLocation siteLocation: mapSiteLocations.keySet()) {
+            //String siteDescription = mapSiteLocations.get(siteLocation);
 
-            for (String siteDescription : mapSiteLocations.keySet()) {
-                RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteDescription, mapSiteLocations.get(siteDescription));
-                sites.add(site);
-            }
+                for (String siteDescription : mapSiteLocations.keySet()) {
+                    Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
+                    siteCount += siteLocations.size();
+                    if (siteDescription.equalsIgnoreCase("nullDescription")){
+                        siteDescription = null;
+                    }
+                    RPSBlastMatch.RPSBlastLocation.RPSBlastSite site = new RPSBlastMatch.RPSBlastLocation.RPSBlastSite(siteDescription, siteLocations);
+                    sites.add(site);
+                }
+            //}
 
         }else{
             Utilities.verboseLog(30, "Sites is null ... ");
-
         }
-        Utilities.verboseLog(30, "Sites  ... " + sites);
+        Utilities.verboseLog(30, "Sites  ... " + sites + " with " + siteCount + " locations");
         locations.add(new RPSBlastMatch.RPSBlastLocation(locationStart, locationEnd, score, eValue, sites));
 
         return new RPSBlastMatch(signature, match.getModelAccession(), locations);
