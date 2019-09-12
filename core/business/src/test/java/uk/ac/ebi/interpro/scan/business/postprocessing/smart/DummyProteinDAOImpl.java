@@ -110,6 +110,9 @@ public class DummyProteinDAOImpl implements uk.ac.ebi.interpro.scan.persistence.
 
     }
 
+    public void closeKVDBStores(){
+        
+    }
     @Override
     public List<Protein> getProteinsWithoutLookupHitBetweenIds(long bottom, long top) {
         return null;
