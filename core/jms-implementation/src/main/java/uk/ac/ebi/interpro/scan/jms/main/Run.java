@@ -454,7 +454,10 @@ public class Run extends AbstractI5Runner {
 
 
                 runnable.run();
-                closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+
+                if (! workingTemporaryDirectory.isEmpty() ) {
+                    closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+                }
 
             }
 
