@@ -35,9 +35,9 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = null;
         int siteCount = 0;
         if (sequenceSiteHits != null && sequenceSiteHits.size() > 0) {
-            Utilities.verboseLog(30, "Sites not null ... get sitelocations");
+            Utilities.verboseLog(30, "Sites not null ... get sitelocations for " + match.getSignatureAccession() + ": [" + match.getSequenceStart() + " - "+ match.getSequenceEnd() + "]");
             sites = new HashSet<>();
-            Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
+            Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match, sequenceSiteHits, signatureLibraryName, signatureAccession);
             //Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = convertSites(match.getProteinMD5(), sequenceSiteHits);
             //for (SiteLocation siteLocation: mapSiteLocations.keySet()) {
             //String siteDescription = mapSiteLocations.get(siteLocation);
@@ -52,7 +52,7 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
                     sites.add(site);
                 }
             //}
-
+            Utilities.verboseLog(30, "Sites not null ... get sitelocations ... DONE");
         }else{
             Utilities.verboseLog(30, "Sites is null ... ");
         }
@@ -89,5 +89,6 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
 
         return sites;
     }
+
 
 }

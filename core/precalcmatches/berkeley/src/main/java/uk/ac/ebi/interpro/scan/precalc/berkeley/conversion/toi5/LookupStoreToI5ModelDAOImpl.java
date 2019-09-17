@@ -163,7 +163,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             for (List<SimpleLookupMatch> matchesForModel : modelToMatchesMap.values()) {
                 assert matchesForModel.size() > 0;
 
-                Utilities.verboseLog(40, "matchesForModel - size:  " + matchesForModel.size());
+                Utilities.verboseLog(40, "Start matchesForModel - size:  " + matchesForModel.size());
 
                 SimpleLookupMatch simpleMatch = matchesForModel.get(0); // Get first match with this modelAc for this protein
 
@@ -267,11 +267,12 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                             Utilities.verboseLog(40, "simpleMatchCount :  " + simpleMatchCount + " signatureAc: " + simpleMatch.getSignatureAccession() +
                                     " expected matches: " + matchesForModel.size());
                             for (SimpleLookupMatch simpleLookupMatchDisplay: matchesForModel){
-                                Utilities.verboseLog(20, "simpleLookupMatchDisplay: \n" +
+                                Utilities.verboseLog(20, "simpleLookupMatchDisplay: [\n" +
                                         " sequence: " + prot.getId() +
                                         " md5: " + simpleLookupMatchDisplay.getProteinMD5() +
                                         " location: " + simpleLookupMatchDisplay.getSequenceStart() + " - " + simpleLookupMatchDisplay.getSequenceEnd() +
-                                        " fragments: " + simpleLookupMatchDisplay.getFragments()) ;
+                                        " fragments: " + simpleLookupMatchDisplay.getFragments() +
+                                        " \n ]");
                             }
 
                             if (matchesForModel.size() == 1) {
@@ -343,6 +344,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         LOGGER.warn("Unable to persist match " + simpleMatch + " as there is no available conversion for signature libarary " + sigLib);
                     }
                 }
+                Utilities.verboseLog(10, "End matches for model " );
             }
         }
         Utilities.verboseLog(30, "exampleKey: " + exampleKey);
