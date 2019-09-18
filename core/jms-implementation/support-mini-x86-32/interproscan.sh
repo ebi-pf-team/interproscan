@@ -40,13 +40,6 @@ then
     exit 1
 fi
 
-#"$JAVA" \
-#-XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts \
-#-XX:+UseFastAccessorMethods -Xms1028M -Xmx6072M \
-#-jar  interproscan-5.jar $@ -u $USER_DIR
-
-#-Dorg.apache.activemq.SERIALIZABLE_PACKAGES="*" \
-
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4  \
  -Xms1028M -Xmx6072M \
