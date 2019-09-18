@@ -91,13 +91,20 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                     Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
                     SiteLocation siteLocation = new SiteLocation(simpleLookupSite.getResidue(), simpleLookupSite.getResidueStart(), simpleLookupSite.getResidueEnd());
 
+                    if (! simpleLookupMatch.getModelAccession().equalsIgnoreCase(simpleLookupSite.getSignatureAccession() )){
+                        Utilities.verboseLog("accessions DONT match");
+                        continue;
+                    }
+
                     if (! siteInLocationRange(simpleLookupMatch, siteLocation)){
-                        LOGGER.warn("site NOT In LocationRange");
+                        Utilities.verboseLog("site NOT In LocationRange");
+                        Utilities.verboseLog(simpleLookupMatch.toString());
+                        Utilities.verboseLog(simpleLookupSite.toString() + " siteLocation: " + siteLocation.toString());
                         continue;
                     }
                     if (siteLocations != null) {
                         if (siteLocations.contains(siteLocation)){
-                            LOGGER.warn("Duplicate site location: " + siteLocation);
+                            Utilities.verboseLog("Duplicate site location: " + siteLocation);
                         }
                         siteLocations.add(siteLocation);
                     } else {

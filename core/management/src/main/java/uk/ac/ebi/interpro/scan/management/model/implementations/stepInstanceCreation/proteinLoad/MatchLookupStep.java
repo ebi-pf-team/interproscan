@@ -19,6 +19,7 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupStoreToI5M
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import javax.rmi.CORBA.Util;
 import java.util.*;
 
 /**
@@ -209,7 +210,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
 
             Thread lookupThread = new Thread(precalculatedProteinLookup);
 
-            System.out.println("Starting Thread... precalculatedProteinLookup - " + precalculatedProteinLookup.hashCode());
+            Utilities.verboseLog(10, "Starting Thread... precalculatedProteinLookup - " + precalculatedProteinLookup.hashCode());
 
             try {
                 lookupThread.start();

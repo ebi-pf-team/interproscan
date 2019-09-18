@@ -75,6 +75,10 @@ public final class TMHMMBinaryStep extends RunBinaryStep {
                 = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileNameTemplate());
         FileContentChecker fileContentChecker = new FileContentChecker(new File(fastaFilePath));
+        if (fastaFilePath.length() >= 230){
+            LOGGER.warn("The input file path is >= 230 characters. TMHMM  may fail to run as the TMHMM binary has a bug " +
+                    " where any filepath with more than 230 characters throws an error.");
+        }
         if (!fileContentChecker.isFileEmpty()) {
             final List<String> command = new ArrayList<String>();
             //Add command
