@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Transient;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class WriteFastaFileStep extends Step {
                 }
                 long maxProteins = topProtein - bottomProtein;
 
-                System.out.println(stepInstance.getStepId() + "["+  bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " +  count + " of possible " + (maxProteins + 1) );
+                Utilities.verboseLog(10,stepInstance.getStepId() + "["+  bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " +  count + " of possible " + (maxProteins + 1) );
                  /*   for (Protein protein : proteinsNotInLookup) {
                         System.out.println("write sequence id : " + protein.getId());
                         Protein protein = proteinDAO.getProtein(protein.getId().toString());
