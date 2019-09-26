@@ -92,8 +92,8 @@ public class MatchesServiceImpl implements MatchesService {
                 resetCountRequests();
             }
         };
-        // schedule the task to run starting now and then every hour...
-        timer.schedule (hourlyTask, 0l, 1000*60*60);
+        // schedule the task to run starting now and then every 24 hours ...
+        timer.schedule (hourlyTask, 0l, 1000*60*60*24);
 //        timer.schedule (hourlyTask, 0l, 1000*60*5);
     }
 
@@ -254,7 +254,8 @@ public class MatchesServiceImpl implements MatchesService {
        String outMessage = " match_counts: " + hourlyTotalRequests + " " + hourlyMd5TotalCount  + " " + hourlyTotalTimeToGetMatches +
                " md5_counts: " + hourlyMD5TotalRequests + " " + hourlyMD5Md5TotalCount  + " " + hourlyMD5TotalTimeToGetMatches;
         if (hourlyTotalRequests > 0) {
-            System.out.println(Utilities.getTimeNow() + outMessage);
+            //not yet for jetty, but should it not say its alive
+           // System.out.println(Utilities.getTimeNow() + outMessage);
         }
 
 

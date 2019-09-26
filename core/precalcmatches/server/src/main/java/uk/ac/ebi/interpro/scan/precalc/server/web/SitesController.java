@@ -57,9 +57,10 @@ public class SitesController {
         long timeToGetSiteMatches = System.currentTimeMillis() - startGetSiteMatches;
         //matchService.countMatchesRequests(md5Array.length, timeToGetMatches);
         //Integer timeProcessingPartitionSeconds = (int) timeProcessingPartition / 1000;
-        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetSiteMatches + " millis to get  site matches  for  " + md5Array.length  + " md5s");
+        //TODO, this is usefull to check the performance of site lookup
+        //System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetSiteMatches + " millis to get  site matches  for  " + md5Array.length  + " md5s");
+        //System.out.println(Utilities.getTimeNow() + "sites count: " + sites.size());
 
-        System.out.println(Utilities.getTimeNow() + "sites count: " + sites.size());
         KVSequenceEntryXML siteXML = new KVSequenceEntryXML(sites);
         response.setContentType("application/xml");
         Writer out = null;

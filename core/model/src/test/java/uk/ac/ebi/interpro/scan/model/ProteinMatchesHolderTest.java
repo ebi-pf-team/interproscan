@@ -37,11 +37,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test cases for {@link ProteinMatchesHolder}
  *
+ * This class is no longer used as it is susceptible to memory leaks
+ *
+ *
  * @author Antony Quinn
  * @version $Id$
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
+@Disabled("this way of processing proteins runs into memory problems")
 public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder> {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinMatchesHolderTest.class.getName());

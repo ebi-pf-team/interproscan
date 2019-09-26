@@ -257,6 +257,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.RAW);
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
+                } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension())) {
+                    LOGGER.info("Generating JSON result output...");
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.JSON);
+                    outputToJSON(outputFile, proteins);
+                    LOGGER.info("Finished generation of JSON.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
                     // No point to convert from XML to XML!
                     System.out.println("XML output format was ignored in convert mode.");
@@ -341,6 +346,14 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
         }
         return outputPath;
+    }
+
+
+    private void outputToJSON(final Path path,
+                             final Collection<Protein> proteins) throws IOException {
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(path, false)) {
+            writeProteinMatches(writer, proteins);
+        }
     }
 
     private void outputToTSV(final Path path,
@@ -457,6 +470,15 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 writer.write(protein);
             }
         }
+    }
+
+    private void writeProteinMatches(final ProteinMatchesJSONResultWriter writer,
+                                     final Collection<Protein> proteins) throws IOException {
+        //try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
+            //old way??
+            //writer.write(matchesHolder, proteinDAO, sequenceType, isSlimOutput);
+
+        //}
     }
 
     private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,
