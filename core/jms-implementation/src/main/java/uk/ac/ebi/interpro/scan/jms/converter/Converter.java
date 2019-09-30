@@ -15,6 +15,7 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.xml.transform.Source;
@@ -195,18 +196,18 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         Source source;
         try {
             source = new StreamSource(new FileReader(new File(xmlInputFilePath)));
-            IMatchesHolder object = (IMatchesHolder) marshaller.unmarshal(source);
+            IMatchesHolder iMatchesHolder = (IMatchesHolder) marshaller.unmarshal(source);
 
             Collection<Protein> proteins;
             Collection<NucleotideSequence> nucleotideSequences = null;
             final char sequenceType;
 
-            if (object instanceof ProteinMatchesHolder) {
-                proteins = ((ProteinMatchesHolder) object).getProteins();
+            if (iMatchesHolder instanceof ProteinMatchesHolder) {
+                proteins = ((ProteinMatchesHolder) iMatchesHolder).getProteins();
                 sequenceType = 'p';
             } else {
                 proteins = new HashSet<>();
-                nucleotideSequences = ((NucleicAcidMatchesHolder) object).getNucleotideSequences();
+                nucleotideSequences = ((NucleicAcidMatchesHolder) iMatchesHolder).getNucleotideSequences();
                 for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
                     Set<OpenReadingFrame> openReadingFrames = nucleotideSequence.getOpenReadingFrames();
                     for (OpenReadingFrame orf : openReadingFrames) {
@@ -257,6 +258,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.RAW);
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
+                } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension())) {
+                    LOGGER.info("Generating JSON result output...");
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.JSON);
+                    outputToJSON(outputFile, iMatchesHolder, proteins);
+                    LOGGER.info("Finished generation of JSON.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
                     // No point to convert from XML to XML!
                     System.out.println("XML output format was ignored in convert mode.");
@@ -341,6 +347,14 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
         }
         return outputPath;
+    }
+
+
+    private void outputToJSON(final Path path, IMatchesHolder iMatchesHolder,
+                              final Collection<Protein> proteins) throws IOException {
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(path, false)) {
+            writeProteinMatches(writer,iMatchesHolder, proteins);
+        }
     }
 
     private void outputToTSV(final Path path,
@@ -459,6 +473,17 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
     }
 
+    private void writeProteinMatches(final ProteinMatchesJSONResultWriter writer, IMatchesHolder iMatchesHolder,
+                                     final Collection<Protein> proteins) throws IOException {
+        //try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
+        //old way??
+        //writer.write()
+        writer.write(iMatchesHolder, proteinDAO, , isSlimOutput);
+        LOGGER.warn("Write to JSON " + proteins.size() + " proteins");
+        LOGGER.error("Write to JSON " + proteins.size() + " proteins");
+        //}
+    }
+
     private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,
                                      final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
         writer.setMapToInterProEntries(true);
@@ -480,4 +505,6 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             writer.writeFASTASequence(key, identifierToSeqMap.get(key));
         }
     }
+
+
 }
