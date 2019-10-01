@@ -643,7 +643,6 @@ public class WriteOutputStep extends Step {
                 Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
                 Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
-
                     writeProteinMatches(tsvSitesWriter, stepInstance);
                 }
             }
