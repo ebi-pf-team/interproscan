@@ -486,8 +486,8 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         //writer.write()
         // writer.write(iMatchesHolder, proteinDAO, , isSlimOutput);
 
-        LOGGER.warn("Write to JSON " + proteins.size() + " proteins");
-        LOGGER.error("Write to JSON " + proteins.size() + " proteins");
+        //LOGGER.warn("Write to JSON " + proteins.size() + " proteins");
+        //LOGGER.error("Write to JSON " + proteins.size() + " proteins");
 
         writer.header(interproscanVersion);
 
