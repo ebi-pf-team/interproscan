@@ -194,10 +194,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             int progressMeter = count * 100 / proteinsCount;
             if (progressMeter % 20 == 0 && progressMeter != oldProgressMeter){
                 if (progressMeter % 40 == 0 ) {
-                    System.out.println(Utilities.getTimeNow() + " LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                    Utilities.verboseLog(10, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 } else {
 
-                    Utilities.verboseLog(10, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                    Utilities.verboseLog(20, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 }
                 oldProgressMeter = progressMeter;
             }

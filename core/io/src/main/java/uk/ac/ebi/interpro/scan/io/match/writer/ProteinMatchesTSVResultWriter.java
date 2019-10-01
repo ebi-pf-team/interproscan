@@ -98,7 +98,6 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         mappingFields.add(status);
                         mappingFields.add(date);
 
-                        mapToInterProEntries = false; //just for testing the new approach
                         if (mapToInterProEntries) {
                             Entry interProEntry = signature.getEntry();
                             if (interProEntry != null) {

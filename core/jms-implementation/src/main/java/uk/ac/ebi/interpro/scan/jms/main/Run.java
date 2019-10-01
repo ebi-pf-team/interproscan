@@ -149,7 +149,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.36-75.0";
+            String i5Version = "5.37-76.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
@@ -161,6 +161,9 @@ public class Run extends AbstractI5Runner {
 
             System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-" + i5Version);
             //32bitMessage:System.out.println(Utilities.getTimeNow() + " You are running the 32-bit version");
+
+            String operatingSystem = System.getProperty("os.name");
+            System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode... on " + operatingSystem );
 
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
@@ -376,7 +379,7 @@ public class Run extends AbstractI5Runner {
 
                 String workingTemporaryDirectory = "";
 
-                //get temp directory for cleanup
+                //get temp directory for cleanup even in convert mode we need temp dir
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
                         || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
                     //|| mode.equals(Mode.CONVERT)
@@ -439,6 +442,8 @@ public class Run extends AbstractI5Runner {
                     ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
                     proteinDAO.checkKVDBStores();
 
+                }else{
+                    LOGGER.warn("Working Temporary Directory is not set");
                 }
 
                 if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
@@ -449,12 +454,14 @@ public class Run extends AbstractI5Runner {
 //                    final PantherScoreStep stepPantherRunBinary = (PantherScoreStep) ctx.getBean("stepPantherHMM3RunPantherScore");
                     //stepPantherRunBinary.setUserDir(parsedCommandLine.getOptionValue(I5Option.USER_DIR.getLongOpt()).trim());
                 }
-                String operatingSystem = System.getProperty("os.name");
-                System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode... on " + operatingSystem );
+
 
 
                 runnable.run();
-                closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+
+                if (! workingTemporaryDirectory.isEmpty() ) {
+                    closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+                }
 
             }
 

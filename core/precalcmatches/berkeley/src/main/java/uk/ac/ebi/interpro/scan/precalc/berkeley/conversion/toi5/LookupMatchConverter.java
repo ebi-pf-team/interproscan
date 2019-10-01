@@ -67,12 +67,13 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
     }
 
 
-    protected Map<String, Set<SiteLocation>> getSiteLocationsMap(String md5, Set<String> sequenceSiteHits, String signatureLibraryName,  String signatureAccession ){
+    protected Map<String, Set<SiteLocation>> getSiteLocationsMap(SimpleLookupMatch simpleLookupMatch, Set<String> sequenceSiteHits, String signatureLibraryName,  String signatureAccession ){
         Utilities.verboseLog(30, "getSiteLocationsMap: " + sequenceSiteHits.size());
 
         Map<String, Set<SiteLocation>> mapSiteLocations = new HashMap();
         //Map<SiteLocation, String> siteLocationsDescptions = new HashMap();
 
+        String md5 = simpleLookupMatch.getProteinMD5();
         int siteCount = 0;
         try {
             for (String sequenceSiteHit : sequenceSiteHits) {
@@ -90,9 +91,20 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                     Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
                     SiteLocation siteLocation = new SiteLocation(simpleLookupSite.getResidue(), simpleLookupSite.getResidueStart(), simpleLookupSite.getResidueEnd());
 
+                    if (! simpleLookupMatch.getModelAccession().equalsIgnoreCase(simpleLookupSite.getSignatureAccession() )){
+                        Utilities.verboseLog("accessions DONT match");
+                        continue;
+                    }
+
+                    if (! siteInLocationRange(simpleLookupMatch, siteLocation)){
+                        Utilities.verboseLog("site NOT In LocationRange");
+                        Utilities.verboseLog(simpleLookupMatch.toString());
+                        Utilities.verboseLog(simpleLookupSite.toString() + " siteLocation: " + siteLocation.toString());
+                        continue;
+                    }
                     if (siteLocations != null) {
                         if (siteLocations.contains(siteLocation)){
-                            LOGGER.warn("Duplicate site location: " + siteLocation);
+                            Utilities.verboseLog("Duplicate site location: " + siteLocation);
                         }
                         siteLocations.add(siteLocation);
                     } else {
@@ -101,7 +113,8 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                     }
                     mapSiteLocations.put(siteDescription, siteLocations);
 
-                    Utilities.verboseLog(30,"siteLocation ...: " + siteLocation.toString() + " description: " + siteDescription);
+                    Utilities.verboseLog(30,"" +
+                            "siteLocation ...: " + siteLocation.toString() + " description: " + siteDescription);
                     //siteLocationsDescptions.put(siteLocation, siteDescription);
                 }
             }
@@ -112,6 +125,10 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                 + " of " + sequenceSiteHits.size() +  " site Locations with max of " + mapSiteLocations.keySet().size() + " descriptions");
         return mapSiteLocations;
         //return siteLocationsDescptions;
+    }
+
+    protected boolean siteInLocationRange(SimpleLookupMatch simpleLookupMatch, SiteLocation siteLocation){
+        return siteLocation.getStart() >= simpleLookupMatch.getSequenceStart() && siteLocation.getEnd() <= simpleLookupMatch.getSequenceEnd();
     }
 
     protected void checkSignatureAc(Signature signature, SimpleLookupMatch simpleMatch) {

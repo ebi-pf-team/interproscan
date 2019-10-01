@@ -261,7 +261,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension())) {
                     LOGGER.info("Generating JSON result output...");
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.JSON);
-                    outputToJSON(outputFile, iMatchesHolder, proteins);
+                    outputToJSON(outputFile, iMatchesHolder, proteins, nucleotideSequences, sequenceType);
                     LOGGER.info("Finished generation of JSON.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
                     // No point to convert from XML to XML!
@@ -288,8 +288,10 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             File file = new File(workingDirectory);
             try {
                 //FileUtils.deleteDirectory(file);
-                FileUtils.forceDelete(file);
-            }catch (IOException e) {
+                if(file.exists()) {
+                    FileUtils.forceDelete(file);
+                }
+            } catch (IOException e) {
                 LOGGER.warn("At convert completion, unable to delete temporary directory " + file.getAbsolutePath());
                 e.printStackTrace();
             }
@@ -351,9 +353,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
 
     private void outputToJSON(final Path path, IMatchesHolder iMatchesHolder,
-                              final Collection<Protein> proteins) throws IOException {
+                              final Collection<Protein> proteins,
+                              final Collection<NucleotideSequence> nucleotideSequences,
+                              final char sequenceType) throws IOException {
         try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(path, false)) {
-            writeProteinMatches(writer,iMatchesHolder, proteins);
+            writeProteinMatches(writer, iMatchesHolder, proteins, nucleotideSequences, sequenceType);
         }
     }
 
@@ -473,15 +477,52 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
     }
 
+
     private void writeProteinMatches(final ProteinMatchesJSONResultWriter writer, IMatchesHolder iMatchesHolder,
-                                     final Collection<Protein> proteins) throws IOException {
+                                     final Collection<Protein> proteins, final Collection<NucleotideSequence> nucleotideSequences,
+                                     final char sequenceType) throws IOException {
         //try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
         //old way??
         //writer.write()
-        writer.write(iMatchesHolder, proteinDAO, , isSlimOutput);
+        // writer.write(iMatchesHolder, proteinDAO, , isSlimOutput);
+
         LOGGER.warn("Write to JSON " + proteins.size() + " proteins");
         LOGGER.error("Write to JSON " + proteins.size() + " proteins");
-        //}
+
+        writer.header(interproscanVersion);
+
+        if (sequenceType == 'p' && !proteins.isEmpty()) {
+            int proteinCount = proteins.size();
+            Utilities.verboseLog(10, " WriteOutputStep -JSON new " + " There are " + proteinCount + " proteins.");
+            int count = 0;
+
+            for (Protein protein: proteins) {
+                if (protein == null) {
+                    LOGGER.warn("protein with id  is null");
+                    continue;
+                }
+                writer.write(protein);
+                count++;
+                if (count < proteinCount) {
+                    writer.write(","); // More proteins/nucleotide sequences to follow
+                }
+            }
+        }
+        if (sequenceType == 'n' && !nucleotideSequences.isEmpty()) {
+            Utilities.verboseLog(10, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
+            int count = 0;
+
+            for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
+                writer.write(nucleotideSequence);
+                count++;
+                if (count < nucleotideSequences.size()) {
+                    writer.write(","); // More proteins/nucleotide sequences to follow
+                }
+            }
+            Utilities.verboseLog("WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
+        }
+        writer.close();
+
     }
 
     private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,

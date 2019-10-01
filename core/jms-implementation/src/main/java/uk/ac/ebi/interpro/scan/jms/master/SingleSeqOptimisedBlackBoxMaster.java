@@ -63,11 +63,11 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLog("Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         //set new consumer values
-        workerQueueJmsContainer.setConcurrentConsumers(12);
-        workerQueueJmsContainer.setMaxConcurrentConsumers(10);
+        //workerQueueJmsContainer.setConcurrentConsumers(12);
+        //workerQueueJmsContainer.setMaxConcurrentConsumers(10);
         //workerQueueJmsContainer.setConcurrency("2-10"); this or the above
 
-        Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+        //Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         try {
             loadInMemoryDatabase();

@@ -297,7 +297,7 @@ public class WriteOutputStep extends Step {
             File file = new File(workingDirectory);
             try {
                 if (file.exists()) {
-                    LOGGER.warn("temporaryFileDirectory exists, so delete: ");
+                    Utilities.verboseLog(10, "temporaryFileDirectory exists, so delete: ");
                     // FileUtils.deleteDirectory(file);
                     FileUtils.forceDelete(file);
                 }
@@ -643,7 +643,6 @@ public class WriteOutputStep extends Step {
                 Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
                 Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
-
                     writeProteinMatches(tsvSitesWriter, stepInstance);
                 }
             }

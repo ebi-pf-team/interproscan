@@ -65,8 +65,9 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
         //Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> sites = new HashSet<>();
         int siteCount = 0;
         if (sequenceSiteHits != null) {
+            Utilities.verboseLog(30, "Sites not null ... get sitelocations for: " + match.getSignatureAccession() + ":  [" + match.getSequenceStart() + " - "+ match.getSequenceEnd() + "]");
             if (sequenceSiteHits.size() > 0) {
-                Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match.getProteinMD5(), sequenceSiteHits, signatureLibraryName, signatureAccession);
+                Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match, sequenceSiteHits, signatureLibraryName, signatureAccession);
                 Utilities.verboseLog(30, "mapSiteLocation descriptions: " + mapSiteLocations.keySet());
 
                 for (String siteDescription : mapSiteLocations.keySet()) {
@@ -80,6 +81,7 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
                     sites.add(site);
                 }
             }
+            Utilities.verboseLog(30, "Sites not null ... get sitelocations ... DONE");
         }
         Utilities.verboseLog(30," Total sites  for this protein: " + sites.size() + " with " + siteCount + " locations");
 

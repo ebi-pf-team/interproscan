@@ -35,21 +35,14 @@ JAVA_MAJOR_VERSION="${JAVA_MAJOR_VERSION_FULL%%.*}"
 if [[ "${JAVA_MAJOR_VERSION}" -ne "11" ]];
 then
     printf 'Java version 11 is required to run InterProScan.\n'
-    printf 'Detected version %s\n' "${JAVA_MAJOR_VERSION}"
+    printf 'Detected version %s\n' "${JAVA_VERSION}"
     printf 'Please install the correct version.\n'
     exit 1
 fi
 
-#"$JAVA" \
-#-XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts \
-#-XX:+UseFastAccessorMethods -Xms1028M -Xmx6072M \
-#-jar  interproscan-5.jar $@ -u $USER_DIR
-
-#-Dorg.apache.activemq.SERIALIZABLE_PACKAGES="*" \
-
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4  \
- -Xms1028M -Xmx8056M \
+ -Xms1028M -Xmx6072M \
 -jar  interproscan-5.jar $@ -u $USER_DIR
 
 #end
