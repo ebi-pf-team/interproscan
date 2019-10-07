@@ -7,3 +7,10 @@ branches:
   - dev
   except:
   - master
+script: cd core && mvn package install
+notifications:  
+  email:  
+    recipients:  
+    - nuka@ebi.ac.uk  
+    on_success: always  
+    on_failure: always
