@@ -1,0 +1,9 @@
+language: java
+jdk: openjdk11
+os:
+  - linux
+branches:
+  only:
+  - dev
+  except:
+  - master
