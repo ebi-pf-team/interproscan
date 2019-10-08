@@ -7,7 +7,7 @@ branches:
   - dev
   except:
   - master
-script: cd core && mvn package install
+script: cd core && mvn -q clean install
 notifications:  
   email:  
     recipients:  
