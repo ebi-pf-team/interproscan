@@ -69,9 +69,9 @@ public class WriteFastaFileStep extends Step {
         final List<Protein> proteins;
 
         try {
-            if (doRunLocally || (! useMatchLookupService)) {
+            if (doRunLocally || (!useMatchLookupService)) {
                 proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            }else {
+            } else {
                 //TODO this is getting completed to filter nonlookup up proteins
 
                 //final List<Protein> proteinsInRange = proteinDAO.getProteinsWithoutLookupHitBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
@@ -81,18 +81,24 @@ public class WriteFastaFileStep extends Step {
                 long topProtein = stepInstance.getTopProtein();
                 proteins = new ArrayList<>();
                 int count = 0;
-                for(long proteinId = bottomProtein; proteinId <= topProtein; proteinId ++) {
+                for (long proteinId = bottomProtein; proteinId <= topProtein; proteinId++) {
                     //Protein protein = proteinDAO.getProtein(Long.toString(proteinId));
                     Protein proteinNotInLookup = proteinDAO.getProteinNotInLookup(Long.toString(proteinId));
                     if (proteinNotInLookup != null) {
                         //System.out.println("write sequence id : " + proteinId + " real id from kv: " + proteinNotInLookup.getId());
                         proteins.add(proteinNotInLookup);
-                        count ++;
+                        count++;
                     }
                 }
                 long maxProteins = topProtein - bottomProtein;
 
-                Utilities.verboseLog(10,stepInstance.getStepId() + "["+  bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " +  count + " of possible " + (maxProteins + 1) );
+                Utilities.verboseLog(10, stepInstance.getStepId() + "[" + bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " + count + " of possible " + (maxProteins + 1));
+
+                //deal with cases where there is no sequence in this range
+                if (count == 0) {
+                    doSkipRun = true;
+                }
+                
                  /*   for (Protein protein : proteinsNotInLookup) {
                         System.out.println("write sequence id : " + protein.getId());
                         Protein protein = proteinDAO.getProtein(protein.getId().toString());

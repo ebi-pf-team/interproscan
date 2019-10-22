@@ -48,6 +48,8 @@ public abstract class Step implements BeanNameAware {
 
     protected boolean doRunLocally = false;
 
+    protected boolean doSkipRun = false;
+
     protected boolean useMatchLookupService = true;
 
     /**
