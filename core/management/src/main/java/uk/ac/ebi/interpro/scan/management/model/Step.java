@@ -2,8 +2,11 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Instances of this class describe / provide a template
@@ -49,6 +52,8 @@ public abstract class Step implements BeanNameAware {
     protected boolean doRunLocally = false;
 
     protected boolean doSkipRun = false;
+
+    protected Set<String> skipRunRanges = new HashSet<>();
 
     protected boolean useMatchLookupService = true;
 
@@ -117,6 +122,14 @@ public abstract class Step implements BeanNameAware {
     public void setJob(Job job) {
         this.job = job;
         job.addStep(this);
+    }
+
+    public Set<String> getSkipRunRanges() {
+        return skipRunRanges;
+    }
+
+    public void setSkipRunRanges(Set<String> skipRunRanges) {
+        this.skipRunRanges = skipRunRanges;
     }
 
     public List<Step> getDependsUpon() {
@@ -227,6 +240,30 @@ public abstract class Step implements BeanNameAware {
         }
     }
 
+    protected boolean checkIfDoSkipRun(Long bottomProtein, Long topProtein){
+        String key = getKey(bottomProtein, topProtein);
+
+        Utilities.verboseLog("check SkipRange key: " + key );
+        if (doSkipRun) {
+            Utilities.verboseLog("check key " + key + " in " + skipRunRanges);
+        }
+
+        if (job.getSkipRunRanges().contains(key)){
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    protected String getKey(Long bottomProtein, Long topProtein){
+        String libraryName = job.getLibraryRelease().getLibrary().getName();
+        String range = "_" + bottomProtein + "-" + topProtein;
+        String key = libraryName + range;
+        return key;
+    }
+
     /**
      * This method is called to execute the action that the StepInstance must perform.
      * <p/>
@@ -291,6 +328,8 @@ public abstract class Step implements BeanNameAware {
         sb.append(", cronSchedule='").append(cronSchedule).append('\'');
         sb.append(", createStepInstancesForNewProteins=").append(createStepInstancesForNewProteins);
         sb.append(", maxProteins=").append(maxProteins);
+        sb.append(", doSkipRun=").append(doSkipRun);
+        sb.append(", skipRunRanges=").append(getSkipRunRanges().toString());
         sb.append(", maxModels=").append(maxModels);
         sb.append(", stepInstances=").append(stepInstances);
         sb.append('}');

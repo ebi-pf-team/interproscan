@@ -118,6 +118,12 @@ public class Gene3DParseAndPersistOutputStep extends Step {
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         // Retrieve raw matches from the SuperFamily binary output file
         InputStream domTblInputStream = null;
         InputStream cathResolverRecordInputStream = null;

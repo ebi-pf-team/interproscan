@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.Map;
@@ -64,6 +65,12 @@ public class PirsfPostProcessAndPersistStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         // Retrieve raw results for protein range.
         Map<String, RawProtein<PirsfHmmer3RawMatch>> rawMatches = rawMatchDAO.getRawMatchesForProteinIdsInRange(
                 stepInstance.getBottomProtein(),

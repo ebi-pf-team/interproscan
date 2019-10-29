@@ -80,6 +80,12 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
             LOGGER.debug("Running ParseStep for proteins " + stepInstance.getBottomProtein() +
                     " to " + stepInstance.getTopProtein());
         }
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
         LOGGER.debug("Output fileName: " + fileName);

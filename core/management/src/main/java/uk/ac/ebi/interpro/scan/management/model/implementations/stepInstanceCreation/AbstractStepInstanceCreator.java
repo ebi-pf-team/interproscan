@@ -95,6 +95,7 @@ public abstract class AbstractStepInstanceCreator {
     protected List<StepInstance> createStepInstances(Step step, Long bottomProteinId, Long topProteinId) {
         final List<StepInstance> stepInstances = new ArrayList<StepInstance>();
         Utilities.verboseLog(20, "step.getMaxProteins(): " + step.getMaxProteins());
+        LOGGER.warn( "step.getMaxProteins(): " + step.getMaxProteins());
         final long sliceSize = (step.getMaxProteins() == null)
                 ? topProteinId - bottomProteinId + 1    // No maximum number of proteins, so all of them!
                 : step.getMaxProteins();                // Limit to the slice size.

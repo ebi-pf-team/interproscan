@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 
@@ -46,6 +47,14 @@ public class DeleteFileStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.info("Starting step with Id " + this.getId());
         LOGGER.debug("deleteWorkingDirectoryOnCompletion: " + deleteWorkingDirectoryOnCompletion);
+
+        //check if we need to skip this step for this range
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " + key);
+            return;
+        }
+
         if(deleteWorkingDirectoryOnCompletion) {
             if (fileNameTemplate != null && fileNameTemplate.length > 0) {
                 for (String fileName : fileNameTemplate) {

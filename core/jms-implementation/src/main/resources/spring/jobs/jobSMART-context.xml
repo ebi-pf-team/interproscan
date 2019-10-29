@@ -32,6 +32,7 @@
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+
     </bean>
 
     <!-- STEP 1 -->

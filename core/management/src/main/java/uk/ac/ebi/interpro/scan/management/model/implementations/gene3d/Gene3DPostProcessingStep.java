@@ -116,6 +116,12 @@ public class Gene3DPostProcessingStep extends Step {
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getSsfOutputFileTemplate());
         // Get raw matches
         final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = this.getRawMatchDAO().getProteinsByIdRange(

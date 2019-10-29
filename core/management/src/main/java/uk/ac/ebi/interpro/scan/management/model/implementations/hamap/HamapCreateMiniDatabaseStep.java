@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Transient;
 import java.io.*;
@@ -99,6 +100,12 @@ public class HamapCreateMiniDatabaseStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final long startTime = System.currentTimeMillis();
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         delayForNfs();
         final String fileNameTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileNameTbloutTemplate);
         final String fastaFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
@@ -109,6 +116,7 @@ public class HamapCreateMiniDatabaseStep extends Step {
         BufferedWriter writer = null;
         BufferedReader reader = null;
         BufferedReader reader2 = null;
+
 
         try {
             isTblout = new FileInputStream(fileNameTblout);

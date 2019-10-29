@@ -33,6 +33,7 @@ public class RunSmartBinaryStep extends RunHmmerBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
 
+
         List<String> command = new ArrayList<>();
         command.add(this.getFullPathToHmmsearchBinary());
         command.addAll(this.getBinarySwitchesAsList());

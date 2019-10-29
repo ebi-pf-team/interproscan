@@ -53,6 +53,11 @@ public class ParsePirsfOutputStep extends Step {
      * stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
 
         // Retrieve raw matches from the PIRSF Hmmer3 binary output file
         InputStream is = null;

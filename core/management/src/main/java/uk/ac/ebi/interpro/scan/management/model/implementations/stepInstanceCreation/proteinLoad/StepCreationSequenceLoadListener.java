@@ -64,7 +64,7 @@ public class StepCreationSequenceLoadListener
     public StepCreationSequenceLoadListener() {
     }
 
-    public StepCreationSequenceLoadListener(Jobs analysisJobs, Job completionJob, Job prepareOutputJob, Job matchLookupJob, Job finaliseInitialStepsJob, boolean initialSetupSteps,  Map<String, String> parameters) {
+    public StepCreationSequenceLoadListener(Jobs analysisJobs, Job completionJob, Job prepareOutputJob, Job matchLookupJob, Job finaliseInitialStepsJob, boolean initialSetupSteps, Map<String, String> parameters) {
         this.parameters = parameters;
         this.jobs = analysisJobs;
         this.completionJob = completionJob;
@@ -74,7 +74,7 @@ public class StepCreationSequenceLoadListener
         this.initialSetupSteps = initialSetupSteps;
     }
 
-    public StepCreationSequenceLoadListener(Jobs analysisJobs,  Map<String, String> parameters) {
+    public StepCreationSequenceLoadListener(Jobs analysisJobs, Map<String, String> parameters) {
         this.parameters = parameters;
         this.jobs = analysisJobs;
         this.completionJob = null;
@@ -87,7 +87,7 @@ public class StepCreationSequenceLoadListener
     @Override
     @Transactional
     public void sequencesLoaded(final Long bottomNewSequenceId, final Long topNewSequenceId,
-                                final Long bottomPrecalculatedSequenceId, final Long topPrecalculatedSequenceId, boolean useMatchLookupService, List <Long> idsWithoutLookupHit) {
+                                final Long bottomPrecalculatedSequenceId, final Long topPrecalculatedSequenceId, boolean useMatchLookupService, List<Long> idsWithoutLookupHit) {
         try {
 
             // These two variables capture the FULL RANGE of proteins that have been inserted into the database,
@@ -115,12 +115,15 @@ public class StepCreationSequenceLoadListener
             if (idsWithoutLookupHit != null) {
                 idsWithoutLookupHitSize = idsWithoutLookupHit.size();
                 Utilities.verboseLog("Protein without Lookup Hit (" + idsWithoutLookupHit.size() + ") range: " + idsWithoutLookupHit.get(0) + " - "
-                        + idsWithoutLookupHit.get(idsWithoutLookupHitSize -1));
-            }else{
+                        + idsWithoutLookupHit.get(idsWithoutLookupHitSize - 1));
+            } else {
                 Utilities.verboseLog("idsWithoutLookupHit is NULL");
             }
-            int percentageOfProteinsinLookup = (topProteinId.intValue() - idsWithoutLookupHitSize) *  100 / topProteinId.intValue();
-            Utilities.verboseLog("Lookup hits: " + percentageOfProteinsinLookup +  "% of the input sequences are in the Lookup Match Server");
+
+            Utilities.verboseLog(20, "topProteinId intValue(): - " + topProteinId.intValue());
+            int percentageOfProteinsinLookup = (topProteinId.intValue() - idsWithoutLookupHitSize) * 100 / topProteinId.intValue();
+
+            Utilities.verboseLog("Lookup hits: " + percentageOfProteinsinLookup + "% of the input sequences are in the Lookup Match Server");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Completion Job:" + completionJob);
 
@@ -137,18 +140,18 @@ public class StepCreationSequenceLoadListener
 
             int workerNumber = Integer.parseInt(this.parameters.get(StepInstanceCreatingStep.WORKER_NUMBER_KEY));
 
-            if (completionJob != null && ! initialSetupSteps) {
+            if (completionJob != null && !initialSetupSteps) {
                 LOGGER.debug("We have a completion Job.");
                 Utilities.verboseLog("Have a completionJob Job: " + completionJob);
                 //TODO this is temp for now
 
-                if(prepareOutputJob != null){
+                if (prepareOutputJob != null) {
                     Utilities.verboseLog("Have a PrepareOutputJob Job :" + prepareOutputJob);
                     //round this number to nearest thousand
                     int rawMaxProteins = (int) (topProteinId / workerNumber);
 
-                    if (rawMaxProteins < 1){
-                        Utilities.verboseLog(20,"rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins); //info
+                    if (rawMaxProteins < 1) {
+                        Utilities.verboseLog(20, "rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins); //info
                         rawMaxProteins = 1;
                     }
                     int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
@@ -160,7 +163,7 @@ public class StepCreationSequenceLoadListener
                         step.setMaxProteins(maxProteins);
 
                         final List<StepInstance> jobStepInstances = createStepInstances(step, bottomProteinId, topProteinId);
-                        for (StepInstance jobStepInstance:jobStepInstances ){
+                        for (StepInstance jobStepInstance : jobStepInstances) {
 //                        if(jobStepInstance.getParameters() == null){
 //                            LOGGER.warn("MatchLookup Parameters is NULL : " );
 //                        }
@@ -171,7 +174,7 @@ public class StepCreationSequenceLoadListener
                         prepareOutputStepInstances.addAll(jobStepInstances);
                         Utilities.verboseLog("Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances");
                     }
-                }else{
+                } else {
                     Utilities.verboseLog(20, "PrepareOutputJob Job is NULL ");
                 }
 
@@ -201,18 +204,18 @@ public class StepCreationSequenceLoadListener
                 //round this number to nearest thousand
                 int rawMaxProteins = (int) (topProteinId / workerNumber);
 
-                if (rawMaxProteins < 1){
-                    Utilities.verboseLog(20,"rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins);
+                if (rawMaxProteins < 1) {
+                    Utilities.verboseLog(20, "rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins);
                     rawMaxProteins = 1;
                 }
                 int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
-                Utilities.verboseLog(20,"workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
+                Utilities.verboseLog(20, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                 for (Step step : matchLookupJob.getSteps()) {
                     //StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     step.setMaxProteins(maxProteins);
 
                     final List<StepInstance> jobStepInstances = createStepInstances(step, bottomProteinId, topProteinId);
-                    for (StepInstance jobStepInstance:jobStepInstances ){
+                    for (StepInstance jobStepInstance : jobStepInstances) {
 //                        if(jobStepInstance.getParameters() == null){
 //                            LOGGER.warn("MatchLookup Parameters is NULL : " );
 //                        }
@@ -222,39 +225,39 @@ public class StepCreationSequenceLoadListener
                     stepToStepInstances.put(step, jobStepInstances);
                     initialSetupStepInstances.addAll(jobStepInstances);
                 }
-            }else{
+            } else {
                 Utilities.verboseLog(20, "matchLookupJob is null.");
             }
 
             if (finaliseInitialStepsJob != null) {
-                Utilities.verboseLog(20,"Have a finaliseInitialStepsJob Job: " + finaliseInitialStepsJob);
+                Utilities.verboseLog(20, "Have a finaliseInitialStepsJob Job: " + finaliseInitialStepsJob);
                 for (Step step : finaliseInitialStepsJob.getSteps()) {
                     //StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
-                    Utilities.verboseLog(20,"step : " + step.getMaxProteins());
-                    Utilities.verboseLog(20,"step max proteins: " + step);
+                    Utilities.verboseLog(20, "step : " + step.getMaxProteins());
+                    Utilities.verboseLog(20, "step max proteins: " + step);
 //                    final List<StepInstance> jobStepInstances = createStepInstances(step, bottomProteinId, topProteinId);
                     StepInstance jobStepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     jobStepInstance.addParameters(parameters);
 //                    LOGGER.warn("FinaliseInitialStepsJob Parameters: " + parameters.toString());
 
-                    Utilities.verboseLog(20,"step max proteins: " + step.getMaxProteins());
-                    Utilities.verboseLog(20,"finaliseInitialStepsJob stepInstance " + jobStepInstance);
+                    Utilities.verboseLog(20, "step max proteins: " + step.getMaxProteins());
+                    Utilities.verboseLog(20, "finaliseInitialStepsJob stepInstance " + jobStepInstance);
                     List<StepInstance> finaliseInitialStepsSingletonStepInstance = new ArrayList<>();
                     finaliseInitialStepsSingletonStepInstance.add(jobStepInstance);
                     stepToStepInstances.put(step, finaliseInitialStepsSingletonStepInstance);
                     initialSetupStepInstances.add(jobStepInstance);
                 }
-                Utilities.verboseLog(20,"initialSetupStepInstances:- " + initialSetupStepInstances);
+                Utilities.verboseLog(20, "initialSetupStepInstances:- " + initialSetupStepInstances);
                 for (StepInstance stepInstance : initialSetupStepInstances) {
-                    Utilities.verboseLog(20,"stepId: " + stepInstance.getStepId());
+                    Utilities.verboseLog(20, "stepId: " + stepInstance.getStepId());
                 }
-            }else{
-                Utilities.verboseLog(20,"finaliseInitialStepsJob is null.");
+            } else {
+                Utilities.verboseLog(20, "finaliseInitialStepsJob is null.");
             }
 
-            Utilities.verboseLog(20,"initialSetupStepInstances Steps: " + initialSetupStepInstances.size());
+            Utilities.verboseLog(20, "initialSetupStepInstances Steps: " + initialSetupStepInstances.size());
 
-            if (! stepToStepInstances.isEmpty()) {
+            if (!stepToStepInstances.isEmpty()) {
                 addDependenciesAndStore(stepToStepInstances);
             }
 
@@ -262,34 +265,48 @@ public class StepCreationSequenceLoadListener
                 LOGGER.debug("Completion Steps:" + completionStepInstances.size());
             }
 
-            if (initialSetupSteps){
+            if (initialSetupSteps) {
                 stepInstanceDAO.flush();
                 return;
             }
             //else
             Utilities.verboseLog("Now create StepInstances for the regular jobs ... : useMatchLookupService: " + useMatchLookupService
                     + " idsWithoutLookupHit: " + (idsWithoutLookupHit != null));
+            double analysisMaxCountMultiplier = 1;
             if (bottomNewSequenceId != null && topNewSequenceId != null) {
-                if(! useMatchLookupService){
-                    Utilities.verboseLog(20,"Not useMatchLookupService  so create jobs for all analyses.");
+                if (!useMatchLookupService) {
+                    Utilities.verboseLog(20, "Not useMatchLookupService  so create jobs for all analyses.");
 
                 }
-                int newSlicePercentage= 0;
-                if(idsWithoutLookupHit != null){
-                    Utilities.verboseLog(10,"idsWithoutLookupHit is NOT NULL, so create jobs for all analyses.");
+                int newSlicePercentage = 0;
+                if (idsWithoutLookupHit != null) {
+                    Utilities.verboseLog(10, "idsWithoutLookupHit is NOT NULL, so create jobs for all analyses.");
                     int idsWithoutLookupHitCount = idsWithoutLookupHit.size();
                     int percentageOfProteinsinLookupRounded = 0;
                     int allProteinCount = topProteinId.intValue();
-                    percentageOfProteinsinLookupRounded = (percentageOfProteinsinLookup / 10 ) * 10;
+                    percentageOfProteinsinLookupRounded = (percentageOfProteinsinLookup / 10) * 10;
                     int percentageOfProteinsNotinLookup = 100 - percentageOfProteinsinLookupRounded;
 
-                    if (percentageOfProteinsNotinLookup > 30){
-                        newSlicePercentage = 100 + percentageOfProteinsinLookupRounded - 20;
-                    }else{
+                    if (percentageOfProteinsNotinLookup < 80) {
+                        newSlicePercentage = 100 + percentageOfProteinsinLookupRounded - 20; //arbitrary figure
+                    } else {
                         newSlicePercentage = 100;
                     }
-                    Utilities.verboseLog(20,"newSlicePercentage :  " + newSlicePercentage);
-                    Utilities.verboseLog(20,"percentageOfProteinsNotinLookup :  " + percentageOfProteinsNotinLookup);
+
+                    if (idsWithoutLookupHitSize <= 0) {
+                        LOGGER.error("idsWithoutLookupHitSize <= 0, something went wrong or there are no sequences to calculate locally");
+                    } else {
+                        LOGGER.warn("analysisMaxCountMultiplier :  topProteinId " + topProteinId + "/ " + idsWithoutLookupHitSize );
+                        analysisMaxCountMultiplier = round(topProteinId.doubleValue() / Double.valueOf(idsWithoutLookupHitSize), 1);
+                        LOGGER.warn("analysisMaxCountMultiplier non rounded :  " + (topProteinId.doubleValue() / Double.valueOf(idsWithoutLookupHitSize)) );
+                    }
+
+                    //TODO remove this temp test
+                    analysisMaxCountMultiplier = 1.1;
+
+                    Utilities.verboseLog(20, "newSlicePercentage :  " + newSlicePercentage);
+                    Utilities.verboseLog(20, "percentageOfProteinsNotinLookup :  " + percentageOfProteinsNotinLookup);
+                    LOGGER.warn("analysisMaxCountMultiplier :  " + analysisMaxCountMultiplier + " idsWithoutLookupHitSize: " + idsWithoutLookupHitSize);
                 }
 
                 for (Job job : jobs.getJobList()) {
@@ -298,7 +315,7 @@ public class StepCreationSequenceLoadListener
                     //or when we have idsWithoutLookupHit
                     //or when we are not using the lookup service
 
-                    if (job.isDoRunLocally() || idsWithoutLookupHit != null || (! useMatchLookupService)) {
+                    if (job.isDoRunLocally() || idsWithoutLookupHit != null || (!useMatchLookupService)) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
                         }
@@ -313,17 +330,25 @@ public class StepCreationSequenceLoadListener
                                 step.setUseMatchLookupService(useMatchLookupService);
                                 Utilities.verboseLog(20, "Old protein slice : " + step.getMaxProteins());
                                 int maxProteins = step.getMaxProteins() * newSlicePercentage / 100;
-                                Utilities.verboseLog(20,"New protein slice : " + step.getMaxProteins() * newSlicePercentage / 100);
+                                Utilities.verboseLog(20, "New protein slice : " + step.getMaxProteins() * newSlicePercentage / 100);
+
+
+                                Utilities.verboseLog(20, "analysisMaxCountMultiplier : " + analysisMaxCountMultiplier);
+                                Double newMaxProteinsDouble = (step.getMaxProteins() * analysisMaxCountMultiplier);
+                                int newMaxProteins = newMaxProteinsDouble.intValue();
+                                Utilities.verboseLog(20, "newMaxProteins : " + newMaxProteins);
                                 boolean changeMaxProteins = false;
-                                if( (! job.isDoRunLocally()) && (useMatchLookupService && idsWithoutLookupHit != null)) {
-                                    if (newSlicePercentage >= 120 && maxProteins >= step.getMaxProteins()) {
-                                        Utilities.verboseLog(20,"New protein slice : " + newSlicePercentage + ", maxProteins: " + maxProteins);
+                                if ((!job.isDoRunLocally()) && (useMatchLookupService && idsWithoutLookupHit != null)) {
+                                    Utilities.verboseLog(20, "New protein slice : " + newSlicePercentage + ", newMaxProteins: " + newMaxProteins);
+                                    //if (newSlicePercentage >= 120 && newMaxProteins >= step.getMaxProteins()) {
+                                    if (newMaxProteins >= step.getMaxProteins()) {
                                         changeMaxProteins = true;
-                                        step.setMaxProteins(maxProteins);
+                                        LOGGER.warn("newMaxProteins :" + newMaxProteins);
+                                        step.setMaxProteins(newMaxProteins);
                                     }
                                 }
-                                if (! changeMaxProteins){
-                                    Utilities.verboseLog(20,"maxProteins NOT changed as not all conditions were met ");
+                                if (!changeMaxProteins) {
+                                    Utilities.verboseLog(20, "newMaxProteins NOT changed as not all conditions were met ");
                                 }
                                 final List<StepInstance> jobStepInstances = createStepInstances(step, bottomNewSequenceId, topNewSequenceId);
                                 stepToStepInstances.put(step, jobStepInstances);
@@ -339,10 +364,10 @@ public class StepCreationSequenceLoadListener
                         }
                     }
                 }
-                if(stepToStepInstances.isEmpty()){
+                if (stepToStepInstances.isEmpty()) {
                     Utilities.verboseLog("stepToStepInstances is emnpty");
                     //return; //is there anything else to do??
-                }else{
+                } else {
                     Utilities.verboseLog("stepToStepInstances  size:" + stepToStepInstances.size());
                 }
                 LOGGER.debug("1. stepToStepInstances.keySet() size:" + stepToStepInstances.keySet().size());
@@ -428,13 +453,13 @@ public class StepCreationSequenceLoadListener
         }
     }
 
-    private long getNewSliceSize(long bottomProteinId, long topProteinId, long maxProteins){
+    private long getNewSliceSize(long bottomProteinId, long topProteinId, long maxProteins) {
         long newSlice = 1l;
 
         return newSlice;
     }
 
-    private boolean checkSignalPSequenceCounts(int sliceSize, long topProteinId){
+    private boolean checkSignalPSequenceCounts(int sliceSize, long topProteinId) {
         int count = 0;
         long bottomProteinId = 1;
 
@@ -451,5 +476,17 @@ public class StepCreationSequenceLoadListener
         }
 
         return true;
+    }
+
+    /**
+     * round a double to a specified precision
+     *
+     * @param value
+     * @param precision
+     * @return
+     */
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 }

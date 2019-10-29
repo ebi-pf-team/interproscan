@@ -68,6 +68,13 @@ public class PantherPostProcessingStep extends Step {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting step with Id " + this.getId());
         }
+        //do we need to skip
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + key);
+            return;
+        }
+
         // Retrieve raw results for protein range.
         Set<RawProtein<PantherRawMatch>> rawMatches = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),

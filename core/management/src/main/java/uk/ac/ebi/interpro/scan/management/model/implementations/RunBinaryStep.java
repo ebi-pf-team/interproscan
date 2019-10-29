@@ -5,6 +5,7 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,6 +137,18 @@ abstract public class RunBinaryStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.info("Starting step with Id " + this.getId());
         LOGGER.debug("About to run binary... some output should follow.");
+
+        long maxProteins = getMaxProteins();
+        //do we need to skip
+        Utilities.verboseLog(10, "doSkipRun: "  + doSkipRun + "  super.doSkipRun:" + super.doSkipRun + " maxProteins: " + maxProteins  + " skipRunRanges: " + skipRunRanges.size());
+        LOGGER.warn("Step State"  + toString());
+
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
+            return;
+        }
+
         delayForNfs();
         String outputFileName;
         if (this.getOutputFileNameTemplate() == null) {

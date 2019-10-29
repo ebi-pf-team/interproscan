@@ -11,6 +11,7 @@ import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Set;
 
@@ -90,6 +91,11 @@ public class Gene3dHmmer3FilterStep extends Step {
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
         // Get raw matches
         Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),

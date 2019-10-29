@@ -68,6 +68,12 @@ public class ParsePrintsOutputStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         delayForNfs();
         InputStream inputStreamParser = null;
         try {

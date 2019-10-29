@@ -97,8 +97,17 @@ public class WriteFastaFileStep extends Step {
                 //deal with cases where there is no sequence in this range
                 if (count == 0) {
                     doSkipRun = true;
+                    super.doSkipRun = true;
+                    //String stepID = stepInstance.getStepId();
+                    String libraryName = job.getLibraryRelease().getLibrary().getName();
+                    String range = "_" + bottomProtein + "-" + topProtein;
+                    String key = libraryName + range;
+                    skipRunRanges.add(key);
+                    job.addSkipRange(key);
+                    LOGGER.warn(skipRunRanges.toString());
+                    LOGGER.error("Some thing will go wrong key:  " + key + " - count of proteins to write to file: " + count);
                 }
-                
+
                  /*   for (Protein protein : proteinsNotInLookup) {
                         System.out.println("write sequence id : " + protein.getId());
                         Protein protein = proteinDAO.getProtein(protein.getId().toString());

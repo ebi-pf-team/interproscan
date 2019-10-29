@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class describes a Job, which is constructed from N steps.
@@ -73,6 +71,8 @@ public class Job implements Serializable, BeanNameAware {
      * over the wire when each StepExecution is run.
      */
     private transient List<Step> steps = new ArrayList<Step>();
+
+    protected Set<String> skipRunRanges = new HashSet<>();
 
     public Job() {
     }
@@ -140,6 +140,14 @@ public class Job implements Serializable, BeanNameAware {
 
     public void setNonEmptyPaths(List<String> nonEmptyPaths) {
         this.nonEmptyPaths = nonEmptyPaths;
+    }
+
+    public Set<String> getSkipRunRanges() {
+        return skipRunRanges;
+    }
+
+    public void addSkipRange(String key){
+        skipRunRanges.add(key);
     }
 
     @Override

@@ -75,6 +75,13 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
             LOGGER.debug("Running ParseStep for proteins " + stepInstance.getBottomProtein() +
                     " to " + stepInstance.getTopProtein());
         }
+
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " + key);
+            return;
+        }
+
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
         LOGGER.debug("Output fileName: " + fileName);

@@ -72,6 +72,13 @@ public class ParseAndPersistStep<T extends RawMatch, U extends Match> extends St
         InputStream inputStream = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileTemplate);
         Set<RawProtein<T>> rawProteins;
+
+        //do we need to skip
+        if (doSkipRun) {
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+            return;
+        }
+
         int count = 0;
         RawMatch represantiveRawMatch = null;
         try {
