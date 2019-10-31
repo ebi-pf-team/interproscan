@@ -140,9 +140,6 @@ abstract public class RunBinaryStep extends Step {
 
         long maxProteins = getMaxProteins();
         //do we need to skip
-        Utilities.verboseLog(10, "doSkipRun: "  + doSkipRun + "  super.doSkipRun:" + super.doSkipRun + " maxProteins: " + maxProteins  + " skipRunRanges: " + skipRunRanges.size());
-        LOGGER.warn("Step State"  + toString());
-
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);

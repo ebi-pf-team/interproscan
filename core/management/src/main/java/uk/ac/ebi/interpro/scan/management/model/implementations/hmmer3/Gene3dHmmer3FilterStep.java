@@ -92,8 +92,9 @@ public class Gene3dHmmer3FilterStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         //do we need to skip
-        if (doSkipRun) {
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
             return;
         }
         // Get raw matches

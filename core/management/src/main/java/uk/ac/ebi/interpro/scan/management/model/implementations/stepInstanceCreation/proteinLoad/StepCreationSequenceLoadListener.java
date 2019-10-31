@@ -302,7 +302,7 @@ public class StepCreationSequenceLoadListener
                     }
 
                     //TODO remove this temp test
-                    analysisMaxCountMultiplier = 1.1;
+                    //analysisMaxCountMultiplier = 1.1; for testing purposes 
 
                     Utilities.verboseLog(20, "newSlicePercentage :  " + newSlicePercentage);
                     Utilities.verboseLog(20, "percentageOfProteinsNotinLookup :  " + percentageOfProteinsNotinLookup);

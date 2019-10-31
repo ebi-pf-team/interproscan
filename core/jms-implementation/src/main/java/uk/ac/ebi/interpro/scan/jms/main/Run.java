@@ -1551,6 +1551,14 @@ public class Run extends AbstractI5Runner {
         // Configure the Broker with a random TCP port number.
         //final BrokerService broker1 = (BrokerService) ctx.getBean("localhostJMSBroker");
         final BrokerService broker = (BrokerService) ctx.getBean("jmsBroker");
+        String brokerTmpDataDirectory  = broker.getTmpDataDirectory().getAbsolutePath();
+        String brokerDataDirectory  = broker.getBrokerDataDirectory().getAbsolutePath();
+        String dataDirectoryfile  = broker.getDataDirectoryFile().getAbsolutePath();
+
+        System.out.println("brokerTmpDataDirectory: " + brokerTmpDataDirectory);
+        System.out.println("brokerDataDirectory: " + brokerDataDirectory);
+        System.out.println("dataDirectoryfile: " + dataDirectoryfile);
+
         try {
             // Get hostname
             //get canonical hostname as otherwise hostname may not be exactly how other machines see this host

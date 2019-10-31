@@ -75,16 +75,18 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        delayForNfs();
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Running ParseStep for proteins " + stepInstance.getBottomProtein() +
                     " to " + stepInstance.getTopProtein());
         }
-        //do we need to skip
-        if (doSkipRun) {
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
+        delayForNfs();
 
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());

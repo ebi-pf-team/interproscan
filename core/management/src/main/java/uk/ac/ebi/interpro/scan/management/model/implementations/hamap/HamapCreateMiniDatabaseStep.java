@@ -101,8 +101,9 @@ public class HamapCreateMiniDatabaseStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final long startTime = System.currentTimeMillis();
         //do we need to skip
-        if (doSkipRun) {
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
             return;
         }
 
@@ -200,7 +201,6 @@ public class HamapCreateMiniDatabaseStep extends Step {
             final long endTime = System.currentTimeMillis();
             LOGGER.debug("HamapCreateMiniDatabaseStep takes  " + (endTime - startTime) + "ms");
         }
-
 
     }
 

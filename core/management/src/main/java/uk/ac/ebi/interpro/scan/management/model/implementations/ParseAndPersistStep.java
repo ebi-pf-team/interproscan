@@ -68,16 +68,16 @@ public class ParseAndPersistStep<T extends RawMatch, U extends Match> extends St
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            return;
+        }
+
         // Retrieve raw matches from the SuperFamily binary output file
         InputStream inputStream = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileTemplate);
         Set<RawProtein<T>> rawProteins;
-
-        //do we need to skip
-        if (doSkipRun) {
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId());
-            return;
-        }
 
         int count = 0;
         RawMatch represantiveRawMatch = null;

@@ -51,9 +51,7 @@ public abstract class Step implements BeanNameAware {
 
     protected boolean doRunLocally = false;
 
-    protected boolean doSkipRun = false;
 
-    protected Set<String> skipRunRanges = new HashSet<>();
 
     protected boolean useMatchLookupService = true;
 
@@ -122,14 +120,6 @@ public abstract class Step implements BeanNameAware {
     public void setJob(Job job) {
         this.job = job;
         job.addStep(this);
-    }
-
-    public Set<String> getSkipRunRanges() {
-        return skipRunRanges;
-    }
-
-    public void setSkipRunRanges(Set<String> skipRunRanges) {
-        this.skipRunRanges = skipRunRanges;
     }
 
     public List<Step> getDependsUpon() {
@@ -244,9 +234,6 @@ public abstract class Step implements BeanNameAware {
         String key = getKey(bottomProtein, topProtein);
 
         Utilities.verboseLog("check SkipRange key: " + key );
-        if (doSkipRun) {
-            Utilities.verboseLog("check key " + key + " in " + skipRunRanges);
-        }
 
         if (job.getSkipRunRanges().contains(key)){
             return true;
@@ -328,8 +315,6 @@ public abstract class Step implements BeanNameAware {
         sb.append(", cronSchedule='").append(cronSchedule).append('\'');
         sb.append(", createStepInstancesForNewProteins=").append(createStepInstancesForNewProteins);
         sb.append(", maxProteins=").append(maxProteins);
-        sb.append(", doSkipRun=").append(doSkipRun);
-        sb.append(", skipRunRanges=").append(getSkipRunRanges().toString());
         sb.append(", maxModels=").append(maxModels);
         sb.append(", stepInstances=").append(stepInstances);
         sb.append('}');
