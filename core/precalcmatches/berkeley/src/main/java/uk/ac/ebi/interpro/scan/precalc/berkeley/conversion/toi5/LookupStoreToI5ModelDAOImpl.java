@@ -439,8 +439,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         for (KVSequenceEntry kvSequenceEntry: kvSiteSequenceEntries){
             List<KVSequenceEntry> kvSequenceEntryList =  mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5());
             if( kvSequenceEntryList != null){
-                Utilities.verboseLog("We already have the sites for : " +  kvSequenceEntry.getProteinMD5());
-                Utilities.verboseLog("kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString());
+                Utilities.verboseLog(40, "We already have the sites for : " +  kvSequenceEntry.getProteinMD5());
+                Utilities.verboseLog(40, "kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString());
             }else{
                 kvSequenceEntryList = new ArrayList<>();
             }
@@ -453,8 +453,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
     @Override
     public void checkMatchDAO() {
-        Utilities.verboseLog(matchDAO.getDbStore().toString());
-        Utilities.verboseLog( " DBSTORE: " + matchDAO.getDbStore().getDbName()
+        Utilities.verboseLog(40, matchDAO.getDbStore().toString());
+        Utilities.verboseLog( 20, " DBSTORE: " + matchDAO.getDbStore().getDbName()
                 + ", DB Store type = " + matchDAO.getDbStore().getKVDBStore()
                 + ", DB Store type = " + matchDAO.getDbStore().getKVDBType());
     }

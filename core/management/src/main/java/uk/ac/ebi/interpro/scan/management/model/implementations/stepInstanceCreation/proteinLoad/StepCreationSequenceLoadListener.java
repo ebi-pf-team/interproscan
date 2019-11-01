@@ -294,11 +294,11 @@ public class StepCreationSequenceLoadListener
                     }
 
                     if (idsWithoutLookupHitSize <= 0) {
-                        LOGGER.error("idsWithoutLookupHitSize <= 0, something went wrong or there are no sequences to calculate locally");
+                        LOGGER.error("Ids without lookup hist count <= 0, something went wrong or there are no sequences to calculate locally");
                     } else {
-                        LOGGER.warn("analysisMaxCountMultiplier :  topProteinId " + topProteinId + "/ " + idsWithoutLookupHitSize );
+                        Utilities.verboseLog(20,"analysisMaxCountMultiplier :  topProteinId " + topProteinId + "/ " + idsWithoutLookupHitSize );
                         analysisMaxCountMultiplier = round(topProteinId.doubleValue() / Double.valueOf(idsWithoutLookupHitSize), 1);
-                        LOGGER.warn("analysisMaxCountMultiplier non rounded :  " + (topProteinId.doubleValue() / Double.valueOf(idsWithoutLookupHitSize)) );
+                        Utilities.verboseLog(20,"analysisMaxCountMultiplier non rounded :  " + (topProteinId.doubleValue() / Double.valueOf(idsWithoutLookupHitSize)) );
                     }
 
                     //TODO remove this temp test
@@ -306,7 +306,7 @@ public class StepCreationSequenceLoadListener
 
                     Utilities.verboseLog(20, "newSlicePercentage :  " + newSlicePercentage);
                     Utilities.verboseLog(20, "percentageOfProteinsNotinLookup :  " + percentageOfProteinsNotinLookup);
-                    LOGGER.warn("analysisMaxCountMultiplier :  " + analysisMaxCountMultiplier + " idsWithoutLookupHitSize: " + idsWithoutLookupHitSize);
+                    Utilities.verboseLog(20,"analysisMaxCountMultiplier :  " + analysisMaxCountMultiplier + " idsWithoutLookupHitSize: " + idsWithoutLookupHitSize);
                 }
 
                 for (Job job : jobs.getJobList()) {
@@ -343,7 +343,7 @@ public class StepCreationSequenceLoadListener
                                     //if (newSlicePercentage >= 120 && newMaxProteins >= step.getMaxProteins()) {
                                     if (newMaxProteins >= step.getMaxProteins()) {
                                         changeMaxProteins = true;
-                                        LOGGER.warn("newMaxProteins :" + newMaxProteins);
+                                        Utilities.verboseLog(40, "newMaxProteins :" + newMaxProteins);
                                         step.setMaxProteins(newMaxProteins);
                                     }
                                 }
