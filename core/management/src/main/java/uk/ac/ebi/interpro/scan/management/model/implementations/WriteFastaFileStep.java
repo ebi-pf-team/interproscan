@@ -70,7 +70,7 @@ public class WriteFastaFileStep extends Step {
 
         try {
             if (doRunLocally || (!useMatchLookupService)) {
-                LOGGER.warn(this.getId() + " GetAllSequences: doRunLocally: " + doRunLocally + " useMatchLookupService: " + useMatchLookupService);
+                Utilities.verboseLog(10, this.getId() + " GetAllSequences: doRunLocally: " + doRunLocally + " useMatchLookupService: " + useMatchLookupService);
                 proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             } else {
                 //TODO this is getting completed to filter nonlookup up proteins
