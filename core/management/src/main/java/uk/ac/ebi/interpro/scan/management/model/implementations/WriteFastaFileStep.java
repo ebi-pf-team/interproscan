@@ -103,7 +103,7 @@ public class WriteFastaFileStep extends Step {
                     String range = "_" + bottomProtein + "-" + topProtein;
                     String key = libraryName + range;
                     job.addSkipRange(key);
-                    LOGGER.error("Some thing will go wrong key:  " + key + " - count of proteins to write to file: " + count);
+                    LOGGER.warn("Protein sequences problem - for:  " + key + " - count of proteins to write to file: " + count);
                 }
 
                  /*   for (Protein protein : proteinsNotInLookup) {
