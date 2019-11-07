@@ -123,6 +123,34 @@ public class MatchHttpClient {
 
 //        HttpClient httpclient = new DefaultHttpClient();
         CloseableHttpClient httpclient = HttpClients.createDefault();
+
+        //set the proxy if needed
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getMatches: " + proxyHost + ":" + proxyPort);
+
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpclient = getClient(proxy);
+
+            //httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            //httpclient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet("http://localhost/");
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try {
+                //do something
+                LOG.warn("HTTP Proxy Warning: this run is configured to use an http proxy, InterProscan is however unable to handle this properly.  ");
+            } finally {
+                response.close();
+            }
+
+            //try use newer API as ConnRoutePNames is deprecated
+//            CloseableHttpClient client = HttpClients.custom()
+//                .setRoutePlanner(
+//                     new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+//                .build();
+
+        }
+
+
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String md5 : md5s) {
             qparams.add(new BasicNameValuePair(MD5_PARAMETER, md5));
@@ -164,30 +192,7 @@ public class MatchHttpClient {
                 return null;
             }
         };
-        //set the proxy if needed
-        if (isProxyEnabled()) {
-            LOG.debug("Using a Proxy server in getMatches: " + proxyHost + ":" + proxyPort);
 
-            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            httpclient = getClient(proxy);
-
-            //httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-            //httpclient = HttpClients.createDefault();
-            HttpGet httpget = new HttpGet("http://localhost/");
-            CloseableHttpResponse response = httpclient.execute(httpget);
-            try {
-                //do something
-            } finally {
-                response.close();
-            }
-
-            //try use newer API as ConnRoutePNames is deprecated
-//            CloseableHttpClient client = HttpClients.custom()
-//                .setRoutePlanner(
-//                     new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
-//                .build();
-
-        }
 
         KVSequenceEntryXML matchXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
