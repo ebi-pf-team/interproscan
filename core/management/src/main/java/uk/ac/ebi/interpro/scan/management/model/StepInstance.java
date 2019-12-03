@@ -1,8 +1,10 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.KeyGen;
 
 import javax.persistence.*;
+import java.io.File;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -35,6 +37,8 @@ import java.util.*;
 @Entity
 @Table
 public class StepInstance implements Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(StepInstance.class.getName());
 
     private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
 
@@ -263,6 +267,9 @@ public class StepInstance implements Serializable {
                     // however this is not a problem - the worst that can happen, is that the StepInstance is not
                     // executed now.
                     if (dependency.getState() != StepExecutionState.STEP_EXECUTION_SUCCESSFUL) {
+                        LOGGER.debug("can be submitted dependency: " + dependency.getStepId()
+                                + " id: " + dependency.getId()
+                                + " state: " + dependency.getState());
                         return false;
                     }
                 }
@@ -316,7 +323,7 @@ public class StepInstance implements Serializable {
 
         return new StringBuilder()
                 .append(temporaryFileDirectory)
-                .append('/')
+                .append(File.separatorChar)
                 .append(fileNameTemplate)
                 .toString();
     }

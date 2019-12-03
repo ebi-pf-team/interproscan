@@ -69,7 +69,7 @@ public class Entry2GoDAOImpl implements Entry2GoDAO {
         final Map<String, Collection<GoXref>> result = new HashMap<String, Collection<GoXref>>();
         try {
             this.jdbcTemplate
-                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id",
+                    .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g INNER JOIN INTERPRO.ENTRY e ON (e.entry_ac = i2g.entry_ac) JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id WHERE e.checked='Y'",
                             new MapSqlParameterSource(),
                             new RowCallbackHandler() {
                                 @Override

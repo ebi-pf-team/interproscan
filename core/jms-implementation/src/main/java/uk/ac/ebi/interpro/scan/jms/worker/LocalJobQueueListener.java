@@ -6,10 +6,11 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
 import javax.jms.*;
+import java.lang.IllegalStateException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -30,6 +31,8 @@ public class LocalJobQueueListener implements MessageListener {
     private StepExecutionTransaction stepExecutor;
 
     boolean verboseLog = false;
+
+    boolean testFailOnce = false;
 
     private int verboseLogLevel;
 
@@ -111,6 +114,7 @@ public class LocalJobQueueListener implements MessageListener {
         jobCount.incrementAndGet();
         int localCount = jobCount.get();
         String timeNow = Utilities.getTimeNow();
+	    long threadId = Thread.currentThread().getId();
         if(localCount == 1){
             Utilities.verboseLog("first transaction ... ");
         }
@@ -130,7 +134,7 @@ public class LocalJobQueueListener implements MessageListener {
 //        Utilities.verboseLog(timeNow + debugToken + "worker-" + inVmworkerNumber + " job " + localCount);
 
         final String messageId;
-        final String stepName;
+        String stepName = "";
 
         try {
             messageId = message.getJMSMessageID();
@@ -171,18 +175,21 @@ public class LocalJobQueueListener implements MessageListener {
                 statsUtil.jobStarted(stepName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-                Utilities.verboseLog("verboseLogLevel :" + verboseLogLevel);
-                if (verboseLogLevel > 2) {
-                    Utilities.verboseLog("Processing " + stepName + " JobCount #: " + localCount
+//                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
+                if (Utilities.verboseLogLevel > 2) {
+                    Utilities.verboseLog("thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
                             + " - stepInstanceId = " + stepId
                             + "\n stepInstance: " + stepExecution.getStepInstance().toString());
                 }
+                //the following code was used to test high memory worker creation, might still be useful later
+//                if (controller != null && ! testFailOnce){
+//                    testFailOnce = true;
+//                    throw new IllegalStateException("Exception for testing ....");
+//                }
                 stepExecutor.executeInTransaction(stepExecution, message);
                 final long executionTime =   System.currentTimeMillis() - now;
-                timeNow = Utilities.getTimeNow();
-//                LOGGER.debug("Execution Time (ms) for JobCount #: " + localCount + " stepId: " + stepExecution.getStepInstance().getStepId() + " time: " + executionTime);
-                if(verboseLogLevel > 2){
-                    Utilities.verboseLog("Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+                if(Utilities.verboseLogLevel > 2){
+                    Utilities.verboseLog("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
                     Utilities.verboseLog("Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
                 }
                 statsUtil.jobFinished(stepName);
@@ -190,6 +197,9 @@ public class LocalJobQueueListener implements MessageListener {
                 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
                 //            running = false;
                 LOGGER.error("Execution thrown when attempting to executeInTransaction the StepExecution.  All database activity rolled back.", e);
+
+                LOGGER.error("StepExecution with errors - stepName: " + stepName);
+
                 // Something went wrong in the execution - try to send back failure
                 // message to the broker.  This in turn may fail if it is the JMS connection
                 // that failed during the execution.

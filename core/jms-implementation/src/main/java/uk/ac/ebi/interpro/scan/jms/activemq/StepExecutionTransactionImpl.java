@@ -118,7 +118,7 @@ public class StepExecutionTransactionImpl implements StepExecutionTransaction {
         final String workingDirectory = directoryManager.replacePath(jobs.getBaseDirectoryTemporaryFiles());
         final String directory = new StringBuilder()
                 .append(workingDirectory)
-                .append('/')
+                .append(File.separatorChar)
                 .append(step.getJob().getId())
                 .toString();
         // Check (just the once) that the working directory exists.

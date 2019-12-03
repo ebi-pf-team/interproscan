@@ -29,7 +29,9 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     private static Logger log = Logger.getLogger(EntryRowCallbackHandler.class);
 
-    private final int BATCH_COMMIT_SIZE = 60;
+//    private final int BATCH_COMMIT_SIZE = 60;
+    private final int BATCH_COMMIT_SIZE = 500;
+
 
     private int entryCounter = 0;
     private Set<Entry> entries = new HashSet<Entry>();
@@ -93,7 +95,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         final String entryAc = resultSet.getString(1);
         final String entryType = resultSet.getString(2);
         final String name = resultSet.getString(3);
-//        final String checked = resultSet.getString(4);
+        final String checked = resultSet.getString(4);
+        if (!checked.equalsIgnoreCase("Y")) {
+            log.warn("Entry " + entryAc + " is unchecked!");
+        }
 //        final Date created = resultSet.getDate(5);
 //        final Date updated = resultSet.getDate(6);
 //        final String userStamp = resultSet.getString(7);

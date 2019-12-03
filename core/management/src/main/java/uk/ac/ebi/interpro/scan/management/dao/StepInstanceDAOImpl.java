@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
@@ -17,6 +18,7 @@ import java.util.*;
  */
 public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> implements StepInstanceDAO {
 
+    private static final Logger LOGGER = Logger.getLogger(StepInstanceDAOImpl.class.getName());
 
     private int maxSerialGroupExecutions = 1;
 
@@ -71,6 +73,7 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         query.setParameter("stepId", step.getId());
         query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
         synchronized (lockObject) {
+            LOGGER.debug("StepInstanceDAO locked");
             return query.getResultList();
         }
     }
@@ -91,9 +94,9 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
                         "inner join j.executions e " +
                         "where e.state = :successful" +
                         ") order by i.id desc");
-
         query.setParameter("successful", StepExecutionState.STEP_EXECUTION_SUCCESSFUL);
         synchronized (lockObject) {
+            LOGGER.debug("StepInstanceDAO locked");
             return query.getResultList();
         }
     }
@@ -138,6 +141,35 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         }
         return true;
     }
+
+    /**
+     * @return instances with the SerialGroup passed in as argument
+     */
+    public List<StepInstance> getSerialGroupInstances(final StepInstance stepInstance, final Jobs jobs) {
+        final SerialGroup serialGroup = stepInstance.getStep(jobs).getSerialGroup();
+        if (serialGroup == null) {
+            return null;
+        }
+        if (!serialGroupToStepIdMap.containsKey(serialGroup)) {
+            serialGroupToStepIdMap.put(serialGroup, buildMapStepIdsInGroup(serialGroup, jobs));
+        }
+        final List<String> stepIds = serialGroupToStepIdMap.get(serialGroup);
+        if (stepIds == null) {    // There are no steps in this SerialGroup, so no restriction on running.  Should never be called though!
+            return null;
+        }
+        final int stepIdCount = stepIds.size();
+        final Query query = entityManager.createQuery(
+                "select i from StepInstance i inner join i.executions e " +
+                        "where i.stepId in (:stepIds) and e.submittedTime is not null and e.completedTime is null");
+        query.setParameter("stepIds", stepIds);
+        List<StepInstance> serialGroupInstances = null;
+
+        synchronized (lockObject) {
+            serialGroupInstances =  query.getResultList();
+        }
+        return serialGroupInstances;
+    }
+
 
     /**
      * Returns true if there are steps left to run

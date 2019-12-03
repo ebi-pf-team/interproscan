@@ -121,7 +121,7 @@
         <property name="gridName" value="${grid.name}"/>
         <property name="gridLimit" value="${grid.jobs.limit}"/>
         <property name="gridCheckInterval" value="${grid.check.interval.seconds}"/>
-
+        <property name="masterCanRunBinaries" value="${master.can.run.binaries}"/>
     </bean>
 
     <bean id="portExclusionList" class="java.lang.String">
@@ -162,6 +162,7 @@
         <property name="sessionTransacted" value="true"/>
         <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
         <property name="autoStartup" value="${master.can.run.binaries}"/>
+
     </bean>
 
     <!--Configuration for the local job queue listener as a fat client-->

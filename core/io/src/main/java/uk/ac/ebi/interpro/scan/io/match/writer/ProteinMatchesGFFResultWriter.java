@@ -4,9 +4,9 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.GFFWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +41,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
     private int matchCounter;
 
     //    protected final Map<String, String> identifierToSeqMap = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-    protected final Map<String, String> identifierToSeqMap = new TreeMap<String, String>(new Gff3FastaSeqIdComparator());
+    protected final Map<String, String> identifierToSeqMap = new TreeMap<>(new Gff3FastaSeqIdComparator());
 
 
     protected ProteinMatchesGFFResultWriter() {
@@ -49,12 +49,12 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         this.matchCounter = 0;
     }
 
-    public ProteinMatchesGFFResultWriter(File file) throws IOException {
-         this(file, true);
+    public ProteinMatchesGFFResultWriter(Path path) throws IOException {
+         this(path, true);
     }
 
-    public ProteinMatchesGFFResultWriter(File file, boolean writeFullGFF) throws IOException {
-        super(file);
+    public ProteinMatchesGFFResultWriter(Path path, boolean writeFullGFF) throws IOException {
+        super(path);
         this.gffWriter = new GFFWriter(super.fileWriter);
         if (writeFullGFF) {
             //Write first line of file - always the same
@@ -64,7 +64,6 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             this.gffWriter.write("##feature-ontology http://song.cvs.sourceforge.net/viewvc/song/ontology/sofa.obo?revision=1.269");
         }
     }
-
 
 
     protected int getMatchCounter() {
@@ -92,16 +91,15 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     .append('"');
 //            gffAttributes.add("interPro_entry_desc=" + interProEntry.getDescription());
             if (mapToPathway) {
-                List<PathwayXref> pathwayXRefs = new ArrayList<PathwayXref>(interProEntry.getPathwayXRefs());
+                List<PathwayXref> pathwayXRefs = new ArrayList<>(interProEntry.getPathwayXRefs());
                 Collections.sort(pathwayXRefs, new PathwayXrefComparator());
-                if (pathwayXRefs != null && pathwayXRefs.size() > 0) {
+                if (pathwayXRefs.size() > 0) {
                     StringBuilder sb = new StringBuilder();
                     for (PathwayXref xref : pathwayXRefs) {
                         if (sb.length() > 0) {
                             sb.append(VALUE_SEPARATOR_GFF3);
                         }
-                        sb
-                                .append('"')
+                        sb.append('"')
                                 .append(xref.getDatabaseName())
                                 .append(':')
                                 .append(xref.getIdentifier()).append('"');
@@ -111,9 +109,9 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             }
             matchFeature.addAttribute("Dbxref", dbxrefAttributeValue.toString());
             if (mapToGO) {
-                List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
+                List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
                 Collections.sort(goXRefs, new GoXrefComparator());
-                if (goXRefs != null && goXRefs.size() > 0) {
+                if ((goXRefs.size() > 0)) {
                     StringBuilder sb = new StringBuilder();
                     for (GoXref xref : goXRefs) {
                         if (sb.length() > 0) {
@@ -295,7 +293,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             final String signatureAc = signature.getAccession();
             final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
             final String analysis = signatureLibrary.getName();
-            final String description = match.getSignature().getDescription();
+            final String description = signature.getDescription();
             final String matchId = MATCH_STRING + getMatchCounter();
 
             final Set<Location> locations = match.getLocations();
@@ -307,9 +305,9 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     // To maintain compatibility, we output the same value for the score column as I4
                     // In some cases we have to take the value from the match
                     if (match instanceof SuperFamilyHmmer3Match) {
-                        score = Double.toString( ((SuperFamilyHmmer3Match) match).getEvalue());
+                        score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                     } else if (match instanceof PantherMatch) {
-                        score = Double.toString( ((PantherMatch) match).getEvalue());
+                        score = Double.toString(((PantherMatch) match).getEvalue());
                     } else if (match instanceof FingerPrintsMatch) {
                         score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                     }
@@ -317,13 +315,15 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     if (location instanceof HmmerLocation) {
                         score = Double.toString(((HmmerLocation) location).getEvalue());
                     } else if (location instanceof BlastProDomMatch.BlastProDomLocation) {
-                        score = Double.toString( ((BlastProDomMatch.BlastProDomLocation) location).getEvalue() );
-                    }  else if (location instanceof ProfileScanMatch.ProfileScanLocation)  {
-                        score = Double.toString( ((ProfileScanMatch.ProfileScanLocation) location).getScore() );
+                        score = Double.toString(((BlastProDomMatch.BlastProDomLocation) location).getEvalue());
+                    } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {
+                        score = Double.toString(((ProfileScanMatch.ProfileScanLocation) location).getScore());
+                    } else if (location instanceof RPSBlastMatch.RPSBlastLocation) {
+                        score = Double.toString(((RPSBlastMatch.RPSBlastLocation) location).getEvalue());
                     }
                     //Build match feature line
                     final int locStart = location.getStart();
-                    int locEnd = location.getEnd();
+                    final int locEnd = location.getEnd();
                     final StringBuilder matchIdLocation = new StringBuilder(matchId);
                     matchIdLocation
                             .append('_')

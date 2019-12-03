@@ -1,0 +1,62 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- remote connection -->
+
+    <!-- Activemq connection factory -->
+    <bean id="remoteAMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" >
+        <!-- brokerURL, You may have different IP or port -->
+        <property name="brokerURL" value="vm://localhost?create=false"/>
+        <!--<property name="prefetchPolicy" ref="prefetchPolicy"/>-->
+        <!--<constructor-arg value="tcp://${jms.broker.host.name}:${jms.broker.port.number}" />-->
+        <!--<constructor-arg  value="vm://localhostJMSBroker?create=false" />-->
+        <!--<property name=""-->
+    </bean>
+
+
+    <bean id="prefetchPolicy" class="org.apache.activemq.ActiveMQPrefetchPolicy">
+        <property name="queuePrefetch" value="${consumer.prefetch.limit}"/>
+    </bean>
+
+    
+    <!-- Pooled Spring connection factory -->
+    <!--<bean id="remoteConnectionFactory"   class="org.springframework.jms.connection.CachingConnectionFactory"  depends-on="jmsBroker">-->
+    <bean id="remoteConnectionFactory"   class="org.springframework.jms.connection.CachingConnectionFactory">
+          <!--class="org.springframework.jms.connection.CachingConnectionFactory" depends-on="jmsBroker">-->
+        <constructor-arg ref="remoteAMQConnectionFactory" />
+    </bean>
+
+
+    <!-- Remote Spring JMSTemplate -->
+    <bean id="remoteJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory">
+            <bean class="org.springframework.jms.connection.CachingConnectionFactory">
+                <constructor-arg ref="remoteConnectionFactory"/>
+                <property name="sessionCacheSize" value="100"/>
+            </bean>
+        </property>
+        <property name="explicitQosEnabled" value="true"/>
+        <property name="sessionAcknowledgeModeName" value="CLIENT_ACKNOWLEDGE"/>
+    </bean>
+
+
+    <!-- JMS Error handler-->
+    <bean id="jmsErrorHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSErrorHandler" />
+
+
+    <!-- JMS Exception handler-->
+    <bean id="jmsIOExceptionHandler" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSIOExceptionHandler" />
+
+    <!-- JMS transport Listener-->
+    <bean id="workerTransportListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSTransportListener" />
+
+    <!-- JMS Exception Listener-->
+    <bean id="workerExceptionListener" class="uk.ac.ebi.interpro.scan.jms.activemq.JMSExceptionListener"  >
+        <constructor-arg value="workerExceptionListener"/>
+        <property name="controller" ref="distributedWorkerController"/>
+    </bean>
+
+</beans>

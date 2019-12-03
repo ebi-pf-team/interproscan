@@ -12,6 +12,7 @@ import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,11 +118,13 @@ public abstract class AbstractMaster implements Master {
     public void setupTemporaryDirectory() {
         //Change base dir temp directory if
         if (baseDirectoryTemporaryFiles != null) {
-            LOGGER.debug("1. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
-            if (!baseDirectoryTemporaryFiles.endsWith("/")) {
-                setTemporaryDirectory(baseDirectoryTemporaryFiles + "/");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("1. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
             }
-            if (baseDirectoryTemporaryFiles.endsWith(temporaryFileDirSuffix + "/")) {
+            if (!baseDirectoryTemporaryFiles.endsWith(File.separator)) {
+                setTemporaryDirectory(baseDirectoryTemporaryFiles + File.separator);
+            }
+            if (baseDirectoryTemporaryFiles.endsWith(temporaryFileDirSuffix + File.separator)) {
                 // The [UNIQUE] was already added (use temp directory as specified in interproscan.properties)
                 jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles);
             }
@@ -130,8 +133,10 @@ public abstract class AbstractMaster implements Master {
                 jobs.setBaseDirectoryTemporaryFiles(baseDirectoryTemporaryFiles + temporaryFileDirSuffix);
                 setTemporaryDirectory(jobs.getBaseDirectoryTemporaryFiles());
             }
-            LOGGER.debug("2. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
-        }else{
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("2. baseDirectoryTemporaryFiles:- " + baseDirectoryTemporaryFiles);
+            }
+        } else {
             LOGGER.debug("baseDirectoryTemporaryFiles  is null ");
         }
     }
@@ -139,7 +144,7 @@ public abstract class AbstractMaster implements Master {
 
 
     public void run() {
-        if (LOGGER.isDebugEnabled()) LOGGER.debug("Started Master run() method.");
+        LOGGER.debug("Started Master run() method.");
         setupTemporaryDirectory();
     }
 
@@ -154,14 +159,14 @@ public abstract class AbstractMaster implements Master {
     protected int createStepInstancesForJob(String jobId, Map<String, String> parameters) {
         int stepInstancesCreatedCount = 0;
         Job job = jobs.getJobById(jobId);
-        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<Step, List<StepInstance>>();
+        final Map<Step, List<StepInstance>> stepToStepInstances = new HashMap<>();
         for (Step step : job.getSteps()) {
             stepInstancesCreatedCount++;
             StepInstance stepInstance = new StepInstance(step);
             stepInstance.addParameters(parameters);
             List<StepInstance> mappedStepInstance = stepToStepInstances.get(step);
             if (mappedStepInstance == null) {
-                mappedStepInstance = new ArrayList<StepInstance>();
+                mappedStepInstance = new ArrayList<>();
                 stepToStepInstances.put(step, mappedStepInstance);
             }
             mappedStepInstance.add(stepInstance);
@@ -209,8 +214,10 @@ public abstract class AbstractMaster implements Master {
         try {
             stepInstanceDAO.insert(stepToStepInstances);
         } catch (Throwable t) {
-            LOGGER.debug("Error thrown by stepInstance DAO");
-            LOGGER.debug(t.getMessage());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Error thrown by stepInstance DAO");
+                LOGGER.debug(t.getMessage());
+            }
         }
 
 
@@ -246,7 +253,9 @@ public abstract class AbstractMaster implements Master {
     public void cleanUpWorkingDirectory(){
         if(isDeleteWorkingDirectoryOnCompletion()) {
             final String temporaryDirectoryName  = getWorkingTemporaryDirectoryPath();
-            LOGGER.debug("Clean temporaryDirectoryName : " + temporaryDirectoryName);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Clean temporaryDirectoryName : " + temporaryDirectoryName);
+            }
             try {
                 deleteWorkingTemporaryDirectory(temporaryDirectoryName);
             } catch (IOException e) {
@@ -255,6 +264,10 @@ public abstract class AbstractMaster implements Master {
             }
         }
     }
+
+
+
+
 
     /**
      * Optionally, set the analyses that should be run.
@@ -265,4 +278,6 @@ public abstract class AbstractMaster implements Master {
     public void setAnalyses(String[] analyses) {
         this.analyses = analyses;
     }
+
+
 }

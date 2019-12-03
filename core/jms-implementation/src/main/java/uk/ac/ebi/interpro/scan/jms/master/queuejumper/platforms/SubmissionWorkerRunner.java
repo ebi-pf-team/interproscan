@@ -6,8 +6,9 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.jms.lsf.LSFMonitor;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -58,7 +59,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
     private int workerCount = 0;
 
-    private int newWorkersCount = 0;
+    private int newWorkersCount = 1;
 
     private String gridName = "lsf";
 
@@ -234,7 +235,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
         this.newWorkersCount = newWorkersCount;
         int actualWorkersStarted = startupNewWorker(priority, tcpUri, temporaryDirectory);
         //reset the masterworker variable
-        this.newWorkersCount = 0;
+        this.newWorkersCount = 1;
         return actualWorkersStarted;
     }
 
@@ -334,6 +335,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                                 + commandToSubmit);
                     }
                     int exitStatus = clc.runCommand(false, commandToSubmit.toString().split(" "));
+                    Utilities.verboseLog(10, "command  submited to cluster:  exitStatus" + exitStatus);
                     if (exitStatus != 0) {
                         LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:"
                                 + commandToSubmit + "\nExit status: "
@@ -398,8 +400,8 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                 jobArray = "";
                 jobIndex = "." + workerIndex;
             }
-            clusterCommandAguments.append(" -o " + logDir + "/"+ agent_id+".out" + jobIndex);
-            clusterCommandAguments.append(" -e " + logDir + "/"+ agent_id+".err" + jobIndex);
+            clusterCommandAguments.append(" -o " + logDir + File.separator+ agent_id+".out" + jobIndex);
+            clusterCommandAguments.append(" -e " + logDir + File.separator+ agent_id+".err" + jobIndex);
 
             if(gridName.equals("lsf")) {
                 clusterCommandAguments.append(" -J "+ agent_id + jobArray);

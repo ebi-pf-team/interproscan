@@ -6,6 +6,9 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,43 +21,41 @@ import java.util.List;
  */
 public class TarArchiveBuilder {
 
-    private final List<File> tarArchiveEntries = new ArrayList<File>();
+    private final List<Path> tarArchiveEntries = new ArrayList<>();
 
-    private final File tarArchive;
+    private final Path tarArchive;
 
     private boolean compress;
 
-    public TarArchiveBuilder(File tarArchiveEntry, File tarArchive) {
+    public TarArchiveBuilder(Path tarArchiveEntry, Path tarArchive) {
         this(tarArchiveEntry, tarArchive, false);
     }
 
-    public TarArchiveBuilder(File tarArchiveEntry, File tarArchive, boolean compress) {
+    public TarArchiveBuilder(Path tarArchiveEntry, Path tarArchive, boolean compress) {
         this.tarArchiveEntries.add(tarArchiveEntry);
         this.tarArchive = tarArchive;
         this.compress = compress;
     }
 
-    public TarArchiveBuilder(List<File> tarArchiveEntries, File tarArchive) {
+    public TarArchiveBuilder(List<Path> tarArchiveEntries, Path tarArchive) {
         this(tarArchiveEntries, tarArchive, false);
     }
 
-    public TarArchiveBuilder(List<File> tarArchiveEntries, File tarArchive, boolean compress) {
+    public TarArchiveBuilder(List<Path> tarArchiveEntries, Path tarArchive, boolean compress) {
         this.tarArchiveEntries.addAll(tarArchiveEntries);
         this.tarArchive = tarArchive;
         this.compress = compress;
     }
 
     public void buildTarArchive() throws IOException {
-        if (tarArchive != null) {
-            tarArchive.createNewFile();
-        }
+        // E.g. for "-b OUT" tarArchive = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
         FileOutputStream fileOutputStream = null;
         BufferedOutputStream bufferedOutputStream = null;
         GzipCompressorOutputStream gzipCompressorOutputStream = null;
         TarArchiveOutputStream tarArchiveOutputStream = null;
         //
         try {
-            fileOutputStream = new FileOutputStream(tarArchive);
+            fileOutputStream = new FileOutputStream(tarArchive.toFile());
             bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
             if (compress) {
                 gzipCompressorOutputStream = new GzipCompressorOutputStream(bufferedOutputStream);
@@ -64,7 +65,7 @@ public class TarArchiveBuilder {
                 tarArchiveOutputStream = new TarArchiveOutputStream(bufferedOutputStream);
             }
 
-            for (File entry : tarArchiveEntries) {
+            for (Path entry : tarArchiveEntries) {
                 addNewEntryToArchive(entry, tarArchiveOutputStream, "");
             }
         } finally {
@@ -84,49 +85,30 @@ public class TarArchiveBuilder {
         }
     }
 
-    private void addNewEntryToArchive(final File tarArchiveEntry,
+    private void addNewEntryToArchive(final Path tarArchiveEntry,
                                       final TarArchiveOutputStream os,
                                       String entryFileName) throws IOException {
-        if (!tarArchiveEntry.isHidden()) {
-            entryFileName = entryFileName + tarArchiveEntry.getName();
-            TarArchiveEntry tarEntry = (TarArchiveEntry) os.createArchiveEntry(tarArchiveEntry, entryFileName);
+        if (!Files.isHidden(tarArchiveEntry)) {
+            entryFileName = entryFileName + tarArchiveEntry.getFileName();
+            // E.g. entryFileName = "resources/images/" +  "ico_type_family_small.png"
+            // OR e.g. entryFileName = "resources/" + "css"
+            TarArchiveEntry tarEntry = (TarArchiveEntry) os.createArchiveEntry(tarArchiveEntry.toFile(), entryFileName);
 
             os.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
             os.putArchiveEntry(tarEntry);
 
-            if (tarArchiveEntry.isFile()) {
-//                IOUtils.copy(new FileInputStream(tarArchiveEntry), os);
-                os.write(getBytesFromFile(tarArchiveEntry));
+            if (Files.isRegularFile(tarArchiveEntry)) {
+                os.write(Files.readAllBytes(tarArchiveEntry));
                 os.flush();
                 os.closeArchiveEntry();
-            } else if (tarArchiveEntry.isDirectory()) {
-                File[] children = tarArchiveEntry.listFiles();
-                if (children != null) {
-                    for (File child : children) {
-                        addNewEntryToArchive(new File(child.getAbsolutePath()), os, entryFileName + "/");
+            } else if (Files.isDirectory(tarArchiveEntry)) {
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(tarArchiveEntry)) {
+                    for (Path child : directoryStream) {
+                        addNewEntryToArchive(child, os, entryFileName + File.separator);
                     }
                 }
             }
         }
-    }
-
-    private byte[] getBytesFromFile(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-        long length = file.length();
-        if (length > Integer.MAX_VALUE) {
-        }
-        byte[] bytes = new byte[(int) length];
-        int offset = 0;
-        int numRead;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
-        if (offset < bytes.length) {
-            throw new IllegalStateException("Could not completely read the file " + file.getName());
-        }
-        is.close();
-        return bytes;
     }
 
     /**

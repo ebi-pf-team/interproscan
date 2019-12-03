@@ -6,8 +6,10 @@ import uk.ac.ebi.interpro.scan.io.prodom.match.BlastProDomMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,15 +65,22 @@ public class ParseAndPersistProDomOutputStep extends Step {
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, proDomBinaryOutputFileName);
         Set<RawProtein<ProDomRawMatch>> rawProteins;
+        int count = 0;
+        RawMatch represantiveRawMatch = null;
         try {
             is = new FileInputStream(fileName);
             rawProteins = parser.parse(is);
+            for (RawProtein<ProDomRawMatch> rawProtein : rawProteins) {
+                count += rawProtein.getMatches().size();
+                if (represantiveRawMatch == null) {
+                    if (rawProtein.getMatches().size() > 0) {
+                        represantiveRawMatch = rawProtein.getMatches().iterator().next();
+                    }
+                }
+            }
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Parsed out " + rawProteins.size() + " proteins with matches from file " + fileName);
-                int count = 0;
-                for (RawProtein<ProDomRawMatch> rawProtein : rawProteins) {
-                    count += rawProtein.getMatches().size();
-                }
+
                 LOGGER.debug("A total of " + count + " matches from file " + fileName);
             }
             // NOTE: No post processing therefore no need to store the raw results here - we will just persist them to
@@ -91,6 +100,23 @@ public class ParseAndPersistProDomOutputStep extends Step {
         if (rawProteins != null && rawProteins.size() > 0) {
             // Persist the matches
             rawMatchDAO.persist(rawProteins);
+            Long now = System.currentTimeMillis();
+            if (count > 0){
+                int matchesFound = 0;
+                int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
+                if (represantiveRawMatch != null) {
+                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
+                    Utilities.sleep(waitTimeFactor * 1000);
+                    //ignore the usual check until refactoring of the parse step
+                }else{
+                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                }
+                Long timeTaken = System.currentTimeMillis() - now;
+                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                        + " time taken: " + timeTaken);
+            }
         }
         else {
             if (LOGGER.isDebugEnabled()) {

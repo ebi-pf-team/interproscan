@@ -1,5 +1,5 @@
 <Context
-        docBase="${deployment.folder}/${project.name}-${timestamp}.war"
+        docBase="${catalina.base}/${deployment.folder}/${project.name}-${timestamp}.war"
         path="/interpro/match-lookup"
         distributable="false">
 </Context>

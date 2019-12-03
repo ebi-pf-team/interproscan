@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

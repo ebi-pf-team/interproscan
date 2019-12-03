@@ -5,10 +5,8 @@ import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
-import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.*;
 import javax.jms.Queue;
@@ -91,6 +89,8 @@ public class StatsUtil {
     private long currentMasterClockTime;
     private long currentMasterlifeSpanRemaining;
 
+    int requestQueueConsumerCount = 0;
+
     private SystemInfo systemInfo;
 
     private Lock pollStatsLock = new ReentrantLock();
@@ -136,7 +136,7 @@ public class StatsUtil {
     }
 
     public synchronized  void setTier(int tier) {
-        this.tier = tier;
+        StatsUtil.tier = tier;
     }
 
     public synchronized boolean isStopRemoteQueueJmsContainer() {
@@ -144,7 +144,7 @@ public class StatsUtil {
     }
 
     public synchronized void setStopRemoteQueueJmsContainer(boolean stopRemoteQueueJmsContainer) {
-        this.stopRemoteQueueJmsContainer = stopRemoteQueueJmsContainer;
+        StatsUtil.stopRemoteQueueJmsContainer = stopRemoteQueueJmsContainer;
     }
 
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
@@ -184,7 +184,7 @@ public class StatsUtil {
     }
 
     public synchronized void setTotalJobs(Long totalJobs) {
-        this.totalJobs = totalJobs;
+        StatsUtil.totalJobs = totalJobs;
     }
 
     public synchronized int getUnfinishedJobs() {
@@ -192,7 +192,7 @@ public class StatsUtil {
     }
 
     public synchronized void setUnfinishedJobs(int unfinishedJobs) {
-        this.unfinishedJobs = unfinishedJobs;
+        StatsUtil.unfinishedJobs = unfinishedJobs;
     }
 
     public long getStartUpTime() {
@@ -247,6 +247,13 @@ public class StatsUtil {
         this.lastMessageReceivedTime = lastMessageReceivedTime;
     }
 
+    public int getRequestQueueConsumerCount() {
+        return requestQueueConsumerCount;
+    }
+
+    public void setRequestQueueConsumerCount(int requestQueueConsumerCount) {
+        this.requestQueueConsumerCount = requestQueueConsumerCount;
+    }
 
     public ConcurrentMap getAllStepInstances() {
         return submittedStepInstances;
@@ -278,7 +285,7 @@ public class StatsUtil {
 
     public Integer getKey(Long id, String name){
         String keyString = name + id.toString();
-        return new Integer(keyString.hashCode());
+        return keyString.hashCode();
     }
 
     public void printSubmittedStepInstances(){
@@ -300,8 +307,7 @@ public class StatsUtil {
         );
         //Collections.sort((List<Comparable>) ids);
 
-        for (Object entry : submittedStepInstances.entrySet()){
-            entry = (Map.Entry<Long, String>) entry;
+        for (Object entry : submittedStepInstances.entrySet()) {
             if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
                 System.out.println(((Map.Entry<Integer, String>) entry).getKey() + ":" + ((Map.Entry<Integer, String>) entry).getValue());
             }
@@ -315,7 +321,6 @@ public class StatsUtil {
         Utilities.verboseLog(" submittedStepInstances:" + ids.size());
 
         for (Object entry : submittedStepInstances.entrySet()){
-            entry = (Map.Entry<Long, String>) entry;
             if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
                 nonAcknowledgedStepInstances.add(((Map.Entry<Integer, String>) entry).getValue());
             }
@@ -413,7 +418,7 @@ public class StatsUtil {
         try {
             Thread.sleep(3*1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return  statsMessageListener.getStats()!=null;
     }
@@ -441,8 +446,8 @@ public class StatsUtil {
                 return ((Queue) queue).getQueueName();
             }
         } catch (JMSException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            if(LOGGER.isDebugEnabled()&& queue!=null){
+            e.printStackTrace();
+            if(LOGGER.isDebugEnabled()){
                 LOGGER.debug("There is a problem with the queue name "+queue.toString());
             }
         }
@@ -455,8 +460,8 @@ public class StatsUtil {
                 return ((Topic) topic).getTopicName();
             }
         } catch (JMSException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            if(LOGGER.isDebugEnabled()&& topic!=null){
+            e.printStackTrace();
+            if(LOGGER.isDebugEnabled()){
                 LOGGER.debug("There is a problem with the queue name "+topic.toString());
             }
         }
@@ -491,7 +496,7 @@ public class StatsUtil {
         try {
             Thread.sleep(1*500);
         } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return  statsMessageListener.getStats()!=null;
     }
@@ -505,23 +510,51 @@ public class StatsUtil {
         if (!requestQueueStatsAvailable) {
             System.out.println("JobRequestQueue: not initialised");
         } else {
-            System.out.println("JobRequestQueue:  " + statsMessageListener.getStats().toString());
+            System.out.println("JobRequestQueue:  " + statsMessageListener.getStats());
+            setRequestQueueConsumerCount(statsMessageListener.getConsumers());
         }
         final boolean responseQueueStatsAvailable = pollStatsBrokerResponseQueue();
         if (!responseQueueStatsAvailable) {
             System.out.println("JobResponseQueue: not initialised");
         } else {
-            System.out.println("JobResponseQueue:  " + statsMessageListener.getStats().toString());
+            System.out.println("JobResponseQueue:  " + statsMessageListener.getStats());
         }
 
+    }
+
+    /**
+     * get the request queue size
+     * @return
+     */
+    public int getRequestQueueSize(){
+        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+        if (!requestQueueStatsAvailable) {
+            LOGGER.warn("JobRequestQueue: not initialised");
+            return -99;
+        }
+        setRequestQueueConsumerCount(statsMessageListener.getConsumers());
+        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+    }
+
+    /**
+     * get highmem queuesie
+     * @return
+     */
+    public int getHighMemRequestQueueSize(){
+        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+        if (!requestQueueStatsAvailable) {
+            Utilities.verboseLog(5, "HighMemJobRequestQueue: not initialised");
+            return -99;
+        }
+        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
     }
 
     public void displayHighMemoryQueueStatistics(){
         final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            System.out.println("JobRequestQueue: not initialised");
+            Utilities.verboseLog(5,"JobRequestQueue: not initialised");
         } else {
-            System.out.println("HighMemoryJobRequestQueue:  " + statsMessageListener.getStats().toString());
+            Utilities.verboseLog(5,"HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
         }
 
     }
@@ -537,7 +570,7 @@ public class StatsUtil {
 
         //unfinishedJobs = requestEnqueueCount - responseDequeueCount;
         setUnfinishedJobs(requestEnqueueCount - responseDequeueCount);
-        setTotalJobs(Long.valueOf(requestEnqueueCount));
+        setTotalJobs((long) requestEnqueueCount);
         pollStatsBrokerJobQueue();
     }
 
@@ -551,7 +584,7 @@ public class StatsUtil {
             Double progress = (double)(masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
 //            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
             boolean displayProgress = false;
-            double actualProgress = 0d;
+            double actualProgress;
             if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
                 displayProgress = true;
                 progressCounter = 1;
@@ -589,7 +622,7 @@ public class StatsUtil {
 
 
     /**
-     *   Display master job progress report based on the number of jobs left to run
+     *   Display worker job progress report based on the number of jobs left to run
      */
     public void displayWorkerProgress(){
         if(progressCounter ==  0){
@@ -602,7 +635,8 @@ public class StatsUtil {
         if(workerTotalJobs > 5.0){
             progressPercent = (workerTotalJobs - unfinishedJobs) * 100 / workerTotalJobs;
         }
-        if(timeSinceLastReport > 1800000){
+        //display every hour 60 * 60 * 1000
+        if(timeSinceLastReport > 3600000){
             int connectionCount = statsMessageListener.getConsumers();
             int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
             int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
@@ -616,6 +650,16 @@ public class StatsUtil {
             previousUnfinishedJobs = unfinishedJobs;
         }
         progressCounter ++;
+    }
+
+    /**
+     *   Display final worker job progress report based on the number of jobs left to run
+     */
+    public void displayFinalWorkerProgress(){
+        Long workerTotalJobs = totalJobs;
+        int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
+        System.out.println(Utilities.getTimeNow() + " Completed " + finishedJobs + " of " + workerTotalJobs + " jobs");
+        LOGGER.debug(statsMessageListener.getStats());
     }
 
 
@@ -695,14 +739,14 @@ public class StatsUtil {
 
         // init code
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        HotSpotDiagnosticMXBean diagBean = null;
+        HotSpotDiagnosticMXBean diagBean;
         try {
             diagBean = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
             // loop code
             // add some code to figure if we have passed some threshold, then
             LOGGER.debug("Memory diagnostic options: " + diagBean.getDiagnosticOptions().toString());
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
 

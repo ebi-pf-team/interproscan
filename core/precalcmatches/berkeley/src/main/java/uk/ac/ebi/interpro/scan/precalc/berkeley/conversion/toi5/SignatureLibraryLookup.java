@@ -31,6 +31,9 @@ public final class SignatureLibraryLookup {
         }
         // And here add any other mappings, e.g. those used in Onion.
         // ALL SHOULD BE LOWER CASE. (Any queries will be converted to lower case.)
+
+        libraryNameToSignatureLibrary.put("cdd", SignatureLibrary.CDD);
+
         libraryNameToSignatureLibrary.put("pfama", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam_hmmer3", SignatureLibrary.PFAM);
         libraryNameToSignatureLibrary.put("pfam-a", SignatureLibrary.PFAM);

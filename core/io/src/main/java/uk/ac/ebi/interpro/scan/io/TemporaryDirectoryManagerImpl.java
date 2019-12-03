@@ -69,6 +69,7 @@ public class TemporaryDirectoryManagerImpl implements TemporaryDirectoryManager 
                         if (!createdDirectories.contains(temporaryDirectory.getPath())) {
                             if (!temporaryDirectory.exists()) {
                                 if (!temporaryDirectory.mkdirs()) {
+                                    // Temporary directory is not writeable?
                                     throw new IllegalStateException(
                                             "Directory " + temporaryDirectory + " could not be created while configuring " + inputURI);
                                 } else {

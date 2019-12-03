@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.jms.*;
 import java.util.Calendar;
@@ -104,16 +104,34 @@ public class RemoteJobQueueListener implements MessageListener {
         try {
             workerMessageSender.sendMessage(jobRequestQueue,message, true);
             workerState.addNonFinishedJob(message);
+            int consumerCount = statsUtil.getRequestQueueConsumerCount();
+            if (consumerCount > 0 && jobCount % consumerCount == 0){
+                Utilities.verboseLog("RemoteRequestQueue - Jobs sent on this queue: " + jobCount);
+            }
+            //check the size of the queue
+            if(gridThrottle){
+                checkQueueState();
+            }else{
+                int stepCountCheck = 4;
+                if (consumerCount > 0) {
+                    stepCountCheck = consumerCount;
+                }
+                if (jobCount % (stepCountCheck * 2) == 0) { //ideally number of workers * 2
+                    //still have some control on the rate of messages being received
+                    //implement a property in statsutil which captures number of consumers on the queue
+                    Utilities.verboseLog("RemoteRequestQueue - Sleep for 10s - Jobs sent on this queue: " + jobCount
+                            + " unfinihsed jobs: " + statsUtil.getUnfinishedJobs()
+                            + " and consumerCount = " + consumerCount);
+                    Thread.sleep(10 * 1000);
+                }
+            }
         } catch (JMSException e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
             e.printStackTrace();
         }  catch (Exception e) {
             LOGGER.debug("Message problem: Failed to access message - "+e.toString());
         }
-        //check the size of the queue
-        if(gridThrottle){
-            checkQueueState();
-        }
+
 
         LOGGER.debug("Worker: received a message from the remote request queue and forwarded it onto the local jobRequestQueue");
     }
@@ -131,7 +149,7 @@ public class RemoteJobQueueListener implements MessageListener {
         if(jobCount == 4){
             LOGGER.info("checkQueueState - First 4 jobs : maxUnfinishedJobs: " + maxUnfinishedJobs + ",  unfinishedJobs: " + unfinishedJobs);
             long now = System.currentTimeMillis();
-            if((now - timeFirstMessageReceived) < 1 * 1000){
+            if((now - timeFirstMessageReceived) < 10 * 1000){
                 //wait for 15 seconds as otherwise we end up with lots of workers without work?
                 final long expectedSynchTime = statsUtil.getCurrentMasterClockTime() + (25 * 1000);
                 final long waitMasterSyncTime = expectedSynchTime - now;

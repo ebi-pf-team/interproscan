@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
-import uk.ac.ebi.interpro.scan.jms.stats.Utilities;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 
@@ -57,9 +57,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
-                    if(Utilities.verboseLogLevel > 4){
-                        Utilities.verboseLog("ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
-                    }
+                    Utilities.verboseLog(4, "ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
                     statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
 
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);

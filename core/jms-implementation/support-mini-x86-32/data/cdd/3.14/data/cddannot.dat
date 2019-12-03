@@ -1,0 +1,9 @@
+99707	cd00009	AAA	1	ATP binding site	0	1	1	0	26,27,28,29,30,31,32,33,90,127	5
+99707	cd00009	AAA	2	Walker A motif	0	0	1	1	25,26,27,28,29,30,31,32	0
+99707	cd00009	AAA	3	Walker B motif	0	0	1	1	86,87,88,89,90,91	0
+99707	cd00009	AAA	4	arginine finger	0	0	1	1	141	0
+238120	cd00199	WAP	1	inhibitory loop	0	1	1	1	16,17,18,19,20,21,22	0
+239775	cd04242	AAK_G5K_ProB	1	nucleotide binding site	0	1	0	1	8,163,164,165,168,169,205,207,211	5
+239775	cd04242	AAK_G5K_ProB	2	putative phosphate binding site	0	0	1	1	45,46,47,48,49,50,51,52	4
+239775	cd04242	AAK_G5K_ProB	3	putative allosteric binding site	0	0	1	1	46,131,142	0
+239775	cd04242	AAK_G5K_ProB	4	homotetrameric interface	0	1	0	1	33,34,37,67,71,94,96,110,111,117,120,130,132,133	2

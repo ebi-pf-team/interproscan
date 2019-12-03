@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 
 import java.text.SimpleDateFormat;
@@ -43,7 +44,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
     private Set<Protein> proteinsAwaitingPersistence;
 
-    private Set<Protein> precalculatedProteins = new HashSet<Protein>();
+    private Set<Protein> precalculatedProteins = new HashSet<>();
 
     private Long bottomProteinId;
 
@@ -60,7 +61,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     @Required
     public void setProteinInsertBatchSize(int proteinInsertBatchSize) {
         this.proteinInsertBatchSize = proteinInsertBatchSize;
-        proteinsAwaitingPersistence = new HashSet<Protein>(proteinInsertBatchSize);
+        proteinsAwaitingPersistence = new HashSet<>(proteinInsertBatchSize);
     }
 
     @Required
@@ -76,7 +77,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     @Required
     public void setProteinPrecalcLookupBatchSize(int proteinPrecalcLookupBatchSize) {
         this.proteinPrecalcLookupBatchSize = proteinPrecalcLookupBatchSize;
-        proteinsAwaitingPrecalcLookup = new HashSet<Protein>(proteinPrecalcLookupBatchSize);
+        proteinsAwaitingPrecalcLookup = new HashSet<>(proteinPrecalcLookupBatchSize);
     }
 
     public void setDescriptionLineParser(GetOrfDescriptionLineParser descriptionLineParser) {
@@ -133,7 +134,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
             // Put precalculated proteins into a Map of MD5 to Protein;
             if (localPrecalculatedProteins != null) {
-                final Map<String, Protein> md5ToPrecalcProtein = new HashMap<String, Protein>(localPrecalculatedProteins.size());
+                final Map<String, Protein> md5ToPrecalcProtein = new HashMap<>(localPrecalculatedProteins.size());
                 for (Protein precalc : localPrecalculatedProteins) {
                     md5ToPrecalcProtein.put(precalc.getMd5(), precalc);
                 }
@@ -173,9 +174,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      * this Collection, ready to be used again.
      */
     private void persistBatch() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("ProteinLoader.persistBatch() method has been called.");
-        }
+        LOGGER.debug("ProteinLoader.persistBatch() method has been called.");
         if (proteinsAwaitingPersistence.size() > 0) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
@@ -253,7 +252,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      * @param analysisJobMap for analysisJobNames to be included in analysis.
      */
     public void storeAll(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
-        LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
+        }
         //TODO: do notify() run this step when lookupProteins() is disabled
         //complicated logic here
         int count = 0;
@@ -279,7 +280,12 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         if (count > 10000) {
             System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
         }
-        LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
+        Utilities.verboseLog(10, " Uploaded/Stored " + count + " sequences for analysis");
+
+        if(LOGGER.isInfoEnabled()) {
+            LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
+        }
+        Utilities.sequenceCount = count;
     }
 
     /**
@@ -292,7 +298,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
     private void createAndPersistNewORFs(final ProteinDAO.PersistedProteins persistedProteins) {
         //Holder for new ORFs which should be persisted
-        Set<OpenReadingFrame> orfsAwaitingPersistence = new HashSet<OpenReadingFrame>();
+        Set<OpenReadingFrame> orfsAwaitingPersistence = new HashSet<>();
 
         Set<Protein> newProteins = persistedProteins.getNewProteins();
         if (LOGGER.isDebugEnabled()) {

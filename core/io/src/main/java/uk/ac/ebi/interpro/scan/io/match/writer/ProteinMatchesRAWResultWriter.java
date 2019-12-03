@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,7 +33,7 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
             long k = i;
             for( int j = 0 ; j < 8 ; ++j ) {
                 if( (k & 1) != 0 ) {
-                    k = (k >>> 1) ^ 0xd800000000000000l;
+                    k = (k >>> 1) ^ 0xd800000000000000L;
                 }
                 else {
                     k = k >>> 1;
@@ -43,9 +43,9 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
         }
     }
 
-    private static Map<String, String> analysisI5toI4 = new HashMap<String, String>();
+    private static Map<String, String> analysisI5toI4 = new HashMap<>();
     static {
-        Map<String, String> tempMap = new HashMap<String, String>();
+        Map<String, String> tempMap = new HashMap<>();
         tempMap.put(SignatureLibrary.PRODOM.getName(), "BlastProDom");
         tempMap.put(SignatureLibrary.COILS.getName(), "Coils");
         tempMap.put(SignatureLibrary.PRINTS.getName(), "FPrintScan");
@@ -68,8 +68,8 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
         analysisI5toI4 = Collections.unmodifiableMap(tempMap);
     }
 
-    public ProteinMatchesRAWResultWriter(File file) throws IOException {
-        super(file);
+    public ProteinMatchesRAWResultWriter(Path path) throws IOException {
+        super(path);
         this.dmyFormat = new SimpleDateFormat("dd-MMM-yyyy"); // Override the superclasses default date format
         this.tsvWriter = new TSVWriter(super.fileWriter);
     }
@@ -104,7 +104,7 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                     }
                     continue;
                 }
-                final String signatureName = match.getSignature().getName();
+                final String signatureName = signature.getName();
 
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
@@ -153,9 +153,9 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                             // START if (mapToGO)
                             // Example GO term format:
                             // Molecular Function:prephenate dehydratase activity (GO:0004664), Biological Process:L-phenylalanine biosynthesis (GO:0009094)
-                            List<GoXref> goXRefs = new ArrayList<GoXref>(interProEntry.getGoXRefs());
+                            List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
                             Collections.sort(goXRefs, new GoXrefComparator());
-                            if (goXRefs != null && goXRefs.size() > 0) {
+                            if (goXRefs.size() > 0) {
                                 StringBuilder sb = new StringBuilder();
                                 for (GoXref xref : goXRefs) {
                                     if (sb.length() > 0) {
@@ -168,10 +168,8 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
                                     sb.append(" (").append(xref.getIdentifier()).append(")");
                                 }
                                 mappingFields.add(sb.toString());
-                            } else {
-                                // No GO terms associated
-                                // mappingFields.add("");
                             }
+                            // ElseNo GO terms associated
                             // END if (mapToGO)
                         }
                         else {

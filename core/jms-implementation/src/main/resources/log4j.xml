@@ -8,7 +8,7 @@
     <appender name="consoleappender" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.out"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%C:%L] %p - %m%n"/>
+            <param name="ConversionPattern" value="%d [%t] [%C:%L] %p - %m%n"/>
         </layout>
     </appender>
 
@@ -19,7 +19,7 @@
         <param name="MaxFileSize" value="2MB"/>
         <param name="MaxBackupIndex" value="10"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d [%C:%L] %p - %m%n"/>
+            <param name="ConversionPattern" value="%d [%t] [%C:%L] %p - %m%n"/>
         </layout>
     </appender>
 
@@ -35,9 +35,9 @@
         <level value="error"/>
     </logger>
 
-    <logger name="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-    <level value="error"/>
-    </logger>
+    <!--<logger name="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">-->
+    <!--<level value="error"/>-->
+    <!--</logger>-->
 
     <!--<logger name="uk.ac.ebi.interpro.scan.jms">-->
         <!--<level value="debug"/>-->
