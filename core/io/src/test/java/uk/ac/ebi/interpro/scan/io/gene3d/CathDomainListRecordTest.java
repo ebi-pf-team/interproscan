@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.io.gene3d;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.runner.RunWith;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -23,7 +23,7 @@ import uk.ac.ebi.interpro.scan.model.Model;
  * @author  Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class CathDomainListRecordTest {
 
@@ -35,7 +35,7 @@ public class CathDomainListRecordTest {
     }
 
     @Test
-    @Ignore("Eye-balling shows collections are equal, but barfs when run -- needs sorting out")
+    @Disabled("Eye-balling shows collections are equal, but barfs when run -- needs sorting out")
     public void testCreateSignatures() throws IOException {
         final Collection<CathDomainListRecord> RECORDS = Arrays.asList(
             new CathDomainListRecord("1oaiA00", 1, 10,  8,  10),

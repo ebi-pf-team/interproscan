@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
     private static final Logger LOGGER = Logger.getLogger(RunHmmerBinaryStep.class.getName());
 
-    private String fullPathToBinary;
+    private String fullPathToHmmsearchBinary;
 
     private String fullPathToHmmScanBinary;
 
@@ -30,21 +31,32 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 
     private boolean useTbloutFormat = false;
 
+    private boolean useDomTbloutFormat = false;
+
+    private boolean outputAlignments = false;
+
     private String outputFileNameTbloutTemplate;
 
-    public String getFullPathToBinary() {
-        return fullPathToBinary;
+    private String outputFileNameDomTbloutTemplate;
+
+    private String outputFileNameAlignmentsTemplate;
+
+    private boolean forceHmmsearch = true;
+
+    public String getFullPathToHmmsearchBinary() {
+        return fullPathToHmmsearchBinary;
     }
 
     @Required
-    public void setFullPathToBinary(String fullPathToBinary) {
-        this.fullPathToBinary = fullPathToBinary;
+    public void setFullPathToHmmsearchBinary(String fullPathToHmmsearchBinary) {
+        this.fullPathToHmmsearchBinary = fullPathToHmmsearchBinary;
     }
 
     public String getFullPathToHmmScanBinary() {
         return fullPathToHmmScanBinary;
     }
 
+    @Required
     public void setFullPathToHmmScanBinary(String fullPathToHmmScanBinary) {
         this.fullPathToHmmScanBinary = fullPathToHmmScanBinary;
     }
@@ -87,6 +99,46 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         this.outputFileNameTbloutTemplate = outputFileNameTbloutTemplate;
     }
 
+    public String getOutputFileNameDomTbloutTemplate() {
+        return outputFileNameDomTbloutTemplate;
+    }
+
+    public void setOutputFileNameDomTbloutTemplate(String outputFileNameDomTbloutTemplate) {
+        this.outputFileNameDomTbloutTemplate = outputFileNameDomTbloutTemplate;
+    }
+
+    public String getOutputFileNameAlignmentsTemplate() {
+        return outputFileNameAlignmentsTemplate;
+    }
+
+    public void setOutputFileNameAlignmentsTemplate(String outputFileNameAlignmentsTemplate) {
+        this.outputFileNameAlignmentsTemplate = outputFileNameAlignmentsTemplate;
+    }
+
+    public boolean isUseDomTbloutFormat() {
+        return useDomTbloutFormat;
+    }
+
+    public void setUseDomTbloutFormat(boolean useDomTbloutFormat) {
+        this.useDomTbloutFormat = useDomTbloutFormat;
+    }
+
+    public boolean isOutputAlignments() {
+        return outputAlignments;
+    }
+
+    public void setOutputAlignments(boolean outputAlignments) {
+        this.outputAlignments = outputAlignments;
+    }
+
+    public boolean isForceHmmsearch() {
+        return forceHmmsearch;
+    }
+
+    public void setForceHmmsearch(boolean forceHmmsearch) {
+        this.forceHmmsearch = forceHmmsearch;
+    }
+
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
 
@@ -94,11 +146,25 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
         List<String> command = new ArrayList<String>();
-
-        if (isSingleSeqMode()){
+         
+        /*
+//        if (isSingleSeqMode()){
+        forceHmmsearch = true;  // we will use hmmsearch until parsing for hmmscan output is implemenetd
+        if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
+            Utilities.verboseLog("SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }else{
             command.add(this.getFullPathToBinary());
+        }
+        */
+        //for panther only in the first place
+        if (forceHmmsearch || Utilities.getSequenceCount() > 10){
+            Utilities.setUseHmmsearch(true);
+            Utilities.verboseLog("Use Hmmsearch  " + getFullPathToHmmsearchBinary());
+            command.add(this.getFullPathToHmmsearchBinary());
+        }else{
+            Utilities.verboseLog("Use hmmscan  " + getFullPathToHmmScanBinary());
+            command.add(this.getFullPathToHmmScanBinary());
         }
         command.addAll(this.getBinarySwitchesAsList());
         // output file option
@@ -111,6 +177,19 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
             final String tblOutputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTbloutTemplate());
             command.add("--tblout");
             command.add(tblOutputFilePathName);
+        }
+
+        if(useDomTbloutFormat) {
+            final String domTblOutputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameDomTbloutTemplate());
+            command.add("--domtblout");
+            command.add(domTblOutputFilePathName);
+        }
+
+
+        if(outputAlignments) {
+            final String alignmentsOutputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameAlignmentsTemplate());
+            command.add("-A");
+            command.add(alignmentsOutputFilePathName);
         }
 
         command.add(this.getFullPathToHmmFile());

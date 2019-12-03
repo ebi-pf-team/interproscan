@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.io.prints;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

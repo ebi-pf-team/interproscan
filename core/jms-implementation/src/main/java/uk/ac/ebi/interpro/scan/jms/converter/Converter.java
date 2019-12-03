@@ -15,6 +15,8 @@ import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMa
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesSVGResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.util.Utilities;
+import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -68,6 +70,14 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
     /* Default value, if no output format is specified */
     private String[] outputFormats;
 
+    private String interproscanVersion;
+
+    private EntryHierarchy entryHierarchy;
+
+    @Required
+    public void setInterproscanVersion(String interproscanVersion) {
+        this.interproscanVersion = interproscanVersion;
+    }
 
     @Required
     public void setMarshaller(Jaxb2Marshaller marshaller) {
@@ -97,13 +107,18 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         this.isExplicitFileNameSet = true;
     }
 
+    @Required
+    public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
+        this.entryHierarchy = entryHierarchy;
+    }
+
     public void setOutputFormats(String[] outputFormats) {
         this.outputFormats = outputFormats;
     }
 
     public String[] getOutputFormats() {
         if (outputFormats == null) {
-            // By default, if no output formats are supplied then return in all formats (except RAW)
+            // If no output formats are supplied then return default formats
             return new String[]{
                     FileOutputFormat.TSV.getFileExtension(),
                     FileOutputFormat.GFF3.getFileExtension()
@@ -169,9 +184,6 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
         setupTemporaryDirectory();
 
-        svgResultWriter.setTempDirectory(temporaryDirectory);
-        htmlResultWriter.setTempDirectory(temporaryDirectory);
-
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("The CONVERT mode is using the following settings...");
             LOGGER.info("Input file: " + inputFile.getAbsolutePath());
@@ -184,18 +196,18 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         Source source;
         try {
             source = new StreamSource(new FileReader(new File(xmlInputFilePath)));
-            IMatchesHolder object = (IMatchesHolder) marshaller.unmarshal(source);
+            IMatchesHolder iMatchesHolder = (IMatchesHolder) marshaller.unmarshal(source);
 
             Collection<Protein> proteins;
             Collection<NucleotideSequence> nucleotideSequences = null;
             final char sequenceType;
 
-            if (object instanceof ProteinMatchesHolder) {
-                proteins = ((ProteinMatchesHolder) object).getProteins();
+            if (iMatchesHolder instanceof ProteinMatchesHolder) {
+                proteins = ((ProteinMatchesHolder) iMatchesHolder).getProteins();
                 sequenceType = 'p';
             } else {
                 proteins = new HashSet<>();
-                nucleotideSequences = ((NucleicAcidMatchesHolder) object).getNucleotideSequences();
+                nucleotideSequences = ((NucleicAcidMatchesHolder) iMatchesHolder).getNucleotideSequences();
                 for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
                     Set<OpenReadingFrame> openReadingFrames = nucleotideSequence.getOpenReadingFrames();
                     for (OpenReadingFrame orf : openReadingFrames) {
@@ -231,11 +243,13 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     LOGGER.info("Finished generation of TSV.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension())) {
                     LOGGER.info("Generating HTML result output...");
+                    htmlResultWriter.setTempDirectory(temporaryDirectory);
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.HTML);
                     outputToHTML(outputFile, proteins);
                     LOGGER.info("Finished generation of HTML.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension())) {
                     LOGGER.info("Generating SVG result output...");
+                    svgResultWriter.setTempDirectory(temporaryDirectory);
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.SVG);
                     outputToSVG(outputFile, proteins);
                     LOGGER.info("Finished generation of SVG.");
@@ -244,6 +258,11 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.RAW);
                     outputToRAW(outputFile, proteins);
                     LOGGER.info("Finished generation of RAW.");
+                } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension())) {
+                    LOGGER.info("Generating JSON result output...");
+                    Path outputFile = initOutputFile(isExplicitFileNameSet, FileOutputFormat.JSON);
+                    outputToJSON(outputFile, iMatchesHolder, proteins, nucleotideSequences, sequenceType);
+                    LOGGER.info("Finished generation of JSON.");
                 } else if (fileOutputFormat.equalsIgnoreCase(FileOutputFormat.XML.getFileExtension())) {
                     // No point to convert from XML to XML!
                     System.out.println("XML output format was ignored in convert mode.");
@@ -268,9 +287,13 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             final String workingDirectory = temporaryDirectory.substring(0, temporaryDirectory.lastIndexOf(File.separatorChar));
             File file = new File(workingDirectory);
             try {
-                FileUtils.deleteDirectory(file);
-            }catch (IOException e) {
+                //FileUtils.deleteDirectory(file);
+                if(file.exists()) {
+                    FileUtils.forceDelete(file);
+                }
+            } catch (IOException e) {
                 LOGGER.warn("At convert completion, unable to delete temporary directory " + file.getAbsolutePath());
+                e.printStackTrace();
             }
         }
 
@@ -328,6 +351,16 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         return outputPath;
     }
 
+
+    private void outputToJSON(final Path path, IMatchesHolder iMatchesHolder,
+                              final Collection<Protein> proteins,
+                              final Collection<NucleotideSequence> nucleotideSequences,
+                              final char sequenceType) throws IOException {
+        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(path, false)) {
+            writeProteinMatches(writer, iMatchesHolder, proteins, nucleotideSequences, sequenceType);
+        }
+    }
+
     private void outputToTSV(final Path path,
                              final Collection<Protein> proteins) throws IOException {
         try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
@@ -339,7 +372,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                               final Collection<Protein> proteins) throws IOException {
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
-                htmlResultWriter.write(protein);
+                htmlResultWriter.write(protein, entryHierarchy);
             }
             List<Path> resultFiles = htmlResultWriter.getResultFiles();
             buildTarArchive(path, resultFiles);
@@ -362,7 +395,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         if (proteins != null && proteins.size() > 0) {
             for (Protein protein : proteins) {
                 try {
-                    svgResultWriter.write(protein);
+                    svgResultWriter.write(protein, entryHierarchy);
                 } catch (IOException e) {
                     LOGGER.error("Cannot write SVG output file!", e);
                 }
@@ -393,7 +426,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private void outputProteinsToGFF(final Path path,
                                      final Collection<Protein> proteins) throws IOException {
-        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path)) {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interproscanVersion)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, proteins);
             //This step writes FASTA sequence at the end of the GFF file
@@ -403,7 +436,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private void outputNucleotideSequencesToGFF(final Path path,
                                                 final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
-        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path)) {
+        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path, interproscanVersion)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, nucleotideSequences);
             //This step writes FASTA sequence at the end of the GFF file
@@ -432,7 +465,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 //        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
 //        final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
         writer.setMapToInterProEntries(true);
-        writer.setMapToGo(true);
+        writer.setMapToGO(true);
         writer.setMapToPathway(true);
         if (proteins != null) {
             if (LOGGER.isInfoEnabled()) {
@@ -444,10 +477,58 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
         }
     }
 
+
+    private void writeProteinMatches(final ProteinMatchesJSONResultWriter writer, IMatchesHolder iMatchesHolder,
+                                     final Collection<Protein> proteins, final Collection<NucleotideSequence> nucleotideSequences,
+                                     final char sequenceType) throws IOException {
+        //try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
+        //old way??
+        //writer.write()
+        // writer.write(iMatchesHolder, proteinDAO, , isSlimOutput);
+
+        //LOGGER.warn("Write to JSON " + proteins.size() + " proteins");
+        //LOGGER.error("Write to JSON " + proteins.size() + " proteins");
+
+        writer.header(interproscanVersion);
+
+        if (sequenceType == 'p' && !proteins.isEmpty()) {
+            int proteinCount = proteins.size();
+            Utilities.verboseLog(10, " WriteOutputStep -JSON new " + " There are " + proteinCount + " proteins.");
+            int count = 0;
+
+            for (Protein protein: proteins) {
+                if (protein == null) {
+                    LOGGER.warn("protein with id  is null");
+                    continue;
+                }
+                writer.write(protein);
+                count++;
+                if (count < proteinCount) {
+                    writer.write(","); // More proteins/nucleotide sequences to follow
+                }
+            }
+        }
+        if (sequenceType == 'n' && !nucleotideSequences.isEmpty()) {
+            Utilities.verboseLog(10, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
+            int count = 0;
+
+            for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
+                writer.write(nucleotideSequence);
+                count++;
+                if (count < nucleotideSequences.size()) {
+                    writer.write(","); // More proteins/nucleotide sequences to follow
+                }
+            }
+            Utilities.verboseLog("WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
+        }
+        writer.close();
+
+    }
+
     private void writeProteinMatches(final GFFResultWriterForNucSeqs writer,
                                      final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
         writer.setMapToInterProEntries(true);
-        writer.setMapToGo(true);
+        writer.setMapToGO(true);
         writer.setMapToPathway(true);
         if (nucleotideSequences != null) {
             if (LOGGER.isInfoEnabled()) {
@@ -465,4 +546,6 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             writer.writeFASTASequence(key, identifierToSeqMap.get(key));
         }
     }
+
+
 }

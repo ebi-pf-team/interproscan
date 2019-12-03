@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.io.match.coils;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import uk.ac.ebi.interpro.scan.model.raw.CoilsRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,10 +28,10 @@ public class CoilsMatchParserTest extends TestCase {
      */
     @Test
     public void testParserEfficiency() throws IOException {
-        logMemUsage("Before parse: ");
+        logMemUsage("BeforeAll parse: ");
         InputStream is = CoilsMatchParserTest.class.getClassLoader().getResourceAsStream(TEST_FILE_PATH);
         CoilsMatchParser parser = new CoilsMatchParser();
-        Set<ParseCoilsMatch> results = parser.parse(is, TEST_FILE_PATH);
+        Set<RawProtein<CoilsRawMatch>> results = parser.parse(is);
         is.close();
         logMemUsage("After parse: ");
         LOGGER.debug("Result count: " + results.size());

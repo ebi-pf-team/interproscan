@@ -2,10 +2,13 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.BlastProDomMatch;
+import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,7 +49,7 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Transactional
-    public void persist(Collection<RawProtein<ProDomRawMatch>> filteredProteins, Map<String, Signature> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<ProDomRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
         for (RawProtein<ProDomRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -55,9 +58,12 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             }
             Set<BlastProDomMatch.BlastProDomLocation> locations = null;
             String currentModelId = null;
+            SignatureModelHolder holder = null;
             Signature currentSignature = null;
             ProDomRawMatch lastRawMatch = null;
             BlastProDomMatch match = null;
+            String signatureLibraryKey = null;
+            Set <Match> proteinMatches =  new HashSet<>();
             for (ProDomRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
@@ -68,16 +74,18 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
 
                         // Not the first (because the currentSignatureAc is not null)
                         if (match != null) {
-                            entityManager.persist(match); // Persist the previous one...
+                            //entityManager.persist(match); // Persist the previous one...
                         }
-                        match = new BlastProDomMatch(currentSignature, locations);
+                        match = new BlastProDomMatch(currentSignature, currentModelId, locations);
                         // Not the first...
-                        protein.addMatch(match);
+                        //protein.addMatch(match);
+                        proteinMatches.add(match);
                     }
                     // Reset everything
-                    locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
+                    locations = new HashSet<>();
                     currentModelId = rawMatch.getModelId();
-                    currentSignature = modelIdToSignatureMap.get(currentModelId);
+                    holder = modelIdToSignatureMap.get(currentModelId);
+                    currentSignature = holder.getSignature();
                     if (currentSignature == null) {
                         throw new IllegalStateException("Cannot find ProDom model " + currentModelId + " in the database.");
                     }
@@ -94,9 +102,24 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
-                match = new BlastProDomMatch(currentSignature, locations);
-                protein.addMatch(match);
-                entityManager.persist(match);
+                match = new BlastProDomMatch(currentSignature, currentModelId, locations);
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+            }
+            if(signatureLibraryKey == null) {
+                signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+            }
+            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
+            Utilities.verboseLog("Now persist prodom matches in kvstore for key: " + dbKey);
+
+            if (! proteinMatches.isEmpty()) {
+                Utilities.verboseLog("persist Prodom matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }

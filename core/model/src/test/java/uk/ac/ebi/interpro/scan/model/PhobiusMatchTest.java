@@ -16,9 +16,11 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import junit.framework.TestCase;
 import org.apache.commons.lang.SerializationUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,7 +33,7 @@ import java.util.Set;
  * @version $Id$
  * @since   1.0
  */
-public class PhobiusMatchTest extends TestCase {
+public class PhobiusMatchTest {
 
     /**
      * Tests the equivalent() method works as expected
@@ -39,30 +41,30 @@ public class PhobiusMatchTest extends TestCase {
     @Test public void testMatchEquals() {
         PhobiusMatch original = new PhobiusMatch(
                 new Signature("SIGNAL_PEPTIDE_N_REGION", "Signal peptide N-region"),
-
+                "SIGNAL_PEPTIDE_N_REGION",
                 new HashSet<PhobiusMatch.PhobiusLocation>(Arrays.asList(
                         new PhobiusMatch.PhobiusLocation(3, 107)
                 ))
         );
         PhobiusMatch copy = (PhobiusMatch)SerializationUtils.clone(original);
-        assertEquals("Original should equal itself", original, original);
-        assertEquals("Original and copy should be equal", original, copy);
-        assertFalse("Original and copy should not be equal",
+        assertEquals(original, original, "Original should equal itself");
+        assertEquals(original, copy, "Original and copy should be equal");
+        assertFalse(
                 original.equals(
                         new PhobiusMatch(
                 new Signature("NON_CYTOPLASMIC_DOMAIN", "Non cytoplasmic domain"),
-
+                "SIGNAL_PEPTIDE_N_REGION",
                 new HashSet<PhobiusMatch.PhobiusLocation>(Arrays.asList(
                         new PhobiusMatch.PhobiusLocation(3, 107)
                 ))
-        )));
+        )), "Original and copy should not be equal");
         // Test sets
         Set<Match> originalSet = new HashSet<Match>();
         Set<Match> copySet     = new HashSet<Match>();
         originalSet.add(original);
         copySet.add(copy);
-        assertEquals("Original set should equal itself", originalSet, originalSet);
-        assertEquals("Original and copy sets should be equal", originalSet, copySet);
+        assertEquals( originalSet, originalSet, "Original set should equal itself");
+        assertEquals( originalSet, copySet, "Original and copy sets should be equal");
     }
 
     /**
@@ -72,9 +74,9 @@ public class PhobiusMatchTest extends TestCase {
     public void testLocationEquals() {
         PhobiusMatch.PhobiusLocation original = new PhobiusMatch.PhobiusLocation(3, 107);
         PhobiusMatch.PhobiusLocation copy = (PhobiusMatch.PhobiusLocation) SerializationUtils.clone(original);
-        assertEquals("Original should equal itself", original, original);
-        assertEquals("Original and copy should be equal", original, copy);
-        assertFalse("Original and copy should not be equal", original.equals(new PhobiusMatch.PhobiusLocation(1, 2)));
+        assertEquals( original, original, "Original should equal itself");
+        assertEquals( original, copy, "Original and copy should be equal");
+        assertFalse( original.equals(new PhobiusMatch.PhobiusLocation(1, 2)), "Original and copy should not be equal");
     }
 
 }

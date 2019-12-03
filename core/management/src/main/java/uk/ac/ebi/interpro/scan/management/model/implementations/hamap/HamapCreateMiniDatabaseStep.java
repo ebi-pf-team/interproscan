@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Transient;
 import java.io.*;
@@ -99,6 +100,13 @@ public class HamapCreateMiniDatabaseStep extends Step {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         final long startTime = System.currentTimeMillis();
+        //do we need to skip
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
+            return;
+        }
+
         delayForNfs();
         final String fileNameTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileNameTbloutTemplate);
         final String fastaFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFileNameTemplate);
@@ -109,6 +117,7 @@ public class HamapCreateMiniDatabaseStep extends Step {
         BufferedWriter writer = null;
         BufferedReader reader = null;
         BufferedReader reader2 = null;
+
 
         try {
             isTblout = new FileInputStream(fileNameTblout);
@@ -192,7 +201,6 @@ public class HamapCreateMiniDatabaseStep extends Step {
             final long endTime = System.currentTimeMillis();
             LOGGER.debug("HamapCreateMiniDatabaseStep takes  " + (endTime - startTime) + "ms");
         }
-
 
     }
 

@@ -31,11 +31,12 @@ public class RPSBlastBerkeleyMatchConverter extends BerkeleyMatchConverter<RPSBl
                     valueOrZero(location.getStart()),
                     valueOrZero(location.getEnd()),
                     valueOrZero(location.getScore()),
-                    valueOrZero(location.geteValue())
+                    valueOrZero(location.geteValue()),
+                    null // TODO Add sites to berkeley DB?
             ));
         }
 
-        return new RPSBlastMatch(signature, locations);
+        return new RPSBlastMatch(signature, berkeleyMatch.getSignatureModels(), locations);
     }
 
 }

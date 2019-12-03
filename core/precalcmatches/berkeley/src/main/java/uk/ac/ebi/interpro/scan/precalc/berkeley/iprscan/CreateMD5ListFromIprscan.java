@@ -7,6 +7,7 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.sql.*;
@@ -25,11 +26,15 @@ public class CreateMD5ListFromIprscan {
 
     private static final String databaseName = "IPRSCAN";
 
+//    private static final String MD5_QUERY =
+//            "select * from (select p.md5 as protein_md5 " +
+//                    "  from iprscan.uniparc_protein p " +
+//                    "  where p.UPI <= ?) " +
+//                    "  order by protein_md5";
+
     private static final String MD5_QUERY =
-            "select * from (select p.md5 as protein_md5 " +
-                    "  from iprscan.uniparc_protein p " +
-                    "  where p.UPI <= ?) " +
-                    "  order by protein_md5";
+//      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 where upi <= 'UPI00000FFFFF' order by protein_md5"; //UPI0003F7AADD
+      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
 
 
     public static void main(String[] args) {
@@ -42,19 +47,24 @@ public class CreateMD5ListFromIprscan {
         String databaseUsername = args[2];
         String databasePassword = args[3];
         String maxUPI = args[4];
+        int fetchSize = 100000;
+        if (args.length >= 6) {
+            fetchSize =  Integer.parseInt(args[5]);
+        }
         CreateMD5ListFromIprscan instance = new CreateMD5ListFromIprscan();
 
         instance.buildDatabase(directoryPath,
                 databaseUrl,
                 databaseUsername,
                 databasePassword,
-                maxUPI
+                maxUPI,
+                fetchSize
         );
 
 
     }
 
-    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword, String maxUPI) {
+    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword, String maxUPI, int fetchSize) {
         Environment myEnv = null;
         EntityStore store = null;
         Connection connection = null;
@@ -95,7 +105,10 @@ public class CreateMD5ListFromIprscan {
             connection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword);
 
             PreparedStatement ps = connection.prepareStatement(MD5_QUERY);
-            ps.setString(1, maxUPI);
+            System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
+            ps.setFetchSize(fetchSize);
+            System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
+//            ps.setString(1, maxUPI);
             ResultSet rs = ps.executeQuery();
 
             int proteinCount = 0;
@@ -109,10 +122,11 @@ public class CreateMD5ListFromIprscan {
                 // Store last protein
                 primIDX.put(protein);
                 proteinCount++;
-                if (proteinCount % 100000 == 0) {
-                    System.out.println("Stored " + proteinCount + " considered proteins.");
+                if (proteinCount % 5000000 == 0) {
+                    System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
                 }
             }
+            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
         } catch (ClassNotFoundException e) {

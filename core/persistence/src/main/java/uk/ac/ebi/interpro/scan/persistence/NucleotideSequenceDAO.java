@@ -12,7 +12,9 @@ import java.util.Set;
  *         Date: 21/06/11
  *         Time: 16:42
  */
-public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Long> {
+public interface NucleotideSequenceDAO extends GenericKVDAO<NucleotideSequence> {
+
+    public Set<NucleotideSequence> getNucleotideSequences();
 
     /**
      * Retrieves nucleotide sequence by cross reference (more precisely by cross reference identifier).
@@ -27,6 +29,8 @@ public interface NucleotideSequenceDAO extends GenericDAO<NucleotideSequence, Lo
      * @return
      */
     public NucleotideSequence retrieveByXrefName(String name);
+
+    public NucleotideSequence getNucleotideSequence(Long nucleotideSequenceID);
 
     /**
      * Inserts new Sequences.

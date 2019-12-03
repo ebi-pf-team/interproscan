@@ -82,6 +82,11 @@ public enum MatchDataSource {
 
     PROSITE_PROFILES("PROSITE profiles", PROSITE.description, PROSITE.homeUrl, PROSITE.linkUrl),
 
+    SFLD(0,
+            "The Structure-Function Linkage Database (SFLD) is a hierarchical classification of enzymes that relates specific sequence-structure features to specific chemical capabilities.",
+            "http://sfld.rbvi.ucsf.edu/django/",
+            "http://sfld.rbvi.ucsf.edu/django/$1/$0"),
+
     SMART(0,
             "SMART (a Simple Modular Architecture Research Tool) uses hidden Markov models (HMMs) and allows the " +
                     "identification of genetically mobile domains and the analysis of domain architectures. These domains are " +
@@ -95,8 +100,8 @@ public enum MatchDataSource {
                     "The library is based on the SCOP classification of proteins. Models correspond to SCOP domains at the " +
                     "superfamily level and a hybrid method subsequently sub-classifies domains at the family level. SUPERFAMILY " +
                     "provides its structural assignments at both levels to all completely sequenced genomes.",
-            "http://supfam.cs.bris.ac.uk/SUPERFAMILY/",
-            "http://supfam.cs.bris.ac.uk/SUPERFAMILY/cgi-bin/scop.cgi?ipid=$0"),
+            "http://supfam.org/SUPERFAMILY/",
+            "http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=$0"),
 
     TIGRFAMS("TIGRFAMs",
             "TIGRFAMs is a collection of protein families.",
@@ -135,6 +140,14 @@ public enum MatchDataSource {
 
     // Others
 
+    MOBIDB_LITE("MobiDB Lite",
+            "MobiDB is designed to offer a centralized resource for annotations of intrinsic protein disorder.",
+            "http://mobidb.bio.unipd.it/",
+            "http://mobidb.bio.unipd.it/$0"),
+
+    MOBIDB("MobiDB Lite", MOBIDB_LITE.description, MOBIDB_LITE.homeUrl, MOBIDB_LITE.linkUrl),
+
+
     COILS(0,
             "COILS compares a sequence to a database of known parallel two-stranded coiled-coils and derives a " +
                     "similarity score and then calculates the probability that the sequence will adopt a coiled-coil " +
@@ -159,11 +172,11 @@ public enum MatchDataSource {
             "http://www.cbs.dtu.dk/services/SignalP/",
             "http://www.cbs.dtu.dk/services/SignalP/"),
 
-    SIGNALP_EUK("SignalP euk", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+    SIGNALP_EUK("SignalP Euk", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
 
-    SIGNALP_GRAM_POSITIVE("SignalP Gram+ prok", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+    SIGNALP_GRAM_POSITIVE("SignalP Gram-positive", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
 
-    SIGNALP_GRAM_NEGATIVE("SignalP Gram- prok", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
+    SIGNALP_GRAM_NEGATIVE("SignalP Gram-negative", SIGNALP.description, SIGNALP.homeUrl, SIGNALP.linkUrl),
 
     // Other
     UNKNOWN;
@@ -190,7 +203,7 @@ public enum MatchDataSource {
     }
 
     // Dummy int just allows us to specify description without having to give name
-    private MatchDataSource(int dummy, String description, String homeUrl, String linkUrl) {
+    MatchDataSource(int dummy, String description, String homeUrl, String linkUrl) {
         this.name = name(); // Default name (see java.lang.Enum)
         this.description = description;
         this.homeUrl = homeUrl;
@@ -225,6 +238,22 @@ public enum MatchDataSource {
         } else if (this == SWISSMODEL && longerThanThree && accession.startsWith("SW_")) {
             accession = accession.substring(3);
         }
+        if (this == SFLD && accession.length() > 5) {
+            // E.g. For "SFLDG01135" use URL "http://sfld.rbvi.ucsf.edu/django/subgroup/01135/"
+            String sfldUrl = linkUrl;
+            switch (accession.charAt(4)) {
+                case 'F':
+                    sfldUrl = linkUrl.replaceAll("\\$1", "family");
+                    break;
+                case 'G':
+                    sfldUrl = linkUrl.replaceAll("\\$1", "subgroup");
+                    break;
+                case 'S':
+                    sfldUrl = linkUrl.replaceAll("\\$1", "superfamily");
+                    break;
+            }
+            return ACCESSION_PATTERN.matcher(sfldUrl).replaceAll(accession.substring(5));
+        }
         return ACCESSION_PATTERN.matcher(linkUrl).replaceAll(accession);
     }
 
@@ -243,15 +272,7 @@ public enum MatchDataSource {
 
             // First get the supplied SignatureLibraryRelease "name" in the same format as it would be for the
             // MatchDataSource name that we will later iterate over
-            name = name.toLowerCase().replaceAll("\\s+", ""); // Supplied name to check
-            if (name.contains("_")) {
-                // SignalP is the only SignatureLibraryRelease name to contain an underscore
-                name = name.replaceAll("_", "");
-                if (name.contains("gram")) {
-                    name = name.replaceAll("positive", "+prok");
-                    name = name.replaceAll("negative", "-prok");
-                }
-            }
+            name = cleanName(name);
 
             // TODO Inconsistent? SignatureLibrary (InterProScan) uses "TIGRFAM" and MatchDataSource (InterPro) uses "TIGRFAMS"
             if (name.equals("tigrfam")) {
@@ -267,7 +288,7 @@ public enum MatchDataSource {
                 } else {
                     // E.g. Match "PROSITE profiles" from InterPro database with "ProSiteProfiles" from I5
                     // SignatureLibraryRelease name
-                    mName = mName.replaceAll("\\s+", "");
+                    mName = cleanName(mName);
                     if (name.equals(mName)) {
                         return m;
                     }
@@ -276,6 +297,27 @@ public enum MatchDataSource {
         }
         return UNKNOWN;
     }
+
+    /**
+     * Strip all spaces/underscores/hyphens from lowercase names
+     * @param name
+     * @return
+     */
+    private static String cleanName(final String name) {
+        String output = name.toLowerCase().replaceAll("\\s+", ""); // Supplied name to check
+        output = output.replaceAll("_", "");
+        output = output.replaceAll("-", "");
+        return output;
+    }
+
+    public static boolean isSequenceFeature(MatchDataSource matchDataSource) {
+        return (matchDataSource.equals(COILS)
+                || matchDataSource.equals(MOBIDB) || matchDataSource.equals(MOBIDB_LITE)
+                || matchDataSource.equals(SIGNALP) || matchDataSource.equals(SIGNALP_EUK)
+                || matchDataSource.equals(SIGNALP_GRAM_POSITIVE) || matchDataSource.equals(SIGNALP_GRAM_NEGATIVE)
+                || matchDataSource.equals(PHOBIUS) || matchDataSource.equals(TMHMM));
+    }
+
 
     public static boolean isStructuralFeature(MatchDataSource matchDataSource) {
         return (matchDataSource.equals(CATH) || matchDataSource.equals(SCOP) || matchDataSource.equals(PDB));

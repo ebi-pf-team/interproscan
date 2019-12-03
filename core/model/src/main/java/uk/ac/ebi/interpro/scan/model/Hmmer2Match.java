@@ -40,8 +40,8 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
     protected Hmmer2Match() {
     }
 
-    public Hmmer2Match(Signature signature, double score, double evalue, Set<Hmmer2Match.Hmmer2Location> locations) {
-        super(signature, score, evalue, locations);
+    public Hmmer2Match(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer2Match.Hmmer2Location> locations) {
+        super(signature, signatureModels, score, evalue, locations);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         for (Hmmer2Location location : this.getLocations()) {
             clonedLocations.add((Hmmer2Location) location.clone());
         }
-        return new Hmmer2Match(this.getSignature(),
+        return new Hmmer2Match(this.getSignature(), this.getSignatureModels(),
                 this.getScore(), this.getEvalue(), clonedLocations);
     }
 
@@ -80,7 +80,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
     @Entity
     @Table(name = "hmmer2_location")
     @XmlType(name = "Hmmer2LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-    public static class Hmmer2Location extends HmmerLocation {
+    public static class Hmmer2Location extends HmmerLocation<Hmmer2Location.Hmmer2LocationFragment> {
 
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -88,16 +88,15 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         protected Hmmer2Location() {
         }
 
-        // TODO: Remove HMM Bounds?
         public Hmmer2Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, HmmBounds hmmBounds) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmBounds);
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds) {
+            super(new Hmmer2LocationFragment(start, end), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
         }
 
-        public Hmmer2Location(int start, int end, double score, double evalue,
-                              int hmmStart, int hmmEnd, int hmmLength) {
-            super(start, end, score, evalue, hmmStart, hmmEnd, hmmLength);
-        }
+//        public Hmmer2Location(int start, int end, double score, double evalue,
+//                              int hmmStart, int hmmEnd) {
+//            super(new Hmmer2LocationFragment(start, end), score, evalue, hmmStart, hmmEnd);
+//        }
 
         @Override
         public boolean equals(Object o) {
@@ -119,9 +118,47 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
         }
 
         public Object clone() throws CloneNotSupportedException {
-            final Hmmer2Location clone = new Hmmer2Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmBounds());
-            clone.setHmmLength(this.getHmmLength());
+            final Hmmer2Location clone = new Hmmer2Location(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), this.getHmmStart(), this.getHmmEnd(), this.getHmmLength(), this.getHmmBounds());
             return clone;
         }
+
+        /**
+         * Location fragment of a HMMER2 match on a protein sequence
+         */
+        @Entity
+        @Table(name = "hmmer2_location_fragment")
+        @XmlType(name = "Hmmer2LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class Hmmer2LocationFragment extends LocationFragment {
+
+            protected Hmmer2LocationFragment() {
+            }
+
+            public Hmmer2LocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof Hmmer2LocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(139, 149)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new Hmmer2LocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
     }
 }

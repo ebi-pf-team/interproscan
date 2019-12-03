@@ -1,9 +1,14 @@
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -27,6 +32,7 @@ import java.util.*;
         @Index(name = "ENTRY_TYPE_IDX", columnList = "TYPE")
 
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "created", "updated", "releases", "id", "abstract"}) // IBU-4703: "abstract" is never populated
 public class Entry implements Serializable {
 
     @Transient
@@ -99,6 +105,8 @@ public class Entry implements Serializable {
             name = "ENTRY_GO_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "GO_XREF_ID"))
+//    @Fetch(FetchMode.JOIN)
+    @JsonManagedReference
     private Set<GoXref> goXRefs = new HashSet<GoXref>();
 
     @ManyToMany(
@@ -108,11 +116,14 @@ public class Entry implements Serializable {
             name = "ENTRY_PATHWAY_XREF",
             joinColumns = @JoinColumn(name = "ENTRY_ID"),
             inverseJoinColumns = @JoinColumn(name = "PATHWAY_XREF_ID"))
+//    @Fetch(FetchMode.JOIN)
+    @JsonManagedReference
     private Set<PathwayXref> pathwayXRefs = new HashSet<PathwayXref>();
 
     @OneToMany(mappedBy = "entry", fetch = FetchType.EAGER)
     //@XmlElementWrapper(name = "signatures")
 //    @XmlElement(name = "signature") // TODO: This should not be here (see TODO comments on getSignatures)
+    @JsonBackReference
     private Set<Signature> signatures = new HashSet<Signature>();
 
     /**

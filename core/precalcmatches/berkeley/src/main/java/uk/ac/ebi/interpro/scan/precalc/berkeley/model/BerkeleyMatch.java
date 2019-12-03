@@ -41,6 +41,8 @@ public class BerkeleyMatch {
 
     private String signatureAccession;
 
+    private String signatureModels;
+
     private Double sequenceScore;
 
     private Double sequenceEValue;
@@ -95,6 +97,14 @@ public class BerkeleyMatch {
 
     public void setSignatureAccession(String signatureAccession) {
         this.signatureAccession = signatureAccession;
+    }
+
+    public String getSignatureModels() {
+        return signatureModels;
+    }
+
+    public void setSignatureModels(String signatureModels) {
+        this.signatureModels = signatureModels;
     }
 
     public Double getSequenceScore() {

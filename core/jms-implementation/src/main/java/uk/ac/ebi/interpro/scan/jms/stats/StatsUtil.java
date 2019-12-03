@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
-import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -8,10 +7,8 @@ import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import javax.jms.*;
 import javax.jms.Queue;
-import javax.management.MBeanServer;
-import java.io.IOException;
+import javax.jms.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -28,7 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * This util has several functions useful for the monitoring of the queues.
  * Its not thread safe, but should only be used in one thread
- *
  */
 public class StatsUtil {
 
@@ -62,6 +58,8 @@ public class StatsUtil {
 
     private Long progressReportTime = Long.MAX_VALUE;
 
+    private static boolean forceDisplayProgress = false;
+
     static private AtomicInteger remoteJobsCompleted = new AtomicInteger(0);
 
     private AtomicLong remoteJobsCount = new AtomicLong(0);
@@ -70,9 +68,11 @@ public class StatsUtil {
 
     static private AtomicInteger localJobsCompleted = new AtomicInteger(0);
 
+    private final ConcurrentMap<String, Map<String, String>> allAvailableJobs = new ConcurrentHashMap<>();
+
     private final List<String> runningJobs = Collections.synchronizedList(new ArrayList<String>());
 
-    private final ConcurrentMap<Integer, String> submittedStepInstances = new ConcurrentHashMap<Integer, String> ();
+    private final ConcurrentMap<String, Map<String, String>> submittedStepInstances = new ConcurrentHashMap();
 
     ConcurrentMap<UUID, WorkerState> workerStateMap = new ConcurrentHashMap<UUID, WorkerState>();
 
@@ -83,7 +83,7 @@ public class StatsUtil {
 
     private long timeOfLastMemoryDisplay = System.currentTimeMillis();
 
-    private  long startUpTime;
+    private long startUpTime;
     private long maximumLifeMillis;
 
     private long currentMasterClockTime;
@@ -135,7 +135,7 @@ public class StatsUtil {
         return tier;
     }
 
-    public synchronized  void setTier(int tier) {
+    public synchronized void setTier(int tier) {
         StatsUtil.tier = tier;
     }
 
@@ -179,7 +179,7 @@ public class StatsUtil {
         return statsMessageListener;
     }
 
-    public synchronized  Long getTotalJobs() {
+    public synchronized Long getTotalJobs() {
         return totalJobs;
     }
 
@@ -255,84 +255,206 @@ public class StatsUtil {
         this.requestQueueConsumerCount = requestQueueConsumerCount;
     }
 
+    public static boolean isForceDisplayProgress() {
+        return forceDisplayProgress;
+    }
+
+    public static void setForceDisplayProgress(boolean forceDisplayProgress) {
+        StatsUtil.forceDisplayProgress = forceDisplayProgress;
+    }
+
     public ConcurrentMap getAllStepInstances() {
         return submittedStepInstances;
     }
 
-    public int getSubmittedStepInstancesCount(){
-        return submittedStepInstances.size();
+    public void addToAllAvailableJobs(StepInstance stepInstance, String status) {
+        String key = stepInstance.getStepId();
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
+        Map<String, String> jobStatus = allAvailableJobs.get(key);
+        if (jobStatus != null){
+            jobStatus.put(proteinRange, status);
+        }else{
+            jobStatus = new ConcurrentHashMap<>();
+            jobStatus.put(proteinRange, status);
+        }
+        allAvailableJobs.put(key, jobStatus);
     }
 
-    public void addToSubmittedStepInstances(StepInstance stepInstance){
-        Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
-        submittedStepInstances.put(key, stepInstance.toString());
-    }
-
-    public void updateSubmittedStepInstances(StepInstance stepInstance){
-
-        Integer key = getKey(stepInstance.getId(), stepInstance.getStepId());
-        Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() +")");
-        submittedStepInstances.replace(key, "Done " + stepInstance.toString());
-        if(Utilities.verboseLogLevel > 2 && ! submittedStepInstances.containsKey(key)){
-            Utilities.verboseLog("stepInstance key  not found in submitted stepInstances: "
-                    + stepInstance.getId() + " -  " + stepInstance.getStepId());
+    public void removeFromAllAvailableJobs(StepInstance stepInstance) {
+        String key = stepInstance.getStepId();
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
+        Map<String, String> jobStatus = allAvailableJobs.get(key);
+        if (jobStatus != null){
+            jobStatus.remove(proteinRange);
+            if (jobStatus.isEmpty()) {
+                allAvailableJobs.remove(key);
+            }
         }
     }
 
-    public void removeFromSubmittedStepInstances(StepInstance stepInstance){
-        submittedStepInstances.remove(stepInstance.getId());
+
+    public void addToSubmittedStepInstances(StepInstance stepInstance) {
+        String key = stepInstance.getStepId();
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
+        Map<String, String> jobStatus = submittedStepInstances.get(key);
+        String status = "submitted";
+
+        if (jobStatus != null){
+            jobStatus.put(proteinRange, status);
+        }else{
+            jobStatus = new ConcurrentHashMap<>();
+            jobStatus.put(proteinRange, status);
+            //Utilities.verboseLog("StepInstanceAdd " + key + ":" +  jobStatus.toString());
+        }
+
+        submittedStepInstances.put(key, jobStatus);
+        addToAllAvailableJobs(stepInstance, "submitted");
     }
 
-    public Integer getKey(Long id, String name){
+    public void updateSubmittedStepInstances(StepInstance stepInstance) {
+        String key = stepInstance.getStepId();
+        Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() + ")");
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
+        Map<String, String> jobStatus = submittedStepInstances.get(key);
+        String status = "Done";
+        if (jobStatus != null){
+            jobStatus.put(proteinRange, status);
+            submittedStepInstances.put(key, jobStatus);
+            removeFromAllAvailableJobs(stepInstance);
+        }else{
+            LOGGER.warn("Trying to update a step that is not the list - step:" + key +  "["
+                    + proteinRange + "] -- " + status);
+        }
+    }
+
+    public void removeFromSubmittedStepInstances(StepInstance stepInstance) {
+        String key = stepInstance.getStepId();
+        submittedStepInstances.remove(key);
+    }
+
+    public Integer getKey(Long id, String name) {
         String keyString = name + id.toString();
         return keyString.hashCode();
     }
 
-    public void printSubmittedStepInstances(){
+    public void printSubmittedStepInstances() {
         Utilities.verboseLog(" submittedStepInstances:");
         Set ids = submittedStepInstances.keySet();
         Utilities.verboseLog(" submittedStepInstances:" + ids.size());
         //Collections.sort((List<Comparable>) ids);
 
-        for(Object stepInstanceId:ids){
+        for (Object stepInstanceId : ids) {
             Long id = (Long) stepInstanceId;
             System.out.println(id + ":" + submittedStepInstances.get(id));
         }
     }
 
-    public void printNonAcknowledgedSubmittedStepInstances(){
-        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
-        Set ids = submittedStepInstances.entrySet();
-        Utilities.verboseLog(" submittedStepInstances:" + ids.size()
-        );
-        //Collections.sort((List<Comparable>) ids);
-
-        for (Object entry : submittedStepInstances.entrySet()) {
-            if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
-                System.out.println(((Map.Entry<Integer, String>) entry).getKey() + ":" + ((Map.Entry<Integer, String>) entry).getValue());
-            }
+    public int getSubmittedStepInstancesCount() {
+        //Utilities.verboseLog(" getSubmittedStepInstancesCounts:");
+        int uniqStepCount = 0;
+        int stepCount = 0;
+        for (Map.Entry<String, Map<String, String>> elem:submittedStepInstances.entrySet()) {
+            Map<String, String> jobStatus = (Map<String, String>) elem.getValue();
+            stepCount += jobStatus.keySet().size();
+            uniqStepCount ++;
         }
+        if (stepCount < uniqStepCount){
+            Utilities.verboseLog(" Originals: stepCount " + stepCount + " uniq stepCount: " + uniqStepCount);
+            stepCount = uniqStepCount;
+        }
+        Utilities.verboseLog(30, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
+        return stepCount;
     }
 
-    public Set<String> getNonAcknowledgedSubmittedStepInstances(){
-        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
-        Set ids = submittedStepInstances.entrySet();
-        Set<String> nonAcknowledgedStepInstances = new TreeSet<String>();
-        Utilities.verboseLog(" submittedStepInstances:" + ids.size());
+    /**
+     *
+     * @return
+     */
+    public int getSubmittedStepInstancesCountOld() {
+        return getSubmittedStepInstancesCount();
+    }
 
-        for (Object entry : submittedStepInstances.entrySet()){
-            if(! ((Map.Entry<Integer, String>) entry).getValue().contains("Done")){
-                nonAcknowledgedStepInstances.add(((Map.Entry<Integer, String>) entry).getValue());
+    public Set<String> getNonAcknowledgedSubmittedStepInstances() {
+        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
+        Set  ids =  submittedStepInstances.entrySet();
+        Set<String> nonAcknowledgedStepInstances = new TreeSet<String>();
+        Utilities.verboseLog(" submittedStepInstances: " + ids.size());
+
+        for (String submittedStepInstanceKey : submittedStepInstances.keySet()) {
+            Map<String, String> submittedStepInstanceValue = (Map<String, String>) submittedStepInstances.get(submittedStepInstanceKey);
+            Utilities.verboseLog(30," submittedStepInstanceValue: its a map : " + submittedStepInstanceKey + " --> " + submittedStepInstanceValue.toString());
+
+
+            Set <String> keySet = submittedStepInstanceValue.keySet();
+            for (String newKey : keySet){
+                String stepInstanceEntryValues = submittedStepInstanceValue.get(newKey);
+                Utilities.verboseLog(30,"key : " + submittedStepInstanceKey + "[" + newKey + "] -> stepInstanceEntryValues:  " + stepInstanceEntryValues);
+                nonAcknowledgedStepInstances.add(submittedStepInstanceKey + " - " + newKey + " - " + stepInstanceEntryValues);
+            }
+            /*
+            Map.Entry<String, String> submittedStepInstance = (Map.Entry<String, String>) entryObject;
+            Utilities.verboseLog(" submittedStepInstance: " + submittedStepInstance.toString());
+            String stepInstanceName = submittedStepInstance.getKey();
+            String stepInstanceStatus = submittedStepInstance.getValue();
+            if (stepInstanceStatus.contains("Done")) {
+            //if (!((Map.Entry<Integer, String>) entry).getValue().contains("Done")) {
+                Utilities.verboseLog(" nonAcknowledgedStepInstance: " + stepInstanceName);
+                nonAcknowledgedStepInstances.add(stepInstanceName);
+            }
+            */
+
+        }
+        return nonAcknowledgedStepInstances;
+    }
+
+    public Map<String, Integer> getNonAcknowledgedSubmittedStepInstancesCounts() {
+        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
+        Map<String, Integer>  nonAcknowledgedStepInstances = new HashMap<>();
+        for  (Map.Entry<String, Map<String, String>> elem:submittedStepInstances.entrySet()) {
+            String key = (String) elem.getKey();
+            String status = "Done";
+            Map<String, String> jobStatus = (Map<String, String>) elem.getValue();
+            int notDoneCount = 0;
+            for (Map.Entry<String, String> entryStatus : jobStatus.entrySet()) {
+                String value = (String)  entryStatus.getValue();
+                if (! value.equals(status)){
+                    notDoneCount ++;
+                }
+            }
+            if (notDoneCount > 0) {
+                nonAcknowledgedStepInstances.put(key, notDoneCount);
             }
         }
         return nonAcknowledgedStepInstances;
     }
 
+    public void displayNonAcknowledgedSubmittedStepInstances() {
+        if (Utilities.verboseLog) {
+            String nonAcknowledgedSubmittedStepInstances = "[";
+            if (Utilities.verboseLog) {
+                Utilities.verboseLog("Current Non-Acknowledged Submitted StepInstances ");
+
+                for (Map.Entry<String, Integer> elem : getNonAcknowledgedSubmittedStepInstancesCounts().entrySet()) {
+                    String jobName = (String) elem.getKey();
+                    int notDoneCount = (int) elem.getValue();
+                    if (notDoneCount > 0) {
+                        String jobMessage = "#:" + notDoneCount; // + ") (rep:" + status;
+                        nonAcknowledgedSubmittedStepInstances += String.format("%s (%s)", jobName, jobMessage)
+                                + ", ";
+                    }
+                }
+            }
+            nonAcknowledgedSubmittedStepInstances += "]";
+            System.out.println(nonAcknowledgedSubmittedStepInstances);
+        }
+    }
+
+
 
     /**
      * Time last message was received
      */
-    public void updateLastMessageReceivedTime(){
+    public void updateLastMessageReceivedTime() {
         lastMessageReceivedTime = System.currentTimeMillis();
     }
 
@@ -358,15 +480,15 @@ public class StatsUtil {
     }
 
     //
-    public void displayMemoryAndRunningJobs(){
+    public void displayMemoryAndRunningJobs() {
         Long now = System.currentTimeMillis();
         Long timeSinceLastMemoryDisplay = now - timeOfLastMemoryDisplay;
-        if(timeSinceLastMemoryDisplay > 5 * 1000){
+        if (timeSinceLastMemoryDisplay > 5 * 1000) {
             displayMemInfo();
 
-            System.out.println(Utilities.getTimeNow() + " Current active Jobs" );
-            List <String> currentRunningJobs =  getRunningJobs();
-            for(String runningJob:currentRunningJobs){
+            System.out.println(Utilities.getTimeNow() + " Current active Jobs");
+            List<String> currentRunningJobs = getRunningJobs();
+            for (String runningJob : currentRunningJobs) {
                 System.out.println(runningJob);
             }
             timeOfLastMemoryDisplay = System.currentTimeMillis();
@@ -374,19 +496,57 @@ public class StatsUtil {
 
     }
 
-    public void displayRunningJobs(){
-        Utilities.verboseLog("Current active Jobs" );
-        List <String> currentRunningJobs =  getRunningJobs();
-        for(String runningJob:currentRunningJobs){
-            Utilities.verboseLog(String.format("%" + 26 + "s", runningJob));
+
+    public void displayRunningJobs() {
+        if (Utilities.verboseLog) {
+            Utilities.verboseLog("Current active Jobs");
+            List<String> currentRunningJobs = getRunningJobs();
+            Map<String,List<String>> runningJobsMap = new HashMap<>();
+            for (String runningJob : currentRunningJobs) {
+                String key = runningJob.split(":")[0];
+                String proteinRange = runningJob.split(":")[1];
+                if (runningJobsMap.containsKey(key)) {
+                    runningJobsMap.get(key).add(proteinRange);
+                }else{
+                    List<String> proteinRanges = new ArrayList<>();
+                    proteinRanges.add(proteinRange);
+                    runningJobsMap.put(key,proteinRanges);
+                }
+            }
+            for (Map.Entry<String,List<String>> elem : runningJobsMap.entrySet()) {
+                String key = (String) elem.getKey();
+                List<String> proteinRanges = (List<String>) elem.getValue();
+                Collections.sort(proteinRanges);
+                System.out.println(String.format("%8s %s %s", "", key, proteinRanges.toString()));
+            }
         }
     }
 
     public List<String> getRunningJobs() {
-        synchronized(runningJobs){
+        synchronized (runningJobs) {
             return Collections.unmodifiableList(new ArrayList<String>(runningJobs));
         }
     }
+
+    public void displayAllAvailableJobs() {
+        if (Utilities.verboseLog) {
+            Utilities.verboseLog("Current available Jobs");
+            for (Map.Entry<String, Map<String, String>> elem:allAvailableJobs.entrySet()) {
+                String jobName = (String) elem.getKey();
+                String status = "";
+                Map<String, String> jobStatus = (Map<String, String>) elem.getValue();
+                int jobCount = jobStatus.size();
+                for (Map.Entry<String, String> entryStatus : jobStatus.entrySet()) {
+                    String key = (String) entryStatus.getKey();
+                    String value = (String)  entryStatus.getValue();
+                    status = key + "-" + value; // + ",";
+                }
+                String jobMessage = "#:" + jobCount + ") (rep:" + status;
+                System.out.println(String.format("%15s %s (%s)", "", jobName, jobMessage));
+            }
+        }
+    }
+
 
     public ConcurrentMap<UUID, WorkerState> getWorkerStateMap() {
         return workerStateMap;
@@ -394,10 +554,11 @@ public class StatsUtil {
 
     /**
      * insert or replace worker state
+     *
      * @param workerState
      */
-    public void updateWorkerStateMap(WorkerState workerState){
-        if(workerStateMap.replace(workerState.getWorkerIdentification(), workerState) == null){
+    public void updateWorkerStateMap(WorkerState workerState) {
+        if (workerStateMap.replace(workerState.getWorkerIdentification(), workerState) == null) {
             workerStateMap.putIfAbsent(workerState.getWorkerIdentification(), workerState);
 
         }
@@ -405,50 +566,51 @@ public class StatsUtil {
 
     /**
      * poll  the statistics broker plugin
+     *
      * @param queue
      * @return
      */
 
-    private synchronized  boolean  pollStatsBroker(Destination queue){
+    private synchronized boolean pollStatsBroker(Destination queue) {
         statsMessageListener.setDestination(queue);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        LOGGER.debug("Setting the destination to "+getQueueName(queue) +" at " +timestamp);
-        jmsTemplate.execute(STATS_BROKER_DESTINATION +  getQueueName(queue), new ProducerCallbackImpl(statsQueue));
+        LOGGER.debug("Setting the destination to " + getQueueName(queue) + " at " + timestamp);
+        jmsTemplate.execute(STATS_BROKER_DESTINATION + getQueueName(queue), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {
-            Thread.sleep(3*1000);
+            Thread.sleep(3 * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return  statsMessageListener.getStats()!=null;
+        return statsMessageListener.getStats() != null;
     }
 
-    public boolean  pollStatsBrokerJobQueue(){
+    public boolean pollStatsBrokerJobQueue() {
 
-        return  pollStatsBroker(jobRequestQueue);
+        return pollStatsBroker(jobRequestQueue);
     }
 
-    public boolean  pollStatsBrokerHighMemJobQueue(){
-        return  pollStatsBroker(highMemJobRequestQueue);
+    public boolean pollStatsBrokerHighMemJobQueue() {
+        return pollStatsBroker(highMemJobRequestQueue);
     }
 
-    public boolean  pollStatsBrokerResponseQueue(){
-        return  pollStatsBroker(jobResponseQueue);
+    public boolean pollStatsBrokerResponseQueue() {
+        return pollStatsBroker(jobResponseQueue);
     }
 
-    public boolean  pollStatsBrokerTopic(){
-        return  pollStatsBroker(workerManagerTopicQueue);
+    public boolean pollStatsBrokerTopic() {
+        return pollStatsBroker(workerManagerTopicQueue);
     }
 
     public String getQueueName(Destination queue) {
         try {
-            if(queue!=null){
+            if (queue != null) {
                 return ((Queue) queue).getQueueName();
             }
         } catch (JMSException e) {
             e.printStackTrace();
-            if(LOGGER.isDebugEnabled()){
-                LOGGER.debug("There is a problem with the queue name "+queue.toString());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("There is a problem with the queue name " + queue.toString());
             }
         }
         return "*";
@@ -456,18 +618,19 @@ public class StatsUtil {
 
     public String getTopicName(Destination topic) {
         try {
-            if(topic!=null){
+            if (topic != null) {
                 return ((Topic) topic).getTopicName();
             }
         } catch (JMSException e) {
             e.printStackTrace();
-            if(LOGGER.isDebugEnabled()){
-                LOGGER.debug("There is a problem with the queue name "+topic.toString());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("There is a problem with the queue name " + topic.toString());
             }
         }
         return "*";
     }
-    public  void sendMessage(){
+
+    public void sendMessage() {
         jmsTemplate.send(jobRequestQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return session.createTextMessage("test");
@@ -475,7 +638,7 @@ public class StatsUtil {
         });
     }
 
-    public  void sendhighMemMessage(){
+    public void sendhighMemMessage() {
         jmsTemplate.send(highMemJobRequestQueue, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 return session.createTextMessage("test2");
@@ -484,29 +647,29 @@ public class StatsUtil {
     }
 
     /**
-     *  poll the topic for statistics
+     * poll the topic for statistics
+     *
      * @param topic
      * @return
      */
-    private boolean  pollStatsBrokerTopic(Destination topic){
+    private boolean pollStatsBrokerTopic(Destination topic) {
         statsMessageListener.setDestination(topic);
-        LOGGER.info("Setting the destination to "+getQueueName(topic));
-        jmsTemplate.execute(STATS_BROKER_DESTINATION +  getTopicName(topic), new ProducerCallbackImpl(statsQueue));
+        LOGGER.info("Setting the destination to " + getQueueName(topic));
+        jmsTemplate.execute(STATS_BROKER_DESTINATION + getTopicName(topic), new ProducerCallbackImpl(statsQueue));
         //wait for a second to receive the message
         try {
-            Thread.sleep(1*500);
+            Thread.sleep(1 * 500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return  statsMessageListener.getStats()!=null;
+        return statsMessageListener.getStats() != null;
     }
 
     /**
      * display queue statistics for debugging
-     *
      */
-    public void displayQueueStatistics(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+    public void displayQueueStatistics() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerJobQueue();
         if (!requestQueueStatsAvailable) {
             System.out.println("JobRequestQueue: not initialised");
         } else {
@@ -524,37 +687,39 @@ public class StatsUtil {
 
     /**
      * get the request queue size
+     *
      * @return
      */
-    public int getRequestQueueSize(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerJobQueue();
+    public int getRequestQueueSize() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerJobQueue();
         if (!requestQueueStatsAvailable) {
             LOGGER.warn("JobRequestQueue: not initialised");
             return -99;
         }
         setRequestQueueConsumerCount(statsMessageListener.getConsumers());
-        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+        return statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
     }
 
     /**
      * get highmem queuesie
+     *
      * @return
      */
-    public int getHighMemRequestQueueSize(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+    public int getHighMemRequestQueueSize() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
             Utilities.verboseLog(5, "HighMemJobRequestQueue: not initialised");
             return -99;
         }
-        return   statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
+        return statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
     }
 
-    public void displayHighMemoryQueueStatistics(){
-        final boolean  requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
+    public void displayHighMemoryQueueStatistics() {
+        final boolean requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            Utilities.verboseLog(5,"JobRequestQueue: not initialised");
+            Utilities.verboseLog(5, "JobRequestQueue: not initialised");
         } else {
-            Utilities.verboseLog(5,"HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
+            Utilities.verboseLog(5, "HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
         }
 
     }
@@ -562,11 +727,11 @@ public class StatsUtil {
     /**
      * set the unfinished jobs
      */
-    public void updateStatsUtilJobCounts(){
+    public void updateStatsUtilJobCounts() {
         pollStatsBrokerResponseQueue();
-        int responseDequeueCount =    statsMessageListener.getDequeueCount();
+        int responseDequeueCount = statsMessageListener.getDequeueCount();
         pollStatsBrokerJobQueue();
-        int requestEnqueueCount =    statsMessageListener.getEnqueueCount();
+        int requestEnqueueCount = statsMessageListener.getEnqueueCount();
 
         //unfinishedJobs = requestEnqueueCount - responseDequeueCount;
         setUnfinishedJobs(requestEnqueueCount - responseDequeueCount);
@@ -575,68 +740,111 @@ public class StatsUtil {
     }
 
     /**
-     *   Display master job progress report based on the number of jobs left to run
+     * Display master job progress report based on the number of jobs left to run
      */
-    public void displayMasterProgress(){
-//        System.out.println("#un:to - " + unfinishedJobs + ":" + totalJobs);
+    public void displayMasterProgress() {
         Long masterTotalJobs = totalJobs;
-        if(unfinishedJobs > 0 && masterTotalJobs > 5.0){
-            Double progress = (double)(masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
-//            System.out.println(" Progress:  " + progress + ":" + progressCounter + "  ");
+        if (unfinishedJobs > 0 && masterTotalJobs > 5.0) {
+            Double progress = (double) (masterTotalJobs - unfinishedJobs) / (double) masterTotalJobs;
+
             boolean displayProgress = false;
-            double actualProgress;
-            if (progress > 0.25 && progress < 0.5 && progressCounter < 1){
+            Double actualProgress;
+            int changeSinceLastReport = 0;
+            boolean displayRemainingJobs = false;
+            Long now = System.currentTimeMillis();
+            Long timeSinceLastReport = now - progressReportTime;
+
+            if (timeSinceLastReport > 3600000) {
                 displayProgress = true;
-                progressCounter = 1;
-            }else if  (progress > 0.5 && progress < 0.75 && progressCounter < 2){
-                displayProgress = true;
-                progressCounter = 2;
-            }else if  (progress > 0.75 && progress < 0.9 && progressCounter < 3){
-                displayProgress = true;
-                progressCounter = 3;
-            }else if  (progress > 0.9 && progressCounter < 4){
-                displayProgress = true;
-                progressCounter = 4;
-            }else if  (progress > 0.9 && progressCounter  >= 4){
-                Long now = System.currentTimeMillis();
-                Long timeSinceLastReport = now - progressReportTime;
-                int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
-                if(timeSinceLastReport > 1800000 && changeSinceLastReport > 0){
-                    displayProgress = true;
-                    previousUnfinishedJobs = unfinishedJobs;
-                    progressCounter ++;
+                progressCounter++;
+                if (progressCounter > 4) {
+                    displayRemainingJobs = true;
                 }
             }
-            if(displayProgress){
-                progressReportTime = System.currentTimeMillis();
-                actualProgress = progress * 100;
-                System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%",actualProgress) + " completed");
 
-                int connectionCount = 9999; //statsMessageListener.getConsumers();
-                String debugProgressString = " #:t" + masterTotalJobs + ":l" + unfinishedJobs + ":c" + connectionCount;
+            if (progress > 0.25 && progress < 0.5 && progressCounter < 1) {
+                displayProgress = true;
+                progressCounter = 1;
+            } else if (progress > 0.5 && progress < 0.75 && progressCounter < 2) {
+                displayProgress = true;
+                progressCounter = 2;
+            } else if (progress > 0.75 && progress < 0.9 && progressCounter < 3) {
+                displayProgress = true;
+                //displayRemainingJobs = true; //TODO debug so remove
+                progressCounter = 3;
+            } else if (progress > 0.9 && progressCounter < 4) {
+                displayProgress = true;
+                progressCounter = 4;
+            } else if (progress > 0.9 && progressCounter >= 4) {
+                changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                if (timeSinceLastReport > 3600000 && changeSinceLastReport > 0) {
+                    displayProgress = true;
+                    previousUnfinishedJobs = unfinishedJobs;
+                    progressCounter++;
+                }
+            }
+            if (forceDisplayProgress && ! displayProgress) {
+                int multiplier = 2;
+                int intervalTime = 3600000 * (progressCounter / multiplier);
+                if (progressCounter >= 5 && timeSinceLastReport > intervalTime) {
+                    displayProgress = true;
+                    progressCounter++;
+                    forceDisplayProgress = false;
+                }
+            }
+            if (displayProgress) {
+                progressReportTime = System.currentTimeMillis();
+                // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
+                actualProgress = Math.floor(progress * 100);
+                System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
+                if (Utilities.verboseLog) {
+                    Set<String> nonAckStepInstances = new HashSet<>();
+
+                    //for (StepInstance stepinstance: getNonAcknowledgedSubmittedStepInstances()):
+
+                    Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances: ");
+                    displayNonAcknowledgedSubmittedStepInstances();
+                    displayRunningJobs();
+                    if (displayRemainingJobs) {
+                        //displayAllAvailableJobs(); TODO refactor
+                        if (unfinishedJobs > 1) {
+                            Utilities.verboseLog("allAvailableJobs uniq count:" + allAvailableJobs.size());
+                        }
+                        //
+                    }
+
+                    int connectionCount = 9999; //statsMessageListener.getConsumers();
+                    changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
+                    if (changeSinceLastReport > 0) {
+                        previousUnfinishedJobs = unfinishedJobs;
+                    }
+                    previousUnfinishedJobs = unfinishedJobs; // maybe the above conditional is superfluous
+
+                    String debugProgressString = " #:t" + masterTotalJobs + " :l" + unfinishedJobs + " change: " + changeSinceLastReport + " :c" + connectionCount;
+                    Utilities.verboseLog("debugProgressString: " + debugProgressString);
 //                LOGGER.debug(statsMessageListener.getStats());
+                }
             }
         }
     }
 
 
-
     /**
-     *   Display worker job progress report based on the number of jobs left to run
+     * Display worker job progress report based on the number of jobs left to run
      */
-    public void displayWorkerProgress(){
-        if(progressCounter ==  0){
+    public void displayWorkerProgress() {
+        if (progressCounter == 0) {
             progressReportTime = System.currentTimeMillis();
         }
         Long now = System.currentTimeMillis();
         Long timeSinceLastReport = now - progressReportTime;
         float progressPercent = 0;
         Long workerTotalJobs = totalJobs;
-        if(workerTotalJobs > 5.0){
+        if (workerTotalJobs > 5.0) {
             progressPercent = (workerTotalJobs - unfinishedJobs) * 100 / workerTotalJobs;
         }
         //display every hour 60 * 60 * 1000
-        if(timeSinceLastReport > 3600000){
+        if (timeSinceLastReport > 3600000) {
             int connectionCount = statsMessageListener.getConsumers();
             int changeSinceLastReport = previousUnfinishedJobs - unfinishedJobs;
             int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
@@ -649,13 +857,13 @@ public class StatsUtil {
             progressReportTime = System.currentTimeMillis();
             previousUnfinishedJobs = unfinishedJobs;
         }
-        progressCounter ++;
+        progressCounter++;
     }
 
     /**
-     *   Display final worker job progress report based on the number of jobs left to run
+     * Display final worker job progress report based on the number of jobs left to run
      */
-    public void displayFinalWorkerProgress(){
+    public void displayFinalWorkerProgress() {
         Long workerTotalJobs = totalJobs;
         int finishedJobs = workerTotalJobs.intValue() - unfinishedJobs;
         System.out.println(Utilities.getTimeNow() + " Completed " + finishedJobs + " of " + workerTotalJobs + " jobs");
@@ -667,32 +875,32 @@ public class StatsUtil {
      *
      */
 
-    public int getAvailableProcessors(){
+    public int getAvailableProcessors() {
         int processors = Runtime.getRuntime().availableProcessors();
         LOGGER.debug(Utilities.getTimeNow() + " Processors available: " + processors);
         return processors;
     }
 
-    public void memoryDisplay(){
+    public void memoryDisplay() {
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
 
-        if(systemInfo == null){
+        if (systemInfo == null) {
             systemInfo = new SystemInfo();
         }
         System.out.println("SystemInfo \n " + systemInfo.Info());
     }
 
-    public void displaySystemInfo(){
-        if(systemInfo == null){
+    public void displaySystemInfo() {
+        if (systemInfo == null) {
             systemInfo = new SystemInfo();
         }
         System.out.println(Utilities.getTimeNow() + " " + "SystemInfo \n " + systemInfo.Info());
     }
 
-    public void displayMemInfo(){
-        if(systemInfo == null){
+    public void displayMemInfo() {
+        if (systemInfo == null) {
             systemInfo = new SystemInfo();
         }
         System.out.println(Utilities.getTimeNow() + " Stats from the JVM ");
@@ -700,12 +908,12 @@ public class StatsUtil {
         System.out.println(getHeapNonHeapUsage());
         // get virtual memory etc
         String PID = "";
-        try{
+        try {
             PID = Utilities.getPid();
             System.out.println(Utilities.getTimeNow() + " " + Utilities.getSwapMemoryDetailsCLC(PID));
             Utilities.runFreeCmd();
             Utilities.runVmstatCmd();
-        }catch (Exception ex ){
+        } catch (Exception ex) {
             LOGGER.debug("Error in getting process PID" + ex);
             System.out.println(Utilities.getTimeNow() + " Failed to get other memory stats - PID : " + PID + " " + ex);
             ex.printStackTrace();
@@ -714,9 +922,10 @@ public class StatsUtil {
 
     /**
      * get memory usage for the JVM
+     *
      * @return
      */
-    public String getHeapNonHeapUsage(){
+    public String getHeapNonHeapUsage() {
         MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
         MemoryUsage heap = memBean.getHeapMemoryUsage();
         MemoryUsage nonheap = memBean.getNonHeapMemoryUsage();
@@ -732,27 +941,5 @@ public class StatsUtil {
 
     }
 
-    /**
-     * get memeory utilisation from the JvM
-     */
-    public void getJVMMemory(){
-
-        // init code
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        HotSpotDiagnosticMXBean diagBean;
-        try {
-            diagBean = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
-            // loop code
-            // add some code to figure if we have passed some threshold, then
-            LOGGER.debug("Memory diagnostic options: " + diagBean.getDiagnosticOptions().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-//        File heapFile = new File(outputDir, "heap-" + curThreshold + ".hprof");
-//        log.info("Dumping heap file " + heapFile.getAbsolutePath());
-//        diagBean.dumpHeap(heapFile.getAbsolutePath(), true);
-    }
 
 }

@@ -49,12 +49,12 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         this.matchCounter = 0;
     }
 
-    public ProteinMatchesGFFResultWriter(Path path) throws IOException {
-         this(path, true);
+    public ProteinMatchesGFFResultWriter(Path path, String interProScanVersion) throws IOException {
+         this(path, interProScanVersion, true);
     }
 
-    public ProteinMatchesGFFResultWriter(Path path, boolean writeFullGFF) throws IOException {
-        super(path);
+    public ProteinMatchesGFFResultWriter(Path path, String interProScanVersion, boolean writeFullGFF) throws IOException {
+        super(path, interProScanVersion);
         this.gffWriter = new GFFWriter(super.fileWriter);
         if (writeFullGFF) {
             //Write first line of file - always the same
@@ -62,6 +62,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
             //##feature-ontology URI
             //This directive indicates that the GFF3 file uses the ontology of feature types located at the indicated URI or URL.
             this.gffWriter.write("##feature-ontology http://song.cvs.sourceforge.net/viewvc/song/ontology/sofa.obo?revision=1.269");
+            this.gffWriter.write("##interproscan-version " + this.getInterProScanVersion());
         }
     }
 
@@ -314,6 +315,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     //In other cases we have to take the value from the location
                     if (location instanceof HmmerLocation) {
                         score = Double.toString(((HmmerLocation) location).getEvalue());
+                    } else if (location instanceof HmmerLocationWithSites) {
+                        score = Double.toString(((HmmerLocationWithSites) location).getEvalue());
                     } else if (location instanceof BlastProDomMatch.BlastProDomLocation) {
                         score = Double.toString(((BlastProDomMatch.BlastProDomLocation) location).getEvalue());
                     } else if (location instanceof ProfileScanMatch.ProfileScanLocation) {

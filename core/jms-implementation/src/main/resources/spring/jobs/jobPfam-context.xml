@@ -40,7 +40,8 @@
           parent="abstractPfamStep">
         <property name="dependsUpon" ref="stepPfamWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pfama} ${hmmer3.hmmsearch.cpu.switch.pfama}"/>
         <property name="fullPathToHmmFile" value="${pfam-a.hmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -114,6 +115,7 @@
                         <property name="pfamCFile" value="${pfam-clans.path}"/>
                     </bean>
                 </property>
+                <property name="pfamHmmDataPath" value="${pfam-a.dat.path}"/>
             </bean>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
@@ -121,7 +123,10 @@
         <property name="signatureLibrary" value="PFAM"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PfamFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

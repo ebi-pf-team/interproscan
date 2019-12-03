@@ -19,11 +19,12 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -31,16 +32,20 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test cases for {@link ProteinMatchesHolder}
  *
+ * This class is no longer used as it is susceptible to memory leaks
+ *
+ *
  * @author Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
+@Disabled("this way of processing proteins runs into memory problems")
 public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder> {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinMatchesHolderTest.class.getName());
@@ -52,7 +57,7 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         // Copy
         ProteinMatchesHolder copy = (ProteinMatchesHolder) SerializationUtils.clone(original);
         // Should be equal
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original, copy, "Original and copy should be equal");
         // Print
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(original);
@@ -60,9 +65,9 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         }
     }
 
-    // TODO: Fix UnsupportedOperationException -- the @Ignore annotation was added in June 2011 (http://tinyurl.com/6tq8nz4), yet the comment is not correct -- the SignatureLibraryRelease element does *not* cause the exception  
+    // TODO: Fix UnsupportedOperationException -- the @Disable annotation was added in June 2011 (http://tinyurl.com/6tq8nz4), yet the comment is not correct -- the SignatureLibraryRelease element does *not* cause the exception  
     @Test
-    @Ignore("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
+    @Disabled("Round trip does not work.  The embedded SignatureLibraryRelease element is not parsed.")
     public void testXml() throws IOException, SAXException {
         super.testSupportsMarshalling(ProteinMatchesHolder.class);
         super.testXmlRoundTrip();
@@ -74,13 +79,13 @@ public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder>
         Signature signature = new Signature("PF02310", "B12-binding");
         p.addCrossReference(new ProteinXref("A0A000_9ACTO"));
         Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 121, 2, 108));
-        p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
+        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.INCOMPLETE, 2, 108, false, DCStatus.CONTINUOUS));
+        p.addMatch(new Hmmer3Match(signature, "PF02310", 0.035, 3.7e-9, locations));
         // Create release
         SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
         signature.setSignatureLibraryRelease(release);
         // Create holder
-        ProteinMatchesHolder holder = new ProteinMatchesHolder();
+        ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
         holder.addProtein(p);
         return holder;
     }

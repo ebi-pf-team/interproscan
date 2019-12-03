@@ -78,7 +78,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrintsStep">
         <property name="dependsUpon" ref="stepPrintsParseFingerPrintScanOutput"/>
-        <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
+        <property name="stepDescription" value="Delete the binary raw output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
@@ -100,7 +100,10 @@
         <property name="signatureLibraryRelease" value="42.0"/>
         <property name="rawMatchDAO" ref="printsRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

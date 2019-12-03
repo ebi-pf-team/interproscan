@@ -22,7 +22,7 @@
                 <entry key="binary.signalp.path" value-ref="fullPathToSignalPBinary"/>
             </map>
         </property>
-        <property name="doRunLocally" value="true"/>
+        <property name="doRunLocally" value="false"/>
     </bean>
 
     <bean id="fullPathToSignalPBinary" class="java.lang.String">
@@ -110,6 +110,8 @@
         <property name="rawMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SignalPFilteredMatchDAOImpl">
                 <constructor-arg ref="latestSignalPGramNegativeSignatureLibraryRelease"/>
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
         <property name="parser">

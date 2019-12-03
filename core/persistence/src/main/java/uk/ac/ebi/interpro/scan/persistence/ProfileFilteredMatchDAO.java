@@ -1,16 +1,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -36,15 +32,32 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
      */
     @Override
     @Transactional
-    protected void persist(Collection<RawProtein<T>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<T>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
 
+        SignatureLibrary signatureLibrary = null;
         for (RawProtein<T> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+            Set<Match> proteinMatches = new HashSet<>();
             for (T rawMatch : rawProtein.getMatches()) {
-                Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                Signature signature = holder.getSignature();
+                if(signatureLibrary == null) {
+                    signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
+                }
                 ProfileScanMatch match = buildMatch(signature, rawMatch);
-                protein.addMatch(match);
-                entityManager.persist(match);
+                //hibernateInitialise
+                hibernateInitialise(match);
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+           }
+            if (! proteinMatches.isEmpty()) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
+                for(Match i5Match: proteinMatches){
+                    //try update with cross refs etc
+                    updateMatch(i5Match);
+                }
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
     }
@@ -55,6 +68,6 @@ abstract class ProfileFilteredMatchDAO<T extends ProfileScanRawMatch>
                 rawMatch.getLocationEnd(),
                 rawMatch.getScore(),
                 rawMatch.getCigarAlignment());
-        return new ProfileScanMatch(signature, Collections.singleton(location));
+        return new ProfileScanMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 }

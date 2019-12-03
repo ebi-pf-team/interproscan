@@ -1,11 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.runner.RunWith;
-import org.junit.Test;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
+
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -21,7 +23,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
  * @author  Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class FastaSequenceReaderTest {
 
@@ -47,28 +49,33 @@ public class FastaSequenceReaderTest {
     @Test
     public void readAatmBrca1() throws IOException {
         final Map<String, Protein> proteins = read(aatmBrca1File);
-        assertEquals("Should be two proteins", 2, proteins.size());
-        assertEquals("Incorrect MD5", AATM_ID, proteins.get(AATM_MD5).getCrossReferences().iterator().next().getIdentifier());
-        assertEquals("Incorrect MD5", AATM_MD5, proteins.get(AATM_MD5).getMd5());
-        assertEquals("Incorrect MD5", BRCA1_ID, proteins.get(BRCA1_MD5).getCrossReferences().iterator().next().getIdentifier());
-        assertEquals("Incorrect MD5", BRCA1_MD5, proteins.get(BRCA1_MD5).getMd5());
+        assertEquals( 2, proteins.size(), "Should be two proteins");
+        assertEquals( AATM_ID, proteins.get(AATM_MD5).getCrossReferences().iterator().next().getIdentifier(), "Incorrect MD5");
+        assertEquals( AATM_MD5, proteins.get(AATM_MD5).getMd5(), "Incorrect MD5");
+        assertEquals( BRCA1_ID, proteins.get(BRCA1_MD5).getCrossReferences().iterator().next().getIdentifier(), "Incorrect MD5");
+        assertEquals( BRCA1_MD5, proteins.get(BRCA1_MD5).getMd5(), "Incorrect MD5");
     }
 
     @Test
     public void readBrca1() throws IOException {
         final Map<String, Protein> proteins = read(brca1File);
-        assertEquals("Should be one protein", 1, proteins.size());
-        assertEquals("Incorrect MD5", BRCA1_MD5, proteins.get(BRCA1_MD5).getMd5());
+        assertEquals(1, proteins.size(), "Should be one protein");
+        assertEquals( BRCA1_MD5, proteins.get(BRCA1_MD5).getMd5(), "Incorrect MD5");
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test //(expected=IllegalStateException.class)
     public void readMissingIdFile() throws IOException {
-        read(missingIdFile);
+        assertThrows(IllegalStateException.class, () -> {
+            read(missingIdFile);
+        });
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test //(expected=IllegalArgumentException.class)
     public void readMissingSequenceFile() throws IOException {
-        read(missingSequenceFile);
+        assertThrows(IllegalArgumentException.class, () -> {
+            read(missingSequenceFile);
+        });
+
     }
 
     private Map<String, Protein> read(org.springframework.core.io.Resource resource) throws IOException {

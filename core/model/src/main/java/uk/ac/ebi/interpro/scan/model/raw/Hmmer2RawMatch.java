@@ -3,10 +3,8 @@ package uk.ac.ebi.interpro.scan.model.raw;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import uk.ac.ebi.interpro.scan.model.HmmBounds;
-import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -75,7 +73,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
 
 
     public static Collection<Hmmer2Match> getMatches(Collection<? extends Hmmer2RawMatch> rawMatches,
-                                                     Listener rawMatchListener) {
+                                                     Map<String, SignatureModelHolder> modelIdToSignatureMap) {
         Collection<Hmmer2Match> matches = new HashSet<Hmmer2Match>();
         // Get a list of unique model IDs
         SignatureLibrary signatureLibrary = null;
@@ -96,34 +94,38 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
             if (matchesByModel.containsKey(modelId)) {
                 matchesByModel.get(modelId).add(m);
             } else {
-                Set<Hmmer2RawMatch> set = new HashSet<Hmmer2RawMatch>();
+                Set<Hmmer2RawMatch> set = new HashSet<>();
                 set.add(m);
                 matchesByModel.put(modelId, set);
             }
         }
         // Find the location(s) for each match and create a Match instance
         for (String key : matchesByModel.keySet()) {
-            Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
-            matches.add(getMatch(signature, key, matchesByModel));
+            SignatureModelHolder holder = modelIdToSignatureMap.get(key);
+            Signature signature = holder.getSignature();
+            Model model = holder.getModel();
+            matches.add(getMatch(signature, model, key, matchesByModel));
         }
         // Next step would be to link this with protein...
         return matches;
 
     }
 
-    private static Hmmer2Match getMatch(Signature signature, String modelId, Map<String, Set<Hmmer2RawMatch>> matchesByModel) {
-        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+    private static Hmmer2Match getMatch(Signature signature, Model model, String modelId, Map<String, Set<Hmmer2RawMatch>> matchesByModel) {
+        assert modelId.equals(model.getAccession());
+        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<>();
         double score = 0, evalue = 0;
         for (Hmmer2RawMatch m : matchesByModel.get(modelId)) {
             // Score and evalue should be the same (repeated for each location)
             score = m.getScore();
             evalue = m.getEvalue();
-            locations.add(getLocation(m));
+            int hmmLength = model.getLength();
+            locations.add(getLocation(m, hmmLength));
         }
-        return new Hmmer2Match(signature, score, evalue, locations);
+        return new Hmmer2Match(signature, modelId, score, evalue, locations);
     }
 
-    private static Hmmer2Match.Hmmer2Location getLocation(Hmmer2RawMatch m) {
+    private static Hmmer2Match.Hmmer2Location getLocation(Hmmer2RawMatch m, int hmmLength) {
         return new Hmmer2Match.Hmmer2Location(
                 m.getLocationStart(),
                 m.getLocationEnd(),
@@ -131,6 +133,7 @@ public abstract class Hmmer2RawMatch extends HmmerRawMatch {
                 m.getLocationEvalue(),
                 m.getHmmStart(),
                 m.getHmmEnd(),
+                hmmLength,
                 HmmBounds.parseSymbol(m.getHmmBounds())
         );
     }

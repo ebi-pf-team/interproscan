@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Set;
 
@@ -115,6 +116,13 @@ public class Gene3DPostProcessingStep extends Step {
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
+        //do we need to skip
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            return;
+        }
+
         final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getSsfOutputFileTemplate());
         // Get raw matches
         final Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = this.getRawMatchDAO().getProteinsByIdRange(
@@ -127,6 +135,8 @@ public class Gene3DPostProcessingStep extends Step {
             LOGGER.debug("In execute() method of Gene3dHmmer3FilterStep.java (Gene3D Post Processing.)");
             LOGGER.debug("DAO returned " + rawProteins.size() + " raw proteins to filter.");
         }
+        Utilities.verboseLog("PostProcess Gene3d matches: protein-range : "
+                + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein());
         // Filter and Persist
         filteredMatchDAO.persist(this.getPostProcessor().filter(rawProteins, outputFilePath));
     }

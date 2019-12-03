@@ -5,12 +5,12 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.19-58.0</version>
+        <version>5.39-77.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>precalcmatches</artifactId>
-    <version>5.19-58.0</version>
+    <version>5.39-77.0</version>
 
     <packaging>pom</packaging>
 
@@ -43,20 +43,29 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>5.19-58.0</version>
+            <version>5.39-77.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
-            <version>5.0.73</version>
+            <version>18.3.12</version>
         </dependency>
 
+
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
-            <groupId>com.oracle.jdbc</groupId>
-            <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>${oracle.jdbc.version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
+
+        <!-- oracle dependency should be commented out for public release -->
+        <!--<dependency>-->
+            <!--<groupId>com.oracle.jdbc</groupId>-->
+            <!--<artifactId>com.springsource.oracle.jdbc</artifactId>-->
+            <!--<version>${oracle.jdbc.version}</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 

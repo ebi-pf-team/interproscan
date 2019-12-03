@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class describes a Job, which is constructed from N steps.
@@ -64,10 +62,17 @@ public class Job implements Serializable, BeanNameAware {
     private boolean active = true;
 
     /**
+     *   This boolean flag tests if the job is deprecated.
+     */
+    private boolean deprecated = false;
+
+    /**
      * List of steps.  this is transient so they don't all get shoved
      * over the wire when each StepExecution is run.
      */
     private transient List<Step> steps = new ArrayList<Step>();
+
+    protected Set<String> skipRunRanges = new HashSet<>();
 
     public Job() {
     }
@@ -137,6 +142,14 @@ public class Job implements Serializable, BeanNameAware {
         this.nonEmptyPaths = nonEmptyPaths;
     }
 
+    public Set<String> getSkipRunRanges() {
+        return skipRunRanges;
+    }
+
+    public void addSkipRange(String key){
+        skipRunRanges.add(key);
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -165,5 +178,13 @@ public class Job implements Serializable, BeanNameAware {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
     }
 }

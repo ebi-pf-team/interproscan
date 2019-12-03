@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -46,11 +47,14 @@ public class PantherPostProcessor implements Serializable {
             filteredMatchesCounter += filtered.getMatches().size();
             filteredMatches.add(filtered);
         }
+        String filterMessage =  "Finished filtering of PANTHER raw matches. Printing out Summary... \n"
+            + "Original number of raw matches: " + rawMatchCounter + "\n"
+            + "Number of discarded raw matches: " + (rawMatchCounter - filteredMatchesCounter) + "\n";
+
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Finished filtering of PANTHER raw matches. Printing out Summary...");
-            LOGGER.info("Original number of raw matches: " + rawMatchCounter);
-            LOGGER.info("Number of discarded raw matches: " + (rawMatchCounter - filteredMatchesCounter));
+            LOGGER.info(filterMessage);
         }
+        Utilities.verboseLog(filterMessage);
         return filteredMatches;
     }
 

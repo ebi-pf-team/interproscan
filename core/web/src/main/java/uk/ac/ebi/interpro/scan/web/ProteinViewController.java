@@ -47,6 +47,7 @@ public class ProteinViewController {
     private CreateSimpleProteinFromMatchData matchData;
     private Jaxb2Marshaller marshaller;
     private PageResources pageResources;
+    private String i5Version;
 
     @Resource
     public void setPageResources(PageResources pageResources) {
@@ -141,6 +142,7 @@ public class ProteinViewController {
     private Map<String, Object> buildModelMap(SimpleProtein p, boolean standalone) {
         Map<String, Object> m = new HashMap<String, Object>();
         m.put("standalone", standalone);
+        m.put("version", i5Version);
         if (p != null) {
             final int proteinLength = p.getLength();
             final List<SimpleEntry> entries = p.getAllEntries();
@@ -194,5 +196,10 @@ public class ProteinViewController {
     @Resource
     public void setMatchData(CreateSimpleProteinFromMatchData matchData) {
         this.matchData = matchData;
+    }
+
+    @Resource
+    public void setI5Version(String i5Version) {
+        this.i5Version = i5Version;
     }
 }

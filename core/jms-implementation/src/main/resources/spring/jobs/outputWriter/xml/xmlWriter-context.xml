@@ -11,4 +11,10 @@
         <property name="marshaller" ref="interproMarshaller"/>
     </bean>
 
+    <!--Bean definition for the XML writer-->
+    <!--<bean id="xmlWriter2" class="uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter">-->
+        <!--<property name="marshaller" ref="interproMarshaller"/>-->
+
+    <!--</bean>-->
+
 </beans>

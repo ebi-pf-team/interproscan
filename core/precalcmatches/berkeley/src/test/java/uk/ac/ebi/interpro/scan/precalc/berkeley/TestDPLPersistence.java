@@ -4,7 +4,7 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-@Ignore
+@Disabled
 public class TestDPLPersistence {
 
 

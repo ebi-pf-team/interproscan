@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
@@ -18,7 +19,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.0
  */
-public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Long> implements PhobiusFilteredMatchDAO {
+public class PhobiusFilteredMatchDAOImpl  extends GenericDAOImpl<PhobiusMatch, Long>  implements GenericDAO<PhobiusMatch,  Long> {
 
     private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAOImpl.class.getName());
 
@@ -73,7 +74,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Lo
                 Set<PhobiusMatch.PhobiusLocation> locations = Collections.singleton(
                         new PhobiusMatch.PhobiusLocation(feature.getStart(), feature.getStop())
                 );
-                PhobiusMatch match = new PhobiusMatch(signature, locations);
+                PhobiusMatch match = new PhobiusMatch(signature, signature.getAccession(), locations);
                 persistentProtein.addMatch(match);
                 entityManager.persist(match);
             }
@@ -160,6 +161,7 @@ public class PhobiusFilteredMatchDAOImpl extends GenericDAOImpl<PhobiusMatch, Lo
      */
 
     private Map<String, Protein> getProteinIdToProteinMap(Set<PhobiusProtein> phobiusProteins) {
+
         final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(phobiusProteins.size());
 
         final List<Long> proteinIds = new ArrayList<Long>(phobiusProteins.size());

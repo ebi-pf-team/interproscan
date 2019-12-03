@@ -24,8 +24,12 @@
     <!--<tx:annotation-driven mode="aspectj"/>-->
 
     <!-- DAO Beans -->
-    <bean id="proteinDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+     <!--this looks like a duplicate -->
+    <!--<bean id="proteinDAO"-->
+          <!--class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">-->
+        <!--<property name="proteinsNotInLookupDB" ref="kvStoreProteinsNotInLookup"/>-->
+        <!--<property name="dbStore" ref="kvStoreProteins"/>-->
+    <!--</bean>-->
 
     <bean id="proteinXrefDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinXrefDAOImpl"/>

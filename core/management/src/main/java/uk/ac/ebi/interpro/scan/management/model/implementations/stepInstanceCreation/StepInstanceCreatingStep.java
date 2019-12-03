@@ -10,11 +10,18 @@ import uk.ac.ebi.interpro.scan.management.model.Jobs;
  */
 public interface StepInstanceCreatingStep {
 
-    public static final String ANALYSIS_JOB_NAMES_KEY = "ANALYSIS_JOB_NAMES";
-    public static final String COMPLETION_JOB_NAME_KEY = "COMPLETION_JOB_NAME";
-    public static final String USE_MATCH_LOOKUP_SERVICE = "USE_MATCH_LOOKUP_SERVICE";
+    String ANALYSIS_JOB_NAMES_KEY = "ANALYSIS_JOB_NAMES";
+    String COMPLETION_JOB_NAME_KEY = "COMPLETION_JOB_NAME";
+    String PREPARE_OUTPUT_JOB_NAME_KEY = "PREPARE_OUTPUT_JOB_NAME";
+    String MATCH_LOOKUP_JOB_NAME_KEY = "MATCH_LOOKUP_JOB_NAME";
+    String WORKER_NUMBER_KEY = "WORKER_NUMBER_COUNT";
+    String FINALISE_INITIAL_STEPS_JOB_NAME_KEY = "FINALISE_INITIAL_STEPS_JOB_NAME";
+    String USE_MATCH_LOOKUP_SERVICE = "USE_MATCH_LOOKUP_SERVICE";
+    String EXCLUDE_SITES = "EXCLUDE_SITES";
+    String INCLUDE_TSV_SITES = "INCLUDE_TSV_SITES";
 
-    public void setJobs(Jobs jobs);
 
-    public void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO);
+    void setJobs(Jobs jobs);
+
+    void setStepInstanceDAO(StepInstanceDAO stepInstanceDAO);
 }

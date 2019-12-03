@@ -21,8 +21,8 @@ public final class SimpleEntry implements Comparable<SimpleEntry>, Serializable 
     private final EntryType type;
     private Integer hierarchyLevel;
     private EntryHierarchyData hierarchyData = null;
-    private List<SimpleLocation> locations = new ArrayList<SimpleLocation>(); // super matches
-    private Map<String, SimpleSignature> signatures = new HashMap<String, SimpleSignature>();
+    private List<SimpleLocation> locations = new ArrayList<>();
+    private Map<String, SimpleSignature> signatures = new HashMap<>();
     private static EntryHierarchy entryHierarchy;
 
     private static final Object ehLock = new Object();

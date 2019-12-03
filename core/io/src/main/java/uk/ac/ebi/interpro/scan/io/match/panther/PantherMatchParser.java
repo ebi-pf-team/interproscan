@@ -3,8 +3,10 @@ package uk.ac.ebi.interpro.scan.io.match.panther;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
+import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 /**
  * Parser for PANTHER output. Parses a single line of the raw result.
@@ -49,7 +51,8 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        if (splitLine.length == 6) {
+        //Utilities.verboseLog(10, "splitLine.length: " + splitLine.length);
+        if (splitLine.length == 9) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();
             //Parse Panther family ID
@@ -60,13 +63,22 @@ public final class PantherMatchParser
             final String eValueString = splitLine[3].trim();
             //Hit score provided by Panther
             final String scoreString = splitLine[4].trim();
-            //Hit start and end
-            final String locationStartEnd = splitLine[5].trim();
+            //Hit HMM start and end
+            final String hmmLocationStartEnd = splitLine[5].trim();
+            //Hit aligment start and end
+            final String aliLocationStartEnd = splitLine[6].trim();
+            //Hit envelope start and end
+            final String envLocationStartEnd = splitLine[7].trim();
+            // HMM length
+            final String hmmLengthString = splitLine[8].trim();
+
             //Transform raw parsed values
             double score = 0.0d;
             double evalue = 0.0d;
-            int locationStart = 0;
-            int locationEnd = 0;
+            int[] hmmLocation = parseLocation(hmmLocationStartEnd);
+            int[] aliLocation = parseLocation(aliLocationStartEnd);
+            int[] envLocation = parseLocation(envLocationStartEnd);
+            int hmmLength = 0;
 
             if (scoreString.length() > 0 && !".".equals(scoreString)) {
                 score = Double.parseDouble(scoreString);
@@ -74,26 +86,43 @@ public final class PantherMatchParser
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
                 evalue = Double.parseDouble(eValueString);
             }
-            if (locationStartEnd.length() > 0 && locationStartEnd.contains("-")) {
-                final String[] splitLocationStartEnd = locationStartEnd.split("-");
-                if (splitLocationStartEnd.length == 2) {
-                    locationStart = Integer.parseInt(splitLocationStartEnd[0].trim());
-                    locationEnd = Integer.parseInt(splitLocationStartEnd[1].trim());
-                }
+            if (hmmLengthString.length() > 0) {
+                hmmLength = Integer.parseInt(hmmLengthString);
             }
 
             return new PantherRawMatch(
                     sequenceIdentifier,
                     modelId,
                     getSignatureLibraryRelease(),
-                    locationStart,
-                    locationEnd,
+                    aliLocation[0],
+                    aliLocation[1],
                     evalue,
                     score,
-                    familyName);
+                    familyName,
+                    hmmLocation[0],
+                    hmmLocation[1],
+                    hmmLength,
+                    HmmBounds.calculateHmmBounds(envLocation[0], envLocation[1], aliLocation[0], aliLocation[1]),
+                    envLocation[0],
+                    envLocation[1]);
         }
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
         LOGGER.warn("Unexpected Raw match line: " + line);
         return null;
     }
+
+    private int[] parseLocation(String locationStartEnd) {
+        int locationStart = 0;
+        int locationEnd = 0;
+        if (locationStartEnd.length() > 0 && locationStartEnd.contains("-")) {
+            final String[] splitLocationStartEnd = locationStartEnd.split("-");
+            if (splitLocationStartEnd.length == 2) {
+                locationStart = Integer.parseInt(splitLocationStartEnd[0].trim());
+                locationEnd = Integer.parseInt(splitLocationStartEnd[1].trim());
+            }
+        }
+        int[] location = {locationStart, locationEnd};
+        return location;
+    }
+
 }

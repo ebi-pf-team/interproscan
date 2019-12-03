@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 
+import java.util.EnumSet;
+
 /**
  * @author Gift Nuka
  *
@@ -28,9 +30,18 @@ public class Utilities {
 
     public static Boolean lookupMatchVersionProblemMessageDisplayed = false;
 
+
+
+    static boolean  writeOutputStepCompleted = false;
+
     public static int sequenceCount = 0;
 
+    public static volatile Boolean useHmmsearch;
+
+    public static final Object useHmmsearchLock = new Object();
+
     public static int logBase = 10;
+
 
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
@@ -38,6 +49,14 @@ public class Utilities {
             sb.append((char) ((int) (Math.random() * 26) + 97));
         }
         return sb.toString();
+    }
+
+    public static boolean isWriteOutputStepCompleted() {
+        return writeOutputStepCompleted;
+    }
+
+    public static void setWriteOutputStepCompleted(boolean hasWriteOutputStepCompleted) {
+        writeOutputStepCompleted = hasWriteOutputStepCompleted;
     }
 
     /**
@@ -86,6 +105,10 @@ public class Utilities {
         return currentDate;
     }
 
+    public static void setMode(String mode) {
+        Utilities.mode = mode;
+    }
+
     public static String getMode(){
         return mode;
     }
@@ -96,6 +119,18 @@ public class Utilities {
 
     public static int getSequenceCount(){
         return sequenceCount;
+    }
+
+    public static Boolean getUseHmmsearch() {
+        return useHmmsearch;
+    }
+
+    public static void setUseHmmsearch(Boolean useHmmsearch) {
+        synchronized (useHmmsearchLock) {
+            if (Utilities.useHmmsearch == null) {
+                Utilities.useHmmsearch = useHmmsearch;
+            }
+        }
     }
 
     /**
@@ -488,9 +523,29 @@ public class Utilities {
 
     //verbose output using System out
     public static void verboseLog(int level, String out){
+        //System.out.println(Utilities.getTimeNow() + " level: " + level + " - " + out);
         if(verboseLogLevel >= level){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }
 
+
+    public enum LogLevel {
+        ALL (10,	"All levels including custom levels."),
+        TRACE(20, "Designates fine-grained informational events that are most useful to debug an application"),
+        DEBUG(20, "Designates fine-grained informational events that are most useful to debug an application"),
+        INFO(30, "Designates informational messages that highlight the progress of the application at coarse-grained level"),
+        WARN(40, "Designates potentially harmful situations"),
+        ERROR(50, "	Designates error events that might still allow the application to continue running"),
+        FATAL(60, "Designates very severe error events that will presumably lead the application to abort"),
+        OFF(0, "The highest possible rank and is intended to turn off logging");
+
+        Integer logLevel;
+        String description;
+
+        LogLevel(Integer logLevel, String description) {
+            this.logLevel = logLevel;
+            this.description = description;
+        }
+    }
 }

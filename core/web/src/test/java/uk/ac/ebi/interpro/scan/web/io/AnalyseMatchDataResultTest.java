@@ -1,11 +1,11 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 import uk.ac.ebi.interpro.scan.web.model.SimpleSignature;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link AnalyseMatchDataResult}
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * @author Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class AnalyseMatchDataResultTest {
 
@@ -51,17 +51,23 @@ public class AnalyseMatchDataResultTest {
 
     public void testIncorrectFormattedResource() {
         SimpleProtein protein = instance.parseMatchDataOutput(incorrectFormattedResource);
-        assertNull("Resulting protein should be NULL!", protein);
+        assertNull(protein, "Resulting protein should be NULL!");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test //(expected = IllegalStateException.class)
     public void testResourceNull() {
-        instance.parseMatchDataOutput(null);
+        assertThrows(IllegalStateException.class, () -> {
+            instance.parseMatchDataOutput(null);
+        });
+
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test //(expected = IllegalStateException.class)
     public void testReadInMatchDataFromNullResource() {
-        instance.readInMatchDataFromResource(null);
+        assertThrows(IllegalStateException.class, () -> {
+            instance.readInMatchDataFromResource(null);
+        });
+
     }
 
     @Test
@@ -74,6 +80,7 @@ public class AnalyseMatchDataResultTest {
                 "6C2CA0E2864B327B",
                 "PTHR10336:SF21",
                 "PTHR10336:SF21",
+                null,
                 "PANTHER",
                 29,
                 1489,
@@ -85,7 +92,8 @@ public class AnalyseMatchDataResultTest {
                 10090,
                 "Mus musculus",
                 "Mus musculus (Mouse)",
-                false));
+                false,
+                ""));
         records.add(new MatchDataRecord("A2AP18",
                 "PLCH2_MOUSE",
                 "1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase eta-2",
@@ -93,6 +101,7 @@ public class AnalyseMatchDataResultTest {
                 "6C2CA0E2864B327B",
                 "PTHR10336",
                 "PTHR10336",
+                null,
                 "PANTHER",
                 29,
                 1489,
@@ -104,9 +113,10 @@ public class AnalyseMatchDataResultTest {
                 10090,
                 "Mus musculus",
                 "Mus musculus (Mouse)",
-                false));
+                false,
+                ""));
 
-        SimpleProtein protein = instance.createSimpleProtein(records);
+        SimpleProtein protein = instance.createSimpleProtein(records, new ArrayList<>());
         assertNotNull(protein);
         List<SimpleEntry> entries = protein.getEntries();
         assertNotNull(entries);

@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Set;
 
@@ -66,6 +67,13 @@ public abstract class FilterStep<T extends RawMatch, U extends Match> extends St
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            return;
+        }
+
         // Get raw matches
         Set<RawProtein<T>> rawProteins = rawMatchDAO.getProteinsByIdRange(
                 stepInstance.getBottomProtein(),

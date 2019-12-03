@@ -29,33 +29,39 @@ import javax.xml.bind.annotation.XmlType;
 public enum SignatureLibrary {
 
     //TODO - complete descriptions of member database libraries.
-    CDD("CDD", "Prediction of CDD domains"),
-    PHOBIUS("Phobius", "Prediction of signal peptides and trans-membrane regions"),
-    GENE3D("Gene3D", "Description to be added"),
-    PANTHER("PANTHER", "The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence."),
-    PFAM("Pfam", "Description to be added"),
-    SMART("SMART", "Description to be added"),
-    SUPERFAMILY("SUPERFAMILY", "Description to be added"),
-    PIRSF("PIRSF", "Family classification system at the Protein Information Resource"),
-    PRINTS("PRINTS", "Description to be added"),
-    PRODOM("ProDom", "Description to be added"),
-    PROSITE_PATTERNS("ProSitePatterns", "Description to be added"),
-    PROSITE_PROFILES("ProSiteProfiles", "Description to be added"),
-    COILS("Coils", "Description to be added"),
-    HAMAP("Hamap", "Description to be added"),
-    TIGRFAM("TIGRFAM", "Description to be added"),
-    SIGNALP_EUK("SignalP_EUK", "SignalP (organism type eukaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for eukaryotes."),
-    SIGNALP_GRAM_POSITIVE("SignalP_GRAM_POSITIVE", "SignalP (organism type gram-positive prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-positive prokaryotes."),
-    SIGNALP_GRAM_NEGATIVE("SignalP_GRAM_NEGATIVE", "SignalP (organism type gram-negative prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-negative prokaryotes."),
-    TMHMM("TMHMM", "Prediction of transmembrane helices in proteins.");
+    CDD("CDD", "Prediction of CDD domains", true),
+    HAMAP("Hamap", "Description to be added", true),
+    MOBIDB_LITE("MobiDBLite", "Predicts disordered protein regions", false),
+    PHOBIUS("Phobius", "Prediction of signal peptides and trans-membrane regions", false),
+    GENE3D("Gene3D", "Description to be added", true),
+    PANTHER("PANTHER", "The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence.", true),
+    PFAM("Pfam", "Description to be added", true),
+    SMART("SMART", "Description to be added", true),
+    SUPERFAMILY("SUPERFAMILY", "Description to be added", true),
+    PIRSF("PIRSF", "Family classification system at the Protein Information Resource", true),
+    PRINTS("PRINTS", "Description to be added", true),
+    PRODOM("ProDom", "Description to be added", true),
+    PROSITE_PATTERNS("ProSitePatterns", "Description to be added", true),
+    PROSITE_PROFILES("ProSiteProfiles", "Description to be added", true),
+    COILS("Coils", "Description to be added", false),
+    TIGRFAM("TIGRFAM", "Description to be added", true),
+    SFLD("SFLD", "Description to be added", true),
+    SIGNALP_EUK("SignalP_EUK", "SignalP (organism type eukaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for eukaryotes.", false),
+    SIGNALP_GRAM_POSITIVE("SignalP_GRAM_POSITIVE", "SignalP (organism type gram-positive prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-positive prokaryotes.", false),
+    SIGNALP_GRAM_NEGATIVE("SignalP_GRAM_NEGATIVE", "SignalP (organism type gram-negative prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-negative prokaryotes.", false),
+    TMHMM("TMHMM", "Prediction of transmembrane helices in proteins.", false);
 
     private String name;
 
     private String description;
 
-    SignatureLibrary(String name, String description) {
+    // Is this an InterPro member database (whose signatures can be integrated into InterPro entries)?
+    private boolean interproMDB;
+
+    SignatureLibrary(String name, String description, boolean interproMDB) {
         setName(name);
         setDescription(description);
+        setInterproMDB(interproMDB);
     }
 
     public String getName() {
@@ -72,5 +78,13 @@ public enum SignatureLibrary {
 
     private void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isInterproMDB() {
+        return interproMDB;
+    }
+
+    private void setInterproMDB(boolean interproMDB) {
+        this.interproMDB = interproMDB;
     }
 }

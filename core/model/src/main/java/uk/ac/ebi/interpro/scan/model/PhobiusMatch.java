@@ -24,8 +24,8 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
     protected PhobiusMatch() {
     }
 
-    public PhobiusMatch(Signature signature, Set<PhobiusLocation> locations) {
-        super(signature, locations);
+    public PhobiusMatch(Signature signature, String signatureModels, Set<PhobiusLocation> locations) {
+        super(signature, signatureModels, locations);
         // TODO - Add runtime check that the Signature being matched
         // has been constructed from the Phobius enum.
         if (!PhobiusFeatureType.isValidSignature(signature)) {
@@ -38,7 +38,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         for (PhobiusLocation location : this.getLocations()) {
             clonedLocations.add((PhobiusLocation) location.clone());
         }
-        return new PhobiusMatch(this.getSignature(), clonedLocations);
+        return new PhobiusMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     @Override
@@ -63,6 +63,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
      * Location of Phobius match on a protein sequence
      *
      * @author Phil Jones
+     * @author Gift Nuka
      */
     @Entity
     @Table(name = "phobius_location")
@@ -73,8 +74,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         }
 
         public PhobiusLocation(int start, int end) {
-
-            super(start, end);
+            super(new PhobiusLocationFragment(start, end));
         }
 
         @Override
@@ -98,6 +98,45 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
         public Object clone() throws CloneNotSupportedException {
             return new PhobiusLocation(this.getStart(), this.getEnd());
         }
+
+        /**
+         * Location fragment of a Phobius match on a protein sequence
+         */
+        @Entity
+        @Table(name = "phobius_location_fragment")
+        @XmlType(name = "PhobiusLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class PhobiusLocationFragment extends LocationFragment {
+
+            protected PhobiusLocationFragment() {
+            }
+
+            public PhobiusLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof PhobiusLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(129, 149)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new PhobiusLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
     }
 
 }

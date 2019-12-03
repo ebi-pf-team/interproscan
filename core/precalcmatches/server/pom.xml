@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>precalcmatches</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.19-58.0</version>
+        <version>5.39-77.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
-    <version>5.19-58.0</version>
+    <version>5.39-77.0</version>
     <name>interpro-match-lookup</name>
+    <!--<name>Precalculated Match Lookup - Server</name>-->
     <packaging>war</packaging>
 
     <repositories>
@@ -22,11 +23,24 @@
         </repository>
     </repositories>
 
+    <properties>
+        <!--<jetty.version>9.4.19.v20190610</jetty.version>-->
+        <jetty.version>9.4.16.v20190411</jetty.version>
+        <i5.version>${project.version}</i5.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>berkeley</artifactId>
-            <version>5.19-58.0</version>
+            <version>5.39-77.0</version>
+            <exclusions>
+                <!--Exclude transitive dependency to surefire -->
+                <exclusion>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -50,10 +64,55 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- to monitor performance -->
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+            <version>1.79.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.jackrabbit/jackrabbit-jcr-commons -->
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-commons</artifactId>
+            <version>2.19.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.simplericity.jettyconsole/jetty-console -->
+        <!--<dependency>-->
+            <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+            <!--<artifactId>jetty-console</artifactId>-->
+            <!--<version>1.60</version>-->
+            <!--&lt;!&ndash;<type>pom</type>&ndash;&gt;-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+            <!--<artifactId>jetty-console</artifactId>-->
+            <!--<version>1.61</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.ow2.asm</groupId>-->
+            <!--<artifactId>asm</artifactId>-->
+            <!--<version>7.1</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.ow2.asm</groupId>-->
+            <!--<artifactId>asm-commons</artifactId>-->
+            <!--<version>7.1</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.ow2.asm</groupId>-->
+            <!--<artifactId>asm-tree</artifactId>-->
+            <!--<version>7.1</version>-->
+        <!--</dependency>-->
+
+
     </dependencies>
-    <properties>
-        <i5.version>${project.version}</i5.version>
-    </properties>
+
 
     <build>
         <resources>
@@ -70,6 +129,8 @@
 
 
          -->
+
+
     <profiles>
         <profile>
             <id>jetty</id>
@@ -78,6 +139,10 @@
                 <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
                 <berkeleydb.path.md5>${basedir}/src/test/resources/berk_md5</berkeleydb.path.md5>
                 <berkeleydb.path.matches>${basedir}/src/test/resources/berk_match</berkeleydb.path.matches>
+                <berkeleydb.path.sites>${basedir}/src/test/resources/berk_site</berkeleydb.path.sites>
+                <!--<berkeleydb.path.md5>data/md5_db</berkeleydb.path.md5>-->
+                <!--<berkeleydb.path.matches>data/match_db</berkeleydb.path.matches>-->
+                <!--<berkeleydb.path.sites>data/site_db</berkeleydb.path.sites>-->
             </properties>
 
             <build>
@@ -85,32 +150,48 @@
                     <!-- For further info on how to config the jetty plugin please visit...-->
                     <!-- http://docs.codehaus.org/display/JETTY/Maven+Jetty+Plugin-->
                     <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
+                        <groupId>org.eclipse.jetty</groupId>
                         <artifactId>maven-jetty-plugin</artifactId>
-                        <version>6.1.26</version>
+                        <!--<version>9.4.19.v20190610</version>-->
+                        <version>${jetty.version}</version>
                         <!-- Set up the context path and the default port -->
                         <configuration>
                             <webAppConfig>
                                 <contextPath>/i5</contextPath>
                             </webAppConfig>
                             <connectors>
-                                <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                                <connector implementation="org.eclipse.jetty.nio.SelectChannelConnector">
                                     <port>8092</port>
                                     <maxIdleTime>60000</maxIdleTime>
                                 </connector>
                             </connectors>
                         </configuration>
                         <dependencies>
+                            <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
                             <dependency>
-                                <groupId>org.mortbay.jetty</groupId>
-                                <artifactId>jsp-2.1</artifactId>
-                                <version>6.1.14</version>
+                                <groupId>org.eclipse.jetty</groupId>
+                                <artifactId>jetty-server</artifactId>
+                                <version>${jetty.version}</version>
                             </dependency>
-                            <dependency>
-                                <groupId>commons-logging</groupId>
-                                <artifactId>commons-logging</artifactId>
-                                <version>1.1.1</version>
-                            </dependency>
+                            <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-jsp -->
+                            <!--<dependency>-->
+                            <!--<groupId>org.eclipse.jetty</groupId>-->
+                            <!--<artifactId>jetty-jsp</artifactId>-->
+                            <!--<version>${jetty.version}</version>-->
+                            <!--&lt;!&ndash;<version>9.2.28.v20190418</version>&ndash;&gt;-->
+                            <!--</dependency>-->
+
+                            <!--<dependency>-->
+                            <!--<groupId>org.mortbay.jetty</groupId>-->
+                            <!--<artifactId>jsp-2.1</artifactId>-->
+                            <!--<version>6.1.14</version>-->
+                            <!--</dependency>-->
+                            <!--<dependency>-->
+                            <!--<groupId>commons-logging</groupId>-->
+                            <!--<artifactId>commons-logging</artifactId>-->
+                            <!--<version>1.1.1</version>-->
+                            <!--</dependency>-->
+
                         </dependencies>
                     </plugin>
 
@@ -151,6 +232,7 @@
                 <deployment.folder>deploy</deployment.folder>
                 <berkeleydb.path.md5>deploy/data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>deploy/data/match_db</berkeleydb.path.matches>
+                <berkeleydb.path.sites>deploy/data/site_db</berkeleydb.path.sites>
             </properties>
         </profile>
 
@@ -168,6 +250,7 @@
                 <deployment.folder>deploy</deployment.folder>
                 <berkeleydb.path.md5>deploy/data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>deploy/data/match_db</berkeleydb.path.matches>
+                <berkeleydb.path.sites>deploy/data/site_db</berkeleydb.path.sites>
             </properties>
         </profile>
 
@@ -244,43 +327,11 @@
                 <deployment.folder>not applicable - jetty does not use this.</deployment.folder>
                 <berkeleydb.path.md5>data/md5_db</berkeleydb.path.md5>
                 <berkeleydb.path.matches>data/match_db</berkeleydb.path.matches>
+                <berkeleydb.path.sites>data/site_db</berkeleydb.path.sites>
             </properties>
 
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.simplericity.jettyconsole</groupId>
-                        <artifactId>jetty-console-maven-plugin</artifactId>
-                        <version>1.53</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>createconsole</goal>
-                                </goals>
-                                <configuration>
-                                    <backgroundImage>
-                                        ${basedir}/src/main/resources/i5_match_lookup_splash_screen.jpg
-                                    </backgroundImage>
-                                    <additionalDependencies>
-                                        <additionalDependency>
-                                            <artifactId>jetty-console-requestlog-plugin</artifactId>
-                                        </additionalDependency>
-                                        <additionalDependency>
-                                            <artifactId>jetty-console-gzip-plugin</artifactId>
-                                        </additionalDependency>
-                                        <additionalDependency>
-                                            <artifactId>jetty-console-ajp-plugin</artifactId>
-                                        </additionalDependency>
-                                        <additionalDependency>
-                                            <artifactId>jetty-console-startstop-plugin</artifactId>
-                                        </additionalDependency>
-                                    </additionalDependencies>
-                                </configuration>
-                            </execution>
-                        </executions>
-
-                    </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
@@ -298,6 +349,168 @@
                             </webResources>
                         </configuration>
                     </plugin>
+
+                    <!--<plugin>-->
+                    <!--<groupId>org.eclipse.jetty</groupId>-->
+                    <!--<artifactId>jetty-maven-plugin</artifactId>-->
+                    <!--&lt;!&ndash;Set version explicitly if get errors on Windows:&ndash;&gt;-->
+                    <!--<version>${jetty.version}</version>-->
+                    <!--<configuration>-->
+                    <!--<war>${project.build.directory}/jetty-i5-lookup.war</war>-->
+                    <!--</configuration>-->
+                    <!--<dependencies>-->
+                    <!--<dependency>-->
+                    <!--<groupId>org.ow2.asm</groupId>-->
+                    <!--<artifactId>asm</artifactId>-->
+                    <!--<version>7.1</version>-->
+                    <!--</dependency>-->
+                    <!--</dependencies>-->
+                    <!--</plugin>-->
+
+                    <plugin>
+                        <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+                        <!--<artifactId>jetty-console</artifactId>-->
+                        <groupId>org.fcrepo</groupId>
+                        <artifactId>jetty-console-maven-plugin</artifactId>
+                        <version>1.61</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>createconsole</goal>
+                                </goals>                                <!--<configuration>-->
+                                    <!--<additionalDependencies>-->
+                                        <!--<additionalDependency>-->
+                                            <!--<artifactId>jetty-console-jsp-plugin</artifactId>-->
+                                        <!--</additionalDependency>-->
+                                        <!--<additionalDependency>-->
+                                            <!--<artifactId>jetty-console-startstop-plugin</artifactId>-->
+                                        <!--</additionalDependency>-->
+                                    <!--</additionalDependencies>-->
+
+                                <!--</configuration>-->
+
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                            <groupId>org.eclipse.jetty</groupId>
+                            <artifactId>jetty-server</artifactId>
+                            <version>${jetty.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.eclipse.jetty</groupId>
+                                <artifactId>jetty-webapp</artifactId>
+                                <version>${jetty.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.eclipse.jetty</groupId>
+                                <artifactId>jetty-annotations</artifactId>
+                                <version>${jetty.version}</version>
+                            </dependency>
+
+                            <!-- https://mvnrepository.com/artifact/org.simplericity.jettyconsole/jetty-console-creator -->
+                            <!--<dependency>-->
+                                <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+                                <!--<artifactId>jetty-console</artifactId>-->
+                                <!--<version>1.60</version>-->
+                                <!--<exclusions>-->
+                                    <!--<exclusion>-->
+                                        <!--<groupId>org.ow2.asm</groupId>-->
+                                        <!--<artifactId>asm</artifactId>-->
+                                    <!--</exclusion>-->
+                                <!--</exclusions>-->
+                            <!--</dependency>-->
+
+                            <!--<dependency>-->
+                                <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+                                <!--<artifactId>jetty-console-creator</artifactId>-->
+                                <!--<version>1.60</version>-->
+                                <!--<exclusions>-->
+                                    <!--<exclusion>-->
+                                        <!--<groupId>org.ow2.asm</groupId>-->
+                                        <!--<artifactId>asm</artifactId>-->
+                                    <!--</exclusion>-->
+                                <!--</exclusions>-->
+                            <!--</dependency>-->
+                            <!--<dependency>-->
+                            <!--<groupId>org.ow2.asm</groupId>-->
+                            <!--<artifactId>asm</artifactId>-->
+                            <!--<version>7.1</version>-->
+                            <!--</dependency>-->
+                            <!--<dependency>-->
+                            <!--<groupId></groupId>-->
+                            <!--<artifactId></artifactId>-->
+                            <!--<exclusions>-->
+                            <!--<exclusion>-->
+                            <!--<groupId>jetty</groupId>-->
+                            <!--<artifactId>jetty</artifactId>-->
+                            <!--</exclusion>-->
+                            <!--</exclusions>-->
+                            <!--</dependency>-->
+                        </dependencies>
+                    </plugin>
+
+                    <!--<plugin>-->
+                    <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+                    <!--<artifactId>jetty-console-maven-plugin</artifactId>-->
+                    <!--<version>1.60</version>-->
+                    <!--<executions>-->
+                    <!--<execution>-->
+                    <!--<goals>-->
+                    <!--<goal>createconsole</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--<backgroundImage>-->
+                    <!--${basedir}/src/main/resources/i5_match_lookup_splash_screen.jpg-->
+                    <!--</backgroundImage>-->
+                    <!--<additionalDependencies>-->
+                    <!--<additionalDependency>-->
+                    <!--<artifactId>jetty-console-requestlog-plugin</artifactId>-->
+                    <!--</additionalDependency>-->
+                    <!--<additionalDependency>-->
+                    <!--<artifactId>jetty-console-gzip-plugin</artifactId>-->
+                    <!--</additionalDependency>-->
+                    <!--<additionalDependency>-->
+                    <!--<artifactId>jetty-console-ajp-plugin</artifactId>-->
+                    <!--</additionalDependency>-->
+                    <!--<additionalDependency>-->
+                    <!--<artifactId>jetty-console-startstop-plugin</artifactId>-->
+                    <!--</additionalDependency>-->
+                    <!--<additionalDependency>-->
+                    <!--<artifactId>jetty-console-startstop-plugin</artifactId>-->
+                    <!--</additionalDependency>-->
+                    <!--</additionalDependencies>-->
+                    <!--</configuration>-->
+                    <!--</execution>-->
+                    <!--</executions>-->
+                    <!--<dependencies>-->
+                    <!--<dependency>-->
+                    <!--<groupId>org.ow2.asm</groupId>-->
+                    <!--<artifactId>asm</artifactId>-->
+                    <!--<version>7.1</version>-->
+                    <!--</dependency>-->
+                    <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.simplericity.jettyconsole/jetty-console-creator &ndash;&gt;-->
+                    <!--<dependency>-->
+                    <!--<groupId>org.simplericity.jettyconsole</groupId>-->
+                    <!--<artifactId>jetty-console-creator</artifactId>-->
+                    <!--<version>1.61</version>-->
+                    <!--</dependency>-->
+
+                    <!--<dependency>-->
+                    <!--<groupId>org.eclipse.jetty</groupId>-->
+                    <!--<artifactId>jetty-server</artifactId>-->
+                    <!--<version>${jetty.version}</version>-->
+                    <!--</dependency>-->
+                    <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-jsp &ndash;&gt;-->
+                    <!--&lt;!&ndash;<dependency>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<groupId>org.eclipse.jetty</groupId>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<artifactId>jetty-jsp</artifactId>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<version>${jetty.version}</version>&ndash;&gt;-->
+                    <!--&lt;!&ndash;&lt;!&ndash;<version>9.2.28.v20190418</version>&ndash;&gt;&ndash;&gt;-->
+                    <!--&lt;!&ndash;</dependency>&ndash;&gt;-->
+                    <!--</dependencies>-->
+                    <!--</plugin>-->
+
                 </plugins>
             </build>
         </profile>

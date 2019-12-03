@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.commons.lang.SerializationUtils;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
@@ -9,10 +11,11 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
  * Tests cases for {@link RawProtein}.
  *
  * @author  Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  * @since   1.0
  */
-public final class RawProteinTest extends TestCase {
+public final class RawProteinTest {
 
     @Test
     public void testGetMatches() {
@@ -22,8 +25,8 @@ public final class RawProteinTest extends TestCase {
         protein.addMatch(new ProDomRawMatch(PROTEIN_ID, "PD400414", "2006.01", 1, 198, "U689_HUMAN_Q6UX39", 1, 206, 426, 1E-41, 3, "PRECURSOR SIGNAL UNQ689/PRO1329 HOMOLOG DIRECT SEQUENCING EO-017 SECRETED"));
         protein.addMatch(new ProDomRawMatch(PROTEIN_ID, "PD400414", "2006.01", 1, 212, "U689_HUMAN_Q6UX39", 1, 206, 501, 2E-50, 3, "PRECURSOR SIGNAL UNQ689/PRO1329 HOMOLOG DIRECT SEQUENCING EO-017 SECRETED"));
         protein.addMatch(
-                new PfamHmmer3RawMatch(PROTEIN_ID, "PF02310", SignatureLibrary.PFAM, "24.0", 3, 107, 3.7E-9, 0.035, 1, 104, "[]", 3.0,
-                        0, 0, 0, 0, 0, 0, 0)
+                new PfamHmmer3RawMatch(PROTEIN_ID, "PF02310", SignatureLibrary.PFAM, "24.0", 3, 107, 3.7E-9, 0.035, 1,
+                        104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0)
         );
         // Test
         assertEquals(PROTEIN_ID, protein.getProteinIdentifier());

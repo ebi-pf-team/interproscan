@@ -1,11 +1,14 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Query;
 import java.util.*;
@@ -22,9 +25,15 @@ import java.util.*;
  * @since 1.0
  */
 
-public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> extends GenericDAOImpl<U, Long> implements FilteredMatchDAO<T, U> {
+public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> extends GenericKVDAOImpl<U> implements FilteredMatchDAO<T, U> {
 
     private static final Logger LOGGER = Logger.getLogger(FilteredMatchDAOImpl.class.getName());
+
+    //TODO remove this after testing
+    //Test if this removes the errors
+
+    protected MatchDAO matchDAO;
+
 
     /**
      * Sets the class of the model that the DOA instance handles.
@@ -40,6 +49,21 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
     public FilteredMatchDAOImpl(Class<U> modelClass) {
         super(modelClass);
     }
+
+    public void setMatchDAO(MatchDAO matchDAO) {
+        this.matchDAO = matchDAO;
+    }
+
+    @Override
+    public void persist(String key, Set<Match> matches) {
+        //check if this is valid
+        if(dbStore == null){
+            LOGGER.error("Dbstore is null");
+        }
+        byte[] byteMatches = dbStore.serialize((HashSet<Match>) matches);
+        dbStore.put(key,byteMatches);
+    }
+
 
     /**
      * Persists filtered protein matches.
@@ -59,6 +83,9 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         for (RawProtein<T> rawProtein : filteredProteins) {
             for (T rawMatch : rawProtein.getMatches()) {
                 rawMatchCount++;
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("rawMatch :" + rawMatch.toString());
+                }
                 if (signatureLibraryRelease == null) {
                     signatureLibraryRelease = rawMatch.getSignatureLibraryRelease();
                     if (signatureLibraryRelease == null) {
@@ -85,33 +112,23 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             return;
         }
 
+        LOGGER.debug("getProteinIdToProteinMap: " );
         final Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
-        final Map<String, Signature> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
-        LOGGER.debug("signatureLibrary: " +  signatureLibrary
-                + " signatureLibraryRelease: "     + signatureLibraryRelease
-                + " filteredProteins: " + filteredProteins.size()
-                + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+        LOGGER.debug("getModelAccessionToSignatureMap: " );
+        final Map<String, SignatureModelHolder> modelIdToSignatureMap = getModelAccessionToSignatureMap(signatureLibrary, signatureLibraryRelease, filteredProteins);
 
-        StringBuilder signatureList = new StringBuilder();
-        for (Signature signature:   modelIdToSignatureMap.values()){
-            signatureList.append(signature.getModels().toString());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("signatureLibrary: " + signatureLibrary
+                    + " signatureLibraryRelease: " + signatureLibraryRelease
+                    + " filteredProteins: " + filteredProteins.size()
+                    + " modelIdToSignatureMap size: " + modelIdToSignatureMap.size());
+            LOGGER.debug("now persists the filtered proteins: " );
         }
 
         persist(filteredProteins, modelIdToSignatureMap, proteinIdToProteinMap);
+
     }
 
-    /**
-     * This is the method that should be implemented by specific FilteredMatchDAOImpl's to
-     * persist filtered matches.
-     *
-     * @param filteredProteins             being the Collection of filtered RawProtein objects to persist
-     * @param modelAccessionToSignatureMap a Map of model accessions to Signature objects.
-     * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
-     */
-    @Transactional
-    protected abstract void persist(Collection<RawProtein<T>> filteredProteins,
-                                    final Map<String, Signature> modelAccessionToSignatureMap,
-                                    final Map<String, Protein> proteinIdToProteinMap);
 
     /**
      * Helper method to retrieve a Map for lookup of Signature
@@ -122,18 +139,23 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return
      */
     @Transactional(readOnly = true)
-    private Map<String, Signature> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
-                                                                   Collection<RawProtein<T>> rawProteins) {
+    protected Map<String, SignatureModelHolder> getModelAccessionToSignatureMap(SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+                                                                                Collection<RawProtein<T>> rawProteins) {
         //Model accession to signatures map
         LOGGER.info("Creating model accession to signature map...");
-        final Map<String, Signature> result = new HashMap<String, Signature>();
+        final Map<String, SignatureModelHolder> result = new HashMap<>();
 
-        List<String> modelIDs = new ArrayList<String>();
+        Set<String> modelIDsSet = new HashSet<>();
+        int count = 0;
         for (RawProtein<T> rawProtein : rawProteins) {
+//            LOGGER.warn("rawProtein: " + rawProtein.toString());
             for (RawMatch rawMatch : rawProtein.getMatches()) {
-                modelIDs.add(rawMatch.getModelId());
+                modelIDsSet.add(rawMatch.getModelId());
+                count ++;
             }
         }
+        List<String> modelIDs = new ArrayList<>();
+        modelIDs.addAll(modelIDsSet);
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("... for " + modelIDs.size() + " model IDs.");
@@ -167,7 +189,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             //Inner join
             final Query query =
                     entityManager.createQuery(
-                            "select s from Signature s, Model m " +
+                            "select s, m from Signature s, Model m " +
                                     "where s.id = m.signature.id " +
                                     "and m.accession in (:accession) " +
                                     "and s.signatureLibraryRelease.version = :version " +
@@ -175,14 +197,44 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             query.setParameter("accession", modelIdsSlice);
             query.setParameter("signatureLibrary", signatureLibrary);
             query.setParameter("version", signatureLibraryRelease);
-            @SuppressWarnings("unchecked") List<Signature> signatures = query.getResultList();
+            @SuppressWarnings("unchecked") List<Object[]> signatureModels = query.getResultList();
 
-            for (Signature s : signatures) {
-                for (Model m : s.getModels().values()) {
-                    result.put(m.getAccession(), s);
-                    LOGGER.debug("accession: " + m.getAccession() + " signature: " + s);
+            String signatureModelQueryMessage = "SignatureModel query: "
+                    + "accession: " + modelIdsSlice.toString()
+                    + " signatureLibrary: " + signatureLibrary
+                    + " version: " + signatureLibraryRelease;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(signatureModelQueryMessage);
+//            Utilities.verboseLog(signatureModelQueryMessage);
+            }
+
+
+            int modelCount = 0;
+            for (Object[] row : signatureModels) {
+                Signature signature = (Signature) row[0];
+                Model model = (Model) row[1];
+                result.put(model.getAccession(), new SignatureModelHolder(signature, model));
+                modelCount ++;
+                if (result.get(model.getAccession()) == null){
+                    LOGGER.warn("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
                 }
             }
+        }
+        //check which models are missing and why?
+
+        List<String> missingModelIDs = new ArrayList<>();
+        Set<String> resultModelIds = result.keySet();
+
+
+        for (String modelID : modelIDsSet){
+            if(! resultModelIds.contains(modelID)){
+                missingModelIDs.add(modelID);
+            }
+        }
+
+        if (missingModelIDs.size() > 0) {
+            LOGGER.warn("Failed to get some of the analaysis models from h2 db: # " + missingModelIDs.size());
+            LOGGER.warn("First missing model : " + missingModelIDs.get(0));
         }
         return result;
     }
@@ -197,7 +249,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      * @return a Map of protein IDs to Protein objects.
      */
     @Transactional(readOnly = true)
-    private Map<String, Protein> getProteinIdToProteinMap
+    protected Map<String, Protein> getProteinIdToProteinMap
     (Collection<RawProtein<T>> rawProteins) {
         final Map<String, Protein> proteinIdToProteinMap = new HashMap<String, Protein>(rawProteins.size());
 
@@ -237,5 +289,51 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
      */
     protected int boundedLocationEnd(Protein protein, RawMatch rawMatch) {
         return (rawMatch.getLocationEnd() > protein.getSequenceLength()) ? protein.getSequenceLength() : rawMatch.getLocationEnd();
+    }
+
+    /**
+     * Check if the location is withing the sequence length
+     *
+     * @param protein
+     * @param rawMatch
+     * @return
+     */
+    public boolean isLocationWithinRange(Protein protein, RawMatch rawMatch){
+        if (protein.getSequenceLength() < rawMatch.getLocationEnd() || protein.getSequenceLength() < rawMatch.getLocationStart()){
+            return false;
+        }
+        return true;
+    }
+
+
+    public void hibernateInitialise(Match match){
+        //*****Initialize goxrefs and pathwayxrefs collections *******
+        if (match.getSignature().getEntry() != null) {
+            Utilities.verboseLog("entry: " + match.getSignature().getEntry().getAccession());
+            Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
+            Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
+            Utilities.verboseLog("PathwayXRefs: " + match.getSignature().getEntry().getPathwayXRefs().size());
+            Utilities.verboseLog("GoXRefs: " + match.getSignature().getEntry().getGoXRefs().size());
+            Hibernate.initialize(match.getSignature().getCrossReferences());
+            Utilities.verboseLog("getCrossReferences: " + match.getSignature().getCrossReferences().size());
+        }
+
+
+    }
+
+    public void updateMatch(Match match){
+        Entry matchEntry = match.getSignature().getEntry();
+        if(matchEntry!= null) {
+            //check goterms
+            //check pathways
+            matchEntry.getGoXRefs();
+            if (matchEntry.getGoXRefs() != null) {
+                matchEntry.getGoXRefs().size();
+            }
+            matchEntry.getPathwayXRefs();
+            if (matchEntry.getPathwayXRefs() != null) {
+                matchEntry.getPathwayXRefs().size();
+            }
+        }
     }
 }

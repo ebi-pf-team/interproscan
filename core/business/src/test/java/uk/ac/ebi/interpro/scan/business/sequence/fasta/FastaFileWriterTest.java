@@ -1,14 +1,17 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 
 import javax.annotation.Resource;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,8 +22,12 @@ import java.util.List;
  * User: pjones
  * Date: 15-Nov-2009
  * Time: 12:36:07
+ *
+ * @author Phil Jones
+ * @author Gift Nuka
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class FastaFileWriterTest {
 
@@ -39,7 +46,7 @@ public class FastaFileWriterTest {
     }
 
     @Test
-    @Ignore("Need to fix as sequences are now validated as amino acid.")
+    //@Ignore("Need to fix as sequences are now validated as amino acid.")
     public void testWriter() throws IOException, FastaFileWriter.FastaFileWritingException {
         List<Protein> proteinList = new ArrayList<Protein>();
         String[] proteins = {"ABCDEFGHIKLMNPQRSTUVWXYZ",

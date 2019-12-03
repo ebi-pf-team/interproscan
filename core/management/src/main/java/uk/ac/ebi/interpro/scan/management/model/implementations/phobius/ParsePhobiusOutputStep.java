@@ -1,32 +1,22 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.phobius;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.io.match.phobius.PhobiusMatchParser;
-import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusFeature;
-import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
-import uk.ac.ebi.interpro.scan.management.model.Step;
-import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.management.model.implementations.ParseAndPersistStep;
 import uk.ac.ebi.interpro.scan.model.PhobiusMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAO;
-import uk.ac.ebi.interpro.scan.util.Utilities;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Set;
+import uk.ac.ebi.interpro.scan.model.raw.PhobiusRawMatch;
 
 /**
  * Parses the output of phobius and stores the results to the database
  * (as filtered results - there is currently no second filtering step.)
  *
- * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
-public class ParsePhobiusOutputStep extends Step {
+public class ParsePhobiusOutputStep extends ParseAndPersistStep<PhobiusRawMatch, PhobiusMatch> {
+
+}
+
+/*
 
     private static final Logger LOGGER = Logger.getLogger(ParsePhobiusOutputStep.class.getName());
 
@@ -51,6 +41,9 @@ public class ParsePhobiusOutputStep extends Step {
         this.parser = parser;
     }
 
+    **/
+
+
     /**
      * This method is called to execute the action that the StepInstance must perform.
      * <p/>
@@ -61,6 +54,8 @@ public class ParsePhobiusOutputStep extends Step {
      * @param stepInstance           containing the parameters for executing.
      * @param temporaryFileDirectory being the directory in which the raw file is being stored.
      */
+
+    /**
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         delayForNfs();
@@ -116,3 +111,6 @@ public class ParsePhobiusOutputStep extends Step {
         }
     }
 }
+
+
+     */

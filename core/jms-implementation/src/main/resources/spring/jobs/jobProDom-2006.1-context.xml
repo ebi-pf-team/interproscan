@@ -12,6 +12,7 @@
                   value="ProDom is a comprehensive set of protein domain families automatically generated from the UniProt Knowledge Database."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseProdom-2006.1"/>
+        <property name="deprecated" value="true"/>
     </bean>
 
     <bean id="abstractProDomStep-2006.1" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -68,6 +69,8 @@
         <property name="rawMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
                 <constructor-arg value="2006.1"/>
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
         <property name="parser">

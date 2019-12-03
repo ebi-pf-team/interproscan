@@ -11,7 +11,7 @@
         <property name="description"
                   value="Structural assignment for whole genes and genomes using the CATH domain structure database"/>
         <property name="analysis" value="true"/>
-        <property name="active" value="true" />
+        <property name="active" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseGene3d"/>
     </bean>
 
@@ -36,123 +36,112 @@
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.gene3d} ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="binarySwitches"
+                  value="${hmmer3.hmmsearch.switches.gene3d} ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="useDomTbloutFormat" value="true"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+    </bean>
+
+    <bean id="stepRunCathResolveHitsStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunCathResolveHitsBinaryStep"
+          parent="abstractGene3dStep">
+        <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
+        <property name="stepDescription" value="Run CathResolveHits"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fullPathToBinary" value="${cath.resolve.hits.path}"/>
+        <property name="binarySwitches" value="${cath.resolve.hits.switches.gene3d}"/>
+        <property name="crhOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepGene3dDeleteFastaFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+    <bean id="stepRunAssignCathFamiliesStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunAssignCathFamilyBinaryStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
-        <property name="stepDescription" value="Delete FASTA file after HMMER3 run"/>
-        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="dependsUpon" ref="stepRunCathResolveHitsStep"/>
+        <property name="stepDescription" value="Run AssignCathFamilyStep"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="inputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="domainToFamilyMapFile" value="${gene3d.model2sf_map.path}"/>
+        <property name="discontinuousRegionsFile" value="${gene3d.discontinuous_regs.path}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
+        <property name="fullPathToBinary" value="${assign.cath.superfamilies.path}"/>
+        <property name="binarySwitches" value="${assign.cath.superfamilies.switches.gene3d}"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepGene3dParseHmmerOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.Gene3dHmmer3ParseStep"
+    <bean id="stepGene3dParseOutputs"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DParseAndPersistOutputStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
-        <property name="stepDescription" value="Parse output from HMMER3"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <!--<property name="fullPath"                       value="${gene3d.hmm.path.3.5.0}"/>-->
+        <property name="dependsUpon" >
+                <list>
+                    <!--<ref bean="stepGene3dRunHmmer3"/>-->
+                    <ref bean="stepRunAssignCathFamiliesStep"/>
+                </list>
+        </property>
+        <property name="stepDescription" value="Parse output from HMMER3 and CathResolveHits"/>
+        <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
+        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+
         <property name="serialGroup" value="PARSE_GENE3D"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
-        <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
-                <property name="parserSupport">
-                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">
-                        <!--TODO: We need to pass in or look up release number-->
-                        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
-                        <property name="alignmentEncoder">
-                            <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
-                        </property>
-                        <property name="hmmKey" value="NAME"/>
-                    </bean>
-                </property>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
+        <property name="hmmer3DomTblParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser"/>
+        </property>
+        <property name="cathResolveHitsOutputParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser"/>
+        </property>
+        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
+        <property name="gene3dEvalueCutoff" value="${gene3d.evalue.cutoff}"/>
+        <!--<property name="parser">-->
+            <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser">-->
+                <!--<property name="parserSupport">-->
+                    <!--<bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Gene3DHmmer3ParserSupport">-->
+                        <!--&lt;!&ndash;TODO: We need to pass in or look up release number&ndash;&gt;-->
+                        <!--<property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>-->
+                        <!--<property name="alignmentEncoder">-->
+                            <!--<bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>-->
+                        <!--</property>-->
+                        <!--<property name="hmmKey" value="NAME"/>-->
+                    <!--</bean>-->
+                <!--</property>-->
+            <!--</bean>-->
+        <!--</property>-->
         <property name="retries" value="3"/>
+
     </bean>
 
-    <bean id="stepGene3dDeleteHmmerOutput"
+    <bean id="stepGene3dRelatedTmpFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dParseHmmerOutput"/>
-        <property name="stepDescription" value="Delete HMMER output file after parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-    </bean>
-
-    <bean id="stepCreateSsfFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.WriteGene3dSsfFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dParseHmmerOutput"/>
-        <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
-        <property name="stepDescription" value="Write out SSF file for DomainFinder3 to consume"/>
-        <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
-        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
-        <property name="ssfFileWriter">
-            <bean class="uk.ac.ebi.interpro.scan.io.gene3d.SsfFileWriter"/>
-        </property>
-    </bean>
-
-    <bean id="stepRunDomainFinder3Step"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunDomainFinder3BinaryStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepCreateSsfFile"/>
-        <property name="stepDescription" value="Run DomainFinder3"/>
-        <property name="ssfInputFileTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
-        <property name="fullPathToBinary" value="${domainfinder3.path}"/>
-        <property name="binarySwitches" value="${domainfinder3.switches.gene3d}"/>
-        <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
-        <property name="outputFileNameTemplate" value="[PROTSTART]_[PROTEND].ssf.err"/>
-        <property name="requiresDatabaseAccess" value="false"/>
-    </bean>
-
-    <bean id="stepGene3dPostProcessingStep"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DPostProcessingStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
-        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="stepDescription" value="Performs Gene3D Post Processing"/>
-        <property name="ssfOutputFileTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
-        <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO"/>
-        </property>
-        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
-        <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.gene3d.Gene3DPostProcessing"/>
-        </property>
-        <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
-    </bean>
-
-    <bean id="stepGene3dDeleteSsfInputFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
+        <property name="dependsUpon" ref="stepGene3dParseOutputs"/>
         <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
-        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].input.ssf"/>
-    </bean>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+            </list>
+        </property>
+        <property name="deleteWorkingDirectoryOnCompletion" value="false"/>
 
-    <bean id="stepGene3dDeleteSsfErrFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunDomainFinder3Step"/>
-        <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
-        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].ssf.err"/>
-    </bean>
-
-    <bean id="stepGene3dDeleteSsfOutputFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dPostProcessingStep"/>
-        <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
-        <property name="fileNameTemplate" value="[PROTSTART]_[PROTEND].output.ssf"/>
     </bean>
 
     <!-- ######################## Dependencies ############################  -->

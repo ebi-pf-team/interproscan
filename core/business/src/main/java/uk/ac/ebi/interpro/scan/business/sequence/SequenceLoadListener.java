@@ -2,6 +2,9 @@ package uk.ac.ebi.interpro.scan.business.sequence;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Listener interface allowing an implementation which is
  * responsible for creating StepInstances in response to
@@ -27,5 +30,5 @@ public interface SequenceLoadListener {
      * @param topPrecalculatedSequenceId    top sequence primary key of precalculated sequences, inclusive.
      */
     @Transactional
-    void sequencesLoaded(Long bottomNewSequenceId, Long topNewSequenceId, Long bottomPrecalculatedSequenceId, Long topPrecalculatedSequenceId);
+    void sequencesLoaded(Long bottomNewSequenceId, Long topNewSequenceId, Long bottomPrecalculatedSequenceId, Long topPrecalculatedSequenceId, boolean useMatchLookupService, List<Long> idsWithoutLookupHit);
 }

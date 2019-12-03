@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.panther;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -11,9 +11,9 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test of the PantherModelDirectoryParser class.
@@ -26,14 +26,16 @@ public class PantherModelDirectoryParserTest {
 
     private PantherModelDirectoryParser parser;
 
-    @Before
+    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/12.0";
+    private static final String PANTHER_TEST_VERSION = "12.0";
+    private static final String PANTHER_TEST_NAMES_TAB_FILE = "names.tab";
+
+    @BeforeEach
     public void setUp() {
         parser = new PantherModelDirectoryParser();
     }
 
-    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/7.0/model";
-    private static final String PANTHER_TEST_VERSION = "7.0";
-    private static final String PANTHER_TEST_NAMES_TAB_FILE = "names.tab";
+
 
 
     @Test
@@ -55,16 +57,16 @@ public class PantherModelDirectoryParserTest {
         assertEquals(SignatureLibrary.PANTHER, sigLib.getLibrary());
         assertNotNull(sigLib.getSignatures());
         //3 super and 11 sub family signature
-        assertEquals(14, sigLib.getSignatures().size());
+        assertEquals(8, sigLib.getSignatures().size());
 
         boolean foundExpectedSignature = false;
         for (Signature signature : sigLib.getSignatures()) {
             assertNotNull(signature);
             assertNotNull(signature.getAccession());
             assertNotNull(signature.getName());
-            if ("PTHR10003:SF11".equals(signature.getAccession())) {
+            if ("PTHR43828:SF3".equals(signature.getAccession())) {
                 foundExpectedSignature = true;
-                assertEquals("SUPEROXIDE DISMUTASE [CU-ZN]", signature.getName());
+                assertEquals("L-ASPARAGINASE 2", signature.getName());
             }
             assertNotNull(signature.getModels());
             assertEquals(1, signature.getModels().size());

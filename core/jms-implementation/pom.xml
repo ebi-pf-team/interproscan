@@ -5,12 +5,12 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.19-58.0</version>
+        <version>5.39-77.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jms-implementation</artifactId>
-    <version>5.19-58.0</version>
+    <version>5.39-77.0</version>
 
     <packaging>jar</packaging>
 
@@ -44,7 +44,7 @@
         <!-- 5.3.1 is the version we have been using stably for development.
         The previous stable version used is 5.5.0
         The latest version is 5.12.0  -->
-        <apache.activemq.version>5.12.0</apache.activemq.version>
+        <apache.activemq.version>5.15.9</apache.activemq.version>
     </properties>
 
     <dependencies>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-management</artifactId>
-            <version>5.19-58.0</version>
+            <version>5.39-77.0</version>
         </dependency>
 
         <dependency>
@@ -62,18 +62,24 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.3.1</version>
+            <version>1.4</version>
         </dependency>
 
         <!-- Installer JDBC access to InterPro database -->
 
-        <dependency>
-            <groupId>com.oracle.jdbc</groupId>
-            <artifactId>com.springsource.oracle.jdbc</artifactId>
-            <version>${oracle.jdbc.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.oracle.jdbc</groupId>-->
+            <!--<artifactId>com.springsource.oracle.jdbc</artifactId>-->
+            <!--<version>${oracle.jdbc.version}</version>-->
+        <!--</dependency>-->
 
         <!-- JAXB tests -->
 
@@ -134,6 +140,16 @@
 
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>org.apache.xbean</groupId>
+                    <artifactId>xbean-spring</artifactId>
+                </exclusion>
+
+                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
@@ -189,7 +205,14 @@
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
-            <version>4.4</version>
+            <version>4.2</version>
+            <!--<version>4.4</version>-->
+            <exclusions>
+            <exclusion>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+            </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

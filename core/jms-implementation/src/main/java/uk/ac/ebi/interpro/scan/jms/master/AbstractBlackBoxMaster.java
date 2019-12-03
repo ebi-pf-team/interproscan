@@ -27,6 +27,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     protected String outputBaseFilename;
     /* Default value, if no output format is specified */
     private String[] outputFormats;
+    private boolean inclTSVVersion = false;
     /**
      * Specifies the type of the I5 input sequences.
      * <p/>
@@ -45,6 +46,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
      * runnable StepExecutions available.
      */
     protected CleanRunDatabase databaseCleaner;
+    private boolean excludeSites = false;
+    private boolean includeTsvSites = false;
     private boolean mapToInterPro = false;
     private boolean mapToGO = false;
     private boolean mapToPathway = false;
@@ -144,6 +147,12 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
         processOutputFormats(params, this.outputFormats);
         params.put(StepInstanceCreatingStep.COMPLETION_JOB_NAME_KEY, "jobWriteOutput");
+        params.put(StepInstanceCreatingStep.PREPARE_OUTPUT_JOB_NAME_KEY, "jobPrepareForOutput");
+        params.put(StepInstanceCreatingStep.MATCH_LOOKUP_JOB_NAME_KEY, "jobMatchLookup");
+        params.put(StepInstanceCreatingStep.WORKER_NUMBER_KEY, Integer.toString(getConcurrentInVmWorkerCount()));
+        params.put(StepInstanceCreatingStep.FINALISE_INITIAL_STEPS_JOB_NAME_KEY, "jobFinaliseInitialSteps");
+
+        params.put(WriteOutputStep.INCL_TSV_VERSION, Boolean.toString(this.inclTSVVersion));
 
         String outputBaseName;
         if (outputBaseFilename == null || outputBaseFilename.isEmpty()) {
@@ -162,6 +171,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         params.put(WriteOutputStep.MAP_TO_INTERPRO_ENTRIES, Boolean.toString(mapToInterPro));
         params.put(WriteOutputStep.MAP_TO_GO, Boolean.toString(mapToGO));
         params.put(StepInstanceCreatingStep.USE_MATCH_LOOKUP_SERVICE, Boolean.toString(useMatchLookupService));
+        params.put(StepInstanceCreatingStep.EXCLUDE_SITES, Boolean.toString(excludeSites));
+        params.put(StepInstanceCreatingStep.INCLUDE_TSV_SITES, Boolean.toString(includeTsvSites));
         params.put(WriteOutputStep.MAP_TO_PATHWAY, Boolean.toString(mapToPathway));
         params.put(WriteOutputStep.SEQUENCE_TYPE, this.sequenceType);
         params.put(RunGetOrfStep.MIN_NUCLEOTIDE_SIZE, this.minSize);
@@ -184,12 +195,15 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             }
             for (FileOutputFormat outputFormat : FileOutputFormat.values()) {
                 String extension = outputFormat.getFileExtension();
-                //specify default output formats: TSV, XML and GFF3, but not SVG, HTML, GFF3 partial or XML slim
+                //specify default output formats: TSV, XML and GFF3, but not SVG, HTML, GFF3 partial, XML slim or TSV production
                 if (extension.equalsIgnoreCase(FileOutputFormat.SVG.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.HTML.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.GFF3_PARTIAL.getFileExtension()) ||
-                        extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension())) {
+                        extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.JSON_SLIM.getFileExtension()) ||
+                        extension.equalsIgnoreCase(FileOutputFormat.TSV_PRO.getFileExtension())) {
                     // SVG, HTML and RAW formats are not part of the default formats
                     continue;
                 }
@@ -215,9 +229,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     public int getMinimumStepsExpected(){
         int analysesCount = 1;
         if (analyses != null) {
+            Utilities.verboseLog("analyses != null:  " + analyses.toString());
             analysesCount = analyses.length;
         }else{
-            analysesCount = jobs.getActiveAnalysisJobs().getJobIdList().size();
+            analysesCount = jobs.getActiveNonDeprecatedAnalysisJobs().getJobIdList().size();
         }
         Utilities.verboseLog("analysesCount :  " + analysesCount);
         int minimumStepForEachAnalysis = 0;
@@ -300,6 +315,24 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.outputFormats = outputFormats;
     }
 
+    protected boolean isExcludeSites() {
+        return excludeSites;
+    }
+
+    @Override
+    public void setExcludeSites(boolean excludeSites) {
+        this.excludeSites = excludeSites;
+    }
+
+    public boolean isIncludeTsvSites() {
+        return includeTsvSites;
+    }
+
+    @Override
+    public void setIncludeTsvSites(boolean includeTsvSites) {
+        this.includeTsvSites = includeTsvSites;
+    }
+
     @Override
     public void setMapToInterProEntries(boolean mapToInterPro) {
         this.mapToInterPro = mapToInterPro;
@@ -376,5 +409,10 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     public void setGridCheckInterval(int gridCheckInterval) {
         this.gridCheckInterval = gridCheckInterval;
+    }
+
+    @Override
+    public void setInclTSVVersion(boolean inclTSVVersion) {
+        this.inclTSVVersion = inclTSVVersion;
     }
 }

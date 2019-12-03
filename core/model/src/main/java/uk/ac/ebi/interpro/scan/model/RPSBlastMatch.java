@@ -28,8 +28,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     protected RPSBlastMatch() {
     }
 
-    public RPSBlastMatch(Signature signature, Set<RPSBlastLocation> locations) {
-        super(signature, locations);
+    public RPSBlastMatch(Signature signature, String signatureModels, Set<RPSBlastLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     @Override
@@ -51,11 +51,11 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     }
 
     public Object clone() throws CloneNotSupportedException {
-        final Set<RPSBlastLocation> clonedLocations = new HashSet<RPSBlastLocation>(this.getLocations().size());
+        final Set<RPSBlastLocation> clonedLocations = new HashSet<>(this.getLocations().size());
         for (RPSBlastLocation location : this.getLocations()) {
             clonedLocations.add((RPSBlastLocation) location.clone());
         }
-        return new RPSBlastMatch(this.getSignature(), clonedLocations);
+        return new RPSBlastMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     }
 
     /**
-     * Location of CDD match on a protein sequence
+     * Location of RPS-Blast (e.g. CDD)  match on a protein sequence
      *
      * @author Gift Nuka
      */
@@ -72,7 +72,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
     @Table(name = "rpsblast_location")
     @XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     //@XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = { "start", "end", "score", "evalue"})
-    public static class RPSBlastLocation extends Location {
+    public static class RPSBlastLocation extends LocationWithSites<RPSBlastLocation.RPSBlastSite, LocationFragment> {
 
         @Column(nullable = false, name = "evalue")
         private double evalue;
@@ -83,8 +83,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         protected RPSBlastLocation() {
         }
 
-        public RPSBlastLocation(int start, int end, double score, double evalue) {
-            super(start, end);
+        public RPSBlastLocation(int start, int end, double score, double evalue, Set<RPSBlastSite> sites) {
+            super(new RPSBlastLocationFragment(start, end), sites);
             setScore(score);
             setEvalue(evalue);
         }
@@ -107,7 +107,6 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
             this.score = score;
         }
 
-
         @Override
         public boolean equals(Object o) {
             if (this == o)
@@ -119,16 +118,6 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
                     .isEquals();
         }
 
-//        @Override
-//        public int hashCode() {
-//            int result = super.hashCode();
-//            long temp;
-//            temp = Double.doubleToLongBits(evalue);
-//            result = 31 * result + (int) (temp ^ (temp >>> 32));
-//            temp = Double.doubleToLongBits(score);
-//            result = 31 * result + (int) (temp ^ (temp >>> 32));
-//            return result;
-//        }
         @Override
         public int hashCode() {
             return new HashCodeBuilder(41, 59)
@@ -137,7 +126,90 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
         }
 
         public Object clone() throws CloneNotSupportedException {
-            return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue());
+            final Set<RPSBlastSite> clonedSites = new HashSet<>(this.getSites().size());
+            for (RPSBlastSite site : this.getSites()) {
+                clonedSites.add((RPSBlastSite) site.clone());
+            }
+            return new RPSBlastLocation(this.getStart(), this.getEnd(), this.getScore(), this.getEvalue(), clonedSites);
+        }
+
+        /**
+         * Location fragment of a RPSBlast match on a protein sequence
+         */
+        @Entity
+        @Table(name = "rpsblast_location_fragment")
+        @XmlType(name = "RPSBlastLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class RPSBlastLocationFragment extends LocationFragment {
+
+            protected RPSBlastLocationFragment() {
+            }
+
+            public RPSBlastLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof RPSBlastLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(141, 159)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new RPSBlastLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
+
+        @Entity
+        @Table(name = "rpsblast_site")
+        @XmlType(name = "RPSBlastSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class RPSBlastSite extends Site {
+
+            protected RPSBlastSite() {
+            }
+
+            public RPSBlastSite(String description, Set<SiteLocation> siteLocations) {
+                super(description, siteLocations);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof RPSBlastSite))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(41, 59)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                final Set<SiteLocation> clonedSiteLocations = new HashSet<>(this.getSiteLocations().size());
+                for (SiteLocation sl : this.getSiteLocations()) {
+                    clonedSiteLocations.add((SiteLocation) sl.clone());
+                }
+                return new RPSBlastSite(this.getDescription(), clonedSiteLocations);
+            }
+
         }
     }
 

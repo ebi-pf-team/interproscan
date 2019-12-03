@@ -58,28 +58,38 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
      *                               stepInstance.buildFullyQualifiedFilePath(String temporaryFileDirectory, String fileNameTemplate) method
      */
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        Long bottomProtein = stepInstance.getBottomProtein();
+        Long topProtein = stepInstance.getTopProtein();
 
+        //do we need to skip
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            return;
+        }
+
+        Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Start parse and persist [" + bottomProtein + "-" + topProtein + "]");
         // Retrieve raw matches from the SuperFamily binary output file
         InputStream inputStream = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, superFamilyBinaryOutputFileName);
         Set<RawProtein<SuperFamilyHmmer3RawMatch>> rawProteins;
         int count = 0;
-        RawMatch represantiveRawMatch = null;
+        RawMatch representativeRawMatch = null;
         try {
             inputStream = new FileInputStream(fileName);
             rawProteins = parser.parse(inputStream);
 
+            // Get a representative raw match and note the number of raw matches for logging and validation purposes
             for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : rawProteins) {
                 count += rawProtein.getMatches().size();
-                if (represantiveRawMatch == null) {
+                if (representativeRawMatch == null) {
                     if (rawProtein.getMatches().size() > 0) {
-                        represantiveRawMatch = rawProtein.getMatches().iterator().next();
+                        representativeRawMatch = rawProtein.getMatches().iterator().next();
                     }
                 }
             }
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Parsed out " + rawProteins.size() + " proteins with matches from file " + fileName);
-
                 LOGGER.debug("A total of " + count + " raw matches from file " + fileName);
             }
             // NOTE: No post processing therefore no need to store the raw results here - we will just persist them to
@@ -96,25 +106,25 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
             }
         }
 
-        if (rawProteins != null && rawProteins.size() > 0) {
+        if (rawProteins.size() > 0) {
             // Persist the matches
+            Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Persist the parsed matches for proteins: " + bottomProtein + "-" + topProtein);
             filteredMatchDAO.persist(rawProteins);
+            Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Completed persisting the parsed matches for proteins: " + bottomProtein + "-" + topProtein);
             //TODO refactor this
             Long now = System.currentTimeMillis();
-            if (count > 0){
-                int matchesFound = 0;
+            if (count > 0) {
                 int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
-                if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
-                    String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
+                if (representativeRawMatch != null) {
+                    Utilities.verboseLog("represantiveRawMatch :" + representativeRawMatch.toString());
                     Utilities.sleep(waitTimeFactor * 1000);
                     //ignore the usual check until refactoring of the parse step
-                }else{
-                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                } else {
+                    LOGGER.warn("Check if Raw matches committed " + count + " rm: " + representativeRawMatch);
+                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + representativeRawMatch);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + representativeRawMatch.toString()
                         + " time taken: " + timeTaken);
             }
         } else {
@@ -122,7 +132,7 @@ public class ParseAndPersistSuperFamilyOutputStep extends Step {
                 LOGGER.debug("No SuperFamily matches were persisted as none were found in the SuperFamily binary output file: " + fileName);
             }
         }
-
+        Utilities.verboseLog("ParseAndPersistSuperFamilyOutputStep: Completed parse and persist [" + bottomProtein + "-" + topProtein + "]");
 
     }
 }

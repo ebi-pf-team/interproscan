@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.io.sequence;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,7 +46,7 @@ public class XrefParser {
      * NB All ENA parsing has been commented out for the moment
      * This is to allow the short-term fix to the nucleotide header problem (IBU-2426)
      * TODO - reimplement when the long-term fix is in place
-     *
+     * <p>
      * This parser only supports FASTA headers from ENA at the moment. All other FASTA headers are returned un-parsed.
      * If you are extending it don't forget to update the unit test at the same time.
      * <p/>
@@ -118,13 +119,31 @@ public class XrefParser {
              */
             final Matcher matcher = GETORF_HEADER_PATTERN.matcher(crossReference);
             if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
-                if (matcher.find()) {
-                    if (LOGGER.isDebugEnabled()) LOGGER.debug("MATCHES");
-                    return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
-                }
+                LOGGER.debug("Checking for match to GETORF regex, crossRef: " + crossReference);
 
-            if ( crossReference.startsWith(SWISSPROT_DB_NAME) || crossReference.startsWith(TREMBL_DB_NAME) )  {
+            String originalHeaderName = crossReference.trim();
+
+            if (matcher.find()) {
+                //Utilities.verboseLog("MATCHES GETORF_HEADER_PATTERN");
+                //Utilities.verboseLog("originalHeaderName: " + originalHeaderName + " and now xref-id : " + matcher.group(1));
+                return new ProteinXref(null, matcher.group(1), originalHeaderName, matcher.group(2));
+            }
+
+	        // this eventually should be the only way to parse the header
+            if (originalHeaderName.length() > 1) {
+                //Test using the header
+                //Utilities.verboseLog("originalHeaderName: " + originalHeaderName);
+                return stripUniqueIdentifierAndTrimForProteinSeqDefault(originalHeaderName);
+            }
+
+            //The rest of the code below will be ignored
+
+            if (matcher.find()) {
+                if (LOGGER.isDebugEnabled()) LOGGER.debug("MATCHES");
+                return new ProteinXref(null, matcher.group(1), null, matcher.group(2));
+            }
+
+            if (crossReference.startsWith(SWISSPROT_DB_NAME) || crossReference.startsWith(TREMBL_DB_NAME)) {
                 String[] chunks = PIPE_REGEX.split(crossReference);
                 if (chunks.length >= 3) {
                     String database = chunks[0];
@@ -132,7 +151,7 @@ public class XrefParser {
                     String description = chunks[2];
                     String proteinName = getProteinName(description);
                     return new ProteinXref(database, identifier, proteinName, description);
-                }  else {
+                } else {
                     return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
                 }
             } else if (crossReference.startsWith(GENERAL_IDENTIFIER)) {
@@ -157,7 +176,7 @@ public class XrefParser {
                 } else {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug("No Match.");
                     */
-                    return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
+                return stripUniqueIdentifierAndTrimForProteinSeq(crossReference);
                 //}
             }
         }
@@ -171,9 +190,23 @@ public class XrefParser {
             id = id.trim();
             Matcher matcher = DEFLINE_ID_PATTERN.matcher(id);
             if (matcher.find()) {
-                return new NucleotideSequenceXref(null, matcher.group(1), matcher.group(2));
+                return new NucleotideSequenceXref(null, matcher.group(1), id);
             } else {
-                return new NucleotideSequenceXref(id);
+                return new NucleotideSequenceXref(null, id, id);
+            }
+        }
+    }
+
+    private static ProteinXref stripUniqueIdentifierAndTrimForProteinSeqDefault(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalStateException("Found an identifier in a fasta file which is null or empty???");
+        } else {
+            id = id.trim();
+            Matcher matcher = DEFLINE_ID_PATTERN.matcher(id);
+            if (matcher.find()) {
+                return new ProteinXref(null, matcher.group(1), id, matcher.group(2));
+            } else {
+                return new ProteinXref(null, id, id);
             }
         }
     }

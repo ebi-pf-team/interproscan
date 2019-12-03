@@ -102,6 +102,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
         }
+        System.out.println("interproscan cwd = " + System.getProperty("user.dir"));
+
         String threadName = "[masterRun] ";
         System.out.println(Utilities.getTimeNow() + " Interproscan 5 Master process running on: " + tcpUri);
         Long timeLastDisplayedStatsAndUpdatedClusterState = System.currentTimeMillis();
@@ -119,6 +121,31 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
             Utilities.verboseLog("DEBUG " + "Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
             Utilities.verboseLog("DEBUG " + "tcpUri: " + tcpUri);
         }
+        //handle concurrent workers configuration
+        if (! (getMaxConcurrentInVmWorkerCount() == localQueueJmsContainerFatMaster.getMaxConcurrentConsumers())){
+            int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
+            localQueueJmsContainerFatMaster.setConcurrentConsumers(minNumberOfCPUCores);
+            localQueueJmsContainerFatMaster.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
+            Utilities.verboseLog("minNumberOfCPUCores: " + minNumberOfCPUCores
+                    + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
+        }
+        Utilities.verboseLog("New values --- inVmWorkers min: " + localQueueJmsContainerFatMaster.getConcurrentConsumers()
+                + " max: " + localQueueJmsContainerFatMaster.getMaxConcurrentConsumers()
+                + " schedlued: " + localQueueJmsContainerFatMaster.getScheduledConsumerCount()
+                + " active: " + localQueueJmsContainerFatMaster.getActiveConsumerCount()  );
+
+        localQueueJmsContainerFatMaster.shutdown();
+        if(! localQueueJmsContainerFatMaster.isRunning()){
+            Utilities.verboseLog(" the localQueueJmsContainerFatMaster is shutdown ...");
+        }
+        localQueueJmsContainerFatMaster.afterPropertiesSet();
+        localQueueJmsContainerFatMaster.start();
+
+        Utilities.verboseLog("After Stop Start --- inVmWorkers min: " + localQueueJmsContainerFatMaster.getConcurrentConsumers()
+                + " max: " + localQueueJmsContainerFatMaster.getMaxConcurrentConsumers()
+                + " schedlued: " + localQueueJmsContainerFatMaster.getScheduledConsumerCount()
+                + " active: " + localQueueJmsContainerFatMaster.getActiveConsumerCount()  );
+
         try {
             loadInMemoryDatabase();
 
@@ -717,7 +744,7 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
         }
 
         if (ftMode) {
-            statsUtil.printNonAcknowledgedSubmittedStepInstances();
+            statsUtil.displayNonAcknowledgedSubmittedStepInstances();
         }
     }
 
@@ -914,6 +941,8 @@ public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements
 
         String threadName = "[StartNewWorker] ";
         Executor executor = Executors.newSingleThreadExecutor();
+
+        LOGGER.debug(threadName + "start New Workers");
 
         executor.execute(new Runnable() {
             public void run() {

@@ -40,4 +40,6 @@ public interface LoadFastaFile extends Serializable {
      */
     @Transactional
     void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoadListener, Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService);
+
+    void setLevelDBStoreRoot(String levelDBStoreRoot);
 }

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.phobius;
 
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
@@ -32,9 +33,11 @@ public class PhobiusDummyParser extends AbstractModelFileParser {
                 this.getReleaseVersionNumber());
 
         for (final PhobiusFeatureType type : PhobiusFeatureType.values()) {
+            final Model model = new Model(type.getAccession(), type.getName(), type.getDescription());
             final Signature.Builder builder = new Signature.Builder(type.getAccession());
             final Signature signature = builder
                     .name(type.getName())
+                    .model(model)
                     .description(type.getDescription())
                     .signatureLibraryRelease(release)
                     .build();

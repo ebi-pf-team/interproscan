@@ -224,7 +224,7 @@ public final class DomainFinderRecord {
                 rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
                 rawMatch.getHmmStart(), rawMatch.getHmmEnd(),
                 rawMatch.getDomainIeValue(), rawMatch.getLocationScore(),
-                rawMatch.getCigarAlignment(), rawMatch.getEvalue());
+                rawMatch.getAlignedRegions(), rawMatch.getEvalue());
 
     }
 

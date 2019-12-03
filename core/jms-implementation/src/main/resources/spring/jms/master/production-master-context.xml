@@ -64,7 +64,7 @@
         </property>
         <property name="workerRunner">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-                <property name="submissionCommand" value="bsub -q production-rh6 -o worker.lsf.out -e worker.lsf.err -J i5EsJms ${worker.command}"/>
+                <property name="submissionCommand" value="bsub -q production-rh7 -o worker.lsf.out -e worker.lsf.err -J i5EsJms ${worker.command}"/>
                 <property name="gridCommand" value="${grid.lsf.master.command}"/>
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.command}"/>
@@ -79,7 +79,7 @@
         </property>
         <property name="workerRunnerHighMemory">
             <bean class="uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner">
-                <property name="submissionCommand" value="bsub -q production-rh6 -o highmem.worker.lsf.out -e highmem.worker.lsf.err -J i5EsJms ${worker.high.memory.command}"/>
+                <property name="submissionCommand" value="bsub -q production-rh7 -o highmem.worker.lsf.out -e highmem.worker.lsf.err -J i5EsJms ${worker.high.memory.command}"/>
                 <property name="gridCommand" value="${grid.lsf.master.high.memory.command}"/>
                 <property name="projectId" value="${user.digest}"/>
                 <property name="i5Command" value="${worker.high.memory.command}"/>

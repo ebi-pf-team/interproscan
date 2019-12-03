@@ -16,12 +16,18 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import javax.swing.text.Utilities;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -30,6 +36,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.logging.Logger;
+
 
 /**
  * Represents a signature match on a protein sequence.
@@ -42,7 +50,8 @@ import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@XmlType(name = "MatchType", propOrder = {"signature", "locations"})
+@XmlType(name = "MatchType", propOrder = {"signature", "signatureModels", "locations"})
+@JsonIgnoreProperties({"id"})
 public abstract class Match<T extends Location> implements Serializable, Cloneable {
 
     @Id
@@ -52,22 +61,30 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "PROTEIN_ID", referencedColumnName = "ID")
+    @JsonBackReference
     private Protein protein;
 
+    //TEST - TODO check again
+    //cascade = CascadeType.ALL does not work
     @ManyToOne(optional = false)
     @JoinColumn(name = "SIGNATURE_ID", referencedColumnName = "ID")
     private Signature signature;
 
+    @Column(nullable = true)
+    private String signatureModels;
+
     @OneToMany(cascade = CascadeType.PERSIST, targetEntity = Location.class, mappedBy = "match")
     @BatchSize(size=4000)
+    @JsonManagedReference
     protected Set<T> locations = new LinkedHashSet<T>();
 
     protected Match() {
     }
 
-    protected Match(Signature signature, Set<T> locations) {
+    protected Match(Signature signature, String signatureModels, Set<T> locations) {
         setLocations(locations);
         setSignature(signature);
+        setSignatureModels(signatureModels);
     }
 
     @XmlTransient
@@ -96,6 +113,32 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
     private void setSignature(Signature signature) {
         this.signature = signature;
+    }
+
+    // add the signatureModels variable for handling model string list
+    @XmlElement (name = "model-ac")
+    @JsonProperty("model-ac")
+    public String getSignatureModels() {
+        return signatureModels;
+    }
+
+    public void addSignatureModel(String signatureModel) {
+        if (this.signatureModels == null){
+            setSignatureModels(signatureModel);
+        }else {
+            for(String elem: this.signatureModels.split(",")){
+                if (signatureModel.equals(elem)){
+                    //System.out.println("Model already in list: " + elem);
+                    //("Model already in list: " + elem);
+                    return;
+                }
+            }
+            this.signatureModels = this.signatureModels + ","  + signatureModel;
+        }
+    }
+
+    public void setSignatureModels(String signatureModels) {
+        this.signatureModels = signatureModels;
     }
 
     @Transient
@@ -163,9 +206,11 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
          */
         @Override
         public MatchesType marshal(Set<Match> matches) {
-            Set<RPSBlastMatch> rpsBlastMatches = new LinkedHashSet<RPSBlastMatch>();
+            Set<RPSBlastMatch> rpsBlastMatches = new LinkedHashSet<>();
+            Set<Hmmer3MatchWithSites> hmmer3MatchesWithSites = new LinkedHashSet<>();
             Set<Hmmer2Match> hmmer2Matches = new LinkedHashSet<Hmmer2Match>();
             Set<Hmmer3Match> hmmer3Matches = new LinkedHashSet<Hmmer3Match>();
+            Set<MobiDBMatch> mobiDBMatches = new LinkedHashSet<MobiDBMatch>();
             Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches = new LinkedHashSet<SuperFamilyHmmer3Match>();
             Set<FingerPrintsMatch> fingerPrintsMatches = new LinkedHashSet<FingerPrintsMatch>();
             Set<BlastProDomMatch> proDomMatches = new LinkedHashSet<BlastProDomMatch>();
@@ -179,10 +224,14 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             for (Match m : matches) {
                 if (m instanceof RPSBlastMatch) {
                     rpsBlastMatches.add((RPSBlastMatch) m);
+                } else if (m instanceof Hmmer3MatchWithSites) {
+                    hmmer3MatchesWithSites.add((Hmmer3MatchWithSites) m);
                 } else if (m instanceof Hmmer2Match) {
                     hmmer2Matches.add((Hmmer2Match) m);
                 } else if (m instanceof Hmmer3Match) {
                     hmmer3Matches.add((Hmmer3Match) m);
+                } else if (m instanceof MobiDBMatch) {
+                    mobiDBMatches.add((MobiDBMatch) m);
                 } else if (m instanceof SuperFamilyHmmer3Match) {
                     superFamilyHmmer3Matches.add((SuperFamilyHmmer3Match) m);
                 } else if (m instanceof FingerPrintsMatch) {
@@ -207,7 +256,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                     throw new IllegalArgumentException("Unrecognised Match class: " + m);
                 }
             }
-            return new MatchesType(rpsBlastMatches, hmmer2Matches, hmmer3Matches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
+            return new MatchesType(rpsBlastMatches, hmmer3MatchesWithSites, hmmer2Matches, hmmer3Matches, mobiDBMatches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
                     patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches, pantherMatches, signalPMatches, tmhmmPMatches);
         }
 
@@ -220,8 +269,11 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                  matchTypes) {
             Set<Match> matches = new HashSet<Match>();
             matches.addAll(matchTypes.getRpsBlastMatches());
+            matches.addAll(matchTypes.getHmmer3MatchesWithSites());
             matches.addAll(matchTypes.getHmmer2Matches());
             matches.addAll(matchTypes.getHmmer3Matches());
+            matches.addAll(matchTypes.getHmmer3Matches());
+            matches.addAll(matchTypes.getMobiDBMatches());
             matches.addAll(matchTypes.getSuperFamilyHmmer3Matches());
             matches.addAll(matchTypes.getFingerPrintsMatches());
             matches.addAll(matchTypes.getProDomMatches());
@@ -246,11 +298,17 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
         @XmlElement(name = "rpsblast-match")
         private final Set<RPSBlastMatch> rpsBlastMatches;
 
+        @XmlElement(name = "hmmer3-match-with-sites")
+        private final Set<Hmmer3MatchWithSites> hmmer3MatchesWithSites;
+
         @XmlElement(name = "hmmer2-match")
         private final Set<Hmmer2Match> hmmer2Matches;
 
         @XmlElement(name = "hmmer3-match")
         private final Set<Hmmer3Match> hmmer3Matches;
+
+        @XmlElement(name = "mobidblite-match")
+        private final Set<MobiDBMatch> mobiDBMatches;
 
         @XmlElement(name = "superfamilyhmmer3-match")
         private final Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches;
@@ -285,8 +343,10 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
         private MatchesType() {
             rpsBlastMatches = null;
+            hmmer3MatchesWithSites = null;
             hmmer2Matches = null;
             hmmer3Matches = null;
+            mobiDBMatches = null;
             superFamilyHmmer3Matches = null;
             fingerPrintsMatches = null;
             proDomMatches = null;
@@ -300,8 +360,10 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
         }
 
         public MatchesType(Set<RPSBlastMatch> rpsBlastMatches,
+                           Set<Hmmer3MatchWithSites> hmmer3MatchesWithSites,
                            Set<Hmmer2Match> hmmer2Matches,
                            Set<Hmmer3Match> hmmer3Matches,
+                           Set<MobiDBMatch> mobiDBMatches,
                            Set<SuperFamilyHmmer3Match> superFamilyHmmer3Matches,
                            Set<FingerPrintsMatch> fingerPrintsMatches,
                            Set<BlastProDomMatch> proDomMatches,
@@ -313,8 +375,10 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                            Set<SignalPMatch> signalPMatches,
                            Set<TMHMMMatch> tmhmmMatches) {
             this.rpsBlastMatches = rpsBlastMatches;
+            this.hmmer3MatchesWithSites = hmmer3MatchesWithSites;
             this.hmmer2Matches = hmmer2Matches;
             this.hmmer3Matches = hmmer3Matches;
+            this.mobiDBMatches = mobiDBMatches;
             this.superFamilyHmmer3Matches = superFamilyHmmer3Matches;
             this.fingerPrintsMatches = fingerPrintsMatches;
             this.proDomMatches = proDomMatches;
@@ -331,12 +395,19 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             return (rpsBlastMatches == null ? Collections.<RPSBlastMatch>emptySet() : rpsBlastMatches);
         }
 
+        public Set<Hmmer3MatchWithSites> getHmmer3MatchesWithSites() {
+            return (hmmer3MatchesWithSites == null ? Collections.<Hmmer3MatchWithSites>emptySet() : hmmer3MatchesWithSites);
+        }
+
         public Set<Hmmer2Match> getHmmer2Matches() {
             return (hmmer2Matches == null ? Collections.<Hmmer2Match>emptySet() : hmmer2Matches);
         }
 
         public Set<Hmmer3Match> getHmmer3Matches() {
             return (hmmer3Matches == null ? Collections.<Hmmer3Match>emptySet() : hmmer3Matches);
+        }
+        public Set<MobiDBMatch> getMobiDBMatches() {
+            return (mobiDBMatches == null ? Collections.<MobiDBMatch>emptySet() : mobiDBMatches);
         }
 
         public Set<SuperFamilyHmmer3Match> getSuperFamilyHmmer3Matches() {

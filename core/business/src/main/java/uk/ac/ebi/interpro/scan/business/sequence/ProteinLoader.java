@@ -21,14 +21,16 @@ import java.util.*;
  * SerialWorker JVM, from Spring.
  *
  * @author Phil Jones
- *         Date: 14-Nov-2009
- *         Time: 14:04:59
+ * Date: 14-Nov-2009
+ * Time: 14:04:59
  */
 public class ProteinLoader implements SequenceLoader<Protein> {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class.getName());
 
     private PrecalculatedProteinLookup proteinLookup;
+
+    private boolean displayLookupMessage = false;
 
     private ProteinDAO proteinDAO;
 
@@ -37,6 +39,8 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     private OpenReadingFrameDAO openReadingFrameDAO;
 
     private int proteinInsertBatchSize;
+
+    private int proteinInsertBatchSizeNoLookup;
 
     private int proteinPrecalcLookupBatchSize;
 
@@ -62,6 +66,11 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     public void setProteinInsertBatchSize(int proteinInsertBatchSize) {
         this.proteinInsertBatchSize = proteinInsertBatchSize;
         proteinsAwaitingPersistence = new HashSet<>(proteinInsertBatchSize);
+    }
+
+    @Required
+    public void setProteinInsertBatchSizeNoLookup(int proteinInsertBatchSizeNoLookup) {
+        this.proteinInsertBatchSizeNoLookup = proteinInsertBatchSizeNoLookup;
     }
 
     @Required
@@ -118,12 +127,15 @@ public class ProteinLoader implements SequenceLoader<Protein> {
     }
 
     /**
-     *
      * @param analysisJobMap
      */
     private void lookupProteins(Map<String, SignatureLibraryRelease> analysisJobMap) {
         if (proteinsAwaitingPrecalcLookup.size() > 0) {
             final boolean usingLookupService = proteinLookup != null;
+            if (!usingLookupService) {
+                proteinInsertBatchSize = proteinInsertBatchSizeNoLookup;
+            }
+
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
                     : null;
@@ -147,6 +159,8 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                     }
                 }
             } else {
+                //there are no matches or we are not using the lookup match service
+
                 for (Protein protein : proteinsAwaitingPrecalcLookup) {
                     addProteinToBatch(protein);
                 }
@@ -164,7 +178,9 @@ public class ProteinLoader implements SequenceLoader<Protein> {
      */
     private void addProteinToBatch(Protein protein) {
         proteinsAwaitingPersistence.add(protein);
+
         if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) {
+            Utilities.verboseLog("proteinInsertBatchSize " + proteinInsertBatchSize);
             persistBatch();
         }
     }
@@ -179,13 +195,18 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             }
+            Utilities.verboseLog("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
+            Utilities.verboseLog("Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
             if (isGetOrfOutput) {
+                Utilities.verboseLog("Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
                 createAndPersistNewORFs(persistedProteins);
+                Utilities.verboseLog("Completed Persisting  getOrfOutput ");
             }
             proteinsAwaitingPersistence.clear();
+
         }
     }
 
@@ -229,26 +250,58 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             LOGGER.debug("Top precalc protein: " + topPrecalcProteinId);
         }
 
-        sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId);
+        sequenceLoadListener.sequencesLoaded(bottomNewProteinId, topNewProteinId, bottomPrecalcProteinId, topPrecalcProteinId, proteinLookup != null, null);
         // Prepare the ProteinLoader for another set of proteins.
         resetBounds();
     }
 
+    public void setDisplayLookupMessage(boolean displayLookupMessage) {
+        this.displayLookupMessage = displayLookupMessage;
+    }
+
     public void setUseMatchLookupService(boolean useMatchLookupService) {
+        String lookupMessage = "";
         if (!useMatchLookupService || proteinLookup == null || !proteinLookup.isConfigured()) {
             this.proteinLookup = null;
-            System.out.println("Pre-calculated match lookup service DISABLED.  Please wait for match calculations to complete...");
+            lookupMessage = "Pre-calculated match lookup service DISABLED.  Please wait for match calculations to complete...";
         } else {
-            System.out.println("Available matches will be retrieved from the pre-calculated match lookup service.\n\n" +
-                    "Matches for any sequences that are not represented in the lookup service will be calculated locally.");
+            lookupMessage = "Available matches will be retrieved from the pre-calculated match lookup service.\n\n" +
+                    "Matches for any sequences that are not represented in the lookup service will be calculated locally.";
         }
+        if (displayLookupMessage) {
+            System.out.println(lookupMessage);
+        }
+    }
+
+
+    public void storeAll2KV(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) throws Exception {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Storing " + parsedProteins.size() + " proteins in batches of " + proteinPrecalcLookupBatchSize);
+        }
+        //TODO: do notify() run this step when lookupProteins() is disabled
+        //complicated logic here
+        long bottom = 1l;
+        long top = bottom + parsedProteins.size();
+        //TODO check again
+        List<Protein> storedProteins = proteinDAO.getProteins(); //original was proteinDAO.getProteins(bottom, top);
+        Long count = 0L;
+        //SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+        for (Protein protein : storedProteins) {
+            count++;
+            String sequenceId = Long.toString(protein.getId());
+            if (count == 1 || count == 10) {
+                Utilities.verboseLog("sequenceId = " + sequenceId);
+            }
+            proteinDAO.insert(sequenceId, protein);
+        }
+        Utilities.verboseLog("Completed storing " + count + " parsed proteins into KV store, top=" + top);
     }
 
     /**
      * Persists proteins that have been collapsed and annotated with ProteinXrefs
      * by a separate process, e.g. the fasta file loader.
      *
-     * @param parsedProteins   being a Collection of non-redundant Proteins and Xrefs.
+     * @param parsedProteins being a Collection of non-redundant Proteins and Xrefs.
      * @param analysisJobMap for analysisJobNames to be included in analysis.
      */
     public void storeAll(Set<Protein> parsedProteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
@@ -258,31 +311,39 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         //TODO: do notify() run this step when lookupProteins() is disabled
         //complicated logic here
         int count = 0;
-        SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         for (Protein protein : parsedProteins) {
             count++;
             proteinsAwaitingPrecalcLookup.add(protein);
             if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
                 lookupProteins(analysisJobMap);
             }
-            if(count % 5000 == 0){
-                if (count % 10000 == 0) {
+            if (count % 4000 == 0) {
+                if (count % 16000 == 0) {
                     //TODO use utilities.verboselog to log this
+                    Utilities.verboseLog("Stored " + count + " sequences");
                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Stored " + count + " sequences");
 
-                }else{
-                    if(LOGGER.isInfoEnabled()){
-                        LOGGER.info( "Stored " + count + " sequences");
+                } else {
+                    if (LOGGER.isInfoEnabled()) {
+                        LOGGER.info("Stored " + count + " sequences");
                     }
                 }
             }
         }
-        if (count > 10000) {
-            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " sequences for analysis");
-        }
-        Utilities.verboseLog(10, " Uploaded/Stored " + count + " sequences for analysis");
+        if (count <= 2) {
+            //For now we dont have the code to properly handle the single-seq mode for hmmscan
+            //SINGLE_SEQUENCE_MODE
+//            Utilities.setMode("singleseq_pending_changes_to_parsers");
+//            Utilities.setMode("singleseq");
 
-        if(LOGGER.isInfoEnabled()) {
+        }
+        if (count > 12000) {
+            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " unique sequences for analysis");
+        }
+        Utilities.verboseLog(10, " Uploaded/Stored " + count + " unique sequences for analysis");
+
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
         }
         Utilities.sequenceCount = count;
@@ -305,14 +366,27 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             LOGGER.debug("Persisted " + newProteins.size() + " new proteins and their cross references.");
             LOGGER.debug("Iterating over all new proteins and their xrefs...");
         }
+        Long startCreateAndPersistNewORFs = System.currentTimeMillis();
+        Long countCreateAndPersistNewORFs = System.currentTimeMillis();
+        Utilities.verboseLog("Start createAndPersistNewORFs for  " + newProteins.size() + " new proteins and their cross references.");
+        int proteinCount = 0;
+        int totalXrefs = 0;
         for (Protein newProtein : newProteins) {
+            proteinCount++;
+            Long startPersistProtein = System.currentTimeMillis();
             Set<ProteinXref> xrefs = newProtein.getCrossReferences();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Protein with ID " + newProtein.getId() + " has " + xrefs.size() + " cross references.");
             }
+            int xrefCount = xrefs.size();
+            totalXrefs = totalXrefs + xrefCount;
+
+            toDebugPrint(newProteins.size(), proteinCount,
+                    "getCrossReferences: " + (System.currentTimeMillis() - startPersistProtein) + " millis ");
             for (ProteinXref xref : xrefs) {
                 String nucleotideId = xref.getIdentifier();
                 String description = xref.getDescription();
+                Long startNewOrf = System.currentTimeMillis();
                 OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 //Get rid of the underscore
                 nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
@@ -322,15 +396,20 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 */
                 //Get rid of those pesky version numbers too
                 //nucleotideId = XrefParser.stripOfVersionNumberIfExists(nucleotideId);
+                //this step might be expensive -- consider getting all xrefs and puting them into a map?? -- gift
+                Long startRetrieveByXrefIdentifier = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf) + " millis ");
+
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
                 if (nucleotide == null) {
                     if (LOGGER.isDebugEnabled()) {
-                        List<NucleotideSequence> seqs= nucleotideSequenceDAO.retrieveAll();
-                        for (NucleotideSequence ns: seqs) {
-                            Set<NucleotideSequenceXref> nsXrefs = ns.getCrossReferences() ;
-                            for (NucleotideSequenceXref nsXref: nsXrefs) {
+                        List<NucleotideSequence> seqs = nucleotideSequenceDAO.retrieveAll();
+                        for (NucleotideSequence ns : seqs) {
+                            Set<NucleotideSequenceXref> nsXrefs = ns.getCrossReferences();
+                            for (NucleotideSequenceXref nsXref : nsXrefs) {
                                 LOGGER.debug("Nucleotide xref identifier: " + nsXref.getIdentifier());
                             }
                         }
@@ -338,18 +417,82 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                     throw new IllegalStateException("Couldn't find nucleotide sequence by the following cross reference: " + nucleotideId);
 
                 }
+                Long startSetNucleotideSequence = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "RetrieveByXrefIdentifier: " + (startSetNucleotideSequence - startRetrieveByXrefIdentifier) + " millis ");
                 newOrf.setNucleotideSequence(nucleotide);
+                Long startSetProtein = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "SetNucleotideSequence: " + (startSetProtein - startSetNucleotideSequence) + " millis ");
                 newOrf.setProtein(newProtein);
+                Long startAddOpenReadingFrame = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "SetProtein in ORF: " + (startAddOpenReadingFrame - startSetProtein) + " millis ");
                 newProtein.addOpenReadingFrame(newOrf);
+                Long startOrfAwaitingPersistence = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "Add Orf to protein: " + (startOrfAwaitingPersistence - startAddOpenReadingFrame) + " millis ");
                 orfsAwaitingPersistence.add(newOrf);
+                Long endOrfAwaitingPersistence = System.currentTimeMillis();
+                toDebugPrint(newProteins.size(), proteinCount,
+                        "Add newOrf to ORFs AwaitingPersistence: " + (endOrfAwaitingPersistence - startOrfAwaitingPersistence) + " millis ");
+            }
+            /*
+            if (proteinCount %  (proteinInsertBatchSize / 2) == 0){
+                Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
+                        "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + " in " +
+                        (System.currentTimeMillis() - countCreateAndPersistNewORFs ) + " millis " );
+                countCreateAndPersistNewORFs = System.currentTimeMillis();
+            }
+            */
+
+            int avgXrefPerProtein = totalXrefs / proteinCount;
+            if (proteinCount % 4000 == 0) {
+                Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
+                        "  totalXrefs " + totalXrefs + " xrefCount :" + xrefCount + "  "
+                        + " avgXrefPerProtein: " + avgXrefPerProtein
+                        + " in " +
+                        (System.currentTimeMillis() - countCreateAndPersistNewORFs) + " millis ");
+                countCreateAndPersistNewORFs = System.currentTimeMillis();
             }
         }
+        Utilities.verboseLog("createAndPersistNewORFs done in " +
+                (System.currentTimeMillis() - startCreateAndPersistNewORFs) + " millis");
+
         //Finally persist open reading frames
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Persisting " + orfsAwaitingPersistence.size() + " new open reading frames.");
         }
+        Long startNewOrf2 = System.currentTimeMillis();
+//        toDebugPrint(newProteins.size(), proteinCount,
+//                "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
         openReadingFrameDAO.insert(orfsAwaitingPersistence);
+        Long startNewOrf3 = System.currentTimeMillis();
+//        toDebugPrint(newProteins.size(), proteinCount,
+//                "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
         openReadingFrameDAO.flush();
+        Long startNewOrf4 = System.currentTimeMillis();
+//        toDebugPrint(newProteins.size(), proteinCount,
+//                "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
+    }
+
+    void toDebugPrint(int size, int count, String debugString) {
+        if (count < 0) {
+            return;
+        }
+        int halfSize = size / 2;
+        boolean debugPrint = false;
+        if (count == 1) {
+            debugPrint = true;
+        } else if (count == halfSize) {
+            debugPrint = true;
+        } else if (count == size - 1) {
+            debugPrint = true;
+        }
+
+        if (debugPrint) {
+            Utilities.verboseLog(25, "count:" + count + " - " + debugString);
+        }
     }
 
 

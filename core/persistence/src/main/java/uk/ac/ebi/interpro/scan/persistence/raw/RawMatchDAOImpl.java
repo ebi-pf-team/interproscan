@@ -140,6 +140,8 @@ public class RawMatchDAOImpl<T extends RawMatch>
             long bottomId, long topId, String signatureDatabaseRelease) {
         Map<String, RawProtein<T>> proteinIdToMatchMap =
                 new HashMap<String, RawProtein<T>>();
+
+        // Get raw matches
         Query query = entityManager
                 .createQuery(String.format("select p from %s  p  " +
                         "where p.numericSequenceId >= :bottom " +

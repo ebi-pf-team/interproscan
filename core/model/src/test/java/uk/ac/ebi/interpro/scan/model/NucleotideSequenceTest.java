@@ -19,10 +19,10 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -30,15 +30,17 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for {@link NucleotideSequence}
  *
  * @author Antony Quinn
+ * @author Gift nuka
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
 
@@ -51,7 +53,7 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
         // Copy
         NucleotideSequence copy = (NucleotideSequence) SerializationUtils.clone(original);
         // Should be equal
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals(original, copy, "Original and copy should be equal");
         // Print
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(original);
@@ -69,28 +71,31 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
     public void testIUPACNucleotideCharacters() {
         // This sequence contains all IPUAC nucleotide characters, so MUST be accepted as valid
         String sequence = "cccaaaaaaatgatgcttatacatrttattataaagtctagctcagagcttttgttttcaaty" +
-                          "ttctatggttctcacagagattttctccacaatgaatcttattactgaattcccaaattgggc" +
-                          "agctatagca--ttcgatttcgnntttgaatcaaaagagaagactcggccattgatactcgca" +
-                          "gggaaatgcagagctaacaatccaccgtctagtttctatgaattgcaaaacatgttacaaata" +
-                          "dttttattgaaaacaaaacacagaatccagakctggaaaagacamaagattactagcagaaca" +
-                          "tttacggatggagcagaacatttacggatggagccgtagaaatagtcgtctgtctatcgacag" +
-                          "aaatstaaatacaacagtgattttattgatgagatgcagtctttagtttgcabgacggcaaca" +
-                          "haaagctttuttctttcatcttaataaatagacttaaaaagaatgaaaccaaacatccaactg" +
-                          "tvtaaataaccacttgcacttgcagtcattaatccaatttaagaaaccaaaaatccccaaaaat" +
-                          "taaatagccctctgcaaaggttttcaccaagaagacccagatccagggaaattttctggttttt" +
-                          "ttttcatttcgataaaaattaaacaggcgaattaccgtaatggagcgacgactgccattgcggt" +
-                          "twaagaagaaattatggaatgggcagcaacggaggtaactgttctagaaggaggctcccatctc" +
-                          "tgtagaatcttcagtaatgaggtggcttttcgtttyycgcggtgagtgcctgtcgtgagaagaa" +
-                           "tgtacaaggaagg.accaacgatggaacca.ggtcacggcgttcagaacattgccgcctccgt";
+                "ttctatggttctcacagagattttctccacaatgaatcttattactgaattcccaaattgggc" +
+                "agctatagca--ttcgatttcgnntttgaatcaaaagagaagactcggccattgatactcgca" +
+                "gggaaatgcagagctaacaatccaccgtctagtttctatgaattgcaaaacatgttacaaata" +
+                "dttttattgaaaacaaaacacagaatccagakctggaaaagacamaagattactagcagaaca" +
+                "tttacggatggagcagaacatttacggatggagccgtagaaatagtcgtctgtctatcgacag" +
+                "aaatstaaatacaacagtgattttattgatgagatgcagtctttagtttgcabgacggcaaca" +
+                "haaagctttuttctttcatcttaataaatagacttaaaaagaatgaaaccaaacatccaactg" +
+                "tvtaaataaccacttgcacttgcagtcattaatccaatttaagaaaccaaaaatccccaaaaat" +
+                "taaatagccctctgcaaaggttttcaccaagaagacccagatccagggaaattttctggttttt" +
+                "ttttcatttcgataaaaattaaacaggcgaattaccgtaatggagcgacgactgccattgcggt" +
+                "twaagaagaaattatggaatgggcagcaacggaggtaactgttctagaaggaggctcccatctc" +
+                "tgtagaatcttcagtaatgaggtggcttttcgtttyycgcggtgagtgcctgtcgtgagaagaa" +
+                "tgtacaaggaagg.accaacgatggaacca.ggtcacggcgttcagaacattgccgcctccgt";
         NucleotideSequence ns = new NucleotideSequence(sequence);
 
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidNucleotideCharacters() {
         // Create a sequence with some completely invalid characters
-        NucleotideSequence ns = new NucleotideSequence("gggazatgcagagctaacaatccaccgtctagtttclatgaattgcaaaacatgttacaaata");
+        assertThrows(IllegalArgumentException.class, () -> {
+            NucleotideSequence ns = new NucleotideSequence("gggazatgcagagctaacaatccaccgtctagtttclatgaattgcaaaacatgttacaaata");
+        });
+
 
     }
 
@@ -119,9 +124,9 @@ public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
         sm.addLocation(new SuperMatch.Location(45, 60));
         p.addSuperMatch(sm);
         // Matches;
-        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 121, 2, 108));
-        p.addMatch(new Hmmer3Match(signature, 0.035, 3.7e-9, locations));
+        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<>();
+        locations.add(new Hmmer3Match.Hmmer3Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.INCOMPLETE, 2, 108, true, DCStatus.CONTINUOUS));
+        p.addMatch(new Hmmer3Match(signature, "PF02310", 0.035, 3.7e-9, locations));
         return p;
     }
 

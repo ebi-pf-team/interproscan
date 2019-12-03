@@ -1,10 +1,11 @@
 package uk.ac.ebi.interpro.scan.model;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -13,9 +14,11 @@ import java.io.InputStreamReader;
 
 /**
  * Created by IntelliJ IDEA.
- * User: pjones
+ * @author pjones
+ * @author Gift Nuka
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class GeneralUnmarshallTest extends AbstractXmlTest<ProteinMatchesHolder> {
 
@@ -24,9 +27,9 @@ public class GeneralUnmarshallTest extends AbstractXmlTest<ProteinMatchesHolder>
 
     @Test
     public void testXmlUn304marshalling() throws IOException {
-        Assert.assertNotNull("The testXML Resource has not been set", testXML);
+        assertNotNull( testXML, "The testXML Resource has not been set");
         Source source = new StreamSource(new InputStreamReader(testXML.getInputStream()));
         ProteinMatchesHolder pmh = unmarshal(source);
-        Assert.assertNotNull("Unmarshalling of the XML has returned a null ProteinMatchesHolder object", pmh);
+        assertNotNull( pmh,"Unmarshalling of the XML has returned a null ProteinMatchesHolder object");
     }
 }

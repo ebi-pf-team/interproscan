@@ -19,23 +19,23 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.text.ParseException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test cases for {@link SignatureLibraryRelease}
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
  * @version $Id$
  * @since 1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
@@ -59,9 +59,9 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
         //TODO: Why is the signature library set to NULL?
         //copy.getSignatures().iterator().next().setSignatureLibraryRelease(null);
         // Should be equal
-        assertEquals("Original and copy models should be equal", original.getSignatures().iterator().next().getModels(), copy.getSignatures().iterator().next().getModels());
-        assertEquals("Original and copy signatures should be equal", original.getSignatures(), copy.getSignatures());
-        assertEquals("Original and copy should be equal", original, copy);
+        assertEquals( original.getSignatures().iterator().next().getModels(), copy.getSignatures().iterator().next().getModels(), "Original and copy models should be equal");
+        assertEquals( original.getSignatures(), copy.getSignatures(), "Original and copy signatures should be equal");
+        assertEquals( original, copy, "Original and copy should be equal");
     }
 
     @Test
@@ -70,27 +70,27 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
         Signature s1 = sdr.addSignature(new Signature("PF00001"));
         Signature s2 = sdr.addSignature(new Signature("PF00002"));
         // Should be OK
-        assertEquals("Should have two signatures", 2, sdr.getSignatures().size());
+        assertEquals( 2, sdr.getSignatures().size(), "Should have two signatures");
         // Should be OK (key not recognised, so just ignores)
         sdr.removeSignature(new Signature("??"));
-        assertEquals("Should have two signatures", 2, sdr.getSignatures().size());
+        assertEquals( 2, sdr.getSignatures().size(), "Should have two signatures");
         // Should fail
         try {
             sdr.removeSignature(null);
         } catch (Exception e) {
-            assertTrue("Should be NullPointerException", e instanceof NullPointerException);
+            assertTrue( e instanceof NullPointerException, "Should be NullPointerException");
         }
         // Should be OK
         sdr.removeSignature(s1);
-        assertEquals("Should have one signature", 1, sdr.getSignatures().size());
+        assertEquals( 1, sdr.getSignatures().size(), "Should have one signature");
         sdr.removeSignature(s2);
-        assertEquals("Should have no signatures", 0, sdr.getSignatures().size());
+        assertEquals( 0, sdr.getSignatures().size(),"Should have no signatures");
     }
 
     @Test
     public void testPrints() throws IOException, ParseException {
         SignatureLibraryRelease release = getPrintsObject();
-        assertEquals("Should have 3 xrefs", 3, release.getSignatures().iterator().next().getCrossReferences().size());
+        assertEquals(3, release.getSignatures().iterator().next().getCrossReferences().size(), "Should have 3 xrefs");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(release);
             LOGGER.debug(super.marshal(release));
@@ -124,7 +124,7 @@ public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRe
                         .name("Nucleic acid-binding proteins")
                         .type("domain")
                         .build());
-        signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins"));
+        signature.addModel(new Model("1o7iB00", "1o7iB00", "Nucleic acid-binding proteins", 265));
         return release;
     }
 

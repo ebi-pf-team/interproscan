@@ -1,12 +1,14 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import org.hibernate.Hibernate;
+import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import uk.ac.ebi.interpro.scan.model.HmmBounds;
-import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
+import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+
+//import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +44,9 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
     @Column(nullable = false)
     private double domainBias;
+
+    @Column(nullable = true)
+    private UUID splitGroup;
 
     protected Hmmer3RawMatch() {
     }
@@ -122,15 +127,23 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
         this.domainBias = domainBias;
     }
 
+    public UUID getSplitGroup() {
+        return splitGroup;
+    }
+
+    public void setSplitGroup(UUID splitGroup) {
+        this.splitGroup = splitGroup;
+    }
+
     // TODO: Generalise this to RawMatch
 
     public static Collection<Hmmer3Match> getMatches(Collection<? extends Hmmer3RawMatch> rawMatches,
-                                                     Listener rawMatchListener) {
-        Collection<Hmmer3Match> matches = new HashSet<Hmmer3Match>();
+                                                     Map<String, SignatureModelHolder> modelIdToSignatureMap) {
+        Collection<Hmmer3Match> matches = new HashSet<>();
         // Get a list of unique model IDs
         SignatureLibrary signatureLibrary = null;
         String signatureLibraryRelease = null;
-        Map<String, Set<Hmmer3RawMatch>> matchesByModel = new HashMap<String, Set<Hmmer3RawMatch>>();
+        Map<String, Set<Hmmer3RawMatch>> matchesByModel = new HashMap<>();
         for (Hmmer3RawMatch m : rawMatches) {
             // Get signature library name and release
             if (signatureLibrary == null) {
@@ -146,34 +159,107 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
             if (matchesByModel.containsKey(modelId)) {
                 matchesByModel.get(modelId).add(m);
             } else {
-                Set<Hmmer3RawMatch> set = new HashSet<Hmmer3RawMatch>();
+                Set<Hmmer3RawMatch> set = new HashSet<>();
                 set.add(m);
                 matchesByModel.put(modelId, set);
             }
         }
         // Find the location(s) for each match and create a Match instance
         for (String key : matchesByModel.keySet()) {
-            Signature signature = rawMatchListener.getSignature(key, signatureLibrary, signatureLibraryRelease);
-            matches.add(getMatch(signature, key, matchesByModel));
+            SignatureModelHolder holder = modelIdToSignatureMap.get(key);
+            Signature signature = holder.getSignature();
+            if (signature != null) {
+                //TODO when gene3d model 2signaturemap is resolved remove this condition
+                Model model = holder.getModel();
+                matches.addAll(getMatches(signature, model, key, matchesByModel));
+            }else{
+                //TODO
+                // display warning
+            }
         }
         // Next step would be to link this with protein...
         return matches;
 
     }
 
-    private static Hmmer3Match getMatch(Signature signature, String modelId, Map<String, Set<Hmmer3RawMatch>> matchesByModel) {
-        Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
+    private static Collection<Hmmer3Match> getMatches(Signature signature, Model model, String modelId, Map<String, Set<Hmmer3RawMatch>> matchesByModel) {
+        assert modelId.equals(model.getAccession());
+        Set<Hmmer3Match.Hmmer3Location> nonSplitLocations = new HashSet<>();
         double score = 0, evalue = 0;
+
+        final Map<UUID, Hmmer3Match> splitGroupToMatch = new HashMap<>();
+
         for (Hmmer3RawMatch m : matchesByModel.get(modelId)) {
             // Score and evalue should be the same (repeated for each location)
             score = m.getScore();
             evalue = m.getEvalue();
-            locations.add(getLocation(m));
+            int hmmLength = model.getLength();
+
+            Hmmer3Match match = splitGroupToMatch.get(m.getSplitGroup());
+            Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment hmmer3LocationFragment = new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
+                    m.getLocationStart(), m.getLocationEnd(), DCStatus.parseSymbol(m.getLocFragmentDCStatus())
+            );
+//            System.out.println("hmmer3LocationFragment: bounds was [" + m.getLocFragmentBounds() + "] -- > " + hmmer3LocationFragment.toString());
+            if (match == null){
+                //create new match or new location
+                Hmmer3Match.Hmmer3Location hmmer3Location = getLocation(m, hmmLength);
+                if (m.getSplitGroup() == null){
+                    // this is a normal single location
+                    nonSplitLocations.add(hmmer3Location);
+                }else {
+                    //this is a discontinuous domain as it has a split group
+                    match = new Hmmer3Match(signature, modelId, score, evalue, null);
+                    match.addLocation(hmmer3Location);
+                    splitGroupToMatch.put(m.getSplitGroup(), match);
+                }
+//                System.out.println("hmmer3Location:" + hmmer3Location.toString());
+            }else{
+                //we already have the match in the splitgroup match
+                //this is a discontinuous domain as it has a split group
+                Set<Hmmer3Match.Hmmer3Location> locations = match.getLocations();
+                Hmmer3Match.Hmmer3Location location = locations.iterator().next();
+                for (Object objFragment: location.getLocationFragments()){
+                    LocationFragment cmprLocationFragment = (LocationFragment)  objFragment;
+                    hmmer3LocationFragment.updateDCStatus(cmprLocationFragment);
+                    cmprLocationFragment.updateDCStatus(hmmer3LocationFragment);
+//                    System.out.println("cmprLocationFragment: " + cmprLocationFragment.toString() + " \nhmmer3LocationFragment : "
+//                            + hmmer3LocationFragment.toString());
+                }
+                location.addLocationFragment(hmmer3LocationFragment);
+//                System.out.println("location:" + location.toString());
+            }
+            if (match != null) {
+                //System.out.println("match: " + match.toString());
+                // find a better way of displaying debug in model classes
+                //hibernate initialise
+                /*
+                Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
+                Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
+                match.getSignature().getEntry().getPathwayXRefs().size();
+                match.getSignature().getEntry().getGoXRefs().size();
+                match.getSignature().getCrossReferences();
+                */
+                updateMatch(match);
+                int count = 0;
+            }
+
         }
-        return new Hmmer3Match(signature, score, evalue, locations);
+        if (nonSplitLocations.size() > 0) {
+            Hmmer3Match nonSplitMatch = new Hmmer3Match(signature, modelId, score, evalue, nonSplitLocations);
+            final UUID matchUUID = UUID.randomUUID(); // just for putting the match in the matchset
+            splitGroupToMatch.put(matchUUID, nonSplitMatch);
+        }
+        //return new Hmmer3Match(signature, score, evalue, locations);
+//        System.out.println("Matches:" + splitGroupToMatch.values().toString());
+        return splitGroupToMatch.values();
     }
 
-    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m) {
+    private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength) {
+        boolean postProcessed = false;
+        if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch) {
+            postProcessed = true;
+        }
+
         return new Hmmer3Match.Hmmer3Location(
                 m.getLocationStart(),
                 m.getLocationEnd(),
@@ -181,9 +267,12 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
                 m.getDomainIeValue(),
                 m.getHmmStart(),
                 m.getHmmEnd(),
+                hmmLength,
                 HmmBounds.parseSymbol(m.getHmmBounds()),
                 m.getEnvelopeStart(),
-                m.getEnvelopeEnd()
+                m.getEnvelopeEnd(),
+                postProcessed,
+                DCStatus.parseSymbol(m.getLocFragmentDCStatus())
         );
     }
 
@@ -223,6 +312,23 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public static void updateMatch(Match match){
+        Entry matchEntry = match.getSignature().getEntry();
+        if(matchEntry!= null) {
+            //check goterms
+            //check pathways
+            matchEntry.getGoXRefs();
+            if (matchEntry.getGoXRefs() != null) {
+                matchEntry.getGoXRefs().size();
+            }
+            matchEntry.getPathwayXRefs();
+            if (matchEntry.getPathwayXRefs() != null) {
+                matchEntry.getPathwayXRefs().size();
+            }
+            match.getSignature().getCrossReferences();
+        }
     }
 
 }

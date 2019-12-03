@@ -1,10 +1,17 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import org.junit.jupiter.api.Disabled;
+
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
@@ -15,15 +22,18 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  *
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
+ *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
+//@Disabled ("TODO remove after removing the errors")
 public class ProteinXrefDAOTest {
 
-    @Resource
+    @Resource //(name = "proteinDAO")
     private ProteinDAO proteinDAO;
 
-    @Resource
+    @Resource (name = "proteinXrefDAO")
     private ProteinXrefDAO proteinXrefDAO;
 
     @Test
@@ -47,10 +57,10 @@ public class ProteinXrefDAOTest {
         // Retrieve a List of non-unique sequences - should contain just Q12345.
 
         List<String> nonUniqueXrefs = proteinXrefDAO.getNonUniqueXrefs();
-        Assert.assertNotNull(nonUniqueXrefs);
-        Assert.assertEquals(1, nonUniqueXrefs.size());
+        assertNotNull(nonUniqueXrefs);
+        assertEquals(1, nonUniqueXrefs.size());
         String nonUnique = nonUniqueXrefs.get(0);
-        Assert.assertEquals(identifier1, nonUnique);
+        assertEquals(identifier1, nonUnique);
     }
 
     @Test
@@ -73,11 +83,11 @@ public class ProteinXrefDAOTest {
         proteinDAO.insert(protein3);
 
         List<ProteinXref> proteinXrefs = proteinXrefDAO.getXrefAndProteinByProteinXrefIdentifier("Q12345");
-        Assert.assertEquals(3, proteinXrefs.size());
+        assertEquals(3, proteinXrefs.size());
         Long proteinId1 = proteinXrefs.get(0).getProtein().getId();
         Long proteinId2 = proteinXrefs.get(1).getProtein().getId();
         Long proteinId3 = proteinXrefs.get(2).getProtein().getId();
-        Assert.assertEquals("", 1, proteinId3.compareTo(proteinId2));
-        Assert.assertEquals("", 1, proteinId2.compareTo(proteinId1));
+        assertEquals(1, proteinId3.compareTo(proteinId2));
+        assertEquals(1, proteinId2.compareTo(proteinId1));
     }
 }

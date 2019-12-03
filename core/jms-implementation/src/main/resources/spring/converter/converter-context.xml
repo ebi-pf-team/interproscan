@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--Imports-->
     <import resource="classpath:/spring/spring-properties-context.xml"/>
@@ -10,6 +10,8 @@
     <import resource="classpath:/spring/jobs/outputWriter/xml/xmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/html/htmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/svg/svgWriter-context.xml"/>
+    <import resource="classpath:/spring/jobs/outputWriter/EntryHierarchy-context.xml"/>
+    <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
     <bean id="convert" class="uk.ac.ebi.interpro.scan.jms.converter.Converter">
         <property name="marshaller" ref="interproMarshaller"/>
@@ -19,6 +21,8 @@
         <property name="temporaryDirectory" value="${temporary.file.directory}"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
-    </bean>
+        <property name="interproscanVersion" value="${i5.version}"/>
+        <property name="entryHierarchy" ref="entryHierarchy"/>
+     </bean>
 
 </beans>

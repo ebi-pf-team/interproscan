@@ -1,6 +1,6 @@
 <#import "../macros/supermatchLocation.ftl" as supermatchLocationMacro>
 
-<#macro condensedView condensedView scale entryColours>
+<#macro condensedView condensedView scale entryColours idPrefix>
 
     <#if condensedView?? && (condensedView.numSuperMatchBlobs > 0)>
     <div class="prot_sum">
@@ -23,24 +23,23 @@
     <li class="signature entry-signatures">
         <#-- the order of the divs is important , first right column fixed-->
         <#if showAll>
-        <div class="bot-row-signame">${type}</div>
+        <div class="bot-row-signame">${type?replace("_"," ")}</div>
         </#if>
         <div class="bot-row-line">
             <div class="matches">
                 <#list line.superMatchList as superMatch>
                     <#global superMatchId=superMatchId + 1>
-                    <#--TODO: Is the next check the right thing to do???  Might not be...-->
                     <#--This check ensures that the entry is in the colour mapping file.  If not, uses a default class.-->
-                    <#if entryColours[superMatch.firstEntry.ac]??>
-                    <@supermatchLocationMacro.supermatchLocation supermatchId=superMatchId proteinLength=proteinLength supermatch=superMatch colourClass="c"+entryColours[superMatch.firstEntry.ac]+" "+type />
+                    <#if entryColours?has_content && entryColours[superMatch.firstEntry.ac]??>
+                    <@supermatchLocationMacro.supermatchLocation supermatchId=idPrefix+"-"+superMatchId proteinLength=proteinLength supermatch=superMatch colourClass="c"+entryColours[superMatch.firstEntry.ac]+" "+type />
                 <#else>
-                    <@supermatchLocationMacro.supermatchLocation supermatchId=superMatchId proteinLength=proteinLength supermatch=superMatch colourClass="c1 "+type />
+                    <@supermatchLocationMacro.supermatchLocation supermatchId=idPrefix+"-"+superMatchId proteinLength=proteinLength supermatch=superMatch colourClass=type />
                 </#if>
                 </#list>
 
                 <#--Draw in scale markers for this line-->
                 <#list scale?split(",") as scaleMarker>
-                    <span class="grade" style="left:${(scaleMarker?number?int / proteinLength) * 100}%;" title="${scaleMarker}"></span>
+                    <span class="grade" style="left:${((scaleMarker?number?int / proteinLength) * 100)?c}%;" title="${scaleMarker}"></span>
                 </#list>
 
             </div>
@@ -62,15 +61,15 @@
                     <#list scale?split(",") as scaleMarker>
                         <#-- to build an exception for 0 -->
                         <#if scaleMarker?number == 0>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
+                            <span class="scale_bar" style="left:${((scaleMarker?number / proteinLength) * 100)?c}%;"
                                   title="1"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / proteinLength) * 100+1}%;">1</span>
+                                      style="left:${((scaleMarker?number / proteinLength) * 100+1)?c}%;">1</span>
                         <#else>
-                            <span class="scale_bar" style="left:${(scaleMarker?number / proteinLength) * 100}%;"
+                            <span class="scale_bar" style="left:${((scaleMarker?number / proteinLength) * 100)?c}%;"
                                   title="${scaleMarker}"></span>
                                 <span class="scale_numb"
-                                      style="left:${(scaleMarker?number / proteinLength) * 100}%;">${scaleMarker}</span>
+                                      style="left:${((scaleMarker?number / proteinLength) * 100)?c}%;">${scaleMarker}</span>
                         </#if>
                     </#list>
                 </div>

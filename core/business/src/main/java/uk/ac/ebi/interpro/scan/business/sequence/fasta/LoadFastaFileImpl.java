@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
+import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,8 +36,15 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     private SequenceLoader<T> sequenceLoader;
 
+    String levelDBStoreRoot;
+
+    protected String inputType = "Protein";
+
     protected static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
 
+    public void setInputType(String inputType) {
+        this.inputType = inputType;
+    }
 
     @Override
     @Required
@@ -43,10 +52,15 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
         this.sequenceLoader = sequenceLoader;
     }
 
+//    @Override
+    public void setLevelDBStoreRoot(String levelDBStoreRoot) {
+        this.levelDBStoreRoot = levelDBStoreRoot;
+    }
 
     @Override
     @Transactional
     public void loadSequences(InputStream fastaFileInputStream, SequenceLoadListener sequenceLoaderListener,Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
+        sequenceLoader.setDisplayLookupMessage(true);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
         int sequencesParsed = 0;
@@ -59,6 +73,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
             final Set<T> parsedMolecules = new HashSet<>();
 
+            Utilities.verboseLog("start Parsing  input file stream");
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.length() > 0) {
@@ -68,13 +83,13 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                         // Store previous record, if it exists.
                         if (currentId != null) {
                             if (LOGGER.isDebugEnabled()) {
-                                if (sequencesParsed % 500 == 0) {
-                                    LOGGER.debug("Stored " + sequencesParsed + " sequences.");
-                                    if (LOGGER.isTraceEnabled()) {
-                                        LOGGER.trace("Current id: " + currentId);
-                                        LOGGER.trace("Current sequence: '" + currentSequence + "'");
-                                    }
-                                }
+//                                if (sequencesParsed % 500 == 0) {
+//                                    LOGGER.debug("Stored " + sequencesParsed + " sequences.");
+//                                    if (LOGGER.isTraceEnabled()) {
+//                                        LOGGER.trace("Current id: " + currentId);
+//                                        LOGGER.trace("Current sequence: '" + currentSequence + "'");
+//                                    }
+//                                }
                                 if (LOGGER.isTraceEnabled()) {
                                     Matcher seqCheckMatcher = Protein.AMINO_ACID_PATTERN.matcher(currentSequence);
                                     if (!seqCheckMatcher.matches()) {
@@ -87,10 +102,21 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                                 addToMoleculeCollection(seq, currentId, parsedMolecules);
                                 sequencesParsed++;
                             }
+//                            if (sequencesParsed == 1000 ) {
+//                                //check if we are running nucleotides
+//                               if (parsedMolecules.iterator().next() instanceof NucleotideSequence){
+//                                    LOGGER.info("You are analysing more than 1000 nucleotide sequences. " +
+//                                            " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
+//                                            " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
+//                                }
+//                                throw new IllegalStateException("Input error - nucleotide sequence  count : " + sequencesParsed);
+//                            }
+
                             currentSequence.delete(0, currentSequence.length());
-                            if (sequencesParsed % 5000 == 0) {
-                                if (sequencesParsed % 10000 == 0) {
+                            if (sequencesParsed % 4000 == 0) {
+                                if (sequencesParsed % 16000 == 0) {
                                     //TODO use utilities.verboselog
+                                    Utilities.verboseLog("Parsed " + sequencesParsed + " sequences");
                                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
                                 }else{
                                     if(LOGGER.isInfoEnabled()){
@@ -127,11 +153,16 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 addToMoleculeCollection(currentSequence.toString(), currentId, parsedMolecules);
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
+
+            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
+
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
             sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
+            Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
             sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
+            Utilities.verboseLog("Store and persist the sequences ...  completed");
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         }
@@ -163,3 +194,4 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
     protected abstract void addToMoleculeCollection(String sequence, final String currentId, final Set<T> parsedMolecules);
 }
+//todo edit

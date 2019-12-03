@@ -9,6 +9,20 @@ import java.util.Map;
 public interface BlackBoxMaster extends SimpleBlackBoxMaster {
 
     /**
+     * Boolean switch which excludes sites from the output.
+     *
+     * @param excludeSites Default is false (not activated)
+     */
+    void setExcludeSites(boolean excludeSites);
+
+    /**
+     * Boolean switch which includes sites in the TSV output.
+     *
+     * @param includeTsvSites Default is false (not activated)
+     */
+    void setIncludeTsvSites(boolean includeTsvSites);
+
+    /**
      * Boolean switch which activates the InterPro lookup.
      *
      * @param mapToInterPro Default is FALSE (not activated)
@@ -57,5 +71,13 @@ public interface BlackBoxMaster extends SimpleBlackBoxMaster {
     void processOutputFormats(final Map<String, String> params, final String[] outputFormats);
 
     void setUserDir(String userDir);
+
+    /**
+     * Boolean switch which includes the TSV version output file.
+     *
+     * @param inclTSVVersion Default is FALSE (not activated)
+     */
+
+    void setInclTSVVersion(boolean inclTSVVersion);
 
 }

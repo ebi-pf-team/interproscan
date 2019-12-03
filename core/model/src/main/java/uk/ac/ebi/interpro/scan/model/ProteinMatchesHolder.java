@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -25,9 +26,18 @@ import java.util.Set;
 @XmlType(name = "proteinMatchesType")
 public final class ProteinMatchesHolder implements IMatchesHolder, Serializable {
 
+    private String interProScanVersion = "Unknown";
     private final Set<Protein> proteins = new HashSet<Protein>();
 
-    public ProteinMatchesHolder() {
+    public ProteinMatchesHolder() {}
+
+    public ProteinMatchesHolder(String interProScanVersion) {
+        this.interProScanVersion = interProScanVersion;
+    }
+
+    @XmlAttribute(name = "interproscan-version")
+    public String getInterProScanVersion() {
+        return interProScanVersion;
     }
 
     public void addProtein(Protein protein) {
@@ -70,6 +80,7 @@ public final class ProteinMatchesHolder implements IMatchesHolder, Serializable 
             return false;
         final ProteinMatchesHolder s = (ProteinMatchesHolder) o;
         return new EqualsBuilder()
+                .append(interProScanVersion, s.interProScanVersion)
                 .append(proteins, s.proteins)
                 .isEquals();
     }
@@ -77,6 +88,7 @@ public final class ProteinMatchesHolder implements IMatchesHolder, Serializable 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(71, 53)
+                .append(interProScanVersion)
                 .append(proteins)
                 .toHashCode();
     }

@@ -27,6 +27,7 @@
                     <property name="signatureLibrary" value="COILS"/>
                     <property name="releaseVersionNumber" value="${coils.signature.library.release}"/>
                     <property name="analysisJobId" value="jobCoils"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
@@ -37,24 +38,33 @@
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
 
+                <bean class="uk.ac.ebi.interpro.scan.io.mobidb.MobiDBDummyModelParser">
+                    <property name="signatureLibrary" value="MOBIDB_LITE"/>
+                    <property name="releaseVersionNumber" value="${mobidb.signature.library.release}"/>
+                    <property name="analysisJobId" value="jobMobiDBLite"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
+                </bean>
+
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="SFLD"/>
+                    <property name="releaseVersionNumber" value="${sfld.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${sfld.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobSFLD"/>
+                </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
                     <property name="signatureLibrary" value="TMHMM"/>
                     <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.phobius.PhobiusDummyParser">
                     <property name="signatureLibrary" value="PHOBIUS"/>
                     <property name="releaseVersionNumber" value="${phobius.signature.library.release}"/>
                     <property name="analysisJobId" value="jobPhobius"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PFAM"/>
-                    <property name="releaseVersionNumber" value="${prev.pfam-a.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${prev.pfam-a.hmm.path}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPfam"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
@@ -65,14 +75,6 @@
                     <property name="analysisJobId" value="jobPfam"/>
                 </bean>
 
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PFAM"/>
-                    <property name="releaseVersionNumber" value="${pfam-a.signature.library.release.prev}"/>
-                    <property name="modelFiles" value="file:${pfam-a.hmm.path.prev}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPfam"/>
-                </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
@@ -116,10 +118,10 @@
 
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="3.01"/>
-                    <property name="modelFiles" value="file:${pirsf.sfhmm.path.3.01}"/>
+                    <property name="releaseVersionNumber" value="${pirsf.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${pirsf.sfhmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF-3.01"/>
+                    <property name="analysisJobId" value="jobPIRSF"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">

@@ -34,8 +34,8 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         super();
     }
 
-    public GFFResultWriterForNucSeqs(Path path) throws IOException {
-        super(path);
+    public GFFResultWriterForNucSeqs(Path path, String interProScanVersion) throws IOException {
+        super(path, interProScanVersion);
     }
 
     private String getNucleotideId() {
@@ -116,7 +116,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                             // Getorf appends '_N' where N is an integer to the protein accession. We need to compare this to the nucleotide sequence ID, that does not have _N on the end, so first of all strip this off for the comparison.
                             String strippedProteinId = XrefParser.stripOfFinalUnderScore(proteinXref.getIdentifier());
                             // Get rid of those pesky version numbers too.
-                            strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
+                            //strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
                             // V.
                             if ((nucleotideSequenceXrefId.equals(strippedProteinId))) {
                                 // VI.
@@ -145,7 +145,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                         super.gffWriter.write(getPolypeptideLine(sequenceLength, proteinIdForGFF, md5));
                         processMatches(protein.getMatches(), proteinIdForGFF, date, protein, getNucleotideId());
                     } else {
-                        throw new IllegalStateException("Cannot find the ORF object that maps to protein with PK / MD5: " + protein.getId() + " / " + protein.getMd5());
+                        throw new IllegalStateException("Cannot find the ORF object that maps to protein with MD5: " + protein.getMd5());
                     }
                 }
             }
@@ -220,7 +220,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                 //Write polypeptide
                 super.gffWriter.write(getPolypeptideLine(sequenceLength, proteinIdForGFF, md5));
             } else {
-                throw new IllegalStateException("Cannot find the ORF object that maps to protein with PK / MD5: " + protein.getId() + " / " + protein.getMd5());
+                throw new IllegalStateException("Cannot find the ORF object that maps to protein with MD5: " + protein.getMd5());
             }
         }
     }

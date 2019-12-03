@@ -18,13 +18,22 @@ package uk.ac.ebi.interpro.scan.persistence;
 
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
+import org.iq80.leveldb.DB;
+
+import org.iq80.leveldb.WriteBatch;
+import org.iq80.leveldb.DBException;
+import uk.ac.ebi.interpro.scan.persistence.kvstore.KVDB;
+import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
+import uk.ac.ebi.interpro.scan.util.Utilities;
+
 import javax.persistence.Query;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -37,7 +46,7 @@ import java.util.*;
  *
  * @author Phil Jones, EMBL-EBI
  */
-public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements ProteinDAO {
+public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements ProteinDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ProteinDAOImpl.class.getName());
 
@@ -47,6 +56,12 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
      * sub-classes of the Match class, allowing them to be queried in turn.
      */
     private static final List<String> CONCRETE_MATCH_CLASSES = new ArrayList<String>();
+
+    protected KVDB proteinsNotInLookupDB;
+
+    private Set<Protein> proteinsWithoutLookupHit;
+
+    Map<Long, Protein> proteinIdsWithoutLookupHit;
 
     static {
         final Reflections reflections = new Reflections("uk.ac.ebi.interpro.scan.model");
@@ -65,6 +80,184 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
     public ProteinDAOImpl() {
         super(Protein.class);
     }
+
+
+    //new methods utisiling the KV api
+    @Transactional
+    public void persist(final Map<String, Protein> keyToProteinMap) {
+        /*
+        try {
+            WriteBatch batch = dbStore.getLevelDBStore().createWriteBatch();
+            try {
+                for (Map.Entry<String, Protein> entry : keyToProteinMap.entrySet()) {
+                    String key = entry.getKey();
+                    Protein protein = entry.getValue();
+                    byte[] byteKey = dbStore.serialize(key);
+                    byte[] data = dbStore.serialize(protein);
+                    batch.put(byteKey, data);
+                }
+
+                // do batch operation with sync option.
+
+                dbStore.getLevelDBStore().write(batch);
+                //levelDBStore.getLevelDBStore().write(batch, SYNC_WRITE_OPTION);
+
+                LOGGER.info("data flushed to kv db .... " + dbStore.getDbName());
+
+            } finally {
+                // close the batch
+                try {
+                    batch.close();
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (DBException e) {
+            new IOException(e).printStackTrace();
+            //throw new IOException(e);
+        }
+
+        */
+    }
+
+    @Transactional
+    @Override
+    public void insert(String key, Protein protein) {
+        dbStore.put(key, dbStore.serialize(protein));
+        //return protein;
+    }
+
+    @Transactional
+    @Override
+    public void insertProteinNotInLookup(String key, Protein protein) {
+        proteinsNotInLookupDB.put(key, dbStore.serialize(protein));
+        //return protein;
+    }
+
+    @Transactional
+    public void persist(byte[] key, byte[] protein) {
+        dbStore.put(key, protein);
+    }
+
+    @Transactional
+    public void persistProteinNotInLookup(byte[] key, byte[] protein) {
+        proteinsNotInLookupDB.put(key, protein);
+    }
+
+    @Transactional
+    public Protein getProtein(String key) {
+        byte[] byteProtein = dbStore.get(key);
+        if(byteProtein != null) {
+            return dbStore.asProtein(byteProtein);
+        }
+        return null;
+    }
+
+    @Transactional
+    public Protein getProteinNotInLookup(String key) {
+        byte[] byteProtein = proteinsNotInLookupDB.get(key);
+        if(byteProtein != null) {
+            return proteinsNotInLookupDB.asProtein(byteProtein);
+        }
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Protein> getProteins() throws Exception{
+        List<Protein> proteins = new ArrayList<Protein>();
+        Collection<byte[]> allByteProteins = dbStore.getAllElements().values();
+        for (byte[] byteProtein : allByteProteins) {
+            Protein protein = dbStore.asProtein(byteProtein);
+            proteins.add(protein);
+        }
+        return proteins;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Protein> getProteinsNotInLookup() throws Exception{
+        List<Protein> proteins = new ArrayList<Protein>();
+        Collection<byte[]> allByteProteins = proteinsNotInLookupDB.getAllElements().values();
+        for (byte[] byteProtein : allByteProteins) {
+            Protein protein = proteinsNotInLookupDB.asProtein(byteProtein);
+            proteins.add(protein);
+        }
+        return proteins;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Protein> getKeyToProteinMap()  throws Exception{
+        Map<String, Protein> keyToProteinMap = new HashMap<>();
+        Map<byte[], byte[]> allByteProteins = dbStore.getAllElements();
+        Iterator it = allByteProteins.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            String key = dbStore.asString((byte[]) pair.getKey());
+            Protein protein = dbStore.asProtein((byte[]) pair.getValue());
+            //Utilities.verboseLog(" key:" + key + " protein: " + protein.getId());
+            keyToProteinMap.put(key, protein);
+        }
+        return keyToProteinMap;
+    }
+
+
+
+    public void setProteinsWithoutLookupHit(Set<Protein> proteinsWithoutLookupHit) {
+        this.proteinsWithoutLookupHit = proteinsWithoutLookupHit;
+    }
+
+    @Transactional
+    public Set<Protein> getProteinsWithoutLookupHit() {
+        return proteinsWithoutLookupHit;
+    }
+
+    public void setProteinIdsWithoutLookupHit(Map<Long, Protein> proteinIdsWithoutLookupHit) {
+        this.proteinIdsWithoutLookupHit = proteinIdsWithoutLookupHit;
+    }
+
+    public Map<Long, Protein> getProteinIdsWithoutLookupHit() {
+        return proteinIdsWithoutLookupHit;
+    }
+
+    public KVDB getProteinsNotInLookupDB() {
+        return proteinsNotInLookupDB;
+    }
+
+    @Required
+    public void setProteinsNotInLookupDB(KVDB proteinsNotInLookupDB) {
+        this.proteinsNotInLookupDB = proteinsNotInLookupDB;
+
+    }
+
+    public void checkKVDBStores(){
+        Utilities.verboseLog(10, "Main Store: " + dbStore.getKVDBStore());
+        Utilities.verboseLog(10,"Secondary Store: " + proteinsNotInLookupDB.getKVDBStore());
+
+        if(this.proteinsNotInLookupDB == null){
+            LOGGER.warn("proteinsNotInLookupDB == null");
+        }else{
+            if (! (proteinsNotInLookupDB.getLevelDBStore() == null)){
+                Utilities.verboseLog("proteinsNotInLookupDB LevelDBStore is NOT NULL");
+            }else{
+                LOGGER.warn("proteinsNotInLookupDB is NULL - storename: " +  proteinsNotInLookupDB.getKVDBStore() +
+                        " dbmane: " + proteinsNotInLookupDB.getDbName());
+            }
+        }
+        Utilities.verboseLog(10, proteinsNotInLookupDB.toString());
+    }
+
+    public DB getLevelDBStore(){
+
+        return proteinsNotInLookupDB.getLevelDBStore();
+    }
+
+    public void closeKVDBStores(){
+        dbStore.close();
+        proteinsNotInLookupDB.close();
+    }
+
+    //the old methods that may have to be refactored
+
+
 
     /**
      * Retrieves a Protein object by primary key and also retrieves any associated cross references.
@@ -114,36 +307,20 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         return matchingProteins;
     }
 
-
-    /**
-     * Retrieves all Proteins, cross references and matches for a range
-     *
-     * @param bottom range lower bound (included)
-     * @param top    range upper bound (included)
-     * @return The Protein, with matches loaded. (matches are LAZY by default) or null if the
-     *         primary key is not present in the database.
-     */
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
-    public List<Protein> getProteinsAndMatches(long bottom, long top) {
-        Query query = entityManager.createQuery("select distinct p from Protein p " +
-                "left outer join fetch p.matches " +
-                "where p.id >= :bottom and p.id <= :top");
+    public List<Protein> getProteinsWithoutLookupHitBetweenIds(long bottom, long top) {
+        Query query = entityManager.createQuery("select p from Protein p where p.id >= :bottom and p.id <= :top");
         query.setParameter("bottom", bottom);
         query.setParameter("top", top);
-        List<Protein> matchingProteins = (List<Protein>) query.getResultList();
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Querying proteins with IDs in range: " + bottom + " to " + top);
-            LOGGER.trace("Matching protein count: " + matchingProteins.size());
-            for (Protein protein : matchingProteins) {
-                LOGGER.trace("Protein ID: " + protein.getId() + " MD5: " + protein.getMd5());
-                LOGGER.trace("Has " + protein.getMatches().size() + " matches");
-                for (ProteinXref xref : protein.getCrossReferences()) {
-                    LOGGER.trace("Xref: " + xref.getIdentifier());
-                }
+        List<Protein> proteins = (List<Protein>) query.getResultList();
+        List<Protein> proteinsWithoutLookupHitBetweenIds = new ArrayList<>();
+        for (Protein protein: proteins){
+            if(proteinIdsWithoutLookupHit.containsKey(protein.getId())){
+                proteinsWithoutLookupHitBetweenIds.add(protein);
             }
         }
-        return matchingProteins;
+        return proteinsWithoutLookupHitBetweenIds;
     }
 
 
@@ -160,6 +337,32 @@ public class ProteinDAOImpl extends GenericDAOImpl<Protein, Long> implements Pro
         query.setParameter("bottom", bottom);
         query.setParameter("top", top);
         return (List<Protein>) query.getResultList();
+    }
+
+    /**
+     * Retrieves a List of Proteins that are part of the TransactionSlice passed in as argument.
+     * TODO - Consider this very carefully.  If the TransactionSlice includes all the proteins in the database, this will make a nasty mess.
+     *
+     * @return a List of Proteins that are part of the TransactionSlice passed in as argument.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public List<Protein> getProteins(long bottom, long top) {
+        Query query = entityManager.createQuery("select p from Protein p");
+//        query.setParameter("bottom", bottom);
+//        query.setParameter("top", top);
+        return (List<Protein>) query.getResultList();
+    }
+
+    @Transactional(readOnly = true)
+    public Protein getProteinById(Long proteinId) {
+        Protein protein = null;
+        if (proteinId != null) {
+            Query query = entityManager.createQuery("select p from Protein p where p.id = :id");
+            query.setParameter("id", proteinId);
+            protein = (Protein) query.getSingleResult();
+        }
+        return protein;
     }
 
     @Transactional(readOnly = true)

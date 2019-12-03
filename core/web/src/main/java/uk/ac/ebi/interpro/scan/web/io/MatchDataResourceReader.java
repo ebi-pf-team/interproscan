@@ -109,11 +109,12 @@ public class MatchDataResourceReader extends AbstractResourceReader<MatchDataRec
             isProteinFragment = true;
         }
 
+        // TODO signatureModels NULL for now as it's not in the TSV output (but can this class and associated tests all be deleted - obsolete?)
         return new MatchDataRecord(proteinAc, proteinId, proteinDescription, proteinLength, crc64,
-                methodAc, methodName, methodDatabase,
+                methodAc, methodName, null, methodDatabase,
                 posFrom, posTo, score,
                 entryAc, entryShortName, entryName, entryType,
-                taxId, taxScienceName, taxFullName, isProteinFragment);
+                taxId, taxScienceName, taxFullName, isProteinFragment,"");//TODo Fragments empty - remove all this code?
     }
 
 }

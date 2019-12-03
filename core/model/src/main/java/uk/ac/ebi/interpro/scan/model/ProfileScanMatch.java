@@ -16,6 +16,9 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
@@ -44,8 +47,8 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     protected ProfileScanMatch() {
     }
 
-    public ProfileScanMatch(Signature signature, Set<ProfileScanLocation> locations) {
-        super(signature, locations);
+    public ProfileScanMatch(Signature signature, String signatureModels, Set<ProfileScanLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -53,7 +56,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         for (ProfileScanLocation location : this.getLocations()) {
             clonedLocations.add((ProfileScanLocation) location.clone());
         }
-        return new ProfileScanMatch(this.getSignature(), clonedLocations);
+        return new ProfileScanMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     /**
@@ -64,6 +67,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     @Entity
     @Table(name = "profile_scan_location")
     @XmlType(name = "ProfileScanLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @JsonIgnoreProperties({"id", "cigarAlignment"}) // cigarAlignment is not output i the json
     public static class ProfileScanLocation extends Location {
 
         @Column(nullable = false)
@@ -79,7 +83,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         }
 
         public ProfileScanLocation(int start, int end, double score, String cigarAlignment) {
-            super(start, end);
+            super(new ProfileScanLocationFragment(start, end));
             setScore(score);
             setCigarAlignment(cigarAlignment);
         }
@@ -149,6 +153,45 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         public Object clone() throws CloneNotSupportedException {
             return new ProfileScanLocation(this.getStart(), this.getEnd(), this.getScore(), this.getCigarAlignment());
         }
+
+        /**
+         * Location fragment of a Prosite Profile match on a protein sequence
+         */
+        @Entity
+        @Table(name = "profile_scan_location_fragment")
+        @XmlType(name = "ProfileScanLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class ProfileScanLocationFragment extends LocationFragment {
+
+            protected ProfileScanLocationFragment() {
+            }
+
+            public ProfileScanLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof ProfileScanLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(119, 181)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new ProfileScanLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
     }
 }

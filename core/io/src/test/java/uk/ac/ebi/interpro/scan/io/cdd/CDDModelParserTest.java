@@ -2,7 +2,10 @@ package uk.ac.ebi.interpro.scan.io.cdd;
 
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -14,7 +17,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+
 
 /**
  * Test the CDD model parser (cddid.tbl file).

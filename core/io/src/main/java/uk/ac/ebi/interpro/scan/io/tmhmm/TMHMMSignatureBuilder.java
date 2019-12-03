@@ -1,10 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
-import uk.ac.ebi.interpro.scan.model.PhobiusFeatureType;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.model.TMHMMSignature;
+import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.IOException;
 
@@ -32,9 +29,11 @@ public class TMHMMSignatureBuilder extends AbstractModelFileParser {
                 this.getReleaseVersionNumber());
 
         for (final TMHMMSignature type : TMHMMSignature.values()) {
+            final Model model = new Model(type.getAccession(), type.getShortDesc(), type.getDescription());
             final Signature.Builder builder = new Signature.Builder(type.getAccession());
             final Signature signature = builder
                     .description(type.getDescription())
+                    .model(model)
                     .signatureLibraryRelease(release)
                     .build();
             release.addSignature(signature);

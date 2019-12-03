@@ -5,6 +5,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="pfamParser" class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
+
         <property name="parserSupport">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Pfam_A_Hmmer3Hmmer3ParserSupport">
                 <property name="gaValuesRetriever">

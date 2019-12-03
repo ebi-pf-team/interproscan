@@ -7,7 +7,8 @@ import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -28,11 +29,13 @@ public class XmlWriter {
     }
 
     public void writeMatches(final Path path, final IMatchesHolder matchesHolder) throws IOException {
+
         LOGGER.debug("About to start writing out match XML.");
         try (BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(path))) {
             Result result = new StreamResult(bos);
             marshaller.marshal(matchesHolder, result);
             LOGGER.debug("Finished writing out match XML.");
         }
+
     }
 }

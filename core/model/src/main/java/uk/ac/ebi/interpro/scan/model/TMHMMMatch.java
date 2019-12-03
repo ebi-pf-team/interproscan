@@ -25,11 +25,15 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
     protected TMHMMMatch() {
     }
 
-    public TMHMMMatch(Signature signature, Set<TMHMMLocation> locations) {
-        super(signature, locations);
+    public TMHMMMatch(Signature signature, String signatureModels, Set<TMHMMLocation> locations) {
+        super(signature, signatureModels, locations);
+
+        /*
         if (!TMHMMSignature.isValidSignature(signature)) {
             throw new IllegalArgumentException("The Signature object being used for this TMHMM does not appear to be a valid TMHMM signature.");
         }
+        */
+        
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -37,7 +41,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
         for (TMHMMLocation location : this.getLocations()) {
             clonedLocations.add((TMHMMLocation) location.clone());
         }
-        return new TMHMMMatch(this.getSignature(), clonedLocations);
+        return new TMHMMMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     @Override
@@ -75,10 +79,10 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
     @XmlType(name = "TMHMMLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
     public static class TMHMMLocation extends Location {
 
-        @Column(nullable = false)
+        @Column(nullable = true)
         private String prediction;
 
-        @Column(nullable = false)
+        @Column(nullable = true)
         private float score;
 
         /**
@@ -92,7 +96,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
         }
 
         public TMHMMLocation(int start, int end, String prediction, float score) {
-            super(start, end);
+            super(new TMHMMLocationFragment(start, end));
             this.prediction = prediction;
 //            TODO: Take care of magnitude of score
             this.score = score;
@@ -177,5 +181,44 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
         public Object clone() throws CloneNotSupportedException {
             return new TMHMMLocation(this.getStart(), this.getEnd(), this.getPrediction(), this.getScore());
         }
+
+        /**
+         * Location fragment of a TMHMM match on a protein sequence
+         */
+        @Entity
+        @Table(name = "tmhmm_location_fragment")
+        @XmlType(name = "TMHMMLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class TMHMMLocationFragment extends LocationFragment {
+
+            protected TMHMMLocationFragment() {
+            }
+
+            public TMHMMLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof TMHMMLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(119, 171)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new TMHMMLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
     }
 }

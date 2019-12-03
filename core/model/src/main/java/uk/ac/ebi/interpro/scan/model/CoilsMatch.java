@@ -24,8 +24,8 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
     protected CoilsMatch() {
     }
 
-    public CoilsMatch(Signature signature, Set<CoilsLocation> locations) {
-        super(signature, locations);
+    public CoilsMatch(Signature signature, String signatureModels, Set<CoilsLocation> locations) {
+        super(signature, signatureModels, locations);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
         for (CoilsLocation location : this.getLocations()) {
             clonedLocations.add((CoilsLocation) location.clone());
         }
-        return new CoilsMatch(this.getSignature(), clonedLocations);
+        return new CoilsMatch(this.getSignature(), this.getSignatureModels(), clonedLocations);
     }
 
     /**
@@ -69,7 +69,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
 
         public CoilsLocation(int start, int end) {
 
-            super(start, end);
+            super(new CoilsLocationFragment(start, end));
         }
 
         @Override
@@ -93,6 +93,45 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
         public Object clone() throws CloneNotSupportedException {
             return new CoilsLocation(this.getStart(), this.getEnd());
         }
+
+        /**
+         * Location fragment of a Coils match on a protein sequence
+         */
+        @Entity
+        @Table(name = "coils_location_fragment")
+        @XmlType(name = "CoilsLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class CoilsLocationFragment extends LocationFragment {
+
+            protected CoilsLocationFragment() {
+            }
+
+            public CoilsLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof CoilsLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(127, 147)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new CoilsLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
     }
 
 }

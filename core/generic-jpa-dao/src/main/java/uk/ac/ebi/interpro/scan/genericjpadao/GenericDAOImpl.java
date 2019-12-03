@@ -122,6 +122,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
                 LOGGER.debug("The Entity that you are attempting to store has already been persisted.");
                 continue;
             }
+//            LOGGER.debug(newInstance.toString());
             entityManager.persist(newInstance);
         }
         return newInstances;

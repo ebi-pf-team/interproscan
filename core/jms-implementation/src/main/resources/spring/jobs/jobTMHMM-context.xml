@@ -36,7 +36,7 @@
                 <entry key="tmhmm.model.path" value-ref="pathToTMHMMModelFileId"/>
             </map>
         </property>
-        <property name="doRunLocally" value="true"/>
+        <property name="doRunLocally" value="false"/>
     </bean>
 
     <bean id="abstractTMHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -117,11 +117,15 @@
           parent="abstractTMHMMStep">
         <property name="dependsUpon" ref="stepTMHMMRunBinary"/>
         <property name="stepDescription" value="Parse the output from TMHMM binary"/>
-        <property name="parser" ref="tmhmmParser"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser">
+                <property name="signatureLibraryRelease" ref="latestTMHMMSignatureLibraryReleaseVersion"/>
+            </bean>
+        </property>
         <property name="filteredMatchDAO" ref="tmhmmFilteredMatchDAO"/>
         <property name="serialGroup" value="PARSE_TMHMM"/>
         <property name="retries" value="3"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepTMHMMDeleteRawOutput"
@@ -135,18 +139,26 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="signatureLibraryReleaseTMHMM" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="TMHMM"/>
-        <constructor-arg type="java.lang.String" ref="tmhmmSignatureLibraryReleaseVersion"/>
+        <constructor-arg type="java.lang.String" ref="latestTMHMMSignatureLibraryReleaseVersion"/>
     </bean>
 
-    <bean id="tmhmmParser" class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser">
+    <!--<bean id="tmhmmParser22" class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser">-->
+        <!--<constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM"/>-->
+    <!--</bean>-->
+
+    <bean id="tmhmmFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAO">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM"/>
+        <property name="dbStore" ref="kvStoreMatches"/>
+        <property name="matchDAO" ref="matchDAO"/>
     </bean>
 
-    <bean id="tmhmmFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImpl">
+    <bean id="tmhmmFilteredMatchDAOOld" class="uk.ac.ebi.interpro.scan.persistence.TMHMMFilteredMatchDAOImplOld">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease" ref="signatureLibraryReleaseTMHMM"/>
+        <!--<property name="dbStore" ref="kvStoreMatches"/>-->
+        <!--<property name="matchDAO" ref="matchDAO"/>-->
     </bean>
 
-    <bean id="tmhmmSignatureLibraryReleaseVersion" class="java.lang.String">
+    <bean id="latestTMHMMSignatureLibraryReleaseVersion" class="java.lang.String">
         <constructor-arg value="${tmhmm.signature.library.release}"/>
     </bean>
 

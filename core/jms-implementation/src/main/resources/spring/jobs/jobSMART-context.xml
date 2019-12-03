@@ -32,6 +32,7 @@
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+
     </bean>
 
     <!-- STEP 1 -->
@@ -58,7 +59,8 @@
         <property name="dependsUpon" ref="stepSMARTWriteFastaFile"/>
         <property name="stepDescription" value="Run HMM on selected proteins"/>
 
-        <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer2.hmmpfam.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.smart} ${hmmer2.hmmpfam.cpu.switch.smart}"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -132,7 +134,10 @@
         <property name="signatureLibraryRelease" ref="smartSignatureLibraryReleaseVersion"/>
         <property name="rawMatchDAO" ref="smartRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SmartFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SMART !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

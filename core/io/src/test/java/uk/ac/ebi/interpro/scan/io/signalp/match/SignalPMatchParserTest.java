@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.signalp.match;
 
 import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;

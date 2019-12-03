@@ -42,9 +42,15 @@ public final class Model2SfReader extends AbstractModelFileParser {
         final Map<String, String> records = parseFileToMap();
 
         // Create signatures
-        final Map<String, Signature> signatureMap = new HashMap<String, Signature>();
-        for (String modelAc : records.keySet()) {
-            String signatureAc = records.get(modelAc);
+        final Map<String, Signature> signatureMap = new HashMap<>();
+        for (String modelData : records.keySet()) {
+            String[] model = modelData.split("#");
+            if (model.length != 2) {
+                throw new IllegalStateException("Model data key not in expected 'modelAc#hmmLength' format: " + modelData);
+            }
+            String modelAc = model[0];
+            int hmmLength = Integer.parseInt(model[1]);
+            String signatureAc = records.get(modelData);
             Signature signature;
             if (signatureMap.containsKey(signatureAc)) {
                 signature = signatureMap.get(signatureAc);
@@ -52,15 +58,20 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 signature = new Signature(signatureAc);
                 signatureMap.put(signatureAc, signature);
             }
-            signature.addModel(new Model(modelAc));
+            signature.addModel(new Model(modelAc, null, null, hmmLength));
         }
 
         // Create release
-        return new SignatureLibraryRelease(library, releaseVersion, new HashSet<Signature>(signatureMap.values()));
+        return new SignatureLibraryRelease(library, releaseVersion, new HashSet<>(signatureMap.values()));
     }
 
     public Map<String, String> parseFileToMap() throws IOException {
-        final Map<String, String> records = new HashMap<String, String>();
+        final Map<String, String> records = new HashMap<>();
+
+        // Some example lines to parse:
+        // 1q14A01 3.40.50.1220  50
+        // 1vhnA02 1.10.1200.80  112
+
 
         for (Resource modelFile : modelFiles) {
             BufferedReader reader = null;
@@ -68,8 +79,16 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    String[] splitLine = line.split(",");
-                    records.put(splitLine[0], prefix + splitLine[1]);  // model - signature
+                    String[] splitLine = line.split("\\s+");
+                    if (splitLine.length != 3) {
+                        throw new IllegalStateException("Unexpected format on line: " + line);
+                    }
+
+                    String model = splitLine[0];
+                    String signature = splitLine[1];
+                    int hmmLength = Integer.parseInt(splitLine[2]);
+
+                    records.put(model + '#' + hmmLength, prefix + signature);  // model#hmmLength -> signature
                 }
             }
             finally {

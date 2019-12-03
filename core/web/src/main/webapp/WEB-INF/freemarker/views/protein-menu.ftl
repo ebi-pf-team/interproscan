@@ -13,6 +13,11 @@
         <div class="menu-filter-type"><h1>Entry type</h1>
 
             <fieldset>
+                <div ${protein.disabledStyleIfNoMatches("HOMOLOGOUS_SUPERFAMILY")}>
+                    <input type="checkbox" class="type" id="check-1" value="Homologous_superfamily-row"
+                           checked="checked" ${protein.disableIfNoMatches("HOMOLOGOUS_SUPERFAMILY")}/>
+                    <label for="check-1" class="homologous-superfamily">Homologous superfamily</label>
+                </div>
                 <div ${protein.disabledStyleIfNoMatches("FAMILY")}>
                     <input type="checkbox" class="type" id="check-2" value="Family-row"
                            checked="checked" ${protein.disableIfNoMatches("FAMILY")}/>
@@ -48,6 +53,17 @@
             </fieldset>
         </div>
 
+        <div class="menu-filter-sites"><h1>Per-residue features</h1>
+
+            <fieldset>
+                <div ${protein.disabledStyleIfNoSites()}>
+                    <input type="checkbox" name="sites" id="check-7" value="Sites"
+                           checked="checked" ${protein.disableIfNoSites()}/>
+                    <label for="check-7">Residue annotation</label>
+                </div>
+            </fieldset>
+        </div>
+
         <div class="menu-filter-colour">
             <div class="filter-colour-head">
                 <div class="filter-colour-title-l">
@@ -76,7 +92,7 @@
 // Read colour preference from cookie (requires http://plugins.jquery.com/project/Cookie)
 
             // Retrieve existing cookies and set checkbox states accordingly
-            var checkBoxIDs = ["#check-2", "#check-3", "#check-4", "#check-5", "#check-6"];
+            var checkBoxIDs = ["#check-1", "#check-2", "#check-3", "#check-4", "#check-5", "#check-6", "#check-7"];
             for (i = 0; i < checkBoxIDs.length; i++) {
                 var checkBoxId = checkBoxIDs[i];
                 var cookieVal = $.cookie(checkBoxId);
@@ -125,6 +141,17 @@
             $("#check-6").each(function() {
                 displayUnintegrated(this);
             });
+
+        // Change event for sites checkbox
+        $("#check-7").change(function() {
+            displaySites(this);
+        });
+
+        // Initialise sites.
+        // TODO Work out how to do this without each! Only one thing with an ID of "check-7"!
+        $("#check-7").each(function() {
+            displaySites(this);
+        });
 
         // Make the menu visible - Javascript is enabled.
         $("#menu").css('display', 'block');

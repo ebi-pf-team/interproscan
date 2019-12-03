@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
 import javax.annotation.Resource;
@@ -15,8 +15,9 @@ import javax.annotation.Resource;
  * Time: 09:33:10
  *
  * @author Phil Jones, EMBL-EBI
+ * @author Gift Nuka
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class ModelDAOTest {
 

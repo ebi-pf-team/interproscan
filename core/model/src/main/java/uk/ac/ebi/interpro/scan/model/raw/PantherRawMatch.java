@@ -37,6 +37,25 @@ public class PantherRawMatch extends RawMatch {
     @Column
     private double score;
 
+    @Column(nullable = false)
+    private int hmmStart;
+
+    @Column(nullable = false)
+    private int hmmEnd;
+
+    @Column(nullable = false)
+    private int hmmLength;
+
+    @Column(length = 2)
+    private String hmmBounds;
+
+    @Column(nullable = false)
+    private int envelopeStart;
+
+    @Column(nullable = false)
+    private int envelopeEnd;
+
+
     protected PantherRawMatch() {
     }
 
@@ -48,11 +67,18 @@ public class PantherRawMatch extends RawMatch {
     public PantherRawMatch(String sequenceIdentifier, String model,
                            String signatureLibraryRelease,
                            int locationStart, int locationEnd,
-                           double evalue, double score, String familyName) {
+                           double evalue, double score, String familyName,
+                           int hmmStart, int hmmEnd, int hmmLength, String hmmBounds, int envelopeStart, int envelopeEnd) {
         super(sequenceIdentifier, model, SignatureLibrary.PANTHER, signatureLibraryRelease, locationStart, locationEnd);
         setEvalue(evalue);
         this.score = score;
         this.familyName = familyName;
+        this.hmmStart = hmmStart;
+        this.hmmEnd = hmmEnd;
+        this.hmmLength = hmmLength;
+        this.hmmBounds = hmmBounds;
+        this.envelopeStart = envelopeStart;
+        this.envelopeEnd = envelopeEnd;
     }
 
     public double getEvalue() {
@@ -77,5 +103,53 @@ public class PantherRawMatch extends RawMatch {
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public int getHmmStart() {
+        return hmmStart;
+    }
+
+    public void setHmmStart(int hmmStart) {
+        this.hmmStart = hmmStart;
+    }
+
+    public int getHmmEnd() {
+        return hmmEnd;
+    }
+
+    public void setHmmEnd(int hmmEnd) {
+        this.hmmEnd = hmmEnd;
+    }
+
+    public int getHmmLength() {
+        return hmmLength;
+    }
+
+    public void setHmmLength(int hmmLength) {
+        this.hmmLength = hmmLength;
+    }
+
+    public String getHmmBounds() {
+        return hmmBounds;
+    }
+
+    public void setHmmBounds(String hmmBounds) {
+        this.hmmBounds = hmmBounds;
+    }
+
+    public int getEnvelopeStart() {
+        return envelopeStart;
+    }
+
+    public void setEnvelopeStart(int envelopeStart) {
+        this.envelopeStart = envelopeStart;
+    }
+
+    public int getEnvelopeEnd() {
+        return envelopeEnd;
+    }
+
+    public void setEnvelopeEnd(int envelopeEnd) {
+        this.envelopeEnd = envelopeEnd;
     }
 }

@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
-import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
@@ -50,9 +50,12 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
      * stripped off (but doesn't really apply here).
      */
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^ACC\\s+([A-Z0-9]+)\\.?.*$");
+
+    private static final Pattern LENGTH_LINE = Pattern.compile("^LENG\\s+([0-9]+)$");
+
     private static final String END_OF_RECORD = "//";
 
-    private final Map<String, Signature> signatures = new HashMap<String, Signature>();
+    private final Map<String, Signature> signatures = new HashMap<>();
 
 
     @Transactional
@@ -64,6 +67,7 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
             BufferedReader reader = null;
             try {
                 String accession = null, name = null, description = null;
+                Integer length = null;
 
                 reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
                 int lineNumber = 0;
@@ -82,10 +86,11 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
                             case '/':
                                 // Looks like an end of record marker - just to check:
                                 if (END_OF_RECORD.equals(line)) {
-                                    processRecord(release, accession, name, description);
+                                    processRecord(release, accession, name, description, length);
                                     accession = null;
                                     name = null;
                                     description = null;
+                                    length = null;
                                 }
                                 break;
                             case 'A':
@@ -108,12 +113,17 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
                                     name = extractValue(NAME_LINE, line, 1);
                                 }
                                 break;
+                            case 'L':
+                                if (length == null) {
+                                    length = Integer.parseInt(extractValue(LENGTH_LINE, line, 1));
+                                }
+                                break;
                         }
                     }
                 }
                 // Dont forget the last one, just in case that final end of record
                 // marker is missing!
-                processRecord(release, accession, name, description);
+                processRecord(release, accession, name, description, length);
 
             } finally {
                 if (reader != null) {
@@ -138,15 +148,16 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
      * @param accession   Signature accession, if NULL then this method does nothing
      * @param name        Model Id
      * @param description Signature and model names
+     * @param length      Model HMM length
      */
-    private void processRecord(SignatureLibraryRelease release, String accession, String name, String description) {
+    private void processRecord(SignatureLibraryRelease release, String accession, String name, String description, Integer length) {
         if (accession != null) {
-            Model model = new Model(name, description, null, null);
+            Model model = new Model(name, description, null, length);
             if (signatures.containsKey(accession)) {
                 Signature signature = signatures.get(accession);
                 signature.addModel(model);
             } else {
-                Signature signature = new Signature(accession, description, null, null, null, release, new HashSet<Model>());
+                Signature signature = new Signature(accession, description, null, null, null, release, new HashSet<>());
                 signature.addModel(model);
                 signatures.put(accession, signature);
             }

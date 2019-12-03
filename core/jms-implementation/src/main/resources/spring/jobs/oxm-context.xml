@@ -30,6 +30,33 @@
         </property>
     </bean>
 
+    <bean id="interproJaxb" abstract="true" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>uk.ac.ebi.interpro.scan.model.Entry</value>
+                <value>uk.ac.ebi.interpro.scan.model.Protein</value>
+                <value>uk.ac.ebi.interpro.scan.model.Signature</value>
+                <value>uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease</value>
+                <value>uk.ac.ebi.interpro.scan.model.ProteinMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder</value>
+                <value>uk.ac.ebi.interpro.scan.model.Xref</value>
+            </list>
+        </property>
+        <property name="marshallerProperties">
+            <util:map value-type="java.lang.Boolean">
+                <entry value="true">
+                    <key>
+                        <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT"/>
+                    </key>
+                </entry>
+                <entry value="true">
+                    <key>  <util:constant static-field="javax.xml.bind.Marshaller.JAXB_FRAGMENT"/>
+                    </key>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
     <bean id="interproMarshaller" parent="interproJaxb2"/>
     <!--<bean id="unmarshaller" parent="jaxb2"/>-->
 

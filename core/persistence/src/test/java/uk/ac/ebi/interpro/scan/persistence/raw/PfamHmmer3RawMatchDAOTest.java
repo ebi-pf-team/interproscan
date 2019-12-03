@@ -1,11 +1,17 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -15,16 +21,15 @@ import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Units tests for {@link PfamHmmer3RawMatchDAO}
  *
  * @author Manjula Thimma
+ * @author Gift Nuka
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class PfamHmmer3RawMatchDAOTest {
 
@@ -55,11 +60,11 @@ public class PfamHmmer3RawMatchDAOTest {
         this.dao = dao;
     }
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void emptyPfamTable() {
         dao.deleteAll();
-        assertEquals("There should be no pfam entries in the Pfam table following a call to dao.deleteAll", LONG_ZERO, dao.count());
+        assertEquals(LONG_ZERO, dao.count(),"There should be no pfam entries in the Pfam table following a call to dao.deleteAll");
     }
 
     /**
@@ -76,16 +81,16 @@ public class PfamHmmer3RawMatchDAOTest {
         emptyPfamTable();
         PfamHmmer3RawMatch p = new PfamHmmer3RawMatch(UPI, MODEL, signatureLibrary, dbVersion, start, end,
                 3.7E-9, 0.035, 1, 104, "[]", 3.0, 0, 0, 0, 0, 0, 0, 0);
-        assertNotNull("The PfamDAOImpl object should be not-null.", dao);
+        assertNotNull(dao, "The PfamDAOImpl object should be not-null.");
         dao.insert(p);
         Long id = p.getId();
-        assertEquals("The count of pfams in the database is not correct.", LONG_ONE, dao.count());
+        assertEquals(LONG_ONE, dao.count(), "The count of pfams in the database is not correct.");
         PfamHmmer3RawMatch retrievedPfam = dao.read(id);
-        assertEquals("The pfam methodAc of the retrieved object is not the same as the original object.", p.getModelId(), retrievedPfam.getModelId());
+        assertEquals(p.getModelId(), retrievedPfam.getModelId(), "The pfam methodAc of the retrieved object is not the same as the original object.");
         dao.delete(retrievedPfam);
         List<PfamHmmer3RawMatch> retrievedPfamList = dao.retrieveAll();
-        assertEquals("There should be no pfams in the database, following removal of the single pfam that was added.", 0, retrievedPfamList.size());
-        assertEquals("The count of pfams in the database is not correct.", LONG_ZERO, dao.count());
+        assertEquals(0, retrievedPfamList.size(), "There should be no pfams in the database, following removal of the single pfam that was added.");
+        assertEquals(LONG_ZERO, dao.count(), "The count of pfams in the database is not correct.");
         emptyPfamTable();
     }
 
@@ -94,12 +99,15 @@ public class PfamHmmer3RawMatchDAOTest {
      * Test that a PersistenceException is thrown if an attempt is made to
      * insert the same Protein twice.
      */
-    @Test(expected = PersistenceException.class)
+    @Test //(expected = PersistenceException.class)
     public void testPersistenceExceptionOnSecondInsert() {
         emptyPfamTable();
         PfamHmmer3RawMatch p = getMatchExample(null);
-        dao.insert(p);
-        dao.insert(p);
+        assertThrows(PersistenceException.class, () -> {
+            dao.insert(p);
+            dao.insert(p);
+        });
+
     }
 
     /**
@@ -116,7 +124,7 @@ public class PfamHmmer3RawMatchDAOTest {
                 maxPrimaryKey = p.getId();
             }
         }
-        assertEquals("The maximum primary key is not as expected", maxPrimaryKey, dao.getMaximumPrimaryKey());
+        assertEquals(maxPrimaryKey, dao.getMaximumPrimaryKey(), "The maximum primary key is not as expected");
     }
 
     private PfamHmmer3RawMatch getMatchExample(String proteinId) {
@@ -144,6 +152,7 @@ public class PfamHmmer3RawMatchDAOTest {
         for (RawProtein rawProtein : matches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
+
         assertEquals(5, matchCount);
     }
 

@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 
+import java.util.List;
+
 /**
  * No-op implementation of the SequenceLoadListener - does nothing
  * when the proteins are loaded.
@@ -18,8 +20,14 @@ public class NoopSequenceLoadListener implements SequenceLoadListener {
      * values are null, then no action is taken.
      */
 
-    @Override
+
     public void sequencesLoaded(Long bottomNewSequenceId, Long topNewSequenceId, Long bottomPrecalculatedSequenceId, Long topPrecalculatedSequenceId) {
+        //no-op
+    }
+
+    @Override
+    public void sequencesLoaded(final Long bottomNewSequenceId, final Long topNewSequenceId,
+                                final Long bottomPrecalculatedSequenceId, final Long topPrecalculatedSequenceId, boolean useMatchLookupService, List<Long> idsWithoutLookupHit) {
         //no-op
     }
 }

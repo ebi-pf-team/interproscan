@@ -1,14 +1,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
-import uk.ac.ebi.interpro.scan.model.Protein;
-import uk.ac.ebi.interpro.scan.model.Signature;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -33,17 +31,34 @@ public class PrositePatternFilteredMatchDAO
      * @param proteinIdToProteinMap        a Map of Protein IDs to Protein objects
      */
     @Override
-    protected void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, Signature> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<ProSitePatternRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+        SignatureLibrary signatureLibrary = null;
         for (RawProtein<ProSitePatternRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
+            Set<Match> proteinMatches = new HashSet<>();
             for (ProSitePatternRawMatch rawMatch : rawProtein.getMatches()) {
 
-                Signature signature = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
+                Utilities.verboseLog("rawMatch.getModelId() : "+ rawMatch.getModelId() +  " SignatureModelHolder: " + holder);
+                Signature signature = holder.getSignature();
+                if(signatureLibrary == null) {
+                    signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
+                }
                 PatternScanMatch match = buildMatch(signature, rawMatch);
-                protein.addMatch(match);
-                entityManager.persist(match);
+                //hibernateInitialise
+                hibernateInitialise(match);
+
+                //protein.addMatch(match);
+                proteinMatches.add(match);
+                //entityManager.persist(match);
+
+            }
+            if (! proteinMatches.isEmpty()) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
+                matchDAO.persist(dbKey, proteinMatches);
             }
         }
+
     }
 
     private PatternScanMatch buildMatch(Signature signature, ProSitePatternRawMatch rawMatch) {
@@ -52,6 +67,6 @@ public class PrositePatternFilteredMatchDAO
                 rawMatch.getLocationEnd(),
                 rawMatch.getPatternLevel(),
                 rawMatch.getCigarAlignment());
-        return new PatternScanMatch(signature, Collections.singleton(location));
+        return new PatternScanMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
     }
 }

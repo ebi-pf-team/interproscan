@@ -2,13 +2,10 @@ package uk.ac.ebi.interpro.scan.io.superfamily.model;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import uk.ac.ebi.interpro.scan.model.Model;
-import uk.ac.ebi.interpro.scan.model.Signature;
-import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
-import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
+import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.IOException;
 import java.util.Map;

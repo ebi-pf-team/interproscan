@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
+import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.PantherMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
@@ -25,15 +26,26 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
         if (berkeleyMatch == null || signature == null) {
             return null;
         }
-        Set<PantherMatch.PantherLocation> locations = new HashSet<PantherMatch.PantherLocation>(berkeleyMatch.getLocations().size());
+        Set<PantherMatch.PantherLocation> locations = new HashSet<>(berkeleyMatch.getLocations().size());
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
+
+            final HmmBounds bounds;
+            if (berkeleyLocation.getHmmBounds() == null || berkeleyLocation.getHmmBounds().isEmpty()) {
+                bounds = HmmBounds.COMPLETE;   // FUDGE!  HmmBounds cannot be null...
+            } else {
+                bounds = HmmBounds.parseSymbol(berkeleyLocation.getHmmBounds());
+            }
+
             locations.add(new PantherMatch.PantherLocation(
-                    berkeleyLocation.getStart(), berkeleyLocation.getEnd()
+                    berkeleyLocation.getStart(), berkeleyLocation.getEnd(),
+                    valueOrZero(berkeleyLocation.getHmmStart()), valueOrZero(berkeleyLocation.getHmmEnd()), valueOrZero(berkeleyLocation.getHmmLength()),
+                    bounds, valueOrZero(berkeleyLocation.getEnvelopeStart()), valueOrZero(berkeleyLocation.getEnvelopeEnd())
             ));
         }
 
         return new PantherMatch(
                 signature,
+                berkeleyMatch.getSignatureModels(),
                 locations,
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 "Not available",

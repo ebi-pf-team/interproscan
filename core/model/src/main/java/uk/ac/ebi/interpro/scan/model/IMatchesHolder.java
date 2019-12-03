@@ -12,7 +12,9 @@ import java.util.Collection;
 @XmlTransient
 public interface IMatchesHolder {
 
-    public void addProtein(Protein protein);
+    String getInterProScanVersion();
 
-    public void addProteins(Collection<Protein> proteins);
+    void addProtein(Protein protein);
+
+    void addProteins(Collection<Protein> proteins);
 }

@@ -1,26 +1,28 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.interpro.scan.web.model.SimpleStructuralDatabase;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link AnalyseStructuralMatchDataResult}
  *
  * @author  Matthew Fraser
  * @author  Antony Quinn
+ * @author Gift Nuka
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class AnalyseStructuralMatchDataResultTest {
 
@@ -42,8 +44,12 @@ public class AnalyseStructuralMatchDataResultTest {
         }
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test //(expected = NullPointerException.class)
     public void testResourceNull() {
-        parser.parseStructuralMatchDataOutput(null);
+        assertThrows(NullPointerException.class, () ->{
+            parser.parseStructuralMatchDataOutput(null);
+        });
+
+
     }
 }

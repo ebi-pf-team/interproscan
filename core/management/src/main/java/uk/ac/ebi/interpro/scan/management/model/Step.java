@@ -2,8 +2,11 @@ package uk.ac.ebi.interpro.scan.management.model;
 
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Instances of this class describe / provide a template
@@ -46,6 +49,11 @@ public abstract class Step implements BeanNameAware {
 
     protected boolean requiresDatabaseAccess = true;
 
+    protected boolean doRunLocally = false;
+
+
+
+    protected boolean useMatchLookupService = true;
 
     /**
      * Number of retries
@@ -139,6 +147,22 @@ public abstract class Step implements BeanNameAware {
         this.requiresDatabaseAccess = requiresDatabaseAccess;
     }
 
+    public boolean isDoRunLocally() {
+        return doRunLocally;
+    }
+
+    public void setDoRunLocally(boolean doRunLocally) {
+        this.doRunLocally = doRunLocally;
+    }
+
+    public boolean isUseMatchLookupService() {
+        return useMatchLookupService;
+    }
+
+    public void setUseMatchLookupService(boolean useMatchLookupService) {
+        this.useMatchLookupService = useMatchLookupService;
+    }
+
     public Integer getMaxProteins() {
         return maxProteins;
     }
@@ -180,6 +204,10 @@ public abstract class Step implements BeanNameAware {
         this.nfsDelayMilliseconds = nfsDelayMilliseconds;
     }
 
+    public int getNfsDelayMilliseconds(){
+        return nfsDelayMilliseconds;
+    }
+
     @Required
     public void setRetries(int retries) {
         this.retries = retries;
@@ -200,6 +228,27 @@ public abstract class Step implements BeanNameAware {
                 throw new IllegalStateException("InterruptedException thrown when attempting to sleep for NFS delay.", e);
             }
         }
+    }
+
+    protected boolean checkIfDoSkipRun(Long bottomProtein, Long topProtein){
+        String key = getKey(bottomProtein, topProtein);
+
+        Utilities.verboseLog("check SkipRange key: " + key );
+
+        if (job.getSkipRunRanges().contains(key)){
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    protected String getKey(Long bottomProtein, Long topProtein){
+        String libraryName = job.getLibraryRelease().getLibrary().getName();
+        String range = "_" + bottomProtein + "-" + topProtein;
+        String key = libraryName + range;
+        return key;
     }
 
     /**
@@ -247,9 +296,8 @@ public abstract class Step implements BeanNameAware {
 
         Step step = (Step) o;
 
-        if (!id.equals(step.id)) return false;
+        return id.equals(step.id);
 
-        return true;
     }
 
     @Override

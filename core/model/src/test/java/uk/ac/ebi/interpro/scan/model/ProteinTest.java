@@ -18,12 +18,15 @@ package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.custommonkey.xmlunit.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.xml.sax.SAXException;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 
@@ -31,7 +34,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+
 
 /**
  * Tests cases for {@link Protein}.
@@ -39,7 +42,7 @@ import static org.junit.Assert.*;
  * @author Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class ProteinTest extends AbstractTest<Protein> {
 
@@ -76,14 +79,14 @@ public class ProteinTest extends AbstractTest<Protein> {
     public void testGetSequence() {
         // Should be OK
         Protein protein = new Protein(GOOD);
-        assertEquals("Should be correct amino acid sequence", GOOD, protein.getSequence());
+        assertEquals( GOOD, protein.getSequence(), "Should be correct amino acid sequence");
         protein = new Protein(MULTILINE);
-        assertEquals("Should be correct amino acid sequence without whitespace", SINGLELINE, protein.getSequence());
+        assertEquals( SINGLELINE, protein.getSequence(),"Should be correct amino acid sequence without whitespace");
         // Should fail
         try {
             new Protein(BAD);
         } catch (Exception e) {
-            assertTrue("Should be IllegalArgumentException", e instanceof IllegalArgumentException);
+            assertTrue(e instanceof IllegalArgumentException, "Should be IllegalArgumentException");
         }
     }
 
@@ -103,7 +106,7 @@ public class ProteinTest extends AbstractTest<Protein> {
      * Tests the equivalent() method works as expected
      */
     @Test
-    @Ignore
+    @Disabled
     public void testEquals() throws IOException {
         Protein original = new Protein(GOOD);
         Protein copy = (Protein) SerializationUtils.clone(original);
@@ -113,15 +116,15 @@ public class ProteinTest extends AbstractTest<Protein> {
         assertEquals(original, copy);
         // Original and copy should not be equal
         ProteinXref ProteinXref = original.addCrossReference(new ProteinXref("A0A000_9ACTO"));
-        assertFalse("Original and copy should not be equal", original.equals(copy));
+        assertFalse( original.equals(copy), "Original and copy should not be equal");
         //  Original and copy should be equal again
         copy.addCrossReference((ProteinXref) SerializationUtils.clone(ProteinXref));
         assertEquals(original, copy);
         // Try with locations
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
-        Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
-        assertFalse("Original and copy should not be equal", original.equals(copy));
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104,HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), "PF02310", 0.035, 3.7e-9, locations));
+        assertFalse( original.equals(copy), "Original and copy should not be equal");
         copy.addMatch((Hmmer2Match) SerializationUtils.clone(match));
         assertEquals(original, copy);
         // Print
@@ -140,14 +143,14 @@ public class ProteinTest extends AbstractTest<Protein> {
         Protein original = new Protein(GOOD);
         original.addCrossReference(new ProteinXref("A0A000_9ACTO"));
 
-        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
-        original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), 0.035, 3.7e-9, locations));
+        Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<>();
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        original.addMatch(new Hmmer2Match(new Signature("PF02310", "B12-binding"), "PF02310",0.035, 3.7e-9, locations));
 
-        Set<ProfileScanMatch.ProfileScanLocation> l = new HashSet<ProfileScanMatch.ProfileScanLocation>();
+        Set<ProfileScanMatch.ProfileScanLocation> l = new HashSet<>();
         // Sequence is 60 chars, so make up a CIGAR string that adds up to 60 (10+10+30):
         l.add(new ProfileScanMatch.ProfileScanLocation(1, 60, 15.158, "10M10D10I30M"));
-        original.addMatch(new ProfileScanMatch(new Signature("PS50206"), l));
+        original.addMatch(new ProfileScanMatch(new Signature("PS50206"), "PS50206", l));
 
         byte[] data = SerializationUtils.serialize(original);
         String originalXML = marshal(original);
@@ -172,18 +175,18 @@ public class ProteinTest extends AbstractTest<Protein> {
     @Test
     public void testGetMd5() {
         Protein ps = new Protein(GOOD);
-        assertEquals("MD5 checksums should be same", GOOD_MD5, ps.getMd5());
+        assertEquals( GOOD_MD5, ps.getMd5(), "MD5 checksums should be same");
     }
 
     @Test
     public void testRemoveMatch() {
         Protein protein = new Protein(GOOD);
         Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
-        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, HmmBounds.N_TERMINAL_COMPLETE));
-        Match match = protein.addMatch(new Hmmer2Match(new Signature("PF00155"), 0.035, 4.3e-61, locations));
-        assertEquals("Protein should have one match", 1, protein.getMatches().size());
+        locations.add(new Hmmer2Match.Hmmer2Location(3, 107, 3.0, 3.7e-9, 1, 104, 104, HmmBounds.N_TERMINAL_COMPLETE));
+        Match match = protein.addMatch(new Hmmer2Match(new Signature("PF00155"), "PF00155", 0.035, 4.3e-61, locations));
+        assertEquals( 1, protein.getMatches().size(), "Protein should have one match");
         protein.removeMatch(match);
-        assertEquals("Protein should have no matches", 0, protein.getMatches().size());
+        assertEquals( 0, protein.getMatches().size(), "Protein should have no matches");
     }
 
     // Note: The following does not work perhaps because IllegalArgumentException is a runtime exception, and only
@@ -205,7 +208,7 @@ public class ProteinTest extends AbstractTest<Protein> {
     // TODO: Re-enable when JPA works OK
 
     @Test
-    @Ignore("Fails due to problems with retrievel of match data")
+    @Disabled("Fails due to problems with retrievel of match data")
     public void testJpa() {
         super.testJpaXmlObjects(new ObjectRetriever<Protein>() {
             public Protein getObjectByPrimaryKey(GenericDAO<Protein, Long> dao, Long primaryKey) {

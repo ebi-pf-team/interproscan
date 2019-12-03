@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.Hmmer2Match;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -72,6 +73,13 @@ public class PirsfPersistStep extends Step {
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
+        //do we need to skip
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            return;
+        }
+
         double signatureLibraryReleaseValue = Double.parseDouble(signatureLibraryRelease);
         if (signatureLibraryReleaseValue <= 2.74d) {
             Set<RawProtein<PIRSFHmmer2RawMatch>> filteredRawMatches = new HashSet<RawProtein<PIRSFHmmer2RawMatch>>();

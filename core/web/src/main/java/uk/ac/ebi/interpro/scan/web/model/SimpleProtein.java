@@ -28,6 +28,8 @@ public final class SimpleProtein implements Serializable {
     private Set<SimpleEntry> familyEntries = null;
     private List<SimpleStructuralDatabase> structuralDatabases = new ArrayList<SimpleStructuralDatabase>();
 
+    private List<SimpleSite> sites = new ArrayList<>();
+
 
     public SimpleProtein(String ac, String id, String name, int length, String md5, String crc64,
                          int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
@@ -238,7 +240,12 @@ public final class SimpleProtein implements Serializable {
         final List<SimpleSignature> signatures = new ArrayList<SimpleSignature>();
         for (SimpleEntry entry : this.entries) {
             if (!entry.isIntegrated()) {
-                signatures.addAll(entry.getSignatures());
+                for (SimpleSignature signature : entry.getSignatures()) {
+                    if (!MatchDataSource.isSequenceFeature(signature.getDataSource())) {
+                        signatures.add(signature);
+                    }
+                }
+                break;
             }
         }
         Collections.sort(signatures);
@@ -259,6 +266,52 @@ public final class SimpleProtein implements Serializable {
             resultValue = (getUnintegratedSignatures().size() - 1) * heightPerSignatureLine + globalHeight;
         }
         return resultValue;
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     *
+     * @return
+     */
+    public List<SimpleSignature> getSequenceFeatures() {
+        final List<SimpleSignature> signatures = new ArrayList<>();
+        for (SimpleEntry entry : this.entries) {
+            if (!entry.isIntegrated()) {
+                for (SimpleSignature signature : entry.getSignatures()) {
+                    if (MatchDataSource.isSequenceFeature(signature.getDataSource())) {
+                        signatures.add(signature);
+                    }
+                }
+                break;
+            }
+        }
+        Collections.sort(signatures);
+        return signatures;
+    }
+
+    /**
+     * Returns the height in pixel for the un-integrated signatures section within the SVG template.
+     *
+     * @param heightPerSignatureLine
+     * @param globalHeight
+     * @return
+     */
+    public int getSequenceFeaturesComponentHeightForSVG(int heightPerSignatureLine, int globalHeight) {
+        //default
+        int resultValue = 0;
+        if (getSequenceFeatures() != null) {
+            resultValue = (getSequenceFeatures().size() - 1) * heightPerSignatureLine + globalHeight;
+        }
+        return resultValue;
+    }
+
+    public List<SimpleSite> getSites() {
+        Collections.sort(sites);
+        return sites;
+    }
+
+    public void setSites(List<SimpleSite> sites) {
+        this.sites = sites;
     }
 
     /**
@@ -349,6 +402,39 @@ public final class SimpleProtein implements Serializable {
         return false;
     }
 
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there are no sites.
+     *
+     * @return true if one or more sites are present, otherwise false
+     */
+    public boolean hasSites() {
+        return !(this.sites == null || this.sites.size() < 1);
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute class="disabled" if there are no sites.
+     *
+     * @return required HTML snippet.
+     */
+    public String disabledStyleIfNoSites() {
+        return (hasSites()) ? "" : "class=\"disabled\"";
+    }
+
+    /**
+     * USED BY FREEMARKER - DON'T DELETE
+     * <p/>
+     * Method to return an HTML attribute disabled="disabled" if there are no sites.
+     *
+     * @return required HTML snippet.
+     */
+    public String disableIfNoSites() {
+        return (hasSites()) ? "" : "disabled=\"disabled\"";
+    }
+
 
     private static final String UNKNOWN = "Unknown";
 
@@ -381,6 +467,7 @@ public final class SimpleProtein implements Serializable {
             // 2) Create SimpleSignature object
             final Signature signature = match.getSignature();
             final String signatureAc = signature.getAccession();
+            final String signatureModels = match.getSignatureModels();
             final String signatureName = (signature.getName() == null || signature.getName().length() == 0)
                     ? signatureAc
                     : signature.getName();
@@ -401,11 +488,14 @@ public final class SimpleProtein implements Serializable {
                 simpleProtein.getAllEntries().add(simpleEntry);
             }
 
+            // Need library name, e.g. we could get "SignalP-noTM" signatureAc from both SignalP_EUK and SIGNALP_GRAM_NEGATIVE
+            final String signatureKey = signatureAc + "-" + signatureLibraryName;
+
             // If SimpleSignature entry already exists, get it
-            if (simpleEntry.getSignaturesMap().containsKey(signatureAc)) {
-                simpleSignature = simpleEntry.getSignaturesMap().get(signatureAc);
+            if (simpleEntry.getSignaturesMap().containsKey(signatureKey)) {
+                simpleSignature = simpleEntry.getSignaturesMap().get(signatureKey);
             } else {
-                simpleEntry.getSignaturesMap().put(signatureAc, simpleSignature);
+                simpleEntry.getSignaturesMap().put(signatureKey, simpleSignature);
             }
 
             //Iterate over match locations
@@ -413,12 +503,46 @@ public final class SimpleProtein implements Serializable {
 
                 // 4) Create SimpleLocation object
                 final Location location = (Location) o;
-                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd());
+                String feature = null;
+                if (location instanceof MobiDBMatch.MobiDBLocation) {
+                    feature = ((MobiDBMatch.MobiDBLocation) location).getSequenceFeature();
+                }
+
+                final SimpleLocation simpleLocation = new SimpleLocation(location.getStart(), location.getEnd(), signatureModels, feature);
+
+                Set<LocationFragment> fragments = location.getLocationFragments();
+                if (fragments != null) {
+                    for (LocationFragment fragment: fragments) {
+                        SimpleLocationFragment simpleLocationFragment = new SimpleLocationFragment(fragment.getStart(), fragment.getEnd(), fragment.getDcStatus());
+                        simpleLocation.addFragment(simpleLocationFragment);
+                    }
+                }
 
                 // Adding the same SimpleLocation to both the Signature and the Entry is OK, as the SimpleLocation is immutable.
                 simpleSignature.getLocations().add(simpleLocation);
                 // Add location to the list of super matches
                 simpleEntry.getLocations().add(simpleLocation);
+
+                // Add any sites from that location
+                if (location instanceof LocationWithSites) {
+                    final Set<Site> siteSet = ((LocationWithSites) location).getSites();
+                    if (siteSet != null) {
+                        long i = 1L;
+                        for (Site site : siteSet) {
+                            Long siteId = site.getId();
+                            if (siteId == null) {
+                                siteId = i; // Auto-allocate a temporary ID unique to this site/protein when not already set (e.g. for convert mode)
+                            }
+                            SimpleSite simpleSite = new SimpleSite(siteId, site.getDescription(), site.getNumLocations(), simpleSignature, simpleEntry);
+                            for (SiteLocation siteLocation : site.getSiteLocations()) {
+                                SimpleSiteLocation simpleSiteLocation = new SimpleSiteLocation(siteLocation.getResidue(), new SimpleLocation(siteLocation.getStart(), siteLocation.getEnd(), signatureModels));
+                                simpleSite.addSiteLocation(simpleSiteLocation);
+                            }
+                            simpleProtein.getSites().add(simpleSite);
+                            i++;
+                        }
+                    }
+                }
             }
         }
         return simpleProtein;

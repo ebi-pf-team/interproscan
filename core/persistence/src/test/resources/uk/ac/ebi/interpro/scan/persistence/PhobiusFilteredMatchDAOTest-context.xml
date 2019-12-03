@@ -5,23 +5,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
 
-    <!-- JPA Configuration -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="testPersistence"/>
-    </bean>
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    <import resource="./spring-persistence-config.xml"/>
+    <!--<import resource="persistence.xml"/>-->
 
-    <!-- JPA Transaction Setup -->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
+    <import resource="classpath:/spring-persistence-config.xml"/>
+
+
+
 
     <tx:annotation-driven/>
 
-    <bean id="phobiusDAO" class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAOImpl">
-        <constructor-arg value="1.0"/>
+    <bean id="phobiusFilteredMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAO">
+        <!--<constructor-arg value="1.0"/>-->
+        <constructor-arg ref="signatureLibraryReleasePhobius"/>
+        <property name="dbStore" ref="kvStoreMatches"/>
+        <property name="matchDAO" ref="matchDAO"/>
     </bean>
 
-    <bean id="proteinDAO" class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="signatureLibraryReleasePhobius" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PHOBIUS"/>
+        <constructor-arg type="java.lang.String" ref="latestPhobiusSignatureLibraryRelease"/>
+    </bean>
+
+    <bean id="latestPhobiusSignatureLibraryRelease" class="java.lang.String">
+        <constructor-arg value="1.0"/>
+        <!--<constructor-arg value="${phobius.signature.library.release}"/>-->
+    </bean>
 
 </beans>

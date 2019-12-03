@@ -22,7 +22,16 @@
 
     <!-- Common DAO Beans (where possible, make them more local to where they are required) -->
     <bean id="proteinDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl"/>
+          class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">
+        <property name="proteinsNotInLookupDB" ref="kvStoreProteinsNotInLookup"/>
+        <property name="dbStore" ref="kvStoreProteins"/>
+        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
+    </bean>
+
+    <bean id="matchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.MatchDAOImpl">
+        <property name="dbStore" ref="kvStoreMatches"/>
+    </bean>
 
     <bean id="signatureDAO"
           class="uk.ac.ebi.interpro.scan.persistence.SignatureDAOImpl">
@@ -61,7 +70,9 @@
           class="uk.ac.ebi.interpro.scan.persistence.OpenReadingFrameDAOImpl"/>
 
     <bean id="nucleotideSequenceDAO"
-          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl"/>
+          class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAOImpl">
+        <property name="dbStore" ref="kvStoreNucleotides"/>
+    </bean>
 
     <bean id="nucleotideSequenceXrefDAO"
           class="uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAOImpl"/>
@@ -71,5 +82,40 @@
     <bean id="releaseDAO" class="uk.ac.ebi.interpro.scan.persistence.ReleaseDAOImpl"/>
 
     <bean id="lockObject" class="java.lang.Object"/>
+
+
+    <!-- othe beans usefull for persistence-->
+
+    <!-- protein that have no matches in the lookup service-->
+    <bean id="proteinsWithoutLookupHit" class="org.eclipse.jetty.util.ConcurrentHashSet">
+    </bean>
+
+    <bean id="kvStoreProteins"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinDB"/>
+    </bean>
+
+    <bean id="kvStoreProteinsNotInLookup"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinNotInLookupDB"/>
+    </bean>
+
+    <bean id="kvStoreProteinsOther"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <!-- TODO inject this value, so rleative to jobStep directory-->
+        <property name="dbName" value="proteinOtherDB"/>
+    </bean>
+
+    <bean id="kvStoreMatches"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <property name="dbName" value="matchDB"/>
+    </bean>
+
+    <bean id="kvStoreNucleotides"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <property name="dbName" value="NucleotideDB"/>
+    </bean>
 
 </beans>

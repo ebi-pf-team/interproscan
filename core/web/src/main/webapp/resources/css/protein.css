@@ -201,9 +201,11 @@ a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_o
     background-color: #ffac0b;
 }
 
-.Family_tab, .Protein_tab, .Domain_tab, .Site_tab, .Conserved_site_tab, .Active_site_tab, .Binding_site_tab, .Repeat_tab, .PTM_tab, .Region_tab, .sign_uni_tab {font-size: 137%; padding-left: 22px; margin: 9px 0 0 9px;}
+.Family_tab, .Domain_tab, .Site_tab, .Conserved_site_tab, .Active_site_tab, .Binding_site_tab, .Repeat_tab, .PTM_tab, .Region_tab, .sign_uni_tab {font-size: 137%; padding-left: 22px; margin: 9px 0 0 9px;}
+.Protein_tab {font-size: 137%; margin: 9px 0 0 4px;}
 
-.Protein_tab {color: #1897e9; background: url(../images/ico_type_protein.png) no-repeat 0 5px;}
+.Protein_tab {color: #2e5882;}
+/*.Protein_tab {color: #1897e9; background: url(../images/ico_type_protein.png) no-repeat 0 5px;}*/
 
 .main-box {border: 1px solid #e4e4e4; float: left; width: 98%; /* this is a mystery to correct*/ } /*to remove when possible*/
 
@@ -214,18 +216,20 @@ a.ext:hover,a.ext:active, a.ext:focus { background: url(../images/ico_ext_link_o
 .menu-filter fieldset label.view_all {padding-left:19px;padding-top:5px; background: url(../images/ico_type_all.png) no-repeat 0 2px; font-weight:bold;}
 .menu-filter div { margin-bottom:10px;}
 .menu-filter div H1 {color:#2e5882; font-size:110%;font-weight:bold; background-color:#f2f6f8; border:1px solid #9eb6ce; padding: 4px 10px; margin:0; }
-.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
+.menu-filter div H1, .menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-sites fieldset, .menu-filter .menu-filter-colour fieldset {box-shadow:0px 2px 2px #adadad;-moz-box-shadow:0px 2px 2px #adadad ;-khtml-box-shadow:0px 2px 2px #adadad;-webkit-box-shadow:0px 2px 2px #adadad;}
 .menu-filter div fieldset {border: 1px solid #d1d1d1;  margin:0;}
 .menu-filter .disabled {border:0px solid red;-moz-opacity: .5; opacity: 0.50; filter: alpha(opacity=50);}
 .menu-filter .disabled label {cursor:default;}
-.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-colour div {display: block;}
-.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
+.menu-filter .menu-filter-type div, .menu-filter .menu-filter-status div, .menu-filter .menu-filter-sites div, .menu-filter .menu-filter-colour div {display: block;}
+.menu-filter .menu-filter-type fieldset, .menu-filter .menu-filter-status fieldset, .menu-filter .menu-filter-sites fieldset, .menu-filter .menu-filter-colour fieldset {background-color:#fff; padding:6px 2px; border-top:0;-moz-border-radius:  0 0 4px 4px;-khtml-border-radius:   0 0 4px 4px ;-webkit-border-radius:  0 0 4px 4px; border-radius: 0 0 4px 4px;}
 .menu-filter .menu-filter-type label, .menu-filter .menu-filter-status label  {border:0px green solid;padding-left:19px;padding-top:5px; }
-.menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-type label.site {background:url(../images/ico_type_site.png) no-repeat 0 2px;}
-.menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 2px;}
+.menu-filter .menu-filter-sites label  {border:0px green solid;padding-left:2px;padding-top:5px; }
+.menu-filter .menu-filter-type label.homologous-superfamily {background: url(../images/ico_type_homologous_superfamily.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.family {background: url(../images/ico_type_family.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.domains {background:url(../images/ico_type_domain.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.repeats {background:url(../images/ico_type_repeat.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-type label.site {background:url(../images/ico_type_site.png) no-repeat 0 4px;}
+.menu-filter .menu-filter-status label.uni {background:url(../images/ico_type_uni.png) no-repeat 0 4px;}
 .menu-filter .menu-filter-colour { font-size:80%;}
 .menu-filter .menu-filter-colour legend { font-size:110%;font-weight:bold;}
 .menu-filter .menu-filter-colour .filter-colour-head {overflow:auto; background-color: #f2f6f8; border: 1px solid #9eb6ce; padding: 4px 10px;margin: 0;}
@@ -344,8 +348,9 @@ border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; -webkit-
 
 .ui-tooltip-content ul {margin:0; padding:0; list-style:none;}
 .ui-tooltip-content ul li {list-style-type: none; padding-left: 26px;/* padding-bottom: 2px;add space to make the shadow of the tree icon appear correctly*/}
-.ui-tooltip-content ul li {background: url(../images/ico_tree_d.png) no-repeat 0 0;} /*temp fix as Domain is added randomly to list element - code needs to be checked*/
+.ui-tooltip-content ul li {background: url(../images/ico_tree_domain.png) no-repeat 0 0;} /*temp fix as Domain is added randomly to list element - code needs to be checked*/
 .ui-tooltip-content ul li.Repeat {background: url(../images/ico_tree_repeat.png) no-repeat 0 0;}
+.ui-tooltip-content ul li.Homologous_superfamily {background: url(../images/ico_tree_homologous_superfamily.png) no-repeat 0 0;}
 
 .ui-tooltip .popup_topl {padding-bottom:4px; font-weight:bold;font-size:88%;}
 .ui-tooltip .popup_topl .caption_puce {width:6px; height:6px; border:1px solid #393939; float:left; margin: 4px 4px 0 0;zoom:1; /* for IE7 and IE6 to visualise the span and background without content*/}

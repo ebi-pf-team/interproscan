@@ -2,7 +2,7 @@ package uk.ac.ebi.interpro.scan.io.match.tmhmm;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.Protein;
@@ -46,7 +46,7 @@ public class TMHMMMatchMarshalTest extends TestCase {
         final Set<TMHMMMatch.TMHMMLocation> locations = new HashSet<TMHMMMatch.TMHMMLocation>();
         locations.add(new TMHMMMatch.TMHMMLocation(1, 2, "TMHelix", 1.0f));
         final Signature signature = new Signature.Builder("TMhelix").build();
-        final TMHMMMatch match = new TMHMMMatch(signature, locations);
+        final TMHMMMatch match = new TMHMMMatch(signature, "TMhelix", locations);
         final Protein protein = new Protein("aaa");
         protein.addMatch(match);
         try {

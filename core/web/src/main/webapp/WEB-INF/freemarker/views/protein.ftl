@@ -71,6 +71,10 @@
 </#if>
 
 </div>
+
+<#if standalone>
+    <div class="grid_19 omega main-content"><i>Generated with InterProScan ${interproscanVersion}</i></div>
+</#if>
 </div>
 </body>
 </html>

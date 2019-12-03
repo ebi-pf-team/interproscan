@@ -29,6 +29,7 @@ public interface SequenceLoader<T> extends Serializable {
      *                              to use this service.
      */
     void setUseMatchLookupService(boolean useMatchLookupService);
+    void setDisplayLookupMessage(boolean displayMessage);
 
     /**
      * Persists proteins that have been collapsed and annotated with ProteinXrefs

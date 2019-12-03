@@ -3,7 +3,11 @@ package uk.ac.ebi.interpro.scan.jms.worker;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.pool.PooledConnectionFactory;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
@@ -37,6 +41,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+
 /**
  * This controller monitors the activity of the Worker.  If the worker is inactive and has
  * been idle for longer than maximumIdleTimeMillis, or if the worker is inactive and
@@ -49,7 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class WorkerImpl implements Worker {
 
-    private static final Logger LOGGER = Logger.getLogger(WorkerImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WorkerImpl.class.getName());
 
     private long lastMessageFinishedTime = System.currentTimeMillis(); //new Date().getTime();
 
@@ -166,6 +172,8 @@ public class WorkerImpl implements Worker {
     private int jmsRelatedExceptionCount = 0;
 
     private int queuePrefetchLimit = 0;
+
+    public int sequenceCount = 0;
 
     /**
      * Constructor that requires a DefaultMessageListenerContainer - this needs to be set before anything else.
@@ -564,6 +572,14 @@ public class WorkerImpl implements Worker {
 
     public void setGridCheckInterval(int gridCheckInterval) {
         this.gridCheckInterval = gridCheckInterval;
+    }
+
+    public int getSequenceCount() {
+        return sequenceCount;
+    }
+
+    public void setSequenceCount(int sequenceCount) {
+        this.sequenceCount = sequenceCount;
     }
 
     public void jobStarted(String jmsMessageId) {
@@ -1346,6 +1362,7 @@ public class WorkerImpl implements Worker {
             LOGGER.debug("Message selector: '" + messageSelector + "'");
         }
         remoteQueueJmsContainer.setMessageSelector(messageSelector.toString());
+
         if (LOGGER.isTraceEnabled()) {
             LOGGER.debug("State following setMessageSelector call:");
             logMessageListenerContainerState();
@@ -1450,6 +1467,12 @@ public class WorkerImpl implements Worker {
         activeMQConnectionFactory.setAlwaysSessionAsync(false);
         activeMQConnectionFactory.getPrefetchPolicy().setQueuePrefetch(getQueuePrefetchLimit()); //TODO monitor
 
+        // <!--<property name="trustedPackages" value="uk.ac.ebi.interpro.scan.*" />-->
+        List<String> trustedPackages = new ArrayList();
+        trustedPackages.add("uk.ac.ebi.interpro.scan.*");
+        //activeMQConnectionFactory.setTrustedPackages(trustedPackages);
+        activeMQConnectionFactory.setTrustAllPackages(true);
+
         //set the RedeliveryPolicy
         RedeliveryPolicy queuePolicy =  activeMQConnectionFactory.getRedeliveryPolicy();
         queuePolicy.setInitialRedeliveryDelay(0);
@@ -1461,6 +1484,8 @@ public class WorkerImpl implements Worker {
 
         activeMQConnectionFactory.setTransportListener(jmsTransportListener);
         activeMQConnectionFactory.setExceptionListener(jmsExceptionListener);
+
+
 
         final CachingConnectionFactory oldCachingconnectionFactory = new CachingConnectionFactory(activeMQConnectionFactory);
         //the following works for the cachingFactory
@@ -1558,6 +1583,8 @@ public class WorkerImpl implements Worker {
         try {
             localhostname = java.net.InetAddress.getLocalHost().getHostName();
             fullHostName = java.net.InetAddress.getLocalHost().getCanonicalHostName();
+            LOGGER.debug("localhostname: " + localhostname);
+            LOGGER.debug("fullHostName: " + fullHostName);
         } catch (UnknownHostException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

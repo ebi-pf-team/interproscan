@@ -16,6 +16,9 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -29,7 +32,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Signature, for example SSF53098 [http://supfam.mrc-lmb.cam.ac.uk/SUPERFAMILY/cgi-bin/models_list.cgi?sf=53098]
+ * Signature, for example SSF53098 [http://supfam.org/SUPERFAMILY/cgi-bin/models_list.cgi?sf=53098]
  *
  * @author Antony Quinn
  * @author Phil Jones
@@ -44,6 +47,7 @@ import java.util.*;
         @Index(name = "SIGNATURE_TYPE_IDX", columnList = "TYPE"),
         @Index(name = "SIGNATURE_MD5_IDX", columnList = "MD5")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "updated", "created", "id", "crossReferences", "abstract", "comment", "md5", "deprecatedAccessions", "type"}) // IBU-4703: "abstract", "comment", "md5" and "type" are never populated
 public class Signature implements Serializable {
 
     @Transient
@@ -108,9 +112,10 @@ public class Signature implements Serializable {
     private String abstractText;
 
     //TODO: Switch back to eager loading after schema update (loading entries to database)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     // TODO: This needs to be ManyToMany so that a Signature can be re-used across releases.
     @BatchSize(size=4000)
+    @JsonManagedReference
     private SignatureLibraryRelease signatureLibraryRelease;
 
     // TODO: Decide whether to use Map or Set (see ChEBI team)
@@ -120,16 +125,20 @@ public class Signature implements Serializable {
 //    @OneToMany(mappedBy = "signature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "accession")
     @BatchSize(size=4000)
+    @JsonManagedReference
+    @JsonIgnore
     private Map<String, Model> models = new HashMap<String, Model>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature", fetch = FetchType.EAGER)
+    //@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "signature")
     //@XmlElementWrapper(name = "xrefs")
     @XmlElement(name = "xref") // TODO: This should not be here (see TODO comments on getCrossReferences)
     @BatchSize(size=4000)
+    @JsonManagedReference
     private Set<SignatureXref> crossReferences = new HashSet<SignatureXref>();
 
-    @ElementCollection
-//    @ElementCollection(fetch = FetchType.EAGER)
+//    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(name = "signature_deprecated_acs")
     @Column(nullable = true)
     @BatchSize(size=4000)
@@ -138,8 +147,10 @@ public class Signature implements Serializable {
     @Column(nullable = true, name = "signature_comment")  // comment is an SQL reserved word.
     private String comment;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER) // lets try eager here
+//    @ManyToOne(optional = true, fetch = FetchType.LAZY) //why lazy??
 //    @ManyToOne(optional = true, cascade = CascadeType.MERGE)
+    @JsonManagedReference
     private Entry entry;
 
     /**
@@ -472,7 +483,10 @@ public class Signature implements Serializable {
         deprecatedAccessions.remove(ac);
     }
 
-    @XmlJavaTypeAdapter(ModelAdapter.class)
+//    @XmlJavaTypeAdapter(ModelAdapter.class)
+    @XmlTransient
+    @JsonManagedReference
+    @JsonIgnore
     public Map<String, Model> getModels() {
 //        return (models == null ? null : Collections.unmodifiableMap(models));
         return models;
@@ -542,7 +556,7 @@ public class Signature implements Serializable {
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class ModelsType {
 
-        @XmlElement(name = "model")
+        @XmlElement(name = "old-model-elm")
         private final Set<Model> models;
 
         private ModelsType() {

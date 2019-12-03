@@ -22,6 +22,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
      * CRC64
      * METHOD_AC
      * METHOD_NAME
+     * MODELS
      * METHOD_DATABASE_NAME
      * POS_FROM
      * POS_TO
@@ -34,10 +35,12 @@ public final class MatchDataRecord extends AbstractDataRecord {
      * TAXONOMY_SCIENCE_NAME
      * TAXONOMY_FULL_NAME
      * PROTEIN_FRAGMENT
+     * FRAGMENTS
      */
 
     private final String methodAc;
     private final String methodName;
+    private final String models; // Could be NULL
     private final String methodDatabase;
     private final Double score; // Could be NULL
     private final String entryAc;
@@ -47,15 +50,18 @@ public final class MatchDataRecord extends AbstractDataRecord {
     private final int taxId;
     private final String taxScienceName;
     private final String taxFullName;
+    private final String fragments; // Could be NULL?
 
     public MatchDataRecord(String proteinAc, String proteinId, String proteinDescription, int proteinLength,
-                           String crc64, String methodAc, String methodName, String methodDatabase,
+                           String crc64, String methodAc, String methodName, String models, String methodDatabase,
                            int posFrom, int posTo, Double score,
                            String entryAc, String entryShortName, String entryName, String entryType,
-                           int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment) {
+                           int taxId, String taxScienceName, String taxFullName, boolean isProteinFragment,
+                           String fragments) {
         super(proteinAc, proteinId, proteinDescription, proteinLength, crc64, posFrom, posTo, isProteinFragment);
         this.methodAc = methodAc;
         this.methodName = methodName;
+        this.models = models;
         this.methodDatabase = methodDatabase;
         this.score = score;
         this.entryAc = entryAc;
@@ -65,6 +71,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
         this.taxId = taxId;
         this.taxScienceName = taxScienceName;
         this.taxFullName = taxFullName;
+        this.fragments = fragments;
     }
 
     public String getMethodAc() {
@@ -73,6 +80,10 @@ public final class MatchDataRecord extends AbstractDataRecord {
 
     public String getMethodName() {
         return methodName;
+    }
+
+    public String getModels() {
+        return models;
     }
 
     public String getMethodDatabase() {
@@ -111,6 +122,10 @@ public final class MatchDataRecord extends AbstractDataRecord {
         return taxFullName;
     }
 
+    public String getFragments() {
+        return fragments;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -127,6 +142,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(getCrc64(), r.getCrc64())
                 .append(methodAc, r.methodAc)
                 .append(methodName, r.methodName)
+                .append(models, r.models)
                 .append(methodDatabase, r.methodDatabase)
                 .append(getPosFrom(), r.getPosFrom())
                 .append(getPosTo(), r.getPosTo())
@@ -139,6 +155,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(taxScienceName, r.taxScienceName)
                 .append(taxFullName, r.taxFullName)
                 .append(isProteinFragment(), r.isProteinFragment())
+                .append(fragments, r.fragments)
                 .isEquals();
     }
 
@@ -152,6 +169,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(getCrc64())
                 .append(methodAc)
                 .append(methodName)
+                .append(models)
                 .append(methodDatabase)
                 .append(getPosFrom())
                 .append(getPosTo())
@@ -164,6 +182,7 @@ public final class MatchDataRecord extends AbstractDataRecord {
                 .append(taxScienceName)
                 .append(taxFullName)
                 .append(isProteinFragment())
+                .append(fragments)
                 .toHashCode();
     }
 

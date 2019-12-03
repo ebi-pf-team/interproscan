@@ -1,10 +1,10 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.interpro.scan.business.filter.Gene3dRawMatchFilter;
 import uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author  Antony Quinn
  * @version $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public final class Gene3dHmmer3FilterStepTest {
 
@@ -43,11 +43,11 @@ public final class Gene3dHmmer3FilterStepTest {
     private static final String ALIGNMENT   = "24M2I9M1D9";
 
     private static final Gene3dHmmer3RawMatch match =
-              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "3.3.0",
+              new Gene3dHmmer3RawMatch(SEQ_ID, MODEL_ID, "", "", "3.3.0",
                                        SEQ_START, SEQ_END, SEQ_EVALUE, SEQ_SCORE,
                                        MODEL_START, MODEL_END, HMM_BOUNDS, DOMAIN_SCORE,
                                        ENV_START, ENV_END, EXPECTED_ACCURACY, SEQ_BIAS,
-                                       DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT);
+                                       DOMAIN_C_EVALUE, DOMAIN_I_EVALUE, DOMAIN_BIAS, ALIGNMENT, "");
     
 //    @Resource
 //    Gene3dHmmer3FilterStep step;
@@ -56,7 +56,7 @@ public final class Gene3dHmmer3FilterStepTest {
     Gene3dRawMatchFilter filter;
 
     @Test
-    @Ignore("Relies on DomainFinder binary")
+    @Disabled("Relies on DomainFinder binary")
     public void testFilter() {
         RawProtein<Gene3dHmmer3RawMatch> p = new RawProtein<Gene3dHmmer3RawMatch>(SEQ_ID);
         p.addMatch(match);

@@ -87,6 +87,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
         }
         String analysisJobNames = stepInstance.getParameters().get(ANALYSIS_JOB_NAMES_KEY);
         final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
+
         boolean useMatchLookupService = true;
         if (stepInstance.getParameters().containsKey(USE_MATCH_LOOKUP_SERVICE)) {
             useMatchLookupService = Boolean.parseBoolean(stepInstance.getParameters().get(USE_MATCH_LOOKUP_SERVICE));
@@ -100,7 +101,11 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
             String fastaFileInputStatusMessage;
             try {
                 Path path = Paths.get(providedPath); // E.g. "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
-                System.out.println(getTimeNow() + " Loading file " + providedPath);
+                if (Utilities.verboseLog || ! Utilities.isRunningInSingleSeqMode()) {
+                    System.out.println(getTimeNow() + " Loading file " + providedPath);
+                }
+//                System.out.println(getTimeNow() + " Loading file " + providedPath);
+
                 if (Files.exists(path)) {
                     fastaFileInputStatusMessage = " - fasta file exists";
                     if (Files.isReadable(path)) {
@@ -180,6 +185,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 Jobs analysisJobs;
                 if (analysisJobNames == null) {
                     analysisJobs = jobs.getActiveAnalysisJobs();
+                    analysisJobs = jobs.getActiveNonDeprecatedAnalysisJobs();
                     List<String> analysisJobIdList = analysisJobs.getJobIdList();
                     StringBuilder analysisJobNamesBuilder = new StringBuilder();
                     for (String jobName : analysisJobIdList) {
@@ -212,7 +218,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
-                //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
@@ -222,7 +228,11 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 //                StringBuilder analysesToDisplay = new StringBuilder();
                 StringJoiner analysesToDisplay = new StringJoiner(",");
 
-                for (String key: analysisJobMap.keySet()){
+                 //sort the keys
+                List<String> analysisJobMapKeySet = new ArrayList(analysisJobMap.keySet());
+                Collections.sort(analysisJobMapKeySet);
+
+                for (String key: analysisJobMapKeySet){
                     analysesToRun.append(analysisJobMap.get(key).getLibrary().getName() + "-" + analysisJobMap.get(key));
                     analysesToDisplay.add(String.join("-", analysisJobMap.get(key).getLibrary().getName(),
                             analysisJobMap.get(key).getVersion()));
@@ -238,11 +248,23 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
                 Job completionJob = jobs.getJobById(completionJobName);
 
+                final String prepareOutputJobName = stepInstance.getParameters().get(PREPARE_OUTPUT_JOB_NAME_KEY);
+                Job prepareOutputJob = jobs.getJobById(prepareOutputJobName);
+
+                final String matchLookupJobName = stepInstance.getParameters().get(MATCH_LOOKUP_JOB_NAME_KEY);
+                Job matchLookupJob = jobs.getJobById(matchLookupJobName);
+
+                final String finalInitialJobName = stepInstance.getParameters().get(FINALISE_INITIAL_STEPS_JOB_NAME_KEY);
+                Job finalInitialJob = jobs.getJobById(finalInitialJobName);
+
+                boolean  initialSetupSteps = false;
+
                 StepCreationSequenceLoadListener sequenceLoadListener =
-                        new StepCreationSequenceLoadListener(analysisJobs, completionJob, stepInstance.getParameters());
+                        new StepCreationSequenceLoadListener(analysisJobs, completionJob, prepareOutputJob,  matchLookupJob, finalInitialJob, initialSetupSteps, stepInstance.getParameters());
                 sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
 
                 fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
+
                 LOGGER.debug("Finished loading sequences and creating step instances.");
             } catch (IOException e) {
                 e.printStackTrace();

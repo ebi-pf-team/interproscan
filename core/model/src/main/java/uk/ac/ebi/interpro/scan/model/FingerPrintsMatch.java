@@ -48,8 +48,8 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
     protected FingerPrintsMatch() {
     }
 
-    public FingerPrintsMatch(Signature signature, double evalue, String graphscan, Set<FingerPrintsLocation> locations) {
-        super(signature, locations);
+    public FingerPrintsMatch(Signature signature, String signatureModels, double evalue, String graphscan, Set<FingerPrintsLocation> locations) {
+        super(signature, signatureModels, locations);
         setEvalue(evalue);
         setGraphscan(graphscan);
     }
@@ -99,7 +99,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         for (FingerPrintsLocation location : this.getLocations()) {
             clonedLocations.add((FingerPrintsLocation) location.clone());
         }
-        return new FingerPrintsMatch(this.getSignature(), this.getEvalue(), this.getGraphscan(), clonedLocations);
+        return new FingerPrintsMatch(this.getSignature(), this.getSignatureModels(), this.getEvalue(), this.getGraphscan(), clonedLocations);
     }
 
     /**
@@ -128,7 +128,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         }
 
         public FingerPrintsLocation(int start, int end, double pvalue, double score, int motifNumber) {
-            super(start, end);
+            super(new FingerPrintsLocationFragment(start, end));
             setPvalue(pvalue);
             setScore(score);
             setMotifNumber(motifNumber);
@@ -189,6 +189,45 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
         public Object clone() throws CloneNotSupportedException {
             return new FingerPrintsLocation(this.getStart(), this.getEnd(), this.getPvalue(), this.getScore(), this.getMotifNumber());
         }
+
+        /**
+         * Location fragment of a PRINTS match on a protein sequence
+         */
+        @Entity
+        @Table(name = "finger_prints_location_fragment")
+        @XmlType(name = "FingerPrintsLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        public static class FingerPrintsLocationFragment extends LocationFragment {
+
+            protected FingerPrintsLocationFragment() {
+            }
+
+            public FingerPrintsLocationFragment(int start, int end) {
+                super(start, end);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o)
+                    return true;
+                if (!(o instanceof FingerPrintsLocationFragment))
+                    return false;
+                return new EqualsBuilder()
+                        .appendSuper(super.equals(o))
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder(117, 161)
+                        .appendSuper(super.hashCode())
+                        .toHashCode();
+            }
+
+            public Object clone() throws CloneNotSupportedException {
+                return new FingerPrintsLocationFragment(this.getStart(), this.getEnd());
+            }
+        }
+
 
     }
 }

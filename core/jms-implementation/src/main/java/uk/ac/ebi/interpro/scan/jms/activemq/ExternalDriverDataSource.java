@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.jdbc.datasource.AbstractDriverBasedDataSource;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 
@@ -23,7 +25,7 @@ import java.util.Properties;
 
 public class ExternalDriverDataSource extends AbstractDriverBasedDataSource {
 
-    private static final Logger LOGGER = Logger.getLogger(ExternalDriverDataSource.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ExternalDriverDataSource.class.getName());
 
     private volatile boolean loaded;
     private SQLException failure;

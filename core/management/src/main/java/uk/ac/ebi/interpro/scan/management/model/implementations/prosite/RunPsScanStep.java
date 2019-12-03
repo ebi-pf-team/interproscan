@@ -23,10 +23,13 @@ public class RunPsScanStep extends RunBinaryStep {
     private String fullPathToPsScanPerlScript;
 
     private String fullPathToPfscanBinary;
+    private String fullPathToPfsearchBinary;
 
     private String fastaFileNameTemplate;
 
     private String fullPathToConfirmatoryProfiles;
+
+    private Boolean usePfsearch = false;
 
     private String modelFile;
 
@@ -66,12 +69,27 @@ public class RunPsScanStep extends RunBinaryStep {
         this.fullPathToPfscanBinary = fullPathToPfscanBinary;
     }
 
+    //pfsearch
+    public String getFullPathToPfsearchBinary() {
+        return fullPathToPfsearchBinary;
+    }
+
+    @Required
+    public void setFullPathToPfsearchBinary(String fullPathToPfsearchBinary) {
+        this.fullPathToPfsearchBinary = fullPathToPfsearchBinary;
+    }
+
+
     public String getFullPathToConfirmatoryProfiles() {
         return fullPathToConfirmatoryProfiles;
     }
 
     public void setFullPathToConfirmatoryProfiles(String fullPathToConfirmatoryProfiles) {
         this.fullPathToConfirmatoryProfiles = fullPathToConfirmatoryProfiles;
+    }
+
+    public void setUsePfsearch(Boolean usePfsearch) {
+        this.usePfsearch = usePfsearch;
     }
 
     /**
@@ -93,8 +111,13 @@ public class RunPsScanStep extends RunBinaryStep {
         command.add(this.getFullPathToPsScanPerlScript());
         command.add("-d");
         command.add(this.getModelFile());
-        command.add("--pfscan");
-        command.add(this.getFullPathToPfscanBinary());
+        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
+          command.add("-w");
+          command.add(this.getFullPathToPfsearchBinary());
+        }else{
+          command.add("--pfscan");
+          command.add(this.getFullPathToPfscanBinary());
+        }
         if (this.getFullPathToConfirmatoryProfiles() != null && this.getFullPathToConfirmatoryProfiles().length() > 0) {
             command.add("-b");
             command.add(this.getFullPathToConfirmatoryProfiles());

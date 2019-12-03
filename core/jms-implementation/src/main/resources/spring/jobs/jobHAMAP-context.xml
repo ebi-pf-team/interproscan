@@ -39,7 +39,7 @@
           parent="abstractHamapHMMStep">
         <property name="dependsUpon" ref="stepHamapHMMWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER3"/>
-        <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="singleSeqMode" value="false"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.hmmfilter} ${hmmer3.hmmsearch.cpu.switch.hmmfilter}"/>
@@ -69,7 +69,7 @@
         <property name="retries" value="3"/>
         <property name="fullPathToPFsearch" value="${binary.prosite.pfsearch.path}"/>
         <property name="fullPathToPfsearchWrapper" value="${binary.prosite.pfsearch.wrapperpath}"/>
-        <property name="fullPathToPython" value="${binary.prosite.python.path}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
         <property name="modelDir" value="${hamap.profile.models.dir}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -136,7 +136,10 @@
             </bean>
         </property>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.HamapFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
     </bean>

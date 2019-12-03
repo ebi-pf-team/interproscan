@@ -85,24 +85,31 @@
     <lang:groovy id="cddObject">
         <lang:inline-script>
             <![CDATA[
-                import uk.ac.ebi.interpro.scan.model.*
+            import uk.ac.ebi.interpro.scan.model.*
 
-                // Create protein
-                Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
-                p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
-                Signature signature = new Signature("cd000004", "Sortase ");
-                Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<RPSBlastMatch.RPSBlastLocation>();
-                locations.add(new RPSBlastMatch.RPSBlastLocation(1, 237, 2, 2.4e-32));
-                p.addMatch(new RPSBlastMatch(signature,  locations));
+            // Create protein
+            Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
+            p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
+            Signature signature = new Signature("cd000004", "Sortase ");
+            // Residue annotations (sites)
+            Set<SiteLocation> siteLocations = new HashSet<>();
+            siteLocations.add(new SiteLocation("Q", 39, 39));
+            siteLocations.add(new SiteLocation("K", 43, 43));
+            Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = new HashSet<>();
+            sites.add(new RPSBlastMatch.RPSBlastLocation.RPSBlastSite("heterodimer interface", siteLocations))
+            // Match location
+            Set<RPSBlastMatch.RPSBlastLocation> locations = new HashSet<>();
+            locations.add(new RPSBlastMatch.RPSBlastLocation(1, 237, 2.0, 2.4e-32, sites));
+            p.addMatch(new RPSBlastMatch(signature, "cd000004", locations));
 
-                // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14");
-                signature.setSignatureLibraryRelease(release);
-                // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
-                holder.addProtein(p);
+            // Create release
+            SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.CDD, "3.14");
+            signature.setSignatureLibraryRelease(release);
+            // Create holder
+            ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
+            holder.addProtein(p);
 
-                return holder;
+            return holder;
             ]]>
         </lang:inline-script>
     </lang:groovy>
@@ -113,7 +120,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                     <protein>
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
@@ -123,7 +130,19 @@
                                     <signature-library-release library="CDD" version="3.14" />
                                 </signature>
                                 <locations>
-                                    <rpsblast-location  evalue="2.4E-32" score="2" start="1" end="237"/>
+                                    <rpsblast-location evalue="2.4E-32" score="2.0" start="1" end="237">
+                                        <location-fragments>
+                                            <rpsblast-location-fragment start="1" end="237" dc-status="CONTINUOUS"/>
+                                        </location-fragments>
+                                        <sites>
+                                            <rpsblast-site description="heterodimer interface" numLocations="2">
+                                                <site-locations>
+                                                    <site-location residue="Q" start="39" end="39"/>
+                                                    <site-location residue="K" start="43" end="43"/>
+                                                </site-locations>
+                                            </rpsblast-site>
+                                        </sites>
+                                    </rpsblast-location>
                                 </locations>
                             </rpsblast-match>
                         </matches>
@@ -149,11 +168,11 @@
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.GENE3D, "3.1.0");
                 signature.setSignatureLibraryRelease(release);
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, 114, 73, 94));
-                p.addMatch(new Hmmer3Match(signature, -8.9, 0.28, locations));
+                locations.add(new Hmmer3Match.Hmmer3Location(74, 93, -8.9, 0.28, 63, 82, 265, HmmBounds.INCOMPLETE, 73, 94, true, DCStatus.CONTINUOUS));
+                p.addMatch(new Hmmer3Match(signature, "1o7jA01", -8.9, 0.28, locations));
 
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -167,7 +186,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                                       http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                                       http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                     <protein>
                         <sequence md5="1de2cf633901ff1f00785735c8ce7e70">MPTIKQLIRNARQPIRNVTKSPALRGCPQRRGTCTRVYTITPKKPNSALRKVARVRLTSG</sequence>
                         <xref db="UniProt" id="A0A314" name="RR12_COFAR"/>
@@ -176,11 +195,12 @@
                                 <signature ac="G3DSA:2.40.50.140" name="Nucleic acid-binding proteins">
                                     <signature-library-release library="GENE3D" version="3.1.0"/>
                                 </signature>
+                                <model-ac>1o7jA01</model-ac>
                                 <locations>
                                     <hmmer3-location start="74" end="93"
                                                      env-start="73" env-end="94"
                                                      score="-8.9" evalue="0.28"
-                                                     hmm-start="63" hmm-end="82" hmm-length="114" />
+                                                     hmm-start="63" hmm-end="82" />
                                 </locations>
                             </hmmer3-match>
                         </matches>
@@ -205,15 +225,15 @@
                         "SAVHETEEIHRFVDALDGIWSELGAARRV");
                 p.addCrossReference(new ProteinXref("UniProt", "A0A000", "A0A000_9ACTO"));
                 Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, 363, 41, 381));
+                locations.add(new Hmmer3Match.Hmmer3Location(37, 381, 206.7, 3.7E-67, 6, 363, 265, HmmBounds.INCOMPLETE, 41, 381, false, DCStatus.CONTINUOUS));
                 Signature signature = new Signature("PF00155", "Aminotran_1_2");
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PFAM, "23");
                 signature.setSignatureLibraryRelease(release);
-                p.addMatch(new Hmmer3Match(signature, 206.7, 3.7E-67, locations));
+                p.addMatch(new Hmmer3Match(signature, "PF00155", 206.7, 3.7E-67, locations));
 
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -228,7 +248,7 @@
                                                        xmlns:pfam="http://pfam.xfam.org"
                                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                                           http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.2.xsd
+                                                                           http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd
                                                                            http://pfam.xfam.org
                                                                            http://pfam.xfam.org/static/documents/schemas/results.xsd">
                         <protein>
@@ -243,7 +263,7 @@
                                         <hmmer3-location start="37" end="381"
                                                          env-start="41" env-end="381"
                                                          score="206.7" evalue="3.7E-67"
-                                                         hmm-start="6" hmm-end="363" hmm-length="363"/>
+                                                         hmm-start="6" hmm-end="363" />
                                     </locations>
                                 </hmmer3-match>
                             </matches>
@@ -263,15 +283,15 @@
                 Protein p = new Protein("MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK");
                 p.addCrossReference(new ProteinXref("UniProt", "Q8MLZ5", "GAP2_CAEEL"));
                 Signature signature = new Signature("SM00323", "RasGAP_2");
-                Set<Hmmer3Match.Hmmer3Location> locations = new HashSet<Hmmer3Match.Hmmer3Location>();
-                locations.add(new Hmmer2Match.Hmmer2Location(512, 857, 543.4, 2.7e-164, 1, 390, 390));
-                p.addMatch(new Hmmer2Match(signature, 543.4, 2.7e-164, locations));
+                Set<Hmmer2Match.Hmmer2Location> locations = new HashSet<Hmmer2Match.Hmmer2Location>();
+                locations.add(new Hmmer2Match.Hmmer2Location(512, 857, 543.4, 2.7e-164, 1, 390, 265, HmmBounds.INCOMPLETE));
+                p.addMatch(new Hmmer2Match(signature, "SM00323", 543.4, 2.7e-164, locations));
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SMART, "5.1");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -285,7 +305,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                     <protein>
                         <sequence md5="829339ede4627f6a6bf9166f3e9526d9">MKVIDEKPEDEEEEKDSGSKCKTPSSCTKKRVREKEEDLPPICHGWLIVCEGNPTKMMNK</sequence>
                         <xref db="UniProt" id="Q8MLZ5" name="GAP2_CAEEL"/>
@@ -297,7 +317,7 @@
                                 <locations>
                                     <hmmer2-location start="512" end="857"
                                                      score="543.4" evalue="2.7E-164"
-                                                     hmm-start="1" hmm-end="390" hmm-length="390"/>
+                                                     hmm-start="1" hmm-end="390" />
                                 </locations>
                             </hmmer2-match>
                         </matches>
@@ -311,24 +331,25 @@
     <lang:groovy id="superfamilyObject">
         <lang:inline-script>
             <![CDATA[
-                import uk.ac.ebi.interpro.scan.model.*
+            import uk.ac.ebi.interpro.scan.model.*
 
-                // Create protein
-                Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
-                p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
-                Signature signature = new Signature("SSF53098", "Ribonuclease H-like");
-                Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
-                locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(1, 237));
-                p.addMatch(new SuperFamilyHmmer3Match(signature, 2.4e-32, locations));
+            // Create protein
+            Protein p = new Protein("MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD");
+            p.addCrossReference(new ProteinXref("UniProt", "A6Q974", "A6Q974_SULNB"));
+            Signature signature = new Signature("SSF53098", "Ribonuclease H-like");
+            SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment fragment = new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location.SuperFamilyHmmer3LocationFragment(1, 237);
+            Set<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> locations = new HashSet<SuperFamilyHmmer3Match.SuperFamilyHmmer3Location>();
+            locations.add(new SuperFamilyHmmer3Match.SuperFamilyHmmer3Location(fragment, 237));
+            p.addMatch(new SuperFamilyHmmer3Match(signature, "1o7jA01", 2.4e-32, locations));
 
-                // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.75");
-                signature.setSignatureLibraryRelease(release);
-                // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
-                holder.addProtein(p);
+            // Create release
+            SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SUPERFAMILY, "1.75");
+            signature.setSignatureLibraryRelease(release);
+            // Create holder
+            ProteinMatchesHolder holder = new ProteinMatchesHolder();
+            holder.addProtein(p);
 
-                return holder;
+            return holder;
             ]]>
         </lang:inline-script>
     </lang:groovy>
@@ -339,7 +360,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                     <protein>
                         <sequence md5="992407d4eb2062c4e4b90ae12b568311">MAKYVLFDTETTGNQEADRIIQIGAMIVHSKDEIEVFDELCSTQVPISIEAMEVHNITPD</sequence>
                         <xref db="UniProt" id="A6Q974" name="A6Q974_SULNB"/>
@@ -348,8 +369,13 @@
                                 <signature ac="SSF53098" name="Ribonuclease H-like">
                                     <signature-library-release library="SUPERFAMILY" version="1.75" />
                                 </signature>
+                                <model-ac>1o7jA01</model-ac>
                                 <locations>
-                                    <superfamilyhmmer3-location start="1" end="237"/>
+                                    <superfamilyhmmer3-location start="1" end="237" hmm-length="237">
+                                        <location-fragments>
+                                            <superfamilyhmmer3-location-fragment start="1" end="237" dc-status="CONTINUOUS"/>
+                                        </location-fragments>
+                                    </superfamilyhmmer3-location>
                                 </locations>
                             </superfamilyhmmer3-match>
                         </matches>
@@ -376,13 +402,13 @@
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(191, 207, 1.43e-10, 77.83, 4));
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(271, 289, 9.33e-15, 83.70, 5));
                 locations.add(new FingerPrintsMatch.FingerPrintsLocation(319, 332, 1.04e-09, 81.87, 6));
-                p.addMatch(new FingerPrintsMatch(signature, 2.2e-64, "IIIIII", locations));
+                p.addMatch(new FingerPrintsMatch(signature, "PR00579", 2.2e-64, "IIIIII", locations));
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRINTS, "38.1");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -396,7 +422,7 @@
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                         <protein>
                             <sequence md5="ae2f4d0c928c8017da2df2d5cf15f01">MNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIVLGFPIN</sequence>
                             <xref db="UniProt" id="P02700" name="OPSD_SHEEP"/>
@@ -452,13 +478,13 @@
                 Signature signature = new Signature("PD001061");
                 Set<BlastProDomMatch.BlastProDomLocation> locations = new HashSet<BlastProDomMatch.BlastProDomLocation>();
                 locations.add(new BlastProDomMatch.BlastProDomLocation(9, 150, 763, 1e-80));
-                p.addMatch(new BlastProDomMatch(signature, locations));
+                p.addMatch(new BlastProDomMatch(signature, "PD001061", locations));
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PRODOM, "2006.1");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -472,7 +498,7 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                     <protein>
                         <sequence md5="daa9d1290a78528c68605d254f9ba358">MSLLTEVETYVLSIVPSGPLKAEIAQRLEDVFAGRNTDLEALMEWLKTRPILSPLTKGIL</sequence>
                         <xref db="UniParc" id="UPI000048E726" name="UPI000048E726"/>
@@ -515,13 +541,13 @@
                 Signature signature = new Signature("PS00675", "SIGMA54_INTERACT_1");
                 Set<PatternScanMatch.PatternScanLocation> locations = new HashSet<PatternScanMatch.PatternScanLocation>();
                 locations.add(new PatternScanMatch.PatternScanLocation(8, 43, PatternScanMatch.PatternScanLocation.Level.STRONG, "23M10D3I"));
-                p.addMatch(new PatternScanMatch(signature, locations));
+                p.addMatch(new PatternScanMatch(signature, "PS00675", locations));
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PATTERNS, "20.35");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -535,7 +561,7 @@
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                         <protein>
                             <sequence md5="386964a0a573631d643f2a7e7de03066">MSKILIIDDEVQIRSLLARMLGLEGYEVCQAGDCKAAIRQLEIQQPDVALCDVFLPDGNG</sequence>
                             <xref db="UniParc" id="UPI0001AFC88D" name="UPI0001AFC88D"/>
@@ -574,17 +600,17 @@
 
                 locations = new HashSet<ProfileScanMatch.ProfileScanLocation>();
                 locations.add(new ProfileScanMatch.ProfileScanLocation(1, 33, 24.202, "30M3D"));
-                p.addMatch(new ProfileScanMatch(new Signature("PS50042", "CNMP_BINDING_3"), locations));
+                p.addMatch(new ProfileScanMatch(new Signature("PS50042", "CNMP_BINDING_3"), "PS50042", locations));
 
                 locations = new HashSet<ProfileScanMatch.ProfileScanLocation>();
                 locations.add(new ProfileScanMatch.ProfileScanLocation(35, 53, 15.158, "6D10I3D"));
-                p.addMatch(new ProfileScanMatch(new Signature("PS50206", "RHODANESE_3"), locations));
+                p.addMatch(new ProfileScanMatch(new Signature("PS50206", "RHODANESE_3"), "PS50042", locations));
 
                 // Create release
-                SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
+                //SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.PROSITE_PROFILES, "20.35");
 
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -598,7 +624,7 @@
                     <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                        xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                                   http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                         <!--<signature-library-release library="PROSITE_PROFILES" version="20.35" />-->
                         <protein>
                             <sequence md5="de25966e66a6340eed9d837b05ffc58b">MSHNPKLLDTSAQMTTAVLALLNTFEPLAKLSAGRKRELAGLCFVEKVSKGINPLRMNVS</sequence>
@@ -644,13 +670,13 @@
                 SignalPOrganismType organismType = SignalPOrganismType.EUK;
                 Set<SignalPMatch.SignalPLocation> locations = new HashSet<SignalPMatch.SignalPLocation>();
                 locations.add(new SignalPMatch.SignalPLocation(1, 22, 0.903));
-                p.addMatch(new SignalPMatch(signature, organismType, locations));
+                p.addMatch(new SignalPMatch(signature, "SignalP-noTM", organismType, locations));
 
                 // Create release
                 SignatureLibraryRelease release = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.0");
                 signature.setSignatureLibraryRelease(release);
                 // Create holder
-                ProteinMatchesHolder holder = new ProteinMatchesHolder();
+                ProteinMatchesHolder holder = new ProteinMatchesHolder("5.15-54.0");
                 holder.addProtein(p);
 
                 return holder;
@@ -664,16 +690,13 @@
                 <protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5
-                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-1.3.xsd">
+                                               http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">
                     <protein>
                         <sequence md5="52e5277916375709c7865985a7e88f80">MVSTMLSGLVLWLTFGWTPALAYSPRTPDRVSETDIQRLLHGVMEQLGIARPRVEYPAHQAMNLVGPQSIEGGAHEGLQHLGPFGNIPNIVAELTGDNTPKDFSEDQGYPDPPNPCPIGKTDDGCLENTPDTAEFSREFQLHQHLFDPEHDYPGLGKWNKKLLYEKMKGGQRRKRRSVNPYLQGQRLDNVVAKKSVPHFSDEDKDPE</sequence>
                         <xref id="P01165|7B2_PIG"/>
                         <matches>
                             <signalp-match>
                                 <signature name="SignalP-noTM" ac="SignalP-noTM">
-                                    <models>
-                                        <model name="SignalP-noTM" ac="SignalP-noTM"/>
-                                    </models>
                                     <signature-library-release version="4.0" library="SIGNALP_EUK"/>
                                 </signature>
                                 <locations>

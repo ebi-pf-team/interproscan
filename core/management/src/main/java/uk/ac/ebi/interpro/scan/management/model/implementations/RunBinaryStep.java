@@ -5,7 +5,9 @@ import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -42,6 +44,8 @@ abstract public class RunBinaryStep extends Step {
     private boolean usesFileOutputSwitch = false;
 
     private boolean singleSeqMode = false;
+
+    final private String ANALYSIS_TEMP_DIR_SUFFIX = "tmp_files";
 
     public void setUsesFileOutputSwitch(boolean usesFileOutputSwitch) {
         this.usesFileOutputSwitch = usesFileOutputSwitch;
@@ -94,6 +98,35 @@ abstract public class RunBinaryStep extends Step {
     }
 
 
+
+    /**
+     * create an absolute path to the temporary directory file for this analysis
+     *
+     * @param temporaryFileDirectory
+     * @return
+     */
+    public String getAbsoluteAnalysisTempDirPath(String temporaryFileDirectory, String fileNameTemplate){
+        String absoluteTempDirPath =  temporaryFileDirectory
+                + File.separator
+                + fileNameTemplate
+                + "_"
+                + ANALYSIS_TEMP_DIR_SUFFIX;
+
+
+        File dir = new File(absoluteTempDirPath);
+        try {
+            boolean dirCreated = dir.mkdirs();
+            LOGGER.debug("The directory (-" + absoluteTempDirPath + " is created");
+        } catch (SecurityException e) {
+            LOGGER.error("Directory creation . Cannot create the specified directory !\n" +
+                    "Specified directory path (absolute): " + dir.getAbsolutePath(), e);
+            throw new IllegalStateException("The directory (-" + absoluteTempDirPath + ")  you specified cannot be written to:", e);
+        }
+        LOGGER.debug(" TempDir - after update: " + absoluteTempDirPath);
+        return absoluteTempDirPath;
+    }
+
+
     /**
      * This method is called to execute the action that the StepInstance must perform.
      *
@@ -104,6 +137,15 @@ abstract public class RunBinaryStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         LOGGER.info("Starting step with Id " + this.getId());
         LOGGER.debug("About to run binary... some output should follow.");
+
+        long maxProteins = getMaxProteins();
+        //do we need to skip
+        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
+            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
+            return;
+        }
+
         delayForNfs();
         String outputFileName;
         if (this.getOutputFileNameTemplate() == null) {
@@ -187,4 +229,16 @@ abstract public class RunBinaryStep extends Step {
         return null;
     }
 
+    /**
+     *
+     * @param command
+     * @return
+     */
+    protected String getCommandBuilder(List<String>  command){
+        StringBuilder commandBuilder = new StringBuilder();
+        for (String value : command) {
+            commandBuilder.append(value).append(" ");
+        }
+        return commandBuilder.toString();
+    }
 }

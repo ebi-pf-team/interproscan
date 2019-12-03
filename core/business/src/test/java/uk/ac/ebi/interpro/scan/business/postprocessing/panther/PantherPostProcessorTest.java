@@ -1,21 +1,25 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 
-import org.junit.Before;
-import org.junit.Test;
+
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * TODO: Description
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -23,9 +27,10 @@ public class PantherPostProcessorTest {
 
     private PantherPostProcessor processor;
 
-    @Before
+    @BeforeEach
     public void init() {
         processor = new PantherPostProcessor(10e-11);
+
     }
 
     @Test
@@ -48,19 +53,20 @@ public class PantherPostProcessorTest {
         rawProtein.addMatch(rawMatch2);
         //
         rawMatches.add(rawProtein);
-        assertEquals("Actual match size is different to the expected match size!", 3, rawProtein.getMatches().size());
+        assertEquals( 3, rawProtein.getMatches().size(), "Actual match size is different to the expected match size!");
         //Filter raw matches
-        Set<RawProtein<PantherRawMatch>> filteredMatches = processor.process(rawMatches);
+        PantherPostProcessor  processor2 = new PantherPostProcessor(10e-11);
+        Set<RawProtein<PantherRawMatch>> filteredMatches = processor2.process(rawMatches);
         assertEquals(1, filteredMatches.size());
         for (RawProtein<PantherRawMatch> item : filteredMatches) {
-            assertEquals("Actual match size is different to the expected match size!", 2, item.getMatches().size());
-            assertTrue("Raw match 1 should be part of the result set!", item.getMatches().contains(rawMatch1));
-            assertTrue("Raw match 3 should be part of the result set!", item.getMatches().contains(rawMatch3));
-            assertFalse("Raw match 2 shouldn't be part of the result set!", item.getMatches().contains(rawMatch2));
+            assertEquals( 2, item.getMatches().size(), "Actual match size is different to the expected match size!");
+            assertTrue( item.getMatches().contains(rawMatch1), "Raw match 1 should be part of the result set!");
+            assertTrue( item.getMatches().contains(rawMatch3), "Raw match 3 should be part of the result set!");
+            assertFalse( item.getMatches().contains(rawMatch2), "Raw match 2 shouldn't be part of the result set!");
         }
     }
 
     private PantherRawMatch getDefaultPantherRawMatchObj(String sequenceIdentifier) {
-        return new PantherRawMatch(sequenceIdentifier, "model", "signatureLibraryRelease", 0, 0, 0.0d, 0.0d, "familyName");
+        return new PantherRawMatch(sequenceIdentifier, "model", "signatureLibraryRelease", 0, 0, 0.0d, 0.0d, "familyName", 0, 0, 0,"[]",0,0);
     }
 }

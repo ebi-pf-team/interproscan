@@ -9,6 +9,7 @@ import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.model.CondensedView;
+import uk.ac.ebi.interpro.scan.web.model.EntryType;
 import uk.ac.ebi.interpro.scan.web.model.SimpleEntry;
 import uk.ac.ebi.interpro.scan.web.model.SimpleProtein;
 
@@ -16,6 +17,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -37,8 +39,8 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
      * @return the number of rows printed (i.e. the number of Locations on Matches).
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
-    public int write(final Protein protein) throws IOException {
-        checkEntryHierarchy();
+    @Override
+    public int write(final Protein protein, final EntryHierarchy entryHierarchy) throws IOException {
 
         if (entryHierarchy != null) {
             for (ProteinXref xref : protein.getCrossReferences()) {
@@ -64,8 +66,6 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
                         writer.flush();
                     } catch (TemplateException e) {
                         e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     } finally {
                         if (writer != null) {
                             writer.close();
@@ -83,12 +83,15 @@ public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
             final int proteinLength = p.getLength();
             final List<SimpleEntry> entries = p.getAllEntries();
             final CondensedView condensedView = new CondensedView(entries, proteinLength);
+            final CondensedView condensedHSView = new CondensedView(entries, proteinLength, Arrays.asList(EntryType.HOMOLOGOUS_SUPERFAMILY));
 
             model.put("protein", p);
             model.put("condensedView", condensedView);
+            model.put("condensedHSView", condensedHSView);
             model.put("entryColours", entryHierarchy.getEntryColourMap());
             model.put("scale", ProteinViewHelper.generateScaleMarkers(p.getLength(), MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS));
-            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, 30, 180, 18, 19, 30));
+            model.put("svgDocumentHeight", ProteinViewHelper.calculateSVGDocumentHeight(p, condensedView, condensedHSView, 30, 180, 18, 19, 50));
+            model.put("interproscanVersion", interproscanVersion);
         }
         return model;
     }

@@ -24,16 +24,20 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatchXML;
+import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Random;
 
 /**
  * Client to query the REST web service for matches
@@ -49,6 +53,8 @@ public class MatchHttpClient {
 
     private static final String MD5_PARAMETER = "md5";
 
+    private boolean lastTestResponse = false;
+
     private String url;
 
     private String proxyHost;
@@ -56,6 +62,8 @@ public class MatchHttpClient {
     private String proxyPort;
 
     private final Jaxb2Marshaller unmarshaller;
+
+    public static final String SITE_SERVICE_PATH = "/sites";
 
     public static final String MATCH_SERVICE_PATH = "/matches";
 
@@ -80,21 +88,131 @@ public class MatchHttpClient {
         this.url = url;
     }
 
-    public String getUrl() { return url;    }
+    public String getUrl() {
+        return url;
+    }
 
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
-    public String getProxyHost() { return proxyHost;   }
+    public String getProxyHost() {
+        return proxyHost;
+    }
 
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
     }
 
-    public String getProxyPort() { return proxyPort;  }
+    public String getProxyPort() {
+        return proxyPort;
+    }
 
-    public BerkeleyMatchXML getMatches(String... md5s) throws IOException {
+    public KVSequenceEntryXML getMatches(String... md5s) throws IOException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Call to MatchHttpClient.getMatches:");
+            for (String md5 : md5s) {
+                LOG.debug("Protein match requested for MD5: " + md5);
+            }
+        }
+
+        if (url == null || url.isEmpty()) {
+            throw new IllegalStateException("The url must be set for the MatchHttpClient.getMatches method to function");
+        }
+
+
+//        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+
+        //set the proxy if needed
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getMatches: " + proxyHost + ":" + proxyPort);
+
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpclient = getClient(proxy);
+
+            //httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            //httpclient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet("http://localhost/");
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try {
+                //do something
+                LOG.warn("HTTP Proxy Warning: this run is configured to use an http proxy, InterProscan is however unable to handle this properly.  ");
+            } finally {
+                response.close();
+            }
+
+            //try use newer API as ConnRoutePNames is deprecated
+//            CloseableHttpClient client = HttpClients.custom()
+//                .setRoutePlanner(
+//                     new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+//                .build();
+
+        }
+
+
+        final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+        for (String md5 : md5s) {
+            qparams.add(new BasicNameValuePair(MD5_PARAMETER, md5));
+        }
+        UrlEncodedFormEntity encodedParameterEntity;
+        encodedParameterEntity = new UrlEncodedFormEntity(qparams, "UTF-8");
+
+        // Using HttpPost to ensure no problems with long URLs.
+        HttpPost post = new HttpPost(url + MATCH_SERVICE_PATH);
+
+        long startGetMatches = System.currentTimeMillis();
+        post.setEntity(encodedParameterEntity);
+
+
+        ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
+            public KVSequenceEntryXML handleResponse(
+                    HttpResponse response) throws IOException {
+                HttpEntity responseEntity = response.getEntity();
+//                Utilities.verboseLog("response:" + response.toString());
+//                Utilities.verboseLog("responseEntity:" + responseEntity.toString());
+                if (responseEntity != null) {
+                    // Stream in the response to the unmarshaller
+                    BufferedInputStream bis = null;
+
+                    try {
+                        bis = new BufferedInputStream(responseEntity.getContent());
+//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                        if (testXMResponse()){
+//                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
+//                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
+//                        }
+                        return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(bis));
+                    } finally {
+                        if (bis != null) {
+                            bis.close();
+                        }
+                    }
+                }
+                return null;
+            }
+        };
+
+
+        KVSequenceEntryXML matchXML = httpclient.execute(post, handler);
+//        httpclient.getConnectionManager().shutdown();
+        httpclient.close();
+//        Utilities.verboseLog("matchXML:" + matchXML.toString());
+        long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+//        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
+
+        return matchXML;
+    }
+
+
+    /**
+     * get the site matches for CDD and SFLD fro thelookup service
+     *
+     * @param md5s
+     * @return
+     * @throws IOException
+     */
+    public KVSequenceEntryXML getSites(String... md5s) throws IOException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Call to MatchHttpClient.getMatches:");
             for (String md5 : md5s) {
@@ -117,12 +235,14 @@ public class MatchHttpClient {
         encodedParameterEntity = new UrlEncodedFormEntity(qparams, "UTF-8");
 
         // Using HttpPost to ensure no problems with long URLs.
-        HttpPost post = new HttpPost(url + MATCH_SERVICE_PATH);
+        HttpPost post = new HttpPost(url + SITE_SERVICE_PATH);
+
+        long startGetMatches = System.currentTimeMillis();
         post.setEntity(encodedParameterEntity);
 
 
-        ResponseHandler<BerkeleyMatchXML> handler = new ResponseHandler<BerkeleyMatchXML>() {
-            public BerkeleyMatchXML handleResponse(
+        ResponseHandler<KVSequenceEntryXML> handler = new ResponseHandler<KVSequenceEntryXML>() {
+            public KVSequenceEntryXML handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
 //                Utilities.verboseLog("response:" + response.toString());
@@ -133,8 +253,12 @@ public class MatchHttpClient {
 
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
-//                        Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
-                        return (BerkeleyMatchXML) unmarshaller.unmarshal(new StreamSource(bis));
+//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                        if (testXMResponse()){
+//                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
+//                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
+//                        }
+                        return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(bis));
                     } finally {
                         if (bis != null) {
                             bis.close();
@@ -169,11 +293,33 @@ public class MatchHttpClient {
 
         }
 
-        BerkeleyMatchXML matchXML = httpclient.execute(post, handler);
+        KVSequenceEntryXML siteXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
 //        Utilities.verboseLog("matchXML:" + matchXML.toString());
-        return matchXML;
+        long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
+//        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
+
+        return siteXML;
+    }
+
+
+    public boolean testXMResponse() {
+        boolean testXMResponse = false;
+        String timeNow = Utilities.getTimeNow();
+        //08/11/2018 21:53:50:765
+        String seconds = Character.toString(timeNow.charAt(17));
+        if (seconds.equals("3")) {
+            testXMResponse = true;
+        }
+        Random random = new Random();
+        testXMResponse = random.nextBoolean();
+        if (!lastTestResponse) {
+            testXMResponse = true;
+        }
+        Utilities.verboseLog("testXMResponse=" + testXMResponse);
+        lastTestResponse = testXMResponse;
+        return testXMResponse;
     }
 
     /**
@@ -246,59 +392,64 @@ public class MatchHttpClient {
 
     public String getServerVersion() throws IOException {
 
-            LOG.debug("Call to MatchHttpClient.getServerVersion:");
+        LOG.debug("Call to MatchHttpClient.getServerVersion:");
 
-            if (url == null || url.isEmpty()) {
-                throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
-            }
+        if (url == null || url.isEmpty()) {
+            throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
+        }
 
-            CloseableHttpClient httpclient = getClient();
+        String serverVersion = "5.33-72.0"; //TODO this is for TEM and testing only as the server with the correct versionis not yet ready;
 
-            // Use HttpGet as the URL will be very short
-            HttpGet get = new HttpGet(url + VERSION_PATH);
+        if (! url.isEmpty()){
+            return serverVersion;
+        }
+        CloseableHttpClient httpclient = getClient();
+
+        // Use HttpGet as the URL will be very short
+        HttpGet get = new HttpGet(url + VERSION_PATH);
 
 
-            ResponseHandler<String> handler = new ResponseHandler<String>() {
-                public String handleResponse(
-                        HttpResponse response) throws IOException {
-                    String serverVersion = "";
-                    HttpEntity responseEntity = response.getEntity();
-                    if (responseEntity != null) {
+        ResponseHandler<String> handler = new ResponseHandler<String>() {
+            public String handleResponse(
+                    HttpResponse response) throws IOException {
+                String  serverVersion = "";
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
 
-                        // Stream in the response
-                        BufferedReader reader = null;
-                        try {
-                            reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
-                            String line;
-                            line = reader.readLine().trim();
-                            if (!line.isEmpty()) {
-                                    serverVersion  = line;
-                            }
-
-                        } finally {
-                            if (reader != null) {
-                                reader.close();
-                            }
+                    // Stream in the response
+                    BufferedReader reader = null;
+                    try {
+                        reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
+                        String line;
+                        line = reader.readLine().trim();
+                        if (!line.isEmpty()) {
+                            serverVersion = line;
                         }
 
-                        if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
-                            serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
-                        }  else {
-                            throw new IOException("Could not determine server version");
+                    } finally {
+                        if (reader != null) {
+                            reader.close();
                         }
+                    }
+
+                    if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
+                        serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
+                    } else {
+                        throw new IOException("Could not determine server version");
+                    }
                 }
-                    return serverVersion;
+                return serverVersion;
             }
-            };
+        };
 
         //set the proxy if needed
-        if(isProxyEnabled()){
-            LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost+":"+proxyPort);
+        if (isProxyEnabled()) {
+            LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost + ":" + proxyPort);
             HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
             httpclient = getClient(proxy);
         }
 
-        String serverVersion = httpclient.execute(get, handler);
+        serverVersion = httpclient.execute(get, handler);
         httpclient.close();
         //httpclient.getConnectionManager().shutdown();
         return serverVersion;
@@ -311,7 +462,7 @@ public class MatchHttpClient {
      * @return
      */
     public boolean isConfigured() {
-        LOG.debug("lookup url: " + url );
+        LOG.debug("lookup url: " + url);
         return url != null && !url.isEmpty();
     }
 
@@ -320,7 +471,7 @@ public class MatchHttpClient {
      * if enabled configure the system properties
      */
     public boolean isProxyEnabled() {
-        LOG.debug("proxy Host: " + proxyHost + " proxyPort: " + proxyPort );
+        LOG.debug("proxy Host: " + proxyHost + " proxyPort: " + proxyPort);
         //set the proxy if needed
         if (proxyHost == null || proxyHost.isEmpty() || proxyPort == null || proxyPort.isEmpty()) {
 //            System.setProperty("proxySet", "true");
@@ -337,7 +488,7 @@ public class MatchHttpClient {
         return httpclient;
     }
 
-    public CloseableHttpClient getClient(HttpHost proxy){
+    public CloseableHttpClient getClient(HttpHost proxy) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         CloseableHttpClient httpclient = HttpClients.custom()
 //                .setConnectionManager(connManager)
@@ -351,7 +502,7 @@ public class MatchHttpClient {
 
     }
 
-    public CloseableHttpClient getClient(HttpHost proxy, CredentialsProvider credsProvider ) throws  Exception {
+    public CloseableHttpClient getClient(HttpHost proxy, CredentialsProvider credsProvider) throws Exception {
         CredentialsProvider credsProvider2 = new BasicCredentialsProvider();
         credsProvider2.setCredentials(
                 new AuthScope("localhost", 8080),
