@@ -5,8 +5,9 @@ os:
 branches:
   only:
   - dev
-  except:
   - master
+  except:
+  - new_master
 script: cd core && mvn -q clean install
 notifications:  
   email:  
