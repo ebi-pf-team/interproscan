@@ -8,7 +8,7 @@ branches:
   - master
   except:
   - new_master
-script: cd core && mvn -q clean install
+script: cd core && mvn -q clean install && cd jms-implementation && mvn -q clean package && cd target/interproscan-5-dist && ./interproscan.sh -i test_proteins.fasta -f tsv -dp
 notifications:  
   email:  
     recipients:  
