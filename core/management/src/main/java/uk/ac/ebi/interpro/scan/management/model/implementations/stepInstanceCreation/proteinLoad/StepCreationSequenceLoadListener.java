@@ -123,11 +123,7 @@ public class StepCreationSequenceLoadListener
             Utilities.verboseLog(20, "topProteinId intValue(): - " + topProteinId.intValue());
             int percentageOfProteinsinLookup = (topProteinId.intValue() - idsWithoutLookupHitSize) * 100 / topProteinId.intValue();
 
-            if(useMatchLookupService){
-                System.out.println("Lookup match service was used: ");
-            }
-            System.out.println("Lookup hits: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue() + " input sequences are in the Lookup Match Server");
-            if (LOGGER.isDebugEnabled()) {
+           if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Completion Job:" + completionJob);
 
                 if (parameters != null) {
@@ -146,6 +142,17 @@ public class StepCreationSequenceLoadListener
             if (completionJob != null && !initialSetupSteps) {
                 LOGGER.debug("We have a completion Job.");
                 Utilities.verboseLog("Have a completionJob Job: " + completionJob);
+
+                if(useMatchLookupService){
+                    System.out.println("Lookup match service was used: ");
+                    String extraLookupMessage = "";
+                    if (percentageOfProteinsinLookup < 40 ){
+                        extraLookupMessage = "Check www.ebi.ac.uk/interpro to see if the lookup up is efficient for your kind of input";
+                    }
+                    System.out.println("Match Lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
+                            + " input sequences are in the Lookup Match Server. " + extraLookupMessage);
+                }
+
                 //TODO this is temp for now
 
                 if (prepareOutputJob != null) {
