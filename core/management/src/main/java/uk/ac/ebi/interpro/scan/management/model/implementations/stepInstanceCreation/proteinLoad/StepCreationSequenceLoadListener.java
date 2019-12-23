@@ -144,7 +144,7 @@ public class StepCreationSequenceLoadListener
                 Utilities.verboseLog("Have a completionJob Job: " + completionJob);
 
                 if(useMatchLookupService){
-                    //System.out.println("Lookup match service was used: ");
+                    System.out.println("Lookup match service was used: ");
                     String extraLookupMessage = "";
                     if (percentageOfProteinsinLookup < 40 ){
                         extraLookupMessage = "Check www.ebi.ac.uk/interpro to see if the lookup up is efficient for your kind of input";
