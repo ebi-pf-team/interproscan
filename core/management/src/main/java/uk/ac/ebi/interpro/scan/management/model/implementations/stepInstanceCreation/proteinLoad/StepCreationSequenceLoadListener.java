@@ -123,7 +123,10 @@ public class StepCreationSequenceLoadListener
             Utilities.verboseLog(20, "topProteinId intValue(): - " + topProteinId.intValue());
             int percentageOfProteinsinLookup = (topProteinId.intValue() - idsWithoutLookupHitSize) * 100 / topProteinId.intValue();
 
-            Utilities.verboseLog("Lookup hits: " + percentageOfProteinsinLookup + "% of the input sequences are in the Lookup Match Server");
+            if(useMatchLookupService){
+                System.out.println("Lookup match service was used: ");
+            }
+            System.out.println("Lookup hits: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue() + " input sequences are in the Lookup Match Server");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Completion Job:" + completionJob);
 
