@@ -267,14 +267,14 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 lookupMessage = "Pre-calculated match lookup service auto-DISABLED.  Please wait for match calculations to complete...";
             }
             lookupMessage += " useMatchLookupService: " + useMatchLookupService + " ";
-            System.out.println(lookupMessage);
+            //System.out.println(lookupMessage);
         }
         if (!useMatchLookupService) {
             this.proteinLookup = null;
             if(!useMatchLookupService) {
                 lookupMessage = "Pre-calculated match lookup service DISABLED.  Please wait for match calculations to complete...";
             }
-            lookupMessage += " useMatchLookupService: " + useMatchLookupService + " ";
+            //lookupMessage += " useMatchLookupService: " + useMatchLookupService + " ";
         } else {
             lookupMessage = "Available matches will be retrieved from the pre-calculated match lookup service.\n\n" +
                     "Matches for any sequences that are not represented in the lookup service will be calculated locally.";
