@@ -143,14 +143,14 @@ public class StepCreationSequenceLoadListener
                 LOGGER.debug("We have a completion Job.");
                 Utilities.verboseLog("Have a completionJob Job: " + completionJob);
 
-                if(useMatchLookupService){
+                if(useMatchLookupService && topProteinId.intValue() > 100){
                     //System.out.println("Lookup match service was used: ");
                     String extraLookupMessage = "";
                     if (percentageOfProteinsinLookup < 40 ){
                         extraLookupMessage = "Check www.ebi.ac.uk/interpro to see if the lookup up is efficient for your kind of input";
                     }
                     System.out.println("Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
-                            + " input sequences were found in the match lookup server. " + extraLookupMessage);
+                            + " unique input sequences were found in the match lookup server. " + extraLookupMessage);
                 }
 
                 //TODO this is temp for now
