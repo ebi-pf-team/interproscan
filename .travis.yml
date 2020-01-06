@@ -2,7 +2,8 @@ language: java
 jdk: openjdk11
 
 -os: linux
-   dist: bionic
+dist: bionic
+
 #-os: linux
 #   dist: xenial
 #-os: linux
