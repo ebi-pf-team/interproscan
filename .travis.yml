@@ -3,10 +3,10 @@ jdk: openjdk11
 
 -os: linux
    dist: bionic
--os: linux
-   dist: xenial
--os: linux
-   dist: eoan
+#-os: linux
+#   dist: xenial
+#-os: linux
+#   dist: eoan
 branches:
   only:
   - dev
