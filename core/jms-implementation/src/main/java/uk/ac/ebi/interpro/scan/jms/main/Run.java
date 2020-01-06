@@ -708,7 +708,7 @@ public class Run extends AbstractI5Runner {
             final boolean mapToIPR = true;
             bbMaster.setMapToInterProEntries(mapToGo || mapToPathway || mapToIPR);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() - " + bbMaster.getTemporaryDirectory());
+                LOGGER.debug("temporaryDirectory: bbmaster.getTemporaryDirectory() -- " + bbMaster.getTemporaryDirectory());
             }
 
             // Include version file with TSV output?
