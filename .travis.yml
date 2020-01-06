@@ -4,17 +4,18 @@ jdk: openjdk11
 #-os: linux
 #dist: bionic
 
--os: linux
-   dist: xenial
+#-os: linux
+#   dist: xenial
 #-os: linux
 #   dist: trusty
-
+#
 #-os: linux
 #   dist: eoan
 branches:
   only:
   - dev
   - master
+  - release-5.40-77.0
   except:
   - new_master
 script: scripts/build.sh
