@@ -302,12 +302,6 @@ public abstract class Step implements BeanNameAware {
                 // Get the absolute path of file f
                 String absolute = f.getAbsolutePath();
 
-                // Display the file path of the file object
-                // and also the file path of absolute file
-                System.out.println("Original path: "
-                        + f.getPath());
-                System.out.println("Absolute path: "
-                        + absolute);
                 absolutePath = absolute;
             }
             catch (Exception e) {

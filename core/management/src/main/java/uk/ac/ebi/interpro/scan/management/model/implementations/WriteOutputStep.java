@@ -312,7 +312,7 @@ public class WriteOutputStep extends Step {
                     FileUtils.forceDelete(file);
                 }
             } catch (IOException e) {
-                LOGGER.info("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
+                LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
                 Utilities.verboseLog(20,"WriteOutPut - ExceptionMessage: " + e.getMessage());
                 //e.printStackTrace();
             }

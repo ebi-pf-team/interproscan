@@ -677,6 +677,7 @@ public class Run extends AbstractI5Runner {
 
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 bbMaster.setSequenceType(sequenceType);
+                Utilities.setSequenceType(sequenceType);
             }
 
             if (parsedCommandLine.hasOption(I5Option.MIN_SIZE.getLongOpt())) {
@@ -1764,7 +1765,7 @@ public class Run extends AbstractI5Runner {
             try {
                 if(new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
-                    LOGGER.warn("TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
+                    Utilities.verboseLog("TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
                     deleteWorkingTemporaryDirectory(temporaryFileDirectory);
                 }
             } catch (IOException e) {
