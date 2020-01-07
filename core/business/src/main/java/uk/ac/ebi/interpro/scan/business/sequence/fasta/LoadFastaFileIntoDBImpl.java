@@ -98,7 +98,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
         sequenceLoader.setDisplayLookupMessage(true);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService); //set lookup and display message
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
-        Utilities.verboseLog("Entered LoadFastaFileImpl.loadSequences() method");
+        Utilities.verboseLog("Entered LoadFastaFiletoDBImpl.loadSequences() method");
         int sequencesParsed = 0;
 
         levelDBStoreName = levelDBStoreRoot + "/leveldb";

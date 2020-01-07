@@ -41,7 +41,8 @@ public class RunCoilsBinaryStep extends RunBinaryStep {
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
-        command.add(fullPathToBinary);
+        String absolutePathtoBinary = getAbsolutePath(fullPathToBinary);
+        command.add(absolutePathtoBinary);
         command.addAll(getBinarySwitchesAsList());
         return command;
     }

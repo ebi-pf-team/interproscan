@@ -101,8 +101,13 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
             String fastaFileInputStatusMessage;
             try {
                 Path path = Paths.get(providedPath); // E.g. "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
-                if (Utilities.verboseLog || ! Utilities.isRunningInSingleSeqMode()) {
+
+                if (Utilities.getSequenceType().equals("n")){
                     System.out.println(getTimeNow() + " Loading file " + providedPath);
+                }else {
+                    if (Utilities.verboseLog || !Utilities.isRunningInSingleSeqMode()) {
+                        Utilities.verboseLog("Loading file " + providedPath);
+                    }
                 }
 //                System.out.println(getTimeNow() + " Loading file " + providedPath);
 
@@ -218,7 +223,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
 
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
-                System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
@@ -243,7 +248,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     LOGGER.debug(analysesDisplayStr + analysesToDisplay.toString());
                 }
 
-                System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
+                //System.out.println(analysesDisplayStr + "[" + analysesToDisplay.toString() +"]");
 
 
                 Job completionJob = jobs.getJobById(completionJobName);

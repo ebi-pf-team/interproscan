@@ -298,13 +298,23 @@ public class WriteOutputStep extends Step {
             try {
                 if (file.exists()) {
                     Utilities.verboseLog(10, "temporaryFileDirectory exists, so delete: ");
+                    //Collection<File> filesToDelete = new HashSet<>(FileUtils.listFiles(file,null,true));
+                    //Set <String> filenames = new HashSet<>();
+                    //for (File fileToDelete : filesToDelete){
+                    //    filenames.add(fileToDelete.getName());
+                    //}
+                    //System.out.println("To delete the following files: ");
+                    //for (String filename : filenames){
+                    //    System.out.println(filename);
+                    //}
+                    delayForNfs();
                     // FileUtils.deleteDirectory(file);
                     FileUtils.forceDelete(file);
                 }
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
-                LOGGER.warn("ExceptionMessage: " + e.getMessage());
-                e.printStackTrace();
+                Utilities.verboseLog(20,"WriteOutPut - ExceptionMessage: " + e.getMessage());
+                //e.printStackTrace();
             }
         } else {
             LOGGER.debug("Files in temporaryFileDirectory not deleted since  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);

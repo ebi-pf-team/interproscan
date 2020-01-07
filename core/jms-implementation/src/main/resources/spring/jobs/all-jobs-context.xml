@@ -319,6 +319,7 @@
         <!--Abstract parameter-->
         <property name="job" ref="jobLoadNucleicAcidSequence"/>
         <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
+        <property name="dependsUpon" ref="stepLoadNucleicAcidFromFasta"/>
         <property name="createStepInstancesForNewProteins" value="false"/>
         <property name="retries" value="1"/>
         <!-- Need to consider this parameter "outputFileNameTemplate"- this is normally the output from the binary

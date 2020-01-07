@@ -128,7 +128,7 @@
 
     </bean>
 
-    <bean id="stepGene3dRelatedTmpFiles"
+    <bean id="stepGene3dDeleteRelatedTmpFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractGene3dStep">
         <property name="dependsUpon" ref="stepGene3dParseOutputs"/>

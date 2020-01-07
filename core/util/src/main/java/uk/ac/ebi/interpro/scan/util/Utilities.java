@@ -28,6 +28,8 @@ public class Utilities {
 
     public static String mode = "standalone";
 
+    public static String sequenceType = "p";
+
     public static Boolean lookupMatchVersionProblemMessageDisplayed = false;
 
 
@@ -103,6 +105,14 @@ public class Utilities {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
         String currentDate = sdf.format(cal.getTime());
         return currentDate;
+    }
+
+    public static String getSequenceType() {
+        return sequenceType;
+    }
+
+    public static void setSequenceType(String sequenceType) {
+        Utilities.sequenceType = sequenceType;
     }
 
     public static void setMode(String mode) {

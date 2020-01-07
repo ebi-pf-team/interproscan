@@ -423,7 +423,7 @@ public class PrepareForOutputStep extends Step {
                     //Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
                 }
 
-                Utilities.verboseLog("WriteOutPut nucleotideSequenceIds size: " +  nucleotideSequenceIds.size());
+                Utilities.verboseLog("PrepareforOutPut nucleotideSequenceIds size: " +  nucleotideSequenceIds.size());
             }
 
         }catch (JAXBException e){
@@ -659,7 +659,7 @@ public class PrepareForOutputStep extends Step {
 
     private void deleteTmpMarshallingFile(Path outputPath){
         final String outputFilePathName = outputPath.toAbsolutePath().toString();
-        Utilities.verboseLog(20,"Deleting temp xml file:  " + outputFilePathName);
+        Utilities.verboseLog(20,"Deleting (or attempting to) temp xml file:  " + outputFilePathName);
         File file = new File(outputFilePathName);
         if (file.exists()){
             return;

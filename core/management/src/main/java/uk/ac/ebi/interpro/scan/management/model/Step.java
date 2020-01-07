@@ -4,6 +4,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -288,6 +289,28 @@ public abstract class Step implements BeanNameAware {
      */
     public abstract void execute(StepInstance stepInstance, String temporaryFileDirectory);
 
+    protected String getAbsolutePath(String relativePath){
+        String absolutePath = null;
+        if(new File(relativePath).isAbsolute()){
+            absolutePath = relativePath;
+        }else{
+
+            try {
+                // Create a file object
+                File f = new File(relativePath);
+
+                // Get the absolute path of file f
+                String absolute = f.getAbsolutePath();
+
+                absolutePath = absolute;
+            }
+            catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
+
+        return absolutePath;
+    }
 
     @Override
     public boolean equals(Object o) {
