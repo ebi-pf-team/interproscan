@@ -2,13 +2,16 @@ language: java
 jdk: openjdk11
 os:
   - linux
+  dist: bionic
+
 branches:
   only:
   - dev
   - master
+  - hamap_2019_11
   except:
   - new_master
-script: cd core && mvn -q clean install
+script: scripts/build.sh
 notifications:  
   email:  
     recipients:  
