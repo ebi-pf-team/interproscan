@@ -1,8 +1,27 @@
 language: java
 jdk: openjdk11
-os:
-  - linux
-dist: bionic
+
+
+sudo: required
+env:
+  matrix:
+  - OS_TYPE=centos OS_VERSION=7
+
+#  - OS_TYPE=linux OS_VERSION=19.10
+  
+services:
+  - docker
+  
+before_install:
+  - sudo apt-get update
+  - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
+  - sudo service docker restart
+  - sleep 5
+  - sudo docker pull centos:centos${OS_VERSION}
+
+#os:
+#  - linux
+#dist: bionic
 
 #-os: linux
 #dist: bionic
