@@ -6,6 +6,7 @@ sudo: required
 env:
   matrix:
   - OS_TYPE=centos OS_VERSION=7
+  - OS_TYPE=centos OS_VERSION=8
 
 #  - OS_TYPE=linux OS_VERSION=19.10
   
