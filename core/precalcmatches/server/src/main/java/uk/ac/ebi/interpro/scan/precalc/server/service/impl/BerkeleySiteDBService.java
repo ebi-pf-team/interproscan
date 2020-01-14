@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.precalc.server.service.impl;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.StatsConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
@@ -10,6 +11,7 @@ import com.sleepycat.persist.StoreConfig;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 
@@ -90,6 +92,14 @@ public class BerkeleySiteDBService extends AbstractDBService {
 
         PrimaryIndex<Long, KVSequenceEntry> primIDX = store.getPrimaryIndex(Long.class, KVSequenceEntry.class);
         secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
+    }
+
+    public void displayServerStats(){
+        StatsConfig config = new StatsConfig();
+        config.setClear(true);
+
+        System.err.println(Utilities.getTimeNow() + " SiteDB " + myEnv.getStats(config));
+
     }
 
     public void shutdown() {

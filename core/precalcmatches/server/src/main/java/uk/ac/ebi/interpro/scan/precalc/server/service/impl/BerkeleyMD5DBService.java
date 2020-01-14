@@ -3,12 +3,14 @@ package uk.ac.ebi.interpro.scan.precalc.server.service.impl;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.StatsConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 
@@ -80,6 +82,14 @@ public class BerkeleyMD5DBService extends AbstractDBService {
 
 
         primIDX = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
+    }
+
+    public void displayServerStats(){
+        StatsConfig config = new StatsConfig();
+        config.setClear(true);
+
+        System.err.println(Utilities.getTimeNow() + " MD5DB " + myEnv.getStats(config));
+
     }
 
     public void shutdown() {
