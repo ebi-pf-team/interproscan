@@ -1,22 +1,50 @@
 language: java
 jdk: openjdk11
 
+
+sudo: required
+env:
+  matrix:
+  - OS_TYPE=centos OS_VERSION=7
+  - OS_TYPE=centos OS_VERSION=8
+  - OS_TYPE=ubuntu OS_VERSION=xenial
+  - OS_TYPE=ubuntu OS_VERSION=bionic
+  - OS_TYPE=ubuntu OS_VERSION=19.10
+  
+services:
+  - docker
+  
+before_install:
+  - sudo apt-get update
+  - echo 'DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock -s devicemapper"' | sudo tee /etc/default/docker > /dev/null
+  - sudo service docker restart
+  - sleep 5
+  - sudo docker pull ${OS_TYPE}:${OS_VERSION}
+
+#os:
+#  - linux
+#dist: bionic
+
 #-os: linux
 #dist: bionic
 
--os: linux
-   dist: xenial
+#-os: linux
+#   dist: xenial
 #-os: linux
 #   dist: trusty
-
+#
 #-os: linux
 #   dist: eoan
+
 branches:
   only:
   - dev
   - master
+  - hamap_2019_11
+  - release-5.40-77.0
   except:
   - new_master
+
 script: scripts/build.sh
 #cd core && mvn -q clean install && cd jms-implementation && mvn -q clean package && cd target/interproscan-5-dist && cd $TRAVIS_BUILD_DIR && pwd && PATH=$TRAVIS_BUILD_DIR/core/jms-implementation/target/interproscan-5-dist:$PATH && echo $PATH && pwd && cd $TRAVIS_BUILD_DIR/core/jms-implementation/target/interproscan-5-dist && df -h  && ./interproscan.sh -i test_proteins.fasta -f tsv -dp -appl sfld, hamap
 #./interproscan.sh -help
