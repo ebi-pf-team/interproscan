@@ -100,6 +100,7 @@ public class BerkeleyMatchDBService extends AbstractDBService {
         System.err.println(Utilities.getTimeNow() + " MatchesDB " + myEnv.getStats(config));
 
     }
+
     public void shutdown() {
         if (store != null) {
             try {
