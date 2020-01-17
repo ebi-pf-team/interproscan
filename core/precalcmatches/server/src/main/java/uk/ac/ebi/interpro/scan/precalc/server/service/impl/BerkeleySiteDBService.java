@@ -41,7 +41,7 @@ public class BerkeleySiteDBService extends AbstractDBService {
     public BerkeleySiteDBService(String databasePath, int cacheSizeInMegabytes) {
         Assert.notNull(databasePath, "The databasePath bean cannot be null.");
         this.cacheSizeInBytes = cacheSizeInMegabytes * 1024 * 1024;
-        this.cachePercentInt = 60;
+        this.cachePercentInt = 20;
         this.databasePath = setDeploymentPath(databasePath);
         System.out.println("Initializing BerkeleyDB Site Database (creating indexes): Please wait...");
         initializeMD5Index();
