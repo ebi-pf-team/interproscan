@@ -92,6 +92,7 @@ public class MatchesServiceImpl implements MatchesService {
                 resetCountRequests();
             }
         };
+
 //        TimerTask envStatsTask = new TimerTask () {
 //            @Override
 //            public void run () {
@@ -103,6 +104,7 @@ public class MatchesServiceImpl implements MatchesService {
         // schedule the task to run starting now and then every 24 hours ...
         timer.schedule (hourlyTask, 0l, 1000 * 60 * 60 * 12);
 //        timer.schedule (envStatsTask, 1000 * 60 * 5l, 1000 * 60 * 60 * 1);
+
 //        timer.schedule (hourlyTask, 0l, 1000*60*5);
     }
 
