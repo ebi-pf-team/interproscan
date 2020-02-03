@@ -20,17 +20,9 @@ chmod +x bin/blast/ncbi-blast-2.9.0+/rpsbproc
 ./interproscan.sh -i test_proteins.fasta -f tsv -dp -appl prositepatterns
 ./interproscan.sh -i test_proteins.fasta -f tsv -dp -appl prositeprofiles
 ./interproscan.sh -i test_proteins.fasta -f tsv -dp -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
-<<<<<<< HEAD
 ./interproscan.sh -i test_proteins.fasta -f tsv -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
 ./interproscan.sh -i test_nt_seqs.fasta -t n -f tsv -dp -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
 ./interproscan.sh -i test_nt_seqs.fasta -t n -f tsv -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
-./interproscan.sh -i test_nt_seqs.fasta -t n -f tsv -exclappl cdd
 ./interproscan.sh -i test_all_appl.fasta -f tsv -dp -exclappl cdd
-=======
-#./interproscan.sh -i test_proteins.fasta -f tsv -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
-#./interproscan.sh -i test_nt_seqs.fasta -t n -f tsv -dp -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
-#./interproscan.sh -i test_nt_seqs.fasta -t n -f tsv -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
-#./interproscan.sh -i test_all_appl.fasta -f tsv -dp -exclappl cdd
->>>>>>> hamap_2020_01
 
 
