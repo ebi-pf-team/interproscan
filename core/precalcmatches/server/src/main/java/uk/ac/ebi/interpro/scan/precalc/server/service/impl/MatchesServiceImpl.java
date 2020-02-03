@@ -92,8 +92,19 @@ public class MatchesServiceImpl implements MatchesService {
                 resetCountRequests();
             }
         };
+
+//        TimerTask envStatsTask = new TimerTask () {
+//            @Override
+//            public void run () {
+//                berkeleyMatchDBService.displayServerStats();
+//                berkeleyMD5Service.displayServerStats();
+//                berkeleySiteDBService.displayServerStats();
+//            }
+//        };
         // schedule the task to run starting now and then every 24 hours ...
-        timer.schedule (hourlyTask, 0l, 1000*60*60*24);
+        timer.schedule (hourlyTask, 0l, 1000 * 60 * 60 * 12);
+//        timer.schedule (envStatsTask, 1000 * 60 * 5l, 1000 * 60 * 60 * 1);
+
 //        timer.schedule (hourlyTask, 0l, 1000*60*5);
     }
 

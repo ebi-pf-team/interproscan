@@ -78,6 +78,10 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
             writer.setDefaultNamespace("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
         }catch (IOException e){
             e.printStackTrace();
+        }finally {
+            if( bos != null) {
+                bos.close();
+            }
         }
 
         this.jaxbContext = JAXBContext.newInstance(classToBind);

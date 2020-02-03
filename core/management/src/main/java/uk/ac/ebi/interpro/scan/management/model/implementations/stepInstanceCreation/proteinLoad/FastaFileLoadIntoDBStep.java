@@ -109,8 +109,9 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
             String fastaFileInputStatusMessage;
             try {
                 Path path = Paths.get(providedPath); // E.g. "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/test_proteins.fasta"
-                if (Utilities.verboseLog || ! Utilities.isRunningInSingleSeqMode()) {
-                    System.out.println(getTimeNow() + " Loading file " + providedPath);
+                if (Utilities.verboseLog ||
+                        (Utilities.getSequenceType().equals("p") && ! Utilities.isRunningInSingleSeqMode())) {
+                        System.out.println(getTimeNow() + " Loading file " + providedPath);
                 }
 //                System.out.println(getTimeNow() + " Loading file " + providedPath);
 

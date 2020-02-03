@@ -49,7 +49,7 @@ public class DeleteFileStep extends Step {
         LOGGER.debug("deleteWorkingDirectoryOnCompletion: " + deleteWorkingDirectoryOnCompletion);
 
         //check if we need to skip this step for this range
-        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+        if (job.getLibraryRelease() != null && checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " + key);
             return;

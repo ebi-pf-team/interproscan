@@ -138,9 +138,9 @@ abstract public class RunBinaryStep extends Step {
         LOGGER.info("Starting step with Id " + this.getId());
         LOGGER.debug("About to run binary... some output should follow.");
 
-        long maxProteins = getMaxProteins();
+        //long maxProteins = getMaxProteins();
         //do we need to skip
-        if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
+        if (job.getLibraryRelease() != null && checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
             return;
@@ -241,4 +241,6 @@ abstract public class RunBinaryStep extends Step {
         }
         return commandBuilder.toString();
     }
+
+
 }

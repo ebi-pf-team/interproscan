@@ -111,8 +111,8 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             LOGGER.debug("analysisJobMap:" + analysisJobMap);
         }
 
-        String analysesPrintOutStr = " Running the following analyses:";
-        String analysesDisplayStr =  "Running the following analyses:";
+        String analysesPrintOutStr = " FinaliseInitialSetupStep: Running the following analyses:";
+        String analysesDisplayStr =  " FinaliseInitialSetupStep: Running the following analyses:";
 
         StringBuilder analysesToRun = new StringBuilder();
 
