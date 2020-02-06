@@ -729,7 +729,6 @@ public class WriteOutputStep extends Step {
         try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false)) {
             writeProteinMatches(writer, stepInstance);
         }
-
     }
 
 
