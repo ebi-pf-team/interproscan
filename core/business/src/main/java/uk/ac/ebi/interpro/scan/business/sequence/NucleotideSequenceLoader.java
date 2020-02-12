@@ -61,6 +61,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
                 for (String crossReference : crossReferences) {
                     NucleotideSequenceXref xref = XrefParser.getNucleotideSequenceXref(crossReference);
                     nucleotideSequence.addCrossReference(xref);
+                    Utilities.verboseLog("nucleotideSequenceXref: " + xref);
                 }
             } else {
                 LOGGER.error("Have a nucleotide sequence with no associated Xrefs.  There must be at least one xref associated with the nucleotide sequence");

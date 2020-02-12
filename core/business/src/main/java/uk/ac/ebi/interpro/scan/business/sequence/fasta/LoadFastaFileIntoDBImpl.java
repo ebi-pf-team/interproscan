@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
+import uk.ac.ebi.interpro.scan.io.ntranslate.ORFDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
@@ -57,6 +58,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
     private boolean isGetOrfOutput;
 
+    private ORFDescriptionLineParser orfDescriptionLineParser;
     private GetOrfDescriptionLineParser descriptionLineParser;
 
     @Required
@@ -78,6 +80,10 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
     @Required
     public void setGetOrfOutput(boolean getOrfOutput) {
         isGetOrfOutput = getOrfOutput;
+    }
+
+    public void setOrfDescriptionLineParser(ORFDescriptionLineParser orfDescriptionLineParser) {
+        this.orfDescriptionLineParser = orfDescriptionLineParser;
     }
 
     public void setDescriptionLineParser(GetOrfDescriptionLineParser descriptionLineParser) {
@@ -342,12 +348,19 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             toDebugPrint(newProteins.size(), proteinCount,
                     "getCrossReferences: " + (System.currentTimeMillis() - startPersistProtein ) + " millis ");
             for (ProteinXref xref : xrefs) {
-                String nucleotideId = xref.getIdentifier();
+                String orfId = xref.getIdentifier();
                 String description = xref.getDescription();
+                String originalHeader = xref.getName();
                 Long startNewOrf = System.currentTimeMillis();
-                OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
+                OpenReadingFrame newOrfTest = orfDescriptionLineParser.createORFFromParsingResult(description);
+                LOGGER.warn("orfId: " +  newOrfTest + " nucleotideId: " + orfId + " originalHeader: " + originalHeader + " description: " + description);
+
+                //OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
+                OpenReadingFrame newOrf = newOrfTest;
                 //Get rid of the underscore
-                nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
+                //String nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
+                String nucleotideId = XrefParser.getNucleotideIdFromORFId(originalHeader);
+
                 /*
                   Commented-out version number stripping to allow the short-term fix for nucleotide headers to work (IBU-2426)
                   TODO - consider if this is really necessary (may not be a good idea in all cases)
@@ -360,6 +373,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                         "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
 
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
+                LOGGER.warn("nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
                 if (nucleotide == null) {
