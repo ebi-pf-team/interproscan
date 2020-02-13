@@ -220,7 +220,7 @@ public class WriteOutputStep extends Step {
                 }
                 switch (outputFormat) {
                     case TSV:
-                        outputToTSV(outputPath, stepInstance);
+                        outputToTSV(outputPath, stepInstance, sequenceType);
                         break;
                     case TSV_PRO:
                         outputToTSVPRO(outputPath, stepInstance);
@@ -636,8 +636,8 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSV(final Path path,
-                             final StepInstance stepInstance ) throws IOException {
-        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
+                             final StepInstance stepInstance , String sequenceType ) throws IOException {
+        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path, sequenceType.equalsIgnoreCase("p"))) {
             writeProteinMatches(writer, stepInstance);
         }
         //write the site tsv production output
@@ -708,10 +708,10 @@ public class WriteOutputStep extends Step {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
-                writer = new GFFResultWriterForNucSeqs(path, interProScanVersion);
+                writer = new GFFResultWriterForNucSeqs(path, interProScanVersion, false);
             }//Default tsvWriter for proteins
             else {
-                writer = new GFFResultWriterForProtSeqs(path, interProScanVersion);
+                writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, true, true);
             }
 
             //This step writes features (protein matches) into the GFF file
@@ -726,7 +726,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToGFFPartial(Path path, StepInstance stepInstance) throws IOException {
-        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false)) {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false, false)) {
             writeProteinMatches(writer, stepInstance);
         }
     }

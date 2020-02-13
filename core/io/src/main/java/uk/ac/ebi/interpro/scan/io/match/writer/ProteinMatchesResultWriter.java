@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -30,6 +31,8 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
     protected boolean mapToGO;
     protected boolean mapToPathway;
     protected String interProScanVersion = "Unknown";
+
+    protected boolean proteinSequence = true;
 
     protected DateFormat dmyFormat;
 
@@ -66,15 +69,22 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
         return proteinXRef.toString();
     }
 
-    protected List<String> getProteinAccessions(Protein protein) {
+    protected List<String> getProteinAccessions(Protein protein, boolean proteinSequence) {
         Set<ProteinXref> crossReferences = protein.getCrossReferences();
         List<String> proteinXRefs = new ArrayList<>(crossReferences.size());
         for (ProteinXref crossReference : crossReferences) {
-            proteinXRefs.add(crossReference.getIdentifier());
+            String identifier = crossReference.getIdentifier();
+            String displayName = identifier;
+            Utilities.verboseLog("proteinSequence: " + proteinSequence);
+            if (! proteinSequence) {
+                String proteinName = crossReference.getName();
+                displayName = proteinName + "_" + identifier;
+            }
+            proteinXRefs.add(displayName);
         }
         return proteinXRefs;
-
     }
+
 
     public String getInterProScanVersion() {
         return interProScanVersion;

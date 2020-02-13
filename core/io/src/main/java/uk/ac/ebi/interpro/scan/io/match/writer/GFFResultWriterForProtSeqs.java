@@ -28,9 +28,10 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
         super(path, interProScanVersion);
     }
 
-    public GFFResultWriterForProtSeqs(Path path, String interProScanVersion, boolean writeFullGFF) throws IOException {
+    public GFFResultWriterForProtSeqs(Path path, String interProScanVersion, boolean writeFullGFF, boolean proteinSequence) throws IOException {
         super(path, interProScanVersion, writeFullGFF);
         this.writeFullGFF = false;
+        this.proteinSequence = proteinSequence;
     }
 
 
@@ -42,7 +43,7 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
      * @throws java.io.IOException in the event of I/O problem writing out the file.
      */
     public int write(Protein protein) throws IOException {
-        List<String> proteinIdsForGFF = getProteinAccessions(protein);
+        List<String> proteinIdsForGFF = getProteinAccessions(protein, proteinSequence);
 
         int sequenceLength = protein.getSequenceLength();
         String md5 = protein.getMd5();
