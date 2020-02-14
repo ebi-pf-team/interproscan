@@ -83,7 +83,7 @@ public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
      */
     public int write(Protein protein) throws IOException {
         int locationCount = 0;
-        List<String> proteinAcs = getProteinAccessions(protein);
+        List<String> proteinAcs = getProteinAccessions(protein, proteinSequence);
 
         final int length = protein.getSequenceLength();
         final String sequence = protein.getSequence();

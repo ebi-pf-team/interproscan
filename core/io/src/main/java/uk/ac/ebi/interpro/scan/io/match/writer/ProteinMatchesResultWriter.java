@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
+import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -59,15 +60,15 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
         }
     }
 
-    protected String getProteinAccession(Protein protein) {
-        StringBuilder proteinXRef = new StringBuilder();
-        Set<ProteinXref> crossReferences = protein.getCrossReferences();
-        for (ProteinXref crossReference : crossReferences) {
-            if (proteinXRef.length() > 0) proteinXRef.append(VALUE_SEPARATOR);
-            proteinXRef.append(crossReference.getIdentifier());
-        }
-        return proteinXRef.toString();
-    }
+//    protected String getProteinAccession(Protein protein) {
+//        StringBuilder proteinXRef = new StringBuilder();
+//        Set<ProteinXref> crossReferences = protein.getCrossReferences();
+//        for (ProteinXref crossReference : crossReferences) {
+//            if (proteinXRef.length() > 0) proteinXRef.append(VALUE_SEPARATOR);
+//            proteinXRef.append(crossReference.getIdentifier());
+//        }
+//        return proteinXRef.toString();
+//    }
 
     protected List<String> getProteinAccessions(Protein protein, boolean proteinSequence) {
         Set<ProteinXref> crossReferences = protein.getCrossReferences();
@@ -78,7 +79,8 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
             Utilities.verboseLog("proteinSequence: " + proteinSequence);
             if (! proteinSequence) {
                 String proteinName = crossReference.getName();
-                displayName = proteinName + "_" + identifier;
+                String source = XrefParser.getSource(proteinName);
+                displayName = source + "_" + identifier;
             }
             proteinXRefs.add(displayName);
         }
@@ -102,4 +104,11 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
         this.mapToPathway = mapToPathway;
     }
 
+    public boolean isProteinSequence() {
+        return proteinSequence;
+    }
+
+    public void setProteinSequence(boolean proteinSequence) {
+        this.proteinSequence = proteinSequence;
+    }
 }

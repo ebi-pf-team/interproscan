@@ -288,4 +288,24 @@ public class XrefParser {
         return identifier;
     }
 
+    public static String getSource(String name) {
+        String source = name;
+        final Matcher sourceMatcher = ESLTRANSLATE_HEADER_SOURCE_PATTERN.matcher(name);
+        if (sourceMatcher.find()) {
+            source = sourceMatcher.group(1);
+            String coords = sourceMatcher.group(2);
+            String length = sourceMatcher.group(3);
+            String frame = sourceMatcher.group(4);
+            String moreDesc = sourceMatcher.group(5);
+            LOGGER.warn("identifier: " + name +
+                    " source: " + source +
+                    " coords: " + coords +
+                    " length: " + length +
+                    " frame: " + frame +
+                    " moreDesc: " + moreDesc);
+        }
+
+        return source;
+    }
+
 }
