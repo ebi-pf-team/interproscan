@@ -19,7 +19,7 @@ import java.util.TreeMap;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class GFFResultWriterForNucSeqsTesGFFResultWriterForNucSeqst {
+public class GFFResultWriterForNucSeqsTest {
 
     private Map<String, String> identifierToSeqMap;
 
