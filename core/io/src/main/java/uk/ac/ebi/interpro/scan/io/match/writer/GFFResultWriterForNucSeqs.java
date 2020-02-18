@@ -72,12 +72,16 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         String date = dmyFormat.format(new Date());
         Set<Match> matches = protein.getMatches();
         String proteinIdForGFF = null;
+        proteinSequence = false;
+        Utilities.verboseLog("proteinSequence in GFFResultWriterForNucSeqs: " + proteinSequence);
+
         List<String> proteinIdsFromGetOrf = getProteinAccessions(protein, proteinSequence);
         for (String proteinIdFromGetorf : proteinIdsFromGetOrf) {
             if (matches.size() > 0) {
                 proteinIdFromGetorf = getValidGFF3SeqId(proteinIdFromGetorf);
                 writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdFromGetorf);
-                processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+                //processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+                processMatches(matches, proteinIdForGFF, date, protein, proteinIdFromGetorf);
             }
         }
         return 0;
@@ -247,10 +251,10 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         if (orf == null) {
             throw new IllegalArgumentException("A null orf has been passed in.");
         }
-        final String seqId = getORFSequenceId(proteinIdFromGetorf);
+        final String seqId = proteinIdFromGetorf;
         final String strand = (NucleotideSequenceStrand.SENSE.equals(orf.getStrand()) ? "+" : "-");
         final String orfIdentifier = buildOrfIdentifier(orf);
-        Utilities.verboseLog("seqId in getORFLine : " + seqId);
+        Utilities.verboseLog("seqId in getORFLine : " + seqId +  " proteinIdFromGetorf: " + proteinIdFromGetorf);
         GFF3Feature orfFeature = new GFF3Feature(seqId, "getorf", "ORF", orf.getStart(), orf.getEnd(), strand);
         orfFeature.addAttribute(GFF3Feature.ID_ATTR, orfIdentifier);
         orfFeature.addAttribute(GFF3Feature.NAME_ATTR, proteinIdFromGetorf);
@@ -304,8 +308,9 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      * Writes information about the target protein sequence (or reference sequence).
      */
     private List<String> getPolypeptideLine(int sequenceLength, String proteinIdFromGetorf, String proteinIdForGFF, String md5) {
-        String seqId = getORFSequenceId(proteinIdFromGetorf);
-        Utilities.verboseLog("seqId in getPolypeptideLine : " + seqId);
+        //String seqId = getORFSequenceId(proteinIdFromGetorf);
+        String seqId = proteinIdFromGetorf;
+        Utilities.verboseLog("seqId in getPolypeptideLine : " + seqId +  " proteinIdFromGetorf: " + proteinIdFromGetorf);
         GFF3Feature polypeptideFeature = new GFF3Feature(seqId, "getorf", "polypeptide", 1, sequenceLength, "+");
         polypeptideFeature.addAttribute(GFF3Feature.ID_ATTR, proteinIdForGFF);
         polypeptideFeature.addAttribute(GFF3Feature.MD5_ATTR, md5);

@@ -30,7 +30,7 @@ public class GFFResultWriterForProtSeqs extends ProteinMatchesGFFResultWriter {
 
     public GFFResultWriterForProtSeqs(Path path, String interProScanVersion, boolean writeFullGFF, boolean proteinSequence) throws IOException {
         super(path, interProScanVersion, writeFullGFF);
-        this.writeFullGFF = false;
+        //this.writeFullGFF = false; ??? not sure why this is harcoded to false
         this.proteinSequence = proteinSequence;
     }
 
