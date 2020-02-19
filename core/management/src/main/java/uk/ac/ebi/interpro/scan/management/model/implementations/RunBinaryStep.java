@@ -242,5 +242,12 @@ abstract public class RunBinaryStep extends Step {
         return commandBuilder.toString();
     }
 
+    protected boolean isFilePathLengthReasonable(String filepath){
+        if (filepath.length() > 255){
+            LOGGER.warn("file path " + filepath + " is longer than 255 characters and one of the binaries in InterProScan has problems with such long filenames");
+            return false;
+        }
+        return true;
+    }
 
 }
