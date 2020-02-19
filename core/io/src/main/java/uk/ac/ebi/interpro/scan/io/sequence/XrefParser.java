@@ -297,7 +297,7 @@ public class XrefParser {
             String length = sourceMatcher.group(3);
             String frame = sourceMatcher.group(4);
             String moreDesc = sourceMatcher.group(5);
-            LOGGER.warn("identifier: " + name +
+            Utilities.verboseLog(20, "identifier: " + name +
                     " source: " + source +
                     " coords: " + coords +
                     " length: " + length +

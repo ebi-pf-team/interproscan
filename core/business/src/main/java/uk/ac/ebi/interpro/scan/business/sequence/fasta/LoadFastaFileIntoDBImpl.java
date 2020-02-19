@@ -353,7 +353,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 String originalHeader = xref.getName();
                 Long startNewOrf = System.currentTimeMillis();
                 OpenReadingFrame newOrfTest = orfDescriptionLineParser.createORFFromParsingResult(description);
-                LOGGER.warn("orfId: " +  newOrfTest + " nucleotideId: " + orfId + " originalHeader: " + originalHeader + " description: " + description);
+                Utilities.verboseLog(20, "orfId: " +  newOrfTest + " nucleotideId: " + orfId + " originalHeader: " + originalHeader + " description: " + description);
 
                 //OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 OpenReadingFrame newOrf = newOrfTest;
@@ -373,7 +373,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                         "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
 
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
-                LOGGER.warn("nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
+                Utilities.verboseLog(20, "nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
                 if (nucleotide == null) {

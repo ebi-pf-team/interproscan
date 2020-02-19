@@ -30,7 +30,6 @@ public class ORFDescriptionLineParser {
             if (LOGGER.isDebugEnabled()) LOGGER.debug("Matched!");
             String coords = matcher.group(2);
             String [] coordsPair = coords.replace("coords=", "").split("\\.\\.");
-            LOGGER.warn("coords: " + coords);
             final int start = Integer.parseInt(coordsPair[0]);
             final int end = Integer.parseInt(coordsPair[1]);
             if (matcher.group(3) == null) {
