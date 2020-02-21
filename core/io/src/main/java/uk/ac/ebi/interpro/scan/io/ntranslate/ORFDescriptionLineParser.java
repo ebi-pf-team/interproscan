@@ -30,9 +30,11 @@ public class ORFDescriptionLineParser {
             if (LOGGER.isDebugEnabled()) LOGGER.debug("Matched!");
             String coords = matcher.group(2);
             String [] coordsPair = coords.replace("coords=", "").split("\\.\\.");
+            //check if reverse or not
             final int start = Integer.parseInt(coordsPair[0]);
             final int end = Integer.parseInt(coordsPair[1]);
-            if (matcher.group(3) == null) {
+            boolean reverseSense = start >= end? true:false;
+            if (! reverseSense) {
                 return new OpenReadingFrame(start, end, NucleotideSequenceStrand.SENSE);
             } else {
                 return new OpenReadingFrame(end, start, NucleotideSequenceStrand.ANTISENSE);
