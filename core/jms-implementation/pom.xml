@@ -75,11 +75,11 @@
 
         <!-- Installer JDBC access to InterPro database -->
 
-        <!--<dependency>-->
-            <!--<groupId>com.oracle.jdbc</groupId>-->
-            <!--<artifactId>com.springsource.oracle.jdbc</artifactId>-->
-            <!--<version>${oracle.jdbc.version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>com.springsource.oracle.jdbc</artifactId>
+            <version>${oracle.jdbc.version}</version>
+        </dependency>
 
         <!-- JAXB tests -->
 
