@@ -230,7 +230,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                 Utilities.verboseLog("nucleotideSequenceId considered: " + nucleotideSequenceId +
                         " proteinIdFromGetorf: + proteinIdFromGetorf");
                 if (proteinIdFromGetorf.startsWith(nucleotideSequenceId)) {
-                    super.gffWriter.write("Matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
+                    Utilities.verboseLog(40,"Matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
                     super.gffWriter.write("##sequence-region " + concatenatedNucSeqIdentifiersStr + " 1 " + nucleotideSequence.getSequence().length());
                     super.gffWriter.write(getNucleicAcidLine(nucleotideSequence));
                     //Build protein identifier for GFF3
@@ -247,7 +247,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                     //Write polypeptide
                     super.gffWriter.write(getPolypeptideLine(sequenceLength, proteinIdFromGetorf, proteinIdForGFF, md5));
                 } else {
-                    super.gffWriter.write("NOT matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
+                    Utilities.verboseLog(40,"NOT matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
                 }
             } else {
                 Utilities.verboseLog("protein considered: " + protein.toString());
