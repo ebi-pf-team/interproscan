@@ -138,7 +138,8 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
         }
         if (parsedNucleotideSequencesCount > 12000){
             LOGGER.warn("You are analysing more than 12000 nucleotide sequences. " +
-                    " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
+                    " Depending on your resources this might cause problems with memory or running for a long time." +
+                    "Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
                     " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
         }
 
