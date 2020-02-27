@@ -21,10 +21,8 @@ import org.iq80.leveldb.Options;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -200,7 +198,8 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
 
-            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
+            int totalProteinsParsed = parsedMolecules.size();
+            Utilities.verboseLog("Parsed Molecules (sequences) : " + totalProteinsParsed);
 
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
@@ -268,6 +267,11 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             //sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
             Utilities.verboseLog("Store and persist the sequences into KV and H2 dbs...  completed");
+
+            if (count > 12000) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+                System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded " + totalProteinsParsed + " unique sequences for analysis");
+            }
 
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
