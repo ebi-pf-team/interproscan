@@ -398,11 +398,17 @@ public class MatchHttpClient {
             throw new IllegalStateException("The url must be set for the MatchHttpClient.getServerVersion method to function");
         }
 
+        String serverVersion = "";
+        /**
+         * for testing the lookup only
+
         String serverVersion = "5.33-72.0"; //TODO this is for TEM and testing only as the server with the correct versionis not yet ready;
 
         if (! url.isEmpty()){
             return serverVersion;
         }
+        */
+
         CloseableHttpClient httpclient = getClient();
 
         // Use HttpGet as the URL will be very short
