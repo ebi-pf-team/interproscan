@@ -13,9 +13,10 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/iprscan/5/bin/centos7/rpsbproc.z
 unzip rpsbproc.zip 
 cp rpsbproc bin/blast/ncbi-blast-2.9.0+/rpsbproc
 chmod +x bin/blast/ncbi-blast-2.9.0+/rpsbproc
-if [${OS_TYPE} =  'ubuntu']; then
+if which apt >/dev/null; then
   sudo apt install libdw1 libdw-dev
-else
+fi
+if which yum >/dev/null; then
   yum install libdw1 libdw-dev
 fi
 ./interproscan.sh -i test_proteins.fasta -f tsv -dp -appl sfld, hamap,prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
