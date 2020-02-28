@@ -511,6 +511,14 @@ public class WriteOutputStep extends Step {
                 final Set<NucleotideSequence> nucleotideSequences = nucleotideSequenceDAO.getNucleotideSequences();
                 for(NucleotideSequence  nucleotideSequence : nucleotideSequences ){
                     count ++;
+                    for (OpenReadingFrame orf: nucleotideSequence.getOpenReadingFrames()) {
+                        Protein protein = orf.getProtein();
+                        String proteinKey = Long.toString(protein.getId());
+                        Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
+                        //protein = proteinMarshalled;
+                        orf.setProtein(proteinMarshalled);
+                    }
+                    //Utilities.verboseLog("\n#" + count + " nucleotideSequence: " + nucleotideSequence.toString());
                     writer.write(nucleotideSequence, sequenceType, isSlimOutput);
                 }
 
@@ -586,8 +594,15 @@ public class WriteOutputStep extends Step {
                     int count = 0;
 
                     for (NucleotideSequence nucleotideSequence :nucleotideSequences){
-                        writer.write(nucleotideSequence);
                         count++;
+                        for (OpenReadingFrame orf: nucleotideSequence.getOpenReadingFrames()) {
+                            Protein protein = orf.getProtein();
+                            String proteinKey = Long.toString(protein.getId());
+                            Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
+                            //protein = proteinMarshalled;
+                            orf.setProtein(proteinMarshalled);
+                        }
+                        writer.write(nucleotideSequence);
                         if (count < nucleotideSequences.size()) {
                             writer.write(","); // More proteins/nucleotide sequences to follow
                         }
