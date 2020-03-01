@@ -247,7 +247,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                         Utilities.verboseLog(30, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
                         NucleotideSequence seq = orf.getNucleotideSequence();
                         //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
-                        if (seq != null) {
+                        if (seq != null && Utilities.verboseLogLevel >= 30) {
                             Utilities.verboseLog(30, "getCrossReferences().size" + seq.getCrossReferences().size());
                             Utilities.verboseLog(30, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
                         }
@@ -377,7 +377,9 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                         "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
 
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
-                Utilities.verboseLog(20, "nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
+                if (Utilities.verboseLogLevel >= 20){
+                	Utilities.verboseLog(20, "nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
+		}
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
                 if (nucleotide == null) {

@@ -423,7 +423,7 @@ public class PrepareForOutputStep extends Step {
                     String nucleotideSequenceKey = nucleotideSequenceInH2.getMd5();
                     //nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.get(nucleotideSequenceKey);
-                    Utilities.verboseLog("\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : " + nucleotideSequenceInH2.toString());
+                    Utilities.verboseLog("\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : "); // + nucleotideSequenceInH2.toString());
                     for (OpenReadingFrame orf: nucleotideSequenceInH2.getOpenReadingFrames()) {
                         Protein protein = orf.getProtein();
                        // String proteinKey = Long.toString(protein.getId());
@@ -432,7 +432,9 @@ public class PrepareForOutputStep extends Step {
                         //orf.setProtein(proteinMarshalled);
                     }
                     String xmlNucleotideSequence = writer.marshal(nucleotideSequenceInH2);
-                    Utilities.verboseLog("\n#" + count + " xmlNucleotideSequence: " + xmlNucleotideSequence);
+                    if (Utilities.verboseLogLevel > 0){
+                    	Utilities.verboseLog("\n#" + count + " xmlNucleotideSequence: " + xmlNucleotideSequence);
+		    }
                     //String key = nucleotideSequence.getMd5();
                     nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
@@ -486,7 +488,9 @@ public class PrepareForOutputStep extends Step {
                     nucleotideSequenceDAO.getMaximumPrimaryKey();
 
                     nucleotideSequenceDAO.persist(key, nucleotideSequence);
-                    Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " +  xmlNucleotideSequence);
+                    if (Utilities.verboseLogLevel > 0){
+                    	Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " +  xmlNucleotideSequence);
+		    }
                 }
 
                 Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
