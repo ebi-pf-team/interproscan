@@ -15,6 +15,8 @@ def get_sequences(fasta_file):
                 continue
             if line.startswith('>'):
                 seq_id = line.lstrip('>')
+                if 'Bob'  in seq_id:
+                  print(seq_id)
                 fasta_dict[seq_id] = ''
             else:
                 fasta_dict[seq_id] += line + '\n'
@@ -35,14 +37,20 @@ def get_all_seqs_dic(all_seqs):
     all_seqs_dic = {}
 
     for elem in all_seqs:
-        key = elem
-        new_key = key.split()[0]
-        if '_' in new_key:
-            new_key,index = new_key.rsplit('_',1)
-        s_list = all_seqs[key]
-        seq_length = len(s_list)
-        s_pair = [seq_length,(key, s_list)]
-        all_seqs_dic = updateSet(new_key, s_pair, all_seqs_dic)
+        seq_key = elem
+        new_elements = elem.rsplit(' ')
+        if len(new_elements) >=2:
+            orf_id = new_elements[0]
+            source_element = new_elements[1].split('=')
+            if len(source_element) >= 2:
+               source = source_element[1]
+               if 'Bob'  in source:
+                  print(elem)
+               key = source.strip()
+               s_list = all_seqs[seq_key]
+               seq_length = len(s_list)
+               s_pair = [seq_length,(seq_key, s_list)]
+               all_seqs_dic = updateSet(key, s_pair, all_seqs_dic)
     return all_seqs_dic
 
 if len(sys.argv) >= 4:

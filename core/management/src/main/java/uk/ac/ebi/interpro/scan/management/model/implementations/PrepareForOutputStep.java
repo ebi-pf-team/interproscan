@@ -96,6 +96,7 @@ public class PrepareForOutputStep extends Step {
             }
             Utilities.verboseLog("Completed prepraring the protein range  ..." + proteinRange);
         } catch (IOException e) {
+            LOGGER.warn("Problem with marshalling in the  Prepare proteins for output step");
             e.printStackTrace();
         }
 
@@ -278,7 +279,8 @@ public class PrepareForOutputStep extends Step {
 
     private void simulateMarshalling( StepInstance stepInstance, String sequenceType, String temporaryFileDirectory) throws IOException {
         if (! sequenceType.equalsIgnoreCase("p")){
-            return;
+            //maybe we should simulate for all types
+            //return;
         }
         final boolean isSlimOutput = false;
         //final String interProScanVersion = "5-34";
@@ -416,11 +418,27 @@ public class PrepareForOutputStep extends Step {
                 writer.header(interProScanVersion,   "nucleotide-sequence-matches");
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId :nucleotideSequenceIds){
-                    NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSequenceId);
-                    String xmlNucleotideSequence = writer.marshal(nucleotideSequence);
-                    String key = nucleotideSequence.getMd5();
-                    nucleotideSequenceDAO.persist(key, nucleotideSequence);
+                    count ++;
+                    NucleotideSequence  nucleotideSequenceInH2 = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSequenceId);
+                    String nucleotideSequenceKey = nucleotideSequenceInH2.getMd5();
+                    //nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
+                    //NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.get(nucleotideSequenceKey);
+                    Utilities.verboseLog("\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : "); // + nucleotideSequenceInH2.toString());
+                    for (OpenReadingFrame orf: nucleotideSequenceInH2.getOpenReadingFrames()) {
+                        Protein protein = orf.getProtein();
+                       // String proteinKey = Long.toString(protein.getId());
+                        //Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
+                        //protein = proteinMarshalled;
+                        //orf.setProtein(proteinMarshalled);
+                    }
+                    String xmlNucleotideSequence = writer.marshal(nucleotideSequenceInH2);
+                    if (Utilities.verboseLogLevel > 0){
+                    	Utilities.verboseLog("\n#" + count + " xmlNucleotideSequence: " + xmlNucleotideSequence);
+		    }
+                    //String key = nucleotideSequence.getMd5();
+                    nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
+                    //break;
                 }
 
                 Utilities.verboseLog("PrepareforOutPut nucleotideSequenceIds size: " +  nucleotideSequenceIds.size());
@@ -470,7 +488,9 @@ public class PrepareForOutputStep extends Step {
                     nucleotideSequenceDAO.getMaximumPrimaryKey();
 
                     nucleotideSequenceDAO.persist(key, nucleotideSequence);
-                    Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " +  xmlNucleotideSequence);
+                    if (Utilities.verboseLogLevel > 0){
+                    	Utilities.verboseLog("Prepae OutPut xmlNucleotideSequence : " +  xmlNucleotideSequence);
+		    }
                 }
 
                 Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());

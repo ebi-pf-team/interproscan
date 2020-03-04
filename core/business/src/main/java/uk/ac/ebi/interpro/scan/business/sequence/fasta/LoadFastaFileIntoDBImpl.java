@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoader;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
+import uk.ac.ebi.interpro.scan.io.ntranslate.ORFDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
@@ -20,10 +21,8 @@ import org.iq80.leveldb.Options;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +56,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
     private boolean isGetOrfOutput;
 
+    private ORFDescriptionLineParser orfDescriptionLineParser;
     private GetOrfDescriptionLineParser descriptionLineParser;
 
     @Required
@@ -78,6 +78,10 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
     @Required
     public void setGetOrfOutput(boolean getOrfOutput) {
         isGetOrfOutput = getOrfOutput;
+    }
+
+    public void setOrfDescriptionLineParser(ORFDescriptionLineParser orfDescriptionLineParser) {
+        this.orfDescriptionLineParser = orfDescriptionLineParser;
     }
 
     public void setDescriptionLineParser(GetOrfDescriptionLineParser descriptionLineParser) {
@@ -194,7 +198,8 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
 
-            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
+            int totalProteinsParsed = parsedMolecules.size();
+            Utilities.verboseLog("Parsed Molecules (sequences) : " + totalProteinsParsed);
 
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
@@ -242,7 +247,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                         Utilities.verboseLog(30, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
                         NucleotideSequence seq = orf.getNucleotideSequence();
                         //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
-                        if (seq != null) {
+                        if (seq != null && Utilities.verboseLogLevel >= 30) {
                             Utilities.verboseLog(30, "getCrossReferences().size" + seq.getCrossReferences().size());
                             Utilities.verboseLog(30, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
                         }
@@ -262,6 +267,11 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             //sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
             Utilities.verboseLog("Store and persist the sequences into KV and H2 dbs...  completed");
+
+            if (count > 12000) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+                System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded " + totalProteinsParsed + " unique sequences for analysis");
+            }
 
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
@@ -342,12 +352,19 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             toDebugPrint(newProteins.size(), proteinCount,
                     "getCrossReferences: " + (System.currentTimeMillis() - startPersistProtein ) + " millis ");
             for (ProteinXref xref : xrefs) {
-                String nucleotideId = xref.getIdentifier();
+                String orfId = xref.getIdentifier();
                 String description = xref.getDescription();
+                String originalHeader = xref.getName();
                 Long startNewOrf = System.currentTimeMillis();
-                OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
+                OpenReadingFrame newOrfTest = orfDescriptionLineParser.createORFFromParsingResult(description);
+                Utilities.verboseLog(20, "orfId: " +  newOrfTest + " nucleotideId: " + orfId + " originalHeader: " + originalHeader + " description: " + description);
+
+                //OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
+                OpenReadingFrame newOrf = newOrfTest;
                 //Get rid of the underscore
-                nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
+                //String nucleotideId = XrefParser.stripOfFinalUnderScore(nucleotideId);
+                String nucleotideId = XrefParser.getNucleotideIdFromORFId(originalHeader);
+
                 /*
                   Commented-out version number stripping to allow the short-term fix for nucleotide headers to work (IBU-2426)
                   TODO - consider if this is really necessary (may not be a good idea in all cases)
@@ -360,6 +377,9 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                         "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf ) + " millis ");
 
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
+                if (Utilities.verboseLogLevel >= 20){
+                	Utilities.verboseLog(20, "nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
+		}
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
                 if (nucleotide == null) {

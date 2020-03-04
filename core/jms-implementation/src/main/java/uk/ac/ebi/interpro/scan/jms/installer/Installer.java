@@ -125,7 +125,7 @@ public class Installer implements Runnable {
     private void loadEntries() {
         String releaseVersion = jdbcEntryDAO.getLatestDatabaseReleaseVersion();
         Release interProRelease = releaseDAO.getReleaseByVersion(releaseVersion);
-        LOGGER.warn("Loading InterPro entries - " + releaseVersion + " version number " + interProRelease);
+        LOGGER.warn(Utilities.getTimeNow() + " Loading InterPro entries - " + releaseVersion + " version number " + interProRelease);
         if (interProRelease == null) {
             interProRelease = releaseDAO.insert(new Release(releaseVersion));
         }
@@ -156,7 +156,7 @@ public class Installer implements Runnable {
                         continue;
                     }
                 }
-                LOGGER.warn("Loading " + parser.getSignatureLibrary() + " version number " + parser.getReleaseVersionNumber());
+                LOGGER.warn(Utilities.getTimeNow() + " Loading " + parser.getSignatureLibrary() + " version number " + parser.getReleaseVersionNumber());
                 if (signatureLibraryReleaseDAO.isReleaseAlreadyPersisted(parser.getSignatureLibrary(), parser.getReleaseVersionNumber())) {
                     LOGGER.warn(parser.getSignatureLibrary() + " version " + parser.getReleaseVersionNumber() + " is already loaded.");
                     return;

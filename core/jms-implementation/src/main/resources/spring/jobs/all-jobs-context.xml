@@ -315,7 +315,7 @@
 
     <!-- STEP 2 -->
     <bean id="stepRunGetOrf"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunGetOrfStep">
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide.RunTranslateToProteinsStep">
         <!--Abstract parameter-->
         <property name="job" ref="jobLoadNucleicAcidSequence"/>
         <property name="stepDescription" value="Run GetOrf to predict open reading frames from nucleic acid sequence"/>
@@ -326,9 +326,11 @@
         but in this case
          the output is defined as a parameter (fastaFileNameTemplate).  This may contain error messages,
          so needs to be handled in some way.-->
-        <property name="outputFileNameTemplate" value="getorf.err.txt"/>
+        <property name="outputFileNameTemplate" ref="getOrfResultFile"/>
         <!--More specific parameter-->
-        <property name="fullPathToBinary" value="${binary.getorf.path}"/>
+        <property name="fullPathToGetorfBinary" value="${binary.getorf.path}"/>
+        <property name="fullPathToTranslateBinary" value="${binary.esltranslate.path}"/>
+
         <property name="fastaFilePath" ref="getOrfResultFile"/>
         <property name="minSize" value="${getorf.minsize}"/>
     </bean>
@@ -380,7 +382,6 @@
         <property name="jobs" ref="jobs"/>
         <property name="stepInstanceDAO" ref="stepInstanceDAO"/>
     </bean>
-
 
 
     <!-- STEP 3b (depends on both Step 1 and 2) -->
@@ -470,6 +471,9 @@
         <constructor-arg value="devnull.txt"/>
     </bean>
 
+    <bean id="orfDescriptionLineParser"
+          class="uk.ac.ebi.interpro.scan.io.ntranslate.ORFDescriptionLineParser"/>
+
     <bean id="getOrfDescriptionLineParser"
           class="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser"/>
 
@@ -491,6 +495,8 @@
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
         <property name="openReadingFrameDAO" ref="openReadingFrameDAO"/>
         <property name="descriptionLineParser" ref="getOrfDescriptionLineParser"/>
+        <property name="orfDescriptionLineParser" ref="orfDescriptionLineParser"/>
+
     </bean>
 
     <bean id="finaliseInitialSetupTasks" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks">

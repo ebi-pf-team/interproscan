@@ -342,6 +342,10 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         try {
             // Only proceed if the lookup client and server are in sync
+            String serverVersion = preCalcMatchClient.getServerVersion();
+            int finalDashIndex = interproscanVersion.lastIndexOf("-");
+            String interproDataVersion = interproscanVersion.substring(finalDashIndex);
+            Utilities.verboseLog("Lookup isSynchronised? interproDataVersion: " + interproDataVersion + " serverVersion:" + serverVersion);
             if (!isSynchronised()) {
                 Utilities.verboseLog(10, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
                 return null;
@@ -560,7 +564,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         String serverVersion = preCalcMatchClient.getServerVersion();
         int finalDashIndex = interproscanVersion.lastIndexOf("-");
         String interproDataVersion = interproscanVersion.substring(finalDashIndex);
-        if (!( serverVersion.endsWith(interproDataVersion) || serverVersion.contains("5.33-72.0"))) {
+        Utilities.verboseLog("Lookup isSynchronised? interproDataVersion: " + interproDataVersion + " serverVersion:" + serverVersion);
+        if (!( serverVersion.endsWith(interproDataVersion) )) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }

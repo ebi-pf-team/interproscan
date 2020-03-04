@@ -24,6 +24,9 @@ public class XrefParser {
 
     private static final Pattern GETORF_HEADER_PATTERN = Pattern.compile("^(.+)\\s+(\\[\\d+\\s+\\-\\s+\\d+].*)$");
 
+    private static final Pattern ESLTRANSLATE_HEADER_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(.+)$");
+    private static final Pattern ESLTRANSLATE_HEADER_SOURCE_PATTERN = Pattern.compile("^\\S+\\s+source=(\\S+)\\s+coords=(\\S+)\\s+length=(\\S+)\\s+frame=(\\S+)\\s+desc=(.*)$");
+
     /**
      * Everything before the first whitespace will be recognised as the identifier and everything afterwards will be kind of description.
      */
@@ -75,6 +78,7 @@ public class XrefParser {
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
             } */
+            Utilities.verboseLog("getNucleotideSequenceXref: " + crossReference);
             return stripUniqueIdentifierAndTrimForNucleotideSeq(crossReference);
         }
         return null;
@@ -271,5 +275,37 @@ public class XrefParser {
         return identifier;
     }
 
+    /**
+     *   get nucleotide id from string
+     */
+    public static String getNucleotideIdFromORFId(final String identifier) {
+        final Matcher sourceMatcher = ESLTRANSLATE_HEADER_SOURCE_PATTERN.matcher(identifier.trim());
+        if (sourceMatcher.find()) {
+            String source = sourceMatcher.group(1);
+            Utilities.verboseLog("nucleotide source: " + source + " original string: " + identifier);
+            return source.trim();
+        }
+        return identifier;
+    }
+
+    public static String getSource(String name) {
+        String source = name;
+        final Matcher sourceMatcher = ESLTRANSLATE_HEADER_SOURCE_PATTERN.matcher(name);
+        if (sourceMatcher.find()) {
+            source = sourceMatcher.group(1);
+            String coords = sourceMatcher.group(2);
+            String length = sourceMatcher.group(3);
+            String frame = sourceMatcher.group(4);
+            String moreDesc = sourceMatcher.group(5);
+            Utilities.verboseLog(20, "identifier: " + name +
+                    " source: " + source +
+                    " coords: " + coords +
+                    " length: " + length +
+                    " frame: " + frame +
+                    " moreDesc: " + moreDesc);
+        }
+
+        return source;
+    }
 
 }

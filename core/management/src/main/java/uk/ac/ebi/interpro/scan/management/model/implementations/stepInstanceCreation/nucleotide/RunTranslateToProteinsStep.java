@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
  *         Date: 21/06/11
  *         Time: 12:01
  */
@@ -19,12 +20,16 @@ public class RunTranslateToProteinsStep extends RunBinaryStep {
 
     private static final Logger LOGGER = Logger.getLogger(RunTranslateToProteinsStep.class.getName());
 
-    private String fullPathToBinary;
+    private String fullPathToTranslateBinary;
+
+    private String fullPathToGetorfBinary;
 
     /**
      * The path / file name for the OUTPUT FILE (protein sequence fasta file).
      */
     private String fastaFilePath;
+
+    private String mode = "translate";
 
     /**
      * Minimum nucleotide size of ORF to report (Any integer value). Default value is 50.
@@ -43,11 +48,15 @@ public class RunTranslateToProteinsStep extends RunBinaryStep {
     /**
      * Path to getorf binary.
      *
-     * @param fullPathToBinary
+     * @param fullPathToGetorfBinary
      */
     @Required
-    public void setFullPathToBinary(String fullPathToBinary) {
-        this.fullPathToBinary = fullPathToBinary;
+    public void setFullPathToGetorfBinary(String fullPathToGetorfBinary) {
+        this.fullPathToGetorfBinary = fullPathToGetorfBinary;
+    }
+
+    public void setFullPathToTranslateBinary(String fullPathToTranslateBinary) {
+        this.fullPathToTranslateBinary = fullPathToTranslateBinary;
     }
 
     /**
@@ -80,32 +89,38 @@ public class RunTranslateToProteinsStep extends RunBinaryStep {
         }
         final String fastaFile = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, fastaFilePath);
         final List<String> command = new ArrayList<String>();
-        command.add(fullPathToBinary);
+        if (mode.equals("translate")){
+            command.add(fullPathToTranslateBinary);
+            command.add(nucleicAcidSeqFilePath);
+            //setOutputFileNameTemplate(fastaFile);
+        }else {
+            command.add(fullPathToGetorfBinary);
             /*
             Using the pearson format switch (undocumented feature!) means that getorf will
             use all text up to the first space as the identifier.
             This is essential for the short term nucletide header fix to work (IBU-2426)
             TODO - consider removing this switch when the long-term fix is implemented
              */
-        command.add("-sf");
-        command.add("pearson");
-        command.add("-sequence");
-        command.add(nucleicAcidSeqFilePath);
-        command.add("-outseq");
-        command.add(fastaFile);
-        if (this.minSize != null) {
-            command.add("-minsize");
-            command.add(this.minSize);
+            command.add("-sf");
+            command.add("pearson");
+            command.add("-sequence");
+            command.add(nucleicAcidSeqFilePath);
+            command.add("-outseq");
+            command.add(fastaFile);
+            if (this.minSize != null) {
+                command.add("-minsize");
+                command.add(this.minSize);
+            }
+            if (this.maxSize != null) {
+                command.add("-maxsize");
+                command.add(this.maxSize);
+            }
+            // Need to build binary switches.
+            // Need to have default minimum length (100?)
+            command.addAll(getBinarySwitchesAsList());
         }
-        if (this.maxSize != null) {
-            command.add("-maxsize");
-            command.add(this.maxSize);
-        }
-        // Need to build binary switches.
-        // Need to have default minimum length (100?)
-        command.addAll(getBinarySwitchesAsList());
 
-        Utilities.verboseLog("RunGetOrfStep: " + getCommandBuilder(command));
+        Utilities.verboseLog("RunTranslateToProteinsStep: " + getCommandBuilder(command));
         return command;
     }
 }
