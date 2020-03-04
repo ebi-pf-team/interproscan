@@ -2,7 +2,7 @@ package PIRSF;
 
 use strict;
 use warnings;
-use File::Temp qw/tempdir/;
+use File::Temp qw/tempfile/;
 
 sub checkHmmFiles{
   my ($sf_hmm, $path) = @_;
@@ -88,21 +88,43 @@ sub read_fasta {
 }
 
 sub run_hmmer {
+  my ($hmmer_path, $mode, $cpus, $sf_hmm, $fasta_file, $tmpdir) = @_;
+  ### $fasta_file
+
+  my (undef, $filename) = tempfile(
+    DIR => $tmpdir,
+    UNLINK => 1
+  );
+
+  my $err_code = system("${hmmer_path}/$mode --cpu $cpus -o /dev/null --domtblout $filename -E 0.01 --acc $sf_hmm $fasta_file");
+
+  if ($err_code) {
+    die "\"${hmmer_path}/$mode --cpu $cpus -o /dev/null --domtblout $filename -E 0.01 --acc $sf_hmm $fasta_file\" failed: $?";
+  }
+
+
+### $filename
+
+  return $filename;
+
+}
+
+sub process_results {
   my ($infile, $domtblout_file, $sf_hmm, $pirsf_data, $matches, $children, $path, $cpu, $hmmer, $i5_tmpdir) = @_;
   #Change to using table output.
   #system("$hmmscan --domtblout table -E 0.01 --acc $sf_hmm $infile")
-  my $dir  = tempdir( CLEANUP => 1 , DIR=> $i5_tmpdir);
-  if($path and $path =~ /\S+/){
-    $path.='/' if($path !~ /\/^/);
-  }
+  # my $dir  = tempdir( CLEANUP => 1 , DIR=> $i5_tmpdir);
+  # if($path and $path =~ /\S+/){
+  #   $path.='/' if($path !~ /\/^/);
+  # }
 
   my %promote;
   my $store; #Use this to store previous rows
-  if($cpu and $cpu =~ /\d+/){
-    $cpu = "--cpu $cpu";
-  }
+  # if($cpu and $cpu =~ /\d+/){
+  #   $cpu = "--cpu $cpu";
+  # }
 
-  $path .= "$hmmer";
+  # $path .= "$hmmer";
 
 
   #Run HMM search for full-length models and get information
