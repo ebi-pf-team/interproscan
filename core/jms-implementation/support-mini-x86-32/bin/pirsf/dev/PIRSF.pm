@@ -161,7 +161,7 @@ sub process_hit {
    my ($rows, $children, $store, $promote, $pirsf_data, $matches) = @_;
    #Just get the key bits of information out.
    my($pirsf_acc, $seq_acc, $seq_leng, $seq_start, $seq_end,
-       $hmm_start, $hmm_end) = @{$rows->[0]}[1,3,5,15,16,17,18];
+       $hmm_start, $hmm_end) = @{$rows->[0]}[1,3,5,17,18,15,16];
   my $score = 0;
   #Now loop over all rows that are left, check that we do not have a smaller start or larger end for the sequence/hmm.
   foreach my $row (@{$rows}){
