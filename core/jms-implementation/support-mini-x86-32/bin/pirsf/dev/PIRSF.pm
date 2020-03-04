@@ -286,7 +286,7 @@ sub print_output {
 #Query sequence: A4YCN9 No Match
  
    if(lc($outfmt) eq 'pirsf'){ 
-    foreach my $seq (keys %$bestMatch){
+    foreach my $seq (sort keys %$bestMatch){
       print "Query Sequence: $seq ";
       if(exists($bestMatch->{$seq}->{sf})){
         my $sf_data = $bestMatch->{$seq}->{sf};
@@ -302,7 +302,7 @@ sub print_output {
       }
     } 
   }elsif(lc($outfmt) eq 'i5'){
-    foreach my $seq (keys %$bestMatch){
+    foreach my $seq (sort keys %$bestMatch){
        if(exists($bestMatch->{$seq}->{sf})){
         my $sf_data = $bestMatch->{$seq}->{sf};
         _print_i5($sf_data, $seq);
