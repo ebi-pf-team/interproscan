@@ -33,27 +33,25 @@ my $hmmer_path;
 my $dominput;
 
 GetOptions(
-  "h"        => \$help,
-  "fasta=s"  => \$input,
-  "domtbl=s"  => \$dominput,
-  "hmmlib=s" => \$sf_hmm,
-  "verbose"  => \$verbose,
-  "mode=s"   => \$mode,
-  "dat=s"    => \$pirsf_dat,
-  "outfmt=s" => \$output,
-  "path=s"   => \$hmmer_path,
-  "cpus=i"   => \$cpus,
-  "tmpdir=s"   => \$i5_tmpdir,
-) or die("Error in command line arguments, run $0 -h\n");
-
-help() if($help);
+  'help'     => sub { pod2usage( -verbose => 1 ) },
+  'man'      => sub { pod2usage( -verbose => 2 ) },
+  'fasta=s'  => \$input,
+  'domtbl=s' => \$dominput,
+  'hmmlib=s' => \$sf_hmm,
+  'verbose'  => \$verbose,
+  'mode=s'   => \$mode,
+  'data=s'   => \$pirsf_dat,
+  'outfmt=s' => \$output,
+  'path=s'   => \$hmmer_path,
+  'cpus=i'   => \$cpus,
+  'tmpdir=s' => \$tmpdir,
+) or pod2usage(2);
 
 if(!$input){
-  print "\n *** FATAL, no input fasta file defined ***\n\n";
-  $help = 1;
+    print STDERR "\n *** FATAL, no input fasta file defined ***\n\n";
+    pod2usage(2);
+    exit;
 }
-
-help() if($help);
 
 #sf.tb file
 my $sftb="sf.tb";
