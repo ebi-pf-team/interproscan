@@ -73,8 +73,14 @@ my $matches = {};
 #to parse the length, as that is in the hmmer output.
 PIRSF::read_fasta($input, $matches) if($verbose);
 
+if (!$dominput) {
+  $dominput = PIRSF::run_hmmer($hmmer_path, $mode, $cpus, $sf_hmm, $input, $tmpdir);
+  ### $dominput
+}
+
+
 #Now run the search.
-my $matches_found = PIRSF::run_hmmer($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $i5_tmpdir);
+my $matches_found = PIRSF::process_results($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $tmpdir);
 
 if (!$matches_found == 0){
     #Now determine the best matches and subfamily matches.
