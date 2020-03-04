@@ -87,29 +87,38 @@ if (!$matches_found == 0){
 }
 exit;
 
-#------------------------------------------------------------------------------
+1;
+
+__END__
 
 
-sub help {
 
-  print<<EOF;
+=head1 NAME
 
-usage: $0 -fasta myseqs.fa
+pirsf.pl - Interpro version of PIR SF scan program for one sequence in fasta format
 
-Options - 
+=head1 SYNOPSIS
+
+  pirsf.pl -fasta myseqs.fa [OPTIONS]
+
   -fasta  <filename>          : Input fasta that you want to analyse, required.
   -hmmlib <filename>          : The PIRSF HMM library, containing both family and subfamily profiles, default sf_hmm_all .
   -dat    <filename>          : The PIRSF data file, listing family and subfamily metadata, default pirsf.dat.
   -mode   <hmmscan|hmmsearch> : [Experimental] Switch from hmmscan mode to hmmsearch.
   -verbose                    : Report No matches, default off.
-  -outfmt <pirsf|i5>          : Print output in different formats. Default prisf.
+  -outfmt <pirsf|i5>          : Print output in different formats. Default pirsf.
   -path                       : Path to HMMER binaries.
-  -cpu    <#>                 : Number of cpus to using for hmmscan.
-  -tmpdir                     : temp dir.
-  -domtbl                     : domtblout from hmmer run.
+  -cpu    <#>                 : Number of cpus to using for hmmscan. Default 1
+  -tmpdir                     : Directory for hmmer to use. Default temporary ./tmp/
+  -domtbl                     : domtblout from hmmer run (if provided will skip using hmmer).
   -help                       : Prints this message.
 
-EOF
-exit;
-}
+=head1 DESCRIPTION
 
+
+
+=head1 DEPENDENCIES
+
+hmmer
+
+=cut
