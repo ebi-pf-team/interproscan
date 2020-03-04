@@ -235,7 +235,7 @@ sub post_process {
       if(defined($pirsf_data->{$pirsf_acc}->{children})){
          foreach my $pirsf_sub (@matchesSort){
             if($pirsf_data->{$pirsf_acc}->{children}->{$pirsf_sub}){
-              $bestMatch->{$seq}->{sub} = $matches->{$seq}->{$pirsf_sub}->{data};
+              $bestMatch->{$seq}->{subf} = $matches->{$seq}->{$pirsf_sub}->{data};
               last;
             }
          }
@@ -270,8 +270,8 @@ sub print_output {
         my $sf_data = $bestMatch->{$seq}->{sf};
         print "matches $sf_data->[0]->[1]: $pirsf_data->{$sf_data->[0]->[1]}->{name}\n";
         _print_report($sf_data);
-        if($bestMatch->{$seq}->{sub}){
-          my $sub_data = $bestMatch->{$seq}->{sub};
+        if($bestMatch->{$seq}->{subf}){
+          my $sub_data = $bestMatch->{$seq}->{subf};
           print " and matches Sub-Family $sub_data->[0]->[1]: $pirsf_data->{$sub_data->[0]->[1]}->{name}\n";
           _print_report($sub_data);
         }    
@@ -284,8 +284,8 @@ sub print_output {
        if(exists($bestMatch->{$seq}->{sf})){
         my $sf_data = $bestMatch->{$seq}->{sf};
         _print_i5($sf_data, $seq);
-        if($bestMatch->{$seq}->{sub}){
-          my $sub_data = $bestMatch->{$seq}->{sub};
+        if($bestMatch->{$seq}->{subf}){
+          my $sub_data = $bestMatch->{$seq}->{subf};
           _print_i5($sub_data, $seq);
         }
       }
