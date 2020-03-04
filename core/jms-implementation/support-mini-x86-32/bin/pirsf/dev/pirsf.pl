@@ -15,22 +15,22 @@ BEGIN {
 use PIRSF;
 
 #------------------------------------------------------------------------------
-#Deal with all of the options handling.
+# Deal with all of the options handling.
 
-my($sf_hmm, $pirsf_dat, $input, $mode, $help, $verbose, $output, $hmmer_path, 
-$cpus,$dominput,$i5_tmpdir);
-
-#Both the family and subfamily hmm library combined. 
-$sf_hmm="sf_hmm_all";
-#PIRSF data file
-$pirsf_dat="pirsf.dat";
-$mode = "hmmscan";
-$verbose = 0;
-$output  = 'pirsf';
-$hmmer_path = '';
-$cpus = '';
-$dominput = '';
-$i5_tmpdir = '';
+# Both the family and subfamily hmm library combined. 
+my $sf_hmm = 'sf_hmm_all';
+# PIRSF data file
+my $pirsf_dat = 'pirsf.dat';
+# Other options with default values
+my $mode = 'hmmscan';
+my $verbose = 0;
+my $output  = 'pirsf';
+my $cpus = 1;
+my $tmpdir = '/tmp';
+# Other options with no default value
+my $input;
+my $hmmer_path;
+my $dominput;
 
 GetOptions(
   "h"        => \$help,
