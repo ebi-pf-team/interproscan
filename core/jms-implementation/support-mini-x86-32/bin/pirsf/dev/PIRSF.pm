@@ -190,10 +190,21 @@ sub process_hit {
   #Now loop over all rows that are left, check that we do not have a smaller start or larger end for the sequence/hmm.
   foreach my $row (@{$rows}){
     $score += $row->[13];
-    $seq_start = ($row->[17] < $seq_start ? $row->[17] : $seq_start); 
-    $seq_end   = ($row->[18] > $seq_end   ? $row->[18] : $seq_end); 
-    $hmm_start = ($row->[15] < $hmm_start ? $row->[15] : $hmm_start); 
-    $hmm_end   = ($row->[16] > $hmm_end   ? $row->[16] : $hmm_end);
+
+    # $seq_start = ($row->[17] < $seq_start ? $row->[17] : $seq_start); 
+    # $seq_end   = ($row->[18] > $seq_end   ? $row->[18] : $seq_end); 
+    # $hmm_start = ($row->[15] < $hmm_start ? $row->[15] : $hmm_start); 
+    # $hmm_end   = ($row->[16] > $hmm_end   ? $row->[16] : $hmm_end);
+
+    if ($row->[17] < $seq_start && $row->[15] < $hmm_start) {
+      $seq_start = $row->[17];
+      $hmm_start = $row->[15];
+    }
+    if ($row->[18] > $seq_end && $row->[16] > $hmm_end) {
+      $seq_end = $row->[18];
+      $hmm_end = $row->[16];
+    }
+
   }
 
   #Overall length
