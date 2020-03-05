@@ -323,7 +323,7 @@ sub print_output {
  
    if(lc($outfmt) eq 'pirsf'){ 
     foreach my $seq (sort keys %$bestMatch){
-      print "Query Sequence: $seq ";
+      print "Query sequence: $seq ";
       if(exists($bestMatch->{$seq}->{sf})){
         my $sf_data = $bestMatch->{$seq}->{sf};
         print "matches $sf_data->[0]->[1]: $pirsf_data->{$sf_data->[0]->[1]}->{name}\n";
