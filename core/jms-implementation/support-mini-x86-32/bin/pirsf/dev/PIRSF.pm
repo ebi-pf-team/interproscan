@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use File::Temp qw/tempfile/;
 
+use Smart::Comments;
+
 sub checkHmmFiles{
   my ($sf_hmm, $path) = @_;
   if($path and $path =~ /\S+/){
@@ -109,6 +111,29 @@ sub run_hmmer {
 
 }
 
+
+sub read_dom_input {
+  my ($dominput) = @_;
+
+ ## $dominput
+
+  my @results;
+  # open(T, '<', "$dominput") or open(T, '<', \$dominput) or  die "Failed to open table\n";
+  open(my $dom_fh, '<', $dominput) or die "Failed to open table file $dominput\n";
+  while(my $line = <$dom_fh>){
+    next if( substr($line, 0, 1) eq '#');
+    chomp $line;
+    ## $line
+    push(@results, $line);
+  }
+  close($dom_fh);
+
+  return \@results;
+}
+
+
+
+
 sub process_results {
   my ($infile, $domtblout_file, $sf_hmm, $pirsf_data, $matches, $children, $path, $cpu, $hmmer, $i5_tmpdir) = @_;
   #Change to using table output.
@@ -196,29 +221,56 @@ sub process_hit {
 
   #Overall length
   my $ovl = (($seq_end - $seq_start) + 1)/$seq_leng;
+### $seq_end
+### $seq_start
+### $seq_leng
+### $ovl
+
   my $r   = (($hmm_end - $hmm_start) + 1)/ (($seq_end - $seq_start) + 1); #Ratio over coverage of sequence and profile HMM.
+### $hmm_end
+### $hmm_start
+### $seq_end
+### $seq_start
+### $r
   if(! defined($store->{$seq_acc})){
     $store = {};
     $store->{$seq_acc}={};
   }
 
+
   #Length deviation
   my $ld = abs($seq_leng - $pirsf_data->{$pirsf_acc}->{meanL});
+
+### $r
+### $score
+### $ld
+
+### $pirsf_acc
+### $children
+
+
   if($children->{$pirsf_acc}){
     #If a sub-family, process slightly differently. Only consider the score.
     if($r > 0.67 && $score >=$pirsf_data->{$pirsf_acc}->{minS}){
-        
+### hit score for child
       #No work out which family we may need to promote and check to see if
       #we have seen it nor not
       my $parent = $children->{$pirsf_acc};
+      ### $parent
+      ### $store
+      ### $promote
       if($store->{$seq_acc}->{$parent}){
+        ### FIRST IF
         $matches->{$seq_acc}->{$parent} = $store->{$seq_acc}->{$parent};
       }else{
+        ### SECOND IF
         $promote->{$seq_acc.'-'.$parent} = 1;
       }
       #Store the sub family match.
       $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
       $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
+      ### $promote
+      ### $matches
     }
   }elsif($r > 0.67 && $ovl>=0.8 && 
           ($score >=$pirsf_data->{$pirsf_acc}->{minS}) && 
@@ -240,6 +292,7 @@ sub process_hit {
 
 sub post_process {
   my($matches, $pirsf_data) = @_;
+  ### $matches
   my $bestMatch; 
   #Sort all matches and find the smallest evalue. 
   foreach my $seq (keys %$matches){
