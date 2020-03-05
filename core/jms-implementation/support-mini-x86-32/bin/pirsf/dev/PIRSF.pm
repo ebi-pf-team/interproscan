@@ -135,47 +135,23 @@ sub read_dom_input {
 
 
 sub process_results {
-  my ($infile, $domtblout_file, $sf_hmm, $pirsf_data, $matches, $children, $path, $cpu, $hmmer, $i5_tmpdir) = @_;
-  #Change to using table output.
-  #system("$hmmscan --domtblout table -E 0.01 --acc $sf_hmm $infile")
-  # my $dir  = tempdir( CLEANUP => 1 , DIR=> $i5_tmpdir);
-  # if($path and $path =~ /\S+/){
-  #   $path.='/' if($path !~ /\/^/);
-  # }
-
-  my %promote;
-  my $store; #Use this to store previous rows
-  # if($cpu and $cpu =~ /\d+/){
-  #   $cpu = "--cpu $cpu";
-  # }
-
-  # $path .= "$hmmer";
-
-
-  #Run HMM search for full-length models and get information
-  # we run this outside this script and just get the domtblout
-  #my @sf_out=` $path $cpu --domtblout $dir/table -E 0.01 --acc $sf_hmm $infile`;
-
-  my @results;
-  open(T, '<', "$domtblout_file") or die "Failed to open table\n";
-  while(<T>){
-    next if( substr($_, 0, 1) eq '#');
-    chomp;
-    push(@results, $_);
-  }
-  close(T);
+  my ($results, $pirsf_data, $matches, $children, $hmmer_mode) = @_;
 
   # deal with the case of no hits
-  if (@results <= 0) {
+  if (!scalar @{$results}) {
     return 0;
   }
 
+
+  my %promote;
+  my $store; #Use this to store previous rows
+
   my ($pirsf_acc, $seq_acc, @keep_row);
   ROW:
-  for (my $i = 0; $i <= $#results; $i++){
-    
-    my @row = split(/\s+/, $results[$i], 24);
-    if($hmmer eq 'hmmsearch'){
+  foreach my $row (@{$results}) {
+
+    my @row = split(/\s+/, $row, 24);
+    if($hmmer_mode eq 'hmmsearch'){
       my @reorder = @row[0..5];
       $row[0] = $reorder[3];
       $row[1] = $reorder[4];
@@ -187,7 +163,7 @@ sub process_results {
     if(defined($pirsf_acc) and defined($seq_acc)){
       if( ($row[1] ne $pirsf_acc) or ($row[3] ne $seq_acc)){
         #The sequence or the profile accession has changed.
-        my @pRow = @keep_row; 
+        my @pRow = @keep_row;
         process_hit(\@pRow, $children, $store, \%promote, $pirsf_data, $matches);
         @keep_row = ();
       }else{
@@ -195,8 +171,8 @@ sub process_results {
        next ROW;
       }
     }
-    
-    $pirsf_acc = $row[1]; # 
+
+    $pirsf_acc = $row[1];
     $seq_acc = $row[3];
     push(@keep_row, \@row);
   }

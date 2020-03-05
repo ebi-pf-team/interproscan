@@ -79,8 +79,13 @@ if (!$dominput) {
 }
 
 
+
+my $results = PIRSF::read_dom_input($dominput);
+## $results
+
+
 #Now run the search.
-my $matches_found = PIRSF::process_results($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $tmpdir);
+my $matches_found = PIRSF::process_results($results, $pirsf_data, $matches, $children, $mode);
 
 if (!$matches_found == 0){
     #Now determine the best matches and subfamily matches.
