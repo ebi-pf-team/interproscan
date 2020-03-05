@@ -91,7 +91,7 @@ sub read_fasta {
 
 sub run_hmmer {
   my ($hmmer_path, $mode, $cpus, $sf_hmm, $fasta_file, $tmpdir) = @_;
-  ### $fasta_file
+  ## $fasta_file
 
   my (undef, $filename) = tempfile(
     DIR => $tmpdir,
@@ -105,7 +105,7 @@ sub run_hmmer {
   }
 
 
-### $filename
+## $filename
 
   return $filename;
 
@@ -121,6 +121,7 @@ sub read_dom_input {
   # open(T, '<', "$dominput") or open(T, '<', \$dominput) or  die "Failed to open table\n";
   open(my $dom_fh, '<', $dominput) or die "Failed to open table file $dominput\n";
   while(my $line = <$dom_fh>){
+    ## $line
     next if( substr($line, 0, 1) eq '#');
     chomp $line;
     ## $line
@@ -164,7 +165,7 @@ sub process_results {
       if( ($row[1] ne $pirsf_acc) or ($row[3] ne $seq_acc)){
         #The sequence or the profile accession has changed.
         my @pRow = @keep_row;
-        process_hit(\@pRow, $children, $store, \%promote, $pirsf_data, $matches);
+        $store = process_hit(\@pRow, $children, $store, \%promote, $pirsf_data, $matches);
         @keep_row = ();
       }else{
        push(@keep_row, \@row);
@@ -176,7 +177,7 @@ sub process_results {
     $seq_acc = $row[3];
     push(@keep_row, \@row);
   }
-  process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
+  $store = process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
   return 1;
 }
 
@@ -197,56 +198,56 @@ sub process_hit {
 
   #Overall length
   my $ovl = (($seq_end - $seq_start) + 1)/$seq_leng;
-### $seq_end
-### $seq_start
-### $seq_leng
-### $ovl
+## $seq_end
+## $seq_start
+## $seq_leng
+## $ovl
 
   my $r   = (($hmm_end - $hmm_start) + 1)/ (($seq_end - $seq_start) + 1); #Ratio over coverage of sequence and profile HMM.
-### $hmm_end
-### $hmm_start
-### $seq_end
-### $seq_start
-### $r
-  if(! defined($store->{$seq_acc})){
-    $store = {};
-    $store->{$seq_acc}={};
-  }
+## $hmm_end
+## $hmm_start
+## $seq_end
+## $seq_start
+## $r
+  # if(! defined($store->{$seq_acc})){
+  #   $store = {};
+  #   $store->{$seq_acc}={};
+  # }
 
 
   #Length deviation
   my $ld = abs($seq_leng - $pirsf_data->{$pirsf_acc}->{meanL});
 
-### $r
-### $score
-### $ld
+## $r
+## $score
+## $ld
 
-### $pirsf_acc
-### $children
+## $pirsf_acc
+## $children
 
 
   if($children->{$pirsf_acc}){
     #If a sub-family, process slightly differently. Only consider the score.
     if($r > 0.67 && $score >=$pirsf_data->{$pirsf_acc}->{minS}){
-### hit score for child
+## hit score for child
       #No work out which family we may need to promote and check to see if
       #we have seen it nor not
       my $parent = $children->{$pirsf_acc};
-      ### $parent
-      ### $store
-      ### $promote
+      ## $parent
+      ## $store
+      ## $promote
       if($store->{$seq_acc}->{$parent}){
-        ### FIRST IF
+        ## FIRST IF
         $matches->{$seq_acc}->{$parent} = $store->{$seq_acc}->{$parent};
       }else{
-        ### SECOND IF
+        ## SECOND IF
         $promote->{$seq_acc.'-'.$parent} = 1;
       }
       #Store the sub family match.
       $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
       $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
-      ### $promote
-      ### $matches
+      ## $promote
+      ## $matches
     }
   }elsif($r > 0.67 && $ovl>=0.8 && 
           ($score >=$pirsf_data->{$pirsf_acc}->{minS}) && 
@@ -259,16 +260,22 @@ sub process_hit {
     $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
     $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
   }else{
+    ## last if 
     #Store for later in case there is a subfamily match.
     $store->{$seq_acc}->{$pirsf_acc}->{score}=$score;
     $store->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
+    ## $store
+    ## $seq_acc
+    ## $pirsf_acc
+    ## $score
+    ## $rows
   }
-  return 1;
+  return $store;
 }
 
 sub post_process {
   my($matches, $pirsf_data) = @_;
-  ### $matches
+  ## $matches
   my $bestMatch; 
   #Sort all matches and find the smallest evalue. 
   foreach my $seq (keys %$matches){
