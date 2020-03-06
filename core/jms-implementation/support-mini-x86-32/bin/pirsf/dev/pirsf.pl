@@ -2,23 +2,17 @@
 
 use strict;
 use warnings;
-use lib;
 use Getopt::Long;
 use FindBin qw($Bin);
-use Smart::Comments;
-
-#Our PIRSF module sits in the same directory as the executable.
-#Add the path to the library path.
-BEGIN {
-  lib->import($Bin);
-}
-
+use lib "$Bin";
 use PIRSF;
+
+use Smart::Comments;
 
 #------------------------------------------------------------------------------
 # Deal with all of the options handling.
 
-# Both the family and subfamily hmm library combined. 
+# Both the family and subfamily hmm library combined.
 my $sf_hmm = 'sf_hmm_all';
 # PIRSF data file
 my $pirsf_dat = 'pirsf.dat';
@@ -83,7 +77,7 @@ my $matches = PIRSF::process_results($results, $pirsf_data, $children, $mode);
 
 #Now determine the best matches and subfamily matches.
 my $best_matches = PIRSF::post_process($matches, $pirsf_data);
-### $best_matches
+## $best_matches
 
 # get the no matches for output printing
 if ($verbose) {
@@ -97,8 +91,6 @@ if ($verbose) {
 
 #ASCII bestMatchesoutput - but we will want to directly load ingto the database.
 PIRSF::print_output($best_matches, $pirsf_data, $output);
-
-exit;
 
 1;
 
