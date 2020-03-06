@@ -10,18 +10,21 @@ use Smart::Comments;
 
 sub checkHmmFiles{
   my ($sf_hmm, $path) = @_;
-  if($path and $path =~ /\S+/){
-    $path.='/' if($path !~ /\/^/);
+
+  if ( $path =~ /\S+/ && $path !~ /\/^/ ) {
+    $path .= '/';
   }
   $path .= 'hmmpress';
-  foreach my $ext (qw(.h3p .h3m .h3f .h3i)){
-    if(!-e $sf_hmm.$ext){
+
+  foreach my $ext (qw(.h3p .h3m .h3f .h3i)) {
+    if (!-e $sf_hmm.$ext) {
       #Looks like the hmm database is not pressed
       warn "Running hmmpress ($path) on $sf_hmm\n";
-      system("$path $sf_hmm") and die "Could not run hmmpress!\n";;
+      system("$path $sf_hmm") and die "Could not run hmmpress!\n";
       last;
     }
   }
+
   return 1;
 }
 
@@ -154,7 +157,7 @@ sub process_results {
   my ($results, $pirsf_data, $children, $hmmer_mode) = @_;
 
 
-### $results
+## $results
 
   # deal with the case of no hits
   if (!scalar @{$results}) {
@@ -165,7 +168,7 @@ sub process_results {
   my %promote;
   my $store; #Use this to store previous rows
   my $matches = {};
-### $matches
+## $matches
   my ($pirsf_acc, $seq_acc, @keep_row);
   ROW:
   foreach my $row (@{$results}) {
@@ -301,14 +304,14 @@ sub process_hit {
     ## $score
     ## $rows
   }
-        ### process hit
-        ### $matches
+        ## process hit
+        ## $matches
   return $store;
 }
 
 sub post_process {
   my($matches, $pirsf_data) = @_;
-  ### $matches
+  ## $matches
   my $bestMatch; 
   #Sort all matches and find the smallest evalue. 
   foreach my $seq (keys %$matches){
@@ -358,7 +361,7 @@ sub print_output {
 ## $bestMatch
 ## $pirsf_data
 
-### $bestMatch
+## $bestMatch
 
    if(lc($outfmt) eq 'pirsf'){ 
     foreach my $seq (sort keys %$bestMatch){
