@@ -25,50 +25,60 @@ sub checkHmmFiles{
 
 sub read_pirsf_dat {
   my ($pirsf_dat) = @_;
+  my ($data, $child);
 
-  my ($child, $data);
-  $data = {};
-  open(IN, '<', $pirsf_dat) or die "Failed top open $pirsf_dat file:[$!]\n";
-  while(my $line = <IN>){
-    chomp($line);
-    my $acc; 
-    if($line =~ /^\>/){
-      my $rest;
-      ($acc, $rest) = split(/\s/, $line, 2);
-        substr($acc, 0, 1, ''); #Remove the leading '>'
-      if($rest){
-        substr($rest, 0, 7, ''); #Remove the leading 'child: '
-        %{$data->{$acc}->{children}} = map{ $_ => 1 }(split /\s/,$rest); 
-        foreach my $c (keys %{$data->{$acc}->{children}}){
-          $child->{$c} = $acc;
+  open (my $in, '<', $pirsf_dat) or die "Failed top open $pirsf_dat file:[$!]\n";
+
+  my $code = do {
+    local $/ = '>';
+    while (my $block = <$in>) {
+      # PIRSFXX child: PIRSFXX PIRSFXX
+      # name
+      # 5 float values
+      # BLAST: Yes|No
+      if ($block =~
+        m/
+          (\w+)(\schild:\s)?\s?(.*?)\n
+          ([^\n]+)\n
+          ([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\n
+          BLAST:\s+(\w+)
+        /xms ) {
+
+        my $acc = $1;
+        my $child_string = $3;
+
+        if ($child_string) {
+
+          my %children = map{ $_ => 1 } (split /\s/, $child_string);
+          $data->{$acc}->{children} = \%children;
+
+          foreach my $child_id (keys %children) {
+            $child->{$child_id} = $acc;
+          }
+
         }
-      }
-        
-      $line=<IN>;
-      chomp $line;
-      $data->{$acc}->{name} = $line;
+        $data->{$acc}->{name} = $4;
 
-      $line=<IN>;
-      chomp $line;
-      ($data->{$acc}->{meanL},
-       $data->{$acc}->{stdL}, 
-       $data->{$acc}->{minS}, 
-       $data->{$acc}->{meanS}, 
-       $data->{$acc}->{stdS}) = split (/ /,$line);
-      
-      $line=<IN>; 
-      chomp $line;
-      if ($line=~/Yes/) { 
-        $data->{$acc}->{blast} = 1; 
-      }else{
-        $data->{$acc}->{blast} = 0;
+        $data->{$acc}->{meanL} = $5;
+        $data->{$acc}->{stdL}  = $6;
+        $data->{$acc}->{minS}  = $7;
+        $data->{$acc}->{meanS} = $8;
+        $data->{$acc}->{stdS}  = $9;
+
+        if ($10 eq 'No') {
+          $data->{$acc}->{blast} = 0;
+        } else {
+          $data->{$acc}->{blast} = 1;
+        }
+      } else {
+        warn "Unrecognised PIRSF data entry: \"$block\"\n" unless ($block eq '>');
       }
-    }else{
-      warn "Unrecognised line $line\n";
     }
-    }
-    #Clean up
-    close(IN) or die "Failed to close $pirsf_dat\n";
+
+  };
+
+  close($in) or die "Failed to close $pirsf_dat\n";
+
   #return data structure
   return ($data, $child);
 }
@@ -318,6 +328,9 @@ sub print_output {
 
 #Query sequence: A4YCN9 No Match
  
+
+## $bestMatch
+
    if(lc($outfmt) eq 'pirsf'){ 
     foreach my $seq (sort keys %$bestMatch){
       print "Query sequence: $seq ";
