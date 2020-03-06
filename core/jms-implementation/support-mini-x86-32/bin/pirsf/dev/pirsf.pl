@@ -5,6 +5,7 @@ use warnings;
 use lib;
 use Getopt::Long;
 use FindBin qw($Bin);
+use Smart::Comments;
 
 #Our PIRSF module sits in the same directory as the executable.
 #Add the path to the library path.
@@ -66,12 +67,6 @@ PIRSF::checkHmmFiles($sf_hmm, $hmmer_path);
 
 #Read the PIRSF data file.
 my ($pirsf_data, $children) = PIRSF::read_pirsf_dat($pirsf_dat);
-#Store all of the results here.
-my $matches = {};
-
-#This gets a list of sequences to be searched. No need
-#to parse the length, as that is in the hmmer output.
-PIRSF::read_fasta($input, $matches) if($verbose);
 
 if (!$dominput) {
   $dominput = PIRSF::run_hmmer($hmmer_path, $mode, $cpus, $sf_hmm, $input, $tmpdir);
@@ -85,9 +80,9 @@ my $results = PIRSF::read_dom_input($dominput);
 
 
 #Now run the search.
-my $matches_found = PIRSF::process_results($results, $pirsf_data, $matches, $children, $mode);
-
-if (!$matches_found == 0){
+my $matches = PIRSF::process_results($results, $pirsf_data, $children, $mode);
+## $matches
+if ($matches){
     #Now determine the best matches and subfamily matches.
     my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
 

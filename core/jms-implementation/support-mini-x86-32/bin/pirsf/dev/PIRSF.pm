@@ -72,22 +72,6 @@ sub read_pirsf_dat {
   #return data structure
   return ($data, $child);
 }
-#This is not actually need, should be in the HMMER output (RDF).
-sub read_fasta { 
-  my ($infile, $matches) = @_;
-
-  open(IN,'<', $infile) or die "Failed to open $infile:[$!]\n";
-
-  while(my $line=<IN>){ 
-    chomp $line;
-    if ($line=~/^\>(\S+)/){
-      $matches->{$1} = {};
-    }
-  } 
-  close IN or die "Failed to close $infile filehandle:[$!]\n";
-
-  return 1;
-}
 
 sub run_hmmer {
   my ($hmmer_path, $mode, $cpus, $sf_hmm, $fasta_file, $tmpdir) = @_;
@@ -136,7 +120,7 @@ sub read_dom_input {
 
 
 sub process_results {
-  my ($results, $pirsf_data, $matches, $children, $hmmer_mode) = @_;
+  my ($results, $pirsf_data, $children, $hmmer_mode) = @_;
 
   # deal with the case of no hits
   if (!scalar @{$results}) {
@@ -146,6 +130,7 @@ sub process_results {
 
   my %promote;
   my $store; #Use this to store previous rows
+  my $matches = {};
 
   my ($pirsf_acc, $seq_acc, @keep_row);
   ROW:
@@ -178,7 +163,8 @@ sub process_results {
     push(@keep_row, \@row);
   }
   $store = process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
-  return 1;
+
+  return $matches;
 }
 
 sub process_hit {
