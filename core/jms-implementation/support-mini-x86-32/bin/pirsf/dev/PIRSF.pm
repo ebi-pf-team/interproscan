@@ -214,9 +214,9 @@ sub process_hit {
   foreach my $row (@{$rows}){
     $score += $row->[13];
 
-    # $seq_start = ($row->[17] < $seq_start ? $row->[17] : $seq_start); 
-    # $seq_end   = ($row->[18] > $seq_end   ? $row->[18] : $seq_end); 
-    # $hmm_start = ($row->[15] < $hmm_start ? $row->[15] : $hmm_start); 
+    # $seq_start = ($row->[17] < $seq_start ? $row->[17] : $seq_start);
+    # $seq_end   = ($row->[18] > $seq_end   ? $row->[18] : $seq_end);
+    # $hmm_start = ($row->[15] < $hmm_start ? $row->[15] : $hmm_start);
     # $hmm_end   = ($row->[16] > $hmm_end   ? $row->[16] : $hmm_end);
 
     if ($row->[17] < $seq_start && $row->[15] < $hmm_start) {
@@ -283,9 +283,9 @@ sub process_hit {
       ## $promote
       ## $matches
     }
-  }elsif($r > 0.67 && $ovl>=0.8 && 
-          ($score >=$pirsf_data->{$pirsf_acc}->{minS}) && 
-          ($ld<3.5*$pirsf_data->{$pirsf_acc}->{stdL} || $ld < 50 ) ){ 
+  }elsif($r > 0.67 && $ovl>=0.8 &&
+          ($score >=$pirsf_data->{$pirsf_acc}->{minS}) &&
+          ($ld<3.5*$pirsf_data->{$pirsf_acc}->{stdL} || $ld < 50 ) ){
     #Looks like everything passes the threshold of length, score and standard deviations of length.
     $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
     $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
@@ -294,7 +294,7 @@ sub process_hit {
     $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
     $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
   }else{
-    ## last if 
+    ## last if
     #Store for later in case there is a subfamily match.
     $store->{$seq_acc}->{$pirsf_acc}->{score}=$score;
     $store->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
@@ -312,19 +312,19 @@ sub process_hit {
 sub post_process {
   my($matches, $pirsf_data) = @_;
   ## $matches
-  my $bestMatch; 
-  #Sort all matches and find the smallest evalue. 
+  my $bestMatch;
+  #Sort all matches and find the smallest evalue.
   foreach my $seq (keys %$matches){
     $bestMatch->{$seq} = {};#This enables us to capure no matches.
 
     #If there are matches.....sort them on evalue.
-    my @matchesSort = sort{ $matches->{$seq}->{$b}->{score} <=> 
+    my @matchesSort = sort{ $matches->{$seq}->{$b}->{score} <=>
                             $matches->{$seq}->{$a}->{score}}(keys %{$matches->{$seq}});
     foreach my $pirsf_acc (@matchesSort){
-      next if($pirsf_acc =~ /^PIRSF5/); #Ignore sub-families 
+      next if($pirsf_acc =~ /^PIRSF5/); #Ignore sub-families
 
       $bestMatch->{$seq}->{sf} = $matches->{$seq}->{$pirsf_acc}->{data};
-        
+
       #Now see if this entry has sub-families
       if(defined($pirsf_data->{$pirsf_acc}->{children})){
          foreach my $pirsf_sub (@matchesSort){
@@ -334,7 +334,7 @@ sub post_process {
             }
          }
       }
-      
+
       last; #We only want the best match!
     }
   }
@@ -345,7 +345,7 @@ sub post_process {
 
 sub print_output {
   my($bestMatch, $pirsf_data, $outfmt) = @_;
-   
+
 #For PIRSF outfmt
 #Query sequence: A0B5N6  matches PIRSF006429: Predicted glutamate synthase, large subunit domain 2 (FMN-binding)
 #   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
@@ -356,14 +356,14 @@ sub print_output {
 
 
 #Query sequence: A4YCN9 No Match
- 
+
 
 ## $bestMatch
 ## $pirsf_data
 
 ## $bestMatch
 
-   if(lc($outfmt) eq 'pirsf'){ 
+   if(lc($outfmt) eq 'pirsf'){
     foreach my $seq (sort keys %$bestMatch){
       print "Query sequence: $seq ";
       if(exists($bestMatch->{$seq}->{sf})){
@@ -374,11 +374,11 @@ sub print_output {
           my $sub_data = $bestMatch->{$seq}->{subf};
           print " and matches Sub-Family $sub_data->[0]->[1]: $pirsf_data->{$sub_data->[0]->[1]}->{name}\n";
           _print_report($sub_data);
-        }    
+        }
       }else{
         print "No match\n";
       }
-    } 
+    }
   }elsif(lc($outfmt) eq 'i5'){
     foreach my $seq (sort keys %$bestMatch){
        if(exists($bestMatch->{$seq}->{sf})){
@@ -391,33 +391,33 @@ sub print_output {
       }
     }
   }
-  
+
 }
 
 sub _print_report {
   my($all_data) = @_;
-  
-  print sprintf("%4s  %7s%6s%10s%10s%8s%8s   %8s%8s   %8s%8s   %5s\n" , 
-                '#', 'score', 'bias', 'c-Evalue', 'i-Evalue', 'hmmfrom', 
+
+  print sprintf("%4s  %7s%6s%10s%10s%8s%8s   %8s%8s   %8s%8s   %5s\n" ,
+                '#', 'score', 'bias', 'c-Evalue', 'i-Evalue', 'hmmfrom',
                 'hmm to', 'alifrom', 'ali to', 'envfrom', 'env to', 'acc' );
-  
+
   my $cnt = 1;
-  foreach my $data (@{$all_data}){  
+  foreach my $data (@{$all_data}){
     my ($hmmMatch, $seqMatch, $envMatch) = _matchBounds($data);
-    print sprintf("%4s%2s%7s%6s%10s%10s%8s%8s%3s%8s%8s%3s%8s%8s%3s%5s\n" , 
+    print sprintf("%4s%2s%7s%6s%10s%10s%8s%8s%3s%8s%8s%3s%8s%8s%3s%5s\n" ,
                 $cnt,'!', $data->[13], $data->[14], $data->[11], $data->[12], $data->[15], $data->[16], $hmmMatch,
-                $data->[17], $data->[18], $seqMatch, $data->[19], $data->[20], $envMatch, $data->[21]);   
+                $data->[17], $data->[18], $seqMatch, $data->[19], $data->[20], $envMatch, $data->[21]);
     $cnt++;
   }
 }
 
 sub _print_i5 {
-  my ($all_data, $seq) = @_;  
- 
+  my ($all_data, $seq) = @_;
+
   foreach my $data (@$all_data){
     my ($hmmMatch, $seqMatch, $envMatch) = _matchBounds($data);
-  
-    my $line = join("\t", 
+
+    my $line = join("\t",
                         $data->[20], #LOCATION_END
                         $data->[19], #LOCATION_START
                         $data->[1],  #MODEL_ID
@@ -441,7 +441,7 @@ sub _print_i5 {
 
 sub _matchBounds{
   my ($data) = @_;
-  my ($hmmMatch, $seqMatch, $envMatch); 
+  my ($hmmMatch, $seqMatch, $envMatch);
   $hmmMatch .= $data->[15] == 1 ? "[" : ".";
   $hmmMatch .= $data->[16] == $data->[2] ? "]" : ".";
   $seqMatch .= $data->[17] == 1 ? "[" : ".";
@@ -451,40 +451,5 @@ sub _matchBounds{
 
   return($hmmMatch, $seqMatch, $envMatch);
 }
-=head
-
-#BLAST search
-if ($SF && $blast{$SF})
-{
-  @blast_tmp=`$blastall -p blastp -F F -e 0.0005 -b 300 -v 300 -d $sfseq -i $infile -m 8`; 
-  open (IN,$sftb);
-  while($line=<IN>)
-   { chop $line;
-     ($a,$b)=(split / /,$line)[0,1];
-     $SFn{$a}=$b;
-   }
-  close IN;
-
-  %n=();
-  foreach $x (@blast_tmp)
-  { 
-  $y=(split /\s+/,$x)[1]; 
-  if (index($y,"-")>0)
-   { $n{$y}++;
-     if ($n{$y}<2) 
-      {$sf=(split /-/,$y)[1];
-       if (!$sf1){$sf1=$sf;}
-       if ($sf eq $sf1 ){ $hit++; }
-      }
-   }
-  }
-
- foreach $x ( keys %n)
-  { if ($hit>9 || ($SFn{$sf1} && $hit/$SFn{$sf1}>0.33334))
-    { $bl_sf="PIR$sf1";}
-  }
-if ($bl_sf ne $SF) {$SF="";$SF_subf="";}
-}
-=cut
 
 1;
