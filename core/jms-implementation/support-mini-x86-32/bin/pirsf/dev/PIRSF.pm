@@ -56,7 +56,7 @@ sub _process_dat_block {
   if ($block =~
     m/
       (\w+)(\schild:\s)?\s?(.*?)\n
-      ([^\n]+)\n
+      ([^\n]+)?\n
       ([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\n
       BLAST:\s+(\w+)
     /xms ) {
