@@ -48,11 +48,6 @@ if(!$input){
     exit;
 }
 
-#sf.tb file
-my $sftb="sf.tb";
-#sf.seq file (should run formatdb first)
-my $sfseq="sf.seq";
-
 #------------------------------------------------------------------------------
 #Main body
 
