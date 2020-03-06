@@ -97,7 +97,6 @@ sub _process_dat_block {
 
 sub run_hmmer {
   my ($hmmer_path, $mode, $cpus, $sf_hmm, $fasta_file, $tmpdir) = @_;
-  ## $fasta_file
 
   my (undef, $filename) = tempfile(
     DIR => $tmpdir,
@@ -110,11 +109,7 @@ sub run_hmmer {
     die "\"${hmmer_path}/$mode --cpu $cpus -o /dev/null --domtblout $filename -E 0.01 --acc $sf_hmm $fasta_file\" failed: $?";
   }
 
-
-## $filename
-
   return $filename;
-
 }
 
 
@@ -140,16 +135,12 @@ sub read_fasta {
 sub read_dom_input {
   my ($dominput) = @_;
 
- ## $dominput
-
   my @results;
-  # open(T, '<', "$dominput") or open(T, '<', \$dominput) or  die "Failed to open table\n";
+
   open(my $dom_fh, '<', $dominput) or die "Failed to open table file $dominput\n";
-  while(my $line = <$dom_fh>){
-    ## $line
+  while (my $line = <$dom_fh>) {
     next if( substr($line, 0, 1) eq '#');
     chomp $line;
-    ## $line
     push(@results, $line);
   }
   close($dom_fh) or die "Failed to close file $dominput\n";
@@ -163,20 +154,16 @@ sub read_dom_input {
 sub process_results {
   my ($results, $pirsf_data, $children, $hmmer_mode) = @_;
 
-
-## $results
-
   # deal with the case of no hits
   if (!scalar @{$results}) {
     return {};
   }
 
-
   my %promote;
   my $store; #Use this to store previous rows
   my $matches = {};
-## $matches
   my ($pirsf_acc, $seq_acc, @keep_row);
+
   ROW:
   foreach my $row (@{$results}) {
 
@@ -190,13 +177,13 @@ sub process_results {
       $row[4] = $reorder[1];
       $row[5] = $reorder[2];
     }
-    if(defined($pirsf_acc) and defined($seq_acc)){
-      if( ($row[1] ne $pirsf_acc) or ($row[3] ne $seq_acc)){
+    if (defined($pirsf_acc) && defined($seq_acc)) {
+      if (($row[1] ne $pirsf_acc) || ($row[3] ne $seq_acc)) {
         #The sequence or the profile accession has changed.
         my @pRow = @keep_row;
         $store = process_hit(\@pRow, $children, $store, \%promote, $pirsf_data, $matches);
         @keep_row = ();
-      }else{
+      } else {
        push(@keep_row, \@row);
        next ROW;
       }
@@ -237,112 +224,77 @@ sub process_hit {
 
   }
 
-  #Overall length
+  # Overall length
   my $ovl = (($seq_end - $seq_start) + 1)/$seq_leng;
-## $seq_end
-## $seq_start
-## $seq_leng
-## $ovl
-
-  my $r   = (($hmm_end - $hmm_start) + 1)/ (($seq_end - $seq_start) + 1); #Ratio over coverage of sequence and profile HMM.
-## $hmm_end
-## $hmm_start
-## $seq_end
-## $seq_start
-## $r
-  # if(! defined($store->{$seq_acc})){
-  #   $store = {};
-  #   $store->{$seq_acc}={};
-  # }
-
-
+  # Ratio over coverage of sequence and profile HMM
+  my $r   = (($hmm_end - $hmm_start) + 1)/ (($seq_end - $seq_start) + 1);
   #Length deviation
   my $ld = abs($seq_leng - $pirsf_data->{$pirsf_acc}->{meanL});
 
-## $r
-## $score
-## $ld
-
-## $pirsf_acc
-## $children
-
-
   if($children->{$pirsf_acc}){
     #If a sub-family, process slightly differently. Only consider the score.
-    if($r > 0.67 && $score >=$pirsf_data->{$pirsf_acc}->{minS}){
-## hit score for child
+    if ($r > 0.67 && $score >= $pirsf_data->{$pirsf_acc}->{minS}) {
       #No work out which family we may need to promote and check to see if
       #we have seen it nor not
       my $parent = $children->{$pirsf_acc};
-      ## $parent
-      ## $store
-      ## $promote
       if($store->{$seq_acc}->{$parent}){
-        ## FIRST IF
         $matches->{$seq_acc}->{$parent} = $store->{$seq_acc}->{$parent};
-      }else{
-        ## SECOND IF
+      } else {
         $promote->{$seq_acc.'-'.$parent} = 1;
       }
       #Store the sub family match.
-      $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
-      $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
-      ## $promote
-      ## $matches
+      $matches->{$seq_acc}->{$pirsf_acc}->{score} = $score;
+      $matches->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
     }
-  }elsif($r > 0.67 && $ovl>=0.8 &&
-          ($score >=$pirsf_data->{$pirsf_acc}->{minS}) &&
-          ($ld<3.5*$pirsf_data->{$pirsf_acc}->{stdL} || $ld < 50 ) ){
+  } elsif ($r > 0.67 && $ovl>=0.8 &&
+          ($score >= $pirsf_data->{$pirsf_acc}->{minS}) &&
+          ($ld < 3.5*$pirsf_data->{$pirsf_acc}->{stdL} || $ld < 50 ) ) {
     #Looks like everything passes the threshold of length, score and standard deviations of length.
-    $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
-    $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
-  }elsif( defined ( $promote->{$seq_acc.'-'.$pirsf_acc} ) ){
+    $matches->{$seq_acc}->{$pirsf_acc}->{score} = $score;
+    $matches->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
+  } elsif ( defined( $promote->{$seq_acc.'-'.$pirsf_acc} ) ) {
     #Do we promote this?
-    $matches->{$seq_acc}->{$pirsf_acc}->{score}=$score;
-    $matches->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
-  }else{
-    ## last if
+    $matches->{$seq_acc}->{$pirsf_acc}->{score} = $score;
+    $matches->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
+  } else {
     #Store for later in case there is a subfamily match.
-    $store->{$seq_acc}->{$pirsf_acc}->{score}=$score;
-    $store->{$seq_acc}->{$pirsf_acc}->{data}=$rows;
-    ## $store
-    ## $seq_acc
-    ## $pirsf_acc
-    ## $score
-    ## $rows
+    $store->{$seq_acc}->{$pirsf_acc}->{score} = $score;
+    $store->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
   }
-        ## process hit
-        ## $matches
+
   return $store;
 }
 
 sub post_process {
   my($matches, $pirsf_data) = @_;
-  ## $matches
-  my $bestMatch;
-  #Sort all matches and find the smallest evalue.
-  foreach my $seq (keys %$matches){
-    $bestMatch->{$seq} = {};#This enables us to capure no matches.
 
-    #If there are matches.....sort them on evalue.
+  my $bestMatch;
+  # Sort all matches and find the smallest evalue.
+  foreach my $seq (keys %$matches) {
+    # This enables us to capure no matches
+    $bestMatch->{$seq} = {};
+
+    # If there are matches... sort them on evalue.
     my @matchesSort = sort{ $matches->{$seq}->{$b}->{score} <=>
                             $matches->{$seq}->{$a}->{score}}(keys %{$matches->{$seq}});
-    foreach my $pirsf_acc (@matchesSort){
-      next if($pirsf_acc =~ /^PIRSF5/); #Ignore sub-families
+    foreach my $pirsf_acc (@matchesSort) {
+      # Ignore sub-families
+      next if($pirsf_acc =~ /^PIRSF5/);
 
       $bestMatch->{$seq}->{sf} = $matches->{$seq}->{$pirsf_acc}->{data};
 
-      #Now see if this entry has sub-families
-      if(defined($pirsf_data->{$pirsf_acc}->{children})){
+      # Now see if this entry has sub-families
+      if (defined($pirsf_data->{$pirsf_acc}->{children})) {
          foreach my $pirsf_sub (@matchesSort){
-            if($pirsf_data->{$pirsf_acc}->{children}->{$pirsf_sub}){
+            if ($pirsf_data->{$pirsf_acc}->{children}->{$pirsf_sub}) {
               $bestMatch->{$seq}->{subf} = $matches->{$seq}->{$pirsf_sub}->{data};
               last;
             }
          }
       }
 
-      last; #We only want the best match!
+      # We only want the best match!
+      last;
     }
   }
   return $bestMatch;
@@ -365,33 +317,28 @@ sub print_output {
 #Query sequence: A4YCN9 No Match
 
 
-## $bestMatch
-## $pirsf_data
-
-## $bestMatch
-
-   if(lc($outfmt) eq 'pirsf'){
-    foreach my $seq (sort keys %$bestMatch){
+  if (lc($outfmt) eq 'pirsf') {
+    foreach my $seq (sort keys %{$bestMatch}) {
       print "Query sequence: $seq ";
-      if(exists($bestMatch->{$seq}->{sf})){
+      if (exists($bestMatch->{$seq}->{sf})) {
         my $sf_data = $bestMatch->{$seq}->{sf};
         print "matches $sf_data->[0]->[1]: $pirsf_data->{$sf_data->[0]->[1]}->{name}\n";
         _print_report($sf_data);
-        if($bestMatch->{$seq}->{subf}){
+        if ($bestMatch->{$seq}->{subf}) {
           my $sub_data = $bestMatch->{$seq}->{subf};
           print " and matches Sub-Family $sub_data->[0]->[1]: $pirsf_data->{$sub_data->[0]->[1]}->{name}\n";
           _print_report($sub_data);
         }
-      }else{
+      } else {
         print "No match\n";
       }
     }
-  }elsif(lc($outfmt) eq 'i5'){
-    foreach my $seq (sort keys %$bestMatch){
-       if(exists($bestMatch->{$seq}->{sf})){
+  } elsif (lc($outfmt) eq 'i5') {
+    foreach my $seq (sort keys %{$bestMatch}) {
+       if (exists($bestMatch->{$seq}->{sf})) {
         my $sf_data = $bestMatch->{$seq}->{sf};
         _print_i5($sf_data, $seq);
-        if($bestMatch->{$seq}->{subf}){
+        if ($bestMatch->{$seq}->{subf}) {
           my $sub_data = $bestMatch->{$seq}->{subf};
           _print_i5($sub_data, $seq);
         }
@@ -428,23 +375,23 @@ sub _print_i5 {
     my ($hmmMatch, $seqMatch, $envMatch) = _matchBounds($data);
 
     my $line = join("\t",
-                        $data->[20], #LOCATION_END
-                        $data->[19], #LOCATION_START
-                        $data->[1],  #MODEL_ID
-                        $seq,        #SEQUENCE_ID
-                        $data->[6],  #EVALUE
-                        $hmmMatch,   #HMM_BOUNDS
-                        $data->[18], #HMM_END
-                        $data->[17], #HMM_START
-                        $data->[13], #LOCATION_SCORE
-                        $data->[7],  #SCORE
-                        $data->[14], #DOMAIN_BIAS
-                        $data->[11], #DOMAIN_CE_VALUE
-                        $data->[12], #DOMAIN_IE_VALUE
-                        $data->[20], #ENVELOPE_END
-                        $data->[19], #ENVELOPE_START
-                        $data->[21], #EXPECTED_ACCURACY
-                        $data->[8]); #FULL_SEQUENCE_BIAS
+        $data->[20], #LOCATION_END
+        $data->[19], #LOCATION_START
+        $data->[1],  #MODEL_ID
+        $seq,        #SEQUENCE_ID
+        $data->[6],  #EVALUE
+        $hmmMatch,   #HMM_BOUNDS
+        $data->[18], #HMM_END
+        $data->[17], #HMM_START
+        $data->[13], #LOCATION_SCORE
+        $data->[7],  #SCORE
+        $data->[14], #DOMAIN_BIAS
+        $data->[11], #DOMAIN_CE_VALUE
+        $data->[12], #DOMAIN_IE_VALUE
+        $data->[20], #ENVELOPE_END
+        $data->[19], #ENVELOPE_START
+        $data->[21], #EXPECTED_ACCURACY
+        $data->[8]); #FULL_SEQUENCE_BIAS
     print "$line\n";
   }
 
@@ -453,6 +400,7 @@ sub _print_i5 {
 
 sub _matchBounds{
   my ($data) = @_;
+
   my ($hmmMatch, $seqMatch, $envMatch);
   $hmmMatch .= $data->[15] == 1 ? "[" : ".";
   $hmmMatch .= $data->[16] == $data->[2] ? "]" : ".";
@@ -461,7 +409,7 @@ sub _matchBounds{
   $envMatch .= $data->[19] == 1 ? "[" : ".";
   $envMatch .= $data->[20] == $data->[5] ? "]" : ".";
 
-  return($hmmMatch, $seqMatch, $envMatch);
+  return ($hmmMatch, $seqMatch, $envMatch);
 }
 
 1;
