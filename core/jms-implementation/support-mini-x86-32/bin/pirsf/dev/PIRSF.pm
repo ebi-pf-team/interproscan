@@ -6,6 +6,8 @@ use File::Temp qw/tempfile/;
 
 use Smart::Comments;
 
+
+
 sub checkHmmFiles{
   my ($sf_hmm, $path) = @_;
   if($path and $path =~ /\S+/){
@@ -106,6 +108,25 @@ sub run_hmmer {
 }
 
 
+sub read_fasta {
+  my ($infile) = @_;
+
+  my $target_hash;
+
+  open(my $fasta_fh,'<', $infile) or die "Failed to open $infile:[$!]\n";
+
+  while (my $line=<$fasta_fh>) {
+    chomp $line;
+    if ($line=~/^\>(\S+)/){
+      $target_hash->{$1} = {};
+    }
+  }
+  close($fasta_fh) or die "Failed to close $infile filehandle:[$!]\n";
+
+  return $target_hash;
+}
+
+
 sub read_dom_input {
   my ($dominput) = @_;
 
@@ -121,7 +142,7 @@ sub read_dom_input {
     ## $line
     push(@results, $line);
   }
-  close($dom_fh);
+  close($dom_fh) or die "Failed to close file $dominput\n";
 
   return \@results;
 }
@@ -132,16 +153,19 @@ sub read_dom_input {
 sub process_results {
   my ($results, $pirsf_data, $children, $hmmer_mode) = @_;
 
+
+### $results
+
   # deal with the case of no hits
   if (!scalar @{$results}) {
-    return 0;
+    return {};
   }
 
 
   my %promote;
   my $store; #Use this to store previous rows
   my $matches = {};
-
+### $matches
   my ($pirsf_acc, $seq_acc, @keep_row);
   ROW:
   foreach my $row (@{$results}) {
@@ -277,12 +301,14 @@ sub process_hit {
     ## $score
     ## $rows
   }
+        ### process hit
+        ### $matches
   return $store;
 }
 
 sub post_process {
   my($matches, $pirsf_data) = @_;
-  ## $matches
+  ### $matches
   my $bestMatch; 
   #Sort all matches and find the smallest evalue. 
   foreach my $seq (keys %$matches){
@@ -330,6 +356,9 @@ sub print_output {
  
 
 ## $bestMatch
+## $pirsf_data
+
+### $bestMatch
 
    if(lc($outfmt) eq 'pirsf'){ 
     foreach my $seq (sort keys %$bestMatch){

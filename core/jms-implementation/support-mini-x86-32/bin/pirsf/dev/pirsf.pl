@@ -74,21 +74,30 @@ if (!$dominput) {
 }
 
 
-
 my $results = PIRSF::read_dom_input($dominput);
 ## $results
 
 
 #Now run the search.
 my $matches = PIRSF::process_results($results, $pirsf_data, $children, $mode);
-## $matches
-if ($matches){
-    #Now determine the best matches and subfamily matches.
-    my $bestMatches = PIRSF::post_process($matches, $pirsf_data);
 
-    #ASCII output - but we will want to directly load ingto the database.
-    PIRSF::print_output($bestMatches, $pirsf_data, $output);
+#Now determine the best matches and subfamily matches.
+my $best_matches = PIRSF::post_process($matches, $pirsf_data);
+### $best_matches
+
+# get the no matches for output printing
+if ($verbose) {
+  my $target_hash = PIRSF::read_fasta($input);
+  foreach my $seq_id (keys %{$target_hash}) {
+    if (!exists $best_matches->{$seq_id}) {
+      $best_matches->{$seq_id} = $target_hash->{$seq_id};
+    }
+  }
 }
+
+#ASCII bestMatchesoutput - but we will want to directly load ingto the database.
+PIRSF::print_output($best_matches, $pirsf_data, $output);
+
 exit;
 
 1;
