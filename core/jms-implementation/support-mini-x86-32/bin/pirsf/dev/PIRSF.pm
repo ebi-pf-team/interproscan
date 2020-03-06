@@ -32,61 +32,68 @@ sub read_pirsf_dat {
   my ($pirsf_dat) = @_;
   my ($data, $child);
 
-  open (my $in, '<', $pirsf_dat) or die "Failed top open $pirsf_dat file:[$!]\n";
-
-  my $code = do {
+  do {
     local $/ = '>';
+    open (my $in, '<', $pirsf_dat) or die "Failed top open $pirsf_dat file: $!\n";
     while (my $block = <$in>) {
-      # PIRSFXX child: PIRSFXX PIRSFXX
-      # name
-      # 5 float values
-      # BLAST: Yes|No
-      if ($block =~
-        m/
-          (\w+)(\schild:\s)?\s?(.*?)\n
-          ([^\n]+)\n
-          ([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\n
-          BLAST:\s+(\w+)
-        /xms ) {
-
-        my $acc = $1;
-        my $child_string = $3;
-
-        if ($child_string) {
-
-          my %children = map{ $_ => 1 } (split /\s/, $child_string);
-          $data->{$acc}->{children} = \%children;
-
-          foreach my $child_id (keys %children) {
-            $child->{$child_id} = $acc;
-          }
-
-        }
-        $data->{$acc}->{name} = $4;
-
-        $data->{$acc}->{meanL} = $5;
-        $data->{$acc}->{stdL}  = $6;
-        $data->{$acc}->{minS}  = $7;
-        $data->{$acc}->{meanS} = $8;
-        $data->{$acc}->{stdS}  = $9;
-
-        if ($10 eq 'No') {
-          $data->{$acc}->{blast} = 0;
-        } else {
-          $data->{$acc}->{blast} = 1;
-        }
-      } else {
-        warn "Unrecognised PIRSF data entry: \"$block\"\n" unless ($block eq '>');
-      }
+      ($data, $child) = _process_dat_block($block, $data, $child);
     }
-
+    close($in) or die "Failed to close $pirsf_dat\n";
   };
-
-  close($in) or die "Failed to close $pirsf_dat\n";
 
   #return data structure
   return ($data, $child);
 }
+
+sub _process_dat_block {
+  my ($block, $data, $child) = @_;
+
+  # PIRSFXX child: PIRSFXX PIRSFXX
+  # name
+  # 5 float values
+  # BLAST: Yes|No
+
+  if ($block =~
+    m/
+      (\w+)(\schild:\s)?\s?(.*?)\n
+      ([^\n]+)\n
+      ([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\n
+      BLAST:\s+(\w+)
+    /xms ) {
+
+    my $acc = $1;
+    my $child_string = $3;
+
+    if ($child_string) {
+
+      my %children = map{ $_ => 1 } (split /\s/, $child_string);
+      $data->{$acc}->{children} = \%children;
+
+      foreach my $child_id (keys %children) {
+        $child->{$child_id} = $acc;
+      }
+
+    }
+    $data->{$acc}->{name} = $4;
+
+    $data->{$acc}->{meanL} = $5;
+    $data->{$acc}->{stdL}  = $6;
+    $data->{$acc}->{minS}  = $7;
+    $data->{$acc}->{meanS} = $8;
+    $data->{$acc}->{stdS}  = $9;
+
+    if ($10 eq 'No') {
+      $data->{$acc}->{blast} = 0;
+    } else {
+      $data->{$acc}->{blast} = 1;
+    }
+  } else {
+    warn "Unrecognised PIRSF data entry: \"$block\"\n" unless ($block eq '>');
+  }
+
+  return ($data, $child);
+}
+
 
 sub run_hmmer {
   my ($hmmer_path, $mode, $cpus, $sf_hmm, $fasta_file, $tmpdir) = @_;
