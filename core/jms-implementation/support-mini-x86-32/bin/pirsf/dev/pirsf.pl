@@ -42,37 +42,34 @@ GetOptions(
   'tmpdir=s' => \$tmpdir,
 ) or pod2usage(2);
 
-if(!$input){
+if (!$input) {
     print STDERR "\n *** FATAL, no input fasta file defined ***\n\n";
     pod2usage(2);
     exit;
 }
 
 #------------------------------------------------------------------------------
-#Main body
+# Main body
 
-#Check that the hmm files have been properly pressed
+# Check that the hmm files have been properly pressed
 PIRSF::checkHmmFiles($sf_hmm, $hmmer_path);
 
-#Read the PIRSF data file.
+# Read the PIRSF data file.
 my ($pirsf_data, $children) = PIRSF::read_pirsf_dat($pirsf_dat);
 
+# If no dominput provided, generate it
 if (!$dominput) {
   $dominput = PIRSF::run_hmmer($hmmer_path, $mode, $cpus, $sf_hmm, $input, $tmpdir);
-  ### $dominput
 }
 
-
+# Parse dominput into results array
 my $results = PIRSF::read_dom_input($dominput);
-## $results
 
-
-#Now run the search.
+# Now run the search.
 my $matches = PIRSF::process_results($results, $pirsf_data, $children, $mode);
 
-#Now determine the best matches and subfamily matches.
+# Now determine the best matches and subfamily matches.
 my $best_matches = PIRSF::post_process($matches, $pirsf_data);
-## $best_matches
 
 # get the no matches for output printing
 if ($verbose) {
@@ -84,7 +81,7 @@ if ($verbose) {
   }
 }
 
-#ASCII bestMatchesoutput - but we will want to directly load ingto the database.
+# ASCII bestMatchesoutput - but we will want to directly load into the database.
 PIRSF::print_output($best_matches, $pirsf_data, $output);
 
 1;
