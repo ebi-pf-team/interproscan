@@ -392,6 +392,7 @@ sub print_output {
     }
   }
 
+  return;
 }
 
 sub _print_report {
@@ -409,6 +410,8 @@ sub _print_report {
                 $data->[17], $data->[18], $seqMatch, $data->[19], $data->[20], $envMatch, $data->[21]);
     $cnt++;
   }
+
+  return;
 }
 
 sub _print_i5 {
@@ -437,6 +440,8 @@ sub _print_i5 {
                         $data->[8]); #FULL_SEQUENCE_BIAS
     print "$line\n";
   }
+
+  return;
 }
 
 sub _matchBounds{
