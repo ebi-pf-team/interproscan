@@ -3,25 +3,18 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use Test::Warnings;
-use Test::Differences;
 
 use FindBin '$Bin';
 use lib "$Bin/../";
-
-use Smart::Comments;
 
 
 use_ok 'PIRSF';
 
 
-
 my $dat_file = "$Bin/../../../../data/pirsf/3.02/pirsf.dat";
 
 my ($pirsf_data, $children) = PIRSF::read_pirsf_dat($dat_file);
-## $pirsf_data
-## $children
 my $pirsf_count = scalar keys %{$pirsf_data};
-## $pirsf_count
 
 is(scalar keys %{$pirsf_data} , 4,  "4 PIRSF ids found on pirsf_dat");
 
@@ -48,91 +41,70 @@ my $expected_children = {
 is_deeply($pirsf_data->{'PIRSF001220'}->{'children'}, $expected_children, "Correct children for PIRSF001220");
 
 
-
-my $georgetown_testing = `for file in data/test/*
-                          do
-                            perl pirsf.2017.pl "\$file"
-                          done`;
-
-## $georgetown_testing
-
-
-
-
-
 my $input = "$Bin/data/test.fasta";
-# my $dominput = "data/P10751.hmmscan.domtblout.out";
+my $single_input = "$Bin/data/UPI000000078D.fasta";
+my $dominput = "$Bin/data/UPI000000078D.hmmscan.domtblout";
 my $sf_hmm = "$Bin/../../../../data/pirsf/3.02/sf_hmm_all";
 my $matches;
 my $hmmer_path = "$Bin/../../../hmmer/hmmer3/3.1b1";
 # my $cpus = 1;
 my $mode = "hmmscan";
 my $i5_tmpdir = '/tmp';
-
-
-
 my $pirsf_bin = "$Bin/../";
 
-my $test_prot_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta $input -path $hmmer_path --hmmlib $sf_hmm -dat $dat_file --mode hmmscan --outfmt pirsf";
 
+my @targets = sort keys %{PIRSF::read_fasta($dat_file)};
+my @expected_targets = qw/PIRSF001220 PIRSF001789 PIRSF500175 PIRSF500176/;
+
+is( @targets, @expected_targets, "Correct targets found on input fasta file");
+
+my $dom_results = PIRSF::read_dom_input($dominput);
+my $exp_results = ['NGFB                 PIRSF001789   253 UPI000000078D        -            226   1.8e-94  304.0   2.9   1   1   6.5e-95     2e-94  303.9   2.9    36   252     5   225     1   226 0.94 -'];
+
+is($dom_results->[0], $exp_results->[0], "Correct results read from dom file");
+
+
+my $UPI000000078D_i5_expected = <<UPI000000078D_i5;
+226	1	PIRSF001789	UPI000000078D	1.8e-94	..	225	5	303.9	304.0	2.9	6.5e-95	2e-94	226	1	0.94	2.9
+UPI000000078D_i5
+
+my $UPI000000078D_pi_expected = <<UPI000000078D_pirsf;
+Query sequence: UPI000000078D matches PIRSF001789: Nerve growth factor, subunit beta
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+   1 !  303.9   2.9   6.5e-95     2e-94      36     252 ..       5     225 ..       1     226 [] 0.94
+UPI000000078D_pirsf
+
+
+my $single_prot_i5_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta $single_input --domtbl $dominput -path $hmmer_path --hmmlib $sf_hmm -dat $dat_file --mode hmmscan --outfmt i5";
+my $single_prot_pi_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta $single_input --domtbl $dominput -path $hmmer_path --hmmlib $sf_hmm -dat $dat_file --mode hmmscan --outfmt pirsf";
+
+my $single_prot_i5 = qx/$single_prot_i5_cmd/;
+my $single_prot_pi = qx/$single_prot_pi_cmd/;
+
+is($single_prot_i5, $UPI000000078D_i5_expected, "expected i5 output for UPI000000078D");
+is($single_prot_pi, $UPI000000078D_pi_expected, "expected pirsf output for UPI000000078D");
+
+my $UPI000000078D_hmmsearch_expected = <<UPI000000078D_hmmsearch;
+Query sequence: UPI000000078D matches PIRSF001789: Nerve growth factor, subunit beta
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+   1 !  303.9   2.9   6.5e-95   6.5e-95      36     252 ..       5     225 ..       1     226 [] 0.94
+UPI000000078D_hmmsearch
+
+my $single_prot_hmmsearch_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta $single_input -path $hmmer_path --hmmlib $sf_hmm -dat $dat_file --mode hmmsearch --outfmt pirsf";
+my $single_prot_hmmsearch = qx/$single_prot_hmmsearch_cmd/;
+
+is($single_prot_hmmsearch, $UPI000000078D_hmmsearch_expected, "expected pirsf output for UPI000000078D");
+
+
+my $test_prot_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta $input -path $hmmer_path --hmmlib $sf_hmm -dat $dat_file --mode hmmscan --outfmt pirsf";
 my $test_prot_pirsf = qx/$test_prot_cmd/;
 
+my $georgetown_testing = `for file in data/test/*
+                          do
+                            perl pirsf.2017.pl "\$file"
+                          done`;
 
+is($test_prot_pirsf, $georgetown_testing, "results of test.fasta match those of georgetown pirsf.2017.pl");
 
-eq_or_diff($test_prot_pirsf, $georgetown_testing, "results of test.fasta match those of georgetown pirsf.2017.pl");
-
-
-
-
-# my $single_prot_i5_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta data/P10751.fasta --domtbl data/P10751.hmmscan.domtblout.out -path bin/hmmer3.1b1 --hmmlib data/pirsf_data/sf_hmm_all -dat data/pirsf_data/pirsf.dat --tmpdir . --mode hmmscan --outfmt i5 -cpu 1";
-# my $single_prot_pirsf_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta data/P10751.fasta --domtbl data/P10751.hmmscan.domtblout.out -path bin/hmmer3.1b1 --hmmlib data/pirsf_data/sf_hmm_all -dat data/pirsf_data/pirsf.dat --tmpdir . --mode hmmscan --outfmt pirsf -cpu 1";
-
-# my $single_prot_i5 = qx/$single_prot_i5_cmd/;
-# my $single_prot_pirsf = qx/$single_prot_pirsf_cmd/;
-
-# is($single_prot_i5, $P10751_i5_expected, "expected i5 output for P10751");
-# is($single_prot_pirsf, $P10751_pirsf_expected, "expected pirsf output for P10751");
-
-
-
-# my $selected_prot_i5_cmd = "perl ${pirsf_bin}/pirsf.pl --fasta data/selected.fasta --domtbl data/selected.hmmscan.domtblout.out -path bin/hmmer3.1b1 --hmmlib data/pirsf_data/sf_hmm_all -dat data/pirsf_data/pirsf.dat --tmpdir . --mode hmmscan --outfmt i5 -cpu 1";
-# ## $selected_prot_i5_cmd
-
-# my $selected_prot_i5 = qx/$selected_prot_i5_cmd/;
-# ## $selected_prot_i5
-
-
-# is(scalar split('\n', $selected_prot_i5), 251,  "251 lines in output for the selected prots list");
-# cannot test actual data, protein order is random
-# is($selected_prot_i5, $selected_i5_expected, "and all match the expected output");
-
-
-
-
-
-
-
-# my $matches_found = PIRSF::run_hmmer($input, $dominput, $sf_hmm, $pirsf_data, $matches, $children, $hmmer_path, $cpus, $mode, $i5_tmpdir);
-# is($matches_found, 1, "Matches found for protein P10751");
-
-
-
-# my $P10751_i5_expected = <<P10751_i5;
-# 84	2	PIRSF037162	sp|P10751|ZFP11_MOUSE	3.3e-193	..	84	9	24.8	641.2	4.5	3.5e-09	1.7e-06	84	2	0.76	186.0
-# 331	59	PIRSF037162	sp|P10751|ZFP11_MOUSE	3.3e-193	..	331	59	206.3	641.2	43.8	3.9e-64	1.8e-61	331	59	0.99	186.0
-# 415	143	PIRSF037162	sp|P10751|ZFP11_MOUSE	3.3e-193	..	415	143	199.4	641.2	42.5	4.5e-62	2.1e-59	415	143	0.99	186.0
-# 444	309	PIRSF037162	sp|P10751|ZFP11_MOUSE	3.3e-193	..	443	309	95.5	641.2	17.1	1.4e-30	6.8e-28	444	309	0.99	186.0
-# 647	393	PIRSF037162	sp|P10751|ZFP11_MOUSE	3.3e-193	..	644	393	173.0	641.2	46.2	4.8e-54	2.3e-51	647	393	0.98	186.0
-# P10751_i5
-
-# my $P10751_pirsf_expected = <<P10751_pirsf;
-# Query Sequence: sp|P10751|ZFP11_MOUSE matches PIRSF037162: PR-domain zinc finger protein PRDM5
-#    #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
-#    1 !   24.8   4.5   3.5e-09   1.7e-06     454     535 ..       9      84 ..       2      84 .. 0.76
-#    2 !  206.3  43.8   3.9e-64   1.8e-61     257     530 ..      59     331 ..      59     331 .. 0.99
-#    3 !  199.4  42.5   4.5e-62   2.1e-59     257     530 ..     143     415 ..     143     415 .. 0.99
-#    4 !   95.5  17.1   1.4e-30   6.8e-28     396     530 ..     309     443 ..     309     444 .. 0.99
-#    5 !  173.0  46.2   4.8e-54   2.3e-51     255     507 ..     393     644 ..     393     647 .] 0.98
-# P10751_pirsf
 
 done_testing();
