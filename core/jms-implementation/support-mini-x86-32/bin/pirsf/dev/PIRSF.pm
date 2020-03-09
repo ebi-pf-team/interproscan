@@ -55,7 +55,7 @@ sub _process_dat_block {
     m/
       (\w+)(\schild:\s)?\s?(.*?)\n
       ([^\n]+)?\n
-      ([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\n
+      ([^\n]+)\n
       BLAST:\s+(\w+)
     /xms ) {
 
@@ -74,13 +74,13 @@ sub _process_dat_block {
     }
     $data->{$acc}->{name} = $4;
 
-    $data->{$acc}->{meanL} = $5;
-    $data->{$acc}->{stdL}  = $6;
-    $data->{$acc}->{minS}  = $7;
-    $data->{$acc}->{meanS} = $8;
-    $data->{$acc}->{stdS}  = $9;
+    ($data->{$acc}->{meanL},
+    $data->{$acc}->{stdL},
+    $data->{$acc}->{minS},
+    $data->{$acc}->{meanS},
+    $data->{$acc}->{stdS}) = split (/\s/, $5);
 
-    if ($10 eq 'No') {
+    if ($6 eq 'No') {
       $data->{$acc}->{blast} = 0;
     } else {
       $data->{$acc}->{blast} = 1;
