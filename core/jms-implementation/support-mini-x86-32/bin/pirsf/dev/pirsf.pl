@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Pod::Usage;
 use FindBin qw($Bin);
 use lib "$Bin";
 use PIRSF;
@@ -44,6 +45,18 @@ GetOptions(
 
 if (!$input) {
     print STDERR "\n *** FATAL, no input fasta file defined ***\n\n";
+    pod2usage(2);
+    exit;
+}
+
+if ($mode ne 'hmmscan' && $mode ne 'hmmsearch') {
+    print STDERR "\n *** '$mode' is not a valid mode option ***\n\n";
+    pod2usage(2);
+    exit;
+}
+
+if ($output ne 'pirsf' && $output ne 'i5') {
+    print STDERR "\n *** '$output' is not a valid outfmt option ***\n\n";
     pod2usage(2);
     exit;
 }
