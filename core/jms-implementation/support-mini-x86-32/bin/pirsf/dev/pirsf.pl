@@ -105,27 +105,28 @@ __END__
 
 =head1 NAME
 
-pirsf.pl - Interpro version of PIR SF scan program for one sequence in fasta format
+pirsf.pl - Interpro version of PIRSF scan program
 
 =head1 SYNOPSIS
 
   pirsf.pl -fasta myseqs.fa [OPTIONS]
 
   -fasta  <filename>          : Input fasta that you want to analyse, required.
-  -hmmlib <filename>          : The PIRSF HMM library, containing both family and subfamily profiles, default sf_hmm_all .
+  -hmmlib <filename>          : The PIRSF HMM library, containing both family and subfamily profiles, default sf_hmm_all.
   -dat    <filename>          : The PIRSF data file, listing family and subfamily metadata, default pirsf.dat.
-  -mode   <hmmscan|hmmsearch> : [Experimental] Switch from hmmscan mode to hmmsearch.
+  -mode   <hmmscan|hmmsearch> : Switch from hmmscan mode to hmmsearch. Default hmmscan.
   -verbose                    : Report No matches, default off.
   -outfmt <pirsf|i5>          : Print output in different formats. Default pirsf.
   -path                       : Path to HMMER binaries.
   -cpu    <#>                 : Number of cpus to using for hmmscan. Default 1
   -tmpdir                     : Directory for hmmer to use. Default temporary ./tmp/
   -domtbl                     : domtblout from hmmer run (if provided will skip using hmmer).
-  -help                       : Prints this message.
+  -help                       : Prints brief help message.
+  -man                        : Prints full documentation.
 
 =head1 DESCRIPTION
 
-
+Scans and reports PIR superfamily and subfamily matches for the input fasta sequence file.
 
 =head1 DEPENDENCIES
 
