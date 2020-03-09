@@ -1,0 +1,14 @@
+#                                                                             --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession    tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#-------------------  ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+NGFB                 PIRSF001789   253 UPI000000078D        -            226   1.8e-94  304.0   2.9   1   1   6.5e-95     2e-94  303.9   2.9    36   252     5   225     1   226 0.94 -
+#
+# Program:         hmmscan
+# Version:         3.1b1 (May 2013)
+# Pipeline mode:   SCAN
+# Query file:      UPI000000078D.fasta
+# Target file:     ../../../data/pirsf/3.02/sf_hmm_all
+# Option settings: ../../hmmer/hmmer3/3.1b1/hmmscan -o /dev/null --domtblout UPI000000078D.hmmscan.domtblout -E 0.01 ../../../data/pirsf/3.02/sf_hmm_all UPI000000078D.fasta 
+# Current dir:     /home/tgrego/scratch/interproscan/core/jms-implementation/support-mini-x86-32/bin/pirsf/dev
+# Date:            Mon Mar  9 16:20:12 2020
+# [ok]
