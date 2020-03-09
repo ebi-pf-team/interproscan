@@ -8,7 +8,6 @@ use FindBin qw($Bin);
 use lib "$Bin";
 use PIRSF;
 
-use Smart::Comments;
 
 #------------------------------------------------------------------------------
 # Deal with all of the options handling.
