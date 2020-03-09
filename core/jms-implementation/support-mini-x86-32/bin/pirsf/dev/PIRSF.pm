@@ -4,8 +4,6 @@ use strict;
 use warnings;
 use File::Temp qw/tempfile/;
 
-use Smart::Comments;
-
 
 
 sub checkHmmFiles{
@@ -168,7 +166,7 @@ sub process_results {
   foreach my $row (@{$results}) {
 
     my @row = split(/\s+/, $row, 24);
-    if($hmmer_mode eq 'hmmsearch'){
+    if ($hmmer_mode eq 'hmmsearch') {
       my @reorder = @row[0..5];
       $row[0] = $reorder[3];
       $row[1] = $reorder[4];
@@ -364,7 +362,7 @@ sub print_output {
 }
 
 sub _print_report {
-  my($all_data) = @_;
+  my ($all_data) = @_;
 
   print sprintf("%4s  %7s%6s%10s%10s%8s%8s   %8s%8s   %8s%8s   %5s\n" ,
                 '#', 'score', 'bias', 'c-Evalue', 'i-Evalue', 'hmmfrom',
