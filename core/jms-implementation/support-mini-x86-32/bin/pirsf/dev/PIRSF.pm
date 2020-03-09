@@ -159,8 +159,8 @@ sub process_results {
     return {};
   }
 
-  my %promote;
-  my $store; #Use this to store previous rows
+  my $promote = {};
+  my $store; # Use this to store previous rows
   my $matches = {};
   my ($pirsf_acc, $seq_acc, @keep_row);
 
@@ -179,9 +179,9 @@ sub process_results {
     }
     if (defined($pirsf_acc) && defined($seq_acc)) {
       if (($row[1] ne $pirsf_acc) || ($row[3] ne $seq_acc)) {
-        #The sequence or the profile accession has changed.
+        # The sequence or the profile accession has changed.
         my @pRow = @keep_row;
-        $store = process_hit(\@pRow, $children, $store, \%promote, $pirsf_data, $matches);
+        $store = process_hit(\@pRow, $children, $store, $promote, $pirsf_data, $matches);
         @keep_row = ();
       } else {
        push(@keep_row, \@row);
@@ -193,7 +193,7 @@ sub process_results {
     $seq_acc = $row[3];
     push(@keep_row, \@row);
   }
-  $store = process_hit(\@keep_row, $children, $store, \%promote, $pirsf_data, $matches);
+  $store = process_hit(\@keep_row, $children, $store, $promote, $pirsf_data, $matches);
 
   return $matches;
 }
@@ -209,12 +209,12 @@ sub process_hit {
   foreach my $row (@{$rows}){
 
     $pirsf_acc //= $row->[1];
-    $seq_acc //= $row->[3];
-    $seq_leng //= $row->[5];
+    $seq_acc   //= $row->[3];
+    $seq_leng  //= $row->[5];
     $seq_start //= $row->[17];
-    $seq_end //= $row->[18];
+    $seq_end   //= $row->[18];
     $hmm_start //= $row->[15];
-    $hmm_end //= $row->[16];
+    $hmm_end   //= $row->[16];
 
     $score += $row->[13];
 
