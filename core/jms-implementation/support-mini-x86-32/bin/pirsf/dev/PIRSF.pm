@@ -199,20 +199,32 @@ sub process_results {
 }
 
 sub process_hit {
-   my ($rows, $children, $store, $promote, $pirsf_data, $matches) = @_;
-   #Just get the key bits of information out.
-   my($pirsf_acc, $seq_acc, $seq_leng, $seq_start, $seq_end,
-       $hmm_start, $hmm_end) = @{$rows->[0]}[1,3,5,17,18,15,16];
+  my ($rows, $children, $store, $promote, $pirsf_data, $matches) = @_;
+
+  # Initialize variables.
+  my ($pirsf_acc, $seq_acc, $seq_leng, $seq_start, $seq_end, $hmm_start, $hmm_end);
   my $score = 0;
-  #Now loop over all rows that are left, check that we do not have a smaller start or larger end for the sequence/hmm.
+
+  # Loop over all rows, check that we do not have a smaller start or larger end for the sequence/hmm.
   foreach my $row (@{$rows}){
+
+    $pirsf_acc //= $row->[1];
+    $seq_acc //= $row->[3];
+    $seq_leng //= $row->[5];
+    $seq_start //= $row->[17];
+    $seq_end //= $row->[18];
+    $hmm_start //= $row->[15];
+    $hmm_end //= $row->[16];
+
     $score += $row->[13];
 
+    # Code to match georgetown 2015 script
     # $seq_start = ($row->[17] < $seq_start ? $row->[17] : $seq_start);
     # $seq_end   = ($row->[18] > $seq_end   ? $row->[18] : $seq_end);
     # $hmm_start = ($row->[15] < $hmm_start ? $row->[15] : $hmm_start);
     # $hmm_end   = ($row->[16] > $hmm_end   ? $row->[16] : $hmm_end);
 
+    # Update to match georgetown 2017 script
     if ($row->[17] < $seq_start && $row->[15] < $hmm_start) {
       $seq_start = $row->[17];
       $hmm_start = $row->[15];
@@ -226,38 +238,40 @@ sub process_hit {
 
   # Overall length
   my $ovl = (($seq_end - $seq_start) + 1)/$seq_leng;
+
   # Ratio over coverage of sequence and profile HMM
-  my $r   = (($hmm_end - $hmm_start) + 1)/ (($seq_end - $seq_start) + 1);
-  #Length deviation
+  my $r   = (($hmm_end - $hmm_start) + 1)/(($seq_end - $seq_start) + 1);
+
+  # Length deviation
   my $ld = abs($seq_leng - $pirsf_data->{$pirsf_acc}->{meanL});
 
   if($children->{$pirsf_acc}){
-    #If a sub-family, process slightly differently. Only consider the score.
+    # If a sub-family, process slightly differently. Only consider the score.
     if ($r > 0.67 && $score >= $pirsf_data->{$pirsf_acc}->{minS}) {
-      #No work out which family we may need to promote and check to see if
-      #we have seen it nor not
+      # No work out which family we may need to promote and check to see if
+      # we have seen it nor not
       my $parent = $children->{$pirsf_acc};
-      if($store->{$seq_acc}->{$parent}){
+      if ($store->{$seq_acc}->{$parent}) {
         $matches->{$seq_acc}->{$parent} = $store->{$seq_acc}->{$parent};
       } else {
         $promote->{$seq_acc.'-'.$parent} = 1;
       }
-      #Store the sub family match.
+      # Store the sub family match.
       $matches->{$seq_acc}->{$pirsf_acc}->{score} = $score;
       $matches->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
     }
   } elsif ($r > 0.67 && $ovl>=0.8 &&
           ($score >= $pirsf_data->{$pirsf_acc}->{minS}) &&
           ($ld < 3.5*$pirsf_data->{$pirsf_acc}->{stdL} || $ld < 50 ) ) {
-    #Looks like everything passes the threshold of length, score and standard deviations of length.
+    # Looks like everything passes the threshold of length, score and standard deviations of length.
     $matches->{$seq_acc}->{$pirsf_acc}->{score} = $score;
     $matches->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
   } elsif ( defined( $promote->{$seq_acc.'-'.$pirsf_acc} ) ) {
-    #Do we promote this?
+    # Do we promote this?
     $matches->{$seq_acc}->{$pirsf_acc}->{score} = $score;
     $matches->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
   } else {
-    #Store for later in case there is a subfamily match.
+    # Store for later in case there is a subfamily match.
     $store->{$seq_acc}->{$pirsf_acc}->{score} = $score;
     $store->{$seq_acc}->{$pirsf_acc}->{data} = $rows;
   }
