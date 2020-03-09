@@ -45,7 +45,6 @@ my $input = "$Bin/data/test.fasta";
 my $single_input = "$Bin/data/UPI000000078D.fasta";
 my $dominput = "$Bin/data/UPI000000078D.hmmscan.domtblout";
 my $sf_hmm = "$Bin/../../../../data/pirsf/dev/sf_hmm_all";
-my $matches;
 my $hmmer_path = "$Bin/../../../hmmer/hmmer3/3.1b1";
 # my $cpus = 1;
 my $mode = "hmmscan";
