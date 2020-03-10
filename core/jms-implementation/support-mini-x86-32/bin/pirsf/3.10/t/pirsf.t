@@ -11,7 +11,7 @@ use lib "$Bin/../";
 use_ok 'PIRSF';
 
 
-my $dat_file = "$Bin/../../../../data/pirsf/dev/pirsf.dat";
+my $dat_file = "$Bin/../../../../data/pirsf/3.10/pirsf.dat";
 
 my ($pirsf_data, $children) = PIRSF::read_pirsf_dat($dat_file);
 my $pirsf_count = scalar keys %{$pirsf_data};
@@ -44,7 +44,7 @@ is_deeply($pirsf_data->{'PIRSF001220'}->{'children'}, $expected_children, "Corre
 my $input = "$Bin/data/test.fasta";
 my $single_input = "$Bin/data/UPI000000078D.fasta";
 my $dominput = "$Bin/data/UPI000000078D.hmmscan.domtblout";
-my $sf_hmm = "$Bin/../../../../data/pirsf/dev/sf_hmm_all";
+my $sf_hmm = "$Bin/../../../../data/pirsf/3.10/sf_hmm_all";
 my $hmmer_path = "$Bin/../../../hmmer/hmmer3/3.1b1";
 # my $cpus = 1;
 my $mode = "hmmscan";

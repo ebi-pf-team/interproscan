@@ -104,7 +104,7 @@ __END__
 
 =head1 NAME
 
-pirsf.pl - Interpro version of PIRSF scan program
+pirsf.pl - Interpro remake of PIRSF scan program
 
 =head1 SYNOPSIS
 
@@ -126,6 +126,7 @@ pirsf.pl - Interpro version of PIRSF scan program
 =head1 DESCRIPTION
 
 Scans and reports PIR superfamily and subfamily matches for the input fasta sequence file.
+Version 3.10 to match 2017 PIRSF script update.
 
 =head1 DEPENDENCIES
 
