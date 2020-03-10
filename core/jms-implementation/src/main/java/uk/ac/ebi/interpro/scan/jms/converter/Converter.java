@@ -363,7 +363,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private void outputToTSV(final Path path,
                              final Collection<Protein> proteins) throws IOException {
-        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
+        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path, true)) {
             writeProteinMatches(writer, proteins);
         }
     }
@@ -436,7 +436,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
     private void outputNucleotideSequencesToGFF(final Path path,
                                                 final Collection<NucleotideSequence> nucleotideSequences) throws IOException {
-        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path, interproscanVersion)) {
+        try (GFFResultWriterForNucSeqs writer = new GFFResultWriterForNucSeqs(path, interproscanVersion, false)) {
             //This step writes features (protein matches) into the GFF file
             writeProteinMatches(writer, nucleotideSequences);
             //This step writes FASTA sequence at the end of the GFF file

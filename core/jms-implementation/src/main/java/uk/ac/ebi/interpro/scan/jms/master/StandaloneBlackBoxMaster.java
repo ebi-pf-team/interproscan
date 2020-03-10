@@ -303,7 +303,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         }
 
         if (runStatus == 0) {
-            System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed");
+            System.out.println(Utilities.getTimeNow() + " 100% done:  InterProScan analyses completed \n");
         }else{
             LOGGER.error("InterProScan analyses failed, check log details for the errors - " + runStatus);
         }

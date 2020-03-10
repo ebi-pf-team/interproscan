@@ -10,10 +10,8 @@ import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceXrefDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author Phil Jones
@@ -61,6 +59,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
                 for (String crossReference : crossReferences) {
                     NucleotideSequenceXref xref = XrefParser.getNucleotideSequenceXref(crossReference);
                     nucleotideSequence.addCrossReference(xref);
+                    Utilities.verboseLog("nucleotideSequenceXref: " + xref);
                 }
             } else {
                 LOGGER.error("Have a nucleotide sequence with no associated Xrefs.  There must be at least one xref associated with the nucleotide sequence");
@@ -132,9 +131,15 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
      * @param analysisJobMa for analysisJobNames          to be included in analysis.
      */
     public void storeAll(Set<NucleotideSequence> parsedNucleotideSequences, Map<String, SignatureLibraryRelease> analysisJobMa) {
-        if (parsedNucleotideSequences.size() > 2000){
-            LOGGER.warn("You are analysing more than 2000 nucleotide sequences. " +
-                    " Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
+        int parsedNucleotideSequencesCount = parsedNucleotideSequences.size();
+        if (parsedNucleotideSequencesCount > 8000) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
+            System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded " + parsedNucleotideSequencesCount + " unique nucleotide sequences for analysis");
+        }
+        if (parsedNucleotideSequencesCount > 12000){
+            LOGGER.warn("You are analysing more than 12000 nucleotide sequences. " +
+                    " Depending on your resources this might cause problems with memory or running for a long time." +
+                    "Either use an external tool to translate the sequences or Chunk the input and then send the chunks to InterProScan. Refer to " +
                     " https://github.com/ebi-pf-team/interproscan/wiki/ScanNucleicAcidSeqs#improving-performance");
         }
 

@@ -246,11 +246,12 @@ public abstract class AbstractMaster implements Master {
         try {
             if (dir.exists()) {
                 //FileUtils.deleteDirectory(dir);
+
                 FileUtils.forceDelete(dir);
             }
         }catch (IOException e) {
             LOGGER.warn("Unable to delete temporary directory " + dir.getAbsolutePath());
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

@@ -220,7 +220,7 @@ public class WriteOutputStep extends Step {
                 }
                 switch (outputFormat) {
                     case TSV:
-                        outputToTSV(outputPath, stepInstance);
+                        outputToTSV(outputPath, stepInstance, sequenceType);
                         break;
                     case TSV_PRO:
                         outputToTSVPRO(outputPath, stepInstance);
@@ -298,13 +298,23 @@ public class WriteOutputStep extends Step {
             try {
                 if (file.exists()) {
                     Utilities.verboseLog(10, "temporaryFileDirectory exists, so delete: ");
+                    //Collection<File> filesToDelete = new HashSet<>(FileUtils.listFiles(file,null,true));
+                    //Set <String> filenames = new HashSet<>();
+                    //for (File fileToDelete : filesToDelete){
+                    //    filenames.add(fileToDelete.getName());
+                    //}
+                    //System.out.println("To delete the following files: ");
+                    //for (String filename : filenames){
+                    //    System.out.println(filename);
+                    //}
+                    delayForNfs();
                     // FileUtils.deleteDirectory(file);
                     FileUtils.forceDelete(file);
                 }
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
-                LOGGER.warn("ExceptionMessage: " + e.getMessage());
-                e.printStackTrace();
+                Utilities.verboseLog(20,"WriteOutPut - ExceptionMessage: " + e.getMessage());
+                //e.printStackTrace();
             }
         } else {
             LOGGER.debug("Files in temporaryFileDirectory not deleted since  delete.working.directory.on.completion =  " + deleteWorkingDirectoryOnCompletion);
@@ -501,6 +511,14 @@ public class WriteOutputStep extends Step {
                 final Set<NucleotideSequence> nucleotideSequences = nucleotideSequenceDAO.getNucleotideSequences();
                 for(NucleotideSequence  nucleotideSequence : nucleotideSequences ){
                     count ++;
+                    for (OpenReadingFrame orf: nucleotideSequence.getOpenReadingFrames()) {
+                        Protein protein = orf.getProtein();
+                        String proteinKey = Long.toString(protein.getId());
+                        Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
+                        //protein = proteinMarshalled;
+                        orf.setProtein(proteinMarshalled);
+                    }
+                    //Utilities.verboseLog("\n#" + count + " nucleotideSequence: " + nucleotideSequence.toString());
                     writer.write(nucleotideSequence, sequenceType, isSlimOutput);
                 }
 
@@ -576,8 +594,15 @@ public class WriteOutputStep extends Step {
                     int count = 0;
 
                     for (NucleotideSequence nucleotideSequence :nucleotideSequences){
-                        writer.write(nucleotideSequence);
                         count++;
+                        for (OpenReadingFrame orf: nucleotideSequence.getOpenReadingFrames()) {
+                            Protein protein = orf.getProtein();
+                            String proteinKey = Long.toString(protein.getId());
+                            Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
+                            //protein = proteinMarshalled;
+                            orf.setProtein(proteinMarshalled);
+                        }
+                        writer.write(nucleotideSequence);
                         if (count < nucleotideSequences.size()) {
                             writer.write(","); // More proteins/nucleotide sequences to follow
                         }
@@ -626,8 +651,8 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToTSV(final Path path,
-                             final StepInstance stepInstance ) throws IOException {
-        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path)) {
+                             final StepInstance stepInstance , String sequenceType ) throws IOException {
+        try (ProteinMatchesTSVResultWriter writer = new ProteinMatchesTSVResultWriter(path, sequenceType.equalsIgnoreCase("p"))) {
             writeProteinMatches(writer, stepInstance);
         }
         //write the site tsv production output
@@ -698,10 +723,10 @@ public class WriteOutputStep extends Step {
         ProteinMatchesGFFResultWriter writer = null;
         try {
             if (sequenceType.equalsIgnoreCase("n")) {
-                writer = new GFFResultWriterForNucSeqs(path, interProScanVersion);
+                writer = new GFFResultWriterForNucSeqs(path, interProScanVersion, false);
             }//Default tsvWriter for proteins
             else {
-                writer = new GFFResultWriterForProtSeqs(path, interProScanVersion);
+                writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, true, true);
             }
 
             //This step writes features (protein matches) into the GFF file
@@ -716,10 +741,9 @@ public class WriteOutputStep extends Step {
     }
 
     private void outputToGFFPartial(Path path, StepInstance stepInstance) throws IOException {
-        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false)) {
+        try (ProteinMatchesGFFResultWriter writer = new GFFResultWriterForProtSeqs(path, interProScanVersion, false, false)) {
             writeProteinMatches(writer, stepInstance);
         }
-
     }
 
 
