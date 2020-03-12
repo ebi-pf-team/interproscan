@@ -574,7 +574,7 @@ public class WriteOutputStep extends Step {
                         }
                         writer.write(protein);
                         count++;
-                        if (count < proteinIndex) {
+                        if (count < topProteinId) {
                             writer.write(","); // More proteins/nucleotide sequences to follow
                         }
                     }
