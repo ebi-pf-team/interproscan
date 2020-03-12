@@ -341,11 +341,13 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         //check if server has been updated
         Double interproscanDataVersion = 0.0;
         Double serverDataVersion = 99.0;
+        String lookupServerVersion = "";
         try{
             int finalDashIndex = interproscanVersion.lastIndexOf("-");
             interproscanDataVersion = Double.parseDouble(interproscanVersion.substring(finalDashIndex).replace("-", ""));
             ;
             String serverVersion = preCalcMatchClient.getServerVersion();
+            lookupServerVersion = serverVersion;
             int finalDashIndeXForServerVersion = serverVersion.lastIndexOf("-");
             serverDataVersion = Double.parseDouble(serverVersion.substring(finalDashIndeXForServerVersion).replace("-", ""));
 
@@ -359,7 +361,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             Utilities.verboseLog("Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
 
         }catch (Exception e){
-            LOGGER.error("Lookup version check failed ... " +  interproscanDataVersion + ":" + serverDataVersion);
+            LOGGER.error("Lookup version check failed ... interproscanVersion: " +  interproscanVersion + ":vs Lookup version: " + lookupServerVersion);
             e.printStackTrace();
         }
 
