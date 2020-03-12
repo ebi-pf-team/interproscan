@@ -54,7 +54,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 //
 //    private Set<Protein> proteinsWithoutLookupHit;
 
-    private Map <String, Long> proteinRanges;
+    private Map<String, Long> proteinRanges;
 
     private int proteinInsertBatchSize = 200;
 
@@ -62,7 +62,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     private int proteinPrecalcLookupBatchSize = 100;
 
-    private  Map<String, SignatureLibraryRelease> analysisJobMap;
+    private Map<String, SignatureLibraryRelease> analysisJobMap;
 
     private String interproscanVersion;
 
@@ -77,7 +77,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     }
 
-    public BerkeleyPrecalculatedProteinLookup(List<Protein> proteins, Map <String, Long> proteinRanges, ProteinDAO proteinDAO, LookupStoreToI5ModelDAO lookupStoreToI5ModelDAO, MatchHttpClient preCalcMatchClient) {
+    public BerkeleyPrecalculatedProteinLookup(List<Protein> proteins, Map<String, Long> proteinRanges, ProteinDAO proteinDAO, LookupStoreToI5ModelDAO lookupStoreToI5ModelDAO, MatchHttpClient preCalcMatchClient) {
         this.proteins = proteins;
         this.proteinRanges = proteinRanges;
         this.proteinDAO = proteinDAO;
@@ -128,13 +128,13 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         String proteinRange = "[" + proteinRanges.get("bottom") + "-" + proteinRanges.get("top") + "]";
 
-        Utilities.verboseLog("LookupV2 Processing  " + proteins.size() + " range: " + proteinRange );
+        Utilities.verboseLog("LookupV2 Processing  " + proteins.size() + " range: " + proteinRange);
         int count = 0;
         int batchCount = 0;
 
 
-        final  Set<Protein> proteinsAwaitingPrecalcLookup = new HashSet<>();
-        final  Set<Protein> precalculatedProteins = new HashSet<>();
+        final Set<Protein> proteinsAwaitingPrecalcLookup = new HashSet<>();
+        final Set<Protein> precalculatedProteins = new HashSet<>();
         int proteinsCount = proteins.size();
 
         int proteinNotInLookupCount = 0;
@@ -154,7 +154,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 final Set<Protein> localPrecalculatedProteins = getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap);
                 boolean printedProteinKeyRep = false;
                 if (localPrecalculatedProteins != null) {
-                    Utilities.verboseLog(proteinRange + " We have precalculated proteins: " +  localPrecalculatedProteins.size());
+                    Utilities.verboseLog(proteinRange + " We have precalculated proteins: " + localPrecalculatedProteins.size());
                     final Map<String, Protein> md5ToPrecalcProtein = new HashMap<>(localPrecalculatedProteins.size());
                     for (Protein precalc : localPrecalculatedProteins) {
                         md5ToPrecalcProtein.put(precalc.getMd5(), precalc);
@@ -166,11 +166,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                         } else {
                             //addProteinToBatch(proteinAwaitingPrecalcLookup);
                             String proteinKey = String.valueOf(proteinAwaitingPrecalcLookup.getId());
-                            if (! printedProteinKeyRep) {
+                            if (!printedProteinKeyRep) {
                                 Utilities.verboseLog("md5ToPrecalcProtein does NOT contain proteinKey Rep: " + proteinKey);
                                 printedProteinKeyRep = true;
                             }
-                            if(proteinDAO.getLevelDBStore() == null){
+                            if (proteinDAO.getLevelDBStore() == null) {
                                 LOGGER.error("Something wrong witht the kv store: proteinsNotInLookupDB");
                             }
                             proteinDAO.insertProteinNotInLookup(proteinKey, proteinAwaitingPrecalcLookup);
@@ -178,11 +178,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                     }
                 } else {
                     //there are no matches or we are not using the lookup match service
-                    Utilities.verboseLog(proteinRange + " There are NO matches for these proteins: " +  proteinsAwaitingPrecalcLookup.size());
+                    Utilities.verboseLog(proteinRange + " There are NO matches for these proteins: " + proteinsAwaitingPrecalcLookup.size());
                     for (Protein proteinAwaitingPrecalcLookup : proteinsAwaitingPrecalcLookup) {
                         String proteinKey = String.valueOf(proteinAwaitingPrecalcLookup.getId());
                         proteinDAO.insertProteinNotInLookup(proteinKey, proteinAwaitingPrecalcLookup);
-                        proteinNotInLookupCount ++;
+                        proteinNotInLookupCount++;
                         //addProteinToBatch(proteinAwaitingPrecalcLookup);
                     }
                 }
@@ -192,8 +192,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 proteinsAwaitingPrecalcLookup.clear();
             }
             int progressMeter = count * 100 / proteinsCount;
-            if (progressMeter % 20 == 0 && progressMeter != oldProgressMeter){
-                if (progressMeter % 40 == 0 ) {
+            if (progressMeter % 20 == 0 && progressMeter != oldProgressMeter) {
+                if (progressMeter % 40 == 0) {
                     Utilities.verboseLog(10, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 } else {
 
@@ -216,7 +216,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
 
         int proteinsNotInLookupCount = proteinsNotInLookup.size();
-        Utilities.verboseLog(10, "1. proteinsNotInLookupCount :  "  + proteinsNotInLookupCount);
+        Utilities.verboseLog(10, "1. proteinsNotInLookupCount :  " + proteinsNotInLookupCount);
 
 
         Utilities.verboseLog("2. Precalculated Proteins " + proteinRange + "  size: " + precalculatedProteins.size());
@@ -236,7 +236,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * @param protein being the protein to be stored.
      */
     private void addProteinToBatch(Protein protein) {
-      //how do we deal with is method inthe new approach
+        //how do we deal with is method inthe new approach
         //Utilities.verboseLog("check-protein: " + protein.getId());
         String proteinKey = String.valueOf(protein.getId());
         proteinDAO.insertProteinNotInLookup(proteinKey, protein);
@@ -249,7 +249,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         Set<Protein> newProteins = persistedProteins.getNewProteins();
     }
-    
+
     /**
      * Note - this method returns null if there are no precalculated results.
      *
@@ -259,8 +259,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     @Override
     public Protein getPrecalculated(Protein protein, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Check if the precalc service is configure and available.
+        Utilities.verboseLog(10, "Start getPrecalculated for 1 proteins: " + protein.getId());
         if (!preCalcMatchClient.isConfigured()) {
-
             return null;
         }
 
@@ -308,7 +308,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (kvSequenceEntryXML != null) {
                 boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
                 KVSequenceEntryXML kvSitesSequenceEntryXML = null;
-                if(includeCDDorSFLD){
+                if (includeCDDorSFLD) {
                     Utilities.verboseLog(30, "lookup Sites ... ");
                     kvSitesSequenceEntryXML = getSitesFromLookup(upperMD5);
                     //Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
@@ -329,24 +329,43 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     @Override
     public Set<Protein> getPrecalculated(Set<Protein> proteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
         // Check if the precalc service is configure and available.
-        Utilities.verboseLog(10, " Start getPrecalculated for " + proteins.size() + " proteins");
+        Utilities.verboseLog(10, "Start getPrecalculated for " + proteins.size() + " proteins");
         if (!preCalcMatchClient.isConfigured()) {
-            Utilities.verboseLog(10,  " preCalcMatchClient is NULL ...");
+            Utilities.verboseLog(10, " preCalcMatchClient is NULL ...");
             return null;
         }
 
-
-        String lookupMessageStatus = "Checking lookup client and server are in sync";
-
+        String lookupMessageStatus = "First checking lookup client and server are in sync";
         Utilities.verboseLog(10, lookupMessageStatus);
+
+        //check if server has been updated
+        Double interproscanDataVersion = 0.0;
+        Double serverDataVersion = 99.0;
+        try{
+            int finalDashIndex = interproscanVersion.lastIndexOf("-");
+            interproscanDataVersion = Double.parseDouble(interproscanVersion.substring(finalDashIndex).replace("-", ""));
+            ;
+            String serverVersion = preCalcMatchClient.getServerVersion();
+            int finalDashIndeXForServerVersion = serverVersion.lastIndexOf("-");
+            serverDataVersion = Double.parseDouble(serverVersion.substring(finalDashIndeXForServerVersion).replace("-", ""));
+
+            Utilities.verboseLog(10, "interproDataVersion: " +  interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
+            if (interproscanDataVersion > serverDataVersion) {
+                Utilities.verboseLog("Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
+                return null;
+            } else {
+                Utilities.verboseLog("Lookup service UPDATED - continue ... " + interproscanDataVersion + ":" + serverDataVersion);
+            }
+            Utilities.verboseLog("Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
+
+        }catch (Exception e){
+            LOGGER.error("Lookup version check failed ... " +  interproscanDataVersion + ":" + serverDataVersion);
+            e.printStackTrace();
+        }
 
         try {
             // Only proceed if the lookup client and server are in sync
-            String serverVersion = preCalcMatchClient.getServerVersion();
-            int finalDashIndex = interproscanVersion.lastIndexOf("-");
-            String interproDataVersion = interproscanVersion.substring(finalDashIndex);
-            Utilities.verboseLog("Lookup isSynchronised? interproDataVersion: " + interproDataVersion + " serverVersion:" + serverVersion);
-            if (!isSynchronised()) {
+   if (!isSynchronised()) {
                 Utilities.verboseLog(10, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
                 return null;
             } else {
@@ -388,7 +407,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
             lookupMessageStatus = "Get matches of proteins analysed previously";
 //            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
-            Utilities.verboseLog(10, "getMatchesFromLookup .. " );
+            Utilities.verboseLog(10, "getMatchesFromLookup .. ");
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(md5s);
             Utilities.verboseLog(20, "berkeleyMatchXML: " + kvSequenceEntryXML.getMatches().toString());
 
@@ -424,28 +443,29 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
             //Avoid null lists and go for empty lists
             List<KVSequenceEntry> kvSequenceEntrySites = new ArrayList<>();
-            if(includeCDDorSFLD){
+            if (includeCDDorSFLD) {
                 Utilities.verboseLog(30, "Now lookup Sites ... ");
                 kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
-                if(kvSitesSequenceEntryXML != null){
+                if (kvSitesSequenceEntryXML != null) {
                     kvSequenceEntrySites = kvSitesSequenceEntryXML.getMatches();
                 }
                 Utilities.verboseLog(30, "lookup Sites XML:" + kvSequenceEntrySites.size() + " -- " + kvSequenceEntrySites.toString());
             }
 
-            List<KVSequenceEntry> kvSequenceEntryMatches = new ArrayList<>();;
+            List<KVSequenceEntry> kvSequenceEntryMatches = new ArrayList<>();
+            ;
 
-            if(kvSequenceEntryXML != null) {
+            if (kvSequenceEntryXML != null) {
                 kvSequenceEntryMatches = kvSequenceEntryXML.getMatches();
             }
 
             if (isAnalysisVersionConsistent(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap)) {
-                if(kvSequenceEntryMatches != null && kvSequenceEntrySites != null) {
+                if (kvSequenceEntryMatches != null && kvSequenceEntrySites != null) {
                     Utilities.verboseLog(10, "Analysis versions ARE Consistent ..  populateProteinMatches : kvSequenceEntryMatches " + kvSequenceEntryMatches.size() +
                             " kvSequenceEntrySites: " + kvSequenceEntrySites.size());
                 }
                 lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
-                Utilities.verboseLog(10, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size() );
+                Utilities.verboseLog(10, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size());
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
@@ -565,7 +585,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         int finalDashIndex = interproscanVersion.lastIndexOf("-");
         String interproDataVersion = interproscanVersion.substring(finalDashIndex);
         Utilities.verboseLog("Lookup isSynchronised? interproDataVersion: " + interproDataVersion + " serverVersion:" + serverVersion);
-        if (!( serverVersion.endsWith(interproDataVersion) )) {
+        if (!(serverVersion.endsWith(interproDataVersion))) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }
@@ -629,15 +649,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
     }
 
     /**
-     *  include fetching CDD or SFLD sites
+     * include fetching CDD or SFLD sites
      *
      * @param analysisJobMap
      * @return
      */
-    private boolean includeCDDorSFLD(Map<String, SignatureLibraryRelease> analysisJobMap){
+    private boolean includeCDDorSFLD(Map<String, SignatureLibraryRelease> analysisJobMap) {
         for (SignatureLibraryRelease sigLibrelease : analysisJobMap.values()) {
             if (sigLibrelease.getLibrary().getName().startsWith("CDD") ||
-                    sigLibrelease.getLibrary().getName().startsWith("SFLD")){
+                    sigLibrelease.getLibrary().getName().startsWith("SFLD")) {
                 return true;
             }
         }
