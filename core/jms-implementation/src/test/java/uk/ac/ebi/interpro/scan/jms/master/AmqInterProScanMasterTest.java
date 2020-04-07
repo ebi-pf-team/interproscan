@@ -44,7 +44,7 @@ public class AmqInterProScanMasterTest {
         outputFormats = null;
         master.processOutputFormats(params, outputFormats);
         actualOutputFormats = params.get(WriteOutputStep.OUTPUT_FILE_FORMATS).split(",");
-        expectedOutputFormats = new String[]{"tsv", "xml", "gff3"};
+        expectedOutputFormats = new String[]{"tsv", "xml", "json", "gff3"};
         Arrays.sort(expectedOutputFormats);
         Arrays.sort(actualOutputFormats);
         assertArrayEquals(expectedOutputFormats, actualOutputFormats);
@@ -69,9 +69,9 @@ public class AmqInterProScanMasterTest {
         //Run the test for an empty parameter
         outputFormats = null;
         master.processOutputFormats(params, outputFormats);
-        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "tsv,xml,gff3");
+        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "tsv,xml,json,gff3");
         outputFormats = new String[]{};
         master.processOutputFormats(params, outputFormats);
-        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "tsv,xml,gff3");
+        assertEquals(params.get(WriteOutputStep.OUTPUT_FILE_FORMATS), "tsv,xml,json,gff3");
     }
 }

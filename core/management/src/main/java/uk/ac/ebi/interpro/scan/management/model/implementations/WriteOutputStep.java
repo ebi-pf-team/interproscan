@@ -196,7 +196,6 @@ public class WriteOutputStep extends Step {
                 ? parameters.get(OUTPUT_EXPLICIT_FILE_PATH_KEY)
                 : parameters.get(OUTPUT_FILE_PATH_KEY);
 
-
         int waitTimeFactor = 1;  //check what is the average time it takes to get raw results
         if (! Utilities.isRunningInSingleSeqMode()) {
             //use loge to get wait time
@@ -574,7 +573,7 @@ public class WriteOutputStep extends Step {
                         }
                         writer.write(protein);
                         count++;
-                        if (count < proteinIndex) {
+                        if (count < topProteinId) {
                             writer.write(","); // More proteins/nucleotide sequences to follow
                         }
                     }
@@ -610,7 +609,8 @@ public class WriteOutputStep extends Step {
 
                     Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
                 }
-                writer.close();
+                writer.footer();
+
             }
         }
 
