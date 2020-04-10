@@ -41,7 +41,8 @@ branches:
   - dev
   - master
   - hamap_2019_11
-  - release-5.42-78.0
+  - release-5.43-78.0
+  - release-5.43-78.1
   except:
   - new_master
 
