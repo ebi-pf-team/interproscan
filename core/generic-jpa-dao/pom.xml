@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.43-78.0</version>
+        <version>5.43-78.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>generic-jpa-dao</artifactId>
-    <version>5.43-78.0</version>
+    <version>5.43-78.1</version>
 
     <packaging>jar</packaging>
 
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-util</artifactId>
-            <version>5.43-78.0</version>
+            <version>5.43-78.1</version>
         </dependency>
 
         <!-- Hibernate -->
