@@ -149,7 +149,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.42-78.0";
+            String i5Version = "5.44-79.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
@@ -341,11 +341,12 @@ public class Run extends AbstractI5Runner {
 
             // Validate the sequence type
             String sequenceType = "p";
+            Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
 
                 // Check the sequence type is "n" or "p"
-                Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
+                //Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
                 if (sequenceTypes != null && !sequenceTypes.contains(sequenceType)) {
                     System.out.print("\n\nThe specified sequence type " + sequenceType + " was not recognised, expected: ");
                     StringBuilder expectedSeqTypes = new StringBuilder();
@@ -358,6 +359,12 @@ public class Run extends AbstractI5Runner {
                     System.out.println(expectedSeqTypes + "\n\n");
                     System.exit(1);
                 }
+            }
+            if (sequenceTypes != null && sequenceTypes.contains(sequenceType)) {
+                System.out.println("Input sequence type is:  " + sequenceType);
+                System.out.println("expectedSeqTypes " + sequenceTypes + "\n");
+	    } else {
+                System.out.println("expectedSeqTypes " + sequenceTypes + "\n");	        
             }
 
             if (mode.getRunnableBean() != null) {
