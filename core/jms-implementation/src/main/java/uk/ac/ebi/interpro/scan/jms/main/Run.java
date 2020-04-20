@@ -361,8 +361,10 @@ public class Run extends AbstractI5Runner {
                 }
             }
             if (sequenceTypes != null && sequenceTypes.contains(sequenceType)) {
-                System.out.println("Input sequence type is:  " + sequenceType);
-                System.out.println("expectedSeqTypes " + sequenceTypes + "\n");
+                if (sequenceType.equalsIgnoreCase("n")){
+                   System.out.println(Utilities.getTimeNow() + " Input sequence type is:  " + sequenceType + " - Nucleotide sequences ");
+		}
+                //System.out.println("expectedSeqTypes " + sequenceTypes + "\n");
 	    } else {
                 System.out.println("expectedSeqTypes " + sequenceTypes + "\n");	        
             }
