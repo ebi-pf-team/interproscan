@@ -340,7 +340,9 @@ public class Run extends AbstractI5Runner {
             }
 
             // Validate the sequence type
+
             String sequenceType = "p";
+            if (! (mode.equals(Mode.INSTALLER))) {
             Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
             if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
                 sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
@@ -367,6 +369,8 @@ public class Run extends AbstractI5Runner {
                 //System.out.println("expectedSeqTypes " + sequenceTypes + "\n");
 	    } else {
                 System.out.println("expectedSeqTypes " + sequenceTypes + "\n");	        
+            }
+
             }
 
             if (mode.getRunnableBean() != null) {
