@@ -327,13 +327,9 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
     private void createAndPersistNewORFs(final ProteinDAO.PersistedProteins persistedProteins) {
         //Holder for new ORFs which should be persisted
-
         Utilities.verboseLog("Start createAndPersistNewORFs for new proteins and their cross references.");
 
         Set<OpenReadingFrame> orfsAwaitingPersistence = new HashSet<>();
-
-        //--- new implementation
-
 
         Long startCreateAndPersistNewORFs = System.currentTimeMillis();
         Map<String, Set<ProteinXref>> proteinXrefMap = getProteinXrefs(persistedProteins);
@@ -354,16 +350,8 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
         int totalProteinXrefs = 0;
         int totalProteins = 0;
-//        for (Long nucleotideSeqIndex = 1l; nucleotideSeqIndex <= totalNucleotideSequences; nucleotideSeqIndex++) {
         for (NucleotideSequence nucleotideSequence : nucleotideSequenceList) {
-            //Long startRetrieveNucleotideSequence = System.currentTimeMillis();
-//            toDebugPrint(newProteins.size(), proteinCount,
-//                    "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf) + " millis ");
-            //NucleotideSequence nucleotideSequence = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSeqIndex);
             Long startRetrieveByXrefIdentifier = System.currentTimeMillis();
-//            Utilities.verboseLog("get  nucleotideSequence  in  -  "
-//                    + (startRetrieveByXrefIdentifier - startRetrieveNucleotideSequence) + " millis ");
-            //nucleotideSequenceDAO.retrieveByXrefIdentifier("id");
             Set<NucleotideSequenceXref> nucleotideSequenceCrossReferences = nucleotideSequence.getCrossReferences();
             Utilities.verboseLog(50, "get  NucleotideSequenceXref set  -  " + nucleotideSequenceCrossReferences.size() + "  in "
                     + (System.currentTimeMillis() - startRetrieveByXrefIdentifier) + " millis ");
@@ -373,8 +361,10 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 if (proteinXrefSet != null) {
                     Utilities.verboseLog(50, "got proteinXrefSet set  -  " + proteinXrefSet.size() + "  in ");
                 } else {
-                    LOGGER.warn("CHECK nucleotideXrefIdentifier: " + nucleotideXrefIdentifier
-                            + " nucleotideSequence: " + nucleotideSequence.getId());
+                    String outputStrMessage = "CHECK nucleotideXrefIdentifier: " + nucleotideXrefIdentifier
+                            + " nucleotideSequence: " + nucleotideSequence.getId();
+                    LOGGER.info(outputStrMessage);
+                    Utilities.verboseLog(10, outputStrMessage);
                     continue;
                 }
 
@@ -462,9 +452,12 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 proteinXrefs.put(nucleotideId, proteinXrefSet);
             }
         }
-        int avgXrefPerProtein = totalXrefs / proteinCount;
-
+        int avgXrefPerProtein = 0;
+        if (proteinCount > 0) {
+            avgXrefPerProtein = totalXrefs / proteinCount;
+        }
         Utilities.verboseLog("Total proteins: " + proteinCount + " total xrefs = " +  totalXrefs + " avrg xref per protein: " + avgXrefPerProtein);
+
         return proteinXrefs;
     }
 
