@@ -419,8 +419,16 @@ public class PrepareForOutputStep extends Step {
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId :nucleotideSequenceIds){
                     count ++;
+                    Utilities.verboseLog(20, " nucleotideSequenceId  : " + nucleotideSequenceId );
                     NucleotideSequence  nucleotideSequenceInH2 = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSequenceId);
                     String nucleotideSequenceKey = nucleotideSequenceInH2.getMd5();
+                    Set<NucleotideSequenceXref> nucleotideSequenceCrossReferences = nucleotideSequenceInH2.getCrossReferences();
+                    if (Utilities.verboseLogLevel >= 20) {
+                        for (NucleotideSequenceXref nucleotideXref : nucleotideSequenceCrossReferences) {
+                            String nucleotideXrefIdentifier = nucleotideXref.getIdentifier();
+                            Utilities.verboseLog(count + " nucleotideXrefIdentifier: " + nucleotideXrefIdentifier);
+                        }
+                    }
                     //nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.get(nucleotideSequenceKey);
                     Utilities.verboseLog("\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : "); // + nucleotideSequenceInH2.toString());

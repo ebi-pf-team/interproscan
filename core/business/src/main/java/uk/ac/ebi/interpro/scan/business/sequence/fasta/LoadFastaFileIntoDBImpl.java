@@ -355,7 +355,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
         int totalProteinXrefs = 0;
         int totalProteins = 0;
 //        for (Long nucleotideSeqIndex = 1l; nucleotideSeqIndex <= totalNucleotideSequences; nucleotideSeqIndex++) {
-        for ( NucleotideSequence nucleotideSequence : nucleotideSequenceList) {
+        for (NucleotideSequence nucleotideSequence : nucleotideSequenceList) {
             //Long startRetrieveNucleotideSequence = System.currentTimeMillis();
 //            toDebugPrint(newProteins.size(), proteinCount,
 //                    "newOrf: " + (startRetrieveByXrefIdentifier - startNewOrf) + " millis ");
@@ -370,15 +370,16 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             for (NucleotideSequenceXref nucleotideXref : nucleotideSequenceCrossReferences) {
                 String nucleotideXrefIdentifier = nucleotideXref.getIdentifier();
                 Set<ProteinXref> proteinXrefSet = (HashSet) proteinXrefMap.get(nucleotideXrefIdentifier);
-                if (proteinXrefSet != null){
-                  Utilities.verboseLog(50, "got proteinXrefSet set  -  " + proteinXrefSet.size() + "  in ");
-		} else {
-                  LOGGER.warn("CHECK nucleotideXrefIdentifier: " + nucleotideXrefIdentifier
+                if (proteinXrefSet != null) {
+                    Utilities.verboseLog(50, "got proteinXrefSet set  -  " + proteinXrefSet.size() + "  in ");
+                } else {
+                    LOGGER.warn("CHECK nucleotideXrefIdentifier: " + nucleotideXrefIdentifier
                             + " nucleotideSequence: " + nucleotideSequence.getId());
-                  continue;
-		}
+                    continue;
+                }
+                
                 for (ProteinXref proteinXref : proteinXrefSet) {
-                    totalProteinXrefs ++;
+                    totalProteinXrefs++;
                     String description = proteinXref.getDescription();
                     OpenReadingFrame newOrf = orfDescriptionLineParser.createORFFromParsingResult(description);
                     Long startSetNucleotideSequence = System.currentTimeMillis();
