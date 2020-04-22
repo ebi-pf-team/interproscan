@@ -83,6 +83,8 @@ public class StatsUtil {
 
     private long timeOfLastMemoryDisplay = System.currentTimeMillis();
 
+    private Long lastGetSubmittedStepInstancesCountTime = System.currentTimeMillis();
+
     private long startUpTime;
     private long maximumLifeMillis;
 
@@ -362,7 +364,13 @@ public class StatsUtil {
             Utilities.verboseLog(" Originals: stepCount " + stepCount + " uniq stepCount: " + uniqStepCount);
             stepCount = uniqStepCount;
         }
-        Utilities.verboseLog(30, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
+        Long intervaltime = 5 * 60 * 60 * 1000l;
+        Long timePassed = System.currentTimeMillis() - lastGetSubmittedStepInstancesCountTime;
+        if (timePassed > intervaltime) {
+            Utilities.verboseLog(30, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount
+                    +  " totalJobs: " + totalJobs + " unfinishedJobs: " + unfinishedJobs);
+            lastGetSubmittedStepInstancesCountTime = System.currentTimeMillis();
+        }
         return stepCount;
     }
 

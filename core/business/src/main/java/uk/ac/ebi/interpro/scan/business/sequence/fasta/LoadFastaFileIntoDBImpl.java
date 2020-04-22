@@ -377,7 +377,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                             + " nucleotideSequence: " + nucleotideSequence.getId());
                     continue;
                 }
-                
+
                 for (ProteinXref proteinXref : proteinXrefSet) {
                     totalProteinXrefs++;
                     String description = proteinXref.getDescription();
