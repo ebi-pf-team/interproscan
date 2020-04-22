@@ -365,11 +365,18 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 //                    + (startRetrieveByXrefIdentifier - startRetrieveNucleotideSequence) + " millis ");
             //nucleotideSequenceDAO.retrieveByXrefIdentifier("id");
             Set<NucleotideSequenceXref> nucleotideSequenceCrossReferences = nucleotideSequence.getCrossReferences();
-            Utilities.verboseLog(50, "get  NucleotideSequenceXref set  in  -  "
+            Utilities.verboseLog(50, "get  NucleotideSequenceXref set  -  " + nucleotideSequenceCrossReferences.size() + "  in "
                     + (System.currentTimeMillis() - startRetrieveByXrefIdentifier) + " millis ");
             for (NucleotideSequenceXref nucleotideXref : nucleotideSequenceCrossReferences) {
                 String nucleotideXrefIdentifier = nucleotideXref.getIdentifier();
                 Set<ProteinXref> proteinXrefSet = (HashSet) proteinXrefMap.get(nucleotideXrefIdentifier);
+                if (proteinXrefSet != null){
+                  Utilities.verboseLog(50, "got proteinXrefSet set  -  " + proteinXrefSet.size() + "  in ");
+		} else {
+                  LOGGER.warn("CHECK nucleotideXrefIdentifier: " + nucleotideXrefIdentifier
+                            + " nucleotideSequence: " + nucleotideSequence.getId());
+                  continue;
+		}
                 for (ProteinXref proteinXref : proteinXrefSet) {
                     totalProteinXrefs ++;
                     String description = proteinXref.getDescription();
