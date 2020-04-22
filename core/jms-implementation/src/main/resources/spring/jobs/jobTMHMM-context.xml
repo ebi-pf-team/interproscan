@@ -19,7 +19,7 @@
 
     <bean id="jobTMHMM" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="Prediction of transmembrane helices in proteins"/>
+                  value="Prediction of transmembrane helices in proteins."/>
         <property name="analysis" value="true"/>
         <property name="active" value="true" />
         <property name="libraryRelease" ref="signatureLibraryReleaseTMHMM"/>

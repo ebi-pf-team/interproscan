@@ -13,7 +13,7 @@
     </bean>
 
     <bean id="jobPhobius" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="A combined transmembrane topology and signal peptide predictor"/>
+        <property name="description" value="A combined transmembrane topology and signal peptide predictor."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePhobius"/>
         <!--Check mechanism for licensed binaries-->

@@ -9,7 +9,7 @@
     <!-- ######################## JOB: PRINTS ############################  -->
     <bean id="jobPRINTS-42.0" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="A fingerprint is a group of conserved motifs used to characterise a protein family"/>
+                  value="A compendium of protein fingerprints - a fingerprint is a group of conserved motifs used to characterise a protein family."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePrints-42.0"/>
     </bean>
