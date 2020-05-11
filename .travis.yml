@@ -40,9 +40,8 @@ branches:
   only:
   - dev
   - master
-  - hamap_2019_11
-  - release-5.43-78.0
-  - release-5.43-78.1
+  - pfam33.1
+  - release-5.44-79.0
   except:
   - new_master
 
