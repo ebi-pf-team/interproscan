@@ -146,7 +146,7 @@ public class ClanFileParser implements Serializable {
      */
     private void buildClanAndModelModel() throws IOException {
         clanData = new PfamClanData();
-        //parsePfamASeed(); //disable for now until it is set to tbe required
+        parsePfamASeed(); //think of an easier way to get this info as the rest of the alignment info is not used
         parsePfamC();
     }
 
@@ -157,7 +157,7 @@ public class ClanFileParser implements Serializable {
         // will be added to the domain model after parsing the file.
         Map<String, List<String>> modelAccessionNestsModelAccession = new HashMap<String, List<String>>();
 
-        //We shouldnt parse the seed file as it is not being used at the moment
+        //Maybe We shouldnt parse the seed file as it is not being used at the moment
 
         try {
             reader = new BufferedReader(new FileReader(new File(pfamASeedFile)));
