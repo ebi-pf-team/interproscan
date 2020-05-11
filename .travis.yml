@@ -10,6 +10,7 @@ env:
   - OS_TYPE=ubuntu OS_VERSION=xenial
   - OS_TYPE=ubuntu OS_VERSION=bionic
   - OS_TYPE=ubuntu OS_VERSION=19.10
+  - OS_TYPE=ubuntu OS_VERSION=20.04
   
 services:
   - docker
