@@ -108,7 +108,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
         writer.writeStartDocument();
         //bufferedWriter.write("\n");
         writer.writeStartElement("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", localname);
-        writer.writeAttribute("interProScanVersion", interProScanVersion);
+        writer.writeAttribute("interproscan-version", interProScanVersion);
         writer.writeNamespace("", "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
         //writer.writeStartElement("protein-matches");
 
