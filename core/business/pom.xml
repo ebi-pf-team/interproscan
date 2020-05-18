@@ -64,6 +64,7 @@
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
         </dependency>
+       -->
     </dependencies>
 
     <build>
