@@ -21,7 +21,7 @@
     </bean>
 
     <bean id="templateLoadingDirSvgWriter" class="java.io.File">
-        <constructor-arg value="data/freemarker/resources/freeMarker/svg"/>
+        <constructor-arg value="${freemarker.path}/resources/freeMarker/svg"/>
     </bean>
 
     <!--FreeMarker configuration-->

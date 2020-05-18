@@ -40,6 +40,7 @@
         <mvn.worker.manager.topic>worker_manager_topic</mvn.worker.manager.topic>
         <mvn.worker.manager.response.queue>worker_manager_response_queue</mvn.worker.manager.response.queue>
         <mvn.ebi.interproscan5.support>support-mini-x86-32</mvn.ebi.interproscan5.support>
+        <freemarker.output.path>work/freemarker</freemarker.output.path>
 
         <!-- 5.3.1 is the version we have been using stably for development.
         The previous stable version used is 5.5.0
