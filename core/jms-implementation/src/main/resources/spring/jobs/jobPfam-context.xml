@@ -9,7 +9,7 @@
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfam" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)"/>
+                  value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)."/>
         <property name="analysis" value="true"/>
 
         <property name="libraryRelease" ref="signatureLibraryReleasePfamA"/>

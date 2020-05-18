@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.43-78.1</version>
+        <version>5.44-79.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-model</artifactId>
-    <version>5.43-78.1</version>
+    <version>5.44-79.0</version>
 
     <packaging>jar</packaging>
 
@@ -195,7 +195,11 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>generic-jpa-dao</artifactId>
+<<<<<<< HEAD
             <version>5.43-78.1</version>
+=======
+            <version>5.44-79.0</version>
+>>>>>>> release-5.44-79.0
             <scope>test</scope>
         </dependency>
 

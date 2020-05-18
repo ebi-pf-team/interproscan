@@ -9,7 +9,7 @@
     <!-- ######################## JOB: Gene 3D ############################  -->
     <bean id="jobGene3d" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="Structural assignment for whole genes and genomes using the CATH domain structure database"/>
+                  value="Structural assignment for whole genes and genomes using the CATH domain structure database."/>
         <property name="analysis" value="true"/>
         <property name="active" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseGene3d"/>

@@ -9,7 +9,7 @@
     <!-- ######################## JOB: Prosite Patterns ############################  -->
     <bean id="jobPrositePatterns" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them"/>
+                  value="PROSITE consists of documentation entries describing protein domains, families and functional sites as well as associated patterns and profiles to identify them."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePrositePatterns"/>
         <property name="active" value="true"/>
