@@ -26,7 +26,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
 
     public Hmmer3Match convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
-        Utilities.verboseLog(10, "Considering hit:" + match.toString());
+        Utilities.verboseLog(110, "Considering hit:" + match.toString());
 
         final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;
@@ -54,7 +54,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
             int fragEnd = valueOrZero(Integer.parseInt(fragmentCoordinates[1]));
             String dcStatus = fragmentCoordinates[2];
             locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(fragStart, fragEnd, DCStatus.parseSymbol(dcStatus)));
-            Utilities.verboseLog(40, "LocationFragments:" + locationFragments.toString());
+            Utilities.verboseLog(140, "LocationFragments:" + locationFragments.toString());
         }
 
         final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
@@ -73,7 +73,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
                 postProcessed,
                 locationFragments
         ));
-        Utilities.verboseLog(40, "Locations:" + locations.toString());
+        Utilities.verboseLog(140, "Locations:" + locations.toString());
 
 //                public Hmmer3Location(int start, int end, double score, double evalue,
 //        int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
@@ -85,7 +85,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
                 valueOrZero(match.getSequenceEValue()),
                 locations
         );
-        Utilities.verboseLog(40, "hmmer3Match:" + hmmer3Match.toString());
+        Utilities.verboseLog(140, "hmmer3Match:" + hmmer3Match.toString());
 
         return hmmer3Match;
     }

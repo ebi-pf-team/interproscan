@@ -75,7 +75,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        Utilities.verboseLog(10, " FastaFileLoadStep - starting");
+        Utilities.verboseLog(110, " FastaFileLoadStep - starting");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("FastaFileLoadStep.fastaFileLoader : " + fastaFileLoader);
         }
@@ -106,7 +106,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                     System.out.println(getTimeNow() + " Loading file " + providedPath);
                 }else {
                     if (Utilities.verboseLog || !Utilities.isRunningInSingleSeqMode()) {
-                        Utilities.verboseLog("Loading file " + providedPath);
+                        Utilities.verboseLog(1100, "Loading file " + providedPath);
                     }
                 }
 //                System.out.println(getTimeNow() + " Loading file " + providedPath);
@@ -283,7 +283,7 @@ public class FastaFileLoadStep extends Step implements StepInstanceCreatingStep 
                 }
             }
         }
-        Utilities.verboseLog(10, " FastaFileLoadStep - done");
+        Utilities.verboseLog(110, " FastaFileLoadStep - done");
     }
 
     private String getTimeNow() {

@@ -78,7 +78,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " + key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " + key);
             return;
         }
 
@@ -131,7 +131,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                     for (RawProtein<T> rawProtein : rawProteins) {
                         matchesFound += rawProtein.getMatches().size();
                         if (LOGGER.isDebugEnabled()) {
-                            Utilities.verboseLog("Considering ... " + represantiveRawMatch.getSignatureLibrary().getName());
+                            Utilities.verboseLog(1100, "Considering ... " + represantiveRawMatch.getSignatureLibrary().getName());
                             if (represantiveRawMatch.getSignatureLibrary().getName().contains("PANTHER") ||
                                     represantiveRawMatch.getSignatureLibrary().getName().contains("ProSitePatterns")) {
                                 int rmCount = 0;
@@ -144,7 +144,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                         }
                     }
 
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
                     Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + " matchesFound: " + matchesFound + " matchCount: " + matchCount
                             + " queryTime: " + queryTime);
                     int retryCount = 0;
@@ -185,7 +185,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                     Utilities.verboseLog(matchPersistWarning);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog(1100, "ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
                     + " time taken: " + timeTaken);
             }
         } catch (IOException e) {

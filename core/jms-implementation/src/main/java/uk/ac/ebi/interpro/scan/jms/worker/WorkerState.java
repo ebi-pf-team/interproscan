@@ -143,7 +143,7 @@ public class WorkerState implements Serializable {
             this.nonFinishedJobs.put(stepExecution.getStepInstance().getId(), stepExecution);
             this.allJobs.add(stepExecution);
             if(Utilities.verboseLogLevel > 4){
-                Utilities.verboseLog("Received StepInstance:  added to unfinishedJobs - " + stepExecution.getStepInstance().toString());
+                Utilities.verboseLog(1100, "Received StepInstance:  added to unfinishedJobs - " + stepExecution.getStepInstance().toString());
             }
         } catch (JMSException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

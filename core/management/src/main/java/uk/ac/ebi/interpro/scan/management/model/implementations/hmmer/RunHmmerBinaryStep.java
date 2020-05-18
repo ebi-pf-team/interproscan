@@ -151,7 +151,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 //        if (isSingleSeqMode()){
         forceHmmsearch = true;  // we will use hmmsearch until parsing for hmmscan output is implemenetd
         if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
-            Utilities.verboseLog("SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
+            Utilities.verboseLog(1100, "SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }else{
             command.add(this.getFullPathToBinary());
@@ -160,10 +160,10 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         //for panther only in the first place
         if (forceHmmsearch || Utilities.getSequenceCount() > 10){
             Utilities.setUseHmmsearch(true);
-            Utilities.verboseLog("Use Hmmsearch  " + getFullPathToHmmsearchBinary());
+            Utilities.verboseLog(1100, "Use Hmmsearch  " + getFullPathToHmmsearchBinary());
             command.add(this.getFullPathToHmmsearchBinary());
         }else{
-            Utilities.verboseLog("Use hmmscan  " + getFullPathToHmmScanBinary());
+            Utilities.verboseLog(1100, "Use hmmscan  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }
         command.addAll(this.getBinarySwitchesAsList());

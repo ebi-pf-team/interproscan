@@ -102,7 +102,7 @@ public class RunGetOrfParserStep extends RunBinaryStep {
         // No need for binary switches for now.
         //command.addAll(getBinarySwitchesAsList());
 
-        Utilities.verboseLog("RunGetOrfParserStep: " + getCommandBuilder(command));
+        Utilities.verboseLog(1100, "RunGetOrfParserStep: " + getCommandBuilder(command));
         return command;
     }
 }

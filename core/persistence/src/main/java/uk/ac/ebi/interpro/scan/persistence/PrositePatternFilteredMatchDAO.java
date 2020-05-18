@@ -39,7 +39,7 @@ public class PrositePatternFilteredMatchDAO
             for (ProSitePatternRawMatch rawMatch : rawProtein.getMatches()) {
 
                 SignatureModelHolder holder = modelAccessionToSignatureMap.get(rawMatch.getModelId());
-                Utilities.verboseLog("rawMatch.getModelId() : "+ rawMatch.getModelId() +  " SignatureModelHolder: " + holder);
+                Utilities.verboseLog(1100, "rawMatch.getModelId() : "+ rawMatch.getModelId() +  " SignatureModelHolder: " + holder);
                 Signature signature = holder.getSignature();
                 if(signatureLibrary == null) {
                     signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();

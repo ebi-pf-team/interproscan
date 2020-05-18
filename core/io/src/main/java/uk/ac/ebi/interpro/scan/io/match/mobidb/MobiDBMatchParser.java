@@ -124,18 +124,18 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                 lineNumber++;
                 LOGGER.debug("Line: " + line);
                 //id 80	99
-//                Utilities.verboseLog("Domain line: " + line);
+//                Utilities.verboseLog(1100, "Domain line: " + line);
                 Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line.trim());
 
                 if (matcher.matches()) {
-//                    Utilities.verboseLog("number of groups: " + matcher.groupCount());
+//                    Utilities.verboseLog(1100, "number of groups: " + matcher.groupCount());
                     sequenceIdentifier = matcher.group(1);
                     int locationStart = Integer.parseInt(matcher.group(2));
                     int locationEnd = Integer.parseInt(matcher.group(3));
                     String feature = matcher.group(4).trim();
                     if (! (feature.isEmpty() || feature == null)) {
                         String feature2 = feature;
-//                        Utilities.verboseLog("We have a feature  : " + feature2 + " " +
+//                        Utilities.verboseLog(1100, "We have a feature  : " + feature2 + " " +
 //                                sequenceIdentifier + " region: " + locationStart + "-" +  locationEnd);
                     }else{
                         feature = "";
@@ -145,11 +145,11 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
                             SignatureLibrary.MOBIDB_LITE, signatureLibraryRelease,
                             locationStart, locationEnd, feature));
-//                    Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
+//                    Utilities.verboseLog(110, "Match  : " + getLastElement(matches));
                 }
             }
         }
-        Utilities.verboseLog("MobiDB matches size : " + matches.size());
+        Utilities.verboseLog(1100, "MobiDB matches size : " + matches.size());
         return matches;
     }
 

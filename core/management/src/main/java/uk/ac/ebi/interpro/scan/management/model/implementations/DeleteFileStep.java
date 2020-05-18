@@ -51,7 +51,7 @@ public class DeleteFileStep extends Step {
         //check if we need to skip this step for this range
         if (job.getLibraryRelease() != null && checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " + key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " + key);
             return;
         }
 

@@ -202,7 +202,7 @@ public class WriteOutputStep extends Step {
             waitTimeFactor = Utilities.getWaitTimeFactorLogE(20 * Utilities.getSequenceCount()).intValue();
         }
         Utilities.sleep(waitTimeFactor * 1000);                 //1000 milliseconds is one second.
-        Utilities.verboseLog(10, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
+        Utilities.verboseLog(110, " WriteOutputStep - get proteins, waitTime - " + waitTimeFactor + " seconds");
 
         final String sequenceType = parameters.get(SEQUENCE_TYPE);
         if (sequenceType.equalsIgnoreCase("p")) {
@@ -213,7 +213,7 @@ public class WriteOutputStep extends Step {
         for (FileOutputFormat outputFormat : outputFormats) {
             Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
-                Utilities.verboseLog("Writing out " + outputPath.toString());
+                Utilities.verboseLog(1100, "Writing out " + outputPath.toString());
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
@@ -281,9 +281,9 @@ public class WriteOutputStep extends Step {
             LOGGER.info("Step with Id " + this.getId() + " finished.");
         }
         //set that this process has finished
-        Utilities.verboseLog("WriteOutput Step with Id " + this.getId() + " finished.");
+        Utilities.verboseLog(1100, "WriteOutput Step with Id " + this.getId() + " finished.");
         Utilities.setWriteOutputStepCompleted(true);
-        Utilities.verboseLog("writeOutputStepCompleted: " + Utilities.isWriteOutputStepCompleted());
+        Utilities.verboseLog(1100, "writeOutputStepCompleted: " + Utilities.isWriteOutputStepCompleted());
     }
 
     private void cleanUpWorkingDir(final String temporaryFileDirectory) {
@@ -296,7 +296,7 @@ public class WriteOutputStep extends Step {
             File file = new File(workingDirectory);
             try {
                 if (file.exists()) {
-                    Utilities.verboseLog(10, "temporaryFileDirectory exists, so delete: ");
+                    Utilities.verboseLog(110, "temporaryFileDirectory exists, so delete: ");
                     //Collection<File> filesToDelete = new HashSet<>(FileUtils.listFiles(file,null,true));
                     //Set <String> filenames = new HashSet<>();
                     //for (File fileToDelete : filesToDelete){
@@ -312,7 +312,7 @@ public class WriteOutputStep extends Step {
                 }
             } catch (IOException e) {
                 LOGGER.warn("At write output completion, unable to delete temporary directory " + file.getAbsolutePath());
-                Utilities.verboseLog(20,"WriteOutPut - ExceptionMessage: " + e.getMessage());
+                Utilities.verboseLog(120,"WriteOutPut - ExceptionMessage: " + e.getMessage());
                 //e.printStackTrace();
             }
         } else {
@@ -392,14 +392,14 @@ public class WriteOutputStep extends Step {
 
 
     private void outputToXML(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
-        Utilities.verboseLog(10, " WriteOutputStep - outputToXML " );
+        Utilities.verboseLog(110, " WriteOutputStep - outputToXML " );
         if (! sequenceType.equalsIgnoreCase("p")){
             outputNTToXML(outputPath, stepInstance, sequenceType, isSlimOutput);
             return;
         }
         IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
 
-        //Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
+        //Utilities.verboseLog(110, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
         //xmlWriter.writeMatches(outputPath, matchesHolder);
 
         Long bottomProteinId = stepInstance.getBottomProtein();
@@ -411,7 +411,7 @@ public class WriteOutputStep extends Step {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
-                Utilities.verboseLog(10, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
+                Utilities.verboseLog(110, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
                 int count = 0;
                 writer.header(interProScanVersion, "protein-matches");
                 final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
@@ -459,9 +459,9 @@ public class WriteOutputStep extends Step {
                         writer.write(","); // More proteins/nucleotide sequences to follow
                     }
                     for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
-                        Utilities.verboseLog(20, "OpenReadingFrame: " +  orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                        Utilities.verboseLog(120, "OpenReadingFrame: " +  orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
                         NucleotideSequence seq = orf.getNucleotideSequence();
-                        //Utilities.verboseLog("NucleotideSequence: \n" +  seq.toString());
+                        //Utilities.verboseLog(1100, "NucleotideSequence: \n" +  seq.toString());
                         if (seq != null) {
                             nucleotideSequences.add(seq);
                             writer.write(seq, sequenceType, isSlimOutput);
@@ -471,7 +471,7 @@ public class WriteOutputStep extends Step {
                     //print one protein then break
                     //break;
                 }
-                Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
+                Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
             }
             writer.close();
         }catch (JAXBException e){
@@ -488,10 +488,10 @@ public class WriteOutputStep extends Step {
         if (! sequenceType.equalsIgnoreCase("n")){
             return;
         }
-        Utilities.verboseLog(10, " WriteOutputStep - output NucleotideSequence  to XML " );
+        Utilities.verboseLog(110, " WriteOutputStep - output NucleotideSequence  to XML " );
         IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
 
-        //Utilities.verboseLog(10, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
+        //Utilities.verboseLog(110, " WriteOutputStep - outputToXML xml-slim? " + isSlimOutput);
         //xmlWriter.writeMatches(outputPath, matchesHolder);
 
         Long bottomProteinId = stepInstance.getBottomProtein();
@@ -503,7 +503,7 @@ public class WriteOutputStep extends Step {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
-                Utilities.verboseLog(10, " WriteOutputStep nucleotideSequences -XML new " + " There are " + topProteinId + " proteins.");
+                Utilities.verboseLog(110, " WriteOutputStep nucleotideSequences -XML new " + " There are " + topProteinId + " proteins.");
                 int count = 0;
                 writer.header(interProScanVersion, "nucleotide-sequence-matches");
 
@@ -517,11 +517,11 @@ public class WriteOutputStep extends Step {
                         //protein = proteinMarshalled;
                         orf.setProtein(proteinMarshalled);
                     }
-                    //Utilities.verboseLog("\n#" + count + " nucleotideSequence: " + nucleotideSequence.toString());
+                    //Utilities.verboseLog(1100, "\n#" + count + " nucleotideSequence: " + nucleotideSequence.toString());
                     writer.write(nucleotideSequence, sequenceType, isSlimOutput);
                 }
 
-                Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size() + " and count : " + count);
+                Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size() + " and count : " + count);
             }
             writer.close();
         }catch (JAXBException e){
@@ -534,10 +534,10 @@ public class WriteOutputStep extends Step {
 
 
     private void outputToJSON(Path outputPath, StepInstance stepInstance, String sequenceType, boolean isSlimOutput) throws IOException {
-        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON " );
+        Utilities.verboseLog(110, " WriteOutputStep - outputToJSON " );
         IMatchesHolder matchesHolder = getMatchesHolder(stepInstance, sequenceType, isSlimOutput);
 
-        Utilities.verboseLog(10, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
+        Utilities.verboseLog(110, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
         try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
             //old way??
             //writer.write(matchesHolder, proteinDAO, sequenceType, isSlimOutput);
@@ -562,7 +562,7 @@ public class WriteOutputStep extends Step {
                     if (LOGGER.isInfoEnabled()) {
                         LOGGER.info("Load " + topProteinId + " proteins from the db.");
                     }
-                    Utilities.verboseLog(10, " WriteOutputStep -JSON new " + " There are " + topProteinId + " proteins.");
+                    Utilities.verboseLog(110, " WriteOutputStep -JSON new " + " There are " + topProteinId + " proteins.");
                     int count = 0;
                     for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
                         String proteinKey = Long.toString(proteinIndex);
@@ -589,7 +589,7 @@ public class WriteOutputStep extends Step {
                         LOGGER.info("Load " + topProteinId + " proteins from the db.");
                     }
                     final Set<NucleotideSequence> nucleotideSequences = nucleotideSequenceDAO.getNucleotideSequences();
-                    Utilities.verboseLog(10, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
+                    Utilities.verboseLog(110, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
                     int count = 0;
 
                     for (NucleotideSequence nucleotideSequence :nucleotideSequences){
@@ -607,7 +607,7 @@ public class WriteOutputStep extends Step {
                         }
                     }
 
-                    Utilities.verboseLog("WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
+                    Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " +  nucleotideSequences.size());
                 }
                 writer.footer();
 
@@ -666,7 +666,7 @@ public class WriteOutputStep extends Step {
             final boolean includeTsvSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.INCLUDE_TSV_SITES));
             if (includeTsvSites) {
                 Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
-                Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
+                Utilities.verboseLog(1100, "tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
                     writeProteinMatches(tsvSitesWriter, stepInstance);
                 }
@@ -710,7 +710,7 @@ public class WriteOutputStep extends Step {
             final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
             if (!excludeSites) {
                 Path tsvProSitesPath = Paths.get(path.toString() + ".sites");
-                Utilities.verboseLog("tsv site path: " + tsvProSitesPath.getFileName().toString());
+                Utilities.verboseLog(1100, "tsv site path: " + tsvProSitesPath.getFileName().toString());
                 try (ProteinSiteMatchesTSVResultWriter tsvSitesWriter = new ProteinSiteMatchesTSVResultWriter(tsvProSitesPath)) {
 
                     writeProteinMatches(tsvSitesWriter, stepInstance);
@@ -824,7 +824,7 @@ public class WriteOutputStep extends Step {
     }
 
     private void writeProteinMatches(ProteinMatchesResultWriter writer, StepInstance stepInstance) throws IOException {
-        Utilities.verboseLog(10, " WriteOutputStep - outputToTSV-etc ");
+        Utilities.verboseLog(110, " WriteOutputStep - outputToTSV-etc ");
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
 
@@ -839,7 +839,7 @@ public class WriteOutputStep extends Step {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Load " + topProteinId + " proteins from the db.");
             }
-            Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + " There are " + topProteinId + " proteins.");
+            Utilities.verboseLog(110, " WriteOutputStep -tsv-etc " + " There are " + topProteinId + " proteins.");
             int count = 0;
             for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
                 String proteinKey = Long.toString(proteinIndex);
@@ -850,14 +850,14 @@ public class WriteOutputStep extends Step {
                 writer.write(protein);
                 count++;
                 if (count % 40000 == 0) {
-                    Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins");
+                    Utilities.verboseLog(110, " WriteOutout - wrote out matches for " + count + " proteins");
                 }
             }
         }
     }
 
     private void writeGraphicalProteinMatches(GraphicalOutputResultWriter writer, StepInstance stepInstance) throws IOException {
-        Utilities.verboseLog(10, " WriteOutputStep - outputToTSV-etc ");
+        Utilities.verboseLog(110, " WriteOutputStep - outputToTSV-etc ");
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
 
@@ -865,7 +865,7 @@ public class WriteOutputStep extends Step {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Load " + topProteinId + " proteins from the db.");
             }
-            Utilities.verboseLog(10, " WriteOutputStep -tsv-etc " + " There are " + topProteinId + " proteins.");
+            Utilities.verboseLog(110, " WriteOutputStep -tsv-etc " + " There are " + topProteinId + " proteins.");
             int count = 0;
             for (Long proteinIndex= bottomProteinId;proteinIndex <= topProteinId; proteinIndex ++){
                 String proteinKey = Long.toString(proteinIndex);
@@ -876,7 +876,7 @@ public class WriteOutputStep extends Step {
                 writer.write(protein, entryHierarchy);
                 count++;
                 if (count % 40000 == 0) {
-                    Utilities.verboseLog(10, " WriteOutout - wrote out matches for " + count + " proteins");
+                    Utilities.verboseLog(110, " WriteOutout - wrote out matches for " + count + " proteins");
                 }
             }
         }

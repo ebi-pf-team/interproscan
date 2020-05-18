@@ -57,7 +57,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
-                    Utilities.verboseLog(10, "ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
+                    Utilities.verboseLog(110, "ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
                     statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
 
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
@@ -77,7 +77,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     LOGGER.debug("Received FAILED_JOB");
                 }
                 statsUtil.updateLastMessageReceivedTime();
-                Utilities.verboseLog(10, "ResponseMonitorImpl onMessage completed for : " + message.getJMSMessageID());
+                Utilities.verboseLog(110, "ResponseMonitorImpl onMessage completed for : " + message.getJMSMessageID());
             }
             if (! canHandle){
                 LOGGER.error("Master: received a message that I don't know how to handle.");

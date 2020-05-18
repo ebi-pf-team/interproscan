@@ -178,7 +178,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                     }
                     pantherFamilies ++;
                     result.put(familyId, familyName);
-                    Utilities.verboseLog("familyId: " +familyId + " familyName: " + familyName);
+                    Utilities.verboseLog(1100, "familyId: " +familyId + " familyName: " + familyName);
                 } else {
                     LOGGER.warn("Unexpected start of line: " + line);
                 }
@@ -199,7 +199,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             LOGGER.info(result.size() + " entries created in the map.");
         }
 
-        Utilities.verboseLog("pantherFamilies #: " + pantherFamilies);
+        Utilities.verboseLog(1100, "pantherFamilies #: " + pantherFamilies);
         return result;
     }
 

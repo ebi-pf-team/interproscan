@@ -142,7 +142,7 @@ abstract public class RunBinaryStep extends Step {
         //do we need to skip
         if (job.getLibraryRelease() != null && checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId()  + " -- " + key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId()  + " -- " + key);
             return;
         }
 

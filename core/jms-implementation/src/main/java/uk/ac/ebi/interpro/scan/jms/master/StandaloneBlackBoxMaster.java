@@ -47,16 +47,16 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
 
         int runStatus = 11;
-        if(verboseLog) {
-            Utilities.verboseLog("DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
-            Utilities.verboseLog("DEBUG " + "Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
+        if(verboseLogLevel >= 110) {
+            Utilities.verboseLog(110, "DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
+            Utilities.verboseLog(110, "DEBUG " + "Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
 
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog(10, "temp dir: " + getWorkingTemporaryDirectoryPath());
+            Utilities.verboseLog(110, "temp dir: " + getWorkingTemporaryDirectoryPath());
         }
 
-        Utilities.verboseLog("Old values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+        Utilities.verboseLog(110, "Old values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         //if user has specified CPU value
 
@@ -72,7 +72,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 //            }
             workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog("minNumberOfCPUCores: " + minNumberOfCPUCores
+            Utilities.verboseLog(1100, "minNumberOfCPUCores: " + minNumberOfCPUCores
                     + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
         }else{
             //set the minconsumercount to value given by user in the properties file
@@ -91,19 +91,19 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
 
 
-        Utilities.verboseLog("New values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
+        Utilities.verboseLog(1100, "New values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
                 + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
                 + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
                 + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
 
         workerQueueJmsContainer.shutdown();
         if(! workerQueueJmsContainer.isRunning()){
-            Utilities.verboseLog(" the workerQueueJmsContainer is shutdown ...");
+            Utilities.verboseLog(1100, " the workerQueueJmsContainer is shutdown ...");
         }
         workerQueueJmsContainer.afterPropertiesSet();
         workerQueueJmsContainer.start();
 
-        Utilities.verboseLog("After Stop Start --- inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
+        Utilities.verboseLog(1100, "After Stop Start --- inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers()
                 + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
                 + " schedlued: " + workerQueueJmsContainer.getScheduledConsumerCount()
                 + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
@@ -185,7 +185,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         }
                         //if inteproscan is onthe last step, watermark this point
                         if (step instanceof WriteOutputStep) {
-                            Utilities.verboseLog("Processing WriteOutputStep ..." );
+                            Utilities.verboseLog(1100, "Processing WriteOutputStep ..." );
                             StatsUtil.setForceDisplayProgress(true);
                             statsUtil.displayMasterProgress();
                             StatsUtil.setForceDisplayProgress(false);
@@ -206,7 +206,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         statsUtil.addToAllAvailableJobs(stepInstance, "considered");
                     }
                 }
-                //Utilities.verboseLog("runStatus:" + runStatus);
+                //Utilities.verboseLog(1100, "runStatus:" + runStatus);
                 //check what is not completed
                 long totalStepInstances = stepInstanceDAO.count();
                 int totalUnfinishedStepInstances = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
@@ -220,9 +220,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                     controlledLogging = true;
                 }
-//                Utilities.verboseLog("Total StepInstances: " + totalStepInstances +
+//                Utilities.verboseLog(1100, "Total StepInstances: " + totalStepInstances +
 //                        ", left to run: " + totalUnfinishedStepInstances);
-//                Utilities.verboseLog("MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
+//                Utilities.verboseLog(1100, "MaxConcurrentConsumers: " + workerQueueJmsContainer.getMaxConcurrentConsumers()
 //                       + " min ConsumerCount: " + workerQueueJmsContainer.getConcurrentConsumers()
 //                        +  " ActiveConsumerCount: " + workerQueueJmsContainer.getActiveConsumerCount()
 //                         +  " ScheduledConsumerCount: " + workerQueueJmsContainer.getScheduledConsumerCount());
@@ -249,7 +249,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         && totalStepInstances > stepInstancesCreatedByLoadStep
                         && totalStepInstances >= minimumStepsExpected
                         && writeOutputStepCompleted) {
-                    Utilities.verboseLog("stepInstanceDAO.count() " + totalStepInstances
+                    Utilities.verboseLog(1100, "stepInstanceDAO.count() " + totalStepInstances
                             + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                             + " minimumStepsExpected : " + minimumStepsExpected
                             + " SubmittedStepInstancesCount : " + submittedStepInstancesCount
@@ -262,27 +262,27 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         && totalUnfinishedStepInstances == 0
                         && writeOutputStepCompleted) {
                     if(allowedWaitTimeMultiplier % 25 == 0) {
-                        Utilities.verboseLog("Should be finished: stepInstanceDAO.count() " + totalStepInstances
+                        Utilities.verboseLog(1100, "Should be finished: stepInstanceDAO.count() " + totalStepInstances
                                 + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                 + " minimumStepsExpected : " + minimumStepsExpected
                                 + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
                                 + " unfinishedSteps " + totalUnfinishedStepInstances);
                     }
                     if (totalStepInstances > stepInstancesCreatedByLoadStep){
-                        //Utilities.verboseLog("chances are all the steps have been completed, so wait for five second then break");
+                        //Utilities.verboseLog(1100, "chances are all the steps have been completed, so wait for five second then break");
                         allowedWaitTimeMultiplier ++;
                     }else{
-                        Utilities.verboseLog("Should be finished: ...but rest");
+                        Utilities.verboseLog(1100, "Should be finished: ...but rest");
                         allowedWaitTimeMultiplier = 0;
                     }
 
                     if (allowedWaitTimeMultiplier > 50){
-                        Utilities.verboseLog("chances are all the steps have been completed, so wait for five second then break .. allowedWaitTimeMultiplier" + allowedWaitTimeMultiplier);
+                        Utilities.verboseLog(1100, "chances are all the steps have been completed, so wait for five second then break .. allowedWaitTimeMultiplier" + allowedWaitTimeMultiplier);
                         break;
                     }
                 }
 //                if(writeOutputStepCompleted){
-//                    Utilities.verboseLog("2 Should be finished: stepInstanceDAO.count() " + totalStepInstances
+//                    Utilities.verboseLog(1100, "2 Should be finished: stepInstanceDAO.count() " + totalStepInstances
 //                            + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
 //                            + " minimumStepsExpected : " + minimumStepsExpected
 //                            + " SubmittedStepInstancesCount : " + submittedStepInstancesCount

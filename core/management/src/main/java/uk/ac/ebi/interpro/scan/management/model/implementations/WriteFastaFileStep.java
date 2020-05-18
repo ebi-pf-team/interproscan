@@ -70,7 +70,7 @@ public class WriteFastaFileStep extends Step {
 
         try {
             if (doRunLocally || (!useMatchLookupService)) {
-                Utilities.verboseLog(10, this.getId() + " GetAllSequences: doRunLocally: " + doRunLocally + " useMatchLookupService: " + useMatchLookupService);
+                Utilities.verboseLog(110, this.getId() + " GetAllSequences: doRunLocally: " + doRunLocally + " useMatchLookupService: " + useMatchLookupService);
                 proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             } else {
                 //TODO this is getting completed to filter nonlookup up proteins
@@ -93,7 +93,7 @@ public class WriteFastaFileStep extends Step {
                 }
                 long maxProteins = topProtein - bottomProtein;
 
-                Utilities.verboseLog(10, stepInstance.getStepId() + "[" + bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " + count + " of possible " + (maxProteins + 1));
+                Utilities.verboseLog(110, stepInstance.getStepId() + "[" + bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " + count + " of possible " + (maxProteins + 1));
 
                 //deal with cases where there is no sequence in this range
                 if (count == 0) {

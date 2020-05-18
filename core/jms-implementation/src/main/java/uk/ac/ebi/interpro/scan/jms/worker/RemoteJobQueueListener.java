@@ -106,7 +106,7 @@ public class RemoteJobQueueListener implements MessageListener {
             workerState.addNonFinishedJob(message);
             int consumerCount = statsUtil.getRequestQueueConsumerCount();
             if (consumerCount > 0 && jobCount % consumerCount == 0){
-                Utilities.verboseLog("RemoteRequestQueue - Jobs sent on this queue: " + jobCount);
+                Utilities.verboseLog(1100, "RemoteRequestQueue - Jobs sent on this queue: " + jobCount);
             }
             //check the size of the queue
             if(gridThrottle){
@@ -119,7 +119,7 @@ public class RemoteJobQueueListener implements MessageListener {
                 if (jobCount % (stepCountCheck * 2) == 0) { //ideally number of workers * 2
                     //still have some control on the rate of messages being received
                     //implement a property in statsutil which captures number of consumers on the queue
-                    Utilities.verboseLog("RemoteRequestQueue - Sleep for 10s - Jobs sent on this queue: " + jobCount
+                    Utilities.verboseLog(1100, "RemoteRequestQueue - Sleep for 10s - Jobs sent on this queue: " + jobCount
                             + " unfinihsed jobs: " + statsUtil.getUnfinishedJobs()
                             + " and consumerCount = " + consumerCount);
                     Thread.sleep(10 * 1000);

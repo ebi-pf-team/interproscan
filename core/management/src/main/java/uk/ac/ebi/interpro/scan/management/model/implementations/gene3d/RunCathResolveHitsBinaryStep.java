@@ -83,11 +83,11 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
 
         if (forceHmmsearch || Utilities.getSequenceCount() > 10){
             //use hmmsearch output
-            Utilities.verboseLog("Use Hmmsearch  ");
+            Utilities.verboseLog(1100, "Use Hmmsearch  ");
             command.add("--input-format=hmmsearch_out");
         }else{
             //use hmmscan output
-            Utilities.verboseLog("Use hmmscan  ");
+            Utilities.verboseLog(1100, "Use hmmscan  ");
             command.add("--input-format=hmmscan_out");
         }
         command.add("--hits-text-to-file");

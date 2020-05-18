@@ -94,7 +94,7 @@ public class ParseSmartHmmpfamOutputStep extends Step {
                 int matchesFound = 0;
                 int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
                 if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
                     String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
                     while (matchesFound < count) {
                         Utilities.sleep(waitTimeFactor * 1000);
@@ -102,17 +102,17 @@ public class ParseSmartHmmpfamOutputStep extends Step {
                                 stepInstance.getTopProtein(), signatureLibraryRelease).size();
                         if (matchesFound < count) {
                             LOGGER.warn("Raw matches not yet committed - sleep for 5 seconds , count: " + count);
-                            Utilities.verboseLog("Raw matches not yet committed - sleep for "
+                            Utilities.verboseLog(1100, "Raw matches not yet committed - sleep for "
                                     + waitTimeFactor + " seconds, matches found: " + matchesFound
                                     + " matchesCount expected: " + count);
                         }
                     }
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog(1100, "Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog(1100, "ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
                         + " time taken: " + timeTaken);
             }
         }

@@ -66,8 +66,8 @@ public class CathResolveHitsOutputParser {
                 reader.close();
             }
         }
-        Utilities.verboseLog(10, "CathResolverRecord set count (distinct keys) : " + cathResolverRecordMap.values().size());
-        Utilities.verboseLog(10, "CathResolverRecord count : " + recordCount);
+        Utilities.verboseLog(110, "CathResolverRecord set count (distinct keys) : " + cathResolverRecordMap.values().size());
+        Utilities.verboseLog(110, "CathResolverRecord count : " + recordCount);
         LOGGER.debug(" domtbl domain count : " + cathResolverRecordMap.values().size());
 
         return cathResolverRecordMap;

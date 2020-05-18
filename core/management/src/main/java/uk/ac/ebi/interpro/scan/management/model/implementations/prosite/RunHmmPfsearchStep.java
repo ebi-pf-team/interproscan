@@ -162,7 +162,7 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
 
 //        command.add(fastaFilePathName);
         LOGGER.debug("binary command: " + command.toString());
-        Utilities.verboseLog(10,  "binary command: " + command.toString());
+        Utilities.verboseLog(110,  "binary command: " + command.toString());
         return command;
     }
 }

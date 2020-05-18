@@ -78,7 +78,7 @@ public class MonitorQueueMessageListenerImpl implements MessageListener {
                     unfinishedSteps.addAll(worker.getNonFinishedJobs().values());
                 }
             }
-            Utilities.verboseLog("MonitorQueueMessageListenerImpl: total remote steps submitted: " + totalSteps
+            Utilities.verboseLog(1100, "MonitorQueueMessageListenerImpl: total remote steps submitted: " + totalSteps
                     + " remote steps left: " + unfinishedStepsCount );
             if(timeSinceLastStepsDisplay > 120 * 60 * 1000){
                 LOGGER.debug("MonitorQueueMessageListenerImpl: steps still running ");

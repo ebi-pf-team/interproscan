@@ -32,7 +32,7 @@ public class JMSExceptionListener implements ExceptionListener {
     }
 
     public synchronized void onException(JMSException e) {
-        Utilities.verboseLog("JMSExceptionListener-  JMSExceptions thrown : " + e);
+        Utilities.verboseLog(1100, "JMSExceptionListener-  JMSExceptions thrown : " + e);
         timePreviousExceptionReceived = System.currentTimeMillis();
         if(exceptionCount == 0){
             timeFirstException = System.currentTimeMillis();

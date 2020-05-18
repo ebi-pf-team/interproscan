@@ -61,8 +61,8 @@ public class PhobiusFilteredMatchDAO extends FilteredMatchDAOImpl<PhobiusRawMatc
 
         Map<PhobiusFeatureType, Signature> featureTypeToSignatureMap = loadPersistedSignatures();
 
-        Utilities.verboseLog("protein size: " + filteredProteins.size());
-        Utilities.verboseLog("featureTypeToSignatureMap size: " + featureTypeToSignatureMap.size());
+        Utilities.verboseLog(1100, "protein size: " + filteredProteins.size());
+        Utilities.verboseLog(1100, "featureTypeToSignatureMap size: " + featureTypeToSignatureMap.size());
         for (RawProtein<PhobiusRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             Set<Match> proteinMatches = new HashSet();
@@ -79,11 +79,11 @@ public class PhobiusFilteredMatchDAO extends FilteredMatchDAOImpl<PhobiusRawMatc
 //                if (signature == null){
 //                    LOGGER.warn("signature is NULL");
 //                }
-//                Utilities.verboseLog("Phobius match - seqId: " + rawMatch.getSequenceIdentifier() +
+//                Utilities.verboseLog(1100, "Phobius match - seqId: " + rawMatch.getSequenceIdentifier() +
 //                        " signature: " + signature.getAccession() + " lib: " + signature.getSignatureLibraryRelease().getLibrary().getName() +
 //                        " start: " + rawMatch.getLocationStart() +
 //                        " end: " + rawMatch.getLocationEnd());
-//                Utilities.verboseLog("match: " + match);
+//                Utilities.verboseLog(1100, "match: " + match);
                 proteinMatches.add(match);
             }
             if(! proteinMatches.isEmpty()) {

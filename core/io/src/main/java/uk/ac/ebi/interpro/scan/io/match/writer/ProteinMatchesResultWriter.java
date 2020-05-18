@@ -76,7 +76,7 @@ public abstract class ProteinMatchesResultWriter implements ProteinMatchesWriter
         for (ProteinXref crossReference : crossReferences) {
             String identifier = crossReference.getIdentifier();
             String displayName = identifier;
-            Utilities.verboseLog("proteinSequence: " + proteinSequence);
+            Utilities.verboseLog(1100, "proteinSequence: " + proteinSequence);
             if (! proteinSequence) {
                 String proteinName = crossReference.getName();
                 String source = XrefParser.getSource(proteinName);

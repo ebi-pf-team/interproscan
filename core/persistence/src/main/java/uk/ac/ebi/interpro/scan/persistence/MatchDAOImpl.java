@@ -95,8 +95,8 @@ public class MatchDAOImpl extends GenericKVDAOImpl<Match> implements MatchDAO<Ma
             LOGGER.error("Problem - key: " + dbStore.asString(key));
 //                    + " math or matchSet " + dbStore.(match).toString());
         }else {
-            //Utilities.verboseLog("Try1 key: " + (String) SerializationUtils.deserialize( key));
-            //Utilities.verboseLog("Try1 match: " + ((HashSet<Match>) SerializationUtils.deserialize( match)));
+            //Utilities.verboseLog(1100, "Try1 key: " + (String) SerializationUtils.deserialize( key));
+            //Utilities.verboseLog(1100, "Try1 match: " + ((HashSet<Match>) SerializationUtils.deserialize( match)));
             dbStore.put(key, match);
 
         }

@@ -123,7 +123,7 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
 //            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(upperMD5);
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(upperMD5);
             if (kvSequenceEntryXML == null){
-                Utilities.verboseLog(10, "For this batch, calculate the matches locally - md5 =  " + upperMD5);
+                Utilities.verboseLog(110, "For this batch, calculate the matches locally - md5 =  " + upperMD5);
                 return null;
             }
 
@@ -133,7 +133,7 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
                 lookupTimeMillis = timetaken / 1000000;
             }
 
-            Utilities.verboseLog(10, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(110, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
 
@@ -143,9 +143,9 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
                 boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
                 KVSequenceEntryXML kvSitesSequenceEntryXML = null;
                 if(includeCDDorSFLD){
-                    Utilities.verboseLog("lookup Sites ... ");
+                    Utilities.verboseLog(1100, "lookup Sites ... ");
                     kvSitesSequenceEntryXML = getSitesFromLookup(upperMD5);
-                    Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
+                    Utilities.verboseLog(1100, "lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
                 }
                 lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
             }
@@ -201,30 +201,30 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
                 md5s[i++] = md5Upper;
                 precalculatedProteins.add(md5ToProteinMap.get(md5Upper));
             }
-//            Utilities.verboseLog(10, "precalculatedProteins: "+ precalculatedProteins.toString());
+//            Utilities.verboseLog(110, "precalculatedProteins: "+ precalculatedProteins.toString());
             Long startTime = null;
             startTime = System.nanoTime();
 
             lookupMessageStatus = "Get matches of proteins analysed previously";
 //            final KVSequenceEntryXML kvSequenceEntryXML = preCalcMatchClient.getMatches(md5s);
             final KVSequenceEntryXML kvSequenceEntryXML = getMatchesFromLookup(md5s);
-//            Utilities.verboseLog(10, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
+//            Utilities.verboseLog(110, "berkeleyMatchXML: " +berkeleyMatchXML.getMatches().toString());
 
             //if null is returned from the lookupmatch then may need to be calculated
             if (kvSequenceEntryXML == null){
-                Utilities.verboseLog(10, "For this batch, calculate the matches locally - analysedMd5s.size =  " + analysedMd5s.size());
-                Utilities.verboseLog(10, "totalLookedup though: " +  totalLookedup);
+                Utilities.verboseLog(110, "For this batch, calculate the matches locally - analysedMd5s.size =  " + analysedMd5s.size());
+                Utilities.verboseLog(110, "totalLookedup though: " +  totalLookedup);
                 return Collections.emptySet();
 	        }
             totalLookedup =	totalLookedup + analysedMd5s.size();
-            Utilities.verboseLog(10, "totalLookedup: " +  totalLookedup);
+            Utilities.verboseLog(110, "totalLookedup: " +  totalLookedup);
             long timetaken = System.nanoTime() - startTime;
             long lookupTimeMillis = 0;
             if (timetaken > 0) {
                 lookupTimeMillis = timetaken / 1000000;
             }
 
-            Utilities.verboseLog(10, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(110, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
@@ -234,17 +234,17 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
             boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
             KVSequenceEntryXML kvSitesSequenceEntryXML = null;
             if(includeCDDorSFLD){
-                Utilities.verboseLog("lookup Sites ... ");
+                Utilities.verboseLog(1100, "lookup Sites ... ");
                 kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
-                Utilities.verboseLog("lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
+                Utilities.verboseLog(1100, "lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
             }
             if (isAnalysisVersionConsistent(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap)) {
-//                Utilities.verboseLog(10, "Analysis versions ARE Consistent" );
+//                Utilities.verboseLog(110, "Analysis versions ARE Consistent" );
                 lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
-                Utilities.verboseLog(10, "Analysis versions NOT Consistent");
+                Utilities.verboseLog(110, "Analysis versions NOT Consistent");
                 return null;
             }
             timetaken = System.nanoTime() - startTime;
@@ -252,7 +252,7 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
             if (timetaken > 0) {
                 lookupTimeMillis = timetaken / 1000000;
             }
-            Utilities.verboseLog(10, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(110, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             return precalculatedProteins;
 

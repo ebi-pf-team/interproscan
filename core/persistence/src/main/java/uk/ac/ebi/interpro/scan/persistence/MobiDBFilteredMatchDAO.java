@@ -62,7 +62,7 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
                 Signature signature = loadPersistedSignature();
 //                Utilities.verboseLog(rawMatch.toString());
                 MobiDBMatch match = buildMatch(signature, rawMatch);
-//                Utilities.verboseLog("MobiDb match:" + match.toString());
+//                Utilities.verboseLog(1100, "MobiDb match:" + match.toString());
                 proteinMatches.add(match);
                 //entityManager.persist(match);
                 if(signatureLibraryKey == null) {
@@ -111,7 +111,7 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
         final Query query = entityManager.createQuery("select s from Signature s where s.signatureLibraryRelease = :release");
         query.setParameter("release", release);
         @SuppressWarnings("unchecked") List<Signature> retrievedSignatures = query.getResultList();
-//        Utilities.verboseLog("retrievedSignatures size: " + retrievedSignatures.size());
+//        Utilities.verboseLog(1100, "retrievedSignatures size: " + retrievedSignatures.size());
 
         if (retrievedSignatures.size() == 0) {
             // The Signature record does not exist yet, so create it.

@@ -141,7 +141,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
         //System.out.println("");
         //bufferedWriter.close();
 
-        Utilities.verboseLog(20, "Format the xML file --");
+        Utilities.verboseLog(120, "Format the xML file --");
         Transformer transformer = null;
 
         try {
@@ -168,10 +168,10 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
 
             Path sourcePath = Paths.get(newPathName);
             Path targetPath = Paths.get(xmlPath.toAbsolutePath().toString());
-            Utilities.verboseLog(20,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
+            Utilities.verboseLog(120,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
                     + " - with - " + targetPath.toAbsolutePath().toString());
             Files.move(sourcePath, targetPath, REPLACE_EXISTING);
-            Utilities.verboseLog(20,"Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
+            Utilities.verboseLog(120,"Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
                     "                    - with - " + targetPath.toAbsolutePath().toString());
 
         } catch (TransformerConfigurationException e) {

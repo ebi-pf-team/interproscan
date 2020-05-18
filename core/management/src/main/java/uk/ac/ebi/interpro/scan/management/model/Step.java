@@ -234,7 +234,7 @@ public abstract class Step implements BeanNameAware {
     protected boolean checkIfDoSkipRun(Long bottomProtein, Long topProtein){
         String key = getKey(bottomProtein, topProtein);
 
-        Utilities.verboseLog("check SkipRange key: " + key );
+        Utilities.verboseLog(1100, "check SkipRange key: " + key );
 
         if (job.getSkipRunRanges().contains(key)){
             return true;

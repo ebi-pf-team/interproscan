@@ -143,10 +143,10 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
             }
 
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-            //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+            //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey);
 
             if (! proteinMatches.isEmpty()) {
-                //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
                 for(Match i5Match: proteinMatches){
                     //try update with cross refs etc
                     updateMatch(i5Match);
