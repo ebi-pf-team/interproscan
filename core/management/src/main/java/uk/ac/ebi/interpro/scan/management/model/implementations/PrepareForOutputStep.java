@@ -82,7 +82,7 @@ public class PrepareForOutputStep extends Step {
         int proteinRawCount = 0;
         Protein exampleProtein = null;
 
-        printMemoryUsage("at start of preparing  " + + (topProteinId - bottomProteinId) + " proteins");
+        printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
 
 
         try {
@@ -298,6 +298,7 @@ public class PrepareForOutputStep extends Step {
         Long topProteinId = stepInstance.getTopProtein();
         Long proteinsConsidered = topProteinId - bottomProteinId;
 
+        String proteinRange = "[" + stepInstance.getBottomProtein() + "_" + stepInstance.getTopProtein() + "]";
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Load " + topProteinId + " proteins from the db.");
@@ -332,7 +333,7 @@ public class PrepareForOutputStep extends Step {
 
 
             if (proteinIndex == middleProtein) {
-                printMemoryUsage("at midpoint preparing  " + + (topProteinId - bottomProteinId) + " proteins");
+                printMemoryUsage("at midpoint preparing  " + proteinRange + " proteins");
             }
 
             for (String signatureLibraryName : signatureLibraryNames) {
