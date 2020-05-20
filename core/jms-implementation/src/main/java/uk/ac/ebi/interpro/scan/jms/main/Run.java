@@ -697,11 +697,10 @@ public class Run extends AbstractI5Runner {
                 bbMaster.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
             }
 
-            //for this version always have precalc off
-            //if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
-            bbMaster.disablePrecalc();
-            
-            // }
+            //
+            if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
+                bbMaster.disablePrecalc();
+            }
 
             // Exclude sites from output?
             final boolean includeTsvSites = parsedCommandLine.hasOption(I5Option.ENABLE_TSV_RESIDUE_ANNOT.getLongOpt());
