@@ -37,9 +37,9 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
         try {
             setKVDBStore(levelDBStorePath, dbName, dbType);
             this.levelDBStore = factory.open(new File(levelDBStorePath), options);
-            Utilities.verboseLog(10,"Configured this LevelDb Store: " + levelDBStorePath);
+            Utilities.verboseLog(110,"Configured this LevelDb Store: " + levelDBStorePath);
             //System.out.println("Configured this LevelDb Store: " + levelDBStorePath);
-            Utilities.verboseLog(10, toString());
+            Utilities.verboseLog(110, toString());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -119,7 +119,7 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
             Map.Entry<byte[], byte[]> entry = iterator.next();
             allElements.put(entry.getKey(), entry.getValue());
         }
-        //Utilities.verboseLog(" Number of elements " + count);
+        //Utilities.verboseLog(1100, " Number of elements " + count);
         try {
             iterator.close();
         } catch (Exception e) {

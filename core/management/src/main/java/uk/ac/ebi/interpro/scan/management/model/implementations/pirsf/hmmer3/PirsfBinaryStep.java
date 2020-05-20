@@ -136,20 +136,20 @@ public class PirsfBinaryStep extends RunBinaryStep {
         command.add("--tmpdir");
         String tempdir = getAbsoluteAnalysisTempDirPath(temporaryFileDirectory, batchTemplate);
         command.add(tempdir);
-        Utilities.verboseLog("tempdir for PIRSF : " + tempdir);
+        Utilities.verboseLog(1100, "tempdir for PIRSF : " + tempdir);
         command.add("--mode");
         if (forceHmmsearch || Utilities.getSequenceCount() > 10 ) {
             command.add("hmmsearch");
-            Utilities.verboseLog("PIRSF postprocess use hmmsearch output");
+            Utilities.verboseLog(1100, "PIRSF postprocess use hmmsearch output");
         }else{
             command.add("hmmscan");
-            Utilities.verboseLog("PIRSF postprocess use hmmscan output");
+            Utilities.verboseLog(1100, "PIRSF postprocess use hmmscan output");
         }
 
         // Arguments
         command.addAll(this.getBinarySwitchesAsList());
 
-        Utilities.verboseLog("PIRSF binary cmd to run: " + command.toString());
+        Utilities.verboseLog(1100, "PIRSF binary cmd to run: " + command.toString());
         return command;
     }
 }

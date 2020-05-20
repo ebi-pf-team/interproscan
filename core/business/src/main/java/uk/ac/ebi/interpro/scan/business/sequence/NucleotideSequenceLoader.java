@@ -59,7 +59,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
                 for (String crossReference : crossReferences) {
                     NucleotideSequenceXref xref = XrefParser.getNucleotideSequenceXref(crossReference);
                     nucleotideSequence.addCrossReference(xref);
-                    Utilities.verboseLog("nucleotideSequenceXref: " + xref);
+                    Utilities.verboseLog(1100, "nucleotideSequenceXref: " + xref);
                 }
             } else {
                 LOGGER.error("Have a nucleotide sequence with no associated Xrefs.  There must be at least one xref associated with the nucleotide sequence");
@@ -83,7 +83,7 @@ public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequen
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + sequencesAwaitingInsertion.size() + " nucleotide sequences");
             }
-            Utilities.verboseLog("Persisting " + sequencesAwaitingInsertion.size()  + " nucleotide sequences");
+            Utilities.verboseLog(1100, "Persisting " + sequencesAwaitingInsertion.size()  + " nucleotide sequences");
 
             nucleotideSequenceDAO.insertNewNucleotideSequences(sequencesAwaitingInsertion);
             sequencesAwaitingInsertion.clear();

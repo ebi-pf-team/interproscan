@@ -51,7 +51,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
         int proteinCount = 0;
         int matchCount = 0;
         int sfBatchSize = 3000;
-        Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO: Start to persist " + filteredProteins.size() + " filteredProteins,");
+        Utilities.verboseLog(1100, "SuperFamilyHmmer3FilteredMatchDAO: Start to persist " + filteredProteins.size() + " filteredProteins,");
 
         for (RawProtein<SuperFamilyHmmer3RawMatch> rawProtein : filteredProteins) {
             proteinCount++;
@@ -133,7 +133,7 @@ public class SuperFamilyHmmer3FilteredMatchDAOImpl extends FilteredMatchDAOImpl<
                     LOGGER.debug("superfamily match: " + match);
                     LOGGER.debug("Protein with match: " + protein);
                 }
-//                Utilities.verboseLog("SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getSignature()
+//                Utilities.verboseLog(1100, "SuperFamilyHmmer3FilteredMatchDAO:" + "superfamily match: " + match.getSignature()
 //                        + "locations size: " + match.getLocations().size()
 //                        + " \nProtein with match: " + protein.getId());
 

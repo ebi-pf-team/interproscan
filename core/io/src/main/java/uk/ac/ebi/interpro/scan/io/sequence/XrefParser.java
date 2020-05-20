@@ -78,7 +78,7 @@ public class XrefParser {
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
             } */
-            Utilities.verboseLog("getNucleotideSequenceXref: " + crossReference);
+            Utilities.verboseLog(1100, "getNucleotideSequenceXref: " + crossReference);
             return stripUniqueIdentifierAndTrimForNucleotideSeq(crossReference);
         }
         return null;
@@ -128,15 +128,15 @@ public class XrefParser {
             String originalHeaderName = crossReference.trim();
 
             if (matcher.find()) {
-                //Utilities.verboseLog("MATCHES GETORF_HEADER_PATTERN");
-                //Utilities.verboseLog("originalHeaderName: " + originalHeaderName + " and now xref-id : " + matcher.group(1));
+                //Utilities.verboseLog(1100, "MATCHES GETORF_HEADER_PATTERN");
+                //Utilities.verboseLog(1100, "originalHeaderName: " + originalHeaderName + " and now xref-id : " + matcher.group(1));
                 return new ProteinXref(null, matcher.group(1), originalHeaderName, matcher.group(2));
             }
 
 	        // this eventually should be the only way to parse the header
             if (originalHeaderName.length() > 1) {
                 //Test using the header
-                //Utilities.verboseLog("originalHeaderName: " + originalHeaderName);
+                //Utilities.verboseLog(1100, "originalHeaderName: " + originalHeaderName);
                 return stripUniqueIdentifierAndTrimForProteinSeqDefault(originalHeaderName);
             }
 
@@ -282,7 +282,7 @@ public class XrefParser {
         final Matcher sourceMatcher = ESLTRANSLATE_HEADER_SOURCE_PATTERN.matcher(identifier.trim());
         if (sourceMatcher.find()) {
             String source = sourceMatcher.group(1);
-            Utilities.verboseLog("nucleotide source: " + source + " original string: " + identifier);
+            Utilities.verboseLog(1100, "nucleotide source: " + source + " original string: " + identifier);
             return source.trim();
         }
         return identifier;
@@ -297,7 +297,7 @@ public class XrefParser {
             String length = sourceMatcher.group(3);
             String frame = sourceMatcher.group(4);
             String moreDesc = sourceMatcher.group(5);
-            Utilities.verboseLog(20, "identifier: " + name +
+            Utilities.verboseLog(120, "identifier: " + name +
                     " source: " + source +
                     " coords: " + coords +
                     " length: " + length +

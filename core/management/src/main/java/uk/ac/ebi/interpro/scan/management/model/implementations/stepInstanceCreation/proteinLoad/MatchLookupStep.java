@@ -118,7 +118,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
         proteinRanges.put("bottom", bottomProtein);
         proteinRanges.put("top", topProtein);
 
-        Utilities.verboseLog(10, " Match Lookup Step  [" + bottomProtein + "-" + topProtein + "] - starting ");
+        Utilities.verboseLog(110, " Match Lookup Step  [" + bottomProtein + "-" + topProtein + "] - starting ");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Match Lookup Step (" + bottomProtein + "-" + topProtein + ")");
         }
@@ -154,7 +154,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
                 }
-                Utilities.verboseLog(20, "Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
+                Utilities.verboseLog(120, "Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
             }
         }
         if (LOGGER.isDebugEnabled()) {
@@ -210,7 +210,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
 
             Thread lookupThread = new Thread(precalculatedProteinLookup);
 
-            Utilities.verboseLog(10, "Starting Thread... precalculatedProteinLookup - " + precalculatedProteinLookup.hashCode());
+            Utilities.verboseLog(110, "Starting Thread... precalculatedProteinLookup - " + precalculatedProteinLookup.hashCode());
 
             try {
                 lookupThread.start();
@@ -228,11 +228,11 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
                 //proteinsAwaitingPersistence = new ConcurrentHashSet<>();
                 int count = 0;
                 int batchCount = 0;
-                Utilities.verboseLog("1. Protein batch "  + proteinRange + "  size: " + proteins.size());
+                Utilities.verboseLog(1100, "1. Protein batch "  + proteinRange + "  size: " + proteins.size());
                 for (Protein protein : proteins) {
                     count++;
                     if (proteinsAwaitingPrecalcLookup == null){
-                        Utilities.verboseLog("proteinsAwaitingPrecalcLookup is null -- " + proteinsAwaitingPrecalcLookup);
+                        Utilities.verboseLog(1100, "proteinsAwaitingPrecalcLookup is null -- " + proteinsAwaitingPrecalcLookup);
                     }
                     proteinsAwaitingPrecalcLookup.add(protein);
                     if (proteinsAwaitingPrecalcLookup.size() > proteinPrecalcLookupBatchSize) {
@@ -248,8 +248,8 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
                     //lookup the md5s
                 }
                 Thread.sleep(10 * 1000);
-                Utilities.verboseLog("1. Precalculated Proteins "  + proteinRange + "  size: " + precalculatedProteins.size());
-                Utilities.verboseLog("1. Local Precalculated Proteins "  + proteinRange + "  size: " + localPrecalculatedProteinsTest.size());
+                Utilities.verboseLog(1100, "1. Precalculated Proteins "  + proteinRange + "  size: " + precalculatedProteins.size());
+                Utilities.verboseLog(1100, "1. Local Precalculated Proteins "  + proteinRange + "  size: " + localPrecalculatedProteinsTest.size());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -260,20 +260,20 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
         }
         System.out.println("The hashcode for this Instance [" + bottomProtein + "-" + topProtein + "]:" + hashCode());
 
-        Utilities.verboseLog(10, "2. Precalculated Proteins "  + proteinRange + "  size: " + precalculatedProteins.size());
-        Utilities.verboseLog(10, "2. Local Precalculated Proteins Test "  + proteinRange + "  size: " + localPrecalculatedProteinsTest.size());
+        Utilities.verboseLog(110, "2. Precalculated Proteins "  + proteinRange + "  size: " + precalculatedProteins.size());
+        Utilities.verboseLog(110, "2. Local Precalculated Proteins Test "  + proteinRange + "  size: " + localPrecalculatedProteinsTest.size());
          */
         try {
             List<Protein> proteinsNotInLookup = proteinDAO.getProteinsNotInLookup();
             int proteinsNotInLookupCount = proteinsNotInLookup.size();
-            Utilities.verboseLog(10, "1. ProteinsNotInLookupCount :  "  + proteinsNotInLookupCount);
+            Utilities.verboseLog(110, "1. ProteinsNotInLookupCount :  "  + proteinsNotInLookupCount);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
 
-        Utilities.verboseLog(10, " Match Lookup Step  "  + proteinRange + "  - done");
+        Utilities.verboseLog(110, " Match Lookup Step  "  + proteinRange + "  - done");
     }
 
 
@@ -303,7 +303,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
 
             // Put precalculated proteins into a Map of MD5 to Protein;
             if (localPrecalculatedProteins != null) {
-                Utilities.verboseLog("We have precalculated proteins: " +  localPrecalculatedProteins.size());
+                Utilities.verboseLog(1100, "We have precalculated proteins: " +  localPrecalculatedProteins.size());
                 final Map<String, Protein> md5ToPrecalcProtein = new HashMap<>(localPrecalculatedProteins.size());
                 for (Protein precalc : localPrecalculatedProteins) {
                     md5ToPrecalcProtein.put(precalc.getMd5(), precalc);
@@ -318,7 +318,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
                 }
             } else {
                 //there are no matches or we are not using the lookup match service
-                Utilities.verboseLog("There are NO matches for these proteins: " +  proteinsAwaitingPrecalcLookup.size());
+                Utilities.verboseLog(1100, "There are NO matches for these proteins: " +  proteinsAwaitingPrecalcLookup.size());
                 for (Protein protein : proteinsAwaitingPrecalcLookup) {
                     addProteinToBatch(protein);
                 }
@@ -340,7 +340,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
         proteinsAwaitingPersistence.add(protein);
 
         if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) {
-            Utilities.verboseLog("ProteinInsertBatchSize " + proteinInsertBatchSize);
+            Utilities.verboseLog(1100, "ProteinInsertBatchSize " + proteinInsertBatchSize);
 
             persistBatch();
         }
@@ -356,7 +356,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             }
-            Utilities.verboseLog(10, "Persisting " + proteinsAwaitingPersistence.size() + " proteins");
+            Utilities.verboseLog(110, "Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             for (Protein newProtein: proteinsAwaitingPersistence) {
 
                 if (bottomProteinId == null || bottomProteinId > newProtein.getId()) {
@@ -370,12 +370,12 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
-            Utilities.verboseLog("Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+            Utilities.verboseLog(1100, "Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
             if (isGetOrfOutput) {
-                Utilities.verboseLog("Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+                Utilities.verboseLog(1100, "Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
 
                 createAndPersistNewORFs(persistedProteins);
-                Utilities.verboseLog("Completed Persisting  getOrfOutput ");
+                Utilities.verboseLog(1100, "Completed Persisting  getOrfOutput ");
             }
             */
 

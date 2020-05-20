@@ -120,7 +120,7 @@ public class RunTranslateToProteinsStep extends RunBinaryStep {
             command.addAll(getBinarySwitchesAsList());
         }
 
-        Utilities.verboseLog("RunTranslateToProteinsStep: " + getCommandBuilder(command));
+        Utilities.verboseLog(1100, "RunTranslateToProteinsStep: " + getCommandBuilder(command));
         return command;
     }
 }

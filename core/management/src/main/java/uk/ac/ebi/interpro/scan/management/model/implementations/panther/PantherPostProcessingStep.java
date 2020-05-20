@@ -71,7 +71,7 @@ public class PantherPostProcessingStep extends Step {
         //do we need to skip
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + key);
             return;
         }
 
@@ -86,7 +86,7 @@ public class PantherPostProcessingStep extends Step {
         Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
         LOGGER.info("Finally persisting filtered raw matches.");
         filteredMatchDAO.persist(filteredMatches);
-        Utilities.verboseLog("PostProcess panther matches: protein-range : "
+        Utilities.verboseLog(1100, "PostProcess panther matches: protein-range : "
                 + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein()
                 + " rawMatches count:  " + rawMatches.size());
         if (LOGGER.isInfoEnabled()) {

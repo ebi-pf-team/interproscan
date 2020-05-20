@@ -87,7 +87,7 @@ public class ResponseQueueMessageListener implements MessageListener {
 
             LOGGER.debug("Worker: received and sent a message on the jobResponseQueue: "
                     + stepId + " - " + stepName);
-            Utilities.verboseLog("Worker: received and sent a message on the jobResponseQueue: "
+            Utilities.verboseLog(1100, "Worker: received and sent a message on the jobResponseQueue: "
                     + stepId + " - " + stepName);
             //send a message that the response has been sent to the master
             if (controller != null) {

@@ -73,7 +73,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
 
             final Set<T> parsedMolecules = new HashSet<>();
 
-            Utilities.verboseLog("start Parsing  input file stream");
+            Utilities.verboseLog(1100, "start Parsing  input file stream");
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.length() > 0) {
@@ -116,7 +116,7 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                             if (sequencesParsed % 4000 == 0) {
                                 if (sequencesParsed % 16000 == 0) {
                                     //TODO use utilities.verboselog
-                                    Utilities.verboseLog("Parsed " + sequencesParsed + " sequences");
+                                    Utilities.verboseLog(1100, "Parsed " + sequencesParsed + " sequences");
                                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
                                 }else{
                                     if(LOGGER.isInfoEnabled()){
@@ -154,15 +154,15 @@ public abstract class LoadFastaFileImpl<T> implements LoadFastaFile {
                 LOGGER.debug("About to call SequenceLoader.persist().");
             }
 
-            Utilities.verboseLog("Parsed Molecules (sequences) : " + parsedMolecules.size());
+            Utilities.verboseLog(1100, "Parsed Molecules (sequences) : " + parsedMolecules.size());
 
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
             sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
-            Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
+            Utilities.verboseLog(1100, "Store parsed sequences (processed lookup): " + parsedMolecules.size());
             sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
-            Utilities.verboseLog("Store and persist the sequences ...  completed");
+            Utilities.verboseLog(1100, "Store and persist the sequences ...  completed");
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         }

@@ -111,10 +111,10 @@ public class ProDomFilteredMatchDAOImpl extends FilteredMatchDAOImpl<ProDomRawMa
                 signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
             }
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-            Utilities.verboseLog("Now persist prodom matches in kvstore for key: " + dbKey);
+            Utilities.verboseLog(1100, "Now persist prodom matches in kvstore for key: " + dbKey);
 
             if (! proteinMatches.isEmpty()) {
-                Utilities.verboseLog("persist Prodom matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                Utilities.verboseLog(1100, "persist Prodom matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
                 for(Match i5Match: proteinMatches){
                     //try update with cross refs etc
                     updateMatch(i5Match);

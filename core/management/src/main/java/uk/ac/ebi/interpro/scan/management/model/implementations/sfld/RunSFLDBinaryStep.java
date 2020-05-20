@@ -106,7 +106,7 @@ public class RunSFLDBinaryStep extends RunBinaryStep {
             command.add(outputFilePathName);
         }
 
-        Utilities.verboseLog("binary cmd to run: " + command.toString());
+        Utilities.verboseLog(1100, "binary cmd to run: " + command.toString());
         return command;
 
     }

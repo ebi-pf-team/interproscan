@@ -59,7 +59,7 @@ public class Hmmer3DomTblParser {
                 reader.close();
             }
         }
-        Utilities.verboseLog(10, " domtbl domain count : " + domainTblLineMap.values().size());
+        Utilities.verboseLog(110, " domtbl domain count : " + domainTblLineMap.values().size());
         LOGGER.debug(" domtbl domain count : " + domainTblLineMap.values().size());
 
         return domainTblLineMap;

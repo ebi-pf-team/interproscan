@@ -71,7 +71,7 @@ public abstract class MatchPostProcessingStep<T extends RawMatch, U extends Matc
 //        Map<String, RawProtein<T>> proteinIdToRawProteinMap = new HashMap<>(rawMatches.size());
 //        if(rawMatches.size() == 0){
 //            Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-//            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+//            Utilities.verboseLog(110, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
 //
 //            int waitTimeFactor = 2;
 //            if (! Utilities.isRunningInSingleSeqMode()){
@@ -84,14 +84,14 @@ public abstract class MatchPostProcessingStep<T extends RawMatch, U extends Matc
 //                    stepInstance.getTopProtein(),
 //                    signatureLibraryRelease
 //            );
-//            Utilities.verboseLog(10, "matches after : " + rawMatches.size());
+//            Utilities.verboseLog(110, "matches after : " + rawMatches.size());
 //        }
 //
 //        int matchCount = 0;
 //        for (final RawProtein rawProtein : rawMatches) {
 //            matchCount += rawProtein.getMatches().size();
 //        }
-//        Utilities.verboseLog(10, "  Retrieved " + rawMatches.size() + " proteins to post-process."
+//        Utilities.verboseLog(110, "  Retrieved " + rawMatches.size() + " proteins to post-process."
 //                + " A total of " + matchCount + " raw matches.");
 //
 //        for (RawProtein<T> rawMatch : rawMatches) {
@@ -103,7 +103,7 @@ public abstract class MatchPostProcessingStep<T extends RawMatch, U extends Matc
 //        for (final RawProtein rawProtein : filteredMatches.values()) {
 //            matchCount += rawProtein.getMatches().size();
 //        }
-//        Utilities.verboseLog(10,  "  " + filteredMatches.size() + " proteins passed through post processing."
+//        Utilities.verboseLog(110,  "  " + filteredMatches.size() + " proteins passed through post processing."
 //                + " and a total of " + matchCount + " matches PASSED.");
 //        if (LOGGER.isDebugEnabled()) {
 //            LOGGER.debug(filteredMatches.size() + " proteins passed through post processing.");

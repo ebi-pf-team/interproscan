@@ -89,11 +89,11 @@ public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequen
         xrefQuery.setParameter("identifier", identifier);
         @SuppressWarnings("unchecked") NucleotideSequenceXref xref = (NucleotideSequenceXref) xrefQuery.getSingleResult();
         Long startGetNucleotideSequenceTest = System.currentTimeMillis();
-        //Utilities.verboseLog("RetrieveByXref: " + (startGetNucleotideSequenceTest - startGetXref) + " millis ");
+        //Utilities.verboseLog(1100, "RetrieveByXref: " + (startGetNucleotideSequenceTest - startGetXref) + " millis ");
         if (xref != null) {
             NucleotideSequence nucleotideSequenceTest = xref.getNucleotideSequence();
             Long startGetNucleotideSequence = System.currentTimeMillis();
-            //Utilities.verboseLog("RetrieveNucleotideSequenceTest: " + (startGetNucleotideSequence - startGetNucleotideSequenceTest) + " millis ");
+            //Utilities.verboseLog(1100, "RetrieveNucleotideSequenceTest: " + (startGetNucleotideSequence - startGetNucleotideSequenceTest) + " millis ");
             return nucleotideSequenceTest;
         }
 
@@ -107,7 +107,7 @@ public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequen
             query.setParameter("identifier", sequenceId);
             @SuppressWarnings("unchecked") NucleotideSequence nucleotideSequence = (NucleotideSequence) query.getSingleResult();
             Long endGetNucleotideSequence = System.currentTimeMillis();
-            //Utilities.verboseLog("RetrieveNucleotideSequence: " + (endGetNucleotideSequence - startGetNucleotideSequence) + " millis ");
+            //Utilities.verboseLog(1100, "RetrieveNucleotideSequence: " + (endGetNucleotideSequence - startGetNucleotideSequence) + " millis ");
             return nucleotideSequence;
         }
         return null;
@@ -216,7 +216,7 @@ public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequen
                     LOGGER.debug("MD5 of new nucleotide sequence: " + newSequence.getMd5());
                 }
             }
-            Utilities.verboseLog("MD5 of new nucleotide sequence generated in " + (System.currentTimeMillis() - startInsertNewNucleotideSequences) + " millis");
+            Utilities.verboseLog(1100, "MD5 of new nucleotide sequence generated in " + (System.currentTimeMillis() - startInsertNewNucleotideSequences) + " millis");
             // Retrieve any proteins AND associated xrefs that have the same MD5 as one of the 'new' proteins
             // being inserted and place in a Map of MD5 to Protein object.
             final Map<String, NucleotideSequence> md5ToExistingSequence = new HashMap<String, NucleotideSequence>();
@@ -231,7 +231,7 @@ public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequen
                 md5ToExistingSequence.put(existingSequence.getMd5(), existingSequence);
                 count ++;
             }
-            Utilities.verboseLog("Completed querying for Xrefs to get md5ToExistingSequence in " +
+            Utilities.verboseLog(1100, "Completed querying for Xrefs to get md5ToExistingSequence in " +
                             (System.currentTimeMillis() - startQueryMd5ToExistingSequence) + " millis  and found " +
                     count + "  existing nucleotide sequence with MD5 " );
 
@@ -278,12 +278,12 @@ public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequen
                     md5ToExistingSequence.put(candidate.getMd5(), candidate);
                 }
                 if (count % 200 == 0){
-                    Utilities.verboseLog("Completed processing " + count + " New NucleotideSequences in " +
+                    Utilities.verboseLog(1100, "Completed processing " + count + " New NucleotideSequences in " +
                             (System.currentTimeMillis() - countCheckNewNucleotideSequences ) + " millis " );
                     countCheckNewNucleotideSequences = System.currentTimeMillis();
                 }
             }
-            Utilities.verboseLog("Time to update New NucleotideSequences =  " + (System.currentTimeMillis() - startUpdatingNewNucleotideSequences) + " millis");
+            Utilities.verboseLog(1100, "Time to update New NucleotideSequences =  " + (System.currentTimeMillis() - startUpdatingNewNucleotideSequences) + " millis");
 
         }
         // Finally return all the persisted Nucleotide sequence objects (new or existing)

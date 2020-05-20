@@ -54,7 +54,7 @@ public class RunCDDRPSBlastStep extends RunBinaryStep {
         command.add("-db");
         command.add(this.libraryPath);
         command.addAll(getBinarySwitchesAsList());
-        Utilities.verboseLog(10, "command: " + command.toString());
+        Utilities.verboseLog(110, "command: " + command.toString());
         return command;
     }
 

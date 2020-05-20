@@ -50,7 +50,7 @@ public class SFLDHmmer3RawMatch extends Hmmer3RawMatch {
                 this.getEnvelopeStart(), this.getEnvelopeEnd(),
                 this.getExpectedAccuracy(), this.getFullSequenceBias(),
                 this.getDomainCeValue(), this.getDomainIeValue(), this.getDomainBias());
-        //Utilities.verboseLog("Promoted match for " + this.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
+        //Utilities.verboseLog(1100, "Promoted match for " + this.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
         return promotedRawMatch;
     }
 }

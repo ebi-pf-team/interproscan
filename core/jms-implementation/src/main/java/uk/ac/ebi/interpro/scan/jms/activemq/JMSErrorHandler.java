@@ -24,7 +24,7 @@ public class JMSErrorHandler implements ErrorHandler {
         LOGGER.error("Error in listener", t);
 
         if(errorCount == 5){
-            Utilities.verboseLog("Error in Listener, exit after sending shutdown message to other workers: " +  t);
+            Utilities.verboseLog(1100, "Error in Listener, exit after sending shutdown message to other workers: " +  t);
             // We may not be able to recover from this error, likely to be an IO, OS problem
 //            System.exit(1);
         }

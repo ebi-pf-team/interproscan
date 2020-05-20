@@ -493,7 +493,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
         if (sequenceType == 'p' && !proteins.isEmpty()) {
             int proteinCount = proteins.size();
-            Utilities.verboseLog(10, " WriteOutputStep -JSON new " + " There are " + proteinCount + " proteins.");
+            Utilities.verboseLog(110, " WriteOutputStep -JSON new " + " There are " + proteinCount + " proteins.");
             int count = 0;
 
             for (Protein protein: proteins) {
@@ -509,7 +509,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             }
         }
         if (sequenceType == 'n' && !nucleotideSequences.isEmpty()) {
-            Utilities.verboseLog(10, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
+            Utilities.verboseLog(110, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
             int count = 0;
 
             for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
@@ -519,7 +519,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     writer.write(","); // More proteins/nucleotide sequences to follow
                 }
             }
-            Utilities.verboseLog("WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
+            Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
         }
         writer.close();
 

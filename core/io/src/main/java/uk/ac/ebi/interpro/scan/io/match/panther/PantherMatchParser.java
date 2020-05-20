@@ -51,7 +51,7 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        //Utilities.verboseLog(10, "splitLine.length: " + splitLine.length);
+        //Utilities.verboseLog(110, "splitLine.length: " + splitLine.length);
         if (splitLine.length == 9) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();

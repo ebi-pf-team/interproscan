@@ -68,7 +68,7 @@ public class RunCDDPostBlastUtilityStep extends RunBinaryStep {
 		command.add("-d");
         command.add(this.cddDataPath);
         command.addAll(getBinarySwitchesAsList());
-        Utilities.verboseLog(10, "command: " + command.toString());
+        Utilities.verboseLog(110, "command: " + command.toString());
         return command;
     }
 

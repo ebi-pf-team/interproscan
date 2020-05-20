@@ -55,7 +55,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
             }
-//            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
+//            Utilities.verboseLog(1100, "modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
             String signatureLibraryKey = null;
 
             // Convert raw matches to filtered matches
@@ -96,10 +96,10 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
             */
 
 //            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-//            Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+//            Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey);
 //            Set <Match> proteinMatches = protein.getMatches();
 //            if (proteinMatches != null || proteinMatches.isEmpty()) {
-//                Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+//                Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
 //                Set<Match> matchSet = new HashSet<>(); // the protein.get Matches is a persistentSet, but we want a hashset
 //                matchSet.addAll(proteinMatches);
 //                matchDAO.persist(dbKey, matchSet);

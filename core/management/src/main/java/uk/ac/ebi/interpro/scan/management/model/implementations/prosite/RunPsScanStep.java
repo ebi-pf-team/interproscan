@@ -124,7 +124,7 @@ public class RunPsScanStep extends RunBinaryStep {
         }
         command.addAll(this.getBinarySwitchesAsList());
         command.add(fastaFilePathName);
-        Utilities.verboseLog("command: " + command);
+        Utilities.verboseLog(1100, "command: " + command);
         return command;
     }
 }
