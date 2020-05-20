@@ -92,19 +92,19 @@ public abstract class LookupMatchConverter<T extends Match, U extends Location> 
                     SiteLocation siteLocation = new SiteLocation(simpleLookupSite.getResidue(), simpleLookupSite.getResidueStart(), simpleLookupSite.getResidueEnd());
 
                     if (! simpleLookupMatch.getModelAccession().equalsIgnoreCase(simpleLookupSite.getSignatureAccession() )){
-                        Utilities.verboseLog(1100, "accessions DONT match");
+                        Utilities.verboseLog(120, "accessions DONT match");
                         continue;
                     }
 
                     if (! siteInLocationRange(simpleLookupMatch, siteLocation)){
-                        Utilities.verboseLog(1100, "site NOT In LocationRange");
-                        Utilities.verboseLog(simpleLookupMatch.toString());
-                        Utilities.verboseLog(simpleLookupSite.toString() + " siteLocation: " + siteLocation.toString());
+                        Utilities.verboseLog(120, "site NOT In LocationRange");
+                        Utilities.verboseLog(120, "simpleLookupMatch :" + simpleLookupMatch.toString());
+                        Utilities.verboseLog(120, simpleLookupSite.toString() + " siteLocation: " + siteLocation.toString());
                         continue;
                     }
                     if (siteLocations != null) {
                         if (siteLocations.contains(siteLocation)){
-                            Utilities.verboseLog(1100, "Duplicate site location: " + siteLocation);
+                            Utilities.verboseLog(120, "Duplicate site location: " + siteLocation);
                         }
                         siteLocations.add(siteLocation);
                     } else {
