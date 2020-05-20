@@ -9,7 +9,7 @@
     <!-- ######################## JOB: SuperFamily ############################  -->
     <bean id="jobSuperFamily-1.75" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="SUPERFAMILY is a database of structural and functional annotation for all proteins and genomes."/>
+                  value="SUPERFAMILY is a database of structural and functional annotations for all proteins and genomes."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseSuperfamily-1.75"/>
     </bean>

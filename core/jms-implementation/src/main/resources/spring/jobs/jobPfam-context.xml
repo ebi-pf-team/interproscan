@@ -9,7 +9,7 @@
     <!-- ######################## JOB: Pfam-A ############################  -->
     <bean id="jobPfam" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)"/>
+                  value="A large collection of protein families, each represented by multiple sequence alignments and hidden Markov models (HMMs)."/>
         <property name="analysis" value="true"/>
 
         <property name="libraryRelease" ref="signatureLibraryReleasePfamA"/>
@@ -40,8 +40,8 @@
           parent="abstractPfamStep">
         <property name="dependsUpon" ref="stepPfamWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
-        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
-        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer33.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pfama} ${hmmer3.hmmsearch.cpu.switch.pfama}"/>
         <property name="fullPathToHmmFile" value="${pfam-a.hmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>

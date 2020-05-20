@@ -8,7 +8,7 @@
 
     <!-- ######################## JOB: HAMAP ############################  -->
     <bean id="jobHAMAP" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes"/>
+        <property name="description" value="High-quality Automated and Manual Annotation of Microbial Proteomes."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseHAMAP"/>
     </bean>

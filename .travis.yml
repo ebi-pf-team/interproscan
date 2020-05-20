@@ -10,6 +10,7 @@ env:
   - OS_TYPE=ubuntu OS_VERSION=xenial
   - OS_TYPE=ubuntu OS_VERSION=bionic
   - OS_TYPE=ubuntu OS_VERSION=19.10
+  - OS_TYPE=ubuntu OS_VERSION=20.04
   
 services:
   - docker
@@ -40,8 +41,12 @@ branches:
   only:
   - dev
   - master
+<<<<<<< HEAD
+  - pfam33.1
+=======
   - hamap_2019_11
-  - release-5.42-78.0
+>>>>>>> release-5.44-79.0
+  - release-5.44-79.0
   except:
   - new_master
 

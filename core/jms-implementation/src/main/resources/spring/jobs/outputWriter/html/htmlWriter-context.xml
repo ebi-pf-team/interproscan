@@ -8,7 +8,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.writer.ProteinMatchesHTMLResultWriter">
         <property name="freeMarkerConfig" ref="freeMarkerConfigHtmlWriter"/>
         <property name="freeMarkerTemplate" value="views/protein.ftl"/>
-        <property name="htmlResourcesDir" value="data/freemarker/resources"/>
+        <property name="htmlResourcesDir" value="${freemarker.path}/resources"/>
         <property name="tempDirectory" value="temp/"/>
         <property name="interproscanVersion" value="${i5.version}"/>
     </bean>
@@ -20,7 +20,7 @@
     </bean>
 
     <bean id="templateLoadingDirHtmlWriter" class="java.io.File">
-        <constructor-arg value="data/freemarker/WEB-INF/freemarker"/>
+        <constructor-arg value="${freemarker.path}/WEB-INF/freemarker"/>
     </bean>
 
     <!--FreeMarker configuration-->

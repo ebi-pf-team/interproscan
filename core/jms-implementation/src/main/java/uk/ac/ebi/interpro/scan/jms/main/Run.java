@@ -149,7 +149,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.42-78.0";
+            String i5Version = "5.44-79.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
@@ -163,7 +163,7 @@ public class Run extends AbstractI5Runner {
             //32bitMessage:System.out.println(Utilities.getTimeNow() + " You are running the 32-bit version");
 
             String operatingSystem = System.getProperty("os.name");
-            System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode... on " + operatingSystem );
+            System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode... on " + operatingSystem);
 
             //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
@@ -173,7 +173,7 @@ public class Run extends AbstractI5Runner {
 
             //create the dot i5 dir/file
             //$USER_HOME/.interproscan-5/interproscan.properties
-            if(System.getProperty("user.home") != null && ! System.getProperty("user.home").isEmpty()) {
+            if (System.getProperty("user.home") != null && !System.getProperty("user.home").isEmpty()) {
                 String dotInterproscan5Dir = System.getProperty("user.home") + "/.interproscan-5";
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
@@ -197,7 +197,7 @@ public class Run extends AbstractI5Runner {
                     }
                     try {
                         userInterproscan5PropertiesFile.createNewFile();
-                    }catch (IOException e){
+                    } catch (IOException e) {
                         LOGGER.warn("Unable to access  " + userInterproscan5Properties);
                         //check the permisions in the directory of user.home
                         try {
@@ -219,7 +219,7 @@ public class Run extends AbstractI5Runner {
                     LOGGER.debug("USer has not supplied any properties file");
                     System.setProperty("system.interproscan.properties", systemInterproscanProperties);
                 }
-            }else{
+            } else {
                 //system and interproscan.properties are the same in case the user has not supplied any file
                 if (System.getProperty("system.interproscan.properties") == null) {
                     LOGGER.debug("USer has not supplied any properties file");
@@ -246,7 +246,7 @@ public class Run extends AbstractI5Runner {
 
             // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
             String[] analysesToRun = null;
-            String[] depreactedAnalysesToRun  = null;
+            String[] depreactedAnalysesToRun = null;
             String[] excludedAnalyses = null;
 
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
@@ -267,7 +267,7 @@ public class Run extends AbstractI5Runner {
                     for (Job job : jobs.getActiveAnalysisJobs().getJobList()) {
                         // Print out available jobs
                         SignatureLibraryRelease slr = job.getLibraryRelease();
-                        if(! job.isDeprecated()) {
+                        if (!job.isDeprecated()) {
                             analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription())); // LEAVE as System.out
                         }
                     }
@@ -311,9 +311,9 @@ public class Run extends AbstractI5Runner {
                     //System.out.println("excludedAnalyses Analyses  :" + Arrays.asList(excludedAnalyses).toString());
 
                     analysesToRun = getApplications(parsedCommandLine, jobs);
-                    if (LOGGER.isDebugEnabled()){
+                    if (LOGGER.isDebugEnabled()) {
                         StringBuilder analysisItems = new StringBuilder();
-                        for (String analysisItem : analysesToRun){
+                        for (String analysisItem : analysesToRun) {
                             analysisItems.append(analysisItem).append(" ");
                         }
                         LOGGER.debug("analysesToRun :- " + analysisItems.toString());
@@ -340,24 +340,38 @@ public class Run extends AbstractI5Runner {
             }
 
             // Validate the sequence type
-            String sequenceType = "p";
-            if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
-                sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
 
-                // Check the sequence type is "n" or "p"
+            String sequenceType = "p";
+            if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
                 Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
-                if (sequenceTypes != null && !sequenceTypes.contains(sequenceType)) {
-                    System.out.print("\n\nThe specified sequence type " + sequenceType + " was not recognised, expected: ");
-                    StringBuilder expectedSeqTypes = new StringBuilder();
-                    for (String seqType : sequenceTypes) {
-                        if (expectedSeqTypes.length() > 0) {
-                            expectedSeqTypes.append(",");
+                if (parsedCommandLine.hasOption(I5Option.SEQUENCE_TYPE.getLongOpt())) {
+                    sequenceType = parsedCommandLine.getOptionValue(I5Option.SEQUENCE_TYPE.getLongOpt());
+
+                    // Check the sequence type is "n" or "p"
+                    //Set<String> sequenceTypes = (HashSet<String>) ctx.getBean("sequenceTypes");
+                    if (sequenceTypes != null && !sequenceTypes.contains(sequenceType)) {
+                        System.out.print("\n\nThe specified sequence type " + sequenceType + " was not recognised, expected: ");
+                        StringBuilder expectedSeqTypes = new StringBuilder();
+                        for (String seqType : sequenceTypes) {
+                            if (expectedSeqTypes.length() > 0) {
+                                expectedSeqTypes.append(",");
+                            }
+                            expectedSeqTypes.append(seqType);
                         }
-                        expectedSeqTypes.append(seqType);
+                        System.out.println(expectedSeqTypes + "\n\n");
+                        System.exit(1);
                     }
-                    System.out.println(expectedSeqTypes + "\n\n");
-                    System.exit(1);
                 }
+                if (sequenceTypes != null && sequenceTypes.contains(sequenceType)) {
+                    if (sequenceType.equalsIgnoreCase("n")) {
+                        //TODO
+                        //System.out.println(Utilities.getTimeNow() + " Input sequence type - Nucleotide sequences ");
+                    }
+                    //System.out.println("expectedSeqTypes " + sequenceTypes + "\n");
+                } else {
+                    System.out.println("expectedS sequence types: " + sequenceTypes + "\n");
+                }
+
             }
 
             if (mode.getRunnableBean() != null) {
@@ -380,8 +394,8 @@ public class Run extends AbstractI5Runner {
                 String workingTemporaryDirectory = "";
 
                 //get temp directory for cleanup even in convert mode we need temp dir
-                if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
-                        || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER)) ) {
+                if (!(mode.equals(Mode.INSTALLER) || mode.equals(Mode.WORKER) || mode.equals(Mode.DISTRIBUTED_WORKER)
+                        || mode.equals(Mode.CONVERT) || mode.equals(Mode.HIGHMEM_WORKER))) {
                     //|| mode.equals(Mode.CONVERT)
                     final AbstractMaster master = (AbstractMaster) runnable;
                     if (LOGGER.isDebugEnabled()) {
@@ -393,8 +407,7 @@ public class Run extends AbstractI5Runner {
                     }
                     try {
                         temporaryDirectory = master.getWorkingTemporaryDirectoryPath();
-                    }
-                    catch (IllegalStateException e) {
+                    } catch (IllegalStateException e) {
                         final String tempDir = master.getTemporaryDirectory();
                         System.out.println("Could not write to temporary directory: " + tempDir.substring(0, tempDir.lastIndexOf(File.separator)));
                         System.exit(1);
@@ -412,13 +425,13 @@ public class Run extends AbstractI5Runner {
 
                 }
 
-                LevelDBStore kvStoreProteins= null;
+                LevelDBStore kvStoreProteins = null;
                 LevelDBStore kvStoreProteinsNotInLookup = null;
                 LevelDBStore kvStoreProteinsOther = null;
-                LevelDBStore kvStoreMatches =  null;
+                LevelDBStore kvStoreMatches = null;
                 LevelDBStore kvStoreNucleotides = null;
 
-                if (! workingTemporaryDirectory.isEmpty() ) {
+                if (!workingTemporaryDirectory.isEmpty()) {
                     // configure the KVStores
                     kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
                     //System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
@@ -442,11 +455,11 @@ public class Run extends AbstractI5Runner {
                     ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
                     proteinDAO.checkKVDBStores();
 
-                }else{
+                } else {
                     LOGGER.warn("Working Temporary Directory is not set");
                 }
 
-                if (! (mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT)) ) {
+                if (!(mode.equals(Mode.INSTALLER) || mode.equals(Mode.CONVERT))) {
                     //deal with panther  stepPantherHMM3RunPantherScore
                     //this maynot be necessary anymore
                     //TODO maybe remove
@@ -456,10 +469,9 @@ public class Run extends AbstractI5Runner {
                 }
 
 
-
                 runnable.run();
 
-                if (! workingTemporaryDirectory.isEmpty() ) {
+                if (!workingTemporaryDirectory.isEmpty()) {
                     closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
                 }
 
@@ -488,7 +500,7 @@ public class Run extends AbstractI5Runner {
         } finally {
             //clean up the temp files
             //System.out.println(Utilities.getTimeNow() + " Please clean up the TEMP files in ... " + temporaryDirectory);
-            if (temporaryDirectory != null ){
+            if (temporaryDirectory != null) {
                 //deleteWorkingDirectory(true, temporaryDirectory);
 //                System.out.println(Utilities.getTimeNow() + " Please clean up the TEMP files in ... " + temporaryDirectory);
                 cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
@@ -500,6 +512,7 @@ public class Run extends AbstractI5Runner {
 
     /**
      * Get InterProScan mode from the command line argument supplied
+     *
      * @param modeArgument
      * @return
      * @throws IllegalArgumentException
@@ -660,15 +673,15 @@ public class Run extends AbstractI5Runner {
             //deal with cpu cores specified by user
             if (parsedCommandLine.hasOption(I5Option.CPU.getLongOpt())) {
                 int numberOfCPUCores = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.CPU.getLongOpt()));
-                if (numberOfCPUCores == 0){
+                if (numberOfCPUCores == 0) {
                     LOGGER.warn("--cpu 0 is not allowed, updated to --cpu 1");
                     numberOfCPUCores = 1;
                 }
-                if (bbMaster instanceof StandaloneBlackBoxMaster ) {
+                if (bbMaster instanceof StandaloneBlackBoxMaster) {
                     //deal with cpu cores
                     ((StandaloneBlackBoxMaster) master).setMaxConcurrentInVmWorkerCount(numberOfCPUCores);
                 }
-                if (bbMaster instanceof DistributedBlackBoxMaster ) {
+                if (bbMaster instanceof DistributedBlackBoxMaster) {
                     //deal with cpu cores
                     ((DistributedBlackBoxMaster) master).setMaxConcurrentInVmWorkerCount(numberOfCPUCores);
                 }
@@ -693,6 +706,7 @@ public class Run extends AbstractI5Runner {
                 bbMaster.setVerboseLogLevel(0);
             }
 
+
             // Exclude sites from output?
             final boolean includeTsvSites = parsedCommandLine.hasOption(I5Option.ENABLE_TSV_RESIDUE_ANNOT.getLongOpt());
             bbMaster.setIncludeTsvSites(includeTsvSites);
@@ -700,7 +714,6 @@ public class Run extends AbstractI5Runner {
             // Exclude sites from output?
             final boolean excludeSites = parsedCommandLine.hasOption(I5Option.DISABLE_RESIDUE_ANNOT.getLongOpt());
             bbMaster.setExcludeSites(excludeSites);
-
 
 
             // GO terms and/or pathways will also imply IPR lookup
@@ -772,8 +785,7 @@ public class Run extends AbstractI5Runner {
                 // E.g. "-b OUT/"
                 checkPathExistence(outputBaseFileName, false, true, I5Option.BASE_OUT_FILENAME);
                 outputBaseFileName += defaultOutputFileName;
-            }
-            else {
+            } else {
                 // If a base filename is supplied (with optional path elements) then check the base directory is writable
                 // E.g. "-b OUT"
                 checkPathExistence(outputBaseFileName, true, true, I5Option.BASE_OUT_FILENAME);
@@ -1178,24 +1190,21 @@ public class Run extends AbstractI5Runner {
                 if (lastHyphen == -1 || !Character.isDigit(parsedAnalysis.charAt(lastHyphen + 1))) {
                     // No specific version number specified by the user
                     applName = parsedAnalysis;
-                }
-                else {
+                } else {
                     applName = parsedAnalysis.substring(0, lastHyphen);
                     applVersion = parsedAnalysis.substring(lastHyphen + 1);
                 }
                 final Matcher m1 = applNameRegex.matcher(applName);
-                
+
                 if (m1.matches() && (applVersion == null || applVersionRegex.matcher(applVersion).matches())) {
                     if (applName.equalsIgnoreCase("SignalP")) {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), applVersion);
-                    }
-                    else {
+                    } else {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
                     }
-                }
-                else {
+                } else {
                     inputErrorMessages.add(parsedAnalysis + " not a valid input.");
                 }
             }
@@ -1212,7 +1221,7 @@ public class Run extends AbstractI5Runner {
                 boolean found = false;
                 //deal with deprecated application names
                 String possibleUserApplName = deprecatedNames.get(userApplName.toUpperCase());
-                if (possibleUserApplName != null){
+                if (possibleUserApplName != null) {
                     userApplName = possibleUserApplName;
                 }
                 for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
@@ -1232,8 +1241,7 @@ public class Run extends AbstractI5Runner {
                                 found = true;
                                 break; // Found it!
                             }
-                        }
-                        else if (applVersion.equalsIgnoreCase(userApplVersion)) {
+                        } else if (applVersion.equalsIgnoreCase(userApplVersion)) {
                             analysesToRun.add(job.getId());
                             found = true;
                             break; // Found it!
@@ -1243,7 +1251,7 @@ public class Run extends AbstractI5Runner {
                 }
                 if (!found) {
                     // Didn't find the user specified analysis version
-                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-"+userApplVersion) + " does not exist or is deactivated.");
+                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-" + userApplVersion) + " does not exist or is deactivated.");
                 }
             }
             if (inputErrorMessages.size() > 0) {
@@ -1283,8 +1291,7 @@ public class Run extends AbstractI5Runner {
                 if (lastHyphen == -1 || !Character.isDigit(parsedAnalysis.charAt(lastHyphen + 1))) {
                     // No specific version number specified by the user
                     applName = parsedAnalysis;
-                }
-                else {
+                } else {
                     applName = parsedAnalysis.substring(0, lastHyphen);
                     applVersion = parsedAnalysis.substring(lastHyphen + 1);
                 }
@@ -1295,12 +1302,10 @@ public class Run extends AbstractI5Runner {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_EUK.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName(), applVersion);
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName(), applVersion);
-                    }
-                    else {
+                    } else {
                         addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
                     }
-                }
-                else {
+                } else {
                     inputErrorMessages.add(parsedAnalysis + " not a valid input.");
                 }
             }
@@ -1334,8 +1339,7 @@ public class Run extends AbstractI5Runner {
                                 found = true;
                                 break; // Found it!
                             }
-                        }
-                        else if (applVersion.equalsIgnoreCase(userApplVersion)) {
+                        } else if (applVersion.equalsIgnoreCase(userApplVersion)) {
                             deprecatedAnalysesToRun.add(job.getId());
                             job.setDeprecated(false);
                             found = true;
@@ -1346,7 +1350,7 @@ public class Run extends AbstractI5Runner {
                 }
                 if (!found) {
                     // Didn't find the user specified analysis version
-                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-"+userApplVersion) + " does not exist or is deactivated.");
+                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-" + userApplVersion) + " does not exist or is deactivated.");
                 }
             }
             if (inputErrorMessages.size() > 0) {
@@ -1390,17 +1394,15 @@ public class Run extends AbstractI5Runner {
                 if (lastHyphen == -1 || !Character.isDigit(parsedAnalysis.charAt(lastHyphen + 1))) {
                     // No specific version number specified by the user
                     applName = parsedAnalysis;
-                }
-                else {
+                } else {
                     applName = parsedAnalysis.substring(0, lastHyphen);
                     applVersion = parsedAnalysis.substring(lastHyphen + 1);
                 }
                 final Matcher m1 = applNameRegex.matcher(applName);
 
                 if (m1.matches() && (applVersion == null || applVersionRegex.matcher(applVersion).matches())) {
-                        addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
-                }
-                else {
+                    addApplVersionToUserMap(userAnalysesMap, inputErrorMessages, applName, applVersion);
+                } else {
                     inputErrorMessages.add(parsedAnalysis + " not a valid input.");
                 }
             }
@@ -1434,8 +1436,7 @@ public class Run extends AbstractI5Runner {
                                 found = true;
                                 break; // Found it!
                             }
-                        }
-                        else if (applVersion.equalsIgnoreCase(userApplVersion)) {
+                        } else if (applVersion.equalsIgnoreCase(userApplVersion)) {
                             excludedAnalyses.add(job.getId());
                             job.setDeprecated(true);
                             found = true;
@@ -1446,7 +1447,7 @@ public class Run extends AbstractI5Runner {
                 }
                 if (!found) {
                     // Didn't find the user specified analysis version
-                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-"+userApplVersion) + " does not exist or is deactivated.");
+                    inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-" + userApplVersion) + " does not exist or is deactivated.");
                 }
             }
             if (inputErrorMessages.size() > 0) {
@@ -1464,13 +1465,12 @@ public class Run extends AbstractI5Runner {
         if (userAnalysesMap.containsKey(applName)) {
             // Multiple versions/entries of the same application are not allowed in the same InterProScan run
             inputErrorMessages.add(applName + " was specified more than once in the same InterProScan run.");
-        }
-        else {
+        } else {
             userAnalysesMap.put(applName, applVersion);
         }
     }
 
-    public List<String> checkAnalysesToRun(Map<String, String> userAnalysesMap, Map<String, String> deprecatedNames, Jobs allJobs, Set<String> inputErrorMessages){
+    public List<String> checkAnalysesToRun(Map<String, String> userAnalysesMap, Map<String, String> deprecatedNames, Jobs allJobs, Set<String> inputErrorMessages) {
         List<String> analysesToRun = new ArrayList<String>();
 
         // Now check the user entered analysis versions actually exists
@@ -1480,7 +1480,7 @@ public class Run extends AbstractI5Runner {
             boolean found = false;
             //deal with deprecated application names
             String possibleUserApplName = deprecatedNames.get(userApplName.toUpperCase());
-            if (possibleUserApplName != null){
+            if (possibleUserApplName != null) {
                 userApplName = possibleUserApplName;
             }
             for (Job job : allJobs.getAnalysisJobs().getJobList()) { // Loop through (not deactivated) analysis jobs
@@ -1500,8 +1500,7 @@ public class Run extends AbstractI5Runner {
                             found = true;
                             break; // Found it!
                         }
-                    }
-                    else if (applVersion.equalsIgnoreCase(userApplVersion)) {
+                    } else if (applVersion.equalsIgnoreCase(userApplVersion)) {
                         analysesToRun.add(job.getId());
                         found = true;
                         break; // Found it!
@@ -1511,7 +1510,7 @@ public class Run extends AbstractI5Runner {
             }
             if (!found) {
                 // Didn't find the user specified analysis version
-                inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-"+userApplVersion) + " does not exist or is deactivated.");
+                inputErrorMessages.add("Analysis " + userApplName + ((userApplVersion == null) ? "" : "-" + userApplVersion) + " does not exist or is deactivated.");
             }
         }
 
@@ -1559,9 +1558,9 @@ public class Run extends AbstractI5Runner {
         // Configure the Broker with a random TCP port number.
         //final BrokerService broker1 = (BrokerService) ctx.getBean("localhostJMSBroker");
         final BrokerService broker = (BrokerService) ctx.getBean("jmsBroker");
-        String brokerTmpDataDirectory  = broker.getTmpDataDirectory().getAbsolutePath();
-        String brokerDataDirectory  = broker.getBrokerDataDirectory().getAbsolutePath();
-        String dataDirectoryfile  = broker.getDataDirectoryFile().getAbsolutePath();
+        String brokerTmpDataDirectory = broker.getTmpDataDirectory().getAbsolutePath();
+        String brokerDataDirectory = broker.getBrokerDataDirectory().getAbsolutePath();
+        String dataDirectoryfile = broker.getDataDirectoryFile().getAbsolutePath();
 
         System.out.println("brokerTmpDataDirectory: " + brokerTmpDataDirectory);
         System.out.println("brokerDataDirectory: " + brokerDataDirectory);
@@ -1647,8 +1646,8 @@ public class Run extends AbstractI5Runner {
     }
 
 
-    public static void configureKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup,  LevelDBStore kvStoreProteinsOther,
-                                         LevelDBStore kvStoreMatches,  LevelDBStore kvStoreNucleotides, String tempDir ){
+    public static void configureKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup, LevelDBStore kvStoreProteinsOther,
+                                         LevelDBStore kvStoreMatches, LevelDBStore kvStoreNucleotides, String tempDir) {
         String kvstoreDir = "kvstore";
         String kvstoreBase = tempDir + File.separator + kvstoreDir;
         String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
@@ -1673,8 +1672,8 @@ public class Run extends AbstractI5Runner {
 
     }
 
-    public static void closeKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup,  LevelDBStore kvStoreProteinsOther,
-                                         LevelDBStore kvStoreMatches,  LevelDBStore kvStoreNucleotides, String tempDir ){
+    public static void closeKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup, LevelDBStore kvStoreProteinsOther,
+                                     LevelDBStore kvStoreMatches, LevelDBStore kvStoreNucleotides, String tempDir) {
         kvStoreProteins.close();
 
         kvStoreProteinsNotInLookup.close();
@@ -1705,7 +1704,7 @@ public class Run extends AbstractI5Runner {
         return false;
     }
 
-    public static void changeLogLevel(String logLevel){
+    public static void changeLogLevel(String logLevel) {
         //LogManager.getRootLogger().setLevel(Level.WARN);
         /*
         LoggerContext loggerCtx = (LoggerContext) LogManager.getContext(false);
@@ -1756,7 +1755,7 @@ public class Run extends AbstractI5Runner {
         try {
             //FileUtils.deleteDirectory(dir);
             FileUtils.forceDelete(dir);
-        }catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.warn("At Run completion, unable to delete temporary directory " + dir.getAbsolutePath());
         }
     }
@@ -1767,10 +1766,10 @@ public class Run extends AbstractI5Runner {
      * @param deleteWorkingDirectoryOnCompletion
      * @param temporaryFileDirectory
      */
-    private static void cleanUpWorkingDirectory(boolean deleteWorkingDirectoryOnCompletion, String temporaryFileDirectory){
-        if(deleteWorkingDirectoryOnCompletion){
+    private static void cleanUpWorkingDirectory(boolean deleteWorkingDirectoryOnCompletion, String temporaryFileDirectory) {
+        if (deleteWorkingDirectoryOnCompletion) {
             try {
-                if(new File(temporaryFileDirectory).exists()) {
+                if (new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
                     Utilities.verboseLog(1100, "TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
                     deleteWorkingTemporaryDirectory(temporaryFileDirectory);
@@ -1779,20 +1778,20 @@ public class Run extends AbstractI5Runner {
                 LOGGER.warn("At Run completion, unable to delete temporary working directory " + temporaryFileDirectory);
                 e.printStackTrace();
             }
-        }else {
+        } else {
             LOGGER.warn("deleteWorkingDirectoryOnCompletion : " + deleteWorkingDirectoryOnCompletion);
         }
     }
 
 
     @Override
-    public void finalize()  throws Throwable{
+    public void finalize() throws Throwable {
         try {
             if (temporaryDirectory != null) {
                 //do some cleanup
                 cleanUpWorkingDirectory(deleteWorkingDirectoryOnCompletion, temporaryDirectory);
             }
-        }finally {
+        } finally {
             super.finalize();
         }
     }

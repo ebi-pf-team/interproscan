@@ -9,7 +9,7 @@
     <!-- ######################## JOB: SignalP ############################  -->
     <bean id="jobSignalP_GRAM_NEGATIVE" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="SignalP (organism type gram-negative prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-negative prokaryotes."/>
+                  value="SignalP (gram-negative) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-negative prokaryotes."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseSignalp_GRAM_NEGATIVE"/>
         <property name="nonEmptyPaths">

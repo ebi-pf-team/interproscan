@@ -255,6 +255,7 @@ public class PrepareForOutputStep extends Step {
                 //Utilities.verboseLog(1100, "OpenReadingFrame: \n" +  orf.toString());
                 NucleotideSequence seq = orf.getNucleotideSequence();
                 //Utilities.verboseLog(1100, "NucleotideSequence: \n" +  seq.toString());
+
                 if (seq != null) {
                     nucleotideSequences.add(seq);
                     nucleotideSequenceIds.add(seq.getId()); //store the Id
@@ -265,7 +266,6 @@ public class PrepareForOutputStep extends Step {
         }
 
         if (nucleotideSequences.size() > 0) {
-            //Utilities.verboseLog(1100, "nucleotideSequences : \n" + nucleotideSequences.iterator().next());
             try {
                 //outputNTToXML(stepInstance, "n", nucleotideSequences);
                 outputToXML(stepInstance, "n", nucleotideSequenceIds, temporaryFileDirectory);
@@ -275,8 +275,8 @@ public class PrepareForOutputStep extends Step {
                 e.printStackTrace();
             }
         }
-
         Utilities.verboseLog(1100, "nucleotideSequences size: " + nucleotideSequences.size());
+
     }
 
 
@@ -291,6 +291,7 @@ public class PrepareForOutputStep extends Step {
         Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
 
         Utilities.verboseLog(110, " Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
+
         //LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
 
         Long bottomProteinId = stepInstance.getBottomProtein();
@@ -318,7 +319,9 @@ public class PrepareForOutputStep extends Step {
             signatureLibraryNames.add(sig.getName());
         }
 
+
         Long middleProtein = topProteinId / 2;
+
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
             //Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
@@ -327,9 +330,11 @@ public class PrepareForOutputStep extends Step {
                 proteinCount++;
             }
 
+
             if (proteinIndex == middleProtein) {
                 printMemoryUsage("at midpoint preparing  " + + (topProteinId - bottomProteinId) + " proteins");
             }
+
             for (String signatureLibraryName : signatureLibraryNames) {
                 final String dbKey = proteinKey + signatureLibraryName;
 
@@ -341,7 +346,9 @@ public class PrepareForOutputStep extends Step {
                         matches = matchDAO.getMatchSet(dbKey);
                     } catch (Exception exception) {
                         //dont recover but sleep for a few seconds and try again
+
                         Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
+
                         exception.printStackTrace();
                         if (tryCount >= 3) {
                             throw new IllegalStateException("Failed to get matches from the DB for key " + dbKey);
@@ -356,7 +363,9 @@ public class PrepareForOutputStep extends Step {
                         } else {
                             delayForNfs();
                         }
+
                         Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
+
                     }
                     tryCount++;
                 }
@@ -366,6 +375,7 @@ public class PrepareForOutputStep extends Step {
                     for (Match match : matches) {
                         String accession = match.getSignature().getAccession();
                         Utilities.verboseLog(120, "dbKey :" + dbKey + " - " + accession); //+ " - match: " + match.getLocations()) ;
+
                         match.getSignature().getCrossReferences();
                         //match.getSignature().getEntry();
                         //try update with cross refs etc
@@ -407,7 +417,9 @@ public class PrepareForOutputStep extends Step {
         final String interProScanVersion = "5-34";
 
         Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
+
         Utilities.verboseLog(110, " Prepare For OutputStep - output Nucleotide sequences to XML: " + outputPath);
+
 
 
         Long bottomProteinId = stepInstance.getBottomProtein();
@@ -417,6 +429,7 @@ public class PrepareForOutputStep extends Step {
             //writer.header(interProScanVersion);
             if (!nucleotideSequenceIds.isEmpty()) {
                 Utilities.verboseLog(110, " nucleotideSequenceIds  : " + nucleotideSequenceIds.size());
+
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
@@ -426,11 +439,22 @@ public class PrepareForOutputStep extends Step {
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId : nucleotideSequenceIds) {
                     count++;
+                    Utilities.verboseLog(120, " nucleotideSequenceId  : " + nucleotideSequenceId);
+
                     NucleotideSequence nucleotideSequenceInH2 = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSequenceId);
                     String nucleotideSequenceKey = nucleotideSequenceInH2.getMd5();
+                    Set<NucleotideSequenceXref> nucleotideSequenceCrossReferences = nucleotideSequenceInH2.getCrossReferences();
+                    if (Utilities.verboseLogLevel >= 20) {
+                        for (NucleotideSequenceXref nucleotideXref : nucleotideSequenceCrossReferences) {
+                            String nucleotideXrefIdentifier = nucleotideXref.getIdentifier();
+                            Utilities.verboseLog(count + " nucleotideXrefIdentifier: " + nucleotideXrefIdentifier);
+                        }
+                    }
                     //nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.get(nucleotideSequenceKey);
-                    Utilities.verboseLog(1100, "\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : "); // + nucleotideSequenceInH2.toString());
+
+                    Utilities.verboseLog(110, "\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : "); // + nucleotideSequenceInH2.toString());
+
                     for (OpenReadingFrame orf : nucleotideSequenceInH2.getOpenReadingFrames()) {
                         Protein protein = orf.getProtein();
                         // String proteinKey = Long.toString(protein.getId());
@@ -449,6 +473,7 @@ public class PrepareForOutputStep extends Step {
                 }
 
                 Utilities.verboseLog(1100, "PrepareforOutPut nucleotideSequenceIds size: " + nucleotideSequenceIds.size());
+
             }
 
         } catch (JAXBException e) {
@@ -500,6 +525,7 @@ public class PrepareForOutputStep extends Step {
                 }
 
                 Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
+
 
             }
             writer.close();
@@ -684,6 +710,7 @@ public class PrepareForOutputStep extends Step {
     private void deleteTmpMarshallingFile(Path outputPath) {
         final String outputFilePathName = outputPath.toAbsolutePath().toString();
         Utilities.verboseLog(120, "Deleting (or attempting to) temp xml file:  " + outputFilePathName);
+
         File file = new File(outputFilePathName);
         if (file.exists()) {
             return;

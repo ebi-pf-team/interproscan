@@ -8,7 +8,7 @@
 
     <!-- ######################## JOB: SFLD ############################  -->
     <bean id="jobSFLD" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="SFLDs are protein families based on Hidden Markov Models or HMMs"/>
+        <property name="description" value="SFLD is a database of protein families based on hidden Markov models (HMMs)."/>
         <property name="analysis" value="true"/>
         <!--<property name="doRunLocally" value="true"/>-->
         <property name="libraryRelease" ref="signatureLibraryReleaseSFLD"/>

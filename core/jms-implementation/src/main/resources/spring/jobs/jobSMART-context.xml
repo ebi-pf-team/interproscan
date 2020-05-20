@@ -9,7 +9,7 @@
     <!-- ######################## JOB: SMART ############################  -->
     <bean id="jobSMART" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="SMART allows the identification and analysis of domain architectures based on Hidden Markov Models or HMMs"/>
+                  value="SMART allows the identification and analysis of domain architectures based on hidden Markov models (HMMs). "/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseSmart"/>
         <property name="mandatoryParameters">

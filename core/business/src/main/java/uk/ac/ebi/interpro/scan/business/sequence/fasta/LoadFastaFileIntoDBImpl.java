@@ -102,7 +102,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
         sequenceLoader.setDisplayLookupMessage(true);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService); //set lookup and display message
         LOGGER.debug("Entered LoadFastaFileImpl.loadSequences() method");
-        Utilities.verboseLog(1100, "Entered LoadFastaFiletoDBImpl.loadSequences() method");
+        Utilities.verboselog(110, "Entered LoadFastaFiletoDBImpl.loadSequences() method");
         int sequencesParsed = 0;
 
         levelDBStoreName = levelDBStoreRoot + "/leveldb";
@@ -117,7 +117,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
             final Set<Protein> parsedMolecules = new HashSet<>();
 
-            Utilities.verboseLog(1100, "start Parsing  input file stream");
+            Utilities.verboselog(110, "start Parsing  input file stream");
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
                 if (line.length() > 0) {
@@ -160,7 +160,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                             if (sequencesParsed % 4000 == 0) {
                                 if (sequencesParsed % 16000 == 0) {
                                     //TODO use utilities.verboselog
-                                    Utilities.verboseLog(1100, "Parsed " + sequencesParsed + " sequences");
+                                    Utilities.verboselog(110, "Parsed " + sequencesParsed + " sequences");
                                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Parsed " + sequencesParsed + " sequences");
                                 }else{
                                     if(LOGGER.isInfoEnabled()){
@@ -199,7 +199,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             }
 
             int totalProteinsParsed = parsedMolecules.size();
-            Utilities.verboseLog(1100, "Parsed Molecules (sequences) : " + totalProteinsParsed);
+            Utilities.verboselog(110, "Parsed Molecules (sequences) : " + totalProteinsParsed);
 
             // Now iterate over Proteins and store using Sequence Loader.
             LOGGER.info( "Store and persist the sequences");
@@ -213,12 +213,12 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             Long bottomProteinId = persistedProteins.updateBottomProteinId(null);
             Long topProteinId = persistedProteins.updateTopProteinId(null);
 
-            Utilities.verboseLog(1100, "Persisted " + topProteinId + " Molecules (sequences)");
+            Utilities.verboselog(110, "Persisted " + topProteinId + " Molecules (sequences)");
 
             if(isGetOrfOutput){
-                Utilities.verboseLog(1100, "Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+                Utilities.verboselog(110, "Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
                 createAndPersistNewORFs(persistedProteins);
-                Utilities.verboseLog(1100, "Completed Persisting  getOrfOutput ");
+                Utilities.verboselog(110, "Completed Persisting  getOrfOutput ");
             }
 
             //then load into KV store using the sequenceIds
@@ -244,29 +244,29 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                     protein.getOpenReadingFrames();
 
                     for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
-                        Utilities.verboseLog(130, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
+                        Utilities.verboselog(130, "OpenReadingFrame: [" + protein.getId() + "]" + orf.getId() + " --  " + orf.getStart() + "-" + orf.getEnd());
                         NucleotideSequence seq = orf.getNucleotideSequence();
-                        //Utilities.verboseLog(1100, "NucleotideSequence: \n" +  seq.toString());
+                        //Utilities.verboselog(110, "NucleotideSequence: \n" +  seq.toString());
                         if (seq != null && Utilities.verboseLogLevel >= 30) {
-                            Utilities.verboseLog(130, "getCrossReferences().size" + seq.getCrossReferences().size());
-                            Utilities.verboseLog(130, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
+                            Utilities.verboselog(130, "getCrossReferences().size" + seq.getCrossReferences().size());
+                            Utilities.verboselog(130, "getOpenReadingFrames().size" + seq.getOpenReadingFrames().size());
                         }
                     }
                     proteinDAO.insert(sequenceId, protein);
                     count++;
                 }
             }
-            Utilities.verboseLog(1100, "Stored " + count + " parsed sequences into KVDB: " + levelDBStoreName);
+            Utilities.verboselog(110, "Stored " + count + " parsed sequences into KVDB: " + levelDBStoreName);
 
-            Utilities.verboseLog(1100, "Completed Persisting new proteins in H2: topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
-            Utilities.verboseLog(1100, "Stored parsed sequences into H2DB: ");
+            Utilities.verboselog(110, "Completed Persisting new proteins in H2: topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+            Utilities.verboselog(110, "Stored parsed sequences into H2DB: ");
             //sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
-            //Utilities.verboseLog(1100, "Store parsed sequences (processed lookup): " + parsedMolecules.size());
+            //Utilities.verboselog(110, "Store parsed sequences (processed lookup): " + parsedMolecules.size());
 
             sequenceLoaderListener.sequencesLoaded(bottomProteinId, topProteinId, null, null, useMatchLookupService, null);
             //sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
             LOGGER.info( "Store and persist the sequences ...  completed");
-            Utilities.verboseLog(1100, "Store and persist the sequences into KV and H2 dbs...  completed");
+            Utilities.verboselog(110, "Store and persist the sequences into KV and H2 dbs...  completed");
 
             if (count > 12000) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
@@ -336,7 +336,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
         }
         Long startCreateAndPersistNewORFs = System.currentTimeMillis();
         Long  countCreateAndPersistNewORFs = System.currentTimeMillis();
-        Utilities.verboseLog(1100, "Start createAndPersistNewORFs for  " + newProteins.size() + " new proteins and their cross references.");
+        Utilities.verboselog(110, "Start createAndPersistNewORFs for  " + newProteins.size() + " new proteins and their cross references.");
         int proteinCount = 0;
         int totalXrefs = 0;
         for (Protein newProtein : newProteins) {
@@ -357,7 +357,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 String originalHeader = xref.getName();
                 Long startNewOrf = System.currentTimeMillis();
                 OpenReadingFrame newOrfTest = orfDescriptionLineParser.createORFFromParsingResult(description);
-                Utilities.verboseLog(120, "orfId: " +  newOrfTest + " nucleotideId: " + orfId + " originalHeader: " + originalHeader + " description: " + description);
+                Utilities.verboselog(120, "orfId: " +  newOrfTest + " nucleotideId: " + orfId + " originalHeader: " + originalHeader + " description: " + description);
 
                 //OpenReadingFrame newOrf = descriptionLineParser.createORFFromParsingResult(description);
                 OpenReadingFrame newOrf = newOrfTest;
@@ -378,7 +378,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
                 NucleotideSequence nucleotide = nucleotideSequenceDAO.retrieveByXrefIdentifier(nucleotideId);
                 if (Utilities.verboseLogLevel >= 20){
-                	Utilities.verboseLog(120, "nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
+                	Utilities.verboselog(120, "nucleotideId: " + nucleotideId + " nucleotide: " + nucleotide.getSequence() + " ID: " + nucleotide.getId());
 		}
                 //In cases the FASTA file contained sequences from ENA or any other database (e.g. ENA|AACH01000026|AACH01000026.1 Saccharomyces)
                 //the nucleotide can be NULL and therefore we need to get the nucleotide sequence by name
@@ -417,7 +417,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             }
             /*
             if (proteinCount %  (proteinInsertBatchSize / 2) == 0){
-                Utilities.verboseLog(1100, "Completed processing " + proteinCount + " proteins and xrefs: " +
+                Utilities.verboselog(110, "Completed processing " + proteinCount + " proteins and xrefs: " +
                         "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + " in " +
                         (System.currentTimeMillis() - countCreateAndPersistNewORFs ) + " millis " );
                 countCreateAndPersistNewORFs = System.currentTimeMillis();
@@ -426,7 +426,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
             int avgXrefPerProtein =  totalXrefs /  proteinCount;
             if (proteinCount %  4000 == 0){
-                Utilities.verboseLog(1100, "Completed processing " + proteinCount + " proteins and xrefs: " +
+                Utilities.verboselog(110, "Completed processing " + proteinCount + " proteins and xrefs: " +
                         "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + "  "
                         + " avgXrefPerProtein: " + avgXrefPerProtein
                         + " in " +
@@ -434,7 +434,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 countCreateAndPersistNewORFs = System.currentTimeMillis();
             }
         }
-        Utilities.verboseLog(1100, "createAndPersistNewORFs done in " +
+        Utilities.verboselog(110, "createAndPersistNewORFs done in " +
                 (System.currentTimeMillis() - startCreateAndPersistNewORFs) + " millis");
 
         //Finally persist open reading frames

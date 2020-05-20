@@ -9,7 +9,7 @@
     <!-- ######################## JOB: PIRSF version 3.01 ############################  -->
     <bean id="jobPIRSF" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="The PIRSF concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
+                  value="The PIRSF concept is used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePirsf"/>
     </bean>

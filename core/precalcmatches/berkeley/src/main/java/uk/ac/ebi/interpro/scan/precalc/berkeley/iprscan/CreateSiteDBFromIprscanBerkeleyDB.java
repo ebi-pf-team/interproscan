@@ -280,9 +280,11 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                         throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
                     }
 
-                    System.out.println("Finished building BerkeleyDB.");
+                    System.out.println("Finished building matches for this partition.");
                 }
             }
+            System.out.println("Finished building the lookupDB");
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new IllegalStateException("SQLException thrown by IPRSCAN", e);
