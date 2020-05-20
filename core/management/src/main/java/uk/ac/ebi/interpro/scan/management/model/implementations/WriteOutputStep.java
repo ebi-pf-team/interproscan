@@ -213,10 +213,13 @@ public class WriteOutputStep extends Step {
         for (FileOutputFormat outputFormat : outputFormats) {
             Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
-                Utilities.verboseLog(1100, "Writing out " + outputPath.toString());
+                Utilities.verboseLog(110, "Writing out " + outputPath.toString());
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
+                printMemoryUsage("printing " + outputFormat);
+                Utilities.verboseLog(0, " Outputting " + outputFormat);
+
                 switch (outputFormat) {
                     case TSV:
                         outputToTSV(outputPath, stepInstance, sequenceType);
@@ -910,5 +913,28 @@ public class WriteOutputStep extends Step {
             }
         }
 
+    }
+
+    private void printMemoryUsage(String stepName){
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " #####");
+
+        //Print used memory
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb);
+
+        //Print free memory
+        System.out.println("Free Memory:"
+                + runtime.freeMemory() / mb);
+
+        //Print total available memory
+        System.out.println("Total Memory:" + runtime.totalMemory() / mb);
+
+        //Print Maximum available memory
+        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
     }
 }
