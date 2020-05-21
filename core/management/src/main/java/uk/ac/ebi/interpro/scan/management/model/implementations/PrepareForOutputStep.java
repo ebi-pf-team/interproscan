@@ -300,6 +300,11 @@ public class PrepareForOutputStep extends Step {
 
         String proteinRange = "[" + stepInstance.getBottomProtein() + "_" + stepInstance.getTopProtein() + "]";
 
+        List<Long> proteinBreakPoints = new ArrayList<>();
+        proteinBreakPoints.add(10l);
+        for (Long breakIndex = 2000l; breakIndex <= proteinsConsidered; breakIndex += 2000) {
+            proteinBreakPoints.add(breakIndex);
+        }
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Load " + topProteinId + " proteins from the db.");
         }
@@ -399,9 +404,9 @@ public class PrepareForOutputStep extends Step {
 
             proteinDAO.persist(proteinKey, protein);
             //help garbage collection??
-            if (proteinIndex % 10000 == 0){
+            if (proteinBreakPoints.contains(proteinIndex)){
                 System.gc();
-                printMemoryUsage("after GC scheduled");
+                printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
             }
         }
         //}catch (JAXBException e){
