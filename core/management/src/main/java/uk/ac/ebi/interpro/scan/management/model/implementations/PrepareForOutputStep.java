@@ -82,7 +82,9 @@ public class PrepareForOutputStep extends Step {
         int proteinRawCount = 0;
         Protein exampleProtein = null;
 
-        printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
+        if (bottomProteinId == 1) {
+            printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
+        }
 
 
         try {
@@ -334,11 +336,6 @@ public class PrepareForOutputStep extends Step {
             Protein protein = proteinDAO.getProtein(proteinKey);
             if (protein != null) {
                 proteinCount++;
-            }
-
-
-            if (proteinIndex == middleProtein) {
-                printMemoryUsage("at midpoint preparing  " + proteinRange + " proteins");
             }
 
             for (String signatureLibraryName : signatureLibraryNames) {
@@ -745,19 +742,12 @@ public class PrepareForOutputStep extends Step {
 
         System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " #####");
 
-        //Print used memory
         System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb);
-
-        //Print free memory
-        System.out.println("Free Memory:"
-                + runtime.freeMemory() / mb);
-
-        //Print total available memory
-        System.out.println("Total Memory:" + runtime.totalMemory() / mb);
-
-        //Print Maximum available memory
-        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
     }
 
 }

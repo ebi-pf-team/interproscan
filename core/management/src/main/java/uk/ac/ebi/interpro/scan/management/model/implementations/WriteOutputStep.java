@@ -283,6 +283,7 @@ public class WriteOutputStep extends Step {
                     default:
                         LOGGER.warn("Unrecognised output format " + outputFormat + " - cannot write the output file.");
                 }
+
             } catch (IOException ioe) {
                 final String p = outputPath.toAbsolutePath().toString();
                 throw new IllegalStateException("IOException thrown when attempting to writeComment output from InterProScan to path: " + p, ioe);
