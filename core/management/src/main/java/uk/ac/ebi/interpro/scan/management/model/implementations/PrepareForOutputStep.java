@@ -398,7 +398,11 @@ public class PrepareForOutputStep extends Step {
             }
 
             proteinDAO.persist(proteinKey, protein);
-            protein = null;
+            //help garbage collection??
+            if (proteinIndex % 10000 == 0){
+                System.gc();
+                printMemoryUsage("after GC scheduled");
+            }
         }
         //}catch (JAXBException e){
         //    e.printStackTrace();

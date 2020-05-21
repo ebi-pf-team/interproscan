@@ -602,6 +602,11 @@ public class WriteOutputStep extends Step {
                         if (count < topProteinId) {
                             writer.write(","); // More proteins/nucleotide sequences to follow
                         }
+                        //help garbage collection??
+                        if (proteinIndex % 20000 == 0){
+                            System.gc();
+                            printMemoryUsage("after GC scheduled");
+                        }
                     }
                 }
                 writer.footer();
