@@ -289,6 +289,7 @@ public class WriteOutputStep extends Step {
             }
         }
 
+        printMemoryUsage("Completed pritning out results " );
         //close the kvStores
 
         nucleotideSequenceDAO.getDbStore().close();
@@ -488,6 +489,11 @@ public class WriteOutputStep extends Step {
                         }
                     }
 
+                    //help garbage collection??
+                    if (proteinIndex % 20000 == 0){
+                        System.gc();
+                        printMemoryUsage("after GC scheduled");
+                    }
                     //print one protein then break
                     //break;
                 }
@@ -941,17 +947,12 @@ public class WriteOutputStep extends Step {
         System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " #####");
 
         //Print used memory
+
         System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb);
-
-        //Print free memory
-        System.out.println("Free Memory:"
-                + runtime.freeMemory() / mb);
-
-        //Print total available memory
-        System.out.println("Total Memory:" + runtime.totalMemory() / mb);
-
-        //Print Maximum available memory
-        System.out.println("Max Memory:" + runtime.maxMemory() / mb);
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
     }
 }

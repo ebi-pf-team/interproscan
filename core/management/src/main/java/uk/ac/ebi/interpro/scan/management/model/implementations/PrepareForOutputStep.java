@@ -398,6 +398,7 @@ public class PrepareForOutputStep extends Step {
             }
 
             proteinDAO.persist(proteinKey, protein);
+            protein = null;
         }
         //}catch (JAXBException e){
         //    e.printStackTrace();
