@@ -46,6 +46,10 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
 
+        System.out.println(Utilities.getTimeNow()
+                + " verboseLog: " + Utilities.verboseLog
+                + " verboseLogLevel: " + Utilities.verboseLogLevel);
+
         int runStatus = 11;
         if(verboseLogLevel >= 110) {
             Utilities.verboseLog(110, "DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());

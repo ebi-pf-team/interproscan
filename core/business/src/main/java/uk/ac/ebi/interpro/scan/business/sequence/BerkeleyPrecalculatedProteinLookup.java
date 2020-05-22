@@ -26,6 +26,7 @@ import java.util.*;
  * Looks up precalculated matches from the Berkeley WebService.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -131,7 +132,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         Utilities.verboseLog(1100, "LookupV2 Processing  " + proteins.size() + " range: " + proteinRange);
         int count = 0;
         int batchCount = 0;
-
+        if ( proteinRanges.get("bottom") == 1l) {
+            printMemoryUsage("Start of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
+            System.gc();
+            printMemoryUsage("After first gc in procesing " + proteins.size() + " range: " + proteinRange);
+        }
 
         final Set<Protein> proteinsAwaitingPrecalcLookup = new HashSet<>();
         final Set<Protein> precalculatedProteins = new HashSet<>();
@@ -192,7 +197,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 proteinsAwaitingPrecalcLookup.clear();
             }
             int progressMeter = count * 100 / proteinsCount;
-            if (progressMeter % 20 == 0 && progressMeter != oldProgressMeter) {
+            if (progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
+                if ( proteinRanges.get("bottom") == 1l) {
+                    if (progressMeter % 5 == 0) {
+                        Utilities.verboseLog(0, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                    }
+                    if (progressMeter % 10 == 0) {
+                        printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
+                    }
+                }
                 if (progressMeter % 40 == 0) {
                     Utilities.verboseLog(110, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 } else {
@@ -227,6 +240,12 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         Utilities.verboseLog(110, " 2. total proteinsNotInLookup   " + proteinRange + " size: " + proteinsNotInLookup.size());
         Utilities.verboseLog(1100, "2. LookupV2 Processing range: " + proteinRange + " completed");
+
+        if ( proteinRanges.get("bottom") == 1l) {
+            printMemoryUsage("End of  of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
+            System.gc();
+            printMemoryUsage("After second gc in procesing " + proteins.size() + " range: " + proteinRange);
+        }
     }
 
     /**
@@ -813,5 +832,22 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         return available;
     }
+
+    private void printMemoryUsage(String stepName){
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " #####");
+
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+    }
+
 
 }

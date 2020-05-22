@@ -24,7 +24,7 @@ public class Utilities {
 
     public static boolean verboseLog = false;
 
-    public static int verboseLogLevel = 0;
+    public static int verboseLogLevel = -99;
 
     public static String mode = "standalone";
 
@@ -526,7 +526,7 @@ public class Utilities {
 
     //verbose output using System out
     public static void verboseLog(String out){
-        if(verboseLogLevel > 0){
+        if(verboseLog && verboseLogLevel > 0){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }
@@ -534,7 +534,7 @@ public class Utilities {
     //verbose output using System out
     public static void verboseLog(int level, String out){
         //System.out.println(Utilities.getTimeNow() + " level: " + level + " - " + out);
-        if(verboseLogLevel >= level){
+        if(verboseLog && verboseLogLevel >= level){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }

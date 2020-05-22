@@ -354,7 +354,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         if (count > 12000) {
             System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " unique sequences for analysis");
         }
-        Utilities.verboseLog(110, " Uploaded/Stored " + count + " unique sequences for analysis");
+        Utilities.verboseLog(0, " Uploaded/Stored " + count + " unique sequences for analysis");
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");

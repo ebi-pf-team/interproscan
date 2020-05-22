@@ -704,6 +704,8 @@ public class Run extends AbstractI5Runner {
 
             //consider more verbose output
             if (parsedCommandLine.hasOption(I5Option.VERBOSE.getLongOpt())) {
+                String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE.getLongOpt());
+                System.out.println(" verobe parameter value: " + verboseOption);
                 bbMaster.setVerboseLog(true);
                 bbMaster.setVerboseLogLevel(0);
             }
@@ -1572,8 +1574,8 @@ public class Run extends AbstractI5Runner {
             // Get hostname
             //get canonical hostname as otherwise hostname may not be exactly how other machines see this host
             final String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-            if (Utilities.verboseLogLevel >= 10){
-                Utilities.verboseLog(1100, "process hostname: " + hostname);
+            if (Utilities.verboseLogLevel >= 110){
+                Utilities.verboseLog(110, "process hostname: " + hostname);
             }
 
             // Select a random port above 1024, excluding LSF ports and check availability.
@@ -1773,7 +1775,7 @@ public class Run extends AbstractI5Runner {
             try {
                 if (new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
-                    Utilities.verboseLog(1100, "TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
+                    Utilities.verboseLog(110, "TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
                     deleteWorkingTemporaryDirectory(temporaryFileDirectory);
                 }
             } catch (IOException e) {

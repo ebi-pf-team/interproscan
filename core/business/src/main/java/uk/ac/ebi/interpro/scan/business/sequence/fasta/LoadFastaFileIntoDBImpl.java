@@ -272,7 +272,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
                 System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded " + totalProteinsParsed + " unique sequences for analysis");
             }
-
+            Utilities.verboseLog(0, "Uploaded " + totalProteinsParsed + " unique sequences for analysis");
         } catch (IOException e) {
             throw new IllegalStateException("Could not read the fastaFileInputStream. ", e);
         }

@@ -64,7 +64,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected boolean verboseLog;
 
-    protected int verboseLogLevel;
+    protected int verboseLogLevel = -99;
 
 
     private final long startUpTime = System.currentTimeMillis();
