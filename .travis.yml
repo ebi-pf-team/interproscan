@@ -1,6 +1,6 @@
 language: java
 jdk: openjdk11
-
+python: 3.8
 
 sudo: required
 env:
@@ -21,6 +21,10 @@ before_install:
   - sudo service docker restart
   - sleep 5
   - sudo docker pull ${OS_TYPE}:${OS_VERSION}
+#  - sudo apt-get update
+#  - sudo apt-get install python3.8
+
+#after_install:
 
 #os:
 #  - linux
