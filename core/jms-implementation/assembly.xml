@@ -64,7 +64,7 @@
         </dependencySet>
 
         <dependencySet>
-            <outputDirectory>data/freemarker</outputDirectory>
+            <outputDirectory>${freemarker.output.path}</outputDirectory>
             <includes>
                 <include>uk.ac.ebi.interpro.scan:interproscan-web</include>
             </includes>

@@ -9,7 +9,7 @@
     <!-- ######################## JOB: PIRSF version 3.01 ############################  -->
     <bean id="jobPIRSF" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="The PIRSF concept is being used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
+                  value="The PIRSF concept is used as a guiding principle to provide comprehensive and non-overlapping clustering of UniProtKB sequences into a hierarchical order to reflect their evolutionary relationships."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePirsf"/>
     </bean>
@@ -69,7 +69,7 @@
         <!--More specific properties-->
         <property name="perlCommand" value="${perl.command}"/>
         <property name="scriptPath" value="${binary.pirsf.pl.path}"/>
-        <property name="hmmerPath" value="${binary.hmmer3.path}"/>
+        <property name="hmmerPath" value="${binary.hmmer33.path}"/>
         <property name="sfHmmAllPath" value="${pirsf.sfhmm.path}"/>
         <property name="pirsfDatPath" value="${pirsf.dat.path}"/>
         <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>

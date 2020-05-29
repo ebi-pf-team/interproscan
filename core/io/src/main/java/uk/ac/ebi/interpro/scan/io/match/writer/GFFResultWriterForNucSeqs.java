@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -79,11 +80,16 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
         List<String> proteinIdsFromGetOrf = getProteinAccessions(protein, proteinSequence);
         for (String proteinIdFromGetorf : proteinIdsFromGetOrf) {
             if (matches.size() > 0) {
+
                 proteinIdFromGetorf = getValidGFF3SeqId(proteinIdFromGetorf);
+                //System.out.println("------- ----oooooo----- ------- proteinIdFromGetorf : " + proteinIdFromGetorf);
                 writeSequenceRegionPart(protein, sequenceLength, md5, proteinIdFromGetorf);
                 //processMatches(matches, proteinIdForGFF, date, protein, getNucleotideId());
+                //System.out.println("------- ----oooooo----- -------  write the matches for " + proteinIdFromGetorf);
                 processMatches(matches, proteinIdForGFF, date, protein, proteinIdFromGetorf);
+                //System.out.println("------- ----oooooo----- -------");
             }
+
         }
         return 0;
     }
@@ -102,6 +108,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      */
     private void writeSequenceRegionPart(final NucleotideSequence nucleotideSequence) throws IOException {
         // I.
+        Utilities.verboseLog("writeSequenceRegionPart nucleotideSequence: " + nucleotideSequence.getMd5());
         for (OpenReadingFrame orf : nucleotideSequence.getOpenReadingFrames()) {
             Protein protein = orf.getProtein();
             int sequenceLength = protein.getSequenceLength();
@@ -181,11 +188,13 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
      */
     private void writeSequenceRegionPart(final Protein protein, final int sequenceLength, final String md5,
                                          final String proteinIdFromGetorf) throws IOException {
+        Utilities.verboseLog("writeSequenceRegionPart protein: " + protein.getMd5() + " proteinIdFromGetorf:" + proteinIdFromGetorf);
         // I.
         for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
             // II.
             final NucleotideSequence nucleotideSequence = orf.getNucleotideSequence();
             final StringBuilder concatenatedNucSeqIdentifiers = new StringBuilder();
+            Set<String> nucSeqIdentifires = new HashSet<>();
             // III.
             for (final NucleotideSequenceXref nucleotideSequenceXref : nucleotideSequence.getCrossReferences()) {
                 String nucleotideSequenceXrefId = nucleotideSequenceXref.getIdentifier();
@@ -212,13 +221,17 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                     //strippedProteinId = XrefParser.stripOfVersionNumberIfExists(strippedProteinId);
                     // V.
                     if ((nucleotideSequenceXrefId.equals(strippedProteinId))) {
-                        // VI.
-                        if (concatenatedNucSeqIdentifiers.length() > 0) {
-                            concatenatedNucSeqIdentifiers.append(VALUE_SEPARATOR);
-                        }
-                        concatenatedNucSeqIdentifiers.append(nucleotideSequenceXrefId);
+                        // VIa.
+                        nucSeqIdentifires.add(nucleotideSequenceXrefId);
                     }
                 }
+            }
+            // VIb.
+            for (String nucSeqId : nucSeqIdentifires){
+                if (concatenatedNucSeqIdentifiers.length() > 0) {
+                    concatenatedNucSeqIdentifiers.append(VALUE_SEPARATOR);
+                }
+                concatenatedNucSeqIdentifiers.append(nucSeqId);
             }
             // VII.
             String concatenatedNucSeqIdentifiersStr = concatenatedNucSeqIdentifiers.toString();
@@ -228,7 +241,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                 setNucleotideId(concatenatedNucSeqIdentifiersStr);
                 String nucleotideSequenceId = getNucleotideId();
                 Utilities.verboseLog("nucleotideSequenceId considered: " + nucleotideSequenceId +
-                        " proteinIdFromGetorf: + proteinIdFromGetorf");
+                        " proteinIdFromGetorf: " + proteinIdFromGetorf);
                 if (proteinIdFromGetorf.startsWith(nucleotideSequenceId)) {
                     Utilities.verboseLog(40,"Matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
                     super.gffWriter.write("##sequence-region " + concatenatedNucSeqIdentifiersStr + " 1 " + nucleotideSequence.getSequence().length());
@@ -247,7 +260,7 @@ public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
                     //Write polypeptide
                     super.gffWriter.write(getPolypeptideLine(sequenceLength, proteinIdFromGetorf, proteinIdForGFF, md5));
                 } else {
-                    Utilities.verboseLog(40,"NOT matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
+                    Utilities.verboseLog(10,"NOT matching:" + "\t" + nucleotideSequenceId + "\t" + proteinIdFromGetorf);
                 }
             } else {
                 Utilities.verboseLog("protein considered: " + protein.toString());

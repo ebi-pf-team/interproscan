@@ -137,6 +137,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 proteinInsertBatchSize = proteinInsertBatchSizeNoLookup;
             }
 
+            //check if the looku
             Set<Protein> localPrecalculatedProteins = (usingLookupService)
                     ? proteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
                     : null;

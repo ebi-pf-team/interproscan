@@ -201,7 +201,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
                         extension.equalsIgnoreCase(FileOutputFormat.RAW.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.GFF3_PARTIAL.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.XML_SLIM.getFileExtension()) ||
-                        extension.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension()) ||
+                       // extension.equalsIgnoreCase(FileOutputFormat.JSON.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.JSON_SLIM.getFileExtension()) ||
                         extension.equalsIgnoreCase(FileOutputFormat.TSV_PRO.getFileExtension())) {
                     // SVG, HTML and RAW formats are not part of the default formats
@@ -211,6 +211,8 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             }
         }
         params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
+        Utilities.verboseLog("outputFormatList  " + outputFormatList.toString());
+        //LOGGER.warn("outputFormatList  " + outputFormatList.toString());
     }
 
 

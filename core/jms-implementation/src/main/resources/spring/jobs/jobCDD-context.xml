@@ -8,7 +8,7 @@
 
     <!-- ######################## JOB: CDD ############################  -->
     <bean id="jobCDD" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="Prediction of CDD domains in Proteins"/>
+        <property name="description" value="CDD predicts protein domains and families based on a collection of well-annotated multiple sequence alignment models."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseCDD"/>
         <!--<property name="doRunLocally" value="true"/>-->
