@@ -15,12 +15,12 @@ cp rpsbproc bin/blast/ncbi-blast-2.9.0+/rpsbproc
 chmod +x bin/blast/ncbi-blast-2.9.0+/rpsbproc
 if which apt >/dev/null; then
   sudo apt install libdw1 libdw-dev
-  sudo apt-get update
-  sudo apt-get install python3.8
+  #sudo apt-get update
+  #sudo apt-get install python3.8
 fi
 if which yum >/dev/null; then
-  yum install libdw1 libdw-dev
-  yum instal python3.8
+  #yum install libdw1 libdw-dev
+  #yum instal python3.8
 fi
 python3 -V
 echo " checking python version"
