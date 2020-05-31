@@ -135,6 +135,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             //slowSteps.add("stepPrositeProfilesRunBinary");
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
             // stop running if there are no StepInstances left to complete.
+            Long scheduleGCStart = System.currentTimeMillis();
             int allowedWaitTimeMultiplier = 0;
             boolean controlledLogging = false;
             while (!shutdownCalled) {
@@ -208,6 +209,17 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         statsUtil.addToAllAvailableJobs(stepInstance, "submitted");
                     }else{
                         statsUtil.addToAllAvailableJobs(stepInstance, "considered");
+                    }
+                    Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
+                    if (scheduleGCTime >= 30 * 60 * 1000){
+                        scheduleGCStart = System.currentTimeMillis();
+                        Utilities.verboseLog(0,
+                        "stepInstanceDAO.count() " + stepInstanceDAO.count()
+                                + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                                + " minimumStepsExpected : " + minimumStepsExpected
+                                + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                                +  " totalUnfinishedStepInstances: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                        printMemoryUsage("StandaloneBlackBoxMaster - loop - unfinshedStepInstances ");
                     }
                 }
                 //Utilities.verboseLog(1100, "runStatus:" + runStatus);
@@ -295,6 +307,17 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 //                }
                 //for standalone es mode this should be < 200
                 Thread.sleep(100);  // Make sure the Master thread is not hogging resources required by in-memory workers.
+                Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
+                if (scheduleGCTime >= 30 * 60 * 1000){
+                    scheduleGCStart = System.currentTimeMillis();
+                    Utilities.verboseLog(0,
+                            "stepInstanceDAO.count() " + stepInstanceDAO.count()
+                                    + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
+                                    + " minimumStepsExpected : " + minimumStepsExpected
+                                    + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
+                                    +  " totalUnfinishedStepInstances: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
+                    printMemoryUsage("StandaloneBlackBoxMaster - loop - !shutdownCalled ");
+                }
             }
             runStatus = 0;
         } catch (JMSException e) {
@@ -328,6 +351,34 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         }
         systemExit(runStatus);
     }
+
+    private void printMemoryUsage(String stepName){
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " ##### before ");
+
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+
+        System.gc();
+
+        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " ##### after");
+
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+    }
+
 
     /**
      * Exit InterProScan 5 immediately with the supplied exit code.
