@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -42,6 +43,9 @@ public final class Model2SfReader extends AbstractModelFileParser {
         final Map<String, String> records = parseFileToMap();
 
         final Map<String, String> familyRecords = parseCathFamilyFile();
+
+
+
         // Create signatures
         final Map<String, Signature> signatureMap = new HashMap<>();
         for (String modelData : records.keySet()) {
@@ -56,7 +60,8 @@ public final class Model2SfReader extends AbstractModelFileParser {
             if (signatureMap.containsKey(signatureAc)) {
                 signature = signatureMap.get(signatureAc);
             } else {
-                signature = new Signature(signatureAc);
+                String signatureName = familyRecords.get(signatureAc);
+                signature = new Signature(signatureAc, signatureName);
                 signatureMap.put(signatureAc, signature);
             }
             signature.addModel(new Model(modelAc, null, null, hmmLength));
@@ -101,38 +106,46 @@ public final class Model2SfReader extends AbstractModelFileParser {
         return records;
     }
 
+
     public Map<String, String> parseCathFamilyFile() throws IOException {
+
+
         final Map<String, String> records = new HashMap<>();
 
         // Some example lines to parse:
         // 3.30.56.60      "XkdW-like"
         //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
         //3.90.330.10     "Nitrile Hydratase; Chain A"
-        String cathFamilyFile = "/data/gene3d/4.2.0/cath-family-names.txt";
-        for (Resource modelFile : modelFiles) {
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] splitLine = line.split("\\s+");
-                    if (splitLine.length != 3) {
-                        throw new IllegalStateException("Unexpected format on line: " + line);
-                    }
+        String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
 
-                    String model = splitLine[0];
-                    String signature = splitLine[1];
-                    int hmmLength = Integer.parseInt(splitLine[2]);
+        BufferedReader reader = null;
+        try {
+            FileInputStream familyFile = new FileInputStream(cathFamilyFile);
+            reader = new BufferedReader(new InputStreamReader(familyFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] splitLine = line.split("\\s+", 2);
+//                if (splitLine[0].isEmpty()) {
+//                    throw new IllegalStateException("Unexpected format on line: " + line + " \n " + splitLine.toString());
+//                }
 
-                    records.put(model + '#' + hmmLength, prefix + signature);  // model#hmmLength -> signature
+                String accession = splitLine[0];
+                String newAccession = prefix + accession;
+                String familyName = "";
+                if(splitLine.length < 2 || splitLine[1].contains("-")){
+                    familyName = "";
+                }else {
+                    familyName = splitLine[1];
                 }
+
+                records.put(newAccession, familyName);  // model#accession, name
             }
-            finally {
-                if (reader != null) {
-                    reader.close();
-                }
+        } finally {
+            if (reader != null) {
+                reader.close();
             }
         }
+
         return records;
     }
 }

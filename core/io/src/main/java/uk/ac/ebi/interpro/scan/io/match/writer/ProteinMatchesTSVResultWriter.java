@@ -193,7 +193,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 String accession = splitLine[0];
                 String newAccession = prefix + accession;
                 String familyName = "";
-                if(splitLine.length < 2 || splitLine[1].contains("\"\"")){
+                if(splitLine.length < 2 || splitLine[1].contains("-")){
                     familyName = "";
                 }else {
                     familyName = splitLine[1];
