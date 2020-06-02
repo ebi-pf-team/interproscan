@@ -697,11 +697,19 @@ public class Run extends AbstractI5Runner {
                 bbMaster.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
             }
 
-            //for this version always have precalc off
-            //if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
-            bbMaster.disablePrecalc();
-            
-            // }
+            //
+            if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
+                bbMaster.disablePrecalc();
+            }
+
+            //consider more verbose output
+            if (parsedCommandLine.hasOption(I5Option.VERBOSE.getLongOpt())) {
+                String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE.getLongOpt());
+                System.out.println(" verobe parameter value: " + verboseOption);
+                bbMaster.setVerboseLog(true);
+                bbMaster.setVerboseLogLevel(0);
+            }
+
 
             // Exclude sites from output?
             final boolean includeTsvSites = parsedCommandLine.hasOption(I5Option.ENABLE_TSV_RESIDUE_ANNOT.getLongOpt());
@@ -728,6 +736,8 @@ public class Run extends AbstractI5Runner {
             // Include version file with TSV output?
             final boolean inclTSVVersion = parsedCommandLine.hasOption(I5Option.TSV_VERSION_OUTPUT.getLongOpt());
             bbMaster.setInclTSVVersion(inclTSVVersion);
+
+
 
         }
     }
@@ -1564,8 +1574,8 @@ public class Run extends AbstractI5Runner {
             // Get hostname
             //get canonical hostname as otherwise hostname may not be exactly how other machines see this host
             final String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-            if (Utilities.verboseLogLevel >= 10) {
-                Utilities.verboseLog("process hostname: " + hostname);
+            if (Utilities.verboseLogLevel >= 110){
+                Utilities.verboseLog(110, "process hostname: " + hostname);
             }
 
             // Select a random port above 1024, excluding LSF ports and check availability.
@@ -1645,23 +1655,23 @@ public class Run extends AbstractI5Runner {
         String kvstoreDir = "kvstore";
         String kvstoreBase = tempDir + File.separator + kvstoreDir;
         String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
-        Utilities.verboseLog(10, " kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
+        Utilities.verboseLog(110, " kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
         kvStoreProteins.setLevelDBStore(kvStoreProteinsDBPath);
 
         String kvStoreProteinsNotInLookupDBPath = kvstoreBase + File.separator + kvStoreProteinsNotInLookup.getDbName();
-        Utilities.verboseLog(10, " kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
+        Utilities.verboseLog(110, " kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
         kvStoreProteinsNotInLookup.setLevelDBStore(kvStoreProteinsNotInLookupDBPath);
 
         //String kvStoreProteinsOtherDBPath = kvstoreBase + File.separator +  kvStoreProteinsOther.getDbName();
-        //Utilities.verboseLog(10, "kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
+        //Utilities.verboseLog(110, "kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
         //kvStoreProteinsOther.setLevelDBStore(kvStoreProteinsOtherDBPath);
 
         String kvStoreMatchesDBPath = kvstoreBase + File.separator + kvStoreMatches.getDbName();
-        Utilities.verboseLog(10, "kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
+        Utilities.verboseLog(110, "kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
         kvStoreMatches.setLevelDBStore(kvStoreMatchesDBPath);
 
         String kvStoreNucleotidesDBPath = kvstoreBase + File.separator + kvStoreNucleotides.getDbName();
-        Utilities.verboseLog(10, "kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
+        Utilities.verboseLog(110, "kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
         kvStoreNucleotides.setLevelDBStore(kvStoreNucleotidesDBPath);
 
     }
@@ -1765,7 +1775,7 @@ public class Run extends AbstractI5Runner {
             try {
                 if (new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
-                    Utilities.verboseLog("TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
+                    Utilities.verboseLog(110, "TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
                     deleteWorkingTemporaryDirectory(temporaryFileDirectory);
                 }
             } catch (IOException e) {

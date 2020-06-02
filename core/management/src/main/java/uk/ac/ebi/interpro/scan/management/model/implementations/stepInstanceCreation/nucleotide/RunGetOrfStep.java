@@ -105,7 +105,7 @@ public class RunGetOrfStep extends RunBinaryStep {
         // Need to have default minimum length (100?)
         command.addAll(getBinarySwitchesAsList());
 
-        Utilities.verboseLog("RunGetOrfStep: " + getCommandBuilder(command));
+        Utilities.verboseLog(1100, "RunGetOrfStep: " + getCommandBuilder(command));
         return command;
     }
 }

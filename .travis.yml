@@ -45,7 +45,6 @@ branches:
   only:
   - dev
   - master
-  - pfam33.1
   - release-5.45-80.0
   except:
   - new_master

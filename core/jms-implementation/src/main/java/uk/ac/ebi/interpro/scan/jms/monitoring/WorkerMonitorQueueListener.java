@@ -49,7 +49,7 @@ public class WorkerMonitorQueueListener implements MessageListener {
                         return message;
                     }
                 });
-                Utilities.verboseLog("worker state received and forwarded: \n"
+                Utilities.verboseLog(1100, "worker state received and forwarded: \n"
                         + message.getJMSMessageID());
             } catch (JMSException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

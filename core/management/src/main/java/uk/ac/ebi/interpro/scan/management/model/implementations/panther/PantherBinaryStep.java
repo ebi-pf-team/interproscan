@@ -220,7 +220,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
         command.add(getAbsolutePantherTempDirPath(temporaryFileDirectory));
 
         LOGGER.debug("panther command is :" + command.toString());
-        Utilities.verboseLog("panther command is :" + command.toString());
+        Utilities.verboseLog(1100, "panther command is :" + command.toString());
 
         return command;
     }

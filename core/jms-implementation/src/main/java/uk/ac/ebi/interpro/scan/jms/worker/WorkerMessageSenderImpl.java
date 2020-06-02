@@ -150,7 +150,7 @@ public class WorkerMessageSenderImpl implements Serializable, WorkerMessageSende
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Attempting to send message to queue: " + destination);
         }
-        Utilities.verboseLog("Attempting to send message to queue: " + destination);
+        Utilities.verboseLog(1100, "Attempting to send message to queue: " + destination);
 
         if (local) {
             if (!localJmsTemplate.isExplicitQosEnabled()) {

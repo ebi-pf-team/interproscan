@@ -159,7 +159,7 @@ public class WriteGene3dSsfFileStep extends Step {
             }
         }
 
-        Utilities.verboseLog("Raw proteins: " + rawProteins.size() + ", matches: " + count + ", timeTaken: " + timeTaken);
+        Utilities.verboseLog(1100, "Raw proteins: " + rawProteins.size() + ", matches: " + count + ", timeTaken: " + timeTaken);
 
         // Check we have correct data
         if (LOGGER.isDebugEnabled()) {

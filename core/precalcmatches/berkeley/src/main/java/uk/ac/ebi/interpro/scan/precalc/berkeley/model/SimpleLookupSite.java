@@ -47,7 +47,7 @@ public class SimpleLookupSite {
         residueEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_RESIDUE_END - columnOffSet]);
 
         if (lookupMatchTokens.length > 9) {
-            Utilities.verboseLog("lookupMatchTokens size: " + lookupMatchTokens.length + " desc col : " + (COL_IDX_DESCRIPTION - columnOffSet));
+            Utilities.verboseLog(1100, "lookupMatchTokens size: " + lookupMatchTokens.length + " desc col : " + (COL_IDX_DESCRIPTION - columnOffSet));
             description = lookupMatchTokens[COL_IDX_DESCRIPTION - columnOffSet];
         }else{
             description = null;

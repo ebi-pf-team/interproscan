@@ -189,10 +189,10 @@ public class PfamHMMER3PostProcessing implements Serializable {
         }
 
 
-//        Utilities.verboseLog("nestedModelsMap count:" + nestedModelsMap.keySet().size());
+//        Utilities.verboseLog(1100, "nestedModelsMap count:" + nestedModelsMap.keySet().size());
 //        for (String testKey : nestedModelsMap.keySet()) {
 //            if (testKey.contains("PF01193")) {
-//                Utilities.verboseLog("testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
+//                Utilities.verboseLog(1100, "testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
 //            }
 //        }
         Utilities.verboseLog(verboseLevel,"The matches found so far: ");
@@ -380,7 +380,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
     public Map<String, Set<String>> getPfamHmmData() throws IOException {
         LOGGER.debug("Starting to parse hmm data file.");
-        Utilities.verboseLog("Starting to parse hmm data file -- " + pfamHmmDataPath);
+        Utilities.verboseLog(1100, "Starting to parse hmm data file -- " + pfamHmmDataPath);
         Map<String, String> domainNameToAccesstion = new HashMap<>();
         Map<String, Set<String>> pfamHmmData = new HashMap<>();
         BufferedReader reader = null;
@@ -414,7 +414,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                         LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
                         LOGGER.debug("Parsed " + " domething here ????" + " signatures.");
                     }
-                    Utilities.verboseLog("Parsed " + lineNumber + " lines .. at line :" + line);
+                    Utilities.verboseLog(1100, "Parsed " + lineNumber + " lines .. at line :" + line);
                 }
 
                 line = line.trim();
@@ -436,7 +436,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                     if (line.split("\\s+").length >= 3) {
                         String value = line.split("\\s+")[2];
 
-//                        Utilities.verboseLog("accession: " + accession + " id:" +  name + " nestedDomains: "
+//                        Utilities.verboseLog(1100, "accession: " + accession + " id:" +  name + " nestedDomains: "
 //                                + nestedDomains +  " case: " + i + " lineL " + line);
 
                         switch (i) {
@@ -473,7 +473,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                 length = null;
                                 nestedDomains = new HashSet<>();
                                 if (accession.contains("PF01193")) {
-                                    Utilities.verboseLog("accession (PF01193): " + accession + " ne domains : " + nestedDomains);
+                                    Utilities.verboseLog(1100, "accession (PF01193): " + accession + " ne domains : " + nestedDomains);
                                 }
                                 break;
                         }
@@ -485,7 +485,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                 domainNameToAccesstion.put(name, accession);
                                 pfamHmmData.put(accession, nestedDomains);
                                 if (accession.contains("PF01193")) {
-                                    Utilities.verboseLog("accession (PF01193): " + accession + " ne domains : " + nestedDomains);
+                                    Utilities.verboseLog(1100, "accession (PF01193): " + accession + " ne domains : " + nestedDomains);
                                 }
                             }
                             accession = null;
@@ -502,7 +502,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 reader.close();
             }
         }
-        Utilities.verboseLog("pfamHmmData #: " + pfamHmmData.keySet().size());
+        Utilities.verboseLog(1100, "pfamHmmData #: " + pfamHmmData.keySet().size());
         Map<String, Set<String>> altPfamHmmData = new HashMap<>();
         Iterator it = pfamHmmData.entrySet().iterator();
         while (it.hasNext()) {

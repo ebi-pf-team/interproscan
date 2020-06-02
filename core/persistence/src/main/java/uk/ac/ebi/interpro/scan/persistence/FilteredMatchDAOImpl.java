@@ -309,13 +309,13 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
     public void hibernateInitialise(Match match){
         //*****Initialize goxrefs and pathwayxrefs collections *******
         if (match.getSignature().getEntry() != null) {
-            Utilities.verboseLog("entry: " + match.getSignature().getEntry().getAccession());
+            Utilities.verboseLog(1100, "entry: " + match.getSignature().getEntry().getAccession());
             Hibernate.initialize(match.getSignature().getEntry().getPathwayXRefs());
             Hibernate.initialize(match.getSignature().getEntry().getGoXRefs());
-            Utilities.verboseLog("PathwayXRefs: " + match.getSignature().getEntry().getPathwayXRefs().size());
-            Utilities.verboseLog("GoXRefs: " + match.getSignature().getEntry().getGoXRefs().size());
+            Utilities.verboseLog(1100, "PathwayXRefs: " + match.getSignature().getEntry().getPathwayXRefs().size());
+            Utilities.verboseLog(1100, "GoXRefs: " + match.getSignature().getEntry().getGoXRefs().size());
             Hibernate.initialize(match.getSignature().getCrossReferences());
-            Utilities.verboseLog("getCrossReferences: " + match.getSignature().getCrossReferences().size());
+            Utilities.verboseLog(1100, "getCrossReferences: " + match.getSignature().getCrossReferences().size());
         }
 
 

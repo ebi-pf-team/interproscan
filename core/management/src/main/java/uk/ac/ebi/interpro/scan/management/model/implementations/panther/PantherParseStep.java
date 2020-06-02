@@ -110,7 +110,7 @@ public final class PantherParseStep extends ParseStep<PantherRawMatch> {
 //                int matchesFound = 0;
 //                int waitTimeFactor = Utilities.getWaitTimeFactor(matchCount).intValue();
 //                if (represantiveRawMatch != null) {
-//                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+//                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
 //                    String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
 //                    int retryCount = 0;
 //                    Long allowedWaitTime = Long.valueOf(waitTimeFactor) * waitTimeFactor * 100 * 1000;
@@ -142,7 +142,7 @@ public final class PantherParseStep extends ParseStep<PantherRawMatch> {
 //                    Utilities.verboseLog(matchPersistWarning);
 //                }
 //                Long timeTaken = System.currentTimeMillis() - now;
-//                Utilities.verboseLog("ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
+//                Utilities.verboseLog(1100, "ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
 //                        + " time taken: " + timeTaken);
 //            }
 //        } catch (IOException e) {

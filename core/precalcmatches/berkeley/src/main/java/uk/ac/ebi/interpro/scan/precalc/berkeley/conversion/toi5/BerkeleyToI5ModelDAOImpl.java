@@ -76,7 +76,7 @@
 //                    versionNumber = analysisJobMap.get(analysisJobName).getVersion();
 //
 //                    debugString = "Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber;
-////                    Utilities.verboseLog(10, debugString);
+////                    Utilities.verboseLog(110, debugString);
 //                    LOGGER.debug(debugString);
 //                } else {
 //                    throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJobName);
@@ -120,7 +120,7 @@
 //            }
 //            debugString = "sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion;
 //            debugString +=  "\n librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib);
-////            Utilities.verboseLog(10, debugString);
+////            Utilities.verboseLog(110, debugString);
 //
 //            if (LOGGER.isDebugEnabled()) {
 //                LOGGER.debug("sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);

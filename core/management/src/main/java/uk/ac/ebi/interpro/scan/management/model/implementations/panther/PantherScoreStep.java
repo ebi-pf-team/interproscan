@@ -207,7 +207,7 @@ public final class PantherScoreStep extends RunBinaryStep {
         command.add(outputFilePathName);
 
         LOGGER.debug("pantherScore command is :" + command.toString());
-        Utilities.verboseLog("pantherScore command is :" + command.toString());
+        Utilities.verboseLog(1100, "pantherScore command is :" + command.toString());
 
         return command;
     }

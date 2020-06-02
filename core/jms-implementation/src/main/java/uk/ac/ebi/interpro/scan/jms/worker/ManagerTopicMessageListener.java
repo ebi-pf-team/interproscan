@@ -74,14 +74,14 @@ public class ManagerTopicMessageListener implements MessageListener {
                 messageContents = objectMessage.getObject();
                 if (messageContents instanceof Shutdown) {
                     if (Utilities.verboseLogLevel > 4) {
-                        Utilities.verboseLog("Worker Received Shutdown message: ");
+                        Utilities.verboseLog(1100, "Worker Received Shutdown message: ");
                     }
                     setShutdown(true);
                     workerMessageSender.sendShutDownMessage(message);
                 } else if (messageContents instanceof ClusterState) {
                     ClusterState clusterState = (ClusterState) messageContents;
                     if (Utilities.verboseLogLevel > 4) {
-                        Utilities.verboseLog("Worker Received clusterState: " + clusterState.toString());
+                        Utilities.verboseLog(1100, "Worker Received clusterState: " + clusterState.toString());
                     }
                     if (controller != null) {
                         controller.setSubmissionWorkerClusterState(clusterState);

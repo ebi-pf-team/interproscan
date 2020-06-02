@@ -116,7 +116,7 @@ public class LocalJobQueueListener implements MessageListener {
         String timeNow = Utilities.getTimeNow();
         long threadId = Thread.currentThread().getId();
         if (localCount == 1) {
-            Utilities.verboseLog("first transaction ... ");
+            Utilities.verboseLog(1100, "first transaction ... ");
         }
         if (inVmworkerNumber == 0) {
             if (controller != null) {
@@ -150,7 +150,7 @@ public class LocalJobQueueListener implements MessageListener {
             }
             LOGGER.debug("Message received from queue.  JMS Message ID: " + message.getJMSMessageID() + " cmd:  " + message.toString());
             LOGGER.info("Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
-            Utilities.verboseLog(10, "Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
+            Utilities.verboseLog(110, "Message received from queue.  JMS Message ID: " + message.getJMSMessageID());
 
             if (!(message instanceof ObjectMessage)) {
                 LOGGER.error("Received a message of an unknown type (non-ObjectMessage)");
@@ -179,9 +179,9 @@ public class LocalJobQueueListener implements MessageListener {
                 statsUtil.jobStarted(messageName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
-//                Utilities.verboseLog("verboseLogLevel :" + Utilities.verboseLogLevel);
+//                Utilities.verboseLog(1100, "verboseLogLevel :" + Utilities.verboseLogLevel);
 
-                Utilities.verboseLog(10, "thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
+                Utilities.verboseLog(0, "thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
                         + " - stepInstanceId = " + stepId
                         + "\n stepInstance: " + stepExecution.getStepInstance().toString());
 
@@ -194,13 +194,13 @@ public class LocalJobQueueListener implements MessageListener {
 
                 final long executionTime = System.currentTimeMillis() - now;
 
-                Utilities.verboseLog(10, "thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
-                Utilities.verboseLog(10, "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+                Utilities.verboseLog(110, "thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+                Utilities.verboseLog(0, "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
 
                 LOGGER.debug("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
 
                 statsUtil.jobFinished(messageName);
-                Utilities.verboseLog(10,"Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+                Utilities.verboseLog(110,"Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
 
             } catch (Exception e) {
                 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
@@ -245,8 +245,8 @@ public class LocalJobQueueListener implements MessageListener {
             }
         }
         if (localCount == 1) {
-            Utilities.verboseLog("first transaction ... done");
-            Utilities.verboseLog("InterProScan analyses continue ....");
+            Utilities.verboseLog(1100, "first transaction ... done");
+            Utilities.verboseLog(1100, "InterProScan analyses continue ....");
         }
 
     }

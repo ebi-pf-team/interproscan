@@ -28,7 +28,7 @@ public class TimeKeeper {
         executor.execute(new Runnable() {
             public void run() {
                 Long timeToSleep = maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
-                Utilities.verboseLog("TimeToLive: " + (maximumLifeMillis - (System.currentTimeMillis() - startUpTime))
+                Utilities.verboseLog(1100, "TimeToLive: " + (maximumLifeMillis - (System.currentTimeMillis() - startUpTime))
                         + " maximumLifeMillis: " + maximumLifeMillis
                         + " Now: " + System.currentTimeMillis()
                         + " startUpTime: " + startUpTime
@@ -36,7 +36,7 @@ public class TimeKeeper {
 
                 while(System.currentTimeMillis() - startUpTime < maximumLifeMillis){
                     timeToSleep = maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
-                    Utilities.verboseLog("Time To sleep/live: " + timeToSleep);
+                    Utilities.verboseLog(1100, "Time To sleep/live: " + timeToSleep);
                     try {
                         Thread.sleep(timeToSleep + (10 * 1000));
                     } catch (InterruptedException e) {

@@ -117,7 +117,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 for (String crossReference : crossReferences) {
                     ProteinXref xref = XrefParser.getProteinXref(crossReference);
                     protein.addCrossReference(xref);
-                    Utilities.verboseLog("ProteinXref: " + xref + " crossReference: " + crossReference);
+                    Utilities.verboseLog(1100, "ProteinXref: " + xref + " crossReference: " + crossReference);
                 }
             }
             proteinsAwaitingPrecalcLookup.add(protein);
@@ -182,7 +182,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         proteinsAwaitingPersistence.add(protein);
 
         if (proteinsAwaitingPersistence.size() == proteinInsertBatchSize) {
-            Utilities.verboseLog("proteinInsertBatchSize " + proteinInsertBatchSize);
+            Utilities.verboseLog(1100, "proteinInsertBatchSize " + proteinInsertBatchSize);
             persistBatch();
         }
     }
@@ -197,15 +197,15 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             }
-            Utilities.verboseLog("Persisting " + proteinsAwaitingPersistence.size() + " proteins");
+            Utilities.verboseLog(1100, "Persisting " + proteinsAwaitingPersistence.size() + " proteins");
             final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(proteinsAwaitingPersistence);
             bottomProteinId = persistedProteins.updateBottomProteinId(bottomProteinId);
             topProteinId = persistedProteins.updateTopProteinId(topProteinId);
-            Utilities.verboseLog("Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+            Utilities.verboseLog(1100, "Completed Persisting topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
             if (isGetOrfOutput) {
-                Utilities.verboseLog("Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+                Utilities.verboseLog(1100, "Persisting  getOrfOutput topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
                 createAndPersistNewORFs(persistedProteins);
-                Utilities.verboseLog("Completed Persisting  getOrfOutput ");
+                Utilities.verboseLog(1100, "Completed Persisting  getOrfOutput ");
             }
             proteinsAwaitingPersistence.clear();
 
@@ -303,11 +303,11 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             count++;
             String sequenceId = Long.toString(protein.getId());
             if (count == 1 || count == 10) {
-                Utilities.verboseLog("sequenceId = " + sequenceId);
+                Utilities.verboseLog(1100, "sequenceId = " + sequenceId);
             }
             proteinDAO.insert(sequenceId, protein);
         }
-        Utilities.verboseLog("Completed storing " + count + " parsed proteins into KV store, top=" + top);
+        Utilities.verboseLog(1100, "Completed storing " + count + " parsed proteins into KV store, top=" + top);
     }
 
     /**
@@ -334,7 +334,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             if (count % 4000 == 0) {
                 if (count % 16000 == 0) {
                     //TODO use utilities.verboselog to log this
-                    Utilities.verboseLog("Stored " + count + " sequences");
+                    Utilities.verboseLog(1100, "Stored " + count + " sequences");
                     //System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Stored " + count + " sequences");
 
                 } else {
@@ -354,7 +354,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         if (count > 12000) {
             System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded/Stored " + count + " unique sequences for analysis");
         }
-        Utilities.verboseLog(10, " Uploaded/Stored " + count + " unique sequences for analysis");
+        Utilities.verboseLog(0, " Uploaded/Stored " + count + " unique sequences for analysis");
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Persisting protein sequences completed, stored " + count + "proteins");
@@ -381,7 +381,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
         }
         Long startCreateAndPersistNewORFs = System.currentTimeMillis();
         Long countCreateAndPersistNewORFs = System.currentTimeMillis();
-        Utilities.verboseLog("Start createAndPersistNewORFs for  " + newProteins.size() + " new proteins and their cross references.");
+        Utilities.verboseLog(1100, "Start createAndPersistNewORFs for  " + newProteins.size() + " new proteins and their cross references.");
         int proteinCount = 0;
         int totalXrefs = 0;
         for (Protein newProtein : newProteins) {
@@ -452,7 +452,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
             }
             /*
             if (proteinCount %  (proteinInsertBatchSize / 2) == 0){
-                Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
+                Utilities.verboseLog(1100, "Completed processing " + proteinCount + " proteins and xrefs: " +
                         "  totalXrefs " +totalXrefs  + " xrefCount :" + xrefCount + " in " +
                         (System.currentTimeMillis() - countCreateAndPersistNewORFs ) + " millis " );
                 countCreateAndPersistNewORFs = System.currentTimeMillis();
@@ -461,7 +461,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
 
             int avgXrefPerProtein = totalXrefs / proteinCount;
             if (proteinCount % 4000 == 0) {
-                Utilities.verboseLog("Completed processing " + proteinCount + " proteins and xrefs: " +
+                Utilities.verboseLog(1100, "Completed processing " + proteinCount + " proteins and xrefs: " +
                         "  totalXrefs " + totalXrefs + " xrefCount :" + xrefCount + "  "
                         + " avgXrefPerProtein: " + avgXrefPerProtein
                         + " in " +
@@ -469,7 +469,7 @@ public class ProteinLoader implements SequenceLoader<Protein> {
                 countCreateAndPersistNewORFs = System.currentTimeMillis();
             }
         }
-        Utilities.verboseLog("createAndPersistNewORFs done in " +
+        Utilities.verboseLog(1100, "createAndPersistNewORFs done in " +
                 (System.currentTimeMillis() - startCreateAndPersistNewORFs) + " millis");
 
         //Finally persist open reading frames

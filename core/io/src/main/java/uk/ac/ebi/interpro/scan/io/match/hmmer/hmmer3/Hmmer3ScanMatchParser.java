@@ -290,8 +290,8 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
                         if ((nextLine = reader.readLine()) != null) {
                             if (nextLine.trim().equals(END_OF_OUTPUT_FILE)) {
                                 //likely there were no domain hits
-                                Utilities.verboseLog("likely there were no domain hits");
-                                Utilities.verboseLog("rawDomainCount: " + rawDomainCount);
+                                Utilities.verboseLog(1100, "likely there were no domain hits");
+                                Utilities.verboseLog(1100, "rawDomainCount: " + rawDomainCount);
 
                             }
                             domainParsingError = false;
@@ -311,7 +311,7 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
                             if (sequenceIdLineMatcher.matches()) {
                                 stage = ParsingStage.LOOKING_FOR_SEQUENCE_MATCHES;
                                 currentSequenceIdentifier = sequenceIdLineMatcher.group(1);
-                                Utilities.verboseLog("currentSequenceIdentifier:  " + currentSequenceIdentifier);
+                                Utilities.verboseLog(1100, "currentSequenceIdentifier:  " + currentSequenceIdentifier);
                                 if (currentSequenceIdentifier == null){
                                     throw new ParseException("Found a line starting with " +ModelMatchTMP.SEQUENCE_IDENTIFIER_lINE_PATTERN.toString() + " but cannot parse it with the SEQUENCE_ID_LINE regex.", null, line, lineNumber);
                                 }
@@ -344,7 +344,7 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
                                         HmmSearchRecord searchRecord = new HmmSearchRecord(hmmscanSequenceMatch.getModelIdentifier());
                                         searchRecords.put(hmmscanSequenceMatch.getModelIdentifier(), searchRecord);
                                     }
-                                    Utilities.verboseLog("sequenceMatch: " + sequenceMatch);
+                                    Utilities.verboseLog(1100, "sequenceMatch: " + sequenceMatch);
                                     searchRecords.get(hmmscanSequenceMatch.getModelIdentifier()).addSequenceMatch(sequenceMatch);
                                     //searchRecord.addSequenceMatch(sequenceMatch);
                                 }
@@ -424,7 +424,7 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
                             }
                             break;
                         case FINISHED_SEARCHING_RECORD:
-                            Utilities.verboseLog("FINISHED_SEARCHING_RECORD");
+                            Utilities.verboseLog(1100, "FINISHED_SEARCHING_RECORD");
                             stage = ParsingStage.LOOKING_FOR_SEQUENCE_IDENTIFIER;
                             break;
 
@@ -435,7 +435,7 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
                 for (HmmSearchRecord hmmSearchRecord: searchRecords.values()) {
                     hmmer3ParserSupport.addMatch(hmmSearchRecord, rawResults);
                     rawDomainCount += getSequenceMatchCount(hmmSearchRecord);
-                    Utilities.verboseLog("hmmSearchRecord: " + hmmSearchRecord.toString());
+                    Utilities.verboseLog(1100, "hmmSearchRecord: " + hmmSearchRecord.toString());
                 }
 
             }
@@ -445,7 +445,7 @@ public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
             }
         }
         //TODO consider using the utilities methods
-        Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
+        Utilities.verboseLog(110, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
 //       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
         return new HashSet<RawProtein<T>>(rawResults.values());
     }

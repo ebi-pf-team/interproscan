@@ -119,7 +119,7 @@ public class Gene3DPostProcessingStep extends Step {
         //do we need to skip
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -135,7 +135,7 @@ public class Gene3DPostProcessingStep extends Step {
             LOGGER.debug("In execute() method of Gene3dHmmer3FilterStep.java (Gene3D Post Processing.)");
             LOGGER.debug("DAO returned " + rawProteins.size() + " raw proteins to filter.");
         }
-        Utilities.verboseLog("PostProcess Gene3d matches: protein-range : "
+        Utilities.verboseLog(1100, "PostProcess Gene3d matches: protein-range : "
                 + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein());
         // Filter and Persist
         filteredMatchDAO.persist(this.getPostProcessor().filter(rawProteins, outputFilePath));
