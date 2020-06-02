@@ -524,6 +524,34 @@ public class Utilities {
         return null;
     }
 
+
+    public static void printMemoryUsage(String stepName){
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        System.out.println(Utilities.getTimeNow() + "##### Heap utilization statistics [MB]  at " + stepName + " ##### before ");
+
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+
+        System.gc();
+
+        System.out.println(Utilities.getTimeNow() + "##### Heap utilization statistics [MB]  at " + stepName + " ##### after");
+
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+    }
+
     //verbose output using System out
     public static void verboseLog(String out){
         if(verboseLog && verboseLogLevel > 0){

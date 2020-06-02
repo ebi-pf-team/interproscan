@@ -133,9 +133,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         int count = 0;
         int batchCount = 0;
         if ( proteinRanges.get("bottom") == 1l) {
-            printMemoryUsage("Start of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
-            System.gc();
-            printMemoryUsage("After first gc in procesing " + proteins.size() + " range: " + proteinRange);
+            Utilities.printMemoryUsage("Start of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
         }
 
         final Set<Protein> proteinsAwaitingPrecalcLookup = new HashSet<>();
@@ -203,7 +201,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                         Utilities.verboseLog(0, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                     }
                     if (progressMeter % 10 == 0) {
-                        printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
+                        Utilities.printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
                     }
                 }
                 if (progressMeter % 40 == 0) {
@@ -242,9 +240,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         Utilities.verboseLog(1100, "2. LookupV2 Processing range: " + proteinRange + " completed");
 
         if ( proteinRanges.get("bottom") == 1l) {
-            printMemoryUsage("End of  of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
-            System.gc();
-            printMemoryUsage("After second gc in procesing " + proteins.size() + " range: " + proteinRange);
+            Utilities.printMemoryUsage("End of  of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
         }
     }
 
@@ -832,22 +828,5 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
         return available;
     }
-
-    private void printMemoryUsage(String stepName){
-        int mb = 1024*1024;
-
-        //Getting the runtime reference from system
-        Runtime runtime = Runtime.getRuntime();
-
-        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " #####");
-
-        System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb
-                + "\t Free Memory:"
-                + runtime.freeMemory() / mb
-                + "\t Total Memory:" + runtime.totalMemory() / mb
-                + "\t Max Memory:" + runtime.maxMemory() / mb);
-    }
-
 
 }

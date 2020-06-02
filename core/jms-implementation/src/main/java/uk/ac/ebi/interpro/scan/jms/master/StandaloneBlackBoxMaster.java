@@ -219,7 +219,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                                 + " minimumStepsExpected : " + minimumStepsExpected
                                 + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
                                 +  " totalUnfinishedStepInstances: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                        printMemoryUsage("StandaloneBlackBoxMaster - loop - unfinshedStepInstances ");
+                        Utilities.printMemoryUsage("StandaloneBlackBoxMaster - loop - unfinshedStepInstances ");
                     }
                 }
                 //Utilities.verboseLog(1100, "runStatus:" + runStatus);
@@ -316,7 +316,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                                     + " minimumStepsExpected : " + minimumStepsExpected
                                     + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
                                     +  " totalUnfinishedStepInstances: " + stepInstanceDAO.retrieveUnfinishedStepInstances().size());
-                    printMemoryUsage("StandaloneBlackBoxMaster - loop - !shutdownCalled ");
+                    Utilities.printMemoryUsage("StandaloneBlackBoxMaster - loop - !shutdownCalled ");
                 }
             }
             runStatus = 0;
@@ -350,33 +350,6 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             ));
         }
         systemExit(runStatus);
-    }
-
-    private void printMemoryUsage(String stepName){
-        int mb = 1024*1024;
-
-        //Getting the runtime reference from system
-        Runtime runtime = Runtime.getRuntime();
-
-        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " ##### before ");
-
-        System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb
-                + "\t Free Memory:"
-                + runtime.freeMemory() / mb
-                + "\t Total Memory:" + runtime.totalMemory() / mb
-                + "\t Max Memory:" + runtime.maxMemory() / mb);
-
-        System.gc();
-
-        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " ##### after");
-
-        System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb
-                + "\t Free Memory:"
-                + runtime.freeMemory() / mb
-                + "\t Total Memory:" + runtime.totalMemory() / mb
-                + "\t Max Memory:" + runtime.maxMemory() / mb);
     }
 
 

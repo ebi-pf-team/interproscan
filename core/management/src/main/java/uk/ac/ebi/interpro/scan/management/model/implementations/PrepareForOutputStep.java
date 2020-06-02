@@ -83,7 +83,7 @@ public class PrepareForOutputStep extends Step {
         Protein exampleProtein = null;
 
         if (bottomProteinId == 1) {
-            printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
+            Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
         }
 
 
@@ -402,8 +402,7 @@ public class PrepareForOutputStep extends Step {
             proteinDAO.persist(proteinKey, protein);
             //help garbage collection??
             if (proteinBreakPoints.contains(proteinIndex)){
-                System.gc();
-                printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
+                Utilities.printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
             }
         }
         //}catch (JAXBException e){
@@ -734,20 +733,5 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
-    private void printMemoryUsage(String stepName){
-        int mb = 1024*1024;
-
-        //Getting the runtime reference from system
-        Runtime runtime = Runtime.getRuntime();
-
-        System.out.println("##### Heap utilization statistics [MB]  at " + stepName + " #####");
-
-        System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb
-                + "\t Free Memory:"
-                + runtime.freeMemory() / mb
-                + "\t Total Memory:" + runtime.totalMemory() / mb
-                + "\t Max Memory:" + runtime.maxMemory() / mb);
-    }
 
 }
