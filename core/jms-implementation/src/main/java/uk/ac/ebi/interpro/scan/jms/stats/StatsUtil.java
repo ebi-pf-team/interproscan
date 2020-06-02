@@ -97,6 +97,8 @@ public class StatsUtil {
 
     private Lock pollStatsLock = new ReentrantLock();
 
+    private static String sequenceType = "p";
+
     public StatsUtil() {
 
     }
@@ -263,6 +265,10 @@ public class StatsUtil {
 
     public static void setForceDisplayProgress(boolean forceDisplayProgress) {
         StatsUtil.forceDisplayProgress = forceDisplayProgress;
+    }
+
+    public static void setSequenceType(String sequenceType){
+        StatsUtil.sequenceType = sequenceType;
     }
 
     public ConcurrentMap getAllStepInstances() {
@@ -803,6 +809,15 @@ public class StatsUtil {
                     forceDisplayProgress = false;
                 }
             }
+            if (displayProgress && sequenceType.equals("n")){
+                int initialMinutes  = 10 * 60 * 1000;
+                if (timeSinceLastReport < initialMinutes){
+                    displayProgress = false;
+                    Utilities.verboseLog(0, "timeSinceLastReport: " + timeSinceLastReport
+                            + " progress : " + Math.floor(progress * 100)) ;
+                }
+            }
+
             if (displayProgress) {
                 progressReportTime = System.currentTimeMillis();
                 // Round down, to avoid confusion with 99.5% being rounded to 100% complete!

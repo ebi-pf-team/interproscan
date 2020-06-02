@@ -373,6 +373,7 @@ public class Run extends AbstractI5Runner {
                 }
 
             }
+            Utilities.setSequenceType(sequenceType);
 
             if (mode.getRunnableBean() != null) {
                 final Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
