@@ -255,6 +255,7 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
                     proteinDAO.insert(sequenceId, protein);
                     count++;
                 }
+                Utilities.verboseLog(110, "Stored " + count + " parsed sequences into KVDB ... " );
             }
             Utilities.verboseLog(110, "Stored " + count + " parsed sequences into KVDB: " + levelDBStoreName);
 
