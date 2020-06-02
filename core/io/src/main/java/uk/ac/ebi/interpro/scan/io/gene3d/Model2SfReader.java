@@ -41,6 +41,7 @@ public final class Model2SfReader extends AbstractModelFileParser {
     public SignatureLibraryRelease parse() throws IOException {
         final Map<String, String> records = parseFileToMap();
 
+        final Map<String, String> familyRecords = parseCathFamilyFile();
         // Create signatures
         final Map<String, Signature> signatureMap = new HashMap<>();
         for (String modelData : records.keySet()) {
@@ -73,6 +74,41 @@ public final class Model2SfReader extends AbstractModelFileParser {
         // 1vhnA02 1.10.1200.80  112
 
 
+        for (Resource modelFile : modelFiles) {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(modelFile.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] splitLine = line.split("\\s+");
+                    if (splitLine.length != 3) {
+                        throw new IllegalStateException("Unexpected format on line: " + line);
+                    }
+
+                    String model = splitLine[0];
+                    String signature = splitLine[1];
+                    int hmmLength = Integer.parseInt(splitLine[2]);
+
+                    records.put(model + '#' + hmmLength, prefix + signature);  // model#hmmLength -> signature
+                }
+            }
+            finally {
+                if (reader != null) {
+                    reader.close();
+                }
+            }
+        }
+        return records;
+    }
+
+    public Map<String, String> parseCathFamilyFile() throws IOException {
+        final Map<String, String> records = new HashMap<>();
+
+        // Some example lines to parse:
+        // 3.30.56.60      "XkdW-like"
+        //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
+        //3.90.330.10     "Nitrile Hydratase; Chain A"
+        String cathFamilyFile = "/data/gene3d/4.2.0/cath-family-names.txt";
         for (Resource modelFile : modelFiles) {
             BufferedReader reader = null;
             try {

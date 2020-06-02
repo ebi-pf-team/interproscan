@@ -809,7 +809,7 @@ public class StatsUtil {
                     forceDisplayProgress = false;
                 }
             }
-            if (displayProgress && sequenceType.equals("n")){
+            if (displayProgress && Utilities.getSequenceType().equals("n")){
                 int initialMinutes  = 10 * 60 * 1000;
                 if (timeSinceLastReport < initialMinutes){
                     displayProgress = false;

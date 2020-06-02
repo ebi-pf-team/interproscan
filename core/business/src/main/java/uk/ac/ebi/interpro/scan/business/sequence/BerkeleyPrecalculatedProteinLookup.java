@@ -195,7 +195,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 proteinsAwaitingPrecalcLookup.clear();
             }
             int progressMeter = count * 100 / proteinsCount;
-            if (progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
+            if (proteinsCount >= 2000 && progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
                 if ( proteinRanges.get("bottom") == 1l) {
                     if (progressMeter % 5 == 0) {
                         Utilities.verboseLog(0, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
