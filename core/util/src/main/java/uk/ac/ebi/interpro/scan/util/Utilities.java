@@ -124,7 +124,7 @@ public class Utilities {
     }
 
     public static void setSequenceCount(int sequenceCount){
-        sequenceCount = sequenceCount;
+        Utilities.sequenceCount = sequenceCount;
     }
 
     public static int getSequenceCount(){

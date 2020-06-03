@@ -132,7 +132,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         Utilities.verboseLog(1100, "LookupV2 Processing  " + proteins.size() + " range: " + proteinRange);
         int count = 0;
         int batchCount = 0;
-        if ( proteinRanges.get("bottom") == 1l) {
+        if (proteinRanges.get("bottom") == 1l) {
             Utilities.printMemoryUsage("Start of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
         }
 
@@ -195,9 +195,9 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 proteinsAwaitingPrecalcLookup.clear();
             }
             int progressMeter = count * 100 / proteinsCount;
-            if (proteinsCount >= 2000 && progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
-                if ( proteinRanges.get("bottom") == 1l) {
-                    if (progressMeter % 5 == 0) {
+            if (progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
+                if (proteinRanges.get("bottom") == 1l && progressMeter % 5 == 0) {
+                    if (proteinsCount >= 2000 ) {
                         Utilities.verboseLog(0, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                     }
                     if (progressMeter % 10 == 0) {
@@ -207,7 +207,6 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 if (progressMeter % 40 == 0) {
                     Utilities.verboseLog(110, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 } else {
-
                     Utilities.verboseLog(120, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 }
                 oldProgressMeter = progressMeter;
@@ -239,7 +238,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         Utilities.verboseLog(110, " 2. total proteinsNotInLookup   " + proteinRange + " size: " + proteinsNotInLookup.size());
         Utilities.verboseLog(1100, "2. LookupV2 Processing range: " + proteinRange + " completed");
 
-        if ( proteinRanges.get("bottom") == 1l) {
+        if (proteinRanges.get("bottom") == 1l) {
             Utilities.printMemoryUsage("End of  of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
         }
     }
@@ -357,7 +356,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         Double interproscanDataVersion = 0.0;
         Double serverDataVersion = 99.0;
         String lookupServerVersion = "";
-        try{
+        try {
             int finalDashIndex = interproscanVersion.lastIndexOf("-");
             interproscanDataVersion = Double.parseDouble(interproscanVersion.substring(finalDashIndex).replace("-", ""));
             ;
@@ -366,7 +365,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             int finalDashIndeXForServerVersion = serverVersion.lastIndexOf("-");
             serverDataVersion = Double.parseDouble(serverVersion.substring(finalDashIndeXForServerVersion).replace("-", ""));
 
-            Utilities.verboseLog(110, "interproDataVersion: " +  interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
+            Utilities.verboseLog(110, "interproDataVersion: " + interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
             if (interproscanDataVersion > serverDataVersion) {
                 Utilities.verboseLog(1100, "Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
                 return null;
@@ -375,14 +374,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
             Utilities.verboseLog(1100, "Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
 
-        }catch (Exception e){
-            LOGGER.error("Lookup version check failed ... interproscanVersion: " +  interproscanVersion + ":vs Lookup version: " + lookupServerVersion);
+        } catch (Exception e) {
+            LOGGER.error("Lookup version check failed ... interproscanVersion: " + interproscanVersion + ":vs Lookup version: " + lookupServerVersion);
             e.printStackTrace();
         }
 
         try {
             // Only proceed if the lookup client and server are in sync
-   if (!isSynchronised()) {
+            if (!isSynchronised()) {
                 Utilities.verboseLog(110, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
                 return null;
             } else {
