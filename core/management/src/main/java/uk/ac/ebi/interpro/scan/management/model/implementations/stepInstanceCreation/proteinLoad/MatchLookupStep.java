@@ -19,7 +19,8 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupStoreToI5M
 import uk.ac.ebi.interpro.scan.precalc.client.MatchHttpClient;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import javax.rmi.CORBA.Util;
+//import javax.rmi.CORBA.Util;
+
 import java.util.*;
 
 /**

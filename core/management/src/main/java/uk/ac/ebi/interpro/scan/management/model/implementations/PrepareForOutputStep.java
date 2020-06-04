@@ -349,37 +349,39 @@ public class PrepareForOutputStep extends Step {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
 
-                int count = 0;
+                Long count = 0l;
                 writer.header(interProScanVersion, "nucleotide-sequence-matches");
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId : nucleotideSequenceIds) {
                     count++;
-                    Utilities.verboseLog(120, " nucleotideSequenceId  : " + nucleotideSequenceId);
+                    Utilities.verboseLog(120, "#: " + count + "nucleotideSequenceId  : " + nucleotideSequenceId);
 
                     NucleotideSequence nucleotideSequenceInH2 = nucleotideSequenceDAO.getNucleotideSequence(nucleotideSequenceId);
                     String nucleotideSequenceKey = nucleotideSequenceInH2.getMd5();
                     Set<NucleotideSequenceXref> nucleotideSequenceCrossReferences = nucleotideSequenceInH2.getCrossReferences();
-                    if (Utilities.verboseLogLevel >= 20) {
+                    if (Utilities.verboseLogLevel >= 120) {
                         for (NucleotideSequenceXref nucleotideXref : nucleotideSequenceCrossReferences) {
                             String nucleotideXrefIdentifier = nucleotideXref.getIdentifier();
-                            Utilities.verboseLog(110, count + " nucleotideXrefIdentifier: " + nucleotideXrefIdentifier);
+                            Utilities.verboseLog(120, count + " nucleotideXrefIdentifier: " + nucleotideXrefIdentifier);
                         }
                     }
                     //nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.get(nucleotideSequenceKey);
 
-                    Utilities.verboseLog(110, "\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " : "); // + nucleotideSequenceInH2.toString());
-
+                    int orfCount = 0;
                     for (OpenReadingFrame orf : nucleotideSequenceInH2.getOpenReadingFrames()) {
                         Protein protein = orf.getProtein();
+                        orfCount ++;
                         // String proteinKey = Long.toString(protein.getId());
                         //Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
                         //protein = proteinMarshalled;
                         //orf.setProtein(proteinMarshalled);
                     }
+                    Utilities.verboseLog(110, "\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " orfCount: " + orfCount); // + nucleotideSequenceInH2.toString());
+
                     String xmlNucleotideSequence = writer.marshal(nucleotideSequenceInH2);
-                    if (Utilities.verboseLogLevel > 0) {
-                        Utilities.verboseLog(110, "\n#" + count + " xmlNucleotideSequence: " + xmlNucleotideSequence);
+                    if (Utilities.verboseLogLevel > 120) {
+                        Utilities.verboseLog(120, "\n#" + count + " xmlNucleotideSequence: " + xmlNucleotideSequence);
                     }
                     //String key = nucleotideSequence.getMd5();
                     nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);

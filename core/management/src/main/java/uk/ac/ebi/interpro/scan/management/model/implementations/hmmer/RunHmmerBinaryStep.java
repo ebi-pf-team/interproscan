@@ -160,10 +160,10 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         //for panther only in the first place
         if (forceHmmsearch || Utilities.getSequenceCount() > 10){
             Utilities.setUseHmmsearch(true);
-            Utilities.verboseLog(1100, "Use Hmmsearch  " + getFullPathToHmmsearchBinary());
+            Utilities.verboseLog(110, "Use Hmmsearch  " + getFullPathToHmmsearchBinary());
             command.add(this.getFullPathToHmmsearchBinary());
         }else{
-            Utilities.verboseLog(1100, "Use hmmscan  " + getFullPathToHmmScanBinary());
+            Utilities.verboseLog(110, "Use hmmscan  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }
         command.addAll(this.getBinarySwitchesAsList());

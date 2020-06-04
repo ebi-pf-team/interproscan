@@ -105,7 +105,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         String displayDescription = description == null ? signatureName : description;
                         //displayDescription = displayDescription == null ? altDescription : displayDescription;
 
-                        if (displayDescription == null || displayDescription.contains("FAMILY NOT NAMED")) {
+                        if (displayDescription == null || displayDescription.isBlank() || displayDescription.contains("FAMILY NOT NAMED")) {
                             displayDescription = "-";
                         }
                         if (displayDescription.equals("-")) {

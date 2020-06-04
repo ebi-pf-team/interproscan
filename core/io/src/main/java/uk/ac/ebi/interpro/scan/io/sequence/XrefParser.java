@@ -78,7 +78,7 @@ public class XrefParser {
                     return new NucleotideSequenceXref(database, identifier, description);
                 }
             } */
-            Utilities.verboseLog(1100, "getNucleotideSequenceXref: " + crossReference);
+            Utilities.verboseLog(120, "getNucleotideSequenceXref: " + crossReference);
             return stripUniqueIdentifierAndTrimForNucleotideSeq(crossReference);
         }
         return null;

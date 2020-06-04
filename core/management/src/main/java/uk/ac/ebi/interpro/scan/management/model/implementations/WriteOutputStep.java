@@ -492,7 +492,6 @@ public class WriteOutputStep extends Step {
 
                     //help garbage collection??
                     if (proteinIndex % 20000 == 0){
-                        System.gc();
                         Utilities.printMemoryUsage("outputToXML:- GC scheduled at "  + proteinIndex + " proteins");
                     }
                     //print one protein then break
@@ -531,12 +530,12 @@ public class WriteOutputStep extends Step {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
                 Utilities.verboseLog(110, " WriteOutputStep nucleotideSequences -XML new " + " There are " + topProteinId + " proteins.");
-                int count = 0;
+                int nucleotideSequenceCount = 0;
                 writer.header(interProScanVersion, "nucleotide-sequence-matches");
 
                 final Set<NucleotideSequence> nucleotideSequences = nucleotideSequenceDAO.getNucleotideSequences();
                 for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
-                    count++;
+                    nucleotideSequenceCount ++;
                     for (OpenReadingFrame orf : nucleotideSequence.getOpenReadingFrames()) {
                         Protein protein = orf.getProtein();
                         String proteinKey = Long.toString(protein.getId());
@@ -546,9 +545,12 @@ public class WriteOutputStep extends Step {
                     }
                     //Utilities.verboseLog(1100, "\n#" + count + " nucleotideSequence: " + nucleotideSequence.toString());
                     writer.write(nucleotideSequence, sequenceType, isSlimOutput);
+                    if (nucleotideSequenceCount % 4000 == 0){
+                        Utilities.printMemoryUsage("outputToXML:- GC scheduled at "  + nucleotideSequenceCount + " nucleotideSequences");
+                    }
                 }
 
-                Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size() + " and count : " + count);
+                Utilities.verboseLog(110, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size() + " and count : " + nucleotideSequenceCount);
             }
             writer.close();
         } catch (JAXBException e) {
@@ -621,10 +623,10 @@ public class WriteOutputStep extends Step {
                     }
                     final Set<NucleotideSequence> nucleotideSequences = nucleotideSequenceDAO.getNucleotideSequences();
                     Utilities.verboseLog(110, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
-                    int count = 0;
+                    int nucleotideSequenceCount = 0;
 
                     for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
-                        count++;
+                        nucleotideSequenceCount ++;
                         for (OpenReadingFrame orf : nucleotideSequence.getOpenReadingFrames()) {
                             Protein protein = orf.getProtein();
                             String proteinKey = Long.toString(protein.getId());
@@ -633,8 +635,11 @@ public class WriteOutputStep extends Step {
                             orf.setProtein(proteinMarshalled);
                         }
                         writer.write(nucleotideSequence);
-                        if (count < nucleotideSequences.size()) {
+                        if (nucleotideSequenceCount < nucleotideSequences.size()) {
                             writer.write(","); // More proteins/nucleotide sequences to follow
+                        }
+                        if (nucleotideSequenceCount % 4000 == 0){
+                            Utilities.printMemoryUsage("outputToJSON - NucleotideSequences -  GC scheduled at " + nucleotideSequenceCount + " proteins");
                         }
                     }
 
