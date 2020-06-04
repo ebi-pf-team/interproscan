@@ -221,6 +221,7 @@ public class WriteOutputStep extends Step {
             try {
                 Utilities.printMemoryUsage("printing " + outputFormat);
                 Utilities.verboseLog(110, "Writing out " + outputPath.toString());
+                Utilities.verboseLog(0, " Outputting " + outputFormat);
                 outputToXML(outputPath, stepInstance, sequenceType, false);
             } catch (IOException ioe) {
                 final String p = outputPath.toAbsolutePath().toString();
@@ -229,6 +230,9 @@ public class WriteOutputStep extends Step {
         }
 
         for (FileOutputFormat outputFormat : outputFormatsList) {
+            if (outputFormat == FileOutputFormat.XML_SLIM || outputFormat == FileOutputFormat.XML ){
+                continue;
+            }
             Path outputPath = getPathName(explicitPath, filePathName, outputFormat);
             try {
                 Utilities.verboseLog(110, "Writing out " + outputPath.toString());
@@ -249,7 +253,7 @@ public class WriteOutputStep extends Step {
                         //already dealt with this option
                         break;
                     case XML_SLIM:
-                        outputToXML(outputPath, stepInstance, sequenceType, true);
+                        //outputToXML(outputPath, stepInstance, sequenceType, true);
                         break;
                     case JSON:
                         outputToJSON(outputPath, stepInstance, sequenceType, false);

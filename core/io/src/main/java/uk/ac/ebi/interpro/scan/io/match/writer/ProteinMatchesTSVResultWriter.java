@@ -50,6 +50,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
         Set<Match> matches = protein.getMatches();
 
+        Set<String> signaturesWithNoDescription = new HashSet<>();
 
         for (String proteinAc : proteinAcs) {
 //            Utilities.verboseLog(1100, "sequence mapping: " + proteinAc + " -> " + protein.getId() + "  length: " +  protein.getSequenceLength() ) ;
@@ -62,7 +63,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 final String analysis = signatureLibrary.getName();
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
-                if (signatureAc.contains(prefix)){
+                if (signatureAc.contains(prefix)) {
                     signatureName = familyRecords.get(signatureAc);
                 }
 
@@ -109,7 +110,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             displayDescription = "-";
                         }
                         if (displayDescription.equals("-")) {
-                            System.out.println("no description found for " + signatureAc);
+                            signaturesWithNoDescription.add(signatureAc);
                         }
                         mappingFields.add(displayDescription);
                         mappingFields.add(Integer.toString(location.getStart()));
@@ -164,6 +165,12 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 }
             }
         }
+        Utilities.verboseLog(10, "signatures without descriptions: " + signaturesWithNoDescription.size());
+        if (Utilities.verboseLogLevel >= 110) {
+            for (String signatureWithNoDescription : signaturesWithNoDescription) {
+                Utilities.verboseLog(110, signatureWithNoDescription);
+            }
+        }
         return locationCount;
     }
 
@@ -193,9 +200,9 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 String accession = splitLine[0];
                 String newAccession = prefix + accession;
                 String familyName = "";
-                if(splitLine.length < 2 || splitLine[1].contains("-")){
+                if (splitLine.length < 2 || splitLine[1].contains("-")) {
                     familyName = "";
-                }else {
+                } else {
                     familyName = splitLine[1];
                 }
 
