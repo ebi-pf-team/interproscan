@@ -126,7 +126,7 @@ public class Run extends AbstractI5Runner {
         try {
             //change Loglevel
             //TODO use the properties file
-            // changeLogLevel("DEBUG");
+            changeLogLevel("DEBUG");
 
             // parse the command line arguments
             CommandLine parsedCommandLine = parser.parse(COMMAND_LINE_OPTIONS, args);
@@ -1723,6 +1723,7 @@ public class Run extends AbstractI5Runner {
 
         // org.apache.logging.log4j.core.config.Configurator;
 
+
         Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.WARN);
         Configurator.setLevel("org.apache.activemq", Level.WARN);
         Configurator.setLevel("org.hibernate.boot", Level.ERROR);  // check if its possoble to configure to not diplsay the WARNING
@@ -1731,7 +1732,10 @@ public class Run extends AbstractI5Runner {
         // You can also set the root logger:
         Configurator.setRootLevel(Level.WARN);
 
+        //TODO check again, works for now??
         org.apache.log4j.LogManager.getRootLogger().setLevel(org.apache.log4j.Level.WARN);
+        //org.apache.logging.log4j.LogManager.getRootLogger().se.setLevel(org.apache.logging.log4j.Level.WARN);
+
 //        org.apache.log4j.LogManager.getRootLogger().setLevel("uk.ac.ebi.interpro.scan", org.apache.log4j.Level.WARN);
 
         return;
