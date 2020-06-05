@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.pirsf.hmmer3.PirsfHmmer3RawMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -21,7 +23,7 @@ import java.util.Set;
  */
 public class ParsePirsfOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParsePirsfOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParsePirsfOutputStep.class.getName());
 
     private String pirsfBinaryOutputFileName;
 

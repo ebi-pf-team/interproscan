@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE log4j:configuration PUBLIC "-//LOGGER" "log4j.dtd">-->
+
+<!--<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">-->
+<Configuration>
+    <!-- Appenders -->
+    <Appenders>
+        <!-- Console appender -->
+        <Console name="consoleappender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%C:%L] %p - %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <logger name="uk.ac.ebi.interpro.scan.jms.master.StandaloneBlackBoxMaster" level="debug">
+            <AppenderRef ref="consoleappender"/>
+        </logger>
+
+        <logger name="uk.ac.ebi.interpro.scan.jms.master.AbstractBlackBoxMaster" level="debug">
+            <AppenderRef ref="consoleappender"/>
+        </logger>
+
+
+        <logger name="uk.ac.ebi.interpro.scan.jms" level="debug">
+            <AppenderRef ref="consoleappender"/>
+        </logger>
+        <!-- Root Logger -->
+        <Root level="warn">
+            <AppenderRef ref="consoleappender"/>
+        </Root>
+    </Loggers>
+
+
+
+</Configuration>
+<!--</log4j:configuration>-->

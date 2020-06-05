@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.io.match.phobius.parsemodel.PhobiusProtein;
@@ -22,7 +23,7 @@ import java.util.*;
  */
 public class PhobiusFilteredMatchDAO extends FilteredMatchDAOImpl<PhobiusRawMatch, PhobiusMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAO.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PhobiusFilteredMatchDAO.class.getName());
 
     final SignatureLibraryRelease signatureLibraryRelease;
 

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep;
@@ -22,7 +23,7 @@ public class DistributedBlackBoxMasterOLD extends AbstractBlackBoxMaster{
 
     private String tcpUri;
 
-    private static final Logger LOGGER = Logger.getLogger(DistributedBlackBoxMasterOLD.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DistributedBlackBoxMasterOLD.class.getName());
 
     /**
      * Run the Master Application.

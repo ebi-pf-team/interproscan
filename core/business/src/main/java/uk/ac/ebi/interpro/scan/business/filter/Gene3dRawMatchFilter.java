@@ -15,7 +15,8 @@
  */
 package uk.ac.ebi.interpro.scan.business.filter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.business.binary.BinaryRunner;
@@ -41,7 +42,7 @@ public final class Gene3dRawMatchFilter implements RawMatchFilter<Gene3dHmmer3Ra
 
     // TODO This class seems to only be used by a unit test, not by the application itself! The app uses the Gene3DPostProcessing class instead.
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Gene3dRawMatchFilter.class.getName());
 
     /**
      * Currently required for use in "cli" module, although may review this.

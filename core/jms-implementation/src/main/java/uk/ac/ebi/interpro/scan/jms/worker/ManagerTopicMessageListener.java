@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
 import uk.ac.ebi.interpro.scan.jms.monitoring.*;
@@ -21,7 +22,7 @@ import javax.jms.ObjectMessage;
  */
 public class ManagerTopicMessageListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ManagerTopicMessageListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ManagerTopicMessageListener.class.getName());
 
 
     private boolean shutdown = false;

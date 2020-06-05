@@ -125,7 +125,8 @@ public class Run extends AbstractI5Runner {
 
         try {
             //change Loglevel
-            changeLogLevel("DEBUG");
+            //TODO use the properties file
+            // changeLogLevel("DEBUG");
 
             // parse the command line arguments
             CommandLine parsedCommandLine = parser.parse(COMMAND_LINE_OPTIONS, args);
@@ -1735,7 +1736,7 @@ public class Run extends AbstractI5Runner {
 
         return;
         /*
-        Logger root = Logger.getLogger("uk.ac.ebi.interpro.scan");
+        Logger root = LogManager.getLogger("uk.ac.ebi.interpro.scan");
         //setting the logging level according to input
         if ("FATAL".equalsIgnoreCase(logLevel)) {
             root.setLevel(Level.FATAL);

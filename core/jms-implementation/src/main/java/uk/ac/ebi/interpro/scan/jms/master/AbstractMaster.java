@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.TemporaryDirectoryManager;
 import uk.ac.ebi.interpro.scan.jms.activemq.MasterMessageSender;
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 public abstract class AbstractMaster implements Master {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AbstractMaster.class.getName());
     protected Jobs jobs;
     protected StepInstanceDAO stepInstanceDAO;
     protected MasterMessageSender messageSender;

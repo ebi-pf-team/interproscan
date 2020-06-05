@@ -18,7 +18,7 @@ public class ParsePhobiusOutputStep extends ParseAndPersistStep<PhobiusRawMatch,
 
 /*
 
-    private static final Logger LOGGER = Logger.getLogger(ParsePhobiusOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParsePhobiusOutputStep.class.getName());
 
     private String phobiusOutputFileNameTemplate;
 

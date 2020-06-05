@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.web.io.svg.ScaleMarkerUtil;
 import uk.ac.ebi.interpro.scan.web.io.svg.ScaledLocationUtil;
 
@@ -16,7 +17,7 @@ import java.util.*;
  */
 public class CondensedView implements Serializable {
 
-    private static final Logger LOG = Logger.getLogger(CondensedView.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CondensedView.class.getName());
 
     private List<SimpleEntry> entries;
     private int proteinLength = 0;

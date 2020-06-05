@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
@@ -22,7 +23,7 @@ import java.util.Set;
  */
 public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match, Hmmer3Match.Hmmer3Location> {
 
-    private static final Logger LOG = Logger.getLogger(Hmmer3LookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(Hmmer3LookupMatchConverter.class.getName());
 
     public Hmmer3Match convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 

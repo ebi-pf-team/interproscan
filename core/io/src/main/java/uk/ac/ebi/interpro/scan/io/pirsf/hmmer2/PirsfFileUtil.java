@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 
 import java.io.BufferedWriter;
@@ -18,7 +20,7 @@ import java.util.Map;
  * @since 1.0-SNAPSHOT
  */
 public class PirsfFileUtil {
-    private static final Logger LOGGER = Logger.getLogger(PirsfFileUtil.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfFileUtil.class.getName());
 
     /**
      * Write out raw protein details into a temporary file so the data can be made available for later steps in the job.

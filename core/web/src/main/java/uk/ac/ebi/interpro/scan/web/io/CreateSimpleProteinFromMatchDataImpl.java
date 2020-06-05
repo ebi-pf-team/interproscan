@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -23,7 +24,7 @@ import java.util.Collection;
 @Component
 public class CreateSimpleProteinFromMatchDataImpl implements CreateSimpleProteinFromMatchData {
 
-    private static final Logger LOGGER = Logger.getLogger(CreateSimpleProteinFromMatchDataImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(CreateSimpleProteinFromMatchDataImpl.class);
 
     private final AnalyseMatchDataResult matchAnalyser;
     private final AnalyseStructuralMatchDataResult structuralMatchAnalyser;

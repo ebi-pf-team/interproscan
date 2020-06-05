@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.smart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +36,7 @@ import java.util.*;
 @ContextConfiguration
 public class SmartPostProcessingTest {
 
-    private static final Logger LOGGER = Logger.getLogger(SmartPostProcessingTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SmartPostProcessingTest.class.getName());
 
     @Resource
     private org.springframework.core.io.Resource hmmPfamOutput;

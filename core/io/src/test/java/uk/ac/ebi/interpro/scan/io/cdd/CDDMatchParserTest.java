@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.cdd;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ import java.util.Set;
  */
 public class CDDMatchParserTest {
 
-    private static final Logger LOGGER = Logger.getLogger(CDDMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CDDMatchParserTest.class.getName());
 
     private static final String TEST_MODEL_FILE = "data/cdd/cdd.output.txt";
 

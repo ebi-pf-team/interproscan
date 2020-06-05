@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.pirsf.hmmer2.PirsfMatchTempParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -26,7 +27,7 @@ import java.util.Set;
 
 public class PirsfPersistStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfPersistStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfPersistStep.class.getName());
 
     // Matches passed post processing (no blast required)
     protected String filteredMatchesFileName;

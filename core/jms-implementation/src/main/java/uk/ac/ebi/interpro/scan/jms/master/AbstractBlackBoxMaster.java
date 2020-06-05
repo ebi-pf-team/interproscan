@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public abstract class AbstractBlackBoxMaster extends AbstractMaster implements BlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AbstractBlackBoxMaster.class.getName());
 
 
     protected String fastaFilePath;

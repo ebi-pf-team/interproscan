@@ -1,5 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -174,7 +177,7 @@ Domain search space  (domZ):              11  [number of targets reported over t
  */
 public class Hmmer3ScanMatchParser<T extends RawMatch> implements MatchParser {
 
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Hmmer3ScanMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3ScanMatchParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 

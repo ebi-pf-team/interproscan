@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -39,7 +40,7 @@ import java.util.regex.Matcher;
  */
 public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PhobiusMatchParser.class.getName());
 
     private SignatureLibrary signatureLibrary;
     private  String signatureLibraryRelease;

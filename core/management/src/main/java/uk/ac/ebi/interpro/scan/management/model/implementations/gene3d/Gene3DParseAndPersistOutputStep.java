@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.gene3d;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser;
 import uk.ac.ebi.interpro.scan.io.gene3d.CathResolverRecord;
@@ -39,7 +40,7 @@ import java.util.regex.Pattern;
  */
 public class Gene3DParseAndPersistOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3DParseAndPersistOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Gene3DParseAndPersistOutputStep.class.getName());
 
     private Hmmer3DomTblParser hmmer3DomTblParser;
 

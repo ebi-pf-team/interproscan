@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.*;
  */
 public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(LookupStoreToI5ModelDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LookupStoreToI5ModelDAOImpl.class.getName());
 
     private Map<SignatureLibrary, LookupMatchConverter> signatureLibraryToMatchConverter;
 

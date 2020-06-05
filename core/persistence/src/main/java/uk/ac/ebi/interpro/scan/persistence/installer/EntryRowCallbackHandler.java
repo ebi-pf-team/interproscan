@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence.installer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.model.*;
@@ -27,7 +28,7 @@ import java.util.Set;
  */
 public class EntryRowCallbackHandler implements RowCallbackHandler {
 
-    private static Logger log = Logger.getLogger(EntryRowCallbackHandler.class);
+    private static Logger log = LogManager.getLogger(EntryRowCallbackHandler.class);
 
     //    private final int BATCH_COMMIT_SIZE = 60;
     private final int BATCH_COMMIT_SIZE = 500;

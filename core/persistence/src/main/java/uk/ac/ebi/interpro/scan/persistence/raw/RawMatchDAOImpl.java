@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -20,7 +21,7 @@ public class RawMatchDAOImpl<T extends RawMatch>
         extends GenericDAOImpl<T, Long>
         implements RawMatchDAO<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(RawMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RawMatchDAOImpl.class.getName());
 
     public RawMatchDAOImpl(Class<T> modelClass) {
         super(modelClass);

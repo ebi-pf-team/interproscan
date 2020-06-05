@@ -5,7 +5,8 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
  * Date: Oct 5, 2010
  */
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -24,7 +25,7 @@ import java.util.Map;
 // TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.FilterStep
 public class SmartPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(SmartPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SmartPostProcessingStep.class.getName());
 
     private SmartPostProcessing postProcessor;
 

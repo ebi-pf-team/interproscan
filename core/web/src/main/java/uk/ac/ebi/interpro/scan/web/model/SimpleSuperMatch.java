@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
 import uk.ac.ebi.interpro.scan.web.io.SupermatchHierachyElementBuilder;
 
@@ -17,7 +18,7 @@ import java.util.*;
  */
 public class SimpleSuperMatch implements Comparable<SimpleSuperMatch>, Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(SimpleSuperMatch.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SimpleSuperMatch.class.getName());
 
     private EntryType type;
 

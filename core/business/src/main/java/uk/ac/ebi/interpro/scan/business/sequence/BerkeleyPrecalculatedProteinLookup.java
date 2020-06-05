@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.UnmarshallingFailureException;
 import org.springframework.util.Assert;
@@ -32,7 +33,7 @@ import java.util.*;
  */
 public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinLookup, Runnable {
 
-    Logger LOGGER = Logger.getLogger(BerkeleyPrecalculatedProteinLookup.class.getName());
+    Logger LOGGER = LogManager.getLogger(BerkeleyPrecalculatedProteinLookup.class.getName());
 
     /**
      * This client is used to check for existing matches

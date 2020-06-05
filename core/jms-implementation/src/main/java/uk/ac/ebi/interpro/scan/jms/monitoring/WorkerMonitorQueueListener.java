@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.monitoring;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -18,7 +19,7 @@ import javax.jms.*;
  */
 public class WorkerMonitorQueueListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(MonitorQueueMessageListenerImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MonitorQueueMessageListenerImpl.class.getName());
 
     private JmsTemplate remoteJmsTemplate;
 

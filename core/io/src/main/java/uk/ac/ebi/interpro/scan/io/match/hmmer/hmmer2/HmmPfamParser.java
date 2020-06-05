@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -90,7 +91,7 @@ import java.util.regex.Matcher;
  */
 public class HmmPfamParser<T extends RawMatch> implements MatchParser {
 
-    private static final Logger LOGGER = Logger.getLogger(HmmPfamParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(HmmPfamParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -10,7 +11,7 @@ import java.util.*;
 
 public class MatchDAOImpl extends GenericKVDAOImpl<Match> implements MatchDAO<Match> {
 
-    private static final Logger LOGGER = Logger.getLogger(MatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MatchDAOImpl.class.getName());
 
     public MatchDAOImpl() {
         super(Match.class);

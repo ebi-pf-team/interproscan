@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class StepExecutionTransactionImpl implements StepExecutionTransaction {
 
-    private static final Logger LOGGER = Logger.getLogger(StepExecutionTransactionImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StepExecutionTransactionImpl.class.getName());
 
     private List<String> validatedDirectories = new ArrayList<String>();
 

@@ -16,7 +16,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -39,7 +40,7 @@ import java.util.Set;
  */
 public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesXMLJAXBFragmentsResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesXMLJAXBFragmentsResultWriter.class.getName());
 
     //protected BufferedWriter fileWriter;
 

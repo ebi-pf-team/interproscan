@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.sfld;
 
 //import org.apache.commons.collections.functors.ExceptionClosure;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -21,7 +23,7 @@ import java.util.List;
 
 public class RunSFLDBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunSFLDBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunSFLDBinaryStep.class.getName());
 
     private String fullPathToBinary;
 

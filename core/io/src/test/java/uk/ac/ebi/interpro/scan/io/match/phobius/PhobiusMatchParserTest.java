@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ import java.util.Set;
  */
 public class PhobiusMatchParserTest  {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PhobiusMatchParserTest.class.getName());
 
     private static final String TEST_FILE_PATH = "data/phobius/100.phobius.out";
 

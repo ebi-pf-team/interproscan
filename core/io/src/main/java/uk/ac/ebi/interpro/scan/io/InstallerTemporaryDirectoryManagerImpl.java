@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * TODO: Description
@@ -11,7 +12,7 @@ import org.apache.log4j.Logger;
  */
 public class InstallerTemporaryDirectoryManagerImpl implements TemporaryDirectoryManager {
 
-    private static final Logger LOGGER = Logger.getLogger(InstallerTemporaryDirectoryManagerImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(InstallerTemporaryDirectoryManagerImpl.class.getName());
 
     private static final String TEMPLATE_DIRECTORY_NAME = "template";
 

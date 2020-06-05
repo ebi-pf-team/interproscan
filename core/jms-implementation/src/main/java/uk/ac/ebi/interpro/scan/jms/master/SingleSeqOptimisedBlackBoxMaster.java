@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
 
     private DefaultMessageListenerContainer workerQueueJmsContainer;
 

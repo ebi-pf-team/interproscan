@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +29,7 @@ import java.util.List;
 @ContextConfiguration
 public class LoadFastaFileTest {
 
-    private static final Logger LOGGER = Logger.getLogger(LoadFastaFileTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LoadFastaFileTest.class.getName());
 
     private LoadFastaFile loader;
 

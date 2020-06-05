@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.smart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.smart.SmartOverlappingFileParser;
 import uk.ac.ebi.interpro.scan.io.smart.SmartOverlaps;
@@ -29,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public class SmartPostProcessing implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(SmartPostProcessing.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SmartPostProcessing.class.getName());
 
     //Kinases are processed separately, and the Smart accessions for the relevant methods are stored here -> are they permanent?
     private static final String SMART_SER_THR_KINASE_METHOD = "SM00220";

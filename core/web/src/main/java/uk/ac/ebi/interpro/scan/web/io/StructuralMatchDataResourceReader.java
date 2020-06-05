@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.AbstractResourceReader;
 
 import java.util.Scanner;
@@ -15,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class StructuralMatchDataResourceReader extends AbstractResourceReader<StructuralMatchDataRecord> {
 
-    private static final Logger LOGGER = Logger.getLogger(StructuralMatchDataResourceReader.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StructuralMatchDataResourceReader.class.getName());
 
     private static final String HEADER_LINE = "PROTEIN_ACCESSION\tPROTEIN_ID\tPROTEIN_LENGTH\tCRC64\tdatabase_name\tdomain_id\tclass_id\tpos_from\tpos_to";
     private static final String NO_RESULTS = "No results found";

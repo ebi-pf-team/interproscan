@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.PostProcessor;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match, C extends RawSite, D extends Site> extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(MatchAndSitePostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MatchAndSitePostProcessingStep.class.getName());
 
     protected PostProcessor<A> postProcessor;
 

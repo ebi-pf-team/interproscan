@@ -1,0 +1,23 @@
+
+<Configuration status="WARN" >
+
+    <Appenders>
+        <!-- Console appender -->
+        <Console name="consoleappender" target="SYSTEM_OUT">
+            <!--class="org.apache.logging.log4j.core.appender.ConsoleAppender">-->
+            <!--<param name="Target" value="System.out"/>-->
+            <PatternLayout pattern="%d [%t] [%C:%L] %p - %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.reflections.Reflections" level="error" additivity="false">
+            <AppenderRef ref="consoleappender"/>
+        </Logger>
+
+        <Root level="error" additivity="false">
+            <AppenderRef ref="LogToConsole" level="error"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

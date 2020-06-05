@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.hibernate.Hibernate;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesJSONResultWriter;
@@ -28,7 +29,7 @@ import java.util.*;
 
 public class PrepareForOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(PrepareForOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrepareForOutputStep.class.getName());
 
     //DAOs
     private ProteinDAO proteinDAO;

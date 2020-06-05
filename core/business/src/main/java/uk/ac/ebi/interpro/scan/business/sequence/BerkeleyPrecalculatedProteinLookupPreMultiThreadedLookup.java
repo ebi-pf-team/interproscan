@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.springframework.oxm.UnmarshallingFailureException;
 import org.springframework.beans.factory.annotation.Required;
@@ -31,7 +32,7 @@ import java.util.*;
  */
 public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements PrecalculatedProteinLookup {
 
-    Logger LOGGER = Logger.getLogger(BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup.class.getName());
+    Logger LOGGER = LogManager.getLogger(BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup.class.getName());
 
     /**
      * This client is used to check for existing matches

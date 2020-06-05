@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.monitoring;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
@@ -22,7 +23,7 @@ import java.util.List;
 public class MonitorQueueMessageListenerImpl implements MessageListener {
 
 
-    private static final Logger LOGGER = Logger.getLogger(MonitorQueueMessageListenerImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MonitorQueueMessageListenerImpl.class.getName());
 
     private StatsUtil statsUtil;
 

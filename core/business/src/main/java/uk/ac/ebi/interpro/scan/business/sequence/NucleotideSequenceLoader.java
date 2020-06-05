@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
@@ -22,7 +23,7 @@ import java.util.*;
  */
 public class NucleotideSequenceLoader implements SequenceLoader<NucleotideSequence> {
 
-    private static final Logger LOGGER = Logger.getLogger(NucleotideSequenceLoader.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(NucleotideSequenceLoader.class.getName());
 
     private Set<NucleotideSequence> sequencesAwaitingInsertion;
 

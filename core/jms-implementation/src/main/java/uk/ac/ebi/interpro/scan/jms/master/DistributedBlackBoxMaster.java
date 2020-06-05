@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.taglibs.standard.tag.common.core.Util;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -43,7 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DistributedBlackBoxMaster extends AbstractBlackBoxMaster implements ClusterUser {
 
-    private static final Logger LOGGER = Logger.getLogger(DistributedBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DistributedBlackBoxMaster.class.getName());
 
     private String tcpUri;
 

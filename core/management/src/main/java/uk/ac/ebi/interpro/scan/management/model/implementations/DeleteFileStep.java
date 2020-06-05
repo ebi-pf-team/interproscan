@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -17,7 +18,7 @@ import java.io.File;
  */
 public class DeleteFileStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(DeleteFileStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DeleteFileStep.class.getName());
 
     private String[] fileNameTemplate;
 

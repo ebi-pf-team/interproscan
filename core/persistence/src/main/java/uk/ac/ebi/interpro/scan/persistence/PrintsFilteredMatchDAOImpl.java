@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Match;
@@ -21,7 +22,7 @@ import java.util.*;
 
 public class PrintsFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PrintsRawMatch, FingerPrintsMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsFilteredMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrintsFilteredMatchDAOImpl.class.getName());
 
     /**
      * Sets the class of the model that the DOA instance handles.

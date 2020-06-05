@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence.uniparcdb;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class LoadUniParcFromDBImpl implements LoadUniParcFromDB {
      * Define a static logger variable so that it references the
      * Logger instance named "PeptideQuery".
      */
-    private static final Logger LOGGER = Logger.getLogger(LoadUniParcFromDBImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LoadUniParcFromDBImpl.class.getName());
 
     /**
      * Spring documentation claims that this object is thread safe (contains no state -

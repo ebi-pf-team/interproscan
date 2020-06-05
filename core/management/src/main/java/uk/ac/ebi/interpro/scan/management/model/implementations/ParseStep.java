@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 
@@ -30,7 +31,7 @@ import java.util.Set;
  */
 public abstract class ParseStep<T extends RawMatch> extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParseStep.class.getName());
 
     private String outputFileTemplate;
     private MatchParser<T> parser;

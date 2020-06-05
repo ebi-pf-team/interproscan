@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SiteLocation;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastMatch, RPSBlastMatch.RPSBlastLocation> {
 
-    private static final Logger LOG = Logger.getLogger(RPSBlastLookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(RPSBlastLookupMatchConverter.class.getName());
 
     public RPSBlastMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
         Utilities.verboseLog(130, " RPSBlastLookupMatchConverter for " + match.getProteinMD5() + " start: " + match.getSequenceStart() + " end:" + match.getSequenceEnd());

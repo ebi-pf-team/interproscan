@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ import java.util.Set;
 @ContextConfiguration
 public class PrositeMatchParserTest {
 
-    private static final Logger LOGGER = Logger.getLogger(PrositeMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrositeMatchParserTest.class.getName());
 
     @javax.annotation.Resource
     org.springframework.core.io.Resource hamapGffFile;

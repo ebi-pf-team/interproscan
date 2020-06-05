@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 //import uk.ac.ebi.interpro.scan.io.OsUtils;
 //import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 //import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
@@ -20,7 +22,7 @@ import java.util.EnumSet;
  */
 public class Utilities {
 
-    private static volatile Logger LOGGER = Logger.getLogger(Utilities.class.getName());
+    private static volatile Logger LOGGER = LogManager.getLogger(Utilities.class.getName());
 
     public static boolean verboseLog = false;
 

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartResourceManager;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class RunSmartBinaryStep extends RunHmmerBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunSmartBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunSmartBinaryStep.class.getName());
 
 
     private SmartResourceManager smartResourceManager;

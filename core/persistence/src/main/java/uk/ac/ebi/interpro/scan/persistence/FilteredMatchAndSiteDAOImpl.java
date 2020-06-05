@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -26,7 +27,7 @@ import java.util.Map;
 public abstract class FilteredMatchAndSiteDAOImpl<T extends RawMatch, U extends Match, E extends RawSite, K extends Site>
         extends FilteredMatchDAOImpl <T, U> implements FilteredMatchAndSiteDAO<T, U, E, K> {
 
-    private static final Logger LOGGER = Logger.getLogger(FilteredMatchAndSiteDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FilteredMatchAndSiteDAOImpl.class.getName());
 
     /**
      * Sets the class of the model that the DOA instance handles.

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.cdd;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.PostProcessor;
 import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 public class CDDPostProcessing<T extends RPSBlastRawMatch> implements PostProcessor<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(CDDPostProcessing.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CDDPostProcessing.class.getName());
 
     private List<RPSBlastRawMatch.HitType> hitTypes;
 

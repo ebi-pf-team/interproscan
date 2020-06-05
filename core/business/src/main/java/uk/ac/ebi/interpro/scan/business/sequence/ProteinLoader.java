@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
@@ -26,7 +27,7 @@ import java.util.*;
  */
 public class ProteinLoader implements SequenceLoader<Protein> {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinLoader.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinLoader.class.getName());
 
     private PrecalculatedProteinLookup proteinLookup;
 

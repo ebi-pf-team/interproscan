@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
 import org.apache.commons.collections.functors.WhileClosure;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -20,7 +22,7 @@ import java.util.concurrent.Executors;
 
 public class ResourceMonitor implements  Runnable{
 
-    private static final Logger LOGGER = Logger.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
 
     private StatsUtil statsUtil;
 

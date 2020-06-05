@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.lsf;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ public class LSFJobInfoParser {
     private final int SUBMIT_TIME_DAY_POS = 8;
     private final int SUBMIT_TIME_TIME_POS = 9;
 
-    private static final Logger LOGGER = Logger.getLogger(LSFJobInfoParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LSFJobInfoParser.class.getName());
 
     private static final LSFJobInfoParser instance = new LSFJobInfoParser();
 

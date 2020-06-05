@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -21,7 +22,7 @@ import java.lang.IllegalStateException;
  */
 public class WorkerMessageSenderImpl implements Serializable, WorkerMessageSender {
 
-    private static final Logger LOGGER = Logger.getLogger(WorkerMessageSenderImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WorkerMessageSenderImpl.class.getName());
 
 
     public static final String MESSAGE_PROPERTY = "messagetype";

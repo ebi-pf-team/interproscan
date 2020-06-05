@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
@@ -19,7 +20,7 @@ import java.util.*;
  */
 public class NucleotideSequenceDAOImpl extends GenericKVDAOImpl<NucleotideSequence> implements NucleotideSequenceDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(NucleotideSequenceDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(NucleotideSequenceDAOImpl.class.getName());
 
     /**
      * Sets the class of the model that the DOA instance handles.

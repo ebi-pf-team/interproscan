@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -18,7 +19,7 @@ import java.util.Set;
  */
 public class PantherPostProcessor implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherPostProcessor.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherPostProcessor.class.getName());
 
     private final double eValueCutoff;
 

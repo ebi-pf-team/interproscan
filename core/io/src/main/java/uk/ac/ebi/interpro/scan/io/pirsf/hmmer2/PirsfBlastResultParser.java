@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +20,7 @@ import java.util.Map;
  */
 public class PirsfBlastResultParser {
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfBlastResultParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfBlastResultParser.class.getName());
 
     /**
      * Parses all PIRSF IDs out of the BLAST standard output (line per line) and counts the occurrence of each ID.

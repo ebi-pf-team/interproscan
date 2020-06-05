@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.cli;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public class CommandLineConversationImpl implements CommandLineConversation {
 
-    private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationImpl.class.getName());
+    private static volatile Logger LOGGER = LogManager.getLogger(CommandLineConversationImpl.class.getName());
 
     private static final int BUFFER_SIZE = 4096;
 

@@ -16,7 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ import java.util.*;
  */
 public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements ProteinDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinDAOImpl.class.getName());
 
     /**
      * For the method  getProteinsAndMatchesAndCrossReferencesBetweenIds below,

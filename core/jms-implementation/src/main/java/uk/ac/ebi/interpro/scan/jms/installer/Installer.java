@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.installer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ModelFileParser;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.memberDatabaseLoad.StepCreationSignatureDatabaseLoadListener;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class Installer implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(Installer.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Installer.class.getName());
 
     private SignatureLibraryReleaseDAO signatureLibraryReleaseDAO;
 
@@ -85,8 +86,8 @@ public class Installer implements Runnable {
         }
         // By Magic!
           
-        Utilities.verboseLog = true;
-        Utilities.verboseLogLevel = 44;
+        //Utilities.verboseLog = true;
+        //Utilities.verboseLogLevel = 44;
 
         if (mode.equals(InstallerMode.LOAD_NONE)) {
             LOGGER.info("No signatures or entries will be loaded (empty database).");

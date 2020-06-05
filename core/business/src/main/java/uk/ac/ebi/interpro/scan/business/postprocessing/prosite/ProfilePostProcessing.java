@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.prosite;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 public class ProfilePostProcessing<T extends ProfileScanRawMatch> implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProfilePostProcessing.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProfilePostProcessing.class.getName());
 
     private List<ProfileScanRawMatch.Level> passLevels;
 

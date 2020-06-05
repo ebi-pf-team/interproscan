@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
 import uk.ac.ebi.interpro.scan.model.DCStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClanData;
@@ -26,7 +27,7 @@ import java.util.*;
  */
 public class PfamHMMER3PostProcessing implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(PfamHMMER3PostProcessing.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PfamHMMER3PostProcessing.class.getName());
 
     private PfamClanData clanData;
 

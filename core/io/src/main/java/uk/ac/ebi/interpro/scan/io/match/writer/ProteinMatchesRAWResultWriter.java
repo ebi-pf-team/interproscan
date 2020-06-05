@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class ProteinMatchesRAWResultWriter extends ProteinMatchesResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesRAWResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesRAWResultWriter.class.getName());
 
     private TSVWriter tsvWriter;
 

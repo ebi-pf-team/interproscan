@@ -24,6 +24,8 @@ public final class Model2SfReader extends AbstractModelFileParser {
 
     private String prefix = "G3DSA:";
 
+    String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+
     /**
      * Optional bean method, should the prefix be different to the default value.
      *
@@ -31,6 +33,14 @@ public final class Model2SfReader extends AbstractModelFileParser {
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    /**
+     *  set the cath family file for cath gene3d signature names
+     * @param cathFamilyFile
+     */
+    public void setCathFamilyFile(String cathFamilyFile) {
+        this.cathFamilyFile = cathFamilyFile;
     }
 
     /**

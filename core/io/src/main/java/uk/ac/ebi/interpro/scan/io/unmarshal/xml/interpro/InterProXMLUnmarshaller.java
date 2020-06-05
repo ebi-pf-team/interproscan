@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.xml.namespace.QName;
@@ -33,7 +34,7 @@ import java.util.*;
  */
 public class InterProXMLUnmarshaller {
 
-    private static final Logger LOGGER = Logger.getLogger(InterProXMLUnmarshaller.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(InterProXMLUnmarshaller.class.getName());
 
     private static final String EL_INTERPRO = "interpro";
     private static final String EL_MEMBER_LIST = "member_list";

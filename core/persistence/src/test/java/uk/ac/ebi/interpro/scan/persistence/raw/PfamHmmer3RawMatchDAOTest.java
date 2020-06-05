@@ -42,7 +42,7 @@ public class PfamHmmer3RawMatchDAOTest {
     private final int start = 15, hmmStart = 18, hmmEnd = 320;
     private final int end = 345;
     private final double evalue = 0.00005, score = 512.3, locationEvalue = -5.60205984115601, locationScore = 779.4;
-    //private static Logger LOGGER = Logger.getLogger(PfamHmmer3RawMatchDAOTest.class.getName());
+    //private static Logger LOGGER = LogManager.getLogger(PfamHmmer3RawMatchDAOTest.class.getName());
 
     //private static final String[] ACCESSIONS = {"Q12345","P99999", "IPI01234567", "ENSP120923423423234"};
 

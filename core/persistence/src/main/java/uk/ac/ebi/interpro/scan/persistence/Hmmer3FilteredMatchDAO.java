@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Entry;
@@ -29,7 +30,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
         extends FilteredMatchDAOImpl<T, Hmmer3Match>
         implements FilteredMatchDAO<T, Hmmer3Match> {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchDAO.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3FilteredMatchDAO.class.getName());
 
     public Hmmer3FilteredMatchDAO() {
         super(Hmmer3Match.class);

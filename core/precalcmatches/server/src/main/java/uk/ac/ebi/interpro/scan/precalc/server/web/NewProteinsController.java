@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.server.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ public class NewProteinsController {
 
     private MatchesService matchService;
 
-    private static final Logger LOGGER = Logger.getLogger(NewProteinsController.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(NewProteinsController.class.getName());
 
     @Autowired
     public void setMatchService(MatchesService matchService) {

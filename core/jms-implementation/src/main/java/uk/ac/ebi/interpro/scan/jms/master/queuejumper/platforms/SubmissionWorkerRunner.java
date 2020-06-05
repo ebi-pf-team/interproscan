@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
@@ -23,7 +24,7 @@ import java.util.Date;
 
 public class SubmissionWorkerRunner implements WorkerRunner {
 
-    private static final Logger LOGGER = Logger.getLogger(SubmissionWorkerRunner.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SubmissionWorkerRunner.class.getName());
 
     private String submissionCommand;
 

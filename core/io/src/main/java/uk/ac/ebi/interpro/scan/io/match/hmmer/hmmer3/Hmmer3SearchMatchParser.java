@@ -1,5 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -17,7 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
+
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,7 +84,7 @@ import java.util.regex.Pattern;
  */
 public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser {
 
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Hmmer3SearchMatchParser.class.getName());
+    private static final Logger LOGGER =  LogManager.getLogger(Hmmer3SearchMatchParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 

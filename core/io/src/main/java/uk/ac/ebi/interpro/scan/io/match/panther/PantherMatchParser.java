@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
@@ -23,7 +24,7 @@ public final class PantherMatchParser
         extends AbstractLineMatchParser<PantherRawMatch>
         implements MatchParser<PantherRawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherMatchParser.class.getName());
 
 
     /**

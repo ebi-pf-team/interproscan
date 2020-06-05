@@ -22,7 +22,9 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -49,7 +51,7 @@ import java.util.Random;
  */
 public class MatchHttpClient {
 
-    private static final Logger LOG = Logger.getLogger(MatchHttpClient.class.getName());
+    private static final Logger LOG = LogManager.getLogger(MatchHttpClient.class.getName());
 
     private static final String MD5_PARAMETER = "md5";
 

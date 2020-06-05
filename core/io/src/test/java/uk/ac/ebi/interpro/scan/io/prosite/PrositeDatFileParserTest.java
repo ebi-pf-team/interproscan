@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prosite;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +22,7 @@ import java.io.IOException;
  */
 public class PrositeDatFileParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(PrositeDatFileParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrositeDatFileParserTest.class.getName());
 
     private static final String HAMAP_TEST_FILE = "data/hamap/hamap.prf";
     private static final String PROSITE_TEST_FILE = "data/prosite/prosite.dat";

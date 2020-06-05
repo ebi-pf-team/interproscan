@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
@@ -34,7 +36,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
 
     public static final String FASTA_FILE_PATH_KEY = "FASTA_FILE_PATH";
 
-    private static final Logger LOGGER = Logger.getLogger(FastaFileLoadIntoDBStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FastaFileLoadIntoDBStep.class.getName());
 
     private LoadFastaFile fastaFileLoader;
 

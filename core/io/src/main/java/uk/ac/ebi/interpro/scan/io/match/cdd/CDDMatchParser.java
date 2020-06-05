@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.cdd;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class CDDMatchParser implements Serializable, MatchAndSiteParser {
 
-    private static final Logger LOGGER = Logger.getLogger(CDDMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CDDMatchParser.class.getName());
 
     private final SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;

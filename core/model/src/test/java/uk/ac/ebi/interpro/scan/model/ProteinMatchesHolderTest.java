@@ -18,7 +18,8 @@ package uk.ac.ebi.interpro.scan.model;
 
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Disabled("this way of processing proteins runs into memory problems")
 public class ProteinMatchesHolderTest extends AbstractTest<ProteinMatchesHolder> {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesHolderTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesHolderTest.class.getName());
 
     @Test
     public void testEquals() throws IOException, ParseException {

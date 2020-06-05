@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
@@ -40,7 +41,7 @@ import java.util.regex.Pattern;
  */
 public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
 
-    private static final Logger LOGGER = Logger.getLogger(LoadFastaFileIntoDBImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LoadFastaFileIntoDBImpl.class.getName());
 
     private SequenceLoader<Protein> sequenceLoader;
 
