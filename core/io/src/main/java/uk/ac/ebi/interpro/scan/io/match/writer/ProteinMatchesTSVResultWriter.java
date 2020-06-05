@@ -29,8 +29,8 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
         super(path);
         this.proteinSequence = proteinSequence;
         this.tsvWriter = new TSVWriter(super.fileWriter);
-        familyRecords = parseCathFamilyFile();
-        System.out.println("familyRecords: # " + familyRecords.keySet().size());
+        //familyRecords = parseCathFamilyFile();
+        //System.out.println("familyRecords: # " + familyRecords.keySet().size());
     }
 
 
@@ -63,8 +63,9 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 final String analysis = signatureLibrary.getName();
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
-                if (signatureAc.contains(prefix)) {
-                    signatureName = familyRecords.get(signatureAc);
+                if (signatureName != null && signatureName.isBlank() && signatureAc.contains(prefix)) {
+                    //we dont need to parse at runtime
+                    //signatureName = familyRecords.get(signatureAc);
                 }
 
                 Set<Location> locations = match.getLocations();

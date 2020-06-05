@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class Hmmer3ModelLoaderTest {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3ModelLoaderTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3ModelLoaderTest.class.getName());
 
     private static final SignatureLibrary TEST_LIBRARY = SignatureLibrary.PFAM;
 

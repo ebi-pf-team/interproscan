@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.MobiDBMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public class MobiDBLookupMatchConverter extends LookupMatchConverter<MobiDBMatch, MobiDBMatch.MobiDBLocation> {
 
-    private static final Logger LOG = Logger.getLogger(MobiDBLookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(MobiDBLookupMatchConverter.class.getName());
 
     public MobiDBMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 

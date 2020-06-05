@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.match.coils;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.interpro.scan.model.raw.CoilsRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -19,7 +21,7 @@ import java.util.Set;
  */
 public class CoilsMatchParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(CoilsMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CoilsMatchParserTest.class.getName());
 
     private static final String TEST_FILE_PATH = "data/coils/10k.coils.out";
 

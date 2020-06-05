@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
@@ -15,7 +16,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepExecution;
  */
 public class StepExecutionDAOImpl extends GenericDAOImpl<StepExecution, String> implements StepExecutionDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(StepExecutionDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StepExecutionDAOImpl.class.getName());
 
     private Object lockObject;
 

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
@@ -11,7 +12,7 @@ import java.util.*;
 
 public abstract class LookupMatchConverter<T extends Match, U extends Location> {
 
-    private static final Logger LOGGER = Logger.getLogger(LookupStoreToI5ModelDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LookupStoreToI5ModelDAOImpl.class.getName());
 
     private boolean flattenMatches;
 

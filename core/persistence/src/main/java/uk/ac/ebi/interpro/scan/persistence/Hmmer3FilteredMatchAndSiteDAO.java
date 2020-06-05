@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
@@ -16,7 +17,7 @@ import java.util.*;
 abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends Hmmer3RawSite>
         extends FilteredMatchAndSiteDAOImpl<T, Hmmer3MatchWithSites, E, Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchAndSiteDAO.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3FilteredMatchAndSiteDAO.class.getName());
 
     public Hmmer3FilteredMatchAndSiteDAO() {
         super(Hmmer3MatchWithSites.class);

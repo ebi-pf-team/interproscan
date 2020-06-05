@@ -89,15 +89,29 @@
 
     <Loggers>
         <!-- avoid duplicated logs with additivity=false -->
-        <Logger name="uk.ac.ebi.interpro.scan" level="DEBUG" additivity="false">
+<!--        <Logger name="uk.ac.ebi.interpro.scan" level="DEBUG" additivity="false">-->
+<!--            <AppenderRef ref="consoleappender"/>-->
+<!--        </Logger>-->
+        <Logger name="uk.ac.ebi.interpro.scan" level="warn" additivity="false">
             <AppenderRef ref="consoleappender"/>
         </Logger>
 
-        <!--<Root level="WARN">-->
-            <!--<AppenderRef ref="consoleappender"/>-->
-        <!--</Root>-->
-        <Root level="ERROR" additivity="false">
-            <AppenderRef level="WARN" ref="LogToConsole" />
+<!--        <Logger name="org.hibernate.boot.internal.InFlightMetadataCollectorImpl" level="warn">-->
+<!--        <AppenderRef ref="consoleappender"/>-->
+<!--        </Logger>-->
+        <Logger name="org.apache.activemq" level="warn" additivity="false">
+            <AppenderRef ref="consoleappender"/>
+        </Logger>
+        <Logger name="org.hibernate.boot" level="error" additivity="false">
+            <AppenderRef ref="consoleappender"/>
+        </Logger>
+
+        <Logger name="org.reflections.Reflections" level="error" additivity="false">
+            <AppenderRef ref="consoleappender"/>
+        </Logger>
+
+        <Root level="error" additivity="false">
+            <AppenderRef ref="LogToConsole" level="error"/>
         </Root>
     </Loggers>
 

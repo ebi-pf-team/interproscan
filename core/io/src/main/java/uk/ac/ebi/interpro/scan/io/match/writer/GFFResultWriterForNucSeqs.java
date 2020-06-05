@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.sequence.XrefParser;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -26,7 +27,7 @@ import java.util.Set;
  */
 public class GFFResultWriterForNucSeqs extends ProteinMatchesGFFResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(GFFResultWriterForNucSeqs.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(GFFResultWriterForNucSeqs.class.getName());
     private String nucleotideId;
 
     /**

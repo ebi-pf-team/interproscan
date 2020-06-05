@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prodom.match;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public class BlastProDomMatchParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(BlastProDomMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(BlastProDomMatchParserTest.class.getName());
 
     @Test
     public void testParse() throws IOException {

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
@@ -50,7 +51,7 @@ import java.util.regex.Pattern;
  */
 public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteParser {
 
-    private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SFLDHmmer3MatchParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 

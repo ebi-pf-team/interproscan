@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.phobius;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.FileContentChecker;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class RunPhobiusBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunPhobiusBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunPhobiusBinaryStep.class.getName());
 
     private String fullPathToBinary;
 

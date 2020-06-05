@@ -16,7 +16,7 @@ import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 public abstract class MatchPostProcessingStep<T extends RawMatch, U extends Match> extends Step {
 
-//    private static final Logger LOGGER = Logger.getLogger(MatchPostProcessingStep.class.getName());
+//    private static final Logger LOGGER = LogManager.getLogger(MatchPostProcessingStep.class.getName());
 
     protected PostProcessor<T> postProcessor;
 

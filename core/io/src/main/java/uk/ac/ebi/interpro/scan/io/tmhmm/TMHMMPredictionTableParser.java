@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 import uk.ac.ebi.interpro.scan.model.TMHMMMatch;
@@ -42,7 +44,7 @@ import java.util.regex.Pattern;
 @Deprecated
 public final class TMHMMPredictionTableParser {
 
-    private static final Logger LOGGER = Logger.getLogger(TMHMMPredictionTableParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TMHMMPredictionTableParser.class.getName());
 
     private final SignatureLibraryRelease signatureLibraryRelease;
 

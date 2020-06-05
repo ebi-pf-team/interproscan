@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
@@ -25,7 +27,7 @@ public class PirsfSubfamilyFileParser implements Serializable {
      * PIRSF500166/tPIRSF016158
      */
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfSubfamilyFileParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfSubfamilyFileParser.class.getName());
 
 
     /**

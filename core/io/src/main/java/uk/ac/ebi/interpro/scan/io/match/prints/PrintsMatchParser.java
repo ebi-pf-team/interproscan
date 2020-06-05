@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.prints;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.prints.parsemodel.PrintsMotif;
 import uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch;
@@ -23,7 +24,7 @@ import java.util.Set;
 
 public class PrintsMatchParser {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrintsMatchParser.class.getName());
 
     public static final String PROTEIN_ID_MARKER = "Sn";
 

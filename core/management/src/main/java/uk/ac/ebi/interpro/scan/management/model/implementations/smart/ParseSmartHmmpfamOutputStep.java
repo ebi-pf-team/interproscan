@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -34,7 +35,7 @@ public class ParseSmartHmmpfamOutputStep extends ParseStep<SmartRawMatch> {
 // TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseStep
 public class ParseSmartHmmpfamOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseSmartHmmpfamOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParseSmartHmmpfamOutputStep.class.getName());
 
     private String hmmerOutputFilePathTemplate;
 

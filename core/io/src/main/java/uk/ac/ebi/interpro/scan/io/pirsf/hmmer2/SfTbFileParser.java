@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
@@ -27,7 +29,7 @@ public class SfTbFileParser implements Serializable {
      * SF000729 410
      */
 
-    private static final Logger LOGGER = Logger.getLogger(SfTbFileParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SfTbFileParser.class.getName());
 
     private static final Pattern SF_TB_PATTERN = Pattern.compile("^SF\\d{6,}+\\s++\\d{1,}+$");
 

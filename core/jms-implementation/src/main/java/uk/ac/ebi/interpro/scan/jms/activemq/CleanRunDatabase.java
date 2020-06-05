@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -28,7 +29,7 @@ import java.sql.SQLException;
 
 public class CleanRunDatabase implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(CleanRunDatabase.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CleanRunDatabase.class.getName());
 
     private String databaseBackupFile;
 

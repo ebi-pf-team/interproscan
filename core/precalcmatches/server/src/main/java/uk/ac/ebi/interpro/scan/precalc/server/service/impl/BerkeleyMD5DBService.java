@@ -7,7 +7,8 @@ import com.sleepycat.je.StatsConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -23,7 +24,7 @@ import java.io.File;
  */
 public class BerkeleyMD5DBService extends AbstractDBService {
 
-    private static final Logger LOGGER = Logger.getLogger(BerkeleyMD5DBService.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(BerkeleyMD5DBService.class.getName());
 
     private String databasePath;
 

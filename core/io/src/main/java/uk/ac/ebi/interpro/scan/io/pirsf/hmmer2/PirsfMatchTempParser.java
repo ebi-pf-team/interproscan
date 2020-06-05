@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -24,7 +26,7 @@ import java.util.regex.Pattern;
  * @since 1.0
  */
 public class PirsfMatchTempParser {
-    private static final Logger LOGGER = Logger.getLogger(PirsfMatchTempParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfMatchTempParser.class.getName());
 
     private static final Pattern PATTERN = Pattern.compile("^\\d+-PIRSF\\d{6,}+,");
 

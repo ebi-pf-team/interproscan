@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hamap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.sequence.FastaSequenceReader;
 import uk.ac.ebi.interpro.scan.io.sequence.SequenceReader;
@@ -33,7 +35,7 @@ import java.util.regex.Pattern;
  */
 public class HamapCreateMiniDatabaseStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(HamapCreateMiniDatabaseStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(HamapCreateMiniDatabaseStep.class.getName());
 
     private String filteredFastaInputFileNameTemplate;
 

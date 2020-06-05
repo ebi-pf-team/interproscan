@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.lsf;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
@@ -14,7 +15,7 @@ import java.util.*;
  */
 public class LSFMonitor {
 
-    private static final Logger LOGGER = Logger.getLogger(LSFMonitor.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LSFMonitor.class.getName());
 
     /**
      *

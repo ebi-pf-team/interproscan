@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser<PfScanRawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PrositePfsearchMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrositePfsearchMatchParser.class.getName());
 
     private CigarAlignmentEncoder cigarEncoder;
 

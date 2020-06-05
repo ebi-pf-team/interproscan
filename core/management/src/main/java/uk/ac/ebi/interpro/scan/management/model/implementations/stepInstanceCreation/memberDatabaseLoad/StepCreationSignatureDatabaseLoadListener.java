@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.memberDatabaseLoad;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.signatures.SignatureDatabaseLoadListener;
 import uk.ac.ebi.interpro.scan.management.model.Job;
@@ -30,7 +31,7 @@ public class StepCreationSignatureDatabaseLoadListener
         extends AbstractStepInstanceCreator
         implements SignatureDatabaseLoadListener {
 
-    private static final Logger LOGGER = Logger.getLogger(StepCreationSignatureDatabaseLoadListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StepCreationSignatureDatabaseLoadListener.class.getName());
 
 
     private ProteinDAO proteinDAO;

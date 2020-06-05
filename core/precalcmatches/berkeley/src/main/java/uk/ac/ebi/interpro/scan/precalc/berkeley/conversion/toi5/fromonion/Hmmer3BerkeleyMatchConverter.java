@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -22,7 +24,7 @@ import java.util.Set;
  */
 public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3Match> {
 
-    private static final Logger LOG = Logger.getLogger(Hmmer3BerkeleyMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(Hmmer3BerkeleyMatchConverter.class.getName());
 
     public Hmmer3Match convertMatch(BerkeleyMatch match, Signature signature) {
 

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.gene3d;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.gene3d.Gene3DPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -22,7 +24,7 @@ import java.util.Set;
  */
 public class Gene3DPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3DPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Gene3DPostProcessingStep.class.getName());
 
     private String ssfOutputFileTemplate;
 

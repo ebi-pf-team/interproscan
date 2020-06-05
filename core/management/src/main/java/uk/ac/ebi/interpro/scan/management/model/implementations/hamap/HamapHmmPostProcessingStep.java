@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hamap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -25,7 +26,7 @@ import java.util.Set;
 
 public class HamapHmmPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(HamapHmmPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(HamapHmmPostProcessingStep.class.getName());
 
     private ProfilePostProcessing<HamapRawMatch> postProcessor;
 

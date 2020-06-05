@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.signalp;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.signalp.match.SignalPMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -26,7 +27,7 @@ import java.util.Set;
  */
 public class ParseAndPersistBinaryOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseAndPersistBinaryOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParseAndPersistBinaryOutputStep.class.getName());
 
     private String signalPBinaryOutputFileName;
 

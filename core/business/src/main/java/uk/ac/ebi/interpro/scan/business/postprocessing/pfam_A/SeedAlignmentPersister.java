@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public class SeedAlignmentPersister implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(SeedAlignmentPersister.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SeedAlignmentPersister.class.getName());
 
     private Resource modelTextFile;
 

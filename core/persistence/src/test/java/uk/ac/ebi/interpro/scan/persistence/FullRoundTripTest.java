@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -49,7 +50,7 @@ import java.io.Writer;
 //@Disabled
 public class FullRoundTripTest {
 
-    private static final Logger LOGGER = Logger.getLogger(FullRoundTripTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FullRoundTripTest.class.getName());
 
     @Resource(name = "signatureMarshaller")
     private Marshaller signatureMarshaller;

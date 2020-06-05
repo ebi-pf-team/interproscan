@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +25,7 @@ public enum FileOutputFormat {
     //TSV_PRO is the format for production purposes in InterPro
     TSV_PRO("tsv-pro");
 
-    private static final Logger LOGGER = Logger.getLogger(FileOutputFormat.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FileOutputFormat.class.getName());
 
     private String fileExtension;
 

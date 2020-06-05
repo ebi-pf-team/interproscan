@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.test;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -19,7 +21,7 @@ import java.util.List;
  */
 public class TestRawDataStoredStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(TestRawDataStoredStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TestRawDataStoredStep.class.getName());
 
     GenericDAO<RawMatch, Long> rawMatchDAO;
 

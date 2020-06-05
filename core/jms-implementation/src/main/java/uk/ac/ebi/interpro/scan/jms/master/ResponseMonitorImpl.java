@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 public class ResponseMonitorImpl implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ResponseMonitorImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ResponseMonitorImpl.class.getName());
 
     StepExecutionDAO stepExecutionDAO;
 

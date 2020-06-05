@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 
@@ -16,7 +17,7 @@ import java.io.IOException;
  */
 public class LSFMaximumSubmittedJobsWorkerStartupStrategy implements WorkerStartupStrategy {
 
-    private static final Logger LOG = Logger.getLogger(LSFMaximumSubmittedJobsWorkerStartupStrategy.class.getName());
+    private static final Logger LOG = LogManager.getLogger(LSFMaximumSubmittedJobsWorkerStartupStrategy.class.getName());
 
     private int maximumSubmittedJobs;
 

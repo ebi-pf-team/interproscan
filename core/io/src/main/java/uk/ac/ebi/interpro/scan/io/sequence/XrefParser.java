@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceXref;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class XrefParser {
 
-    private static final Logger LOGGER = Logger.getLogger(XrefParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(XrefParser.class.getName());
 
     private static final Pattern PIPE_REGEX = Pattern.compile("\\|");
 

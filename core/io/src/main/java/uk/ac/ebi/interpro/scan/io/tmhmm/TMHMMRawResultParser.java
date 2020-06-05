@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.tmhmm;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -45,7 +47,7 @@ public final class TMHMMRawResultParser implements MatchParser<TMHMMRawMatch> {
 
     private static final Pattern PREDICTION_LINE_PATTERN = Pattern.compile("%pred N[B]?[(]?[0][)]?:[ ,a-zA-Z0-9]*");
 
-    private static final Logger LOGGER = Logger.getLogger(TMHMMRawResultParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TMHMMRawResultParser.class.getName());
 
     //private final SignatureLibraryRelease signatureLibraryRelease;
 

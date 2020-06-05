@@ -16,7 +16,9 @@
 
 package uk.ac.ebi.interpro.scan.genericjpadao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -46,7 +48,7 @@ import java.util.List;
 public class GenericDAOImpl<T, PK extends Serializable>
         implements GenericDAO<T, PK> {
 
-    private static final Logger LOGGER = Logger.getLogger(GenericDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(GenericDAOImpl.class.getName());
 
     protected EntityManager entityManager;
 

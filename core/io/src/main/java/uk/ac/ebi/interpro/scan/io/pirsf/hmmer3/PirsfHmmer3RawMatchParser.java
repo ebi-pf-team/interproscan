@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer3;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -13,7 +15,7 @@ public class PirsfHmmer3RawMatchParser
         extends AbstractLineMatchParser<PirsfHmmer3RawMatch>
         implements MatchParser<PirsfHmmer3RawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfHmmer3RawMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfHmmer3RawMatchParser.class.getName());
 
     /**
      * Constructor is only for JUnit testing.

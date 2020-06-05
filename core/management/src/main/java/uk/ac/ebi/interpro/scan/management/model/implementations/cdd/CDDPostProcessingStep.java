@@ -12,7 +12,7 @@ import uk.ac.ebi.interpro.scan.model.raw.*;
 
 public class CDDPostProcessingStep<A extends CDDRawMatch, B extends RPSBlastMatch, C extends CDDRawSite, D extends RPSBlastMatch.RPSBlastLocation.RPSBlastSite> extends MatchAndSitePostProcessingStep<A, B, C, D> {
 
-//    private static final Logger LOGGER = Logger.getLogger(CDDPostProcessingStep.class.getName());
+//    private static final Logger LOGGER = LogManager.getLogger(CDDPostProcessingStep.class.getName());
 //
 //    /**
 //     * This method is called to execute the action that the StepInstance must perform.

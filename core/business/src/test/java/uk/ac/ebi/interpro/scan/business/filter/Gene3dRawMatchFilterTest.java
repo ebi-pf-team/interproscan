@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.filter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import java.util.*;
 @ContextConfiguration
 public final class Gene3dRawMatchFilterTest {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3dRawMatchFilterTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Gene3dRawMatchFilterTest.class.getName());
 
     @Resource
     private org.springframework.core.io.Resource rawMatches;

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
@@ -27,7 +28,7 @@ import java.util.*;
 
 public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> extends GenericKVDAOImpl<U> implements FilteredMatchDAO<T, U> {
 
-    private static final Logger LOGGER = Logger.getLogger(FilteredMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FilteredMatchDAOImpl.class.getName());
 
     //TODO remove this after testing
     //Test if this removes the errors

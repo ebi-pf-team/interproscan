@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.signalp;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 
@@ -39,7 +41,7 @@ import java.io.InputStreamReader;
  */
 public class SignalPTempOptionParser {
 
-    private static final Logger LOGGER = Logger.getLogger(SignalPTempOptionParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SignalPTempOptionParser.class.getName());
 
     private String tempOptionLine;
 

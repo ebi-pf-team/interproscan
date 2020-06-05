@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ErrorHandler;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -15,7 +16,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 @Service
 public class JMSErrorHandler implements ErrorHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(JMSErrorHandler.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(JMSErrorHandler.class.getName());
 
     private int errorCount = 0;
     @Override

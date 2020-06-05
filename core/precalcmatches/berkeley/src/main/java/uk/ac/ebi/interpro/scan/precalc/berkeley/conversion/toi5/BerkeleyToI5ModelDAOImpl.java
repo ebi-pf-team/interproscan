@@ -1,6 +1,6 @@
 //package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5;
 //
-//import org.apache.log4j.Logger;
+//import org.apache.logging.log4j.Logger;
 //import org.springframework.beans.factory.annotation.Required;
 //import org.springframework.transaction.annotation.Transactional;
 //import uk.ac.ebi.interpro.scan.model.*;
@@ -20,7 +20,7 @@
 //
 //public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
 //
-//    private static final Logger LOGGER = Logger.getLogger(BerkeleyToI5ModelDAOImpl.class.getName());
+//    private static final Logger LOGGER = LogManager.getLogger(BerkeleyToI5ModelDAOImpl.class.getName());
 //
 //    private Map<SignatureLibrary, BerkeleyMatchConverter> signatureLibraryToMatchConverter;
 //

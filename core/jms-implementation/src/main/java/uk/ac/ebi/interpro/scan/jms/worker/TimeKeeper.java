@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.concurrent.Executor;
@@ -8,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class TimeKeeper {
 
-    private static final Logger LOGGER = Logger.getLogger(TimeKeeper.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TimeKeeper.class.getName());
 
     private Long startUpTime;
     private Long maximumLifeMillis;

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import java.util.Map;
 @ContextConfiguration
 public class PrintsRawMatchDAOImplTest {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsRawMatchDAOImplTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrintsRawMatchDAOImplTest.class.getName());
 
     private static final String SIG_DB_VERSION = "40.0";
 

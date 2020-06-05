@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -31,7 +32,7 @@ import java.util.List;
 
 abstract public class RunBinaryStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(RunBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunBinaryStep.class.getName());
 
     private String outputFileNameTemplate;
 

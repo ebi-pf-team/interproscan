@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -18,7 +19,7 @@ import javax.jms.*;
  */
 public class WorkerListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(WorkerListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WorkerListener.class.getName());
 
     private JmsTemplate jmsTemplate;
 

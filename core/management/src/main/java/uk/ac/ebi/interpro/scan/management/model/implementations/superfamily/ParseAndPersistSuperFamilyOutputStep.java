@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.superfamily;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -26,7 +28,7 @@ import java.util.Set;
  */
 public class ParseAndPersistSuperFamilyOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseAndPersistSuperFamilyOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParseAndPersistSuperFamilyOutputStep.class.getName());
 
     private String superFamilyBinaryOutputFileName;
 

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(StandaloneBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StandaloneBlackBoxMaster.class.getName());
 
     private StatsUtil statsUtil;
 

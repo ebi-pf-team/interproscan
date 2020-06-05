@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class LocalJobQueueListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(LocalJobQueueListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LocalJobQueueListener.class.getName());
     private JmsTemplate localJmsTemplate;
 
     private Destination jobResponseQueue;

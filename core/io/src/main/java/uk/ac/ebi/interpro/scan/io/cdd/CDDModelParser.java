@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.cdd;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -37,7 +38,7 @@ public class CDDModelParser extends AbstractModelFileParser {
      *
      */
 
-    private static final Logger LOGGER = Logger.getLogger(CDDModelParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CDDModelParser.class.getName());
 
     private static final Pattern CD_ACCESSION_PATTERN = Pattern.compile("^cd\\d+");
     // CDD models can have accessions start with sd too. Therefore, we need this pattern:

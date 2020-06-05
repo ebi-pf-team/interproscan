@@ -4,7 +4,8 @@ import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -22,7 +23,7 @@ import java.util.Set;
 
 public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> implements PantherFilteredMatchDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherFilteredMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherFilteredMatchDAOImpl.class.getName());
 
     /**
      * Sets the class of the model that the DOA instance handles.

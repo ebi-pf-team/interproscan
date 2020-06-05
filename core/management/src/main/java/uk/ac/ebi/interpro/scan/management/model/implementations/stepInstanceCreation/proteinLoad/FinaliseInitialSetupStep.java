@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
@@ -26,7 +28,7 @@ import java.util.*;
  */
 public class FinaliseInitialSetupStep extends Step implements StepInstanceCreatingStep {
 
-    private static final Logger LOGGER = Logger.getLogger(FinaliseInitialSetupStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FinaliseInitialSetupStep.class.getName());
 
     FinaliseInitialSetupTasks finaliseInitialSetupTasks;
 

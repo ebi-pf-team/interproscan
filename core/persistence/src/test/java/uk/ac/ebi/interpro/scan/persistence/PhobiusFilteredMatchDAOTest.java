@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 //import org.junit.Disabled;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ import java.util.regex.Matcher;
 @Disabled ("TODO remove after fixing the errors")
 public class PhobiusFilteredMatchDAOTest {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAOTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PhobiusFilteredMatchDAOTest.class.getName());
 
     @Resource (name = "phobiusFilteredMatchDAO")
     private PhobiusFilteredMatchDAO phobiusFilteredMatchDAO;

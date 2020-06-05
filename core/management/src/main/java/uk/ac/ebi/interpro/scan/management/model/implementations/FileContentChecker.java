@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +16,7 @@ import java.io.IOException;
  */
 public class FileContentChecker {
 
-    private static final Logger LOGGER = Logger.getLogger(FileContentChecker.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FileContentChecker.class.getName());
 
     private final File fileToCheck;
 

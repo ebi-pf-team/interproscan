@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMProtein;
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class TMHMMFilteredMatchDAOImplOld extends GenericDAOImpl<TMHMMMatch, Long> implements TMHMMFilteredMatchDAOOld {
 
-    private static final Logger LOGGER = Logger.getLogger(TMHMMFilteredMatchDAOImplOld.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TMHMMFilteredMatchDAOImplOld.class.getName());
 
     private final SignatureLibraryRelease signatureLibraryRelease;
 

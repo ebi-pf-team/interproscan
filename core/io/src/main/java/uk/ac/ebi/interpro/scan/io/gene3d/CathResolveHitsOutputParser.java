@@ -3,6 +3,9 @@ package uk.ac.ebi.interpro.scan.io.gene3d;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomTblDomainMatch;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +21,7 @@ import java.util.regex.Matcher;
  */
 public class CathResolveHitsOutputParser {
 
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(CathResolveHitsOutputParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CathResolveHitsOutputParser.class.getName());
 
     /**
      *

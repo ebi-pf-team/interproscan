@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.prodom.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @since 1.0-SNAPSHOT
  */
 public class ProDomModelParserTest {
-    private static final Logger LOGGER = Logger.getLogger(ProDomModelParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProDomModelParserTest.class.getName());
 
     private static final SignatureLibrary TEST_LIBRARY = SignatureLibrary.PRODOM;
 

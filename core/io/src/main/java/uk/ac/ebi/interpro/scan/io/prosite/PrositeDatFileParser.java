@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prosite;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -24,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class PrositeDatFileParser extends AbstractModelFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(PrositeDatFileParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrositeDatFileParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 

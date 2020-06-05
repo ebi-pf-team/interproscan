@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -25,7 +27,7 @@ import java.util.*;
  */
 public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherModelDirectoryParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherModelDirectoryParser.class.getName());
 
     private String namesTabFileStr;
 

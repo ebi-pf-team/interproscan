@@ -3,7 +3,8 @@ package uk.ac.ebi.interpro.scan.io.match.writer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.BufferedWriter;
@@ -21,7 +22,7 @@ import java.util.Set;
  */
 public class ProteinMatchesJSONResultWriter implements AutoCloseable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesJSONResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesJSONResultWriter.class.getName());
 
     protected BufferedWriter fileWriter;
 

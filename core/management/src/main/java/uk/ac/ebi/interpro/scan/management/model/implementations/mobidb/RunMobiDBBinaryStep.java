@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.mobidb;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -22,7 +24,7 @@ import java.util.List;
 
 public class RunMobiDBBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunMobiDBBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunMobiDBBinaryStep.class.getName());
 
     private String fullPathToPython;
 

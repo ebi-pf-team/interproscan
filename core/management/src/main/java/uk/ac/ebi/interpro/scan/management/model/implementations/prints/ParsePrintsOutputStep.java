@@ -7,7 +7,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.prints;
  * Time: 1:46:05 PM
  */
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.prints.PrintsMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -25,7 +27,7 @@ import java.util.Set;
 
 public class ParsePrintsOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParsePrintsOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParsePrintsOutputStep.class.getName());
 
     private String printsOutputFileNameTemplate;
 

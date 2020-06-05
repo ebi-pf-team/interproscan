@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAO;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
@@ -21,7 +22,7 @@ import java.util.*;
  */
 public class PhobiusFilteredMatchDAOImpl  extends GenericDAOImpl<PhobiusMatch, Long>  implements GenericDAO<PhobiusMatch,  Long> {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusFilteredMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PhobiusFilteredMatchDAOImpl.class.getName());
 
     /**
      * The version number of Phobius being run.

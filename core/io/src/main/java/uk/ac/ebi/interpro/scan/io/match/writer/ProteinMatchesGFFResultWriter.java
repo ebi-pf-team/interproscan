@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.GFFWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesGFFResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesGFFResultWriter.class.getName());
 
     /**
      * This matcher matches any character that is NOT allowed in a sequence ID in GFF 3 format.

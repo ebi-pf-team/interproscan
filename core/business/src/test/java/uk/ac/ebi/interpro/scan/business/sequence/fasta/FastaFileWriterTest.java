@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -30,6 +32,7 @@ import java.util.List;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class FastaFileWriterTest {
+    private static final Logger LOGGER = LogManager.getLogger(FastaFileWriterTest.class.getName());
 
     private FastaFileWriter writer;
 

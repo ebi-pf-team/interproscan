@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration
 public class Hmmer3SearchMatchParserTest {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3SearchMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3SearchMatchParserTest.class.getName());
 
     // Pfam
     @Resource

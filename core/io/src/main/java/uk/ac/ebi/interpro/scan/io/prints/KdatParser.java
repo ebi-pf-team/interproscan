@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ParseException;
@@ -27,7 +29,7 @@ public class KdatParser implements Serializable {
     private static final String LINE_SIG_NAME = "gc";
     private static final String LINE_SIG_ABSTRACT = "gd";
 
-    private static final Logger LOGGER = Logger.getLogger(KdatParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(KdatParser.class.getName());
 
     private Resource kdatFileResource;
 

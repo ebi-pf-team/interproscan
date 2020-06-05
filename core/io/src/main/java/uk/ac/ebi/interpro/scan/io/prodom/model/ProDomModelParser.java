@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prodom.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -38,7 +40,7 @@ public class ProDomModelParser extends AbstractModelFileParser {
      * GETKMVETALTPDACYPD
      *
      */
-    private static final Logger LOGGER = Logger.getLogger(ProDomModelParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProDomModelParser.class.getName());
 
     private static final Pattern LINE_PATTERN = Pattern.compile("^>");
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^pd_PD\\d+;sp_");

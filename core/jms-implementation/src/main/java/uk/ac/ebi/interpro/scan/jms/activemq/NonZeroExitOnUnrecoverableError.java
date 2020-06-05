@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -17,7 +18,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
  */
 public class NonZeroExitOnUnrecoverableError implements UnrecoverableErrorStrategy {
 
-    private static final Logger LOGGER = Logger.getLogger(NonZeroExitOnUnrecoverableError.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(NonZeroExitOnUnrecoverableError.class.getName());
 
     @Override
     public void failed(StepInstance stepInstance, Jobs jobs) {

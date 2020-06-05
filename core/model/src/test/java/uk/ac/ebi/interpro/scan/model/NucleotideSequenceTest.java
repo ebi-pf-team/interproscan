@@ -18,7 +18,8 @@ package uk.ac.ebi.interpro.scan.model;
 
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ContextConfiguration
 public class NucleotideSequenceTest extends AbstractTest<NucleotideSequence> {
 
-    private static final Logger LOGGER = Logger.getLogger(NucleotideSequenceTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(NucleotideSequenceTest.class.getName());
 
     @Test
     public void testEquals() throws IOException, ParseException {

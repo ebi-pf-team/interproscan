@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
  */
 public class ExternallySetLocationTemporaryDirectoryManager implements TemporaryDirectoryManager {
 
-    private static final Logger LOGGER = Logger.getLogger(ExternallySetLocationTemporaryDirectoryManager.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ExternallySetLocationTemporaryDirectoryManager.class.getName());
 
     private String passedInDirectoryName;
 

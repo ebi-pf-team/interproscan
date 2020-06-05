@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class WriteFastaFileStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteFastaFileStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WriteFastaFileStep.class.getName());
 
     @Transient
     private FastaFileWriter fastaFileWriter = new FastaFileWriter();

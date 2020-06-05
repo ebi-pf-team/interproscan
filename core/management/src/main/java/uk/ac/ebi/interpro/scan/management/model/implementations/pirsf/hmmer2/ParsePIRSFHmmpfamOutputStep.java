@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.AbstractParseHmmpfamOutputStep;
 import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
@@ -15,7 +16,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
  */
 public class ParsePIRSFHmmpfamOutputStep extends AbstractParseHmmpfamOutputStep<PIRSFHmmer2RawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(ParsePIRSFHmmpfamOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParsePIRSFHmmpfamOutputStep.class.getName());
 
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {

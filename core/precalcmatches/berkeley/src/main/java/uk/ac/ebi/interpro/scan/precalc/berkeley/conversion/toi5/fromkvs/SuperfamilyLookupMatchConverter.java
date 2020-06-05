@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 public class SuperfamilyLookupMatchConverter extends LookupMatchConverter<SuperFamilyHmmer3Match, SuperFamilyHmmer3Match.SuperFamilyHmmer3Location> {
 
-    private static final Logger LOG = Logger.getLogger(SuperfamilyLookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(SuperfamilyLookupMatchConverter.class.getName());
 
     //TODO: Add the e-value to the match location
     @Override

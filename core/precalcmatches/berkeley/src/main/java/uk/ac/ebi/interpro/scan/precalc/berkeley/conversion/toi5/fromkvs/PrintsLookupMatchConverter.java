@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
@@ -10,7 +11,7 @@ import java.util.*;
 
 public class PrintsLookupMatchConverter extends LookupMatchConverter<FingerPrintsMatch, FingerPrintsMatch.FingerPrintsLocation> {
 
-    private static final Logger LOG = Logger.getLogger(PrintsLookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(PrintsLookupMatchConverter.class.getName());
 
     public FingerPrintsMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 

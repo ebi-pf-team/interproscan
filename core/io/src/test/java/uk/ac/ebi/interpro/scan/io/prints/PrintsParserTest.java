@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class PrintsParserTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrintsParserTest.class.getName());
 
     private static final String kdatFileName = "data/prints/prints_10_only.kdat";
     private static final String pvalFileName = "data/prints/prints_10_only.pval";

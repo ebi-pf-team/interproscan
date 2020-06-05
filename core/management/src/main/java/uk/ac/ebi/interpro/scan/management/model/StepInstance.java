@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.KeyGen;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ import java.util.*;
 @Table
 public class StepInstance implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(StepInstance.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StepInstance.class.getName());
 
     private static final String PROTEIN_BOTTOM_HOLDER = "\\[PROTSTART\\]";
 
