@@ -63,7 +63,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 final String analysis = signatureLibrary.getName();
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
-                if (signatureAc.contains(prefix)) {
+                if (signatureName.isBlank() &&  signatureAc.contains(prefix)) {
                     signatureName = familyRecords.get(signatureAc);
                 }
 
