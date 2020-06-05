@@ -1710,6 +1710,11 @@ public class Run extends AbstractI5Runner {
         return false;
     }
 
+    /**
+     * ideally we should have one config file for the application
+     * 
+     * @param logLevel
+     */
     public static void changeLogLevel(String logLevel) {
         //LogManager.getRootLogger().setLevel(Level.WARN);
         /*
