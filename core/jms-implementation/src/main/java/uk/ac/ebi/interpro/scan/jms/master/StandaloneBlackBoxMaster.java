@@ -46,10 +46,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         Utilities.verboseLog = verboseLog;
         Utilities.verboseLogLevel = verboseLogLevel;
+        Utilities.periodicGCCall = periodicGCCall;
 
-        System.out.println(Utilities.getTimeNow()
-                + " verboseLog: " + Utilities.verboseLog
-                + " verboseLogLevel: " + Utilities.verboseLogLevel);
+//        System.out.println(Utilities.getTimeNow()
+//                + " verboseLog: " + Utilities.verboseLog
+//                + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
         int runStatus = 11;
         if(verboseLogLevel >= 110) {
@@ -126,9 +127,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             int minimumStepsExpected = getMinimumStepsExpected();
             runStatus = 31;
-            if(verboseLog) {
-                System.out.println(Utilities.getTimeNow() + " DEBUG step instances: " + stepInstanceDAO.count());
-            }
+            Utilities.verboseLog(110," DEBUG step instances: " + stepInstanceDAO.count());
+
             //initialise slow steps
             List<String> slowSteps = new ArrayList<String>();
             slowSteps.add("stepPantherRunHmmer3");

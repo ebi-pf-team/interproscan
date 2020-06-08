@@ -446,7 +446,7 @@ public class StatsUtil {
     }
 
     public void displayNonAcknowledgedSubmittedStepInstances() {
-        if (Utilities.verboseLogLevel >= 10) {
+        if (Utilities.verboseLogLevel >= 100) {
             String nonAcknowledgedSubmittedStepInstances = "[";
 
             Utilities.verboseLog(110, "Current Non-Acknowledged Submitted StepInstances ");
@@ -514,7 +514,7 @@ public class StatsUtil {
 
 
     public void displayRunningJobs() {
-        if (Utilities.verboseLog) {
+        if (Utilities.verboseLog && Utilities.verboseLogLevel >= 100 ) {
             Utilities.verboseLog(1100, "Current active Jobs");
             List<String> currentRunningJobs = getRunningJobs();
             Map<String, List<String>> runningJobsMap = new HashMap<>();
@@ -822,7 +822,7 @@ public class StatsUtil {
                 // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
                 actualProgress = Math.floor(progress * 100);
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
-                if (Utilities.verboseLog) {
+                if (Utilities.verboseLog ) {
                     Set<String> nonAckStepInstances = new HashSet<>();
 
                     //for (StepInstance stepinstance: getNonAcknowledgedSubmittedStepInstances()):

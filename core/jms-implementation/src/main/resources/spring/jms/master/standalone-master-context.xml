@@ -53,8 +53,10 @@
         <property name="temporaryDirectoryManager" ref="tempDirectoryManager"/>
         <property name="temporaryFileDirSuffix" value="${temporary.file.directory.suffix}"/>
         <property name="temporaryDirectory" value="${temporary.file.directory}"/>
+        <property name="periodicGCCall" value="${periodic.gc.call}"/>
         <property name="verboseLog" value="${verbose.log}"/>
         <property name="verboseLogLevel" value="${verbose.log.level}"/>
+
     </bean>
 
     <bean id="errorStrategy" class="uk.ac.ebi.interpro.scan.jms.activemq.NonZeroExitOnUnrecoverableError"/>

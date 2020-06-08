@@ -176,15 +176,18 @@ public class LocalJobQueueListener implements MessageListener {
                 stepName = stepExecution.getStepInstance().getStepId();
                 Long stepId = stepExecution.getStepInstance().getId();
                 String proteinRange = stepExecution.getStepInstance().getBottomProtein() + "-" + stepExecution.getStepInstance().getTopProtein();
+                if ( stepExecution.getStepInstance().getBottomProtein() == null){
+                    proteinRange = "000-000";
+                }
                 messageName = stepName + ": " + proteinRange;
                 statsUtil.jobStarted(messageName);
                 final long now = System.currentTimeMillis();
                 final String timeNow1 = Utilities.getTimeNow();
 //                Utilities.verboseLog(1100, "verboseLogLevel :" + Utilities.verboseLogLevel);
 
-                Utilities.verboseLog(0, "thread#: " + threadId + " Processing " + stepName + " JobCount #: " + localCount
-                        + " - stepInstanceId = " + stepId
-                        + "\n stepInstance: " + stepExecution.getStepInstance().toString());
+                Utilities.verboseLog(0, "thread#: " + threadId + " Processing " + stepName.replace("step", "")  + " JobNo #: " + localCount
+                        + " - stepInstanceId = " + stepId + " [" + proteinRange + "]");
+                Utilities.verboseLog(110, "\n stepInstance: " + stepExecution.getStepInstance().toString());
 
                 //the following code was used to test high memory worker creation, might still be useful later
 //                if (controller != null && ! testFailOnce){
@@ -195,8 +198,9 @@ public class LocalJobQueueListener implements MessageListener {
 
                 final long executionTime = System.currentTimeMillis() - now;
 
-                Utilities.verboseLog(110, "thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
-                Utilities.verboseLog(0, "Execution Time (ms) for job started " + timeNow1 + " JobCount #: " + localCount + " stepId: " + stepName + "  time: " + executionTime);
+                Utilities.verboseLog(110, "thread#: " + threadId + " Finished Processing " + stepName + " JobNo #: " + localCount + " - stepInstanceId = " + stepId);
+                Utilities.verboseLog(0, "Execution Time (ms) for job started " + timeNow1 + " JobNo #: " + localCount
+                        + " stepName: " + stepName.replace("step", "") + " [" + proteinRange + "]" + "  time: " + executionTime);
 
                 LOGGER.debug("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
 
