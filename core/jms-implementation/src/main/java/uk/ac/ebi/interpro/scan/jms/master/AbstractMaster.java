@@ -41,6 +41,7 @@ public abstract class AbstractMaster implements Master {
     protected TemporaryDirectoryManager temporaryDirectoryManager;
     protected String baseDirectoryTemporaryFiles;
     protected String temporaryFileDirSuffix;
+    protected boolean periodicGCCall = false;
 
     //Misc
     protected boolean deleteWorkingDirectoryOnCompletion;
@@ -114,6 +115,10 @@ public abstract class AbstractMaster implements Master {
     @Required
     public void setTemporaryFileDirSuffix(String temporaryFileDirSuffix) {
         this.temporaryFileDirSuffix = temporaryFileDirSuffix;
+    }
+
+    public void setPeriodicGCCall(boolean periodicGCCall) {
+        this.periodicGCCall = periodicGCCall;
     }
 
     public void setupTemporaryDirectory() {

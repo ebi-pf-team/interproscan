@@ -707,7 +707,7 @@ public class Run extends AbstractI5Runner {
             //consider more verbose output
             if (parsedCommandLine.hasOption(I5Option.VERBOSE.getLongOpt())) {
                 String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE.getLongOpt());
-                System.out.println(" verobe parameter value: " + verboseOption);
+                //System.out.println(" verbose parameter value: " + verboseOption);
                 bbMaster.setVerboseLog(true);
                 bbMaster.setVerboseLogLevel(0);
             }
@@ -1712,7 +1712,7 @@ public class Run extends AbstractI5Runner {
 
     /**
      * ideally we should have one config file for the application
-     * 
+     *
      * @param logLevel
      */
     public static void changeLogLevel(String logLevel) {

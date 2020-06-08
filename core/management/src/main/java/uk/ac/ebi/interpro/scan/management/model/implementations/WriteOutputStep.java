@@ -213,7 +213,6 @@ public class WriteOutputStep extends Step {
 
         List<FileOutputFormat> outputFormatsList = new ArrayList<>(outputFormats);
         Collections.sort(outputFormatsList, Collections.reverseOrder());
-        System.out.println(outputFormatsList.toString());
 
         //always handle xml first ??
         if (outputFormatsList.contains(FileOutputFormat.XML)) {
@@ -222,7 +221,7 @@ public class WriteOutputStep extends Step {
             try {
                 Utilities.printMemoryUsage("printing " + outputFormat);
                 Utilities.verboseLog(110, "Writing out " + outputPath.toString());
-                Utilities.verboseLog(0, " Outputting " + outputFormat);
+                Utilities.verboseLog(0, " Writing out " + outputFormat + " output");
                 outputToXML(outputPath, stepInstance, sequenceType, false);
             } catch (IOException ioe) {
                 final String p = outputPath.toAbsolutePath().toString();
@@ -241,7 +240,7 @@ public class WriteOutputStep extends Step {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
                 Utilities.printMemoryUsage("printing " + outputFormat);
-                Utilities.verboseLog(0, " Outputting " + outputFormat);
+                Utilities.verboseLog(0, " Writing out " + outputFormat + " output");
 
                 switch (outputFormat) {
                     case TSV:

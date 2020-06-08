@@ -46,6 +46,8 @@ public class Utilities {
 
     public static int logBase = 10;
 
+    public static boolean periodicGCCall = false;
+
 
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
@@ -528,6 +530,10 @@ public class Utilities {
 
 
     public static void printMemoryUsage(String stepName){
+
+        if (Utilities.verboseLogLevel < 100){
+            return;
+        }
         int mb = 1024*1024;
 
         //Getting the runtime reference from system
@@ -535,12 +541,20 @@ public class Utilities {
 
         System.out.println(Utilities.getTimeNow() + "##### Heap utilization statistics [MB]  at " + stepName + " ##### before ");
 
+        if ( ! Utilities.periodicGCCall){
+            return;
+        }
+
         System.out.println("Used Memory:"
                 + (runtime.totalMemory() - runtime.freeMemory()) / mb
                 + "\t Free Memory:"
                 + runtime.freeMemory() / mb
                 + "\t Total Memory:" + runtime.totalMemory() / mb
                 + "\t Max Memory:" + runtime.maxMemory() / mb);
+
+        if (Utilities.periodicGCCall){
+            return;
+        }
 
         System.gc();
 
