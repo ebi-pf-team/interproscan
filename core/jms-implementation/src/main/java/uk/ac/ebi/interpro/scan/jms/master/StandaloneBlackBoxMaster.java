@@ -336,7 +336,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             LOGGER.error("InterProScan analyses failed, check log details for the errors - " + runStatus);
         }
 
-        if(verboseLog){
+        if(Utilities.verboseLogLevel >= 10){
             final long executionTime =   System.currentTimeMillis() - now;
             final long executionTimeExclLoadDatabase =   System.currentTimeMillis() - nowAfterLoadingDatabase;
             System.out.println("Computation time : (" + TimeUnit.MILLISECONDS.toSeconds(executionTime)+ " s) => " + String.format("%d min, %d sec",
