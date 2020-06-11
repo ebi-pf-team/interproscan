@@ -150,7 +150,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.44-79.0";
+            String i5Version = "5.45-80.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
