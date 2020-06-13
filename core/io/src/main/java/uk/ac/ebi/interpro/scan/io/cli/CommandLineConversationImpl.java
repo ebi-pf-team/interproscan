@@ -141,11 +141,11 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
             }
-            Utilities.verboseLog(10,  " Start process in clc:  " + stepInstanceStepId);
+            Utilities.verboseLog(20,  " Start process in clc:  " + stepInstanceStepId);
 
             //fork the process
             process = pb.start();
-            Utilities.verboseLog(10,  " Process started in clc:  " + pb.command());
+            Utilities.verboseLog(20,  " Process started in clc:  " + pb.command());
         }finally {
             if(CommandLineConversationMonitor.getBinaryRunDelay() > 0){
                 CommandLineConversationMonitor.binaryRunLock.unlock();

@@ -62,12 +62,13 @@
 
         <!-- oracle dependency should be commented out for public release -->
 
-        <!-- start end -->
+        <!-- start
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
         </dependency>
+        end -->
         <!--  end -->
 
     </dependencies>

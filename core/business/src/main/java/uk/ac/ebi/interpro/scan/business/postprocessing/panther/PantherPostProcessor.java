@@ -55,7 +55,7 @@ public class PantherPostProcessor implements Serializable {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info(filterMessage);
         }
-        Utilities.verboseLog(filterMessage);
+        Utilities.verboseLog(30, filterMessage);
         return filteredMatches;
     }
 

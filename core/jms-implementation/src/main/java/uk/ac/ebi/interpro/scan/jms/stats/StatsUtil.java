@@ -812,7 +812,7 @@ public class StatsUtil {
                 int initialMinutes = 10 * 60 * 1000;
                 if (timeSinceLastReport < initialMinutes) {
                     displayProgress = false;
-                    Utilities.verboseLog(0, "timeSinceLastReport: " + timeSinceLastReport
+                    Utilities.verboseLog(30, "timeSinceLastReport: " + timeSinceLastReport
                             + " progress : " + Math.floor(progress * 100));
                 }
             }

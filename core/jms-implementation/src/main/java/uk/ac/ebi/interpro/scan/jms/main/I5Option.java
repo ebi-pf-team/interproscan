@@ -49,6 +49,8 @@ public enum I5Option {
     TIER1("tier1", "tier1", false, "Optional, switch to indicate the high memory worker is a child of the master.", "TIER", false, Mode.SET_OF_NO_MODES),
     CLUSTER_RUN_ID("clusterrunid", "crid", false, "Optional, switch to specify the Project name for this i5 run.", "CLUSTER-RUN-ID", false, Mode.SET_OF_NO_MODES),
     VERBOSE("verbose", "verbose", false, "Optional, display more verbose log output", null, false, Mode.SET_OF_STANDARD_MODES),
+    VERBOSE_LEVEL("verbose-level", "vl", false, "Optional, display verbose log output at level specified.", "VERBOSE-LEVEL", false, Mode.SET_OF_ALL_MODES),
+
     USER_DIR("userdir", "u", false, "The base directory for results (if absolute paths not specified)", "USER_DIRECTORY", false, Mode.SET_OF_NO_MODES);
 
     private String longOpt;

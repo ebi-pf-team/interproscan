@@ -43,7 +43,7 @@ public class PfamModel implements Serializable {
     public void setClan(PfamClan clan) {
         if (this.clan != null){
             if (this.clan.equals(clan)) {
-                Utilities.verboseLog(10, "new clan: " + clan.getId() + " Pfam  Model: "+ this.toString());
+                Utilities.verboseLog(110, "new clan: " + clan.getId() + " Pfam  Model: "+ this.toString());
                 return;  // deal with duplicates in the clan file
             }
             throw new IllegalStateException ("Found a PfamModel that appears to be in more than one Clan - not an expected state. Model: "+ this.toString());

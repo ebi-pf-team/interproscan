@@ -273,8 +273,9 @@ public class LoadFastaFileIntoDBImpl<T> implements LoadFastaFile {
             if (count > 12000) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSS");
                 System.out.println(sdf.format(Calendar.getInstance().getTime()) + " Uploaded " + totalProteinsParsed + " unique sequences for analysis");
+            }else {
+                Utilities.verboseLog(20, "Uploaded " + totalProteinsParsed + " unique sequences for analysis");
             }
-            Utilities.verboseLog(0, "Uploaded " + totalProteinsParsed + " unique sequences for analysis");
             Utilities.setSequenceCount(count);
 
         } catch (IOException e) {

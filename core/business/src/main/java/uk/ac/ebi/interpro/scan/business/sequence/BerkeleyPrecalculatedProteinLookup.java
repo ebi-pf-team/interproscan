@@ -199,16 +199,16 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
                 if (proteinRanges.get("bottom") == 1l && progressMeter % 5 == 0) {
                     if (proteinsCount >= 2000 && progressMeter % 25 == 0) {
-                        Utilities.verboseLog(0, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                        Utilities.verboseLog(30, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                     }
                     if (progressMeter % 10 == 0) {
                         Utilities.printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
                     }
                 }
                 if (progressMeter % 40 == 0) {
-                    Utilities.verboseLog(110, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                    Utilities.verboseLog(20, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 } else {
-                    Utilities.verboseLog(120, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                    Utilities.verboseLog(50, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
                 }
                 oldProgressMeter = progressMeter;
             }

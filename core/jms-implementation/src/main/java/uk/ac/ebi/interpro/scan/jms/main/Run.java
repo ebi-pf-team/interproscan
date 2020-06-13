@@ -14,6 +14,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+//port org.apache.commons.lang3.StringUtils;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -706,12 +707,33 @@ public class Run extends AbstractI5Runner {
 
             //consider more verbose output
             if (parsedCommandLine.hasOption(I5Option.VERBOSE.getLongOpt())) {
-                String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE.getLongOpt());
+                //String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE.getLongOpt());
                 //System.out.println(" verbose parameter value: " + verboseOption);
                 bbMaster.setVerboseLog(true);
-                bbMaster.setVerboseLogLevel(0);
+                bbMaster.setVerboseLogLevel(10);
             }
-
+            if (parsedCommandLine.hasOption(I5Option.VERBOSE_LEVEL.getLongOpt())) {
+                String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE_LEVEL.getLongOpt());
+                Map<String, Integer> logLevels = new HashMap<>();
+                logLevels.put("OFF", 0);
+                logLevels.put("INFO", 10);
+                logLevels.put("DEBUG", 20);
+                logLevels.put("TRACE", 30);
+                logLevels.put("ALL", 90);
+                int logLevel = 10;
+                Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+                //if(StringUtils.isNumeric(verboseOption)) {
+                if  (pattern.matcher(verboseOption).matches()){
+                    int verboseOptionAsInteger = Integer.parseInt(verboseOption);
+                    if (verboseOptionAsInteger >= 0){
+                        logLevel = verboseOptionAsInteger;
+                    }
+                }else{
+                    logLevel = logLevels.get(verboseOption.strip());
+                }
+                bbMaster.setVerboseLog(true);
+                bbMaster.setVerboseLogLevel(logLevel);
+            }
 
             // Exclude sites from output?
             final boolean includeTsvSites = parsedCommandLine.hasOption(I5Option.ENABLE_TSV_RESIDUE_ANNOT.getLongOpt());

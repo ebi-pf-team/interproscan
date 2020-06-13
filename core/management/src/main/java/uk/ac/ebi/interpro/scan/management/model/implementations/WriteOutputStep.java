@@ -221,7 +221,7 @@ public class WriteOutputStep extends Step {
             try {
                 Utilities.printMemoryUsage("printing " + outputFormat);
                 Utilities.verboseLog(110, "Writing out " + outputPath.toString());
-                Utilities.verboseLog(0, " Writing out " + outputFormat + " output");
+                Utilities.verboseLog(10, " Writing out " + outputFormat + " output");
                 outputToXML(outputPath, stepInstance, sequenceType, false);
             } catch (IOException ioe) {
                 final String p = outputPath.toAbsolutePath().toString();
@@ -240,7 +240,7 @@ public class WriteOutputStep extends Step {
                     LOGGER.info("Writing out " + outputFormat + " file");
                 }
                 Utilities.printMemoryUsage("printing " + outputFormat);
-                Utilities.verboseLog(0, " Writing out " + outputFormat + " output");
+                Utilities.verboseLog(10, " Writing out " + outputFormat + " output");
 
                 switch (outputFormat) {
                     case TSV:
