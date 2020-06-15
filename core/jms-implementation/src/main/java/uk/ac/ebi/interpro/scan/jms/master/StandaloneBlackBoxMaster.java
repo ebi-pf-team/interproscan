@@ -48,6 +48,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.periodicGCCall = periodicGCCall;
 
+
         Utilities.verboseLog( 20, " verboseLog: " + Utilities.verboseLog
                 + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
@@ -114,6 +115,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
 
         long nowAfterLoadingDatabase = now;
+
+        Utilities.cpuCount = workerQueueJmsContainer.getMaxConcurrentConsumers();
+
         try {
             loadInMemoryDatabase();
             runStatus = 21;

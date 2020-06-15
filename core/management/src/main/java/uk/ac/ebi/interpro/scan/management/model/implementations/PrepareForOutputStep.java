@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PrepareForOutputStep extends Step {
 
@@ -34,6 +35,10 @@ public class PrepareForOutputStep extends Step {
     //DAOs
     private ProteinDAO proteinDAO;
     private MatchDAO matchDAO;
+
+    final ConcurrentHashMap<Long, Long> allNucleotideSequenceIds = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<Long, Boolean> processedNucleotideSequences = new ConcurrentHashMap<>();
+    final Set<String> processesReadyForXMLMarshalling = new HashSet<>();
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
@@ -64,6 +69,8 @@ public class PrepareForOutputStep extends Step {
         Long topProteinId = stepInstance.getTopProtein();
 
         Utilities.verboseLog(110, " PrepareForOutputStep :  There are " + (topProteinId - bottomProteinId) + " proteins.");
+
+        Long totalNucleotideSequences =  nucleotideSequenceDAO.count();
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting step with Id " + this.getId());
@@ -99,7 +106,7 @@ public class PrepareForOutputStep extends Step {
                 if (bottomProteinId == 1) {
                     Utilities.printMemoryUsage("Start nucleotide sequences - preparing  [" + proteinRange + " proteins");
                 }
-                processNucleotideSequences(stepInstance, temporaryFileDirectory);
+                processNucleotideSequences(stepInstance, totalNucleotideSequences, temporaryFileDirectory);
             } else {
                 Utilities.verboseLog(1100, "Dealing with proteins  ... , so pre-marshalling already done");
             }
@@ -111,10 +118,11 @@ public class PrepareForOutputStep extends Step {
     }
 
 
-    private void processNucleotideSequences(StepInstance stepInstance, String temporaryFileDirectory) {
+    private void processNucleotideSequences(StepInstance stepInstance, Long totalNucleotideSequences, String temporaryFileDirectory) {
         //
         //should we deal with nucleotides here
         //Utilities.verboseLog(1100, "proteinWithXref: \n" +  proteinWithXref.toString());
+        Utilities.verboseLog(30, "Start processNucleotideSequences - total size expected : " + totalNucleotideSequences );
         final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
 
         final Set<Long> nucleotideSequenceIds = new HashSet<>();
@@ -151,8 +159,10 @@ public class PrepareForOutputStep extends Step {
                 //Utilities.verboseLog(1100, "NucleotideSequence: \n" +  seq.toString());
 
                 if (seq != null) {
-                    nucleotideSequences.add(seq);
-                    nucleotideSequenceIds.add(seq.getId()); //store the Id
+                    Long seqId = seq.getId();
+                    //nucleotideSequences.add(seq);
+                    nucleotideSequenceIds.add(seqId); //store the Id
+                    allNucleotideSequenceIds.put(seqId,seqId);
                     //                    Hibernate.initialize(seq);
                     //                    nucleotideSequenceDAO.persist(key, seq);
                 }
@@ -162,8 +172,33 @@ public class PrepareForOutputStep extends Step {
                 Utilities.printMemoryUsage("processNucleotideSequences: GC scheduled at breakIndex = " + proteinIndex);
             }
         }
+        Utilities.verboseLog(30, "Completed creating the nucleotideSequences and resp. " +
+                "nucleotideSequenceIds: " + nucleotideSequenceIds.size()
+                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
+        int expectedPrepareJobCount = Utilities.prepareOutputInstances;
 
-        if (nucleotideSequences.size() > 0) {
+        Utilities.verboseLog(30, proteinRange + " Start to prepare XML for nucleotideSequences - " + " cpu count: " + expectedPrepareJobCount);
+        //maybe wait
+        //some nucleotides dont have ORFs??
+
+        processesReadyForXMLMarshalling.add(proteinRange);
+        try {
+            //set a break clause in case something amis happens
+            while(processesReadyForXMLMarshalling.size() < expectedPrepareJobCount ) {
+                Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling " cpu count: "
+                        + "expectedPrepareJobCount: " + expectedPrepareJobCount);
+                Thread.sleep(30 * 1000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Utilities.verboseLog(30, " after waiting - " +
+                " processesReadyForXMLMarshalling : " + processesReadyForXMLMarshalling.size() +
+                " nucleotideSequenceIds: " + nucleotideSequenceIds.size()
+                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size()
+                + " totalNucleotideSequences: " + totalNucleotideSequences );
+
+        if (nucleotideSequenceIds.size() > 0) {
             try {
                 //outputNTToXML(stepInstance, "n", nucleotideSequences);
                 outputToXML(stepInstance, "n", nucleotideSequenceIds, temporaryFileDirectory);
@@ -173,8 +208,9 @@ public class PrepareForOutputStep extends Step {
                 e.printStackTrace();
             }
         }
-        Utilities.verboseLog(1100, "nucleotideSequences size: " + nucleotideSequences.size());
-
+        Utilities.verboseLog(30, "Completed marshalling to XML for nucleotideSequences size: " +
+                "nucleotideSequenceIds: " + nucleotideSequenceIds.size()
+                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
     }
 
 
@@ -349,11 +385,17 @@ public class PrepareForOutputStep extends Step {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Load " + topProteinId + " proteins from the db.");
                 }
-
+                Long orfCount = 0l;
                 Long count = 0l;
                 writer.header(interProScanVersion, "nucleotide-sequence-matches");
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId : nucleotideSequenceIds) {
+                    if (processedNucleotideSequences.contains(nucleotideSequenceId)){
+                        continue;
+                    }
+                    //else claim
+                    processedNucleotideSequences.put(nucleotideSequenceId, true);
+
                     count++;
                     Utilities.verboseLog(120, "#: " + count + "nucleotideSequenceId  : " + nucleotideSequenceId);
 
@@ -369,16 +411,17 @@ public class PrepareForOutputStep extends Step {
                     //nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //NucleotideSequence  nucleotideSequence = nucleotideSequenceDAO.get(nucleotideSequenceKey);
 
-                    int orfCount = 0;
+                    int orfCountPerSequence = 0;
                     for (OpenReadingFrame orf : nucleotideSequenceInH2.getOpenReadingFrames()) {
                         Protein protein = orf.getProtein();
                         orfCount ++;
+                        orfCountPerSequence ++;
                         // String proteinKey = Long.toString(protein.getId());
                         //Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
                         //protein = proteinMarshalled;
                         //orf.setProtein(proteinMarshalled);
                     }
-                    Utilities.verboseLog(110, "\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " orfCount: " + orfCount); // + nucleotideSequenceInH2.toString());
+                    Utilities.verboseLog(110, "\n#" + count + " nucleotideSequenceInH2: " + nucleotideSequenceId + " orfCount: " + orfCountPerSequence); // + nucleotideSequenceInH2.toString());
 
                     String xmlNucleotideSequence = writer.marshal(nucleotideSequenceInH2);
                     if (Utilities.verboseLogLevel > 120) {
@@ -388,12 +431,15 @@ public class PrepareForOutputStep extends Step {
                     nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //Utilities.verboseLog(1100, "Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
                     //break;
-                    if (bottomProteinId == 1 && proteinBreakPoints.contains(count)){
-                        Utilities.printMemoryUsage("outputToXML: scheduled at breakIndex = " + count);
+                    if (bottomProteinId == 1 && proteinBreakPoints.contains(orfCount)){
+                        Utilities.printMemoryUsage("outputToXML: scheduled at orfcount breakIndex = " + orfCount + " ns count: " + count);
                     }
                 }
+                Utilities.verboseLog(30, "PrepareforOutPut completed xml marshalling for orfcount count: " + orfCount
+                        + " processed nucleotideSequences: " + count
+                        + " of nucleotideSequenceIds size: " + nucleotideSequenceIds.size());
 
-                Utilities.verboseLog(1100, "PrepareforOutPut nucleotideSequenceIds size: " + nucleotideSequenceIds.size());
+                Utilities.verboseLog(30, "PrepareforOutPut nucleotideSequenceIds size: " + nucleotideSequenceIds.size());
 
             }
 

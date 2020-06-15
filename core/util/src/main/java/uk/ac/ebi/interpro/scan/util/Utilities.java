@@ -48,6 +48,8 @@ public class Utilities {
 
     public static boolean periodicGCCall = false;
 
+    public static int cpuCount = 1;
+    public static int prepareOutputInstances = 1;
 
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
