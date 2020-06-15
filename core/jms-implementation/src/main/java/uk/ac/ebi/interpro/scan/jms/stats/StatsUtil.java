@@ -515,7 +515,7 @@ public class StatsUtil {
 
     public void displayRunningJobs() {
         if (Utilities.verboseLog && Utilities.verboseLogLevel >= 100 ) {
-            Utilities.verboseLog(1100, "Current active Jobs");
+            Utilities.verboseLog(100, "Current active Jobs");
             List<String> currentRunningJobs = getRunningJobs();
             Map<String, List<String>> runningJobsMap = new HashMap<>();
             for (String runningJob : currentRunningJobs) {
