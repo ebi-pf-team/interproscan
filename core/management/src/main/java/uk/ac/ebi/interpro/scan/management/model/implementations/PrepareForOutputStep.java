@@ -177,7 +177,9 @@ public class PrepareForOutputStep extends Step {
                 + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
         int expectedPrepareJobCount = Utilities.prepareOutputInstances;
 
-        Utilities.verboseLog(30, proteinRange + " Start to prepare XML for nucleotideSequences - " + " cpu count: " + expectedPrepareJobCount);
+        Utilities.verboseLog(30, proteinRange + " Start to prepare XML for nucleotideSequences - "
+                +  " cpu count: " + Utilities.cpuCount 
+                + " expectedPrepareJobCount "  + expectedPrepareJobCount);
         //maybe wait
         //some nucleotides dont have ORFs??
 
@@ -185,7 +187,7 @@ public class PrepareForOutputStep extends Step {
         try {
             //set a break clause in case something amis happens
             while(processesReadyForXMLMarshalling.size() < expectedPrepareJobCount ) {
-                Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling " cpu count: "
+                Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling
                         + "expectedPrepareJobCount: " + expectedPrepareJobCount);
                 Thread.sleep(30 * 1000);
             }
