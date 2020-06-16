@@ -149,7 +149,7 @@ public class StepCreationSequenceLoadListener
                     String extraLookupMessage = "This information can help you decide whether to use the lookup match service for your kind of input or switch the lookup match service off.";
                     if (percentageOfProteinsinLookup < 25 ) {
                         // extraLookupMessage = "Check www.ebi.ac.uk/interpro to see if the lookup up is efficient for your kind of input";
-                        System.out.println(Utilities.getTimeNow() + " Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
+                        Utilities.verboseLog(10, " Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
                                 + " unique input sequences were found in the match lookup server. " + extraLookupMessage);
                     }
                 }

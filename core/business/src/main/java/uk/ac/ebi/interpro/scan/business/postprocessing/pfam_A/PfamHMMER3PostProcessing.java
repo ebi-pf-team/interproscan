@@ -98,7 +98,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 seedAlignments = seedAlignmentData.getSeedAlignments(proteinId);
             }
 
-            Utilities.verboseLog(25,"Pfam A post processing: processing protein " + proteinId);
+            Utilities.verboseLog(120,"Pfam A post processing: processing protein " + proteinId);
             proteinIdToRawProteinMap.put(proteinId, processProtein(proteinIdToRawMatchMap.get(proteinId), nestedModelsMap, seedAlignments));
         }
         if (LOGGER.isDebugEnabled()) {

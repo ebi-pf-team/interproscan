@@ -130,6 +130,7 @@ public class PrepareForOutputStep extends Step {
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
 
+
         int proteinCount = 0;
 
         Set<String> signatureLibraryNames = new HashSet<>();
@@ -150,9 +151,11 @@ public class PrepareForOutputStep extends Step {
             String proteinKey = Long.toString(proteinIndex);
             Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
             //Protein protein = proteinDAO.getProtein(proteinKey);
-            if (protein != null) {
-                proteinCount++;
+            if (protein == null) {
+                continue;
             }
+            proteinCount++;
+
             for (OpenReadingFrame orf : protein.getOpenReadingFrames()) {
                 //Utilities.verboseLog(1100, "OpenReadingFrame: \n" +  orf.toString());
                 NucleotideSequence seq = orf.getNucleotideSequence();
@@ -171,14 +174,20 @@ public class PrepareForOutputStep extends Step {
             if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)){
                 Utilities.printMemoryUsage("processNucleotideSequences: GC scheduled at breakIndex = " + proteinIndex);
             }
+            if (proteinCount % 500 == 0) {
+                Utilities.verboseLog(30, proteinRange + " processed " + proteinCount + " proteins of "
+                        + proteinsConsidered + " proteins from "
+                        + " nucleotideSequenceIds: " + nucleotideSequenceIds.size());
+            }
+
         }
-        Utilities.verboseLog(30, "Completed creating the nucleotideSequences and resp. " +
+        Utilities.verboseLog(30, proteinRange + " Completed creating the nucleotideSequences and resp. " +
                 "nucleotideSequenceIds: " + nucleotideSequenceIds.size()
                 + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
         int expectedPrepareJobCount = Utilities.prepareOutputInstances;
 
         Utilities.verboseLog(30, proteinRange + " Start to prepare XML for nucleotideSequences - "
-                +  " cpu count: " + Utilities.cpuCount 
+                +  " cpu count: " + Utilities.cpuCount
                 + " expectedPrepareJobCount "  + expectedPrepareJobCount);
         //maybe wait
         //some nucleotides dont have ORFs??
@@ -187,14 +196,14 @@ public class PrepareForOutputStep extends Step {
         try {
             //set a break clause in case something amis happens
             while(processesReadyForXMLMarshalling.size() < expectedPrepareJobCount ) {
-                Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling
-                        + "expectedPrepareJobCount: " + expectedPrepareJobCount);
+                Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling.size()
+                        + " expectedPrepareJobCount: " + expectedPrepareJobCount);
                 Thread.sleep(30 * 1000);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Utilities.verboseLog(30, " after waiting - " +
+        Utilities.verboseLog(30, proteinRange + " after waiting - " +
                 " processesReadyForXMLMarshalling : " + processesReadyForXMLMarshalling.size() +
                 " nucleotideSequenceIds: " + nucleotideSequenceIds.size()
                 + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size()
@@ -210,7 +219,7 @@ public class PrepareForOutputStep extends Step {
                 e.printStackTrace();
             }
         }
-        Utilities.verboseLog(30, "Completed marshalling to XML for nucleotideSequences size: " +
+        Utilities.verboseLog(30, proteinRange + "Completed marshalling to XML for nucleotideSequences size: " +
                 "nucleotideSequenceIds: " + nucleotideSequenceIds.size()
                 + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
     }
@@ -434,7 +443,9 @@ public class PrepareForOutputStep extends Step {
                     //Utilities.verboseLog(1100, "Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
                     //break;
                     if (bottomProteinId == 1 && proteinBreakPoints.contains(orfCount)){
-                        Utilities.printMemoryUsage("outputToXML: scheduled at orfcount breakIndex = " + orfCount + " ns count: " + count);
+                        Utilities.printMemoryUsage("outputToXML " + proteinRange + " scheduled at orfcount breakIndex = "
+                                + orfCount + " ns count: " + count + " of "+ nucleotideSequenceIds.size()
+                                + " All processedNucleotideSequences: " + processedNucleotideSequences.size());
                     }
                 }
                 Utilities.verboseLog(30, "PrepareforOutPut completed xml marshalling for orfcount count: " + orfCount
@@ -674,6 +685,28 @@ public class PrepareForOutputStep extends Step {
                 matchEntry.getPathwayXRefs().size();
             }
         }
+    }
+
+    /**
+     *  get the proteins in range - expensive in terms of memeory usage, so need benachmarking
+     *
+     * @param bottomProteinId
+     * @param topProteinId
+     * @return
+     */
+    private Set<Protein> getProteinInRange(Long bottomProteinId, Long topProteinId){
+        Set<Protein> proteinsInRange = new HashSet<>();
+        for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
+            String proteinKey = Long.toString(proteinIndex);
+            Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+            //Protein protein = proteinDAO.getProtein(proteinKey);
+            if (protein == null) {
+                continue;
+            }
+            proteinsInRange.add(protein);
+        }
+
+        return proteinsInRange;
     }
 
     private void deleteTmpMarshallingFile(Path outputPath) {
