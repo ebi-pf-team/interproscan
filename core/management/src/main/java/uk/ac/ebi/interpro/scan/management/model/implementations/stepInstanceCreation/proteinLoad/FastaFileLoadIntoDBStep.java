@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.LoadFastaFile;
@@ -34,7 +36,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
 
     public static final String FASTA_FILE_PATH_KEY = "FASTA_FILE_PATH";
 
-    private static final Logger LOGGER = Logger.getLogger(FastaFileLoadIntoDBStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FastaFileLoadIntoDBStep.class.getName());
 
     private LoadFastaFile fastaFileLoader;
 
@@ -76,7 +78,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
      */
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
-        Utilities.verboseLog(10, " FastaFileLoadIntoDBStep - starting");
+        Utilities.verboseLog(110, " FastaFileLoadIntoDBStep - starting");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("FastaFileLoadIntoDBStep.fastaFileLoader : " + fastaFileLoader);
         }
@@ -228,7 +230,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 String analysesPrintOutStr = getTimeNow() + " Running the following analyses:\n";
                 String analysesDisplayStr = getTimeNow() + " Running the following analyses:\n";
                 //System.out.println(analysesPrintOutStr + Arrays.asList(analysisJobNames));
-                Utilities.verboseLog(10,analysesPrintOutStr + Arrays.asList(analysisJobNames));
+                Utilities.verboseLog(110,analysesPrintOutStr + Arrays.asList(analysisJobNames));
 
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(analysesPrintOutStr + Arrays.asList(analysisJobNames));
@@ -268,7 +270,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 Job finalInitialJob = jobs.getJobById(finalInitialJobName);
 
                 if(! useMatchLookupService){
-                    Utilities.verboseLog(10, "useMatchLookupService  is " + useMatchLookupService );
+                    Utilities.verboseLog(110, "useMatchLookupService  is " + useMatchLookupService );
                     matchLookupJob = null;
                 }
 
@@ -280,7 +282,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 fastaFileLoader.loadSequences(fastaFileInputStream, sequenceLoadListener, analysisJobMap, useMatchLookupService);
 
                 LOGGER.debug("Finished loading sequences into the DB. step(FastaFileLoadIntoDBStep)");
-                Utilities.verboseLog("Finished loading sequences into the DB. step(FastaFileLoadIntoDBStep)");
+                Utilities.verboseLog(1100, "Finished loading sequences into the DB. step(FastaFileLoadIntoDBStep)");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -294,7 +296,7 @@ public class FastaFileLoadIntoDBStep extends Step implements StepInstanceCreatin
                 }
             }
         }
-        Utilities.verboseLog(10, " FastaFileLoadIntoDBStep - done");
+        Utilities.verboseLog(110, " FastaFileLoadIntoDBStep - done");
     }
 
     private String getTimeNow() {

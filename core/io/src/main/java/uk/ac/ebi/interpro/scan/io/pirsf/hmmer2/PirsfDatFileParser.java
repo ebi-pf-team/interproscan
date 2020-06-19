@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
@@ -43,7 +45,7 @@ public class PirsfDatFileParser implements Serializable {
     * mean(S), std(S) and min(S) are for the HMM score of the family]
     */
 
-    private static final Logger LOGGER = Logger.getLogger(PirsfDatFileParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PirsfDatFileParser.class.getName());
 
     //Pattern for superfamily accessions only (PIRSF037506)
     private static final Pattern PIRSF_DAT_PATTERN_SUPERFAM = Pattern.compile("^>PIRSF[0-9]{6}$");

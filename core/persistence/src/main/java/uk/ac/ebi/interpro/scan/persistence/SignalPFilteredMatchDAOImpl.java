@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -21,7 +22,7 @@ import java.util.Set;
  */
 public class SignalPFilteredMatchDAOImpl extends FilteredMatchDAOImpl<SignalPRawMatch, SignalPMatch> implements SignalPFilteredMatchDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(SignalPFilteredMatchDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SignalPFilteredMatchDAOImpl.class.getName());
 
     private final String signalPReleaseVersion;
 

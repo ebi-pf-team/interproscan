@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class HmmPfamParserTest {
-    private static final Logger LOGGER = Logger.getLogger(HmmPfamParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(HmmPfamParserTest.class.getName());
 
     // SMART
     @Resource

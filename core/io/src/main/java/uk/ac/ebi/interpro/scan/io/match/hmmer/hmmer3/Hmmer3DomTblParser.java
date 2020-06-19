@@ -1,5 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -23,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class Hmmer3DomTblParser {
 
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Hmmer3DomTblParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3DomTblParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 
@@ -59,7 +62,7 @@ public class Hmmer3DomTblParser {
                 reader.close();
             }
         }
-        Utilities.verboseLog(10, " domtbl domain count : " + domainTblLineMap.values().size());
+        Utilities.verboseLog(110, " domtbl domain count : " + domainTblLineMap.values().size());
         LOGGER.debug(" domtbl domain count : " + domainTblLineMap.values().size());
 
         return domainTblLineMap;

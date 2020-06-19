@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.concurrent.Executor;
@@ -8,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class TimeKeeper {
 
-    private static final Logger LOGGER = Logger.getLogger(TimeKeeper.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TimeKeeper.class.getName());
 
     private Long startUpTime;
     private Long maximumLifeMillis;
@@ -28,7 +29,7 @@ public class TimeKeeper {
         executor.execute(new Runnable() {
             public void run() {
                 Long timeToSleep = maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
-                Utilities.verboseLog("TimeToLive: " + (maximumLifeMillis - (System.currentTimeMillis() - startUpTime))
+                Utilities.verboseLog(1100, "TimeToLive: " + (maximumLifeMillis - (System.currentTimeMillis() - startUpTime))
                         + " maximumLifeMillis: " + maximumLifeMillis
                         + " Now: " + System.currentTimeMillis()
                         + " startUpTime: " + startUpTime
@@ -36,7 +37,7 @@ public class TimeKeeper {
 
                 while(System.currentTimeMillis() - startUpTime < maximumLifeMillis){
                     timeToSleep = maximumLifeMillis - (System.currentTimeMillis() - startUpTime);
-                    Utilities.verboseLog("Time To sleep/live: " + timeToSleep);
+                    Utilities.verboseLog(1100, "Time To sleep/live: " + timeToSleep);
                     try {
                         Thread.sleep(timeToSleep + (10 * 1000));
                     } catch (InterruptedException e) {

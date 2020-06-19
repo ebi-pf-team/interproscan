@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
@@ -26,7 +28,7 @@ import java.util.*;
  */
 public class FinaliseInitialSetupStep extends Step implements StepInstanceCreatingStep {
 
-    private static final Logger LOGGER = Logger.getLogger(FinaliseInitialSetupStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FinaliseInitialSetupStep.class.getName());
 
     FinaliseInitialSetupTasks finaliseInitialSetupTasks;
 
@@ -58,7 +60,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         Long bottomProtein = stepInstance.getBottomProtein();
         Long topProtein =        stepInstance.getTopProtein();
-        Utilities.verboseLog(10, " FinaliseInitialSetupStep Step  (" + bottomProtein + "-" + topProtein + ") - starting ");
+        Utilities.verboseLog(110, " FinaliseInitialSetupStep Step  (" + bottomProtein + "-" + topProtein + ") - starting ");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("FinaliseInitialSetupStep Step (" + bottomProtein + "-" + topProtein + ")");
         }
@@ -76,7 +78,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         Map<String, SignatureLibraryRelease> analysisJobMap = new HashMap<>();
         Jobs analysisJobs;
         if (analysisJobNames == null) {
-            Utilities.verboseLog(20," analysisJobNames is NULL - "  + analysisJobNames);
+            Utilities.verboseLog(120," analysisJobNames is NULL - "  + analysisJobNames);
             analysisJobs = jobs.getActiveAnalysisJobs();
             analysisJobs = jobs.getActiveNonDeprecatedAnalysisJobs();
             List<String> analysisJobIdList = analysisJobs.getJobIdList();
@@ -89,7 +91,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             }
             analysisJobNames = analysisJobNamesBuilder.toString();
         } else {
-            Utilities.verboseLog(20," analysisJobNames is NOT NULL - "  + analysisJobNames);
+            Utilities.verboseLog(120," analysisJobNames is NOT NULL - "  + analysisJobNames);
             analysisJobs = jobs.subset(StringUtils.commaDelimitedListToStringArray(analysisJobNames));
         }
         if (LOGGER.isDebugEnabled()) {
@@ -104,7 +106,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion() + " name: " + signatureLibraryRelease.getLibrary().getName());
                 }
-                Utilities.verboseLog(20, "Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
+                Utilities.verboseLog(120, "Name: " + signatureLibraryRelease.getLibrary().getName() + " version: " + signatureLibraryRelease.getVersion());
             }
         }
         if (LOGGER.isDebugEnabled()) {
@@ -139,12 +141,12 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
 
         final String completionJobName = stepInstance.getParameters().get(COMPLETION_JOB_NAME_KEY);
         Job completionJob = jobs.getJobById(completionJobName);
-        Utilities.verboseLog("completionJobName: " + completionJobName + " completionJob in FinaliseInitialSteps: " + completionJob);
+        Utilities.verboseLog(1100, "completionJobName: " + completionJobName + " completionJob in FinaliseInitialSteps: " + completionJob);
 
         final String prepareOutputJobName = stepInstance.getParameters().get(PREPARE_OUTPUT_JOB_NAME_KEY);
         Job prepareOutputJob = jobs.getJobById(prepareOutputJobName);
 
-        Utilities.verboseLog("prepareOutputJobName: " + prepareOutputJobName + " prepareOutputJob: "
+        Utilities.verboseLog(1100, "prepareOutputJobName: " + prepareOutputJobName + " prepareOutputJob: "
                 + prepareOutputJob + " prepareOutputJob in FinaliseInitialSteps: " + prepareOutputJob);
 
         final String matchLookupJobName = stepInstance.getParameters().get(MATCH_LOOKUP_JOB_NAME_KEY);
@@ -162,7 +164,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
 
         finaliseInitialSetupTasks.execute(sequenceLoadListener, analysisJobMap,  useMatchLookupService);
 
-        Utilities.verboseLog(10, "  FinaliseInitialSetupStep Step - done");
+        Utilities.verboseLog(110, "  FinaliseInitialSetupStep Step - done");
 
         //should we sleep just to make sure changes that are  made on the filesystem kvstore are available for the next step
 
@@ -178,9 +180,9 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             }else {
                 delayForNfs();
             }
-            Utilities.verboseLog(10, "  FinaliseStep - Slept for at least " + waitTime + " millis");
+            Utilities.verboseLog(110, "  FinaliseStep - Slept for at least " + waitTime + " millis");
         }else{
-            Utilities.verboseLog(10, " FinaliseStep - no waiting for the kvstore matchDB as protein count is < 16000: count = " + topProtein);
+            Utilities.verboseLog(110, " FinaliseStep - no waiting for the kvstore matchDB as protein count is < 16000: count = " + topProtein);
         }
 
     }

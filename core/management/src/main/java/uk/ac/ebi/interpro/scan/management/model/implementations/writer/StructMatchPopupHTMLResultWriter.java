@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.web.model.MatchDataSource;
 import uk.ac.ebi.interpro.scan.web.model.SimpleLocation;
 
@@ -20,7 +22,7 @@ import java.util.SortedSet;
 public class StructMatchPopupHTMLResultWriter extends PopupHTMLResultWriter {
     // DO NOT DELETE - This class is not used in InterProScan 5, but is used as a dependency in InterPro web 6
 
-    private static final Logger LOGGER = Logger.getLogger(StructMatchPopupHTMLResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StructMatchPopupHTMLResultWriter.class.getName());
 
     public String write(final String structPopupId,
                         final SimpleLocation location,

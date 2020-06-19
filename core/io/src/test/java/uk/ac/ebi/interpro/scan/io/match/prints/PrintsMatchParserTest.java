@@ -9,7 +9,8 @@ package uk.ac.ebi.interpro.scan.io.match.prints;
  */
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 public class PrintsMatchParserTest  {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrintsMatchParserTest.class.getName());
 
     private static final String TEST_FILE_PATH = "data/prints/5ht_mouse_results.txt";
 

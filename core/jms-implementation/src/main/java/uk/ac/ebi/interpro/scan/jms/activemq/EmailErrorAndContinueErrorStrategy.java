@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -17,7 +18,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
  */
 public class EmailErrorAndContinueErrorStrategy implements UnrecoverableErrorStrategy {
 
-    private static final Logger LOGGER = Logger.getLogger(EmailErrorAndContinueErrorStrategy.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(EmailErrorAndContinueErrorStrategy.class.getName());
 
     @Override
     public void failed(StepInstance stepInstance, Jobs jobs) {

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.gene3d;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.gene3d.Gene3DPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -22,7 +24,7 @@ import java.util.Set;
  */
 public class Gene3DPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3DPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Gene3DPostProcessingStep.class.getName());
 
     private String ssfOutputFileTemplate;
 
@@ -119,7 +121,7 @@ public class Gene3DPostProcessingStep extends Step {
         //do we need to skip
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -135,7 +137,7 @@ public class Gene3DPostProcessingStep extends Step {
             LOGGER.debug("In execute() method of Gene3dHmmer3FilterStep.java (Gene3D Post Processing.)");
             LOGGER.debug("DAO returned " + rawProteins.size() + " raw proteins to filter.");
         }
-        Utilities.verboseLog("PostProcess Gene3d matches: protein-range : "
+        Utilities.verboseLog(1100, "PostProcess Gene3d matches: protein-range : "
                 + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein());
         // Filter and Persist
         filteredMatchDAO.persist(this.getPostProcessor().filter(rawProteins, outputFilePath));

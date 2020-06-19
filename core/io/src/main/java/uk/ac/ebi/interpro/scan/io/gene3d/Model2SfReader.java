@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public final class Model2SfReader extends AbstractModelFileParser {
 
     private String prefix = "G3DSA:";
 
+    String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+
     /**
      * Optional bean method, should the prefix be different to the default value.
      *
@@ -33,6 +36,14 @@ public final class Model2SfReader extends AbstractModelFileParser {
     }
 
     /**
+     *  set the cath family file for cath gene3d signature names
+     * @param cathFamilyFile
+     */
+    public void setCathFamilyFile(String cathFamilyFile) {
+        this.cathFamilyFile = cathFamilyFile;
+    }
+
+    /**
      * Method to parse a model file and return a SignatureLibraryRelease.
      *
      * @return a complete SignatureLibraryRelease object
@@ -40,6 +51,10 @@ public final class Model2SfReader extends AbstractModelFileParser {
     @Override
     public SignatureLibraryRelease parse() throws IOException {
         final Map<String, String> records = parseFileToMap();
+
+        final Map<String, String> familyRecords = parseCathFamilyFile();
+
+
 
         // Create signatures
         final Map<String, Signature> signatureMap = new HashMap<>();
@@ -55,7 +70,8 @@ public final class Model2SfReader extends AbstractModelFileParser {
             if (signatureMap.containsKey(signatureAc)) {
                 signature = signatureMap.get(signatureAc);
             } else {
-                signature = new Signature(signatureAc);
+                String signatureName = familyRecords.get(signatureAc);
+                signature = new Signature(signatureAc, signatureName);
                 signatureMap.put(signatureAc, signature);
             }
             signature.addModel(new Model(modelAc, null, null, hmmLength));
@@ -97,6 +113,49 @@ public final class Model2SfReader extends AbstractModelFileParser {
                 }
             }
         }
+        return records;
+    }
+
+
+    public Map<String, String> parseCathFamilyFile() throws IOException {
+
+
+        final Map<String, String> records = new HashMap<>();
+
+        // Some example lines to parse:
+        // 3.30.56.60      "XkdW-like"
+        //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
+        //3.90.330.10     "Nitrile Hydratase; Chain A"
+        String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+
+        BufferedReader reader = null;
+        try {
+            FileInputStream familyFile = new FileInputStream(cathFamilyFile);
+            reader = new BufferedReader(new InputStreamReader(familyFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] splitLine = line.split("\\s+", 2);
+//                if (splitLine[0].isEmpty()) {
+//                    throw new IllegalStateException("Unexpected format on line: " + line + " \n " + splitLine.toString());
+//                }
+
+                String accession = splitLine[0];
+                String newAccession = prefix + accession;
+                String familyName = "";
+                if (splitLine.length < 2 || splitLine[1].contains("-")) {
+                    familyName = "";
+                } else {
+                    familyName = splitLine[1];
+                }
+
+                records.put(newAccession, familyName);  // model#accession, name
+            }
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+
         return records;
     }
 }

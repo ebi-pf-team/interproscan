@@ -16,7 +16,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -39,7 +40,7 @@ import java.util.Set;
  */
 public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesXMLJAXBFragmentsResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesXMLJAXBFragmentsResultWriter.class.getName());
 
     //protected BufferedWriter fileWriter;
 
@@ -141,7 +142,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
         //System.out.println("");
         //bufferedWriter.close();
 
-        Utilities.verboseLog(20, "Format the xML file --");
+        Utilities.verboseLog(120, "Format the xML file --");
         Transformer transformer = null;
 
         try {
@@ -168,10 +169,10 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
 
             Path sourcePath = Paths.get(newPathName);
             Path targetPath = Paths.get(xmlPath.toAbsolutePath().toString());
-            Utilities.verboseLog(20,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
+            Utilities.verboseLog(120,"Moving/Renaming the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString()
                     + " - with - " + targetPath.toAbsolutePath().toString());
             Files.move(sourcePath, targetPath, REPLACE_EXISTING);
-            Utilities.verboseLog(20,"Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
+            Utilities.verboseLog(120,"Moved/Renamed the xmls file temp xml file:  " + sourcePath.toAbsolutePath().toString() +
                     "                    - with - " + targetPath.toAbsolutePath().toString());
 
         } catch (TransformerConfigurationException e) {

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -19,7 +21,7 @@ import java.util.List;
  */
 public class RunHmmerBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunHmmerBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunHmmerBinaryStep.class.getName());
 
     private String fullPathToHmmsearchBinary;
 
@@ -151,7 +153,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
 //        if (isSingleSeqMode()){
         forceHmmsearch = true;  // we will use hmmsearch until parsing for hmmscan output is implemenetd
         if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
-            Utilities.verboseLog("SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
+            Utilities.verboseLog(1100, "SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }else{
             command.add(this.getFullPathToBinary());
@@ -160,10 +162,10 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         //for panther only in the first place
         if (forceHmmsearch || Utilities.getSequenceCount() > 10){
             Utilities.setUseHmmsearch(true);
-            Utilities.verboseLog("Use Hmmsearch  " + getFullPathToHmmsearchBinary());
+            Utilities.verboseLog(110, "Use Hmmsearch  " + getFullPathToHmmsearchBinary());
             command.add(this.getFullPathToHmmsearchBinary());
         }else{
-            Utilities.verboseLog("Use hmmscan  " + getFullPathToHmmScanBinary());
+            Utilities.verboseLog(110, "Use hmmscan  " + getFullPathToHmmScanBinary());
             command.add(this.getFullPathToHmmScanBinary());
         }
         command.addAll(this.getBinarySwitchesAsList());

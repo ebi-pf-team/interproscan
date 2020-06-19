@@ -8,7 +8,8 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.Assert;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -24,7 +25,7 @@ import java.io.File;
  */
 public class BerkeleyMatchDBService extends AbstractDBService {
 
-    private static final Logger LOGGER = Logger.getLogger(BerkeleyMatchDBService.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(BerkeleyMatchDBService.class.getName());
 
     private String databasePath;
 

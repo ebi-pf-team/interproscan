@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 public class ResponseMonitorImpl implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ResponseMonitorImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ResponseMonitorImpl.class.getName());
 
     StepExecutionDAO stepExecutionDAO;
 
@@ -57,7 +58,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     canHandle = true;
                     StepExecution freshStepExecution = (StepExecution) messageContents;
                     stepExecutionDAO.refreshStepExecution(freshStepExecution);
-                    Utilities.verboseLog(10, "ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
+                    Utilities.verboseLog(110, "ResponseMonitorImpl: " + freshStepExecution.getStepInstance().toString());
                     statsUtil.updateSubmittedStepInstances(freshStepExecution.getStepInstance());
 
                     canRunRemotely = message.getBooleanProperty(CAN_RUN_REMOTELY_PROPERTY);
@@ -77,7 +78,7 @@ public class ResponseMonitorImpl implements MessageListener {
                     LOGGER.debug("Received FAILED_JOB");
                 }
                 statsUtil.updateLastMessageReceivedTime();
-                Utilities.verboseLog(10, "ResponseMonitorImpl onMessage completed for : " + message.getJMSMessageID());
+                Utilities.verboseLog(110, "ResponseMonitorImpl onMessage completed for : " + message.getJMSMessageID());
             }
             if (! canHandle){
                 LOGGER.error("Master: received a message that I don't know how to handle.");

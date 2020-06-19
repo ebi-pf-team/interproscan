@@ -15,7 +15,8 @@
  */
 package uk.ac.ebi.interpro.scan.business.binary;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 
@@ -33,7 +34,7 @@ import java.io.InputStream;
  */
 abstract class AbstractBinaryRunner implements BinaryRunner {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractBinaryRunner.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AbstractBinaryRunner.class.getName());
 
 
     private CommandLineConversation commandLineConversation;

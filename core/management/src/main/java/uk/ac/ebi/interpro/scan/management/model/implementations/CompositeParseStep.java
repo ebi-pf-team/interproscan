@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.io.match.MatchAndSiteParser;
@@ -30,7 +31,7 @@ import java.util.Set;
  */
 public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite> extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(CompositeParseStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CompositeParseStep.class.getName());
 
     private String outputFileTemplate;
     private MatchAndSiteParser<T, U> parser;
@@ -83,7 +84,7 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
         delayForNfs();
@@ -110,14 +111,14 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
                 LOGGER.debug("Parsed out " + results.size() + " proteins with matches from file " + fileName);
                 LOGGER.debug("A total of " + count + " matches from file " + fileName);
             }
-            Utilities.verboseLog("Parsed out " + results.size() + " proteins with matches from file " + fileName + " -- A total of " + count + " matches");
+            Utilities.verboseLog(1100, "Parsed out " + results.size() + " proteins with matches from file " + fileName + " -- A total of " + count + " matches");
             rawMatchDAO.insertProteinMatches(results);
             Long now = System.currentTimeMillis();
             if (count > 0){
                 int matchesFound = 0;
                 int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
                 if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
                     String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
                     while (matchesFound < count) {
                         Utilities.sleep(waitTimeFactor * 1000);
@@ -125,7 +126,7 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
                                 stepInstance.getTopProtein(), signatureLibraryRelease).size();
                         if (matchesFound < count) {
                             LOGGER.warn("Raw matches not yet committed - sleep for 5 seconds , count: " + count);
-                            Utilities.verboseLog("Raw matches not yet committed - sleep for "
+                            Utilities.verboseLog(1100, "Raw matches not yet committed - sleep for "
                                     + waitTimeFactor + " seconds, matches found: " + matchesFound
                                     + " matchesCount expected: " + count);
                         }
@@ -140,10 +141,10 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
                     }
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog(1100, "Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog(1100, "ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
                     + " time taken: " + timeTaken);
             }
 
@@ -153,7 +154,7 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
             if (!excludeSites) { // Check command line argument
                 if (!this.excludeSites) { // No command line argument, so check properties file configuration
                     final Set<RawProteinSite<U>> rawProteinSites = matchSiteData.getRawProteinSites();
-                    Utilities.verboseLog("Parsed out " + rawProteinSites.size() + " proteins with sites from file " + fileName);
+                    Utilities.verboseLog(1100, "Parsed out " + rawProteinSites.size() + " proteins with sites from file " + fileName);
                     RawSite represantiveRawSite = null;
                     count = 0;
                     if (rawProteinSites.size() > 0) {
@@ -165,10 +166,10 @@ public abstract class CompositeParseStep<T extends RawMatch,  U extends RawSite>
                                 }
                             }
                         }
-                        Utilities.verboseLog("represantiveRawSite :" + represantiveRawSite.toString());
+                        Utilities.verboseLog(1100, "represantiveRawSite :" + represantiveRawSite.toString());
                     }
 
-                    Utilities.verboseLog("A total of " + count + " residue sites from file " + fileName);
+                    Utilities.verboseLog(1100, "A total of " + count + " residue sites from file " + fileName);
 
                     rawSiteDAO.insertSites(rawProteinSites);
                 }

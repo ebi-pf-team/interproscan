@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PfamA;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -27,7 +29,7 @@ import java.util.Calendar;
  */
 public class Pfam_A_PostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Pfam_A_PostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Pfam_A_PostProcessingStep.class.getName());
 
     private PfamHMMER3PostProcessing postProcessor;
 
@@ -88,7 +90,7 @@ public class Pfam_A_PostProcessingStep extends Step {
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -98,10 +100,10 @@ public class Pfam_A_PostProcessingStep extends Step {
                 stepInstance.getTopProtein(),
                 getSignatureLibraryRelease()
         );
-        Utilities.verboseLog(10, "Pfam_A_PostProcessingStep : stepinstance:" + stepInstance.toString());
+        Utilities.verboseLog(110, "Pfam_A_PostProcessingStep : stepinstance:" + stepInstance.toString());
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            Utilities.verboseLog(110, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
             int waitTimeFactor = 2;
             if (! Utilities.isRunningInSingleSeqMode()){
                 waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
@@ -113,14 +115,14 @@ public class Pfam_A_PostProcessingStep extends Step {
                     stepInstance.getTopProtein(),
                     getSignatureLibraryRelease()
             );
-            Utilities.verboseLog(10, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
+            Utilities.verboseLog(110, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
         }
         int matchCount = 0;
         for (final RawProtein rawProtein : rawMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10, " PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
-        Utilities.verboseLog(10, " PfamA: A total of " + matchCount + " raw matches.");
+        Utilities.verboseLog(110, " PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
+        Utilities.verboseLog(110, " PfamA: A total of " + matchCount + " raw matches.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("PfamA: Retrieved " + rawMatches.size() + " proteins to post-process.");
             //int matchCount = 0;
@@ -138,8 +140,8 @@ public class Pfam_A_PostProcessingStep extends Step {
             for (final RawProtein rawProtein : filteredMatches.values()) {
                 matchCount += rawProtein.getMatches().size();
             }
-            Utilities.verboseLog(10,  " PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
-            Utilities.verboseLog(10,  " PfamA: A total of " + matchCount + " matches PASSED.");
+            Utilities.verboseLog(110,  " PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
+            Utilities.verboseLog(110,  " PfamA: A total of " + matchCount + " matches PASSED.");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("PfamA: " + filteredMatches.size() + " proteins passed through post processing.");
                 //int matchCount = 0;
@@ -149,7 +151,7 @@ public class Pfam_A_PostProcessingStep extends Step {
                 LOGGER.debug("PfamA: A total of " + matchCount + " matches PASSED.");
             }
             filteredMatchDAO.persist(filteredMatches.values());
-            Utilities.verboseLog(10,  " PfamA: filteredMatches persisted");
+            Utilities.verboseLog(110,  " PfamA: filteredMatches persisted");
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered matches.", e);
         }

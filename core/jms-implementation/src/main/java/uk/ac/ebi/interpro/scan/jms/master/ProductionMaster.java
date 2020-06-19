@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms.SubmissionWorkerRunner;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsMessageListener;
@@ -22,7 +23,7 @@ public class ProductionMaster extends AbstractMaster {
 
     private String tcpUri;
 
-    private static final Logger LOGGER = Logger.getLogger(ProductionMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProductionMaster.class.getName());
 
     private StatsUtil statsUtil;
 

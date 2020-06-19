@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMProtein;
 import uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMRawResultParser;
@@ -25,7 +27,7 @@ import java.util.Set;
  */
 public final class TMHMMParseStepOldV11 extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(TMHMMParseStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TMHMMParseStep.class.getName());
     private String outputFileNameTemplate;
     //    private RawMatchDAO<TMHMMRawMatch> rawMatchDAO;
     private TMHMMRawResultParser parser;
@@ -92,15 +94,15 @@ public final class TMHMMParseStepOldV11 extends Step {
             if (count > 0){
                 int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
                 if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
                     Utilities.sleep(waitTimeFactor * 1000);
                     //ignore the usual check until refactoring of the parse step
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog(1100, "Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog(1100, "ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
                         + " time taken: " + timeTaken);
             }
         } catch (IOException e) {

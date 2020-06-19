@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
@@ -26,7 +27,7 @@ import java.util.Set;
  */
 public abstract class AbstractLineMatchParser<T extends RawMatch> implements MatchParser<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractLineMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AbstractLineMatchParser.class.getName());
 
     private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;

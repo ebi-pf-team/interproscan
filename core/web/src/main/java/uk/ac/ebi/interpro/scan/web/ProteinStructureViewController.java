@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,7 @@ import java.util.Map;
 @RequestMapping(value = "/protein-structures", method = RequestMethod.GET)
 public class ProteinStructureViewController {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinStructureViewController.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinStructureViewController.class.getName());
     private static final int MAX_NUM_MATCH_DIAGRAM_SCALE_MARKERS = 10; // Max number of scale markers to include on the match diagram (one will always be 0 and another protein length)!
 
     // Spring managed beans

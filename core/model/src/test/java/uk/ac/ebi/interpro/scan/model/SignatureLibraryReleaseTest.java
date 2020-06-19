@@ -18,7 +18,8 @@ package uk.ac.ebi.interpro.scan.model;
 
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.ApplicationContext;
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration
 public class SignatureLibraryReleaseTest extends AbstractTest<SignatureLibraryRelease> {
 
-    private static final Logger LOGGER = Logger.getLogger(SignatureLibraryReleaseTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SignatureLibraryReleaseTest.class.getName());
 
     @Test
     public void testEquals() throws ParseException {

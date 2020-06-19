@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.tmhmm;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.FileContentChecker;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public final class TMHMMBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(TMHMMBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(TMHMMBinaryStep.class.getName());
 
     private String fastaFileNameTemplate;
 

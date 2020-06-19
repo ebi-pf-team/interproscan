@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
@@ -12,7 +13,7 @@ import java.util.*;
 
 public final class SimpleProtein implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(SimpleProtein.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SimpleProtein.class.getName());
 
     private final String ac;      // eg. P38398
     private final String id;      // BRCA1_HUMAN

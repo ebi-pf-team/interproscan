@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.persistence.test;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ import java.util.Set;
 @Disabled
 public class HibernateAnnotationTest {
 
-    private final Logger log = Logger.getLogger(HibernateAnnotationTest.class.getName());
+    private final Logger log = LogManager.getLogger(HibernateAnnotationTest.class.getName());
 
     @Resource
     private SignatureDAO signatureDAO;

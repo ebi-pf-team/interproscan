@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.NucleicAcidMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.OutputListElement;
@@ -26,7 +27,7 @@ import java.util.Set;
  */
 public class ProteinMatchesXMLResultWriter implements AutoCloseable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesXMLResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesXMLResultWriter.class.getName());
 
     protected BufferedWriter fileWriter;
 

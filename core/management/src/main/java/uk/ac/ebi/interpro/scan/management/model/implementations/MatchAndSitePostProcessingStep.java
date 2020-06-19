@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.PostProcessor;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match, C extends RawSite, D extends Site> extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(MatchAndSitePostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MatchAndSitePostProcessingStep.class.getName());
 
     protected PostProcessor<A> postProcessor;
 
@@ -89,7 +90,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -104,7 +105,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
         Map<String, RawProtein<A>> proteinIdToRawProteinMap = new HashMap<>(rawProteins.size());
         if (rawProteins.size() == 0) {
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            Utilities.verboseLog(110, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
 
             int waitTimeFactor = 2;
             if (!Utilities.isRunningInSingleSeqMode()) {
@@ -117,7 +118,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                     stepInstance.getTopProtein(),
                     signatureLibraryRelease
             );
-            Utilities.verboseLog(10, "proteins after : " + rawProteins.size());
+            Utilities.verboseLog(110, "proteins after : " + rawProteins.size());
         }
 
         int matchCount = 0;
@@ -125,25 +126,25 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
             proteinIdToRawProteinMap.put(rawProtein.getProteinIdentifier(), rawProtein);
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10, " Retrieved " + rawProteins.size() + " protein(s) to post-process."
+        Utilities.verboseLog(110, " Retrieved " + rawProteins.size() + " protein(s) to post-process."
                 + " A total of " + matchCount + " raw matches.");
 
         Map<String, RawProtein<A>> filteredMatches;
         if (postProcessor == null) {
             // No post processing required, raw matches = filtered matches
             filteredMatches = proteinIdToRawProteinMap;
-            Utilities.verboseLog("No post processing required, raw matches = filtered matches");
+            Utilities.verboseLog(1100, "No post processing required, raw matches = filtered matches");
         } else {
             // Post processing required
             filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
-            Utilities.verboseLog("Post processing done ...");
+            Utilities.verboseLog(1100, "Post processing done ...");
         }
 
         matchCount = 0;
         for (RawProtein<A> rawProtein : filteredMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(" Filtered  " + filteredMatches.size() + " protein(s) with  filtered matches count: " + matchCount);
+        Utilities.verboseLog(1100, " Filtered  " + filteredMatches.size() + " protein(s) with  filtered matches count: " + matchCount);
 
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
@@ -156,20 +157,20 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                         signatureLibraryRelease
                 );
                 for (C repRawSite:rawSites) {
-                    Utilities.verboseLog("rep filtered site: " + repRawSite );
+                    Utilities.verboseLog(1100, "rep filtered site: " + repRawSite );
                     break;
                 }
-                Utilities.verboseLog("Filtered rawSites count: " + rawSites.size() );
+                Utilities.verboseLog(1100, "Filtered rawSites count: " + rawSites.size() );
             }
         }
-        Utilities.verboseLog("Filtered matches: " + filteredMatches.values().size() +  "  Filtered sites: " + rawSites.size()  );
+        Utilities.verboseLog(1100, "Filtered matches: " + filteredMatches.values().size() +  "  Filtered sites: " + rawSites.size()  );
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 
         matchCount = 0;
         for (final RawProtein rawProtein : filteredMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10,  "  " + filteredMatches.size() + " proteins passed through post processing."
+        Utilities.verboseLog(110,  "  " + filteredMatches.size() + " proteins passed through post processing."
                 + " and a total of " + matchCount + " matches PASSED.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(filteredMatches.size() + " proteins passed through post processing.");

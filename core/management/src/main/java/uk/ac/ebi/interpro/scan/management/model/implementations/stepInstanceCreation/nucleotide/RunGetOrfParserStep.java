@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -15,7 +17,7 @@ import java.util.Map;
  */
 public class RunGetOrfParserStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunGetOrfParserStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunGetOrfParserStep.class.getName());
 
     private String fullPathToPython;
 
@@ -102,7 +104,7 @@ public class RunGetOrfParserStep extends RunBinaryStep {
         // No need for binary switches for now.
         //command.addAll(getBinarySwitchesAsList());
 
-        Utilities.verboseLog("RunGetOrfParserStep: " + getCommandBuilder(command));
+        Utilities.verboseLog(1100, "RunGetOrfParserStep: " + getCommandBuilder(command));
         return command;
     }
 }

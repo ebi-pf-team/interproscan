@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.Entry;
@@ -29,7 +30,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
         extends FilteredMatchDAOImpl<T, Hmmer3Match>
         implements FilteredMatchDAO<T, Hmmer3Match> {
 
-    private static final Logger LOGGER = Logger.getLogger(Hmmer3FilteredMatchDAO.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Hmmer3FilteredMatchDAO.class.getName());
 
     public Hmmer3FilteredMatchDAO() {
         super(Hmmer3Match.class);
@@ -55,7 +56,7 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
                 throw new IllegalStateException("Cannot store match to a protein that is not in database " +
                         "[protein ID= " + rp.getProteinIdentifier() + "]");
             }
-//            Utilities.verboseLog("modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
+//            Utilities.verboseLog(1100, "modelAccessionToSignatureMap: " + modelAccessionToSignatureMap);
             String signatureLibraryKey = null;
 
             // Convert raw matches to filtered matches
@@ -96,10 +97,10 @@ abstract class Hmmer3FilteredMatchDAO<T extends Hmmer3RawMatch>
             */
 
 //            final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-//            Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+//            Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey);
 //            Set <Match> proteinMatches = protein.getMatches();
 //            if (proteinMatches != null || proteinMatches.isEmpty()) {
-//                Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+//                Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
 //                Set<Match> matchSet = new HashSet<>(); // the protein.get Matches is a persistentSet, but we want a hashset
 //                matchSet.addAll(proteinMatches);
 //                matchDAO.persist(dbKey, matchSet);

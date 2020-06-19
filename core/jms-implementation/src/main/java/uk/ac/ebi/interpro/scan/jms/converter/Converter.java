@@ -1,8 +1,10 @@
 package uk.ac.ebi.interpro.scan.jms.converter;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.UnmarshallingFailureException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -38,7 +40,7 @@ import java.util.*;
  */
 public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(Converter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Converter.class.getName());
 
     //XML mapper
     private Jaxb2Marshaller marshaller;
@@ -415,7 +417,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                 try {
                     Files.delete(resultFile);
                 } catch (IOException e) {
-                    if (LOGGER.isEnabledFor(Level.WARN)) {
+                    if (LOGGER.isWarnEnabled()) {
                         final String r = resultFile.toAbsolutePath().toString();
                         LOGGER.warn("Couldn't delete file " + r);
                     }
@@ -493,7 +495,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
 
         if (sequenceType == 'p' && !proteins.isEmpty()) {
             int proteinCount = proteins.size();
-            Utilities.verboseLog(10, " WriteOutputStep -JSON new " + " There are " + proteinCount + " proteins.");
+            Utilities.verboseLog(110, " WriteOutputStep -JSON new " + " There are " + proteinCount + " proteins.");
             int count = 0;
 
             for (Protein protein: proteins) {
@@ -509,7 +511,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
             }
         }
         if (sequenceType == 'n' && !nucleotideSequences.isEmpty()) {
-            Utilities.verboseLog(10, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
+            Utilities.verboseLog(110, " WriteOutputStep - JSON  NucleotideSequence " + " There are " + nucleotideSequences.size() + " nucleotides.");
             int count = 0;
 
             for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
@@ -519,7 +521,7 @@ public class Converter extends AbstractI5Runner implements SimpleBlackBoxMaster 
                     writer.write(","); // More proteins/nucleotide sequences to follow
                 }
             }
-            Utilities.verboseLog("WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
+            Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
         }
         writer.close();
 

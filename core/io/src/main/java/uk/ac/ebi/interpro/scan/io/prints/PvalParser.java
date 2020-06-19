@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ public class PvalParser extends AbstractModelFileParser {
 
     // /ebi/production/interpro/data/members/prints/40.0/print.pval
 
-    private static final Logger LOGGER = Logger.getLogger(PvalParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PvalParser.class.getName());
 
     private static final String LINE_SIG_NAME = "gc";
     private static final String LINE_SIG_ACCESSION = "gx";

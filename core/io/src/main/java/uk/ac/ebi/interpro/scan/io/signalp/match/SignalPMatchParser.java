@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.signalp.match;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -26,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class SignalPMatchParser implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(SignalPMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SignalPMatchParser.class.getName());
 
     public static final String SIGNATURE_LIBRARY_RELEASE = "4.1";
 

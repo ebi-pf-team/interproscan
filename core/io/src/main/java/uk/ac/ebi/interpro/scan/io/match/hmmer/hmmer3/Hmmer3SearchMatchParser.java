@@ -1,5 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -17,7 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
+
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,7 +84,7 @@ import java.util.regex.Pattern;
  */
 public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser {
 
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(Hmmer3SearchMatchParser.class.getName());
+    private static final Logger LOGGER =  LogManager.getLogger(Hmmer3SearchMatchParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 
@@ -188,8 +193,8 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
                         if ((nextLine = reader.readLine()) != null) {
                             if (nextLine.trim().equals(END_OF_OUTPUT_FILE)) {
                                 //likely there were no domain hits
-                                Utilities.verboseLog("likely there were no domain hits");
-                                Utilities.verboseLog("rawDomainCount: " + rawDomainCount);
+                                Utilities.verboseLog(1100, "likely there were no domain hits");
+                                Utilities.verboseLog(1100, "rawDomainCount: " + rawDomainCount);
                                 domainParsingError = false;
                             }
                         }
@@ -355,7 +360,7 @@ public class Hmmer3SearchMatchParser<T extends RawMatch> implements MatchParser 
             }
         }
         //TODO consider using the utilities methods
-        Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
+        Utilities.verboseLog(110, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
 //       LOGGER.debug(getTimeNow() + " RawResults.size : " + rawResults.size() + " domainCount: " +  rawDomainCount);
         return new HashSet<RawProtein<T>>(rawResults.values());
     }

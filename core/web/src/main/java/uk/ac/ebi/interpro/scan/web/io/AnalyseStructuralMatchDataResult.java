@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.ResourceReader;
 import uk.ac.ebi.interpro.scan.web.model.MatchDataSource;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public class AnalyseStructuralMatchDataResult {
 
-    private static final Logger LOGGER = Logger.getLogger(AnalyseStructuralMatchDataResult.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AnalyseStructuralMatchDataResult.class.getName());
 
     private final ResourceReader<StructuralMatchDataRecord> reader;
 

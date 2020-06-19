@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -25,7 +26,7 @@ import java.util.Enumeration;
  */
 public class MasterMessageSenderImpl implements MasterMessageSender {
 
-    private static final Logger LOGGER = Logger.getLogger(MasterMessageSenderImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MasterMessageSenderImpl.class.getName());
 
     public static final String HIGH_MEMORY_PROPERTY = "highmem";
 

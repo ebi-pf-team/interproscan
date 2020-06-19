@@ -12,7 +12,7 @@ import uk.ac.ebi.interpro.scan.model.raw.*;
 
 public class CDDPostProcessingStep<A extends CDDRawMatch, B extends RPSBlastMatch, C extends CDDRawSite, D extends RPSBlastMatch.RPSBlastLocation.RPSBlastSite> extends MatchAndSitePostProcessingStep<A, B, C, D> {
 
-//    private static final Logger LOGGER = Logger.getLogger(CDDPostProcessingStep.class.getName());
+//    private static final Logger LOGGER = LogManager.getLogger(CDDPostProcessingStep.class.getName());
 //
 //    /**
 //     * This method is called to execute the action that the StepInstance must perform.
@@ -40,7 +40,7 @@ public class CDDPostProcessingStep<A extends CDDRawMatch, B extends RPSBlastMatc
 //        Map<String, RawProtein<A>> proteinIdToRawProteinMap = new HashMap<>(rawMatches.size());
 //        if(rawMatches.size() == 0){
 //            Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-//            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+//            Utilities.verboseLog(110, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
 //
 //            int waitTimeFactor = 2;
 //            if (! Utilities.isRunningInSingleSeqMode()){
@@ -53,14 +53,14 @@ public class CDDPostProcessingStep<A extends CDDRawMatch, B extends RPSBlastMatc
 //                    stepInstance.getTopProtein(),
 //                    signatureLibraryRelease
 //            );
-//            Utilities.verboseLog(10, "matches after : " + rawMatches.size());
+//            Utilities.verboseLog(110, "matches after : " + rawMatches.size());
 //        }
 //
 //        int matchCount = 0;
 //        for (final RawProtein rawProtein : rawMatches) {
 //            matchCount += rawProtein.getMatches().size();
 //        }
-//        Utilities.verboseLog(10, " CDD: Retrieved " + rawMatches.size() + " proteins to post-process."
+//        Utilities.verboseLog(110, " CDD: Retrieved " + rawMatches.size() + " proteins to post-process."
 //                + " A total of " + matchCount + " raw matches.");
 //
 //        for (RawProtein<A> rawMatch : rawMatches) {
@@ -69,14 +69,14 @@ public class CDDPostProcessingStep<A extends CDDRawMatch, B extends RPSBlastMatc
 //
 //        Map<String, RawProtein<A>> filteredMatches = postProcessor.process(proteinIdToRawProteinMap);
 //
-//        Utilities.verboseLog("filtered matches count: " + filteredMatches.size());
+//        Utilities.verboseLog(1100, "filtered matches count: " + filteredMatches.size());
 //
 //        Set<C> rawSites = rawSiteDAO.getSitesByProteinIdRange(
 //                stepInstance.getBottomProtein(),
 //                stepInstance.getTopProtein(),
 //                signatureLibraryRelease
 //        );
-//        Utilities.verboseLog("filtered sites: " + rawSites);
+//        Utilities.verboseLog(1100, "filtered sites: " + rawSites);
 //
 //        filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 //
@@ -84,7 +84,7 @@ public class CDDPostProcessingStep<A extends CDDRawMatch, B extends RPSBlastMatc
 //        for (final RawProtein rawProtein : filteredMatches.values()) {
 //            matchCount += rawProtein.getMatches().size();
 //        }
-//        Utilities.verboseLog(10,  " CDD: " + filteredMatches.size() + " proteins passed through post processing."
+//        Utilities.verboseLog(110,  " CDD: " + filteredMatches.size() + " proteins passed through post processing."
 //                + " with a total of " + matchCount + " raw matches."
 //                + " and a total of " + matchCount + " matches PASSED.");
 //        if (LOGGER.isDebugEnabled()) {

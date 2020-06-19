@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.superfamily.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -33,7 +35,7 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
      * - Signatures can contain multiple models described in various records - can't just focus on 1 record at a time.
      */
 
-    private static final Logger LOGGER = Logger.getLogger(SuperFamilyModelParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SuperFamilyModelParser.class.getName());
 
     /**
      * In SuperFamily this represents the model Id.

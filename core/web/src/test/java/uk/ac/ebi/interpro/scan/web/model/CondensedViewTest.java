@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +32,7 @@ public class CondensedViewTest {
     @Resource
     private EntryHierarchy entryHierarchy;
 
-    private static final Logger LOG = Logger.getLogger(CondensedViewTest.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CondensedViewTest.class.getName());
 
     @Test
     @Disabled

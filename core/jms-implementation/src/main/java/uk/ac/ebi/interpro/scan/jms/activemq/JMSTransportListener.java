@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.activemq.transport.TransportListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
@@ -14,7 +15,7 @@ import java.io.IOException;
 @Component
 public class JMSTransportListener implements TransportListener {
 
-    private static final Logger LOGGER = Logger.getLogger(JMSTransportListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(JMSTransportListener.class.getName());
 
     private int exceptionsCount = 0;
 
@@ -53,7 +54,7 @@ public class JMSTransportListener implements TransportListener {
             previousIOExceptionTime = System.currentTimeMillis();
             LOGGER.debug("Custom Transport IO exception: ", e);
             if(Utilities.verboseLogLevel > 4) {
-                Utilities.verboseLog("Custom Transport IO exception: " + e);
+                Utilities.verboseLog(1100, "Custom Transport IO exception: " + e);
             }
             exceptionsCount++;
         }else{
@@ -65,7 +66,7 @@ public class JMSTransportListener implements TransportListener {
                     brokenConnection = true;
                     LOGGER.debug("Custom Transport connection IO exception: ", e);
                     if(Utilities.verboseLogLevel > 4) {
-                        Utilities.verboseLog("Custom Transport connection IO exception: " + e);
+                        Utilities.verboseLog(1100, "Custom Transport connection IO exception: " + e);
                     }
 //                    e.printStackTrace();
                 }
@@ -79,7 +80,7 @@ public class JMSTransportListener implements TransportListener {
     public void transportInterupted() {
         Long now = System.currentTimeMillis();
         if(Utilities.verboseLogLevel > 4) {
-            Utilities.verboseLog("Transport interrupted: ...");
+            Utilities.verboseLog(1100, "Transport interrupted: ...");
         }
         Long timePassed = 0l;
         if(!interruptedConnection){
@@ -100,7 +101,7 @@ public class JMSTransportListener implements TransportListener {
         //To change body of implemented methods use File | Settings | File Templates.
         interruptedConnection = false;
         if(Utilities.verboseLogLevel > 4) {
-            Utilities.verboseLog("Custom Transport resumed ...");
+            Utilities.verboseLog(1100, "Custom Transport resumed ...");
         }
     }
 }

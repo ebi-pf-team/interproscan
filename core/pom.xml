@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.44-79.0</version>
+    <version>5.45-80.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -93,7 +93,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!--< java version>-->
-        <java.version>8</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -101,13 +101,13 @@
         <spring.version>5.1.6.RELEASE</spring.version>
         <hibernate.entity.manager.version>5.4.2.Final</hibernate.entity.manager.version>
         <c3p0.version>0.9.5.4</c3p0.version>
-        <groovy.version>2.5.7</groovy.version>
+        <groovy.version>3.0.4</groovy.version>
         <guava.version>27.1-jre</guava.version>
         <hsqldb.version>2.4.1</hsqldb.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <!--<mysql.version>5.1.12</mysql.version>-->
-        <slf4j.version>1.7.26</slf4j.version>
-        <log4j.version>2.12.0</log4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <log4j.version>2.13.3</log4j.version>
         <xmlunit.version>2.6.2</xmlunit.version>
         <httpclient.version>4.5.9</httpclient.version>
         <!--<jaxb-api.version>2.3.2</jaxb-api.version>-->
@@ -180,6 +180,13 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-log4j12</artifactId>-->
+<!--            <version>${slf4j.version}</version>-->
+<!--        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j -->
         <!--TODO check and reinstall this dependency

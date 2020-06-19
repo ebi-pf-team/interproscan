@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 //import uk.ac.ebi.interpro.scan.io.OsUtils;
 //import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 //import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
@@ -20,11 +22,11 @@ import java.util.EnumSet;
  */
 public class Utilities {
 
-    private static volatile Logger LOGGER = Logger.getLogger(Utilities.class.getName());
+    private static volatile Logger LOGGER = LogManager.getLogger(Utilities.class.getName());
 
     public static boolean verboseLog = false;
 
-    public static int verboseLogLevel = 0;
+    public static int verboseLogLevel = -99;
 
     public static String mode = "standalone";
 
@@ -44,6 +46,10 @@ public class Utilities {
 
     public static int logBase = 10;
 
+    public static boolean periodicGCCall = false;
+
+    public static int cpuCount = 1;
+    public static int prepareOutputInstances = 1;
 
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
@@ -124,7 +130,7 @@ public class Utilities {
     }
 
     public static void setSequenceCount(int sequenceCount){
-        sequenceCount = sequenceCount;
+        Utilities.sequenceCount = sequenceCount;
     }
 
     public static int getSequenceCount(){
@@ -524,9 +530,42 @@ public class Utilities {
         return null;
     }
 
+
+    public static void printMemoryUsage(String stepName){
+        int mb = 1024*1024;
+
+        //Getting the runtime reference from system
+        Runtime runtime = Runtime.getRuntime();
+
+        Utilities.verboseLog(30, "##### Heap utilization statistics [MB]  at " + stepName + " ##### before ");
+
+        Utilities.verboseLog(30, "Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+
+        //if we dont want frequenet gc calls return
+        if (! Utilities.periodicGCCall){
+            return;
+        }
+
+        System.gc();
+
+        Utilities.verboseLog(30, "##### Heap utilization statistics [MB]  at " + stepName + " ##### after");
+
+        Utilities.verboseLog(30, "Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + "\t Free Memory:"
+                + runtime.freeMemory() / mb
+                + "\t Total Memory:" + runtime.totalMemory() / mb
+                + "\t Max Memory:" + runtime.maxMemory() / mb);
+    }
+
     //verbose output using System out
     public static void verboseLog(String out){
-        if(verboseLogLevel > 0){
+        if(verboseLog && verboseLogLevel > 0){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }
@@ -534,7 +573,7 @@ public class Utilities {
     //verbose output using System out
     public static void verboseLog(int level, String out){
         //System.out.println(Utilities.getTimeNow() + " level: " + level + " - " + out);
-        if(verboseLogLevel >= level){
+        if(verboseLog && verboseLogLevel >= level){
             System.out.println(Utilities.getTimeNow() + " " + out);
         }
     }

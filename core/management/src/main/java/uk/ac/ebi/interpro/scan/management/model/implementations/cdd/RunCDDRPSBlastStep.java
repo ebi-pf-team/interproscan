@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.cdd;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 
 public class RunCDDRPSBlastStep extends RunBinaryStep {
-    private static final Logger LOGGER = Logger.getLogger(RunCDDRPSBlastStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunCDDRPSBlastStep.class.getName());
 
     private String fullPathToBinary;
 
@@ -54,7 +55,7 @@ public class RunCDDRPSBlastStep extends RunBinaryStep {
         command.add("-db");
         command.add(this.libraryPath);
         command.addAll(getBinarySwitchesAsList());
-        Utilities.verboseLog(10, "command: " + command.toString());
+        Utilities.verboseLog(110, "command: " + command.toString());
         return command;
     }
 

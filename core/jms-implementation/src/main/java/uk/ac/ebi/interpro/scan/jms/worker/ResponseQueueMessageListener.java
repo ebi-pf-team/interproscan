@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -19,7 +20,7 @@ import javax.jms.*;
  */
 public class ResponseQueueMessageListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ResponseQueueMessageListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ResponseQueueMessageListener.class.getName());
 
     private JmsTemplate remoteJmsTemplate;
 
@@ -87,7 +88,7 @@ public class ResponseQueueMessageListener implements MessageListener {
 
             LOGGER.debug("Worker: received and sent a message on the jobResponseQueue: "
                     + stepId + " - " + stepName);
-            Utilities.verboseLog("Worker: received and sent a message on the jobResponseQueue: "
+            Utilities.verboseLog(1100, "Worker: received and sent a message on the jobResponseQueue: "
                     + stepId + " - " + stepName);
             //send a message that the response has been sent to the master
             if (controller != null) {

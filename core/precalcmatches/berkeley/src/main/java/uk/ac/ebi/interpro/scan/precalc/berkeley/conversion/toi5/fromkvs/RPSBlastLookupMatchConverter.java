@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SiteLocation;
@@ -17,10 +18,10 @@ import java.util.Set;
 
 public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastMatch, RPSBlastMatch.RPSBlastLocation> {
 
-    private static final Logger LOG = Logger.getLogger(RPSBlastLookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(RPSBlastLookupMatchConverter.class.getName());
 
     public RPSBlastMatch convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
-        Utilities.verboseLog(30, " RPSBlastLookupMatchConverter for " + match.getProteinMD5() + " start: " + match.getSequenceStart() + " end:" + match.getSequenceEnd());
+        Utilities.verboseLog(130, " RPSBlastLookupMatchConverter for " + match.getProteinMD5() + " start: " + match.getSequenceStart() + " end:" + match.getSequenceEnd());
 
         final String signatureLibraryName = match.getSignatureLibraryName();
         final String signatureAccession = match.getSignatureAccession();
@@ -35,7 +36,7 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
         Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = null;
         int siteCount = 0;
         if (sequenceSiteHits != null && sequenceSiteHits.size() > 0) {
-            Utilities.verboseLog(30, "Sites not null ... get sitelocations for " + match.getSignatureAccession() + ": [" + match.getSequenceStart() + " - "+ match.getSequenceEnd() + "]");
+            Utilities.verboseLog(130, "Sites not null ... get sitelocations for " + match.getSignatureAccession() + ": [" + match.getSequenceStart() + " - "+ match.getSequenceEnd() + "]");
             sites = new HashSet<>();
             Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match, sequenceSiteHits, signatureLibraryName, signatureAccession);
             //Set<RPSBlastMatch.RPSBlastLocation.RPSBlastSite> sites = convertSites(match.getProteinMD5(), sequenceSiteHits);
@@ -52,11 +53,11 @@ public class RPSBlastLookupMatchConverter extends LookupMatchConverter<RPSBlastM
                     sites.add(site);
                 }
             //}
-            Utilities.verboseLog(30, "Sites not null ... get sitelocations ... DONE");
+            Utilities.verboseLog(130, "Sites not null ... get sitelocations ... DONE");
         }else{
-            Utilities.verboseLog(30, "Sites is null ... ");
+            Utilities.verboseLog(130, "Sites is null ... ");
         }
-        Utilities.verboseLog(30, "Sites  ... " + sites + " with " + siteCount + " locations");
+        Utilities.verboseLog(130, "Sites  ... " + sites + " with " + siteCount + " locations");
         locations.add(new RPSBlastMatch.RPSBlastLocation(locationStart, locationEnd, score, eValue, sites));
 
         return new RPSBlastMatch(signature, match.getModelAccession(), locations);

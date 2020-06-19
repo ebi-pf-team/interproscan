@@ -5,7 +5,8 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
  * Date: Oct 5, 2010
  */
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.smart.SmartPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -24,7 +25,7 @@ import java.util.Map;
 // TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.FilterStep
 public class SmartPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(SmartPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SmartPostProcessingStep.class.getName());
 
     private SmartPostProcessing postProcessor;
 
@@ -72,7 +73,7 @@ public class SmartPostProcessingStep extends Step {
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -83,10 +84,10 @@ public class SmartPostProcessingStep extends Step {
                 signatureLibraryRelease
         );
 
-        Utilities.verboseLog(10, "Smart PostProcessingStep : stepinstance:" + stepInstance.toString());
+        Utilities.verboseLog(110, "Smart PostProcessingStep : stepinstance:" + stepInstance.toString());
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            Utilities.verboseLog(110, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
             //TODO do we expect matches?
             int waitTimeFactor = 2;
             if (! Utilities.isRunningInSingleSeqMode()){
@@ -100,7 +101,7 @@ public class SmartPostProcessingStep extends Step {
                     stepInstance.getTopProtein(),
                     signatureLibraryRelease
             );
-            Utilities.verboseLog(10, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
+            Utilities.verboseLog(110, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
         }
 
         // Post process
@@ -109,7 +110,7 @@ public class SmartPostProcessingStep extends Step {
             for (final RawProtein rawProtein : rawMatches.values()) {
                 matchCount += rawProtein.getMatches().size();
             }
-            Utilities.verboseLog(10, " SMART: Retrieved " + rawMatches.size() + " proteins to post-process with " + matchCount + " raw matches.");
+            Utilities.verboseLog(110, " SMART: Retrieved " + rawMatches.size() + " proteins to post-process with " + matchCount + " raw matches.");
 
             Map<String, RawProtein<SmartRawMatch>> filteredMatches = postProcessor.process(rawMatches);
             filteredMatchDAO.persist(filteredMatches.values());
@@ -118,8 +119,8 @@ public class SmartPostProcessingStep extends Step {
             for (final RawProtein rawProtein : filteredMatches.values()) {
                 matchCount += rawProtein.getMatches().size();
             }
-            Utilities.verboseLog(10,  " SMART: " + filteredMatches.size() + " proteins passed through post processing.");
-            Utilities.verboseLog(10,  " SMART: A total of " + matchCount + " matches PASSED.");
+            Utilities.verboseLog(110,  " SMART: " + filteredMatches.size() + " proteins passed through post processing.");
+            Utilities.verboseLog(110,  " SMART: A total of " + matchCount + " matches PASSED.");
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to post process filtered PRINTS matches.", e);
         }

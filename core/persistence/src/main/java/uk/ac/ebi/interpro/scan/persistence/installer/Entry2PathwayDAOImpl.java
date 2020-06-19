@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence.installer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -28,7 +29,7 @@ import java.util.*;
 @Repository
 public class Entry2PathwayDAOImpl implements Entry2PathwayDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(Entry2PathwayDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Entry2PathwayDAOImpl.class.getName());
 
     private NamedParameterJdbcTemplate jdbcTemplate;
 

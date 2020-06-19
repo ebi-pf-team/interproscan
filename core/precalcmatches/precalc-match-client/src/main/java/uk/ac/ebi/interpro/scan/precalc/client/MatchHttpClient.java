@@ -22,7 +22,9 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntryXML;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -49,7 +51,7 @@ import java.util.Random;
  */
 public class MatchHttpClient {
 
-    private static final Logger LOG = Logger.getLogger(MatchHttpClient.class.getName());
+    private static final Logger LOG = LogManager.getLogger(MatchHttpClient.class.getName());
 
     private static final String MD5_PARAMETER = "md5";
 
@@ -169,15 +171,15 @@ public class MatchHttpClient {
             public KVSequenceEntryXML handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
-//                Utilities.verboseLog("response:" + response.toString());
-//                Utilities.verboseLog("responseEntity:" + responseEntity.toString());
+//                Utilities.verboseLog(1100, "response:" + response.toString());
+//                Utilities.verboseLog(1100, "responseEntity:" + responseEntity.toString());
                 if (responseEntity != null) {
                     // Stream in the response to the unmarshaller
                     BufferedInputStream bis = null;
 
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
-//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                      Utilities.verboseLog(1100, "xmlBufferedInputStream:" + bis.toString());
 //                        if (testXMResponse()){
 //                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
 //                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
@@ -197,7 +199,7 @@ public class MatchHttpClient {
         KVSequenceEntryXML matchXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
-//        Utilities.verboseLog("matchXML:" + matchXML.toString());
+//        Utilities.verboseLog(1100, "matchXML:" + matchXML.toString());
         long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
 //        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
 
@@ -245,15 +247,15 @@ public class MatchHttpClient {
             public KVSequenceEntryXML handleResponse(
                     HttpResponse response) throws IOException {
                 HttpEntity responseEntity = response.getEntity();
-//                Utilities.verboseLog("response:" + response.toString());
-//                Utilities.verboseLog("responseEntity:" + responseEntity.toString());
+//                Utilities.verboseLog(1100, "response:" + response.toString());
+//                Utilities.verboseLog(1100, "responseEntity:" + responseEntity.toString());
                 if (responseEntity != null) {
                     // Stream in the response to the unmarshaller
                     BufferedInputStream bis = null;
 
                     try {
                         bis = new BufferedInputStream(responseEntity.getContent());
-//                      Utilities.verboseLog("xmlBufferedInputStream:" + bis.toString());
+//                      Utilities.verboseLog(1100, "xmlBufferedInputStream:" + bis.toString());
 //                        if (testXMResponse()){
 //                            FileInputStream htmlFileInputStream = new FileInputStream("input/htmlTest.html");
 //                            return (KVSequenceEntryXML) unmarshaller.unmarshal(new StreamSource(htmlFileInputStream));
@@ -296,7 +298,7 @@ public class MatchHttpClient {
         KVSequenceEntryXML siteXML = httpclient.execute(post, handler);
 //        httpclient.getConnectionManager().shutdown();
         httpclient.close();
-//        Utilities.verboseLog("matchXML:" + matchXML.toString());
+//        Utilities.verboseLog(1100, "matchXML:" + matchXML.toString());
         long timeToGetMatches = System.currentTimeMillis() - startGetMatches;
 //        System.out.println(Utilities.getTimeNow() + " Took  " + timeToGetMatches + " millis to get  matches  for  " + md5s.length  + " md5s");
 
@@ -317,7 +319,7 @@ public class MatchHttpClient {
         if (!lastTestResponse) {
             testXMResponse = true;
         }
-        Utilities.verboseLog("testXMResponse=" + testXMResponse);
+        Utilities.verboseLog(1100, "testXMResponse=" + testXMResponse);
         lastTestResponse = testXMResponse;
         return testXMResponse;
     }

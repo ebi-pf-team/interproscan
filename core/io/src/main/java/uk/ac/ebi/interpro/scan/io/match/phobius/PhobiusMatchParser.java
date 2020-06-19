@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
@@ -39,7 +40,7 @@ import java.util.regex.Matcher;
  */
 public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PhobiusMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PhobiusMatchParser.class.getName());
 
     private SignatureLibrary signatureLibrary;
     private  String signatureLibraryRelease;
@@ -109,9 +110,9 @@ public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
                         // according to Phobius documentation, so only want matches for proteins
                         // that include signal peptide or transmembrane predictions.)
                         matches.addAll(matchesPerProtein);
-                        //Utilities.verboseLog("Consider these phobius raw matches");
+                        //Utilities.verboseLog(1100, "Consider these phobius raw matches");
                     }
-                    //Utilities.verboseLog("reset: protein Id: " + currentProteinAccession + " matches = " + matchesPerProtein.size());
+                    //Utilities.verboseLog(1100, "reset: protein Id: " + currentProteinAccession + " matches = " + matchesPerProtein.size());
                     // Reset flags / proteinId
                     matchesPerProtein = new HashSet<>();
                     currentProteinAccession = null;
@@ -122,7 +123,7 @@ public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
                         throw new ParseException("Phobius output parsing: Found a second protein ID line in the same record.", "fileName", line, lineNumber);
                     }
                     currentProteinAccession = line.substring(2).trim();
-                    //Utilities.verboseLog("currentProteinAccession: " + currentProteinAccession);
+                    //Utilities.verboseLog(1100, "currentProteinAccession: " + currentProteinAccession);
                     //protein = new PhobiusProtein(line.substring(2).trim());
 
                 } else if (line.startsWith("FT")) {
@@ -157,7 +158,7 @@ public class PhobiusMatchParser  implements MatchParser<PhobiusRawMatch> {
                         }
                         phobiusRawMatch = new PhobiusRawMatch(currentProteinAccession, featureType.getAccession(), signatureLibrary, signatureLibraryRelease, start, stop, featureType, isSP, isTM);
                         matchesPerProtein.add(phobiusRawMatch);
-                        //Utilities.verboseLog("phobiusRawMatch: " + phobiusRawMatch.toString());
+                        //Utilities.verboseLog(1100, "phobiusRawMatch: " + phobiusRawMatch.toString());
                     }
                 }
             }

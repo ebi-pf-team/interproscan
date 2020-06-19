@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master.queuejumper.platforms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversation;
 import uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImpl;
@@ -23,7 +24,7 @@ import java.util.Date;
 
 public class SubmissionWorkerRunner implements WorkerRunner {
 
-    private static final Logger LOGGER = Logger.getLogger(SubmissionWorkerRunner.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SubmissionWorkerRunner.class.getName());
 
     private String submissionCommand;
 
@@ -243,7 +244,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
     public int startupNewWorker(final int priority, final String tcpUri, final String temporaryDirectory) {
         //monitor the cluster
 
-        Utilities.verboseLog("startupNewWorker ");
+        Utilities.verboseLog(1100, "startupNewWorker ");
 
         if(gridName.equals("lsf")){
 
@@ -254,7 +255,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
 
                 DateFormat df = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                 if(Utilities.verboseLogLevel > 1){
-                    Utilities.verboseLog("Grid Job Control: "
+                    Utilities.verboseLog(1100, "Grid Job Control: "
                             + "gridJobsLimit: " + gridJobsLimit
                             + " activeJobs: " + clusterState.getAllClusterProjectJobsCount()
                             + " runningJobs: " + runningJobs
@@ -331,11 +332,11 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                         LOGGER.debug("command to submit to cluster: " + commandToSubmit);
                     }
                     if(Utilities.verboseLogLevel > 1){
-                        Utilities.verboseLog("command to submit to cluster:  "
+                        Utilities.verboseLog(1100, "command to submit to cluster:  "
                                 + commandToSubmit);
                     }
                     int exitStatus = clc.runCommand(false, commandToSubmit.toString().split(" "));
-                    Utilities.verboseLog(10, "command  submited to cluster:  exitStatus" + exitStatus);
+                    Utilities.verboseLog(110, "command  submited to cluster:  exitStatus" + exitStatus);
                     if (exitStatus != 0) {
                         LOGGER.warn("Non-zero exit status from attempting to run a worker: \nCommand:"
                                 + commandToSubmit + "\nExit status: "
@@ -345,7 +346,7 @@ public class SubmissionWorkerRunner implements WorkerRunner {
                     }
                     if(Utilities.verboseLogLevel > 1) {
                         String clcOutput = clc.getOutput();
-                        Utilities.verboseLog("Output from attempting to run a worker: "
+                        Utilities.verboseLog(1100, "Output from attempting to run a worker: "
                                 + ((clcOutput == null) ? "NULL" : clcOutput));
                     }
                 }

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.gene3d;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser;
 import uk.ac.ebi.interpro.scan.io.gene3d.CathResolverRecord;
@@ -39,7 +40,7 @@ import java.util.regex.Pattern;
  */
 public class Gene3DParseAndPersistOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(Gene3DParseAndPersistOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(Gene3DParseAndPersistOutputStep.class.getName());
 
     private Hmmer3DomTblParser hmmer3DomTblParser;
 
@@ -120,7 +121,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -153,7 +154,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
         Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap<>();
 
         if (cathResolverRecordMap != null) {
-            Utilities.verboseLog("cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
+            Utilities.verboseLog(1100, "cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
             BufferedReader reader = null;
             try {
                 //domTblInputStream = new FileInputStream(domTblOutputFileName);
@@ -182,7 +183,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                         String domainLineKey = domTblDomainMatch.getGene3DDomTblDominLineKey(mode);
 
                         Set<CathResolverRecord> cathResolverRecords = cathResolverRecordMap.get(domainLineKey);
-//                        Utilities.verboseLog("domainLineKey: " + domainLineKey + "\n"
+//                        Utilities.verboseLog(1100, "domainLineKey: " + domainLineKey + "\n"
 //                                + "domTblDomainMatch: " + domTblDomainMatch + "\n"
 //                                + "cathResolverRecord: " + cathResolverRecord + "\n"
 //                                + "mode : " +  "\n");
@@ -228,8 +229,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                         }
                     }
                 }
-                Utilities.verboseLog(10, "DomTblDomainMatch count : " + domtblMatchCount);
-                Utilities.verboseLog(10, "matchData protein count : " + matchData.values().size());
+                Utilities.verboseLog(110, "DomTblDomainMatch count : " + domtblMatchCount);
+                Utilities.verboseLog(110, "matchData protein count : " + matchData.values().size());
             } catch (IOException e) {
                 throw new IllegalStateException("IOException thrown when attempting to parse " + domTblOutputFileName);
             } finally {
@@ -245,7 +246,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
 
             //now persists the rawmatches
             Set<RawProtein<Gene3dHmmer3RawMatch>> rawProteins = new HashSet<>(matchData.values());
-            Utilities.verboseLog("rawProteins # :" + rawProteins.size());
+            Utilities.verboseLog(1100, "rawProteins # :" + rawProteins.size());
             int count = 0;
             RawMatch represantiveRawMatch = null;
             for (RawProtein<Gene3dHmmer3RawMatch> rawProtein : rawProteins) {
@@ -258,23 +259,23 @@ public class Gene3DParseAndPersistOutputStep extends Step {
             }
 
             if (rawProteins.size() > 0) {
-                Utilities.verboseLog("Persist Gene3D rawProteins # :" + rawProteins.size());
+                Utilities.verboseLog(1100, "Persist Gene3D rawProteins # :" + rawProteins.size());
                 filteredMatchDAO.persist(rawProteins);
                 Long now = System.currentTimeMillis();
                 if (count > 0) {
                     int matchesFound = 0;
                     int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
                     if (represantiveRawMatch != null) {
-                        Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                        Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
                         String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
                         Utilities.sleep(waitTimeFactor * 1000);
                         //ignore the usual check until refactoring of the parse step
                     } else {
                         LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                        Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                        Utilities.verboseLog(1100, "Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
                     }
                     Long timeTaken = System.currentTimeMillis() - now;
-                    Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                    Utilities.verboseLog(1100, "ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
                             + " time taken: " + timeTaken);
                 }
 

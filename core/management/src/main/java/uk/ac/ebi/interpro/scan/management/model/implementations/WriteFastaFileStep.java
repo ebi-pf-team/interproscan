@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.FastaFileWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class WriteFastaFileStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteFastaFileStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WriteFastaFileStep.class.getName());
 
     @Transient
     private FastaFileWriter fastaFileWriter = new FastaFileWriter();
@@ -70,7 +71,7 @@ public class WriteFastaFileStep extends Step {
 
         try {
             if (doRunLocally || (!useMatchLookupService)) {
-                Utilities.verboseLog(10, this.getId() + " GetAllSequences: doRunLocally: " + doRunLocally + " useMatchLookupService: " + useMatchLookupService);
+                Utilities.verboseLog(110, this.getId() + " GetAllSequences: doRunLocally: " + doRunLocally + " useMatchLookupService: " + useMatchLookupService);
                 proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             } else {
                 //TODO this is getting completed to filter nonlookup up proteins
@@ -93,7 +94,7 @@ public class WriteFastaFileStep extends Step {
                 }
                 long maxProteins = topProtein - bottomProtein;
 
-                Utilities.verboseLog(10, stepInstance.getStepId() + "[" + bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " + count + " of possible " + (maxProteins + 1));
+                Utilities.verboseLog(110, stepInstance.getStepId() + "[" + bottomProtein + "-" + topProtein + "]" + " Writen fasta sequence count : " + count + " of possible " + (maxProteins + 1));
 
                 //deal with cases where there is no sequence in this range
                 if (count == 0) {

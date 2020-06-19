@@ -3,7 +3,9 @@ package uk.ac.ebi.interpro.scan.jms.main;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.collections.iterators.ArrayListIterator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
  */
 public class AbstractI5Runner {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractI5Runner.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AbstractI5Runner.class.getName());
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
     static {

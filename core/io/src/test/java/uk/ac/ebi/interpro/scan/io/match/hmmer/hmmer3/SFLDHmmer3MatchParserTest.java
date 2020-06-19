@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +38,7 @@ import java.util.Set;
 @ContextConfiguration
 public class SFLDHmmer3MatchParserTest {
 
-    private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SFLDHmmer3MatchParserTest.class.getName());
 
     // SFLD
     @Resource

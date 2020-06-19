@@ -3,7 +3,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
 import uk.ac.ebi.interpro.scan.web.io.EntryHierarchy;
@@ -23,7 +25,7 @@ import java.nio.file.Paths;
 public class CondensedViewHTMLResultWriter extends GraphicalOutputResultWriter {
     // DO NOT DELETE - This class is not used in InterProScan 5, but is used as a dependency in InterPro web 6
 
-    private static final Logger LOGGER = Logger.getLogger(CondensedViewHTMLResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CondensedViewHTMLResultWriter.class.getName());
 
     @Required
     public void setHtmlResourcesDir(String path) {

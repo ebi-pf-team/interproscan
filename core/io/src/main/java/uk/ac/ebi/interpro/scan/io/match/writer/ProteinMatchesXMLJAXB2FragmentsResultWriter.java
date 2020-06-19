@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
 import uk.ac.ebi.interpro.scan.model.OutputListElement;
@@ -27,7 +29,7 @@ import java.util.Map;
  */
 public class ProteinMatchesXMLJAXB2FragmentsResultWriter implements AutoCloseable {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesXMLJAXB2FragmentsResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesXMLJAXB2FragmentsResultWriter.class.getName());
 
     //protected BufferedWriter fileWriter;
 

@@ -16,7 +16,8 @@
 
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ import java.util.*;
  */
 public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements ProteinDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinDAOImpl.class.getName());
 
     /**
      * For the method  getProteinsAndMatchesAndCrossReferencesBetweenIds below,
@@ -193,7 +194,7 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
             Map.Entry pair = (Map.Entry) it.next();
             String key = dbStore.asString((byte[]) pair.getKey());
             Protein protein = dbStore.asProtein((byte[]) pair.getValue());
-            //Utilities.verboseLog(" key:" + key + " protein: " + protein.getId());
+            //Utilities.verboseLog(1100, " key:" + key + " protein: " + protein.getId());
             keyToProteinMap.put(key, protein);
         }
         return keyToProteinMap;
@@ -229,20 +230,20 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
     }
 
     public void checkKVDBStores(){
-        Utilities.verboseLog(10, "Main Store: " + dbStore.getKVDBStore());
-        Utilities.verboseLog(10,"Secondary Store: " + proteinsNotInLookupDB.getKVDBStore());
+        Utilities.verboseLog(110, "Main Store: " + dbStore.getKVDBStore());
+        Utilities.verboseLog(110,"Secondary Store: " + proteinsNotInLookupDB.getKVDBStore());
 
         if(this.proteinsNotInLookupDB == null){
             LOGGER.warn("proteinsNotInLookupDB == null");
         }else{
             if (! (proteinsNotInLookupDB.getLevelDBStore() == null)){
-                Utilities.verboseLog("proteinsNotInLookupDB LevelDBStore is NOT NULL");
+                Utilities.verboseLog(1100, "proteinsNotInLookupDB LevelDBStore is NOT NULL");
             }else{
                 LOGGER.warn("proteinsNotInLookupDB is NULL - storename: " +  proteinsNotInLookupDB.getKVDBStore() +
                         " dbmane: " + proteinsNotInLookupDB.getDbName());
             }
         }
-        Utilities.verboseLog(10, proteinsNotInLookupDB.toString());
+        Utilities.verboseLog(110, proteinsNotInLookupDB.toString());
     }
 
     public DB getLevelDBStore(){

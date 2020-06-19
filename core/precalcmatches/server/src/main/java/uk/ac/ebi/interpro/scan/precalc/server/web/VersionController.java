@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.server.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import java.io.Writer;
 @RequestMapping("/version")
 public class VersionController {
 
-    private static final Logger LOGGER = Logger.getLogger(VersionController.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(VersionController.class.getName());
 
     // used to indicate to the client that the response is valid
     private static final String SERVER_VERSION_PREFIX = "SERVER:";

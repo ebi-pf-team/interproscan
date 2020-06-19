@@ -1,7 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.cdd;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +31,7 @@ import java.util.Set;
  * @since 1.0-SNAPSHOT
  */
 public class CDDModelParserTest {
-    private static final Logger LOGGER = Logger.getLogger(CDDModelParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CDDModelParserTest.class.getName());
 
     private static final SignatureLibrary TEST_LIBRARY = SignatureLibrary.CDD;
 

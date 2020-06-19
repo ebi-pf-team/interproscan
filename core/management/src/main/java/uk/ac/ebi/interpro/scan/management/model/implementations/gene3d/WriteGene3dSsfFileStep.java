@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.gene3d;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.gene3d.SsfFileWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public class WriteGene3dSsfFileStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteGene3dSsfFileStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WriteGene3dSsfFileStep.class.getName());
 
     private String ssfInputFileTemplate;
 
@@ -159,7 +160,7 @@ public class WriteGene3dSsfFileStep extends Step {
             }
         }
 
-        Utilities.verboseLog("Raw proteins: " + rawProteins.size() + ", matches: " + count + ", timeTaken: " + timeTaken);
+        Utilities.verboseLog(1100, "Raw proteins: " + rawProteins.size() + ", matches: " + count + ", timeTaken: " + timeTaken);
 
         // Check we have correct data
         if (LOGGER.isDebugEnabled()) {

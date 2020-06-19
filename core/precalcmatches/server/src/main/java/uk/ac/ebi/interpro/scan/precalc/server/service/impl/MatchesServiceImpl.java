@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.precalc.server.service.impl;
 
 import com.sleepycat.persist.EntityCursor;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
@@ -30,7 +31,7 @@ import java.util.TimerTask;
 @Repository
 public class MatchesServiceImpl implements MatchesService {
 
-    private static final Logger LOGGER = Logger.getLogger(MatchesServiceImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MatchesServiceImpl.class.getName());
 
     /**
      * Secondary Index to allow the BerkeleyDB (Sleepycat) to be queried
@@ -266,7 +267,7 @@ public class MatchesServiceImpl implements MatchesService {
                " md5_counts: " + hourlyMD5TotalRequests + " " + hourlyMD5Md5TotalCount  + " " + hourlyMD5TotalTimeToGetMatches;
         if (hourlyTotalRequests > 0) {
             //not yet for jetty, but should it not say its alive
-            System.out.println(Utilities.getTimeNow() + outMessage);
+            //System.out.println(Utilities.getTimeNow() + outMessage);
         }
 
 

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public abstract class AbstractBlackBoxMaster extends AbstractMaster implements BlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(AbstractBlackBoxMaster.class.getName());
 
 
     protected String fastaFilePath;
@@ -64,7 +65,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
 
     protected boolean verboseLog;
 
-    protected int verboseLogLevel;
+    protected int verboseLogLevel = -99;
 
 
     private final long startUpTime = System.currentTimeMillis();
@@ -211,7 +212,7 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
             }
         }
         params.put(WriteOutputStep.OUTPUT_FILE_FORMATS, StringUtils.collectionToCommaDelimitedString(outputFormatList));
-        Utilities.verboseLog("outputFormatList  " + outputFormatList.toString());
+        Utilities.verboseLog(1100, "outputFormatList  " + outputFormatList.toString());
         //LOGGER.warn("outputFormatList  " + outputFormatList.toString());
     }
 
@@ -231,12 +232,12 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
     public int getMinimumStepsExpected(){
         int analysesCount = 1;
         if (analyses != null) {
-            Utilities.verboseLog("analyses != null:  " + analyses.toString());
+            Utilities.verboseLog(1100, "analyses != null:  " + analyses.toString());
             analysesCount = analyses.length;
         }else{
             analysesCount = jobs.getActiveNonDeprecatedAnalysisJobs().getJobIdList().size();
         }
-        Utilities.verboseLog("analysesCount :  " + analysesCount);
+        Utilities.verboseLog(1100, "analysesCount :  " + analysesCount);
         int minimumStepForEachAnalysis = 0;
         int minimumSteps = 2;
         if (! isUseMatchLookupService()){
@@ -381,10 +382,12 @@ public abstract class AbstractBlackBoxMaster extends AbstractMaster implements B
         this.maxConcurrentInVmWorkerCountForWorkers = maxConcurrentInVmWorkerCountForWorkers;
     }
 
+    @Override
     public void setVerboseLog(boolean verboseLog) {
         this.verboseLog = verboseLog;
     }
 
+    @Override
     public void setVerboseLogLevel(int verboseLogLevel) {
         this.verboseLogLevel = verboseLogLevel;
     }

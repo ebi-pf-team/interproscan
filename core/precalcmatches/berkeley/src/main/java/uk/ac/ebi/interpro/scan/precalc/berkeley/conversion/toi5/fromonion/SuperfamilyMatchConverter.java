@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SuperFamilyHmmer3Match;
@@ -22,7 +24,7 @@ import java.util.Set;
  */
 public class SuperfamilyMatchConverter extends BerkeleyMatchConverter<SuperFamilyHmmer3Match> {
 
-    private static final Logger LOG = Logger.getLogger(SuperfamilyMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(SuperfamilyMatchConverter.class.getName());
 
     //TODO: Add the e-value to the match location
     @Override

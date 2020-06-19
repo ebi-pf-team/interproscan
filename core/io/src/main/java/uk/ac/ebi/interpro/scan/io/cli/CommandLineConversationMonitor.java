@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.cli;
 
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.OsUtils;
 
 import java.io.BufferedReader;
@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class CommandLineConversationMonitor {
 
-    private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationMonitor.class.getName());
+    private static volatile Logger LOGGER = LogManager.getLogger(CommandLineConversationMonitor.class.getName());
 
     private static Long binaryRunDelay = 10l;
 

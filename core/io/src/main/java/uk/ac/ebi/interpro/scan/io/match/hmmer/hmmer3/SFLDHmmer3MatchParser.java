@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
@@ -50,7 +51,7 @@ import java.util.regex.Pattern;
  */
 public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteParser {
 
-    private static final Logger LOGGER = Logger.getLogger(SFLDHmmer3MatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SFLDHmmer3MatchParser.class.getName());
 
     private static final String END_OF_RECORD = "//";
 
@@ -145,7 +146,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         Map<String, Set<String>> hierarchyInformation = getHierarchyInformation();
 
-        Utilities.verboseLog("Parsed  match count: " + rawMatches.size());
+        Utilities.verboseLog(1100, "Parsed  match count: " + rawMatches.size());
 
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
@@ -175,16 +176,16 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 Set<SFLDHmmer3RawMatch> resolvedOverlappingMatches = resolveOverlappingMatches(proteinRawMatches, hierarchyInformation);
                 //rawProtein.setMatches(resolvedOverlappingMatches);
                 promotedTentativeCount = resolvedOverlappingMatches.size() - proteinRawMatches.size();
-//                Utilities.verboseLog("Match count: " + promotedTentativeCount + " resolvedOverlappingMatches: " + resolvedOverlappingMatches.size() +
+//                Utilities.verboseLog(1100, "Match count: " + promotedTentativeCount + " resolvedOverlappingMatches: " + resolvedOverlappingMatches.size() +
 //                        " proteinRawMatches : " + originalProteinRawMatchesCount);
                 rawProtein.setMatches(resolvedOverlappingMatches);
                 nonOverlapCount += resolvedOverlappingMatches.size();
 
             }
         }
-        Utilities.verboseLog("Overlap resolved  match count: " + nonOverlapCount + " from original " + rawMatches.size() + " matches");
+        Utilities.verboseLog(1100, "Overlap resolved  match count: " + nonOverlapCount + " from original " + rawMatches.size() + " matches");
 
-        //Utilities.verboseLog("Parsed and Promotted matches ...");
+        //Utilities.verboseLog(1100, "Parsed and Promotted matches ...");
         int seqIdsCount = seqIds.size();
         int idxCount = 0;
         int matchCount = 0;
@@ -243,7 +244,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                         }
                     }
 
-                    //Utilities.verboseLog("promotedRawMatches:" + promotedRawMatches);
+                    //Utilities.verboseLog(1100, "promotedRawMatches:" + promotedRawMatches);
                 }
                 matchCount = originalMatchCount + promotedRawMatchesCount;
             }
@@ -258,8 +259,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             filtertedRawProteinMap.put(key, filteredRawProtein);
             // end problematic code
         }
-        Utilities.verboseLog("Original Parsed match count: " + totalOriginalMatchCount);
-        Utilities.verboseLog("Promotted match count: " + totalPromotedRawMatchesCount);
+        Utilities.verboseLog(1100, "Original Parsed match count: " + totalOriginalMatchCount);
+        Utilities.verboseLog(1100, "Promotted match count: " + totalPromotedRawMatchesCount);
 
         Map<String, Set<SFLDHmmer3RawMatch>> rawMatchGroups = new HashMap<>();
         for (RawProtein<SFLDHmmer3RawMatch> rawProtein: filtertedRawProteinMap.values()){
@@ -285,7 +286,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         Set<SFLDHmmer3RawSite> filteredRawSites = new HashSet<>();
 
         int siteCount = rawSites.size();
-        Utilities.verboseLog("Parsed site count: " + siteCount);
+        Utilities.verboseLog(1100, "Parsed site count: " + siteCount);
         int promotedSiteCont = 0;
         int correctSiteCoordinatesCount = 0;
         for (SFLDHmmer3RawSite rawSite : rawSites) {
@@ -304,7 +305,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
                 correctSiteCoordinatesCount ++;
             }else{
-                Utilities.verboseLog("Site NOT withing match location site - " + rawSite.toString());
+                Utilities.verboseLog(1100, "Site NOT withing match location site - " + rawSite.toString());
             }
 
             /*
@@ -332,7 +333,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             */
         }
         int totalSiteCount = promotedSiteCont + siteCount;
-        Utilities.verboseLog("Sites within match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
+        Utilities.verboseLog(1100, "Sites within match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
 
         //promote the SFLD matched to the parents in the hierarchy
 
@@ -378,7 +379,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
         Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
-        //Utilities.verboseLog("matchesPerModel: " + matchesPerModel.toString());
+        //Utilities.verboseLog(1100, "matchesPerModel: " + matchesPerModel.toString());
         if (matchesPerModel.keySet().size() == 1) {
             overlapFreeRawMatches.addAll(rawMatches);
             return overlapFreeRawMatches;
@@ -391,7 +392,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 continue;
             }
 
-            //Utilities.verboseLog(" modelMatches count: " + modelMatches.size());
+            //Utilities.verboseLog(1100, " modelMatches count: " + modelMatches.size());
             for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
                 boolean overlaps = false;
                 SFLDHmmer3RawMatch baseMatch = modelMatch;
@@ -409,9 +410,9 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                         if (otherParents != null) {
                             otherParentsStr = otherParents.toString();
                         }
-                        //Utilities.verboseLog("modelMatch.overlapsWith otherMatch)  --- check if parents of otherMatch " + otherMatch.getModelId() + " [ " + otherParentsStr + "] contain modelMatch " + modelMatch.getModelId());
+                        //Utilities.verboseLog(1100, "modelMatch.overlapsWith otherMatch)  --- check if parents of otherMatch " + otherMatch.getModelId() + " [ " + otherParentsStr + "] contain modelMatch " + modelMatch.getModelId());
                         if (otherParents != null && otherParents.contains(modelMatch.getModelId())) {
-//                            Utilities.verboseLog("modelMatch does overlapsWith(otherMatch) - modelMatch: " + modelMatch.getModelId()
+//                            Utilities.verboseLog(1100, "modelMatch does overlapsWith(otherMatch) - modelMatch: " + modelMatch.getModelId()
 //                                    + " otherMatch: " + otherMatch.getModelId());
                             overlaps = true;
                             break;
@@ -433,7 +434,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = new HashSet<>();
         Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
         Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
-        //Utilities.verboseLog("matchesPerModel: " + matchesPerModel.toString());
+        //Utilities.verboseLog(1100, "matchesPerModel: " + matchesPerModel.toString());
         /*if (matchesPerModel.keySet().size() == 1) {
             duplicateFreeRawMatches.addAll(rawMatches);
             return overlapFreeRawMatches;
@@ -445,7 +446,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             /* debug
             for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
 
-                //Utilities.verboseLog("raw unfilt match : " + getMatchDetails(modelMatch));
+                //Utilities.verboseLog(1100, "raw unfilt match : " + getMatchDetails(modelMatch));
 
             }
             */
@@ -453,9 +454,9 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
                 boolean duplicate = false;
                 SFLDHmmer3RawMatch baseMatch = modelMatch;
-                //Utilities.verboseLog("Consider  match: " + getMatchDetails(modelMatch));
+                //Utilities.verboseLog(1100, "Consider  match: " + getMatchDetails(modelMatch));
                 for (SFLDHmmer3RawMatch otherMatch : allRawMatches) {
-                    //Utilities.verboseLog(20,"Consider against match: " + getMatchDetails(otherMatch));
+                    //Utilities.verboseLog(120,"Consider against match: " + getMatchDetails(otherMatch));
                     if (modelMatch.equals(otherMatch) || ! modelMatch.getModelId().equals(otherMatch.getModelId())) {
                         continue;
                     }
@@ -542,7 +543,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
     private Set<SFLDHmmer3RawMatch> getPromotedRawMatches(SFLDHmmer3RawMatch rawMatch, Set<String> parents) {
         Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet();
         String childModelId = rawMatch.getModelId();
-        //Utilities.verboseLog("Promoted match for " + childModelId + " with parents: " + parents);
+        //Utilities.verboseLog(1100, "Promoted match for " + childModelId + " with parents: " + parents);
         for (String modelAc : parents) {
             if (!childModelId.equals(modelAc)) {
                 promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
@@ -556,7 +557,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         SFLDHmmer3RawSite promotedRawSite = new SFLDHmmer3RawSite(rawSite.getSequenceIdentifier(),
                 rawSite.getTitle(), rawSite.getResidues(), modelAc, rawSite.getSignatureLibraryRelease());
 
-        //Utilities.verboseLog("Promoted site for " + rawSite.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawSite);
+        //Utilities.verboseLog(1100, "Promoted site for " + rawSite.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawSite);
         return promotedRawSite;
     }
 
@@ -613,7 +614,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("line: " + line + "  stage: " + stage.toString());
                 }
-//                Utilities.verboseLog("dealing with line: " + line + "  stage: " + stage.toString());
+//                Utilities.verboseLog(1100, "dealing with line: " + line + "  stage: " + stage.toString());
                 switch (stage) {
                     case LOOKING_FOR_SEQUENCE_MATCHES:
                         if (line.startsWith(SEQUENCE_SECTION_START)) {
@@ -691,8 +692,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             }
         }
         //TODO consider using the utilities methods
-        Utilities.verboseLog(10, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
-        Utilities.verboseLog(10, " Raw Results: site Count: " + rawSites.size());
+        Utilities.verboseLog(110, " RawResults.size : " + rawResults.size() + " domainCount: " + rawDomainCount);
+        Utilities.verboseLog(110, " Raw Results: site Count: " + rawSites.size());
 
         for (RawProtein<T> rawProtein : rawResults.values()) {
             rawMatches.addAll((Collection<? extends SFLDHmmer3RawMatch>) rawProtein.getMatches());

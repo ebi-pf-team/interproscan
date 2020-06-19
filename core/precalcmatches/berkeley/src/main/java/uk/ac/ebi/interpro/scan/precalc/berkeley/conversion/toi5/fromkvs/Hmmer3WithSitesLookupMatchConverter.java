@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromkvs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupMatchConverter;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
@@ -21,11 +22,11 @@ import java.util.Set;
  */
 public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hmmer3MatchWithSites, Hmmer3MatchWithSites.Hmmer3LocationWithSites> {
 
-    private static final Logger LOG = Logger.getLogger(Hmmer3WithSitesLookupMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(Hmmer3WithSitesLookupMatchConverter.class.getName());
 
     public Hmmer3MatchWithSites convertMatch(SimpleLookupMatch match, Set<String> sequenceSiteHits, Signature signature) {
 
-        Utilities.verboseLog(30, " Hmmer3WithSitesLookupMatchConverter for " + match.getProteinMD5() +  " start: " + match.getSequenceStart() +  " end:" + match.getSequenceEnd());
+        Utilities.verboseLog(130, " Hmmer3WithSitesLookupMatchConverter for " + match.getProteinMD5() +  " start: " + match.getSequenceStart() +  " end:" + match.getSequenceEnd());
         final String signatureLibraryName = match.getSignatureLibraryName();
         final String signatureAccession = match.getSignatureAccession();
 
@@ -58,17 +59,17 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
 
         final HmmBounds bounds = HmmBounds.parseSymbol(HmmBounds.calculateHmmBounds(envStart, envEnd, locationStart, locationEnd));
 
-        Utilities.verboseLog(30, " locationFragments : " + locationFragments.size());
+        Utilities.verboseLog(130, " locationFragments : " + locationFragments.size());
 
         //Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site> sites = new HashSet<>();
         Set<HmmerLocationWithSites.HmmerSite> sites = new HashSet<>();
         //Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites.HmmerSite> sites = new HashSet<>();
         int siteCount = 0;
         if (sequenceSiteHits != null) {
-            Utilities.verboseLog(30, "Sites not null ... get sitelocations for: " + match.getSignatureAccession() + ":  [" + match.getSequenceStart() + " - "+ match.getSequenceEnd() + "]");
+            Utilities.verboseLog(130, "Sites not null ... get sitelocations for: " + match.getSignatureAccession() + ":  [" + match.getSequenceStart() + " - "+ match.getSequenceEnd() + "]");
             if (sequenceSiteHits.size() > 0) {
                 Map<String, Set<SiteLocation>> mapSiteLocations = getSiteLocationsMap(match, sequenceSiteHits, signatureLibraryName, signatureAccession);
-                Utilities.verboseLog(30, "mapSiteLocation descriptions: " + mapSiteLocations.keySet());
+                Utilities.verboseLog(130, "mapSiteLocation descriptions: " + mapSiteLocations.keySet());
 
                 for (String siteDescription : mapSiteLocations.keySet()) {
                     Set<SiteLocation> siteLocations = mapSiteLocations.get(siteDescription);
@@ -81,9 +82,9 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
                     sites.add(site);
                 }
             }
-            Utilities.verboseLog(30, "Sites not null ... get sitelocations ... DONE");
+            Utilities.verboseLog(130, "Sites not null ... get sitelocations ... DONE");
         }
-        Utilities.verboseLog(30," Total sites  for this protein: " + sites.size() + " with " + siteCount + " locations");
+        Utilities.verboseLog(130," Total sites  for this protein: " + sites.size() + " with " + siteCount + " locations");
 
         Hmmer3MatchWithSites.Hmmer3LocationWithSites location = new Hmmer3MatchWithSites.Hmmer3LocationWithSites(
                 locationStart,
@@ -99,11 +100,11 @@ public class Hmmer3WithSitesLookupMatchConverter extends LookupMatchConverter<Hm
                 sites
         );
 
-        Utilities.verboseLog(30," location : " + location);
+        Utilities.verboseLog(130," location : " + location);
         Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations = new HashSet<>();
         locations.add(location);
 
-        Utilities.verboseLog(30, " now create SFLD match ");
+        Utilities.verboseLog(130, " now create SFLD match ");
 
         return new Hmmer3MatchWithSites(signature,
                 match.getModelAccession(),

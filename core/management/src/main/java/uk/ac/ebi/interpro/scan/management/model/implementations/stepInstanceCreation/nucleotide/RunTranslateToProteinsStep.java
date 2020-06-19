@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class RunTranslateToProteinsStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunTranslateToProteinsStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunTranslateToProteinsStep.class.getName());
 
     private String fullPathToTranslateBinary;
 
@@ -120,7 +121,7 @@ public class RunTranslateToProteinsStep extends RunBinaryStep {
             command.addAll(getBinarySwitchesAsList());
         }
 
-        Utilities.verboseLog("RunTranslateToProteinsStep: " + getCommandBuilder(command));
+        Utilities.verboseLog(1100, "RunTranslateToProteinsStep: " + getCommandBuilder(command));
         return command;
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+    <!-- Appenders -->
+    <Appenders>
+        <!-- Console appender -->
+        <Console name="consoleappender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%C:%L] %p - %m%n"/>
+        </Console>
+
+        <!-- File appender -->
+        <Appender type="File" name="File" fileName="${logging.interpro.scan.io.file}">
+            <Layout type="PatternLayout">
+                <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+            </Layout>
+        </Appender>
+    </Appenders>
+    <Loggers>
+        <logger name="uk.ac.ebi.interpro.scan.io.getorf.GetOrfDescriptionLineParser" level="debug">
+            <appender-ref ref="consoleappender"/>
+        </logger>
+
+        <Root level="warn">
+        <appender-ref ref="consoleappender"/>
+        </Root>
+    </Loggers>>
+
+        <!-- Root Logger -->
+</Configuration>
+

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -24,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class HmmerModelParser extends AbstractModelFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(HmmerModelParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(HmmerModelParser.class.getName());
 
     /**
      * Matches the name line.

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.sequence.fasta;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.business.sequence.SequenceLoadListener;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class FinaliseInitialSetupTasks {
 
-    private static final Logger LOGGER = Logger.getLogger(FinaliseInitialSetupTasks.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FinaliseInitialSetupTasks.class.getName());
 
     private SequenceLoader<Protein> sequenceLoader;
 
@@ -41,13 +42,13 @@ public class FinaliseInitialSetupTasks {
         sequenceLoader.setDisplayLookupMessage(false);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
         LOGGER.debug("Entered FinaliseInitialSetupTasks execute method");
-        Utilities.verboseLog("Entered FinaliseInitialSetupTasks execute method");
+        Utilities.verboseLog(1100, "Entered FinaliseInitialSetupTasks execute method");
 
 //        for (Protein protein : parsedMolecules) {
 //            LOGGER.debug("protein to persist: " + protein.getMd5() + " : " + protein.toString());
 //            proteinDAO.insert(protein.getMd5(), protein);
 //        }
-//        Utilities.verboseLog("Stored parsed sequences into KVDB: " + levelDBStoreName);
+//        Utilities.verboseLog(1100, "Stored parsed sequences into KVDB: " + levelDBStoreName);
         //Load in the h2DB as well
         //final ProteinDAO.PersistedProteins persistedProteins = proteinDAO.insertNewProteins(parsedMolecules);
 //        Long bottomProteinId = persistedProteins.updateBottomProteinId(null);
@@ -58,22 +59,22 @@ public class FinaliseInitialSetupTasks {
 
         Long bottomPrecalculatedSequenceId = null;
         Long topPrecalculatedSequenceId = null;
-        Utilities.verboseLog("FinaliseInitialSetupTasks: topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
+        Utilities.verboseLog(1100, "FinaliseInitialSetupTasks: topProteinId: " + topProteinId + " bottomProteinId: " + bottomProteinId);
 
         //sequenceLoader.storeAll(parsedMolecules, analysisJobMap);
-        //Utilities.verboseLog("Store parsed sequences (processed lookup): " + parsedMolecules.size());
+        //Utilities.verboseLog(1100, "Store parsed sequences (processed lookup): " + parsedMolecules.size());
 
         Map<Long, Protein> proteinIdsWithoutLookupHit = new HashMap<>();
 
         if(useMatchLookupService) {
-            Utilities.verboseLog("FinaliseInitialSetupTasks .. useMatchLookupService: " + useMatchLookupService);
+            Utilities.verboseLog(1100, "FinaliseInitialSetupTasks .. useMatchLookupService: " + useMatchLookupService);
             Set<Protein> proteinsWithoutLookupHit = proteinDAO.getProteinsWithoutLookupHit();
             for (Protein protein: proteinsWithoutLookupHit){
                 proteinIdsWithoutLookupHit.put(protein.getId(), protein);
             }
             proteinDAO.setProteinIdsWithoutLookupHit(proteinIdsWithoutLookupHit);
         }else{
-            Utilities.verboseLog("FinaliseInitialSetupTasks dont use lookup .. useMatchLookupService: " + useMatchLookupService);
+            Utilities.verboseLog(1100, "FinaliseInitialSetupTasks dont use lookup .. useMatchLookupService: " + useMatchLookupService);
         }
 
         //TODO this is for testing, we need to revisit this approach later
@@ -96,16 +97,16 @@ public class FinaliseInitialSetupTasks {
                 idsWithoutLookupHit.add(protein.getId());
             }
             Collections.sort(idsWithoutLookupHit);
-            Utilities.verboseLog("FinaliseInitialSetupTasks ...  proteinsNotInLookupCount : " + proteinsNotInLookupCount);
+            Utilities.verboseLog(1100, "FinaliseInitialSetupTasks ...  proteinsNotInLookupCount : " + proteinsNotInLookupCount);
         }else{
-            Utilities.verboseLog("FinaliseInitialSetupTasks ...  proteinsNotInLookup is NULL : " );
+            Utilities.verboseLog(1100, "FinaliseInitialSetupTasks ...  proteinsNotInLookup is NULL : " );
         }
 
 
         sequenceLoaderListener.sequencesLoaded(bottomProteinId, topProteinId, bottomPrecalculatedSequenceId, topPrecalculatedSequenceId, useMatchLookupService, idsWithoutLookupHit);
         //sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);
-        Utilities.verboseLog("FinaliseInitialSetupTasks ...  completed");
-        Utilities.verboseLog("FinaliseInitialSetupTasks ...  completed");
+        Utilities.verboseLog(1100, "FinaliseInitialSetupTasks ...  completed");
+        Utilities.verboseLog(1100, "FinaliseInitialSetupTasks ...  completed");
 
     }
 

@@ -10,7 +10,8 @@ package uk.ac.ebi.interpro.scan.jms.worker;
  */
 
 import org.apache.activemq.command.ActiveMQObjectMessage;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.StepExecution;
 import uk.ac.ebi.interpro.scan.management.model.StepExecutionState;
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentMap;
 public class WorkerState implements Serializable {
 
 
-    private static final Logger LOGGER = Logger.getLogger(WorkerState.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(WorkerState.class.getName());
 
     /**
      * How long has the Worker been alive for?
@@ -143,7 +144,7 @@ public class WorkerState implements Serializable {
             this.nonFinishedJobs.put(stepExecution.getStepInstance().getId(), stepExecution);
             this.allJobs.add(stepExecution);
             if(Utilities.verboseLogLevel > 4){
-                Utilities.verboseLog("Received StepInstance:  added to unfinishedJobs - " + stepExecution.getStepInstance().toString());
+                Utilities.verboseLog(1100, "Received StepInstance:  added to unfinishedJobs - " + stepExecution.getStepInstance().toString());
             }
         } catch (JMSException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

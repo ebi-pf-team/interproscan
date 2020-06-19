@@ -80,4 +80,8 @@ public interface BlackBoxMaster extends SimpleBlackBoxMaster {
 
     void setInclTSVVersion(boolean inclTSVVersion);
 
+    //set verbose
+    void setVerboseLog(boolean verboseLog);
+
+    void setVerboseLogLevel(int verboseLogLevel);
 }

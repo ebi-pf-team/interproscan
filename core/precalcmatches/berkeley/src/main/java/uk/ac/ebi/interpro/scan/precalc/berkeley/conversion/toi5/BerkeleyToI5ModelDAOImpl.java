@@ -1,6 +1,6 @@
 //package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5;
 //
-//import org.apache.log4j.Logger;
+//import org.apache.logging.log4j.Logger;
 //import org.springframework.beans.factory.annotation.Required;
 //import org.springframework.transaction.annotation.Transactional;
 //import uk.ac.ebi.interpro.scan.model.*;
@@ -20,7 +20,7 @@
 //
 //public class BerkeleyToI5ModelDAOImpl implements BerkeleyToI5ModelDAO {
 //
-//    private static final Logger LOGGER = Logger.getLogger(BerkeleyToI5ModelDAOImpl.class.getName());
+//    private static final Logger LOGGER = LogManager.getLogger(BerkeleyToI5ModelDAOImpl.class.getName());
 //
 //    private Map<SignatureLibrary, BerkeleyMatchConverter> signatureLibraryToMatchConverter;
 //
@@ -76,7 +76,7 @@
 //                    versionNumber = analysisJobMap.get(analysisJobName).getVersion();
 //
 //                    debugString = "Job: " + analysisJobName + " :- analysisJob: " + analysisJob + " versionNumber: " + versionNumber;
-////                    Utilities.verboseLog(10, debugString);
+////                    Utilities.verboseLog(110, debugString);
 //                    LOGGER.debug(debugString);
 //                } else {
 //                    throw new IllegalStateException("Analysis job name is in an unexpected format: " + analysisJobName);
@@ -120,7 +120,7 @@
 //            }
 //            debugString = "sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion;
 //            debugString +=  "\n librariesToAnalyse value: " + librariesToAnalyse.keySet().toString() + " version: " + librariesToAnalyse.get(sigLib);
-////            Utilities.verboseLog(10, debugString);
+////            Utilities.verboseLog(110, debugString);
 //
 //            if (LOGGER.isDebugEnabled()) {
 //                LOGGER.debug("sigLib: " + sigLib + "version: " + signatureLibraryReleaseVersion);

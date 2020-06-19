@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
@@ -23,7 +24,7 @@ public final class PantherMatchParser
         extends AbstractLineMatchParser<PantherRawMatch>
         implements MatchParser<PantherRawMatch> {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherMatchParser.class.getName());
 
 
     /**
@@ -51,7 +52,7 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        //Utilities.verboseLog(10, "splitLine.length: " + splitLine.length);
+        //Utilities.verboseLog(110, "splitLine.length: " + splitLine.length);
         if (splitLine.length == 9) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.nucleotide;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -17,7 +19,7 @@ import java.util.Map;
  */
 public class RunGetOrfStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunGetOrfStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunGetOrfStep.class.getName());
 
     private String fullPathToBinary;
 
@@ -105,7 +107,7 @@ public class RunGetOrfStep extends RunBinaryStep {
         // Need to have default minimum length (100?)
         command.addAll(getBinarySwitchesAsList());
 
-        Utilities.verboseLog("RunGetOrfStep: " + getCommandBuilder(command));
+        Utilities.verboseLog(1100, "RunGetOrfStep: " + getCommandBuilder(command));
         return command;
     }
 }

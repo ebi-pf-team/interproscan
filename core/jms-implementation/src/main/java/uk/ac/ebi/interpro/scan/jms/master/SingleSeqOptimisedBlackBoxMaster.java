@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.master;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
 
-    private static final Logger LOGGER = Logger.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SingleSeqOptimisedBlackBoxMaster.class.getName());
 
     private DefaultMessageListenerContainer workerQueueJmsContainer;
 
@@ -60,14 +61,14 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
             //display initial memory usage
         }
 
-        Utilities.verboseLog("Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+        Utilities.verboseLog(1100, "Old values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         //set new consumer values
         //workerQueueJmsContainer.setConcurrentConsumers(12);
         //workerQueueJmsContainer.setMaxConcurrentConsumers(10);
         //workerQueueJmsContainer.setConcurrency("2-10"); this or the above
 
-        //Utilities.verboseLog("New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
+        //Utilities.verboseLog(1100, "New values - inVmWorkers min:" + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
         try {
             loadInMemoryDatabase();
@@ -106,7 +107,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                     if(! runningFirstStep){
                         for (StepInstance stepInstance : unfinishedStepInstances) {
                             runStatus = 45;
-                            Utilities.verboseLog("Single Seq mode: considering :" + stepInstance.getStepId());
+                            Utilities.verboseLog(1100, "Single Seq mode: considering :" + stepInstance.getStepId());
                             if (isHighPriorityStep(stepInstance.getStep(jobs))){
                                 stepInstanceSubmitCount += submitStepInstanceToRequestQueue(stepInstance);
                                 controlledLogging = false;
@@ -160,7 +161,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                         && totalUnfinishedStepInstances == 0
                         && totalStepInstanceCount > stepInstancesCreatedByLoadStep
                         && totalStepInstanceCount >= minimumStepsExpected) {
-                    Utilities.verboseLog("stepInstanceDAO.count() " + totalStepInstanceCount
+                    Utilities.verboseLog(1100, "stepInstanceDAO.count() " + totalStepInstanceCount
                             + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                             + " minimumStepsExpected : " + minimumStepsExpected
                             + " SubmittedStepInstancesCount : " + statsUtil.getSubmittedStepInstancesCount()
@@ -295,7 +296,7 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
                 || step.getId().toLowerCase().contains("prositeprofiles".toLowerCase())
                 || step.getId().toLowerCase().contains("pfam".toLowerCase())
                 ){
-            Utilities.verboseLog(" panther/prositeprofiles/pfam job: " + step.getId() + " Should have high priority");
+            Utilities.verboseLog(1100, " panther/prositeprofiles/pfam job: " + step.getId() + " Should have high priority");
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(" panther/prositeprofiles/pfam job: " + step.getId() + " Should have high priority");
             }

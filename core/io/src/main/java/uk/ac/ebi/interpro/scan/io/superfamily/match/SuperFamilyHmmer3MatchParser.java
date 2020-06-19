@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.superfamily.match;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.raw.SuperFamilyHmmer3RawMatch;
 
@@ -43,7 +44,7 @@ import java.util.regex.Pattern;
  */
 public class SuperFamilyHmmer3MatchParser {
 
-    private static final Logger LOGGER = Logger.getLogger(SuperFamilyHmmer3MatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SuperFamilyHmmer3MatchParser.class.getName());
 
     private static final Pattern MATCH_REGIONS_PATTERN = Pattern.compile("^\\d+\\-\\d+(\\,\\d+\\-\\d+)*$"); // E.g. "39-245,316-411"
 

@@ -2,7 +2,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.web.model.SimpleSite;
 import uk.ac.ebi.interpro.scan.web.model.SimpleSiteLocation;
 
@@ -18,7 +20,7 @@ import java.io.IOException;
 public class ResiduePopupHTMLResultWriter extends PopupHTMLResultWriter {
     // DO NOT DELETE - This class is not used in InterProScan 5, but is used as a dependency in InterPro web 6
 
-    private static final Logger LOGGER = Logger.getLogger(ResiduePopupHTMLResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ResiduePopupHTMLResultWriter.class.getName());
 
     public String write(final String residuePopupId,
                         final String proteinAc,

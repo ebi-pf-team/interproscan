@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.unmarshal.xml.interpro.GoTerm;
 
@@ -15,7 +16,7 @@ import java.util.*;
  */
 public class EntryToGoDataResourceReader {
 
-    private static final Logger LOGGER = Logger.getLogger(EntryToGoDataResourceReader.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(EntryToGoDataResourceReader.class.getName());
 
     public Map<String, List<GoTerm>> read(final Resource entryToGoMappingFile) throws IOException {
         final Map<String, List<GoTerm>> entryToGoTerm = new HashMap<String, List<GoTerm>>();

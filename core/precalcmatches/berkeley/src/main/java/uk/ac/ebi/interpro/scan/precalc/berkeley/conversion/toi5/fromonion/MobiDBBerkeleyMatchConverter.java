@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.MobiDBMatch;
 import uk.ac.ebi.interpro.scan.model.RPSBlastMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -21,7 +23,7 @@ import java.util.Set;
  */
 public class MobiDBBerkeleyMatchConverter extends BerkeleyMatchConverter<MobiDBMatch> {
 
-    private static final Logger LOG = Logger.getLogger(MobiDBBerkeleyMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(MobiDBBerkeleyMatchConverter.class.getName());
 
     public MobiDBMatch convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
 

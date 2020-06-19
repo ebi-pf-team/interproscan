@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
 import org.apache.activemq.transport.TransportListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
@@ -17,7 +18,7 @@ import java.io.IOException;
 @Component
 public class JMSExceptionListener implements ExceptionListener {
 
-    private static final Logger LOGGER = Logger.getLogger(JMSExceptionListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(JMSExceptionListener.class.getName());
 
     private WorkerImpl controller;
 
@@ -32,7 +33,7 @@ public class JMSExceptionListener implements ExceptionListener {
     }
 
     public synchronized void onException(JMSException e) {
-        Utilities.verboseLog("JMSExceptionListener-  JMSExceptions thrown : " + e);
+        Utilities.verboseLog(1100, "JMSExceptionListener-  JMSExceptions thrown : " + e);
         timePreviousExceptionReceived = System.currentTimeMillis();
         if(exceptionCount == 0){
             timeFirstException = System.currentTimeMillis();

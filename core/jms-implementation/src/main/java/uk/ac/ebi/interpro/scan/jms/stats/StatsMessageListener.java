@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.jms.*;
 
@@ -14,7 +15,7 @@ import javax.jms.*;
  * To change this template use File | Settings | File Templates.
  */
 public class StatsMessageListener implements MessageListener {
-    private static final Logger LOGGER = Logger.getLogger(StatsMessageListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StatsMessageListener.class.getName());
 
     private BrokerStatistics stats;
 

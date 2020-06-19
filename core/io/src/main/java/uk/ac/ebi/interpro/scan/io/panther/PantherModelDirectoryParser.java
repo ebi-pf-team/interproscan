@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
@@ -25,7 +27,7 @@ import java.util.*;
  */
 public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherModelDirectoryParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherModelDirectoryParser.class.getName());
 
     private String namesTabFileStr;
 
@@ -178,7 +180,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                     }
                     pantherFamilies ++;
                     result.put(familyId, familyName);
-                    Utilities.verboseLog("familyId: " +familyId + " familyName: " + familyName);
+                    Utilities.verboseLog(1100, "familyId: " +familyId + " familyName: " + familyName);
                 } else {
                     LOGGER.warn("Unexpected start of line: " + line);
                 }
@@ -199,7 +201,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
             LOGGER.info(result.size() + " entries created in the map.");
         }
 
-        Utilities.verboseLog("pantherFamilies #: " + pantherFamilies);
+        Utilities.verboseLog(1100, "pantherFamilies #: " + pantherFamilies);
         return result;
     }
 

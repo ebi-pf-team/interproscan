@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.gene3d;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunCathResolveHitsBinaryStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunCathResolveHitsBinaryStep.class.getName());
 
 
     private String crhInputFileTemplate;
@@ -83,11 +84,11 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
 
         if (forceHmmsearch || Utilities.getSequenceCount() > 10){
             //use hmmsearch output
-            Utilities.verboseLog("Use Hmmsearch  ");
+            Utilities.verboseLog(1100, "Use Hmmsearch  ");
             command.add("--input-format=hmmsearch_out");
         }else{
             //use hmmscan output
-            Utilities.verboseLog("Use hmmscan  ");
+            Utilities.verboseLog(1100, "Use hmmscan  ");
             command.add("--input-format=hmmscan_out");
         }
         command.add("--hits-text-to-file");

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence.raw;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.genericjpadao.GenericDAOImpl;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
@@ -22,7 +23,7 @@ public class RawSiteDAOImpl<T extends RawSite>
         extends GenericDAOImpl<T, Long>
         implements RawSiteDAO<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(RawSiteDAOImpl.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RawSiteDAOImpl.class.getName());
 
     public RawSiteDAOImpl(Class<T> modelClass) {
         super(modelClass);

@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.smart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer2.HmmPfamParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -34,7 +35,7 @@ public class ParseSmartHmmpfamOutputStep extends ParseStep<SmartRawMatch> {
 // TODO: Eliminate all code by extending uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseStep
 public class ParseSmartHmmpfamOutputStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(ParseSmartHmmpfamOutputStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ParseSmartHmmpfamOutputStep.class.getName());
 
     private String hmmerOutputFilePathTemplate;
 
@@ -94,7 +95,7 @@ public class ParseSmartHmmpfamOutputStep extends Step {
                 int matchesFound = 0;
                 int waitTimeFactor = Utilities.getWaitTimeFactor(count).intValue();
                 if (represantiveRawMatch != null) {
-                    Utilities.verboseLog("represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
                     String signatureLibraryRelease = represantiveRawMatch.getSignatureLibraryRelease();
                     while (matchesFound < count) {
                         Utilities.sleep(waitTimeFactor * 1000);
@@ -102,17 +103,17 @@ public class ParseSmartHmmpfamOutputStep extends Step {
                                 stepInstance.getTopProtein(), signatureLibraryRelease).size();
                         if (matchesFound < count) {
                             LOGGER.warn("Raw matches not yet committed - sleep for 5 seconds , count: " + count);
-                            Utilities.verboseLog("Raw matches not yet committed - sleep for "
+                            Utilities.verboseLog(1100, "Raw matches not yet committed - sleep for "
                                     + waitTimeFactor + " seconds, matches found: " + matchesFound
                                     + " matchesCount expected: " + count);
                         }
                     }
                 }else{
                     LOGGER.warn("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
-                    Utilities.verboseLog("Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
+                    Utilities.verboseLog(1100, "Check if Raw matches committed " + count + " rm: " + represantiveRawMatch);
                 }
                 Long timeTaken = System.currentTimeMillis() - now;
-                Utilities.verboseLog("ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
+                Utilities.verboseLog(1100, "ParseStep: count: " + count + " represantiveRawMatch : " + represantiveRawMatch.toString()
                         + " time taken: " + timeTaken);
             }
         }

@@ -5,13 +5,13 @@
     <parent>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
         <artifactId>interproscan</artifactId>
-        <version>5.44-79.0</version>
+        <version>5.45-80.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>interproscan-business</artifactId>
-    <version>5.44-79.0</version>
+    <version>5.45-80.0</version>
 
     <packaging>jar</packaging>
     <name>InterProScan Business Logic</name>
@@ -35,14 +35,14 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>5.44-79.0</version>
+            <version>5.45-80.0</version>
         </dependency>
 
 
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>precalc-match-client</artifactId>
-            <version>5.44-79.0</version>
+            <version>5.45-80.0</version>
         </dependency>
 
         <dependency>
@@ -58,13 +58,13 @@
             <version>1.4</version>
         </dependency>
 
-       <!--
+       <!-- start
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
         </dependency>
-       -->
+         end -->
     </dependencies>
 
     <build>

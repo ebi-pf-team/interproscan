@@ -17,7 +17,8 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.custommonkey.xmlunit.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ import java.util.Set;
 @ContextConfiguration
 public class ProteinTest extends AbstractTest<Protein> {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinTest.class.getName());
 
     // http://www.uniprot.org/uniparc/UPI0000000001.fasta
     private static final String MULTILINE =

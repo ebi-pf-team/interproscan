@@ -5,7 +5,8 @@ import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.activemq.transport.TransportListener;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
@@ -23,7 +24,7 @@ import javax.jms.*;
  */
 public class MasterControllerApplication implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(MasterControllerApplication.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(MasterControllerApplication.class.getName());
 
     private TransportListener jmsTransportListener;
     private ExceptionListener jmsExceptionListener;

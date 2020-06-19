@@ -14,6 +14,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+//port org.apache.commons.lang3.StringUtils;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -125,6 +126,7 @@ public class Run extends AbstractI5Runner {
 
         try {
             //change Loglevel
+            //TODO use the properties file
             changeLogLevel("DEBUG");
 
             // parse the command line arguments
@@ -149,7 +151,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.44-79.0";
+            String i5Version = "5.45-80.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
@@ -373,6 +375,7 @@ public class Run extends AbstractI5Runner {
                 }
 
             }
+            Utilities.setSequenceType(sequenceType);
 
             if (mode.getRunnableBean() != null) {
                 final Runnable runnable = (Runnable) ctx.getBean(mode.getRunnableBean());
@@ -697,11 +700,40 @@ public class Run extends AbstractI5Runner {
                 bbMaster.setMinSize(parsedCommandLine.getOptionValue(I5Option.MIN_SIZE.getLongOpt()));
             }
 
-            //for this version always have precalc off
-            //if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
-            bbMaster.disablePrecalc();
-            
-            // }
+            //
+            if (parsedCommandLine.hasOption(I5Option.DISABLE_PRECALC.getLongOpt())) {
+                bbMaster.disablePrecalc();
+            }
+
+            //consider more verbose output
+            if (parsedCommandLine.hasOption(I5Option.VERBOSE.getLongOpt())) {
+                //String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE.getLongOpt());
+                //System.out.println(" verbose parameter value: " + verboseOption);
+                bbMaster.setVerboseLog(true);
+                bbMaster.setVerboseLogLevel(10);
+            }
+            if (parsedCommandLine.hasOption(I5Option.VERBOSE_LEVEL.getLongOpt())) {
+                String verboseOption = parsedCommandLine.getOptionValue(I5Option.VERBOSE_LEVEL.getLongOpt());
+                Map<String, Integer> logLevels = new HashMap<>();
+                logLevels.put("OFF", 0);
+                logLevels.put("INFO", 10);
+                logLevels.put("DEBUG", 20);
+                logLevels.put("TRACE", 30);
+                logLevels.put("ALL", 90);
+                int logLevel = 10;
+                Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+                //if(StringUtils.isNumeric(verboseOption)) {
+                if  (pattern.matcher(verboseOption).matches()){
+                    int verboseOptionAsInteger = Integer.parseInt(verboseOption);
+                    if (verboseOptionAsInteger >= 0){
+                        logLevel = verboseOptionAsInteger;
+                    }
+                }else{
+                    logLevel = logLevels.get(verboseOption.strip());
+                }
+                bbMaster.setVerboseLog(true);
+                bbMaster.setVerboseLogLevel(logLevel);
+            }
 
             // Exclude sites from output?
             final boolean includeTsvSites = parsedCommandLine.hasOption(I5Option.ENABLE_TSV_RESIDUE_ANNOT.getLongOpt());
@@ -728,6 +760,8 @@ public class Run extends AbstractI5Runner {
             // Include version file with TSV output?
             final boolean inclTSVVersion = parsedCommandLine.hasOption(I5Option.TSV_VERSION_OUTPUT.getLongOpt());
             bbMaster.setInclTSVVersion(inclTSVVersion);
+
+
 
         }
     }
@@ -1564,8 +1598,8 @@ public class Run extends AbstractI5Runner {
             // Get hostname
             //get canonical hostname as otherwise hostname may not be exactly how other machines see this host
             final String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-            if (Utilities.verboseLogLevel >= 10) {
-                Utilities.verboseLog("process hostname: " + hostname);
+            if (Utilities.verboseLogLevel >= 110){
+                Utilities.verboseLog(110, "process hostname: " + hostname);
             }
 
             // Select a random port above 1024, excluding LSF ports and check availability.
@@ -1645,23 +1679,23 @@ public class Run extends AbstractI5Runner {
         String kvstoreDir = "kvstore";
         String kvstoreBase = tempDir + File.separator + kvstoreDir;
         String kvStoreProteinsDBPath = kvstoreBase + File.separator + kvStoreProteins.getDbName();
-        Utilities.verboseLog(10, " kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
+        Utilities.verboseLog(110, " kvStoreProteinsDBPath: " + kvStoreProteinsDBPath);
         kvStoreProteins.setLevelDBStore(kvStoreProteinsDBPath);
 
         String kvStoreProteinsNotInLookupDBPath = kvstoreBase + File.separator + kvStoreProteinsNotInLookup.getDbName();
-        Utilities.verboseLog(10, " kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
+        Utilities.verboseLog(110, " kvStoreProteinsNotInLookupDBPath: " + kvStoreProteinsNotInLookupDBPath);
         kvStoreProteinsNotInLookup.setLevelDBStore(kvStoreProteinsNotInLookupDBPath);
 
         //String kvStoreProteinsOtherDBPath = kvstoreBase + File.separator +  kvStoreProteinsOther.getDbName();
-        //Utilities.verboseLog(10, "kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
+        //Utilities.verboseLog(110, "kvStoreProteinsOtherDBPath: " + kvStoreProteinsOtherDBPath);
         //kvStoreProteinsOther.setLevelDBStore(kvStoreProteinsOtherDBPath);
 
         String kvStoreMatchesDBPath = kvstoreBase + File.separator + kvStoreMatches.getDbName();
-        Utilities.verboseLog(10, "kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
+        Utilities.verboseLog(110, "kvStoreMatchesDBPath: " + kvStoreMatchesDBPath);
         kvStoreMatches.setLevelDBStore(kvStoreMatchesDBPath);
 
         String kvStoreNucleotidesDBPath = kvstoreBase + File.separator + kvStoreNucleotides.getDbName();
-        Utilities.verboseLog(10, "kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
+        Utilities.verboseLog(110, "kvStoreNucleotidesDBPath: " + kvStoreNucleotidesDBPath);
         kvStoreNucleotides.setLevelDBStore(kvStoreNucleotidesDBPath);
 
     }
@@ -1698,6 +1732,11 @@ public class Run extends AbstractI5Runner {
         return false;
     }
 
+    /**
+     * ideally we should have one config file for the application
+     *
+     * @param logLevel
+     */
     public static void changeLogLevel(String logLevel) {
         //LogManager.getRootLogger().setLevel(Level.WARN);
         /*
@@ -1711,6 +1750,7 @@ public class Run extends AbstractI5Runner {
 
         // org.apache.logging.log4j.core.config.Configurator;
 
+
         Configurator.setLevel("uk.ac.ebi.interpro.scan", Level.WARN);
         Configurator.setLevel("org.apache.activemq", Level.WARN);
         Configurator.setLevel("org.hibernate.boot", Level.ERROR);  // check if its possoble to configure to not diplsay the WARNING
@@ -1719,12 +1759,15 @@ public class Run extends AbstractI5Runner {
         // You can also set the root logger:
         Configurator.setRootLevel(Level.WARN);
 
+        //TODO check again, works for now??
         org.apache.log4j.LogManager.getRootLogger().setLevel(org.apache.log4j.Level.WARN);
+        //org.apache.logging.log4j.LogManager.getRootLogger().se.setLevel(org.apache.logging.log4j.Level.WARN);
+
 //        org.apache.log4j.LogManager.getRootLogger().setLevel("uk.ac.ebi.interpro.scan", org.apache.log4j.Level.WARN);
 
         return;
         /*
-        Logger root = Logger.getLogger("uk.ac.ebi.interpro.scan");
+        Logger root = LogManager.getLogger("uk.ac.ebi.interpro.scan");
         //setting the logging level according to input
         if ("FATAL".equalsIgnoreCase(logLevel)) {
             root.setLevel(Level.FATAL);
@@ -1765,7 +1808,7 @@ public class Run extends AbstractI5Runner {
             try {
                 if (new File(temporaryFileDirectory).exists()) {
                     LOGGER.debug("Cleaning up temporaryDirectoryName : " + temporaryFileDirectory);
-                    Utilities.verboseLog("TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
+                    Utilities.verboseLog(110, "TemporaryDirectoryName : " + temporaryFileDirectory + " exists, so delet");
                     deleteWorkingTemporaryDirectory(temporaryFileDirectory);
                 }
             } catch (IOException e) {

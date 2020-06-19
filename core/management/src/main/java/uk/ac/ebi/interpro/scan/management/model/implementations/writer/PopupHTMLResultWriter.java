@@ -3,7 +3,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.*;
@@ -18,7 +20,7 @@ import java.nio.file.Paths;
  */
 public abstract class PopupHTMLResultWriter extends GraphicalOutputResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(PopupHTMLResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PopupHTMLResultWriter.class.getName());
 
     @Required
     public void setHtmlResourcesDir(String path) {

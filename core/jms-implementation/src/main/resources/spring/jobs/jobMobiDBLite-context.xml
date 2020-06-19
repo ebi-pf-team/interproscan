@@ -88,7 +88,7 @@
     </bean>
 
     <!-- STEP 4 -->
-    <bean id="stepMobiDBJobFiles"
+    <bean id="stepMobiDBDeleteJobFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractMobiDBStep">
         <property name="dependsUpon" ref="stepMobiDBStoreFilteredMatches"/>

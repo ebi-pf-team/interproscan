@@ -1,7 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.match.cdd;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class CDDMatchParser implements Serializable, MatchAndSiteParser {
 
-    private static final Logger LOGGER = Logger.getLogger(CDDMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(CDDMatchParser.class.getName());
 
     private final SignatureLibrary signatureLibrary;
     private String signatureLibraryRelease;
@@ -121,7 +122,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                 rawProteinSiteMap.put(sequenceId, rawProteinSite);
             }
         }
-        Utilities.verboseLog("Parsed sites count: " + rawProteinSiteMap.values().size());
+        Utilities.verboseLog(1100, "Parsed sites count: " + rawProteinSiteMap.values().size());
         return new MatchSiteData<>(new HashSet<>(rawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
     }
 
@@ -149,7 +150,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
 //                    System.out.println("SESSION ID: " + proteinIdentifier);
                 } else if (line.startsWith(QUERY_BLOCK_START_MARKER)) {
                     //QUERY	Query_1	Peptide	590	sp|Q96N58|ZN578_HUMAN Zinc finger protein 578 OS=Homo sapiens GN=ZNF578 PE=2 SV=2
-//                    Utilities.verboseLog("Query line: " + line);
+//                    Utilities.verboseLog(1100, "Query line: " + line);
                     Matcher matcher = QUERY_LINE_PATTERN.matcher(line);
                     if (matcher.matches()) {
                         String queryId = matcher.group(1);
@@ -157,7 +158,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                         String sequenceLength = matcher.group(3);
                         definitionLine = matcher.group(4);
                         sequenceIdentifier = definitionLine.trim();
-//                        Utilities.verboseLog("Query: " + queryId
+//                        Utilities.verboseLog(1100, "Query: " + queryId
 //                                + ": sequenceIdentifier : " + sequenceIdentifier + " "
 //                                + sequenceType + " " + sequenceLength + " " + definitionLine);
                     }
@@ -169,7 +170,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                         }
                         //1	Query_1	Specific	143639	24	60	3.46102e-15	69.5006	cd07765	KRAB_A-box	-	271597
                         LOGGER.debug("Line: " + line);
-//                        Utilities.verboseLog("Domain line: " + line);
+//                        Utilities.verboseLog(1100, "Domain line: " + line);
                         Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line);
                         if (matcher.matches()) {
                             int sessionNumber = Integer.parseInt(matcher.group(1));
@@ -192,7 +193,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                             matches.add(new CDDRawMatch(sequenceIdentifier, definitionLine, sessionNumber, hitType,
                                     pssmID, model, locationStart, locationEnd, eValue, score,
                                     shortName, incomplete, superfamilyPSSMId, signatureLibraryRelease));
-//                            Utilities.verboseLog(10, "Match  : " + getLastElement(matches));
+//                            Utilities.verboseLog(110, "Match  : " + getLastElement(matches));
                         }
                     }
                 } else if (line.startsWith(SITES_BLOCK_START_MARKER)) {
@@ -204,7 +205,7 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
                         //#<session-ordinal>	<query-id[readingframe]>	<annot-type>	<title>	<residue(coordinates)>	<complete-size>	<mapped-size>	<source-domain>
                         //1 Query_3 Specific heterodimer interface Q39,K43,W47,Y95,W108,G109 6 6 143182
                         LOGGER.debug("Sites Line: " + line);
-//                        Utilities.verboseLog("Sites line: " + line);
+//                        Utilities.verboseLog(1100, "Sites line: " + line);
                         Matcher matcher = SITE_LINE_PATTERN.matcher(line);
                         String [] siteInfo = line.split("\\t");
 
@@ -237,8 +238,8 @@ public class CDDMatchParser implements Serializable, MatchAndSiteParser {
 
             }
         }
-        Utilities.verboseLog("CDD matches size : " + matches.size());
-        Utilities.verboseLog("CDD sites size : " + sites.size());
+        Utilities.verboseLog(1100, "CDD matches size : " + matches.size());
+        Utilities.verboseLog(1100, "CDD sites size : " + sites.size());
 
         return new MatchData(matches, sites);
     }

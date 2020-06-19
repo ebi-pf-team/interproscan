@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.IMatchesHolder;
@@ -19,7 +20,7 @@ import java.nio.file.Path;
  */
 public class XmlWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(XmlWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(XmlWriter.class.getName());
 
     private Jaxb2Marshaller marshaller;
 

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.prodom.match;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch;
@@ -29,7 +31,7 @@ public class BlastProDomMatchParser extends AbstractLineMatchParser<ProDomRawMat
      *
      */
 
-    private static final Logger LOGGER = Logger.getLogger(BlastProDomMatchParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(BlastProDomMatchParser.class.getName());
 
     /*
      * 1. Protein Accession (as in Fasta File) (String)

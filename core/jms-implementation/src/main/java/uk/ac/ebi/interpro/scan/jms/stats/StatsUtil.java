@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.stats;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerState;
@@ -28,7 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class StatsUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(StatsUtil.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(StatsUtil.class.getName());
 
     protected final String STATS_BROKER_DESTINATION = "ActiveMQ.Statistics.Destination.";
 
@@ -96,6 +97,8 @@ public class StatsUtil {
     private SystemInfo systemInfo;
 
     private Lock pollStatsLock = new ReentrantLock();
+
+    private static String sequenceType = "p";
 
     public StatsUtil() {
 
@@ -265,6 +268,10 @@ public class StatsUtil {
         StatsUtil.forceDisplayProgress = forceDisplayProgress;
     }
 
+    public static void setSequenceType(String sequenceType) {
+        StatsUtil.sequenceType = sequenceType;
+    }
+
     public ConcurrentMap getAllStepInstances() {
         return submittedStepInstances;
     }
@@ -273,9 +280,9 @@ public class StatsUtil {
         String key = stepInstance.getStepId();
         String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
         Map<String, String> jobStatus = allAvailableJobs.get(key);
-        if (jobStatus != null){
+        if (jobStatus != null) {
             jobStatus.put(proteinRange, status);
-        }else{
+        } else {
             jobStatus = new ConcurrentHashMap<>();
             jobStatus.put(proteinRange, status);
         }
@@ -286,7 +293,7 @@ public class StatsUtil {
         String key = stepInstance.getStepId();
         String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
         Map<String, String> jobStatus = allAvailableJobs.get(key);
-        if (jobStatus != null){
+        if (jobStatus != null) {
             jobStatus.remove(proteinRange);
             if (jobStatus.isEmpty()) {
                 allAvailableJobs.remove(key);
@@ -301,12 +308,12 @@ public class StatsUtil {
         Map<String, String> jobStatus = submittedStepInstances.get(key);
         String status = "submitted";
 
-        if (jobStatus != null){
+        if (jobStatus != null) {
             jobStatus.put(proteinRange, status);
-        }else{
+        } else {
             jobStatus = new ConcurrentHashMap<>();
             jobStatus.put(proteinRange, status);
-            //Utilities.verboseLog("StepInstanceAdd " + key + ":" +  jobStatus.toString());
+            //Utilities.verboseLog(1100, "StepInstanceAdd " + key + ":" +  jobStatus.toString());
         }
 
         submittedStepInstances.put(key, jobStatus);
@@ -315,16 +322,16 @@ public class StatsUtil {
 
     public void updateSubmittedStepInstances(StepInstance stepInstance) {
         String key = stepInstance.getStepId();
-        Utilities.verboseLog("Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() + ")");
+        Utilities.verboseLog(1100, "Update submittedStepInstance: " + key + " (" + stepInstance.getStepId() + ")");
         String proteinRange = "[" + stepInstance.getBottomProtein() + "-" + stepInstance.getTopProtein() + "]";
         Map<String, String> jobStatus = submittedStepInstances.get(key);
         String status = "Done";
-        if (jobStatus != null){
+        if (jobStatus != null) {
             jobStatus.put(proteinRange, status);
             submittedStepInstances.put(key, jobStatus);
             removeFromAllAvailableJobs(stepInstance);
-        }else{
-            LOGGER.warn("Trying to update a step that is not the list - step:" + key +  "["
+        } else {
+            LOGGER.warn("Trying to update a step that is not the list - step:" + key + "["
                     + proteinRange + "] -- " + status);
         }
     }
@@ -340,9 +347,9 @@ public class StatsUtil {
     }
 
     public void printSubmittedStepInstances() {
-        Utilities.verboseLog(" submittedStepInstances:");
+        Utilities.verboseLog(1100, " submittedStepInstances:");
         Set ids = submittedStepInstances.keySet();
-        Utilities.verboseLog(" submittedStepInstances:" + ids.size());
+        Utilities.verboseLog(1100, " submittedStepInstances:" + ids.size());
         //Collections.sort((List<Comparable>) ids);
 
         for (Object stepInstanceId : ids) {
@@ -352,30 +359,32 @@ public class StatsUtil {
     }
 
     public int getSubmittedStepInstancesCount() {
-        //Utilities.verboseLog(" getSubmittedStepInstancesCounts:");
+        //Utilities.verboseLog(1100, " getSubmittedStepInstancesCounts:");
         int uniqStepCount = 0;
         int stepCount = 0;
-        for (Map.Entry<String, Map<String, String>> elem:submittedStepInstances.entrySet()) {
+        for (Map.Entry<String, Map<String, String>> elem : submittedStepInstances.entrySet()) {
             Map<String, String> jobStatus = (Map<String, String>) elem.getValue();
             stepCount += jobStatus.keySet().size();
-            uniqStepCount ++;
+            uniqStepCount++;
         }
-        if (stepCount < uniqStepCount){
-            Utilities.verboseLog(" Originals: stepCount " + stepCount + " uniq stepCount: " + uniqStepCount);
+        if (stepCount < uniqStepCount) {
+            Utilities.verboseLog(1100, " Originals: stepCount " + stepCount + " uniq stepCount: " + uniqStepCount);
             stepCount = uniqStepCount;
         }
+
+        Utilities.verboseLog(130, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount);
+
         Long intervaltime = 5 * 60 * 60 * 1000l;
         Long timePassed = System.currentTimeMillis() - lastGetSubmittedStepInstancesCountTime;
         if (timePassed > intervaltime) {
-            Utilities.verboseLog(30, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount
-                    +  " totalJobs: " + totalJobs + " unfinishedJobs: " + unfinishedJobs);
+            Utilities.verboseLog(130, " getSubmittedStepInstancesCounts: " + stepCount + " uniq: " + uniqStepCount
+                    + " totalJobs: " + totalJobs + " unfinishedJobs: " + unfinishedJobs);
             lastGetSubmittedStepInstancesCountTime = System.currentTimeMillis();
         }
         return stepCount;
     }
 
     /**
-     *
      * @return
      */
     public int getSubmittedStepInstancesCountOld() {
@@ -383,30 +392,30 @@ public class StatsUtil {
     }
 
     public Set<String> getNonAcknowledgedSubmittedStepInstances() {
-        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
-        Set  ids =  submittedStepInstances.entrySet();
+        Utilities.verboseLog(1100, " getNonAcknowledgedSubmittedStepInstances:");
+        Set ids = submittedStepInstances.entrySet();
         Set<String> nonAcknowledgedStepInstances = new TreeSet<String>();
-        Utilities.verboseLog(" submittedStepInstances: " + ids.size());
+        Utilities.verboseLog(1100, " submittedStepInstances: " + ids.size());
 
         for (String submittedStepInstanceKey : submittedStepInstances.keySet()) {
             Map<String, String> submittedStepInstanceValue = (Map<String, String>) submittedStepInstances.get(submittedStepInstanceKey);
-            Utilities.verboseLog(30," submittedStepInstanceValue: its a map : " + submittedStepInstanceKey + " --> " + submittedStepInstanceValue.toString());
+            Utilities.verboseLog(130, " submittedStepInstanceValue: its a map : " + submittedStepInstanceKey + " --> " + submittedStepInstanceValue.toString());
 
 
-            Set <String> keySet = submittedStepInstanceValue.keySet();
-            for (String newKey : keySet){
+            Set<String> keySet = submittedStepInstanceValue.keySet();
+            for (String newKey : keySet) {
                 String stepInstanceEntryValues = submittedStepInstanceValue.get(newKey);
-                Utilities.verboseLog(30,"key : " + submittedStepInstanceKey + "[" + newKey + "] -> stepInstanceEntryValues:  " + stepInstanceEntryValues);
+                Utilities.verboseLog(130, "key : " + submittedStepInstanceKey + "[" + newKey + "] -> stepInstanceEntryValues:  " + stepInstanceEntryValues);
                 nonAcknowledgedStepInstances.add(submittedStepInstanceKey + " - " + newKey + " - " + stepInstanceEntryValues);
             }
             /*
             Map.Entry<String, String> submittedStepInstance = (Map.Entry<String, String>) entryObject;
-            Utilities.verboseLog(" submittedStepInstance: " + submittedStepInstance.toString());
+            Utilities.verboseLog(1100, " submittedStepInstance: " + submittedStepInstance.toString());
             String stepInstanceName = submittedStepInstance.getKey();
             String stepInstanceStatus = submittedStepInstance.getValue();
             if (stepInstanceStatus.contains("Done")) {
             //if (!((Map.Entry<Integer, String>) entry).getValue().contains("Done")) {
-                Utilities.verboseLog(" nonAcknowledgedStepInstance: " + stepInstanceName);
+                Utilities.verboseLog(1100, " nonAcknowledgedStepInstance: " + stepInstanceName);
                 nonAcknowledgedStepInstances.add(stepInstanceName);
             }
             */
@@ -416,17 +425,17 @@ public class StatsUtil {
     }
 
     public Map<String, Integer> getNonAcknowledgedSubmittedStepInstancesCounts() {
-        Utilities.verboseLog(" getNonAcknowledgedSubmittedStepInstances:");
-        Map<String, Integer>  nonAcknowledgedStepInstances = new HashMap<>();
-        for  (Map.Entry<String, Map<String, String>> elem:submittedStepInstances.entrySet()) {
+        Utilities.verboseLog(1100, " getNonAcknowledgedSubmittedStepInstances:");
+        Map<String, Integer> nonAcknowledgedStepInstances = new HashMap<>();
+        for (Map.Entry<String, Map<String, String>> elem : submittedStepInstances.entrySet()) {
             String key = (String) elem.getKey();
             String status = "Done";
             Map<String, String> jobStatus = (Map<String, String>) elem.getValue();
             int notDoneCount = 0;
             for (Map.Entry<String, String> entryStatus : jobStatus.entrySet()) {
-                String value = (String)  entryStatus.getValue();
-                if (! value.equals(status)){
-                    notDoneCount ++;
+                String value = (String) entryStatus.getValue();
+                if (!value.equals(status)) {
+                    notDoneCount++;
                 }
             }
             if (notDoneCount > 0) {
@@ -437,26 +446,25 @@ public class StatsUtil {
     }
 
     public void displayNonAcknowledgedSubmittedStepInstances() {
-        if (Utilities.verboseLog) {
+        if (Utilities.verboseLogLevel >= 100) {
             String nonAcknowledgedSubmittedStepInstances = "[";
-            if (Utilities.verboseLog) {
-                Utilities.verboseLog("Current Non-Acknowledged Submitted StepInstances ");
 
-                for (Map.Entry<String, Integer> elem : getNonAcknowledgedSubmittedStepInstancesCounts().entrySet()) {
-                    String jobName = (String) elem.getKey();
-                    int notDoneCount = (int) elem.getValue();
-                    if (notDoneCount > 0) {
-                        String jobMessage = "#:" + notDoneCount; // + ") (rep:" + status;
-                        nonAcknowledgedSubmittedStepInstances += String.format("%s (%s)", jobName, jobMessage)
-                                + ", ";
-                    }
+            Utilities.verboseLog(110, "Current Non-Acknowledged Submitted StepInstances ");
+
+            for (Map.Entry<String, Integer> elem : getNonAcknowledgedSubmittedStepInstancesCounts().entrySet()) {
+                String jobName = (String) elem.getKey();
+                int notDoneCount = (int) elem.getValue();
+                if (notDoneCount > 0) {
+                    String jobMessage = "#:" + notDoneCount; // + ") (rep:" + status;
+                    nonAcknowledgedSubmittedStepInstances += String.format("%s (%s)", jobName, jobMessage)
+                            + ", ";
                 }
             }
+
             nonAcknowledgedSubmittedStepInstances += "]";
             System.out.println(nonAcknowledgedSubmittedStepInstances);
         }
     }
-
 
 
     /**
@@ -506,22 +514,22 @@ public class StatsUtil {
 
 
     public void displayRunningJobs() {
-        if (Utilities.verboseLog) {
-            Utilities.verboseLog("Current active Jobs");
+        if (Utilities.verboseLog && Utilities.verboseLogLevel >= 100 ) {
+            Utilities.verboseLog(100, "Current active Jobs");
             List<String> currentRunningJobs = getRunningJobs();
-            Map<String,List<String>> runningJobsMap = new HashMap<>();
+            Map<String, List<String>> runningJobsMap = new HashMap<>();
             for (String runningJob : currentRunningJobs) {
                 String key = runningJob.split(":")[0];
                 String proteinRange = runningJob.split(":")[1];
                 if (runningJobsMap.containsKey(key)) {
                     runningJobsMap.get(key).add(proteinRange);
-                }else{
+                } else {
                     List<String> proteinRanges = new ArrayList<>();
                     proteinRanges.add(proteinRange);
-                    runningJobsMap.put(key,proteinRanges);
+                    runningJobsMap.put(key, proteinRanges);
                 }
             }
-            for (Map.Entry<String,List<String>> elem : runningJobsMap.entrySet()) {
+            for (Map.Entry<String, List<String>> elem : runningJobsMap.entrySet()) {
                 String key = (String) elem.getKey();
                 List<String> proteinRanges = (List<String>) elem.getValue();
                 Collections.sort(proteinRanges);
@@ -538,15 +546,15 @@ public class StatsUtil {
 
     public void displayAllAvailableJobs() {
         if (Utilities.verboseLog) {
-            Utilities.verboseLog("Current available Jobs");
-            for (Map.Entry<String, Map<String, String>> elem:allAvailableJobs.entrySet()) {
+            Utilities.verboseLog(1100, "Current available Jobs");
+            for (Map.Entry<String, Map<String, String>> elem : allAvailableJobs.entrySet()) {
                 String jobName = (String) elem.getKey();
                 String status = "";
                 Map<String, String> jobStatus = (Map<String, String>) elem.getValue();
                 int jobCount = jobStatus.size();
                 for (Map.Entry<String, String> entryStatus : jobStatus.entrySet()) {
                     String key = (String) entryStatus.getKey();
-                    String value = (String)  entryStatus.getValue();
+                    String value = (String) entryStatus.getValue();
                     status = key + "-" + value; // + ",";
                 }
                 String jobMessage = "#:" + jobCount + ") (rep:" + status;
@@ -716,7 +724,7 @@ public class StatsUtil {
     public int getHighMemRequestQueueSize() {
         final boolean requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            Utilities.verboseLog(5, "HighMemJobRequestQueue: not initialised");
+            Utilities.verboseLog(1100, "HighMemJobRequestQueue: not initialised");
             return -99;
         }
         return statsMessageListener.getEnqueueCount() - statsMessageListener.getDispatchCount();
@@ -725,9 +733,9 @@ public class StatsUtil {
     public void displayHighMemoryQueueStatistics() {
         final boolean requestQueueStatsAvailable = pollStatsBrokerHighMemJobQueue();
         if (!requestQueueStatsAvailable) {
-            Utilities.verboseLog(5, "JobRequestQueue: not initialised");
+            Utilities.verboseLog(1100, "JobRequestQueue: not initialised");
         } else {
-            Utilities.verboseLog(5, "HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
+            Utilities.verboseLog(1100, "HighMemoryJobRequestQueue:  " + statsMessageListener.getStats());
         }
 
     }
@@ -791,7 +799,7 @@ public class StatsUtil {
                     progressCounter++;
                 }
             }
-            if (forceDisplayProgress && ! displayProgress) {
+            if (forceDisplayProgress && !displayProgress) {
                 int multiplier = 2;
                 int intervalTime = 3600000 * (progressCounter / multiplier);
                 if (progressCounter >= 5 && timeSinceLastReport > intervalTime) {
@@ -800,23 +808,32 @@ public class StatsUtil {
                     forceDisplayProgress = false;
                 }
             }
+            if (displayProgress && Utilities.getSequenceType().equals("n")) {
+                int initialMinutes = 10 * 60 * 1000;
+                if (timeSinceLastReport < initialMinutes) {
+                    displayProgress = false;
+                    Utilities.verboseLog(30, "timeSinceLastReport: " + timeSinceLastReport
+                            + " progress : " + Math.floor(progress * 100));
+                }
+            }
+
             if (displayProgress) {
                 progressReportTime = System.currentTimeMillis();
                 // Round down, to avoid confusion with 99.5% being rounded to 100% complete!
                 actualProgress = Math.floor(progress * 100);
                 System.out.println(Utilities.getTimeNow() + " " + String.format("%.0f%%", actualProgress) + " completed");
-                if (Utilities.verboseLog) {
+                if (Utilities.verboseLog ) {
                     Set<String> nonAckStepInstances = new HashSet<>();
 
                     //for (StepInstance stepinstance: getNonAcknowledgedSubmittedStepInstances()):
 
-                    Utilities.verboseLog("NonAcknowledgedSubmittedStepInstances: ");
+                    Utilities.verboseLog(110, "NonAcknowledgedSubmittedStepInstances: ");
                     displayNonAcknowledgedSubmittedStepInstances();
                     displayRunningJobs();
                     if (displayRemainingJobs) {
                         //displayAllAvailableJobs(); TODO refactor
                         if (unfinishedJobs > 1) {
-                            Utilities.verboseLog("allAvailableJobs uniq count:" + allAvailableJobs.size());
+                            Utilities.verboseLog(110, "allAvailableJobs uniq count:" + allAvailableJobs.size());
                         }
                         //
                     }
@@ -829,7 +846,7 @@ public class StatsUtil {
                     previousUnfinishedJobs = unfinishedJobs; // maybe the above conditional is superfluous
 
                     String debugProgressString = " #:t" + masterTotalJobs + " :l" + unfinishedJobs + " change: " + changeSinceLastReport + " :c" + connectionCount;
-                    Utilities.verboseLog("debugProgressString: " + debugProgressString);
+                    Utilities.verboseLog(110, "debugProgressString: " + debugProgressString);
 //                LOGGER.debug(statsMessageListener.getStats());
                 }
             }

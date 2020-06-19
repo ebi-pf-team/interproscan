@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hamap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.prosite.ProfilePostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 public class HamapPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(HamapPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(HamapPostProcessingStep.class.getName());
 
     private ProfilePostProcessing<HamapRawMatch> postProcessor;
 
@@ -73,7 +74,7 @@ public class HamapPostProcessingStep extends Step {
         //do we need to skip
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
@@ -86,7 +87,7 @@ public class HamapPostProcessingStep extends Step {
 
         if(rawMatches.size() == 0){
             Long sequenceCout = stepInstance.getTopProtein() - stepInstance.getBottomProtein();
-            Utilities.verboseLog(10, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
+            Utilities.verboseLog(110, "Zero matches found: on " + sequenceCout + " proteins stepinstance:" + stepInstance.toString());
             int waitTimeFactor = 2;
             if (! Utilities.isRunningInSingleSeqMode()){
                 waitTimeFactor = Utilities.getWaitTimeFactorLogE(10 * sequenceCout.intValue()).intValue();
@@ -98,14 +99,14 @@ public class HamapPostProcessingStep extends Step {
                     stepInstance.getTopProtein(),
                     signatureLibraryRelease
             );
-            Utilities.verboseLog(10, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
+            Utilities.verboseLog(110, "matches after waitTimeFactor: " + waitTimeFactor + " - " + rawMatches.size());
         }
         int matchCount = 0;
         for (final RawProtein rawProtein : rawMatches) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10, " HAMAP: Retrieved " + rawMatches.size() + " proteins to post-process.");
-        Utilities.verboseLog(10, " HAMAP: A total of " + matchCount + " raw matches.");
+        Utilities.verboseLog(110, " HAMAP: Retrieved " + rawMatches.size() + " proteins to post-process.");
+        Utilities.verboseLog(110, " HAMAP: A total of " + matchCount + " raw matches.");
 
         Map<String, RawProtein<HamapRawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<HamapRawMatch>>(rawMatches.size());
         for (RawProtein<HamapRawMatch> rawMatch : rawMatches) {
@@ -117,10 +118,10 @@ public class HamapPostProcessingStep extends Step {
         for (final RawProtein rawProtein : filteredMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(10,  " HAMAP: " + filteredMatches.size() + " proteins passed through post processing.");
-        Utilities.verboseLog(10,  " HAMAP: A total of " + matchCount + " matches PASSED.");
+        Utilities.verboseLog(110,  " HAMAP: " + filteredMatches.size() + " proteins passed through post processing.");
+        Utilities.verboseLog(110,  " HAMAP: A total of " + matchCount + " matches PASSED.");
         filteredMatchDAO.persist(filteredMatches.values());
-        Utilities.verboseLog(10,  " HAMAP: filteredMatches persisted");
+        Utilities.verboseLog(110,  " HAMAP: filteredMatches persisted");
 
     }
 }

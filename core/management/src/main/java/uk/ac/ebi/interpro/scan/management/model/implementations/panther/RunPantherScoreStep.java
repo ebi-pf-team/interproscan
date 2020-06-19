@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class RunPantherScoreStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunPantherScoreStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunPantherScoreStep.class.getName());
 
     private String fullPathToBinary;
 
@@ -103,7 +104,7 @@ public class RunPantherScoreStep extends RunBinaryStep {
             command.add(outputFilePathName);
         }
 
-        Utilities.verboseLog("binary cmd to run: " + command.toString());
+        Utilities.verboseLog(1100, "binary cmd to run: " + command.toString());
         return command;
 
     }

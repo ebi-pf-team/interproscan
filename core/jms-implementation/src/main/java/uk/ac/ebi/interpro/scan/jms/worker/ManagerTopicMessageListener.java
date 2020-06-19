@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.worker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.jms.master.ClusterState;
 import uk.ac.ebi.interpro.scan.jms.monitoring.*;
@@ -21,7 +22,7 @@ import javax.jms.ObjectMessage;
  */
 public class ManagerTopicMessageListener implements MessageListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ManagerTopicMessageListener.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ManagerTopicMessageListener.class.getName());
 
 
     private boolean shutdown = false;
@@ -74,14 +75,14 @@ public class ManagerTopicMessageListener implements MessageListener {
                 messageContents = objectMessage.getObject();
                 if (messageContents instanceof Shutdown) {
                     if (Utilities.verboseLogLevel > 4) {
-                        Utilities.verboseLog("Worker Received Shutdown message: ");
+                        Utilities.verboseLog(1100, "Worker Received Shutdown message: ");
                     }
                     setShutdown(true);
                     workerMessageSender.sendShutDownMessage(message);
                 } else if (messageContents instanceof ClusterState) {
                     ClusterState clusterState = (ClusterState) messageContents;
                     if (Utilities.verboseLogLevel > 4) {
-                        Utilities.verboseLog("Worker Received clusterState: " + clusterState.toString());
+                        Utilities.verboseLog(1100, "Worker Received clusterState: " + clusterState.toString());
                     }
                     if (controller != null) {
                         controller.setSubmissionWorkerClusterState(clusterState);

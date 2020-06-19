@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.management.dao.StepExecutionDAO;
 import uk.ac.ebi.interpro.scan.model.Chunker;
 import uk.ac.ebi.interpro.scan.model.ChunkerSingleton;
@@ -35,7 +36,7 @@ import java.util.List;
 @Table(name = "step_execution")
 public class StepExecution implements Serializable, Comparable<StepExecution> {
 
-    protected static final Logger LOGGER = Logger.getLogger(StepExecution.class.getName());
+    protected static final Logger LOGGER = LogManager.getLogger(StepExecution.class.getName());
 
     @Transient
     private static final Chunker CHUNKER = ChunkerSingleton.getInstance();

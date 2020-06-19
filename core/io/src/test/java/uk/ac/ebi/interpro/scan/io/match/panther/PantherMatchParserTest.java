@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.panther;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import java.util.Set;
  */
 public class PantherMatchParserTest {
 
-    private static final Logger LOGGER = Logger.getLogger(PantherMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PantherMatchParserTest.class.getName());
 
     private PantherMatchParser instance;
 

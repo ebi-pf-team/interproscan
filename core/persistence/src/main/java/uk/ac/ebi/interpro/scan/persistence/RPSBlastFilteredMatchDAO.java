@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch;
@@ -22,7 +23,7 @@ import java.util.*;
 abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RPSBlastRawSite>
         extends FilteredMatchAndSiteDAOImpl<T,RPSBlastMatch, R, RPSBlastMatch.RPSBlastLocation.RPSBlastSite> {
 
-    private static final Logger LOGGER = Logger.getLogger(RPSBlastFilteredMatchDAO.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RPSBlastFilteredMatchDAO.class.getName());
 
 
     /**
@@ -143,10 +144,10 @@ abstract class RPSBlastFilteredMatchDAO<T extends RPSBlastRawMatch, R extends RP
             }
 
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-            //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey);
+            //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey);
 
             if (! proteinMatches.isEmpty()) {
-                //Utilities.verboseLog("persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+                //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
                 for(Match i5Match: proteinMatches){
                     //try update with cross refs etc
                     updateMatch(i5Match);

@@ -1,6 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.ntranslate;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequenceStrand;
 import uk.ac.ebi.interpro.scan.model.OpenReadingFrame;
 
@@ -17,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class ORFDescriptionLineParser {
 
-    private static final Logger LOGGER = Logger.getLogger(ORFDescriptionLineParser.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ORFDescriptionLineParser.class.getName());
 
     private static final Pattern GETORF_DESCRIPTION_PATTERN = Pattern.compile("\\[(\\d+)\\s+\\-\\s+(\\d+)]\\s*(\\(REVERSE SENSE\\))?\\s*(.*)$");
 

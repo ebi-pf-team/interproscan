@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.cli;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public class CommandLineConversationImpl implements CommandLineConversation {
 
-    private static volatile Logger LOGGER = Logger.getLogger(CommandLineConversationImpl.class.getName());
+    private static volatile Logger LOGGER = LogManager.getLogger(CommandLineConversationImpl.class.getName());
 
     private static final int BUFFER_SIZE = 4096;
 
@@ -126,7 +127,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Command Line: \n " + pb.command());
         }
-        if(verboseLogLevel > 5){
+        if(verboseLogLevel > 110){
             System.out.println(CommandLineConversationMonitor.getTimeNow() + " In CommandLineConversation: " + stepInstanceStepId);
         }
         Long getLockTime = System.currentTimeMillis();
@@ -140,11 +141,11 @@ public class CommandLineConversationImpl implements CommandLineConversation {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Start process in clc:  " + stepInstanceStepId);
             }
-            Utilities.verboseLog(10, CommandLineConversationMonitor.getTimeNow() + " Start process in clc:  " + stepInstanceStepId);
+            Utilities.verboseLog(20,  " Start process in clc:  " + stepInstanceStepId);
 
             //fork the process
             process = pb.start();
-            Utilities.verboseLog(10, CommandLineConversationMonitor.getTimeNow() + " Process started in clc:  " + pb.command());
+            Utilities.verboseLog(20,  " Process started in clc:  " + pb.command());
         }finally {
             if(CommandLineConversationMonitor.getBinaryRunDelay() > 0){
                 CommandLineConversationMonitor.binaryRunLock.unlock();
@@ -160,7 +161,7 @@ public class CommandLineConversationImpl implements CommandLineConversation {
         Long startuptime2 = System.currentTimeMillis() - releaseLockTime;
         Long lockTime = releaseLockTime - getLockTime;
         Long processCompleteStartUpTime = System.currentTimeMillis() - getLockTime;
-        if(verboseLogLevel > 5){
+        if(verboseLogLevel > 110){
             System.out.println(CommandLineConversationMonitor.getTimeNow()
                     + " Started process in clc:  " + stepInstanceStepId
                     + " startuptime:  " + startuptime + " ms"

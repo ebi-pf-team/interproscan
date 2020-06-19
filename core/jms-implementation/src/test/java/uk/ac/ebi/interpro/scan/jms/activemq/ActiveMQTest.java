@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.jms.activemq;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import javax.annotation.Resource;
 @Disabled("Needs to be reconfigured.")
 public class ActiveMQTest {
 
-    private static final Logger LOGGER = Logger.getLogger(ActiveMQTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ActiveMQTest.class.getName());
 
     @Resource
     private BlackBoxMaster amqstandalone;

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.prints;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.prints.PrintsPostProcessing;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -23,7 +25,7 @@ import java.util.Map;
 
 public class PrintsPostProcessingStep extends Step {
 
-    private static final Logger LOGGER = Logger.getLogger(PrintsPostProcessingStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PrintsPostProcessingStep.class.getName());
 
     private PrintsPostProcessing postProcessor;
 
@@ -68,7 +70,7 @@ public class PrintsPostProcessingStep extends Step {
         //do we need to skip
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
             String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(10, "doSkipRun - step: "  + this.getId() + " - " +  key);
+            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 

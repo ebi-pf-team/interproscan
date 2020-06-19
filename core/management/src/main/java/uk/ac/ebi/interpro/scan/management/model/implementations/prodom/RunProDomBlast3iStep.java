@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.prodom;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -18,7 +20,7 @@ import java.util.List;
  */
 public class RunProDomBlast3iStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunProDomBlast3iStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunProDomBlast3iStep.class.getName());
 
     private String perlCommand;
     private String fullPathToProDomBlast3iPerlScript;

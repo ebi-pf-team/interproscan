@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.superfamily.match;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,7 +24,7 @@ import java.util.Set;
  * @since 1.0
  */
 public class SuperFamilyMatchParserTest {
-    private static final Logger LOGGER = Logger.getLogger(SuperFamilyMatchParserTest.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SuperFamilyMatchParserTest.class.getName());
 
     private static final String TEST_FILE_NAME = "src/test/resources/data/superfamily/perlBinaryOutput.ass";
 

@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.fromonion;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.FingerPrintsMatch;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchConverter;
@@ -19,7 +21,7 @@ import java.util.Set;
  */
 public class FingerPrintsBerkeleyMatchConverter extends BerkeleyMatchConverter<FingerPrintsMatch> {
 
-    private static final Logger LOG = Logger.getLogger(FingerPrintsBerkeleyMatchConverter.class.getName());
+    private static final Logger LOG = LogManager.getLogger(FingerPrintsBerkeleyMatchConverter.class.getName());
 
     public FingerPrintsMatch convertMatch(BerkeleyMatch berkeleyMatch, Signature signature) {
 

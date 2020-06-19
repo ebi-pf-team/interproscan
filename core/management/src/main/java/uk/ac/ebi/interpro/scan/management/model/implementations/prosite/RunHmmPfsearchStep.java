@@ -1,6 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.prosite;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -19,7 +21,7 @@ import java.util.List;
  */
 public class RunHmmPfsearchStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = Logger.getLogger(RunHmmPfsearchStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunHmmPfsearchStep.class.getName());
 
     private String fullPathToPFsearch;
 
@@ -162,7 +164,7 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
 
 //        command.add(fastaFilePathName);
         LOGGER.debug("binary command: " + command.toString());
-        Utilities.verboseLog(10,  "binary command: " + command.toString());
+        Utilities.verboseLog(110,  "binary command: " + command.toString());
         return command;
     }
 }

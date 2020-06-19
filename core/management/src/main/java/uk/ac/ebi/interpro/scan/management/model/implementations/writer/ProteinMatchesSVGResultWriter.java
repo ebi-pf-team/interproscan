@@ -3,7 +3,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.writer;
 import freemarker.template.SimpleHash;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 import uk.ac.ebi.interpro.scan.web.ProteinViewHelper;
@@ -30,7 +32,7 @@ import java.util.List;
  */
 public class ProteinMatchesSVGResultWriter extends GraphicalOutputResultWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(ProteinMatchesSVGResultWriter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(ProteinMatchesSVGResultWriter.class.getName());
 
     /**
      * Writes out protein view to an zipped and compressed HTML file.

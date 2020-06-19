@@ -684,10 +684,10 @@ public class WorkerImpl implements Worker {
             boolean thisWorkerIsIdle = runningJobs.size() == 0 && exceededIdleTime;
             boolean childWorkersAreIdle = ! workersHaveRunningJobs();
             if(verboseLogLevel > 4){
-                Utilities.verboseLog("lastMessageFinished: "      + lastMessageFinishedTime
+                Utilities.verboseLog(1100, "lastMessageFinished: "      + lastMessageFinishedTime
                         +" IdleTime: "  +(now - lastMessageFinishedTime)
                         + " maxIdleTime: "  + maximumIdleTimeMillis);
-                Utilities.verboseLog("thisWorkerIsIdle : " + thisWorkerIsIdle
+                Utilities.verboseLog(1100, "thisWorkerIsIdle : " + thisWorkerIsIdle
                         + " childWorkersAreIdle : " + childWorkersAreIdle);
             }
             if (exceededLifespan
@@ -735,9 +735,9 @@ public class WorkerImpl implements Worker {
         Utilities.mode = "distributedWorker";
 
         if(verboseLogLevel > 2){
-            Utilities.verboseLog("inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog("DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
-            Utilities.verboseLog("DEBUG " + "master URL: " + tcpUri + " Tier: " + tier);
+            Utilities.verboseLog(1100, "inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
+            Utilities.verboseLog(1100, "DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
+            Utilities.verboseLog(1100, "DEBUG " + "master URL: " + tcpUri + " Tier: " + tier);
         }
 
         //setup connection to master
@@ -775,7 +775,7 @@ public class WorkerImpl implements Worker {
             }
         }
         if(isVerboseLog()){
-            Utilities.verboseLog("Worker run() main loop");
+            Utilities.verboseLog(1100, "Worker run() main loop");
         }
         //initiallise the WorkerStateMonitor
         initialWorkerState();
@@ -810,12 +810,12 @@ public class WorkerImpl implements Worker {
 
                     Long timeSinceLastDisplayWorkerState = System.currentTimeMillis() - displayWorkerStateTime;
                     if(verboseLogLevel > 5){
-                        Utilities.verboseLog("Worker : timeSinceLastDisplayWorkerState - "
+                        Utilities.verboseLog(1100, "Worker : timeSinceLastDisplayWorkerState - "
                             + TimeUnit.MILLISECONDS.toSeconds(timeSinceLastDisplayWorkerState) + "s");
                     }
                     if( TimeUnit.MILLISECONDS.toSeconds(timeSinceLastDisplayWorkerState) > 20 * 60) {
                         sendWorkerStateMessage(workerState);
-//                        Utilities.verboseLog("Worker :  sendWorkerStateMessage(workerState) - dummy");
+//                        Utilities.verboseLog(1100, "Worker :  sendWorkerStateMessage(workerState) - dummy");
                         displayWorkerStateTime = System.currentTimeMillis();
                     }
                 }
@@ -826,16 +826,16 @@ public class WorkerImpl implements Worker {
                     LOGGER.debug("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
                 if(verboseLogLevel > 5){
-                    Utilities.verboseLog("Worker response stats ");
-                    Utilities.verboseLog("Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
+                    Utilities.verboseLog(1100, "Worker response stats ");
+                    Utilities.verboseLog(1100, "Worker Run() - Response Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
                 statsUtil.pollStatsBrokerJobQueue();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
                 if(verboseLogLevel > 5){
-                    Utilities.verboseLog("Worker job request stats ");
-                    Utilities.verboseLog("Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
+                    Utilities.verboseLog(1100, "Worker job request stats ");
+                    Utilities.verboseLog(1100, "Worker Run() - RequestJobQueue Stats: " + statsUtil.getStatsMessageListener().getStats());
                 }
 
                 //check/manage remoteQueueListenerContainer
@@ -851,7 +851,7 @@ public class WorkerImpl implements Worker {
                 //create worker is necessary
                 if(canSpawnWorkers()){
                     if(verboseLogLevel > 5){
-                        Utilities.verboseLog(" Worker run() check if new worker is required");
+                        Utilities.verboseLog(1100, " Worker run() check if new worker is required");
                     }
                     if (isNewWorkersRequired()) {
                         createWorker();
@@ -879,7 +879,7 @@ public class WorkerImpl implements Worker {
                 //remoteQueueJmsContainer.shutdown();
                 remoteQueueJmsContainer.stop();
 	        long timeToShutdownContainer = System.currentTimeMillis() - startContainerShutdown;
-                Utilities.verboseLog("timeToShutdownContainer: using stop()" + timeToShutdownContainer );
+                Utilities.verboseLog(1100, "timeToShutdownContainer: using stop()" + timeToShutdownContainer );
             }
             long waitingTime = 10 * 1000;
             //if shutdown is activated reduce waiting time
@@ -907,7 +907,7 @@ public class WorkerImpl implements Worker {
                     sendWorkerStateMessage(workerState);
                     Long timeAlive = System.currentTimeMillis() - startUpTime;
                     if(verboseLogLevel > 5){
-                        Utilities.verboseLog(" Worker been alive " + String.format("%d min, %d sec",
+                        Utilities.verboseLog(1100, " Worker been alive " + String.format("%d min, %d sec",
                                 TimeUnit.MILLISECONDS.toMinutes(timeAlive),
                                 TimeUnit.MILLISECONDS.toSeconds(timeAlive) -
                                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeAlive))));
@@ -925,8 +925,8 @@ public class WorkerImpl implements Worker {
             //t- tier ws:workers spawned
             Long timeAlive = System.currentTimeMillis() - startUpTime;
             if(verboseLogLevel > 5){
-                Utilities.verboseLog(" Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawnedString() + " jobcount: " + totalJobCount);
-                Utilities.verboseLog(" Worker been alive ("
+                Utilities.verboseLog(1100, " Worker has completed tasks -  t: " + tier + " ws: " + getNumberOfWorkersSpawnedString() + " jobcount: " + totalJobCount);
+                Utilities.verboseLog(1100, " Worker been alive ("
                         + TimeUnit.MILLISECONDS.toSeconds(timeAlive) + ") "
                         + String.format("%d min, %d sec",
                         TimeUnit.MILLISECONDS.toMinutes(timeAlive),
@@ -960,7 +960,7 @@ public class WorkerImpl implements Worker {
         //send shutdown message
         try {
             if(Utilities.verboseLogLevel > 2){
-                Utilities.verboseLog("Send shutdown message to workers");
+                Utilities.verboseLog(1100, "Send shutdown message to workers");
             }
             //workerMessageSender.sendShutDownMessage();
             jmsTopicTemplate.send(workerManagerTopic, new MessageCreator() {
@@ -979,7 +979,7 @@ public class WorkerImpl implements Worker {
             LOGGER.debug("Attempting to send message to queue: " + systemMonitorQueue);
         }
         if(verboseLogLevel > 5){
-            Utilities.verboseLog("Attempting to send message to queue: " + systemMonitorQueue);
+            Utilities.verboseLog(1100, "Attempting to send message to queue: " + systemMonitorQueue);
         }
 
         try {
@@ -1033,7 +1033,7 @@ public class WorkerImpl implements Worker {
     public synchronized void handleFailure(String className){
         jmsRelatedExceptionReceived = true;
         jmsRelatedExceptionCount ++;
-        Utilities.verboseLog("Handle JMSExceptions (" + className + "): #" + jmsRelatedExceptionCount);
+        Utilities.verboseLog(1100, "Handle JMSExceptions (" + className + "): #" + jmsRelatedExceptionCount);
     }
     /**
      * Create a worker depending on the conditions specified
@@ -1056,7 +1056,7 @@ public class WorkerImpl implements Worker {
             if(verboseLog){
 //            numberOfNewWorkers = statsUtil.getUnfinishedJobs()/statsUtil.getStatsMessageListener().getConsumers();
                 if(verboseLogLevel > 5){
-                    Utilities.verboseLog("worker status: "
+                    Utilities.verboseLog(1100, "worker status: "
                             + " tier: " + tier
                             + " maxConsumerSize : " + maxConsumerSize
                             + " currentRemoteWorkersCount " + currentRemoteWorkersCount
@@ -1121,7 +1121,7 @@ public class WorkerImpl implements Worker {
         boolean canSpawnWorker = false;
 
         if(verboseLogLevel > 5){
-            Utilities.verboseLog("canSpawnWorkers - gridName: "
+            Utilities.verboseLog(1100, "canSpawnWorkers - gridName: "
                     +  gridName
                     + " tier : " + tier
                     + " maxTierDepth: " + maxTierDepth
@@ -1135,9 +1135,9 @@ public class WorkerImpl implements Worker {
         if(clusterState != null){
             Long timeSinceClusterLastUpdatedClusterState = System.currentTimeMillis()  - clusterState.getLastUpdated();
             //TODO move to a controller bean
-            Utilities.verboseLog("timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
+            Utilities.verboseLog(1100, "timeSinceClusterLastUpdatedClusterState: " + timeSinceClusterLastUpdatedClusterState);
             if(timeSinceClusterLastUpdatedClusterState > 2 * gridCheckInterval * 1000){
-                Utilities.verboseLog("ClusterState is not uptodate:" + clusterState.toString());
+                Utilities.verboseLog(1100, "ClusterState is not uptodate:" + clusterState.toString());
                 return false;
             }
         }else{
@@ -1297,7 +1297,7 @@ public class WorkerImpl implements Worker {
         int remoteWorkerCount = consumerCount - maxConcurrentInVmWorkerCount;
         int queueSize = statsMessageListener.getQueueSize();
         if(verboseLogLevel > 5){
-            Utilities.verboseLog("isNewWorkersRequired: maxConsumerSize : "
+            Utilities.verboseLog(1100, "isNewWorkersRequired: maxConsumerSize : "
                     +  maxConsumerSize
                     + " TotalConsumers: "  + consumerCount
                     + " QueueSize: "   + queueSize
@@ -1318,7 +1318,7 @@ public class WorkerImpl implements Worker {
                 LOGGER.debug("New worker Required  quickSpawnMode: " + quickSpawnMode);
             }
             if(verboseLogLevel > 5){
-                Utilities.verboseLog("isNewWorkersRequired: maxConsumerSize : "
+                Utilities.verboseLog(1100, "isNewWorkersRequired: maxConsumerSize : "
                         +  maxConsumerSize
                         + " currentRemoteWorkersCount " + remoteWorkerCount
                         + " queueConsumerRatio: " + queueConsumerRatio

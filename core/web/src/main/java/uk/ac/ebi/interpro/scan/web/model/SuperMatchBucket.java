@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.web.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public class SuperMatchBucket implements Serializable {
 
-    private static final Logger LOGGER = Logger.getLogger(SuperMatchBucket.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(SuperMatchBucket.class.getName());
 
     private final List<SimpleSuperMatch> supermatches = new ArrayList<SimpleSuperMatch>();
 
