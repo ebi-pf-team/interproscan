@@ -98,7 +98,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 seedAlignments = seedAlignmentData.getSeedAlignments(proteinId);
             }
 
-            Utilities.verboseLog(25,"Pfam A post processing: processing protein " + proteinId);
+            Utilities.verboseLog(120,"Pfam A post processing: processing protein " + proteinId);
             proteinIdToRawProteinMap.put(proteinId, processProtein(proteinIdToRawMatchMap.get(proteinId), nestedModelsMap, seedAlignments));
         }
         if (LOGGER.isDebugEnabled()) {
@@ -119,8 +119,8 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return a List of filtered matches.
      */
     private RawProtein processProtein(final RawProtein<PfamHmmer3RawMatch> rawProteinUnfiltered, final Map<String, Set<String>> nestedModelsMap, final List<SeedAlignment> seedAlignments) {
-        int verboseLevel = 25;
-        Utilities.verboseLog(verboseLevel,"Start processProtein ---oo--");
+        int localVerboseLevel = 120;
+        Utilities.verboseLog(localVerboseLevel,"Start processProtein ---oo--");
         RawProtein<PfamHmmer3RawMatch> filteredMatches = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
         RawProtein<PfamHmmer3RawMatch> filteredRawProtein = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
 
@@ -129,7 +129,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
         final Set<PfamHmmer3RawMatch> seedMatches = new HashSet<PfamHmmer3RawMatch>();
 
         if (seedAlignments != null) {        // TODO This check can be removed, once the seed alignment stuff has been sorted.
-            Utilities.verboseLog(verboseLevel,"seedAlignments count:" + seedAlignments.size());
+            Utilities.verboseLog(localVerboseLevel,"seedAlignments count:" + seedAlignments.size());
             for (final SeedAlignment seedAlignment : seedAlignments) {
                 for (final PfamHmmer3RawMatch candidateMatch : rawProteinUnfiltered.getMatches()) {
 
@@ -139,7 +139,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                 seedAlignment.getAlignmentEnd() >= candidateMatch.getLocationEnd()) {
                             // Found a match to a seed, where the coordinates fall within the seed alignment.
                             // Add it directly to the filtered rawProteinUnfiltered...
-                            Utilities.verboseLog(verboseLevel,"found match to a seed - candidateMatch and seedMatch: " + candidateMatch);
+                            Utilities.verboseLog(localVerboseLevel,"found match to a seed - candidateMatch and seedMatch: " + candidateMatch);
                             filteredMatches.addMatch(candidateMatch);
                             seedMatches.add(candidateMatch);
                         }
@@ -151,16 +151,16 @@ public class PfamHMMER3PostProcessing implements Serializable {
         // Then iterate over the non-seed raw rawProteinUnfiltered, sorted in order ievalue ASC score DESC
         final Set<PfamHmmer3RawMatch> unfilteredByEvalue = new TreeSet<PfamHmmer3RawMatch>(rawProteinUnfiltered.getMatches());
 
-        Utilities.verboseLog(verboseLevel,"unfilteredByEvalue count: " + unfilteredByEvalue.size());
-        Utilities.verboseLog(verboseLevel,"unfilteredByEvalue: " + unfilteredByEvalue);
+        Utilities.verboseLog(localVerboseLevel,"unfilteredByEvalue count: " + unfilteredByEvalue.size());
+        Utilities.verboseLog(localVerboseLevel,"unfilteredByEvalue: " + unfilteredByEvalue);
         for (final RawMatch rawMatch : unfilteredByEvalue) {
             final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
-            Utilities.verboseLog(verboseLevel,"consider match - candidateMatch: " + candidateMatch);
+            Utilities.verboseLog(localVerboseLevel,"consider match - candidateMatch: " + candidateMatch);
             if (!seedMatches.contains(candidateMatch)) {
                 final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModelId());
 
                 boolean passes = true;   // Optimistic algorithm!
-                Utilities.verboseLog(verboseLevel,"candidateMatchClan: " + candidateMatchClan);
+                Utilities.verboseLog(localVerboseLevel,"candidateMatchClan: " + candidateMatchClan);
                 if (candidateMatchClan != null) {
                     // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
                     for (final PfamHmmer3RawMatch match : filteredMatches.getMatches()) {
@@ -174,7 +174,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                     passes = false;
                                     break;  // out of loop over filtered rawProteinUnfiltered.
                                 } else {
-                                    Utilities.verboseLog(verboseLevel,"nested match: candidateMatch - " + candidateMatch
+                                    Utilities.verboseLog(localVerboseLevel,"nested match: candidateMatch - " + candidateMatch
                                             + " other match:- " + match);
                                 }
                             }
@@ -196,19 +196,19 @@ public class PfamHMMER3PostProcessing implements Serializable {
 //                Utilities.verboseLog(1100, "testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
 //            }
 //        }
-        Utilities.verboseLog(verboseLevel,"The matches found so far: ");
+        Utilities.verboseLog(localVerboseLevel,"The matches found so far: ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
-            Utilities.verboseLog(verboseLevel,pfamHmmer3RawMatch.getModelId() + " [" +
+            Utilities.verboseLog(localVerboseLevel,pfamHmmer3RawMatch.getModelId() + " [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
         }
-        Utilities.verboseLog(verboseLevel,"  --ooo--- ");
+        Utilities.verboseLog(localVerboseLevel,"  --ooo--- ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             String modelId = pfamHmmer3RawMatch.getModelId();
-            Utilities.verboseLog(verboseLevel,"ModelId to consider: " + modelId + " region: [" +
+            Utilities.verboseLog(localVerboseLevel,"ModelId to consider: " + modelId + " region: [" +
                     pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
 
             Set<String> nestedModels = nestedModelsMap.get(modelId);
-            Utilities.verboseLog(verboseLevel,"nestedModels: " + nestedModels);
+            Utilities.verboseLog(localVerboseLevel,"nestedModels: " + nestedModels);
             if (nestedModels != null && ! nestedModels.isEmpty()) {
                 final UUID splitGroup = UUID.randomUUID();
                 pfamHmmer3RawMatch.setSplitGroup(splitGroup);
@@ -223,7 +223,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                         nestedFragments ++;
                     }
                 }
-                Utilities.verboseLog(verboseLevel,"locationFragments to consider:  (# " + nestedFragments + ")" + locationFragments.toString());
+                Utilities.verboseLog(localVerboseLevel,"locationFragments to consider:  (# " + nestedFragments + ")" + locationFragments.toString());
                 //the following is for testing only should be removed in the main code later
 //                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
 //                        380, 395));
@@ -235,12 +235,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
                 rawDiscontinuousMatches.add(pfamHmmer3RawMatch);
                 if (nestedFragments > 1){
-                    Utilities.verboseLog(verboseLevel,"nestedFragments > 1 require special investigation ");
+                    Utilities.verboseLog(localVerboseLevel,"nestedFragments > 1 require special investigation ");
                 }
                 for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
                     List<PfamHmmer3RawMatch> newMatchesFromFragment  = new ArrayList<>();
                     for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
-                        Utilities.verboseLog(verboseLevel,"rawDiscontinuousMatch to consider: " + rawDiscontinuousMatch.toString());
+                        Utilities.verboseLog(localVerboseLevel,"rawDiscontinuousMatch to consider: " + rawDiscontinuousMatch.toString());
                         int newLocationStart = rawDiscontinuousMatch.getLocationStart();
                         int newLocationEnd = rawDiscontinuousMatch.getLocationEnd();
                         int finalLocationEnd = rawDiscontinuousMatch.getLocationEnd();
@@ -266,7 +266,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             fragmentDCStatus = null;
                         }
                         boolean twoAtualRegions = false;
-                        Utilities.verboseLog(verboseLevel,"region to consider: " + fragment.toString());
+                        Utilities.verboseLog(localVerboseLevel,"region to consider: " + fragment.toString());
                         if (fragment.getStart() <= newLocationStart) {
                             newLocationStart = fragment.getEnd() + 1;
                             fragmentDCStatus = DCStatus.N_TERMINAL_DISC;
@@ -279,22 +279,22 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             twoAtualRegions = true;
                             fragmentDCStatus = DCStatus.getNewDCStatus(fragmentDCStatus,  DCStatus.C_TERMINAL_DISC);
                         }
-                        Utilities.verboseLog(verboseLevel,"New Region: " + newLocationStart + "-" + newLocationEnd);
+                        Utilities.verboseLog(localVerboseLevel,"New Region: " + newLocationStart + "-" + newLocationEnd);
                         PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentDCStatus);
                         pfMatchRegionOne.setSplitGroup(splitGroup);
                         pfMatchRegionOne.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
                         newMatchesFromFragment.add(pfMatchRegionOne);
                         newLocationStart = fragment.getEnd() + 1;
-                        Utilities.verboseLog(verboseLevel," New Match for Region One  :" + pfMatchRegionOne.toString());
+                        Utilities.verboseLog(localVerboseLevel," New Match for Region One  :" + pfMatchRegionOne.toString());
                         if (twoAtualRegions) {
                             //deal with final region
                             fragmentDCStatus = DCStatus.N_TERMINAL_DISC;
-                            Utilities.verboseLog(verboseLevel,"The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
+                            Utilities.verboseLog(localVerboseLevel,"The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
                             PfamHmmer3RawMatch pfMatchRegionTwo = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd, fragmentDCStatus);
                             pfMatchRegionTwo.setSplitGroup(splitGroup);
                             pfMatchRegionTwo.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
                             newMatchesFromFragment.add(pfMatchRegionTwo);
-                            Utilities.verboseLog(verboseLevel," New Match for Region Two :" + pfMatchRegionTwo.toString());
+                            Utilities.verboseLog(localVerboseLevel," New Match for Region Two :" + pfMatchRegionTwo.toString());
                         }
                     }
                     rawDiscontinuousMatches = newMatchesFromFragment;

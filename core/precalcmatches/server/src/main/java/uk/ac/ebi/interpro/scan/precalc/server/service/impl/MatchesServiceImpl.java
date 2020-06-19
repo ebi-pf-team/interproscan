@@ -267,7 +267,7 @@ public class MatchesServiceImpl implements MatchesService {
                " md5_counts: " + hourlyMD5TotalRequests + " " + hourlyMD5Md5TotalCount  + " " + hourlyMD5TotalTimeToGetMatches;
         if (hourlyTotalRequests > 0) {
             //not yet for jetty, but should it not say its alive
-            System.out.println(Utilities.getTimeNow() + outMessage);
+            //System.out.println(Utilities.getTimeNow() + outMessage);
         }
 
 

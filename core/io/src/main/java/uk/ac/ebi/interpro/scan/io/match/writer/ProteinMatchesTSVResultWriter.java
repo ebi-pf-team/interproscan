@@ -166,10 +166,10 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 }
             }
         }
-        Utilities.verboseLog(10, "signatures without descriptions: " + signaturesWithNoDescription.size());
-        if (Utilities.verboseLogLevel >= 110) {
+        Utilities.verboseLog(120, "signatures without descriptions: " + signaturesWithNoDescription.size());
+        if (Utilities.verboseLogLevel >= 120) {
             for (String signatureWithNoDescription : signaturesWithNoDescription) {
-                Utilities.verboseLog(110, signatureWithNoDescription);
+                Utilities.verboseLog(120, signatureWithNoDescription);
             }
         }
         return locationCount;

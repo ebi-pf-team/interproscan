@@ -149,7 +149,7 @@ public class StepCreationSequenceLoadListener
                     String extraLookupMessage = "This information can help you decide whether to use the lookup match service for your kind of input or switch the lookup match service off.";
                     if (percentageOfProteinsinLookup < 25 ) {
                         // extraLookupMessage = "Check www.ebi.ac.uk/interpro to see if the lookup up is efficient for your kind of input";
-                        System.out.println(Utilities.getTimeNow() + " Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
+                        Utilities.verboseLog(10, " Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
                                 + " unique input sequences were found in the match lookup server. " + extraLookupMessage);
                     }
                 }
@@ -166,7 +166,7 @@ public class StepCreationSequenceLoadListener
                         rawMaxProteins = 1;
                     }
                     int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
-                    Utilities.verboseLog(1100, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
+                    Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                     Utilities.verboseLog(1100, "Create prepare output jobs for this run ...");
 
                     for (Step step : prepareOutputJob.getSteps()) {
@@ -183,8 +183,9 @@ public class StepCreationSequenceLoadListener
                         }
                         stepToStepInstances.put(step, jobStepInstances);
                         prepareOutputStepInstances.addAll(jobStepInstances);
-                        Utilities.verboseLog(1100, "Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances");
+                        Utilities.verboseLog(30, "Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances");
                     }
+                    Utilities.prepareOutputInstances = prepareOutputStepInstances.size();
                 } else {
                     Utilities.verboseLog(120, "PrepareOutputJob Job is NULL ");
                 }
@@ -220,7 +221,7 @@ public class StepCreationSequenceLoadListener
                     rawMaxProteins = 1;
                 }
                 int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
-                Utilities.verboseLog(120, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
+                Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                 for (Step step : matchLookupJob.getSteps()) {
                     //StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);
                     step.setMaxProteins(maxProteins);

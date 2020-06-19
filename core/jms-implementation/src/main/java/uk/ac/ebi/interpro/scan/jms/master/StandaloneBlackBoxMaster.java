@@ -48,9 +48,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.periodicGCCall = periodicGCCall;
 
-//        System.out.println(Utilities.getTimeNow()
-//                + " verboseLog: " + Utilities.verboseLog
-//                + " verboseLogLevel: " + Utilities.verboseLogLevel);
+
+        Utilities.verboseLog( 20, " verboseLog: " + Utilities.verboseLog
+                + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
         int runStatus = 11;
         if(verboseLogLevel >= 110) {
@@ -115,6 +115,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 + " active: " + workerQueueJmsContainer.getActiveConsumerCount()  );
 
         long nowAfterLoadingDatabase = now;
+
+        Utilities.cpuCount = workerQueueJmsContainer.getMaxConcurrentConsumers();
+
         try {
             loadInMemoryDatabase();
             runStatus = 21;
@@ -214,7 +217,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
                     if (scheduleGCTime >= 30 * 60 * 1000){
                         scheduleGCStart = System.currentTimeMillis();
-                        Utilities.verboseLog(0,
+                        Utilities.verboseLog(10,
                         "stepInstanceDAO.count() " + stepInstanceDAO.count()
                                 + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                 + " minimumStepsExpected : " + minimumStepsExpected
@@ -311,7 +314,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
                 if (scheduleGCTime >= 30 * 60 * 1000){
                     scheduleGCStart = System.currentTimeMillis();
-                    Utilities.verboseLog(0,
+                    Utilities.verboseLog(10,
                             "stepInstanceDAO.count() " + stepInstanceDAO.count()
                                     + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                     + " minimumStepsExpected : " + minimumStepsExpected
