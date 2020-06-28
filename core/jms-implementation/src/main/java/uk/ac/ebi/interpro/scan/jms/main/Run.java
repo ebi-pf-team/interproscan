@@ -729,7 +729,7 @@ public class Run extends AbstractI5Runner {
                         logLevel = verboseOptionAsInteger;
                     }
                 }else{
-                    logLevel = logLevels.get(verboseOption.strip());
+                    logLevel = logLevels.get(verboseOption); //verboseOption.strip()
                 }
                 bbMaster.setVerboseLog(true);
                 bbMaster.setVerboseLogLevel(logLevel);
