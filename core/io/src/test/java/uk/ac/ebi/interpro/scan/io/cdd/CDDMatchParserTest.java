@@ -1,27 +1,26 @@
 package uk.ac.ebi.interpro.scan.io.cdd;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.getorf.MatchSiteData;
 import uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser;
-import uk.ac.ebi.interpro.scan.model.raw.*;
+import uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.CDDRawSite;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.RawProteinSite;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**

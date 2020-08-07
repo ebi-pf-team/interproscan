@@ -1,9 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.prosite;
 
-import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -20,7 +24,7 @@ import java.io.IOException;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PrositeDatFileParserTest extends TestCase {
+public class PrositeDatFileParserTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PrositeDatFileParserTest.class.getName());
 

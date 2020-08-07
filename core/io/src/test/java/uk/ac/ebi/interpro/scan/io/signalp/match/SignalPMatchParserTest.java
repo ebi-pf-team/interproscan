@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.io.signalp.match;
 
-import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
@@ -13,6 +12,10 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Test the SignalP binary output file parser.
  *
@@ -20,7 +23,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class SignalPMatchParserTest extends TestCase {
+public class SignalPMatchParserTest  {
 
     SignatureLibraryRelease slr = new SignatureLibraryRelease(SignatureLibrary.SIGNALP_EUK, "4.1");
 
