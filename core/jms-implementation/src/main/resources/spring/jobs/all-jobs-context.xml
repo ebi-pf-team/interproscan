@@ -19,7 +19,6 @@
     <import resource="jobPfam-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
     <import resource="jobPrints-42.0-context.xml"/>
-    <import resource="jobProDom-2006.1-context.xml"/>
     <import resource="jobPrositeProfiles-context.xml"/>
     <import resource="jobPrositePatterns-context.xml"/>
     <import resource="jobSFLD-context.xml"/>
@@ -62,7 +61,6 @@
                 <ref bean="jobPhobius"/>
                 <ref bean="jobPIRSF" />
                 <ref bean="jobPRINTS-42.0"/>
-                <ref bean="jobProDom-2006.1"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
                 <ref bean="jobSFLD"/>

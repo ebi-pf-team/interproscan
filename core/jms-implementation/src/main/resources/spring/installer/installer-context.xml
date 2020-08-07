@@ -124,14 +124,6 @@
                     <property name="analysisJobId" value="jobPIRSF"/>
                 </bean>
 
-                <bean class="uk.ac.ebi.interpro.scan.io.prodom.model.ProDomModelParser">
-                    <property name="signatureLibrary" value="PRODOM"/>
-                    <property name="releaseVersionNumber" value="2006.1"/>
-                    <property name="modelFiles" value="file:${prodom.ipr.path.2006.1}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobProDom-2006.1"/>
-                </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
                     <property name="analysisJobId" value="jobPanther"/>
