@@ -124,6 +124,14 @@
                     <property name="analysisJobId" value="jobPIRSF"/>
                 </bean>
 
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PIRSR"/>
+                    <property name="releaseVersionNumber" value="${pirsr.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${pirsr.srhmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPIRSR"/>
+                </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
                     <property name="analysisJobId" value="jobPanther"/>
