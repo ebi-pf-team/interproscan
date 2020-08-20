@@ -185,7 +185,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, fasta_f
         #    append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
         #    with open(temp_output_file, 'a') as out_temp_file:
         #        out_temp_file.write(output)
-        output = clean_output(output)
+        #output = clean_output(output)
         if output.strip():
             with open(output_file, 'a') as out_file:
                 out_file.write(output + '\n')

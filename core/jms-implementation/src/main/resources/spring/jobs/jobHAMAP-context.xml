@@ -116,7 +116,13 @@
     <bean id="stepHamapHMMParsePfSearchRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParseHamapPfsearchOutputStep"
           parent="abstractHamapHMMStep">
-        <property name="dependsUpon" ref="stepHamapHMMRunPFSearch"/>
+        <property name="dependsUpon" >
+            <list>
+                <ref bean="stepHamapRunPFScan"/>
+                <ref bean="stepHamapHMMRunWithFilterPFScan"/>
+                <ref bean="stepHamapHMMRunPFSearch"/>
+            </list>
+        </property>
         <property name="stepDescription" value="Parse the output from the ProSite binary"/>
         <property name="serialGroup" value="PARSE_HAMAP"/>
         <property name="retries" value="3"/>

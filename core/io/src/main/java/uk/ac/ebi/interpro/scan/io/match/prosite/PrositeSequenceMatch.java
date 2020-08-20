@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,11 +25,11 @@ public class PrositeSequenceMatch implements Serializable {
      * Group 4:
      */
     //public static final Pattern SEQUENCE_LINE_PATTERN =
-            //Pattern.compile("^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+\\S+=(\\S+)\\|\\S+\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+(.*)");
+    //Pattern.compile("^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+\\S+=(\\S+)\\|\\S+\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+(.*)");
 
     //TODO  make this pattern simpler, sub groups?
-    public static final Pattern SEQUENCE_LINE_PATTERN = Pattern.compile("/^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+motif=(\\S+)\\|\\S+\\s+norm_score=(\\S+)\\s+raw_score=(\\S+)\\s+level=(\\S+)\\s+level_tag=(\\S+)\\s+motif_start=" +;
-
+    public static final Pattern SEQUENCE_LINE_PATTERN = Pattern.compile("/^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+motif=(\\S+)\\|\\S+\\s+norm_score=(\\S+)\\s+raw_score=(\\S+)\\s+level=(\\S+)\\s+level_tag=(\\S+)\\s+motif_start=" +
+        "(\\S+)\\s+motif_end=(\\S+)\\|\\S+\\s+seq_end=(\\S+)\\s+motif_rev=(\\S+)\\s+strand=\\+(.*)/");
 
     // The following  ints are to help with extracting data from the Pattern above - KEEP THEM IN SYNC!
     public static final int SEQ_ID_GROUP = 1;
@@ -88,9 +89,9 @@ public class PrositeSequenceMatch implements Serializable {
             this.score = Double.parseDouble(lineTokens[7]);
             this.level = 1; //Integer.parseInt(lineTokens[xx]); find out if its possible to output the level here
             this.alignment = lineTokens[9];
-            System.out.println("alignment : " + this.alignment);
+            Utilities.verboseLog(40, "alignment : " + this.alignment);
         }
-        System.out.println("alignment for " + this.sequenceIdentifier + " and model " + this.model + " : " + this.alignment);
+        Utilities.verboseLog(40, "alignment for " + this.sequenceIdentifier + " and model " + this.model + " : " + this.alignment);
     }
 
     public String getSequenceIdentifier() {

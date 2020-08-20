@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -47,13 +48,17 @@ public class ProfilePostProcessing<T extends ProfileScanRawMatch> implements Ser
             LOGGER.warn("The ProfilePostProcessing class has been initialised such that NO matches will pass. (The list of acceptable levels is empty).");
         }
         Map<String, RawProtein<T>> filteredMatches = new HashMap<String, RawProtein<T>>();
+        Utilities.verboseLog(40, "hamap proteinIdToRawMatchMap: " + proteinIdToRawMatchMap.toString());
         for (String candidateProteinId : proteinIdToRawMatchMap.keySet()) {
             RawProtein<T> candidateRawProtein = proteinIdToRawMatchMap.get(candidateProteinId);
             RawProtein<T> filteredProtein = new RawProtein<T>(candidateRawProtein.getProteinIdentifier());
+            Utilities.verboseLog(40, "candidateProteinId : " + candidateProteinId);
             for (T rawMatch : candidateRawProtein.getMatches()) {
-                if (passLevels.contains(rawMatch.getLevel())) {
+                Utilities.verboseLog(40, "hamap candidate match: " + rawMatch.toString());
+
+                //if (passLevels.contains(rawMatch.getLevel())) {
                     filteredProtein.addMatch(rawMatch);
-                }
+                //}
             }
             if (filteredProtein.getMatches() != null && filteredProtein.getMatches().size() > 0) {
                 filteredMatches.put(candidateProteinId, filteredProtein);

@@ -54,7 +54,7 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
     protected PfScanRawMatch createMatch(String line) {
         //>testseq1/7-307 motif=MF_00001|Asp_carb_tr norm_score=38.022 raw_score=6449 level=1 seq_end=-5 motif_start=1 motif_end=-1
         LOGGER.debug("parsing line: " + line);
-        Utilities.verboseLog(20, "parsing line: " + line);
+        Utilities.verboseLog(40, "parsing line: " + line);
 
         //MF_01458|FtsH	1	-1	UPI00043D6473	658	1179	13110	32.021942	+	Q
 
@@ -62,8 +62,9 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
             return null;
         }
         PrositeSequenceMatch sequenceMatch = new PrositeSequenceMatch(line);
-        Utilities.verboseLog(20, "alighment is ... -> " + sequenceMatch.getAlignment());
+        Utilities.verboseLog(40, "alighment is ... -> " + sequenceMatch.getAlignment());
         if (sequenceMatch != null) {
+            Utilities.verboseLog(20, "1. We found match ..." + sequenceMatch.toString());
             return buildMatchObject(
                     sequenceMatch.getSequenceIdentifier(),
                     sequenceMatch.getModel(),
@@ -79,8 +80,9 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
             Matcher sequenceMatchLineMatcher = PrositeSequenceMatch.SEQUENCE_LINE_PATTERN.matcher(line);
             if (sequenceMatchLineMatcher.matches()) {
                 LOGGER.debug("We found match ...");
-                Utilities.verboseLog(20, "We found match ...");
+
                 sequenceMatch = new PrositeSequenceMatch(sequenceMatchLineMatcher);
+                Utilities.verboseLog(20, "2. We found match ..." + sequenceMatch.toString());
                 return buildMatchObject(
                         sequenceMatch.getSequenceIdentifier(),
                         sequenceMatch.getModel(),
