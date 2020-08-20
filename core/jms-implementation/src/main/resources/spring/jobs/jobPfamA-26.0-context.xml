@@ -45,7 +45,7 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
@@ -84,7 +84,7 @@
         <property name="serialGroup" value="PARSE_PFAM_A"/>
         <property name="rawMatchDAO" ref="pfamRawMatchDAO-26.0"/>
         <property name="retries" value="3"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPfamADeleteHmmerOutput-26.0"
@@ -92,7 +92,7 @@
           parent="abstractPfamAStep-26.0">
         <property name="dependsUpon" ref="stepPfamAParseHmmerOutput-26.0"/>
         <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 

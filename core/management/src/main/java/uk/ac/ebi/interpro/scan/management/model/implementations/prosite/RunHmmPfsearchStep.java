@@ -31,7 +31,7 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
 
     private String fastaFileNameTemplate;
 
-    private String statsFileNameTemplate;
+    private String fastaFileNameFilteredTemplate;
 
     private String fullPathToConfirmatoryProfiles;
 
@@ -120,12 +120,12 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
         this.fullPathToPfsearchWrapper = fullPathToPfsearchWrapper;
     }
 
-    public String getStatsFileNameTemplate() {
-        return statsFileNameTemplate;
+    public String getFastaFileNameFilteredTemplate() {
+        return fastaFileNameFilteredTemplate;
     }
 
-    public void setStatsFileNameTemplate(String statsFileNameTemplate) {
-        this.statsFileNameTemplate = statsFileNameTemplate;
+    public void setFastaFileNameFilteredTemplate(String fastaFileNameFilteredTemplate) {
+        this.fastaFileNameFilteredTemplate = fastaFileNameFilteredTemplate;
     }
 
     /**
@@ -138,7 +138,7 @@ public class RunHmmPfsearchStep extends RunBinaryStep {
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
-        final String statsFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getStatsFileNameTemplate());
+        final String statsFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameFilteredTemplate());
         final String fileNameTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileNameTbloutTemplate);
         final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, outputFileTemplate);
 

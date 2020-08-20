@@ -76,7 +76,7 @@
         <!--<property name="binarySwitches" value="-D I -E 1e-3 -T temp/ -n -o stdout.txt -e stderr.txt"/>-->
         <property name="binarySwitches" value="-D I -E 1e-3 -n"/>
         <property name="perlScriptTempDir" value="${panther.temporary.file.directory}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -105,7 +105,7 @@
         <property name="serialGroup" value="PARSE_PANTHER"/>
         <property name="retries" value="3"/>
         <property name="signatureLibraryRelease" value="7.0"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPantherDeleteRawOutput"
@@ -113,7 +113,7 @@
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherParseOutput"/>
         <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <!-- STEP 4: Filter and persist filtered results -->

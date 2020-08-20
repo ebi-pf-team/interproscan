@@ -38,7 +38,7 @@
         <property name="fullPathToBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="-Z 10019 --domE 1 ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path.3.3.0}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -57,7 +57,7 @@
           parent="abstractGene3dStep-3.3.0">
         <property name="dependsUpon" ref="stepGene3dRunHmmer3-3.3.0"/>
         <property name="stepDescription" value="Parse output from HMMER3"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <!--<property name="fullPath"                       value="${gene3d.hmm.path.3.3.0}"/>-->
         <property name="serialGroup" value="PARSE_GENE3D"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
@@ -83,7 +83,7 @@
           parent="abstractGene3dStep-3.3.0">
         <property name="dependsUpon" ref="stepGene3dParseHmmerOutput-3.3.0"/>
         <property name="stepDescription" value="Delete HMMER output file after parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepCreateSsfFile-3.3.0"

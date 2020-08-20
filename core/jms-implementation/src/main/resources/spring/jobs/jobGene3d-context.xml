@@ -42,10 +42,10 @@
                   value="${hmmer3.hmmsearch.switches.gene3d} ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path}"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
@@ -57,10 +57,10 @@
         <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
         <property name="stepDescription" value="Run CathResolveHits"/>
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
-        <property name="crhInputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="crhInputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fullPathToBinary" value="${cath.resolve.hits.path}"/>
         <property name="binarySwitches" value="${cath.resolve.hits.switches.gene3d}"/>
-        <property name="crhOutputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="crhOutputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
@@ -70,13 +70,13 @@
         <property name="dependsUpon" ref="stepRunCathResolveHitsStep"/>
         <property name="stepDescription" value="Run AssignCathFamilyStep"/>
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
-        <property name="inputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="inputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="domainToFamilyMapFile" value="${gene3d.model2sf_map.path}"/>
         <property name="discontinuousRegionsFile" value="${gene3d.discontinuous_regs.path}"/>
         <property name="fullPathToPython" value="${python3.command}"/>
         <property name="fullPathToBinary" value="${assign.cath.superfamilies.path}"/>
         <property name="binarySwitches" value="${assign.cath.superfamilies.switches.gene3d}"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputTwoFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
@@ -91,8 +91,8 @@
         </property>
         <property name="stepDescription" value="Parse output from HMMER3 and CathResolveHits"/>
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
-        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalaysisOutputTwoFileTemplate"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalysisOutputTwoFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
 
         <property name="serialGroup" value="PARSE_GENE3D"/>
         <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
@@ -136,8 +136,8 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
-                <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputOneFileTemplate"/>
             </list>
         </property>
         <property name="deleteWorkingDirectoryOnCompletion" value="false"/>

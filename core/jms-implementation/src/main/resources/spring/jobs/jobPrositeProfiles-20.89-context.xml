@@ -45,7 +45,7 @@
         <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile-20.89"/>
         <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
         <property name="binarySwitches" value="-s -m -o gff"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
@@ -70,7 +70,7 @@
         <property name="stepDescription" value="Parse the output from the Prosite binary"/>
         <property name="serialGroup" value="PARSE_PROSITE_PROFILES"/>
         <property name="retries" value="3"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="prositeProfilesRawMatchDAO-20.89"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.PrositeProfileMatchParser">
@@ -87,7 +87,7 @@
           parent="abstractPrositeProfileStep-20.89">
         <property name="dependsUpon" ref="stepPrositeProfilesParseRawOutput-20.89"/>
         <property name="stepDescription" value="Delete the binary output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPrositeProfilesPostProcessing-20.89"

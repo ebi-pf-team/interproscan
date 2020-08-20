@@ -45,7 +45,7 @@
         <!--More specific properties-->
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
         <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToHmmFile" value="${pirsf.hmm.bin.path.2.79}"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -59,7 +59,7 @@
         <property name="dependsUpon" ref="stepPIRSFRunBinarySuperfam-2.79"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
         <!--More specific properties-->
-        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="hmmerOutputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.79"/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
         <property name="parser">
@@ -112,7 +112,7 @@
         <!--More specific properties-->
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
         <property name="binarySwitches" value="-A 0 --cpu 1 --acc -E 0.01"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplateSubFam-2.79"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplateSubFam-2.79"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToHmmFile" value="${pirsf.hmm.subf.bin.path.2.79}"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -128,7 +128,7 @@
         <property name="dependsUpon" ref="stepPIRSFRunBinarySubfam-2.79"/>
         <property name="stepDescription" value="Parse the HMMER 2 binary output and store as raw matches."/>
         <!--More specific properties-->
-        <property name="hmmerOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplateSubFam-2.79"/>
+        <property name="hmmerOutputFileNameTemplate" ref="rawAnalysisOutputFileTemplateSubFam-2.79"/>
         <property name="rawMatchDAO" ref="pirsfRawMatchDAO-2.79"/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
         <property name="parser">
@@ -241,7 +241,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
                 <ref bean="filteredMatchesFileName-2.79"/>
                 <ref bean="blastMatchesFileName-2.79"/>
                 <ref bean="fastaToBlastFileName-2.79"/>
@@ -293,7 +293,7 @@
         <constructor-arg value="[PROTSTART]_[PROTEND].subfam.out"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputFileTemplateSubFam-2.79" class="java.lang.String">
+    <bean id="rawAnalysisOutputFileTemplateSubFam-2.79" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].subfam.raw.out"/>
     </bean>
 

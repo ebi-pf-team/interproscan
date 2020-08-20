@@ -48,7 +48,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.periodicGCCall = periodicGCCall;
 
-
+        Utilities.verboseLog(30, "TemporaryDirectory: " + getTemporaryDirectory());
         Utilities.verboseLog( 20, " verboseLog: " + Utilities.verboseLog
                 + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
