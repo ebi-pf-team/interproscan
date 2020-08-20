@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
 
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,15 +53,34 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
     @Override
     protected PfScanRawMatch createMatch(String line) {
         //>testseq1/7-307 motif=MF_00001|Asp_carb_tr norm_score=38.022 raw_score=6449 level=1 seq_end=-5 motif_start=1 motif_end=-1
+        LOGGER.debug("parsing line: " + line);
+        Utilities.verboseLog(20, "parsing line: " + line);
 
+        //MF_01458|FtsH	1	-1	UPI00043D6473	658	1179	13110	32.021942	+	Q
 
-        LOGGER.debug("parsing line: " +  line);
-
-        if (line.startsWith(START_OF_MATCH)) {
+        if (line.strip().isEmpty()){
+            return null;
+        }
+        PrositeSequenceMatch sequenceMatch = new PrositeSequenceMatch(line);
+        Utilities.verboseLog(20, "alighment is ... -> " + sequenceMatch.getAlignment());
+        if (sequenceMatch != null) {
+            return buildMatchObject(
+                    sequenceMatch.getSequenceIdentifier(),
+                    sequenceMatch.getModel(),
+                    this.getSignatureLibraryRelease(),
+                    sequenceMatch.getSequenceStart(),
+                    sequenceMatch.getSequenceEnd(),
+                    cigarEncoder.encode(sequenceMatch.getAlignment()),
+                    sequenceMatch.getScore(),
+                    ProfileScanRawMatch.Level.byLevelString(Integer.toString(sequenceMatch.getLevel())),
+                    null
+            );
+        } else if (line.startsWith(START_OF_MATCH)) {
             Matcher sequenceMatchLineMatcher = PrositeSequenceMatch.SEQUENCE_LINE_PATTERN.matcher(line);
             if (sequenceMatchLineMatcher.matches()) {
                 LOGGER.debug("We found match ...");
-                PrositeSequenceMatch sequenceMatch = new PrositeSequenceMatch(sequenceMatchLineMatcher);
+                Utilities.verboseLog(20, "We found match ...");
+                sequenceMatch = new PrositeSequenceMatch(sequenceMatchLineMatcher);
                 return buildMatchObject(
                         sequenceMatch.getSequenceIdentifier(),
                         sequenceMatch.getModel(),
@@ -74,7 +94,7 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
                 );
             }
         }
-       return null;
+        return null;
     }
 
     /**
