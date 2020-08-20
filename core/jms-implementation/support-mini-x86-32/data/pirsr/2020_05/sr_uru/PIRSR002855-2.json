@@ -1,0 +1,38 @@
+{
+   "Feature" : {
+      "from" : "P69776",
+      "model" : "SRHMM002855-2"
+   },
+   "Related" : "None",
+   "AC" : "PIRSR002855-2",
+   "Groups" : {
+      "1" : [
+         {
+            "condition" : "C",
+            "hmmEnd" : 21,
+            "end" : 21,
+            "desc" : "N-palmitoyl cysteine.",
+            "start" : 21,
+            "label" : "LIPID",
+            "hmmStart" : 21,
+            "group" : "1"
+         },
+         {
+            "group" : "1",
+            "hmmStart" : 21,
+            "start" : 21,
+            "label" : "LIPID",
+            "hmmEnd" : 21,
+            "end" : 21,
+            "desc" : "S-diacylglycerol cysteine.",
+            "condition" : "C"
+         }
+      ]
+   },
+   "Scope" : [
+      "Bacteria"
+   ],
+   "DC" : "Domain",
+   "TR" : "PIRSF; PIRSF002855; -; 1",
+   "Size" : "unlimited"
+}

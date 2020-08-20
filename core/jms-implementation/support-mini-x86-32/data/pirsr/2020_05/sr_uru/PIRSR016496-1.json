@@ -1,0 +1,126 @@
+{
+   "AC" : "PIRSR016496-1",
+   "Feature" : {
+      "model" : "SRHMM016496-1",
+      "from" : "Q9HLX1"
+   },
+   "Related" : "None",
+   "DC" : "Domain",
+   "Scope" : [
+      "Archaea",
+      "Eukaryota",
+      "Bacteria"
+   ],
+   "TR" : "PIRSF; PIRSF016496; -; 1",
+   "Size" : "unlimited",
+   "Groups" : {
+      "7" : [
+         {
+            "group" : "7",
+            "hmmStart" : 178,
+            "start" : 169,
+            "label" : "NP_BIND",
+            "hmmEnd" : 183,
+            "end" : 174,
+            "desc" : "ATP.",
+            "condition" : "Y-x(4)-K"
+         }
+      ],
+      "8" : [
+         {
+            "condition" : "[GAST]",
+            "hmmEnd" : 214,
+            "desc" : "ATP; via carbonyl oxygen.",
+            "end" : 201,
+            "hmmStart" : 214,
+            "start" : 201,
+            "label" : "BINDING",
+            "group" : "8"
+         }
+      ],
+      "5" : [
+         {
+            "group" : "5",
+            "start" : 143,
+            "label" : "BINDING",
+            "hmmStart" : 152,
+            "hmmEnd" : 152,
+            "desc" : "Substrate; via amide nitrogen.",
+            "end" : 143,
+            "condition" : "[GAST]"
+         }
+      ],
+      "1" : [
+         {
+            "group" : "1",
+            "label" : "NP_BIND",
+            "start" : 5,
+            "hmmStart" : 6,
+            "hmmEnd" : 10,
+            "desc" : "ATP.",
+            "end" : 9,
+            "condition" : "K-x(3)-S"
+         }
+      ],
+      "6" : [
+         {
+            "hmmStart" : 173,
+            "label" : "BINDING",
+            "start" : 164,
+            "group" : "6",
+            "end" : 164,
+            "hmmEnd" : 173,
+            "desc" : "ATP.",
+            "condition" : "D"
+         }
+      ],
+      "9" : [
+         {
+            "label" : "BINDING",
+            "start" : 205,
+            "hmmStart" : 218,
+            "group" : "9",
+            "desc" : "ATP.",
+            "hmmEnd" : 218,
+            "end" : 205,
+            "condition" : "K"
+         }
+      ],
+      "2" : [
+         {
+            "hmmStart" : 50,
+            "start" : 45,
+            "label" : "BINDING",
+            "group" : "2",
+            "condition" : "[GAST]",
+            "hmmEnd" : 50,
+            "desc" : "Substrate; via amide nitrogen.",
+            "end" : 45
+         }
+      ],
+      "4" : [
+         {
+            "group" : "4",
+            "hmmStart" : 55,
+            "label" : "BINDING",
+            "start" : 50,
+            "condition" : "H",
+            "hmmEnd" : 55,
+            "desc" : "Substrate.",
+            "end" : 50
+         }
+      ],
+      "3" : [
+         {
+            "condition" : "[GAST]",
+            "hmmEnd" : 51,
+            "end" : 46,
+            "desc" : "ATP; via amide nitrogen.",
+            "group" : "3",
+            "label" : "BINDING",
+            "start" : 46,
+            "hmmStart" : 51
+         }
+      ]
+   }
+}

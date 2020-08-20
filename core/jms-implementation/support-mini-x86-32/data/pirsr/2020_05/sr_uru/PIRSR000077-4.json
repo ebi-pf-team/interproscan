@@ -1,0 +1,30 @@
+{
+   "AC" : "PIRSR000077-4",
+   "Related" : "None",
+   "Feature" : {
+      "from" : "P0AA25",
+      "model" : "SRHMM000077-4"
+   },
+   "Size" : "unlimited",
+   "TR" : "PIRSF; PIRSF000077; -; 1",
+   "Scope" : [
+      "Eukaryota",
+      "Bacteria",
+      "Archaea"
+   ],
+   "DC" : "Domain",
+   "Groups" : {
+      "1" : [
+         {
+            "condition" : "C-x(2)-C",
+            "hmmEnd" : 34,
+            "desc" : "Redox-active.",
+            "end" : 36,
+            "group" : "1",
+            "label" : "DISULFID",
+            "start" : 33,
+            "hmmStart" : 31
+         }
+      ]
+   }
+}
