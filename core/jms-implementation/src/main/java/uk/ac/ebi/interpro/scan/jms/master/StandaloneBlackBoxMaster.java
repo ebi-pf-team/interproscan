@@ -118,6 +118,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         Utilities.cpuCount = workerQueueJmsContainer.getMaxConcurrentConsumers();
 
+        Utilities.verboseLog(30, "Working TemporaryDirectory: " + getWorkingTemporaryDirectoryPath());
+
         try {
             loadInMemoryDatabase();
             runStatus = 21;
