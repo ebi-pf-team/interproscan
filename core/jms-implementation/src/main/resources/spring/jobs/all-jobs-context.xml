@@ -15,6 +15,7 @@
     <import resource="jobMobiDBLite-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPIRSF-context.xml"/>
+    <import resource="jobPIRSR-context.xml"/>
 
     <import resource="jobPfam-context.xml"/>
     <import resource="jobPhobius-context.xml"/>

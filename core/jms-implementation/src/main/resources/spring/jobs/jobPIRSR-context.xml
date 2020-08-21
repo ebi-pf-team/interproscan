@@ -8,7 +8,7 @@
 
     <!-- ######################## JOB: PIRSR ############################  -->
     <bean id="jobPIRSR" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="PIRSR is a database of protein families based on hidden Markov models (HMMs)."/>
+        <property name="description" value="PIRSR is a database of protein families based on hidden Markov models (HMMs) and Site Rules."/>
         <property name="analysis" value="true"/>
         <!--<property name="doRunLocally" value="true"/>-->
         <property name="libraryRelease" ref="signatureLibraryReleasePIRSR"/>
@@ -43,7 +43,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSRStep">
         <!-- In example command line below, replace _ with -
-        
+
         /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/PIRSR/15.0/PIRSRs_15.0_HMM.LIB  -->
         <property name="dependsUpon" ref="stepPIRSRWriteFastaFile"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
@@ -80,7 +80,7 @@
         <property name="inputFileNameRawOutTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="inputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
-        <property name="sitesAnnotationFileName" value="${pirsr.sites.annotation.file.path}"/>
+      <!--   <property name="sitesAnnotationFileName" value="${pirsr.sites.annotation.file.path}"/> -->
     </bean>
 
 
@@ -90,7 +90,7 @@
         <property name="dependsUpon" ref="stepPIRSRPostProcessorBinaryRun"/>
         <property name="stepDescription" value="Parse the PIRSR binary output and store as Filtered matches."/>
         <property name="serialGroup" value="PARSE_PIRSR"/>
-        
+
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.PIRSRHmmer3MatchParser">
                 <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSR"/>
