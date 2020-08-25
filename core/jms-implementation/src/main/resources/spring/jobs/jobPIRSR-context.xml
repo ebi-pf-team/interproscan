@@ -33,7 +33,6 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-
     <!--TODO - The run binary step for HMMER should choose between search or scan, depending
         TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
         TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
