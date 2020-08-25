@@ -93,7 +93,7 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3
     <bean id="stepHamapHMMRunWithFilterPFScan"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPFScanStep"
           parent="abstractHamapHMMStep">
@@ -110,6 +110,7 @@
         <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
+    -->
 
     <!-- STEP 4 -->
 
@@ -119,7 +120,7 @@
         <property name="dependsUpon" >
             <list>
                 <ref bean="stepHamapRunPFScan"/>
-                <ref bean="stepHamapHMMRunWithFilterPFScan"/>
+<!--                <ref bean="stepHamapHMMRunWithFilterPFScan"/>-->
                 <ref bean="stepHamapHMMRunPFSearch"/>
             </list>
         </property>
@@ -147,7 +148,7 @@
                 <list>
                     <ref bean="stepHamapHMMParsePfSearchRawOutput"/>
                     <ref bean="stepHamapRunPFScan"/>
-                    <ref bean="stepHamapHMMRunWithFilterPFScan"/>
+<!--                    <ref bean="stepHamapHMMRunWithFilterPFScan"/>-->
                     <ref bean="stepHamapHMMPostProcessing"/>
                 </list>
         </property>
