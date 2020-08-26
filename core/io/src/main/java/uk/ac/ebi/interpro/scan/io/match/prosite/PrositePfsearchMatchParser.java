@@ -64,7 +64,7 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
         PrositeSequenceMatch sequenceMatch = new PrositeSequenceMatch(line);
         Utilities.verboseLog(40, "alighment is ... -> " + sequenceMatch.getAlignment());
         if (sequenceMatch != null) {
-            Utilities.verboseLog(20, "1. We found match ..." + sequenceMatch.toString());
+            Utilities.verboseLog(40, "1. We found match ..." + sequenceMatch.toString());
             return buildMatchObject(
                     sequenceMatch.getSequenceIdentifier(),
                     sequenceMatch.getModel(),
@@ -82,7 +82,7 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
                 LOGGER.debug("We found match ...");
 
                 sequenceMatch = new PrositeSequenceMatch(sequenceMatchLineMatcher);
-                Utilities.verboseLog(20, "2. We found match ..." + sequenceMatch.toString());
+                Utilities.verboseLog(40, "2. We found match ..." + sequenceMatch.toString());
                 return buildMatchObject(
                         sequenceMatch.getSequenceIdentifier(),
                         sequenceMatch.getModel(),
