@@ -69,8 +69,8 @@
     <bean id="stepPIRSRStoreRawMatches"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3ParseStep"
           parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRPostProcessorBinaryRun"/>
-        <property name="stepDescription" value="Parse the PIRSR binary output and store as Filtered matches."/>
+        <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
+        <property name="stepDescription" value="Parse the PIRSR hmmer3 output and store matches."/>
         <property name="serialGroup" value="PARSE_PIRSR"/>
 
         <property name="parser">
@@ -84,7 +84,7 @@
                         <property name="hmmKey" value="ACCESSION"/>
                     </bean>
                 </property>
-                <property name="pirsrHierarchyFilePath" value="${pirsr.hierarchy.file.path}"/>
+                <!-- <property name="pirsrHierarchyFilePath" value="${pirsr.hierarchy.file.path}"/> -->
             </bean>
         </property>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
