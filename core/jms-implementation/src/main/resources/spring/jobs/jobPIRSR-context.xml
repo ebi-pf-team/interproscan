@@ -95,21 +95,29 @@
 
 
     <!-- STEP 4 -->
-    <bean id="stepPIRSRPostProcessorBinaryRun"
+    <bean id="stepPIRSRBinaryRun"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsr.RunPIRSRBinaryStep"
           parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
-        <property name="stepDescription" value="Run pirsr postprocessing binary for selected proteins"/>
+        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>
+        <property name="stepDescription" value="Run pirsr binary for selected proteins"/>
         <property name="requiresDatabaseAccess" value="false"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
 
-        <property name="fullPathToBinary" value="${pirsr.postprocess.command}"/>
+        <property name="fullPathToBinary" value="${pirsr.binary.path}"/>
+        <property name="pathToDataFolder" value="${pirsr.data.path}"/>
+
+        <property name="hmmscanPath" value="${binary.hmmer3.hmmscan.path}"/>
+
         <property name="usesFileOutputSwitch" value="true" />
         <property name="inputFileNameRawOutTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="inputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
-        <!--   <property name="sitesAnnotationFileName" value="${pirsr.sites.annotation.file.path}"/> -->
     </bean>
+
+
+
+
+
 
 
     <!--    Step 5 -->

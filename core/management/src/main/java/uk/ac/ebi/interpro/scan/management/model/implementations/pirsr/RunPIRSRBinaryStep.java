@@ -27,6 +27,9 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
 
     private String fullPathToBinary;
 
+    private String pathToDataFolder;
+
+    private String hmmscanPath;
 
     private String inputFileNameRawOutTemplate;
 
@@ -39,6 +42,20 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
+    }
+
+    @Required
+    public void setPathToDataFolder(String pathToDataFolder) {
+        this.pathToDataFolder = pathToDataFolder;
+    }
+
+    public String getHmmscanPath() {
+        return hmmscanPath;
+    }
+
+    @Required
+    public void setHmmerPath(String hmmscanPath) {
+        this.hmmscanPath = hmmscanPath;
     }
 
     public String getInputFileNameRawOutTemplate() {
@@ -90,6 +107,14 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
 
         command.add(fullPathToBinary);
 
+        command.add("-data");
+        command.add(pathToDataFolder);
+
+        // Path to hmmscan binaries
+        command.add("-hmmscan");
+        command.add(this.getHmmscanPath());
+
+
         command.add("-s");
         command.add(sitesAnnotationFileName);
 
@@ -104,7 +129,7 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
 
         // output file option
         if(this.isUsesFileOutputSwitch()){
-            command.add("-o");
+            command.add("-out");
             command.add(outputFilePathName);
         }
 
