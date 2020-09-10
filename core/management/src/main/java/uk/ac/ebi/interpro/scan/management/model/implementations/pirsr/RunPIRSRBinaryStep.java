@@ -1,4 +1,4 @@
-package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf;
+package uk.ac.ebi.interpro.scan.management.model.implementations.pirsr;
 
 //import org.apache.commons.collections.functors.ExceptionClosure;
 
