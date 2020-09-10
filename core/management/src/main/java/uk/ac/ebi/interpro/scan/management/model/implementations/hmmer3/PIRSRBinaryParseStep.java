@@ -10,5 +10,5 @@ import uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawSite;
  * @author Gift Nuka
  * @version $Id$
  */
-public class PIRSRHmmer3ParseStep extends CompositeParseStep<PIRSRHmmer3RawMatch, PIRSRHmmer3RawSite> {
+public class PIRSRBinaryParseStep extends CompositeParseStep<PIRSRHmmer3RawMatch, PIRSRHmmer3RawSite> {
 }

@@ -61,6 +61,7 @@
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobPIRSF" />
+                <ref bean="jobPIRSR" />
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
