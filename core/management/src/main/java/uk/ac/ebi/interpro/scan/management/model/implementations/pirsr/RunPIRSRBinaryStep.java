@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Runs the PIRSR binary on the fasta file provided to the output file provided.
+ * Runs the PIRSR binary on the hmmrscan based tsv and rules json files provided to the output file provided.
  *
  * @author Gift Nuka
  * @version $Id$
@@ -27,17 +27,20 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
 
     private String fullPathToBinary;
 
-    private String pathToDataFolder;
+    private String pathToRulesJson;
 
-    private String hmmscanPath;
+    private String pathToInputTsv;
 
-    private String inputFileNameRawOutTemplate;
 
-    private String inputFileNameDomTbloutTemplate;
 
-    private String inputFileNameAlignmentsTemplate;
 
-    private String sitesAnnotationFileName;
+    // private String inputFileNameRawOutTemplate;
+
+    // private String inputFileNameDomTbloutTemplate;
+
+    // private String inputFileNameAlignmentsTemplate;
+
+    // private String sitesAnnotationFileName;
 
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
@@ -45,91 +48,88 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
     }
 
     @Required
-    public void setPathToDataFolder(String pathToDataFolder) {
-        this.pathToDataFolder = pathToDataFolder;
-    }
-
-    public String getHmmscanPath() {
-        return hmmscanPath;
+    public void setPathToRulesJson(String pathToRulesJson) {
+        this.pathToRulesJson = pathToRulesJson;
     }
 
     @Required
-    public void setHmmerPath(String hmmscanPath) {
-        this.hmmscanPath = hmmscanPath;
+    public void setPathToInputTsv(String pathToInputTsv) {
+        this.pathToInputTsv = pathToInputTsv;
     }
 
-    public String getInputFileNameRawOutTemplate() {
-        return inputFileNameRawOutTemplate;
-    }
 
-    @Required
-    public void setInputFileNameRawOutTemplate(String inputFileNameRawOutTemplate) {
-        this.inputFileNameRawOutTemplate = inputFileNameRawOutTemplate;
-    }
 
-    public String getInputFileNameDomTbloutTemplate() {
-        return inputFileNameDomTbloutTemplate;
-    }
 
-    @Required
-    public void setInputFileNameDomTbloutTemplate(String inputFileNameDomTbloutTemplate) {
-        this.inputFileNameDomTbloutTemplate = inputFileNameDomTbloutTemplate;
-    }
+    // public String getInputFileNameRawOutTemplate() {
+    //     return inputFileNameRawOutTemplate;
+    // }
 
-    public String getInputFileNameAlignmentsTemplate() {
-        return inputFileNameAlignmentsTemplate;
-    }
+    // @Required
+    // public void setInputFileNameRawOutTemplate(String inputFileNameRawOutTemplate) {
+    //     this.inputFileNameRawOutTemplate = inputFileNameRawOutTemplate;
+    // }
 
-    @Required
-    public void setInputFileNameAlignmentsTemplate(String inputFileNameAlignmentsTemplate) {
-        this.inputFileNameAlignmentsTemplate = inputFileNameAlignmentsTemplate;
-    }
+    // public String getInputFileNameDomTbloutTemplate() {
+    //     return inputFileNameDomTbloutTemplate;
+    // }
 
-    public String getSitesAnnotationFileName() {
-        return sitesAnnotationFileName;
-    }
+    // @Required
+    // public void setInputFileNameDomTbloutTemplate(String inputFileNameDomTbloutTemplate) {
+    //     this.inputFileNameDomTbloutTemplate = inputFileNameDomTbloutTemplate;
+    // }
 
-    @Required
-    public void setSitesAnnotationFileName(String sitesAnnotationFileName) {
-        this.sitesAnnotationFileName = sitesAnnotationFileName;
-    }
+    // public String getInputFileNameAlignmentsTemplate() {
+    //     return inputFileNameAlignmentsTemplate;
+    // }
+
+    // @Required
+    // public void setInputFileNameAlignmentsTemplate(String inputFileNameAlignmentsTemplate) {
+    //     this.inputFileNameAlignmentsTemplate = inputFileNameAlignmentsTemplate;
+    // }
+
+    // public String getSitesAnnotationFileName() {
+    //     return sitesAnnotationFileName;
+    // }
+
+    // @Required
+    // public void setSitesAnnotationFileName(String sitesAnnotationFileName) {
+    //     this.sitesAnnotationFileName = sitesAnnotationFileName;
+    // }
 
 
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
+
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
-        final String inputFileNameRawOut = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameRawOutTemplate());
-        final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
-
-        final String inputFileNameAlignments = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameAlignmentsTemplate());
+        // final String inputFileNameRawOut = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameRawOutTemplate());
+        // final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
+        // final String inputFileNameAlignments = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameAlignmentsTemplate());
 
         command.add(fullPathToBinary);
 
-        command.add("-data");
-        command.add(pathToDataFolder);
+        command.add("-r");
+        command.add(pathToRulesJson);
 
-        // Path to hmmscan binaries
-        command.add("-hmmscan");
-        command.add(this.getHmmscanPath());
+        command.add("-i");
+        command.add(pathToInputTsv);
 
+        // command.add("-s");
+        // command.add(sitesAnnotationFileName);
 
-        command.add("-s");
-        command.add(sitesAnnotationFileName);
+        // command.add("-a");
+        // command.add(inputFileNameAlignments);
 
-        command.add("-a");
-        command.add(inputFileNameAlignments);
+        // command.add("-O");
+        // command.add(inputFileNameRawOut);
 
-        command.add("-O");
-        command.add(inputFileNameRawOut);
-
-        command.add("-d");
-        command.add(inputFileNameDomTblout);
+        // command.add("-d");
+        // command.add(inputFileNameDomTblout);
 
         // output file option
         if(this.isUsesFileOutputSwitch()){
-            command.add("-out");
+            command.add("-o");
             command.add(outputFilePathName);
         }
 

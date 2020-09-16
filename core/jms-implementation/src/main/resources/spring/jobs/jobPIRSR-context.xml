@@ -107,6 +107,7 @@
         <property name="pathToDataFolder" value="${pirsr.data.path}"/>
 
         <property name="usesFileOutputSwitch" value="true" />
+
         <property name="inputFileNameRawOutTemplate" ref="rawAnalaysisOutputFileTemplate"/>
         <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
         <property name="inputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
