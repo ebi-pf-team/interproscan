@@ -82,7 +82,7 @@ public class PIRSRHmmer3ParserSupport extends AbstractHmmer3ParserSupport<PIRSRH
      */
     @Override
     public boolean parseAlignments() {
-        return false;
+        return true;
     }
 
 }

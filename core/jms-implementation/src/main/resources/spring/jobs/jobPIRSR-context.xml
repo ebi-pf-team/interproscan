@@ -88,9 +88,9 @@
             </bean>
         </property>
         <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
-        <property name="excludeSites" value="${exclude.sites.from.output}"/>
+<!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
         <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
-        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>
+<!--        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>-->
     </bean>
 
 
@@ -120,24 +120,24 @@
 
 
     <!--    Step 5 -->
-    <bean id="stepPIRSRParseAndPersistOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRParseAndPersistStep"
-          parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>
-        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
-        <property name="stepDescription" value="Store raw PIRSR matches as filtered matches"/>
-        <property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>
-        <!--<property name="postProcessor"/> No post processing required-->
-        <property name="filteredMatchAndSiteDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PIRSRHmmer3FilteredMatchDAOImpl">
-                <property name="dbStore" ref="kvStoreMatches"/>
-                <property name="matchDAO" ref="matchDAO"/>
-            </bean>
-        </property>
-        <property name="excludeSites" value="${exclude.sites.from.output}"/>
-        <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
-        <property name="rawSiteDAO" ref="pirsrRawSiteDAO"/>
-    </bean>
+<!--    <bean id="stepPIRSRParseAndPersistOutput"-->
+<!--          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRParseAndPersistStep"-->
+<!--          parent="abstractPIRSRStep">-->
+<!--        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>-->
+<!--        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
+<!--        <property name="stepDescription" value="Store raw PIRSR matches as filtered matches"/>-->
+<!--        <property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>-->
+<!--        &lt;!&ndash;<property name="postProcessor"/> No post processing required&ndash;&gt;-->
+<!--        <property name="filteredMatchAndSiteDAO">-->
+<!--            <bean class="uk.ac.ebi.interpro.scan.persistence.PIRSRHmmer3FilteredMatchDAOImpl">-->
+<!--                <property name="dbStore" ref="kvStoreMatches"/>-->
+<!--                <property name="matchDAO" ref="matchDAO"/>-->
+<!--            </bean>-->
+<!--        </property>-->
+<!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
+<!--        <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>-->
+<!--        <property name="rawSiteDAO" ref="pirsrRawSiteDAO"/>-->
+<!--    </bean>-->
 
 
     <!--    Step 5-->
