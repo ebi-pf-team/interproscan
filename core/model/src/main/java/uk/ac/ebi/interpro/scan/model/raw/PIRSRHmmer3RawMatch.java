@@ -7,10 +7,7 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 
 /**
- * <a href="http://PIRSR.edu/">PIRSR</a> raw match.
- *
- * @author Gift Nuka
- * @version $Id$
+ * Raw site match for PIRSR.
  */
 @Entity
 @Table(name = PIRSRHmmer3RawMatch.TABLE_NAME, indexes = {

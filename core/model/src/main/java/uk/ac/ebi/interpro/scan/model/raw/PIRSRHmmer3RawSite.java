@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * <a href="http://PIRSR.edu/">PIRSR</a> raw site.
+ * Raw site class for PIRSR.
  */
 @Entity
 @Table(name = PIRSRHmmer3RawSite.TABLE_NAME, indexes = {
