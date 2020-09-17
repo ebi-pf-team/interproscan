@@ -68,7 +68,7 @@
 
     <!--    Step 3 -->
     <bean id="stepPIRSRStoreRawMatches"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRBinaryParseStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3ParseStep"
           parent="abstractPIRSRStep">
         <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
         <property name="stepDescription" value="Parse the PIRSR hmmer3 output and store matches."/>
