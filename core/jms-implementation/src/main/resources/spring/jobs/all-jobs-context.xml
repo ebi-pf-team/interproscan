@@ -89,6 +89,11 @@
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.out"/>
     </bean>
 
+
+    <bean id="rawAnalysisOutputOneFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND]_one.raw.out"/>
+    </bean>
+
     <bean id="rawAnalaysisOutputOneFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND]_one.raw.out"/>
     </bean>

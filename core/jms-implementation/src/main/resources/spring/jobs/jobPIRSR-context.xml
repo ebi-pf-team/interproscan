@@ -58,9 +58,10 @@
 
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
-        <property name="outputAlignments" value="true"/>
-        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
+<!--        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>-->
+<!--        <property name="outputAlignments" value="true"/>-->
+        <!--        the raw output should have the alignments -->
+<!--        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>-->
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -87,7 +88,8 @@
                 <!-- <property name="pirsrHierarchyFilePath" value="${pirsr.hierarchy.file.path}"/> -->
             </bean>
         </property>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputOneFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
 <!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
         <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
 <!--        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>-->

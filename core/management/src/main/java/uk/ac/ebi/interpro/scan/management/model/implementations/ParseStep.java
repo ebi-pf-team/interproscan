@@ -34,6 +34,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
     private static final Logger LOGGER = LogManager.getLogger(ParseStep.class.getName());
 
     private String outputFileTemplate;
+    private String outputOneFileTemplate;
     private MatchParser<T> parser;
     private RawMatchDAO<T> rawMatchDAO;
     private boolean useSingleSequenceMode;
@@ -54,6 +55,14 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
     @Required
     public void setOutputFileTemplate(String template) {
         this.outputFileTemplate = template;
+    }
+
+    public String getOutputOneFileTemplate() {
+        return outputOneFileTemplate;
+    }
+
+    public void setOutputOneFileTemplate(String outputOneFileTemplate) {
+        this.outputOneFileTemplate = outputOneFileTemplate;
     }
 
     @Required
@@ -85,6 +94,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
 
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
+        final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputOneFileTemplate());
         LOGGER.debug("Output fileName: " + fileName);
         try {
             is = new FileInputStream(fileName);
@@ -188,6 +198,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                 Long timeTaken = System.currentTimeMillis() - now;
                 Utilities.verboseLog(1100, "ParseStep: count: " + matchCount + " represantiveRawMatch : " + represantiveRawMatch.toString()
                     + " time taken: " + timeTaken);
+
             }
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse " + fileName, e);
