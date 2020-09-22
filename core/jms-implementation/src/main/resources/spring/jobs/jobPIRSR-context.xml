@@ -37,13 +37,15 @@
         TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
         TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
 
+
+
     <!-- STEP 2 -->
     <bean id="stepPIRSRRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSRStep">
         <!-- In example command line below, replace _ with -
-
-        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/PIRSR/15.0/PIRSRs_15.0_HMM.LIB  -->
+        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/PIRSR/15.0/PIRSRs_15.0_HMM.LIB
+        -->
         <property name="dependsUpon" ref="stepPIRSRWriteFastaFile"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${pirsr.hmmsearch.force}"/>
@@ -58,125 +60,19 @@
 
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
-<!--        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>-->
-<!--        <property name="outputAlignments" value="true"/>-->
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputAlignments" value="true"/>
         <!--        the raw output should have the alignments -->
-<!--        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>-->
+        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!--    Step 3 -->
-    <bean id="stepPIRSRStoreRawMatches"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3ParseStep"
-          parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
-        <property name="stepDescription" value="Parse the PIRSR hmmer3 output and store matches."/>
-        <property name="serialGroup" value="PARSE_PIRSR"/>
-
-        <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
-                <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSR"/>
-                <constructor-arg type="java.lang.String" ref="pirsrSignatureLibraryReleaseVersion"/>
-
-                <property name="parserSupport">
-                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.PIRSRHmmer3ParserSupport">
-                        <property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>
-                        <property name="hmmKey" value="ACCESSION"/>
-                    </bean>
-                </property>
-                <!-- <property name="pirsrHierarchyFilePath" value="${pirsr.hierarchy.file.path}"/> -->
-            </bean>
-        </property>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="outputOneFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-<!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
-        <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
-<!--        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>-->
-    </bean>
-
-
-    <!-- STEP 4 -->
-    <bean id="stepPIRSRBinaryRun"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsr.RunPIRSRBinaryStep"
-          parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>
-        <property name="stepDescription" value="Run pirsr binary for selected proteins"/>
-        <property name="requiresDatabaseAccess" value="false"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
-
-        <property name="fullPathToBinary" value="${pirsr.binary.path}"/>
-        <property name="pathToDataFolder" value="${pirsr.data.path}"/>
-
-        <property name="usesFileOutputSwitch" value="true" />
-
-        <property name="inputFileNameRawOutTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
-        <property name="inputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
-    </bean>
 
 
 
 
 
-
-
-    <!--    Step 5 -->
-<!--    <bean id="stepPIRSRParseAndPersistOutput"-->
-<!--          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRParseAndPersistStep"-->
-<!--          parent="abstractPIRSRStep">-->
-<!--        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>-->
-<!--        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
-<!--        <property name="stepDescription" value="Store raw PIRSR matches as filtered matches"/>-->
-<!--        <property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>-->
-<!--        &lt;!&ndash;<property name="postProcessor"/> No post processing required&ndash;&gt;-->
-<!--        <property name="filteredMatchAndSiteDAO">-->
-<!--            <bean class="uk.ac.ebi.interpro.scan.persistence.PIRSRHmmer3FilteredMatchDAOImpl">-->
-<!--                <property name="dbStore" ref="kvStoreMatches"/>-->
-<!--                <property name="matchDAO" ref="matchDAO"/>-->
-<!--            </bean>-->
-<!--        </property>-->
-<!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
-<!--        <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>-->
-<!--        <property name="rawSiteDAO" ref="pirsrRawSiteDAO"/>-->
-<!--    </bean>-->
-
-
-    <!--    Step 5-->
-    <bean id="stepPIRSRDeleteJobFiles"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>
-        <property name="stepDescription"
-                  value="Delete the fasta file and the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate">
-            <list>
-                <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
-            </list>
-        </property>
-        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
-    </bean>
-
-    <!--&lt;!&ndash; TODO - Check for changes - presumably now using different objects to store the results? &ndash;&gt;-->
-    <!--<bean id="stepPIRSRPostProcessing"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3FilterStep"-->
-          <!--parent="abstractPIRSRStep">-->
-        <!--<property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>-->
-        <!--<property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>-->
-        <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
-        <!--<property name="filteredMatchDAO">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.PIRSRHmmer3FilteredMatchDAOImpl"/>-->
-        <!--</property>-->
-        <!--<property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
-        <!--<property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>-->
-        <!--<property name="signatureLibrary" value="PIRSR"/>-->
-        <!--<property name="filter">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>-->
-        <!--</property>-->
-    <!--</bean>-->
-
-    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: PIRSR !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="pirsrRawMatchDAO"
@@ -199,3 +95,4 @@
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
+
