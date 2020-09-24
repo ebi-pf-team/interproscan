@@ -69,6 +69,35 @@
     </bean>
 
 
+    <!--    Step 3 -->
+    <bean id="stepPIRSRStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3ParseStep"
+          parent="abstractPIRSRStep">
+        <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
+        <property name="stepDescription" value="Parse the PIRSR hmmer3 output and store matches."/>
+        <property name="serialGroup" value="PARSE_PIRSR"/>
+
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+                <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSR"/>
+                <constructor-arg type="java.lang.String" ref="pirsrSignatureLibraryReleaseVersion"/>
+
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.PIRSRHmmer3ParserSupport">
+                        <property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>
+                        <property name="hmmKey" value="ACCESSION"/>
+                    </bean>
+                </property>
+                <!-- <property name="pirsrHierarchyFilePath" value="${pirsr.hierarchy.file.path}"/> -->
+            </bean>
+        </property>
+        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputOneFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
+<!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
+        <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
+<!--        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>-->
+    </bean>
+
 
 
 
