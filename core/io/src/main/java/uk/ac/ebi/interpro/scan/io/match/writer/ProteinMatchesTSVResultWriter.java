@@ -63,7 +63,8 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 final String analysis = signatureLibrary.getName();
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
-                if (signatureName != null && signatureName.isBlank() && signatureAc.contains(prefix)) {
+                //if (signatureName != null && signatureName.isBlank() && signatureAc.contains(prefix)) {  TODO revert to blank
+                if (signatureName != null && signatureName.isEmpty() && signatureAc.contains(prefix)) {
                     //we dont need to parse at runtime
                     //signatureName = familyRecords.get(signatureAc);
                 }
@@ -107,7 +108,8 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         String displayDescription = description == null ? signatureName : description;
                         //displayDescription = displayDescription == null ? altDescription : displayDescription;
 
-                        if (displayDescription == null || displayDescription.isBlank() || displayDescription.contains("FAMILY NOT NAMED")) {
+                        //if (displayDescription == null || displayDescription.isBlank() || displayDescription.contains("FAMILY NOT NAMED")) { revert ot Blank
+                        if (displayDescription == null || displayDescription.isEmpty() || displayDescription.contains("FAMILY NOT NAMED")) {
                             displayDescription = "-";
                         }
                         if (displayDescription.equals("-")) {

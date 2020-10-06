@@ -1,9 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
-import junit.framework.TestCase;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -17,7 +21,7 @@ import java.util.Map;
  * Time: 16:16:55
  * To change this template use File | Settings | File Templates.
  */
-public class FingerPRINTSHierarchDBParserTest extends TestCase {
+public class FingerPRINTSHierarchDBParserTest  {
 
     private static final Logger LOGGER = LogManager.getLogger(FingerPRINTSHierarchDBParserTest.class.getName());
 
