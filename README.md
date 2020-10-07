@@ -7,7 +7,7 @@ Users who have novel nucleotide or protein sequences that they wish to functiona
 
 ## Documentation
 
-For more information on downloading, installing and running InterProScan please see the [InterProScan wiki](https://github.com/ebi-pf-team/interproscan/wiki).
+For more information on downloading, installing and running InterProScan please see the [InterProScan wiki](https://interproscan-docs.readthedocs.io).
 
 ## Contact us
 
