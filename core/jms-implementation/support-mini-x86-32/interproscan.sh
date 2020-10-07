@@ -40,6 +40,8 @@ then
     exit 1
 fi
 
+check_hmm_files.py
+
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4  \
  -Xms1028M -Xmx6072M \
