@@ -47,13 +47,10 @@ def delete_files(wildcard_file):
 
 def get_hmm_models_props(ipr_properties):
     hmm_paths = []
-    #print ('keys count:'  + str(len(ipr_properties)))
-    for key, value in ipr_properties.items():     
+    for key, value in ipr_properties.items():
         if 'hmm.path' in key and not 'smart' in key:
             if not os.path.isfile(value):
                 continue
-            #index_file = value + '.h3*'
-            #delete_files(index_file)
             if not can_run_hmmscan(value):
                 hmm_paths.append(value)
     return hmm_paths
@@ -68,9 +65,9 @@ if __name__ == "__main__":
     hmmpress_path = hmmer3_dir + '/hmmpress'
     hmm_models_paths = get_hmm_models_props(ipr_properties)
     if (len(hmm_models_paths) > 0):
-        print("check any hmm models that need indexing ... this may take a few minutes")
+        print("Checking any hmm models that need indexing ... this may take a few minutes")
         for  hmms_path in  hmm_models_paths:
             if not can_run_hmmscan(hmms_path):
                 run_hmmpress(hmmpress_path, hmms_path.strip())
-        print('completed indexing the hmm models.')
+        print('Completed indexing the hmm models.')
 
