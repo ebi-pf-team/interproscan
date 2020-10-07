@@ -40,7 +40,7 @@ then
     exit 1
 fi
 
-check_hmm_files.py
+python initial_setup.py
 
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4  \
