@@ -62,13 +62,18 @@ def run_hmmpress(hmmpress_path, hmms_path):
 if __name__ == "__main__":
     ipr_properties = load_properties('interproscan.properties')
     hmmer3_dir = ipr_properties['binary.hmmer3.path']
+    hmmer33_dir = ipr_properties['binary.hmmer33.path']
     hmmpress_path = hmmer3_dir + '/hmmpress'
+    hmmpress33_path = hmmer33_dir + '/hmmpress'
     hmm_models_paths = get_hmm_models_props(ipr_properties)
     if (len(hmm_models_paths) > 0):
         print("Checking any hmm models that need indexing ... this may take a few minutes")
         sys.stdout.flush()
-        for  hmms_path in  hmm_models_paths:
+        for  hmms_path in  sorted(hmm_models_paths):
             if not can_run_hmmscan(hmms_path):
-                run_hmmpress(hmmpress_path, hmms_path.strip())
+                if 'superfam' in hmms_path or 'sfld' in hmms_path:
+                    run_hmmpress(hmmpress_path, hmms_path.strip())
+                else:
+                    run_hmmpress(hmmpress33_path, hmms_path.strip())
         print('Completed indexing the hmm models.')
 
