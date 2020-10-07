@@ -3,7 +3,7 @@
 # check if there are hmm models that need indexing
 # """"
 
-import os
+import os, sys
 import glob
 #from subprocess import run
 from subprocess import call
@@ -66,6 +66,7 @@ if __name__ == "__main__":
     hmm_models_paths = get_hmm_models_props(ipr_properties)
     if (len(hmm_models_paths) > 0):
         print("Checking any hmm models that need indexing ... this may take a few minutes")
+        sys.stdout.flush()
         for  hmms_path in  hmm_models_paths:
             if not can_run_hmmscan(hmms_path):
                 run_hmmpress(hmmpress_path, hmms_path.strip())
