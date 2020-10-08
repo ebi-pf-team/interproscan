@@ -48,7 +48,7 @@ def delete_files(wildcard_file):
 def get_hmm_models_props(ipr_properties):
     hmm_paths = []
     for key, value in ipr_properties.items():
-        if 'hmm.path' in key and not 'smart' in key:
+        if 'hmm.path' in key and not ('smart' in key or 'tmhmm' in key):
             if not os.path.isfile(value):
                 continue
             if not can_run_hmmscan(value):
