@@ -37,14 +37,6 @@ def can_run_hmmscan(hmms_path):
     exts = ['.h3p', '.h3m', '.h3f', '.h3i']
     return all([os.path.isfile(hmms_path + ext) for ext in exts])
 
-def delete_files(wildcard_file):
-    file_list = glob.glob(wildcard_file, recursive=True)
-    for file_path in file_list:
-        try:
-            os.remove(file_path)
-        except OSError:
-            print("Error while deleting file - " + file_path)
-
 def get_hmm_models_props(ipr_properties):
     hmm_paths = []
     for key, value in ipr_properties.items():
