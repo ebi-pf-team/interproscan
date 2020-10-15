@@ -45,7 +45,7 @@ branches:
   only:
   - dev
   - master
-  - release-5.46-81.0
+  - release-5.47-82.0
   except:
   - new_master
 

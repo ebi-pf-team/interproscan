@@ -43,7 +43,7 @@
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer33.hmmscan.path}"/>
         <property name="singleSeqMode" value="false"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.hmmfilter} ${hmmer3.hmmsearch.cpu.switch.hmmfilter}"/>
-        <property name="fullPathToHmmFile" value="${hamap.hmm.lib.path}"/>
+        <property name="fullPathToHmmFile" value="${hamap.hmm.path}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="useTbloutFormat" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>

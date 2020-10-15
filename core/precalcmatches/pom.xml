@@ -5,12 +5,12 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.46-81.0</version>
+        <version>5.47-82.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>precalcmatches</artifactId>
-    <version>5.46-81.0</version>
+    <version>5.47-82.0</version>
 
     <packaging>pom</packaging>
 
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-persistence</artifactId>
-            <version>5.46-81.0</version>
+            <version>5.47-82.0</version>
         </dependency>
 
         <dependency>
@@ -62,13 +62,13 @@
 
         <!-- oracle dependency should be commented out for public release -->
 
-        <!-- start
+        <!-- start -->
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
         </dependency>
-        end -->
+        <!-- end -->
         <!--  end -->
 
     </dependencies>

@@ -40,6 +40,8 @@ then
     exit 1
 fi
 
+python initial_setup.py
+
 "$JAVA" \
 -XX:+UseParallelGC -XX:ParallelGCThreads=4  \
  -Xms1028M -Xmx6072M \
