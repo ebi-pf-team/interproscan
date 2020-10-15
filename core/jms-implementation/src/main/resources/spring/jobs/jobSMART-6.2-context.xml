@@ -60,7 +60,7 @@
 
         <property name="fullPathToBinary" value="${binary.hmmer2.hmmpfam.path}"/>
         <property name="binarySwitches" value="${hmmer2.hmmpfam.switches.smart} ${hmmer2.hmmpfam.cpu.switch.smart}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" ref="fullPathToHmmFile-6.2"/>
@@ -86,7 +86,7 @@
           parent="abstractSMARTStep-6.2">
         <property name="dependsUpon" ref="stepSMARTRunBinary-6.2"/>
         <property name="stepDescription" value="Parse the HMMER2 output and store as Filtered matches."/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="smartRawMatchDAO-6.2"/>
         <property name="serialGroup" value="PARSE_SMART"/>
         <property name="parser">
@@ -108,7 +108,7 @@
         <property name="dependsUpon" ref="stepSMARTStoreRawMatches-6.2"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepSmartPostProcessing-6.2"

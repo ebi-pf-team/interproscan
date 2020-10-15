@@ -43,7 +43,7 @@
         <property name="fullPathToBinary" value="${binary.fingerprintscan.path}"/>
         <property name="binarySwitches" value="${fingerprintscan.binary.switches}"/>
         <property name="fullPathToHmmFile" value="${prints.pval.path.42.0}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -70,7 +70,7 @@
         <property name="serialGroup" value="PARSE_PRINTS"/>
         <property name="retries" value="3"/>
         <property name="signatureLibraryRelease" value="42.0"/>
-        <property name="printsOutputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="printsOutputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
 
@@ -79,7 +79,7 @@
           parent="abstractPrintsStep">
         <property name="dependsUpon" ref="stepPrintsParseFingerPrintScanOutput"/>
         <property name="stepDescription" value="Delete the binary raw output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepPrintsPostProcessing"

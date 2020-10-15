@@ -47,7 +47,7 @@
         <property name="binarySwitches" value="${prodomblast3i.binary.switches}"/>
         <property name="retries" value="3"/>
         <property name="perlCommand" value="${perl.command}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <!--<property name="fullPathToTempDirectory" value="${prodom.binary.tmp.path.2006.1}"/>--> <!-- Optional -->
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToProDomBlast3iPerlScript" value="${binary.prodom.2006.1.prodomblast3i.pl.path}"/>
@@ -65,7 +65,7 @@
                   value="Parse the output from the ProDom binary and persist as filtered matches"/>
         <property name="serialGroup" value="PARSE_PRODOM"/>
         <property name="retries" value="3"/>
-        <property name="proDomBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="proDomBinaryOutputFileName" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.ProDomFilteredMatchDAOImpl">
                 <constructor-arg value="2006.1"/>
@@ -91,7 +91,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
             </list>
         </property>
     </bean>

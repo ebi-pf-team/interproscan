@@ -145,7 +145,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                         }
                     }
 
-                    Utilities.verboseLog(1100, "represantiveRawMatch :" + represantiveRawMatch.toString());
+                    Utilities.verboseLog(40, "represantiveRawMatch :" + represantiveRawMatch.toString());
                     Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + " matchesFound: " + matchesFound + " matchCount: " + matchCount
                             + " queryTime: " + queryTime);
                     int retryCount = 0;
@@ -157,7 +157,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                                 stepInstance.getTopProtein(), signatureLibraryRelease);
 
                         matchesFound = rawMatchesInDb.size();
-                        Utilities.verboseLog(represantiveRawMatch.getSignatureLibrary().getName() + " matchesFound-2: " +matchesFound + " matchCount: " + matchCount);
+                        Utilities.verboseLog(40, represantiveRawMatch.getSignatureLibrary().getName() + " matchesFound-2: " +matchesFound + " matchCount: " + matchCount);
 
                         if (matchesFound < matchCount) {
                             int matchCountDifference = matchCount - matchesFound;
@@ -175,7 +175,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
                                         + " after " + timeTaken + " ms "
                                         + " - matches found : " + matchesFound;
                                 LOGGER.warn(matchPersistWarning);
-                                Utilities.verboseLog(matchPersistWarning);
+                                Utilities.verboseLog(40, matchPersistWarning);
                                 break;
                             }
                         }

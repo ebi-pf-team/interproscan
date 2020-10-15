@@ -43,7 +43,7 @@
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.coils.path}"/>
         <property name="binarySwitches" value="${coils.binary.switches}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -62,7 +62,7 @@
           parent="abstractCoilsStep">
         <property name="dependsUpon" ref="stepCoilsRunBinary"/>
         <property name="stepDescription" value="Parse the Coils binary output and store as Filtered matches."/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.coils.CoilsMatchParser">
                 <property name="signatureLibraryRelease" ref="latestCoilsSignatureLibraryRelease"/>
@@ -84,7 +84,7 @@
         <property name="dependsUpon" ref="stepCoilsParseandStoreMatches"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Coils !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

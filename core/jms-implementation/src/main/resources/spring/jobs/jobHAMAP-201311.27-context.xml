@@ -47,7 +47,7 @@
         <property name="dependsUpon" ref="stepHamapWriteFastaFile-201311.27"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="binarySwitches" value="${psscan.hamap.binary.switches}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
@@ -72,7 +72,7 @@
         <property name="stepDescription" value="Parse the output from the ProSite binary"/>
         <property name="serialGroup" value="PARSE_HAMAP"/>
         <property name="retries" value="3"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="hamapRawMatchDAO-201311.27"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapMatchParser">
@@ -89,7 +89,7 @@
           parent="abstractHamapStep-201311.27">
         <property name="dependsUpon" ref="stepHamapParseRawOutput-201311.27"/>
         <property name="stepDescription" value="Delete the hmmer output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepHamapPostProcessing-201311.27"
