@@ -45,7 +45,7 @@ branches:
   only:
   - dev
   - master
-  - release-5.47-82.0
+  - hamapcdd
   except:
   - new_master
 
