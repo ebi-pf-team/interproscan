@@ -63,7 +63,7 @@ public abstract class RawSite implements Serializable {
     @Column(name = COL_NAME_TITLE)               // site name
     private String title;
 
-    @Column(name = "residues", nullable = false, length = 2000)
+    @Column(name = "residues", nullable = false, length = 6000)
     private String residues;
 
     @Column
