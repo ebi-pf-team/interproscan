@@ -135,7 +135,7 @@
                         <value>MINUS_ONE</value>
                     </list>
                 </property>
-                <property name="accessionsToSkipFile" ref="${prosite.profiles.skipflagged.profiles}"/>
+                <property name="accessionsToSkipFile" value="${prosite.profiles.skipflagged.profiles}"/>
             </bean>
         </property>
         <property name="filteredMatchDAO">
