@@ -67,6 +67,10 @@ public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanR
      */
     @Override
     protected PfScanRawMatch createMatch(String line) {
+        //deal with the pfscanV3 info rmessage
+        if (line.startsWith("pfscanV3 is not meant to be used with a single profile")){
+            return null;
+        }
         final String[] splitLine = line.split("\\t");
         if (splitLine.length < 9) return null;
 
