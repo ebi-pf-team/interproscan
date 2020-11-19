@@ -6,10 +6,6 @@ sudo: required
 env:
   matrix:
   - OS_TYPE=centos OS_VERSION=7
-  - OS_TYPE=centos OS_VERSION=8
-  - OS_TYPE=ubuntu OS_VERSION=xenial
-  - OS_TYPE=ubuntu OS_VERSION=bionic
-  - OS_TYPE=ubuntu OS_VERSION=19.10
   - OS_TYPE=ubuntu OS_VERSION=20.04
   
 services:
