@@ -212,6 +212,13 @@ public class WriteOutputStep extends Step {
         }
 
         List<FileOutputFormat> outputFormatsList = new ArrayList<>(outputFormats);
+        if (outputFormatsList.contains(FileOutputFormat.HTML)){
+            outputFormatsList.remove(FileOutputFormat.HTML);
+            if(! outputFormatsList.contains(FileOutputFormat.JSON)) {
+                outputFormatsList.add(FileOutputFormat.JSON);
+            }
+        }
+
         Collections.sort(outputFormatsList, Collections.reverseOrder());
 
         //always handle xml first ??
@@ -269,6 +276,7 @@ public class WriteOutputStep extends Step {
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
+                        
                         if (temporaryFileDirectory != null) {
                             if (htmlResultWriter == null) {
                                 throw new IllegalStateException("htmlResultWriter is null ");
