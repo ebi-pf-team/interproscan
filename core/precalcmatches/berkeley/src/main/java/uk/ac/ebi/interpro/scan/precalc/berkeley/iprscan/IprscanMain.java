@@ -2,6 +2,8 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
 import uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan.CreateMatchDBFromIprscanBerkeleyDB;
 
+import java.util.Arrays;
+
 /**
  * @author Phil Jones
  *         Date: 20/05/11
@@ -27,9 +29,12 @@ public class IprscanMain {
         String databaseUsername = args[4];
         String databasePassword = args[5];
         String maxUPI = args[6];
+        String buildsteps = args[7];
+
+        System.out.println("args  #" + args.length + " : " + Arrays.toString(args));
         int fetchSize = 100000;
-        if (args.length >= 8) {
-            fetchSize = Integer.parseInt(args[6]);
+        if (args.length >= 9) {
+            fetchSize = Integer.parseInt(args[7]);
         }
 
         // TODO Allow user to kick of ALL (both MD5 and MATCH) or just one
@@ -40,8 +45,8 @@ public class IprscanMain {
 
         //md5
 
-        /*
-
+        
+        if ( buildsteps.contains("1")) {
         CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
         md5Builder.buildDatabase(
                 md5DBPath,
@@ -52,6 +57,9 @@ public class IprscanMain {
                 fetchSize
         );
 
+	}
+       
+	if ( buildsteps.contains("2")) {
 
 	    //matches
         CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();
@@ -64,7 +72,9 @@ public class IprscanMain {
                 fetchSize
         );
 
-        */
+        }
+
+	if ( buildsteps.contains("3")) {
 
         //sites
 
@@ -78,6 +88,7 @@ public class IprscanMain {
                 fetchSize
         );
 
+	}
 
     }
 }
