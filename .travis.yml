@@ -39,9 +39,7 @@ before_install:
 
 branches:
   only:
-  - dev
-  - master
-  - release-5.47-82.0
+  - release-5.48-83.0
   except:
   - new_master
 
