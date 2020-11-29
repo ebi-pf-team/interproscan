@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomainMatch;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,15 +24,12 @@ public class PrositeSequenceMatch implements Serializable {
      * Group 3:
      * Group 4:
      */
-    public static final Pattern SEQUENCE_LINE_PATTERN =
-            Pattern.compile("^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+\\S+=(\\S+)\\|\\S+\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+(.*)");
-            //TODO  make this pattern simpler, sub groups?
+    //public static final Pattern SEQUENCE_LINE_PATTERN =
+    //Pattern.compile("^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+\\S+=(\\S+)\\|\\S+\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+(.*)");
 
-//            Pattern.compile("^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+\\S+=(\\S+)\\|\\S+\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+\\S+=(\\S+)\\s+(.*)");
-
-//            Pattern.compile("^\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\S+\\s+\\d+\\s+(\\S+).*$");
-
-
+    //TODO  make this pattern simpler, sub groups?
+    public static final Pattern SEQUENCE_LINE_PATTERN = Pattern.compile("/^>(\\S+)\\/(\\d+)\\-(\\d+)\\s+motif=(\\S+)\\|\\S+\\s+norm_score=(\\S+)\\s+raw_score=(\\S+)\\s+level=(\\S+)\\s+level_tag=(\\S+)\\s+motif_start=" +
+        "(\\S+)\\s+motif_end=(\\S+)\\|\\S+\\s+seq_end=(\\S+)\\s+motif_rev=(\\S+)\\s+strand=\\+(.*)/");
 
     // The following  ints are to help with extracting data from the Pattern above - KEEP THEM IN SYNC!
     public static final int SEQ_ID_GROUP = 1;
@@ -41,10 +39,15 @@ public class PrositeSequenceMatch implements Serializable {
     public static final int NORM_SCORE_GROUP = 5;
     public static final int RAW_SCORE_GROUP = 6;
     public static final int LEVEL_GROUP = 7;
-    public static final int SEQ_END_GROUP = 8;
+    public static final int LEVEL_TAG_GROUP = 8;
+
     public static final int MOTOF_START_GROUP = 9;
     public static final int MOTIF_END_GROUP = 10;
-    public static final int ALIGNMENT_GROUP = 11;
+
+    public static final int SEQ_END_GROUP = 11;
+    public static final int MOTIF_REV_GROUP = 12;
+    //public static final int MOTIF_REV_GROUP = 11;
+    public static final int ALIGNMENT_GROUP = 13;
 
     private String sequenceIdentifier;
 
@@ -70,6 +73,25 @@ public class PrositeSequenceMatch implements Serializable {
         this.score = Double.parseDouble(domainLineMatcher.group(NORM_SCORE_GROUP));
         this.level = Integer.parseInt(domainLineMatcher.group(LEVEL_GROUP));
         this.alignment = domainLineMatcher.group(ALIGNMENT_GROUP);
+    }
+
+    public PrositeSequenceMatch(String line) {
+        //MF_01458|FtsH	1	-1	UPI00043D6473	658	1179	13110	32.021942	+	QLLMekeTVdgeeF
+        // 0            1    2     3             4   5        6        7        8    9
+        String [] lineTokens = line.split("\t");
+        if (lineTokens.length >= 10) {
+            this.sequenceIdentifier = lineTokens[3];
+            this.sequenceStart = Integer.parseInt(lineTokens[4]);
+            this.sequenceEnd = Integer.parseInt(lineTokens[5]);
+            String modelStr = lineTokens[0];
+            this.model = modelStr.split("\\|")[0];
+
+            this.score = Double.parseDouble(lineTokens[7]);
+            this.level = 1; //Integer.parseInt(lineTokens[xx]); find out if its possible to output the level here
+            this.alignment = lineTokens[9];
+            Utilities.verboseLog(40, "alignment : " + this.alignment);
+        }
+        Utilities.verboseLog(40, "alignment for " + this.sequenceIdentifier + " and model " + this.model + " : " + this.alignment);
     }
 
     public String getSequenceIdentifier() {

@@ -61,7 +61,7 @@
         <property name="fullPathToBinary" value="${binary.rpsbproc.path}"/>
         <property name="binarySwitches" value="${rpsbproc.switches.cdd}"/>
         <property name="cddDataPath" value="${cdd.data.path}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" value="[PROTSTART]_[PROTEND].blast.raw.out"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -83,7 +83,7 @@
           parent="abstractCDDStep">
         <property name="dependsUpon" ref="stepCDDRunPostBlastProcessing"/>
         <property name="stepDescription" value="Parse the CDD binary output and store as Filtered matches."/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.cdd.CDDMatchParser">
                 <property name="signatureLibraryRelease" ref="cddSignatureLibraryRelease"/>
@@ -103,7 +103,7 @@
         <property name="dependsUpon" ref="stepCDDParsePostBlastProcessing"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 

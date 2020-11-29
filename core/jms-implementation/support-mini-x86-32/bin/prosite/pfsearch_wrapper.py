@@ -126,7 +126,7 @@ def write_to_file(filename, output):
     with open(filename, 'w') as seq_file:
         seq_file.write(output)
 
-def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command_index):
+def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, fasta_filtered_file, command_index):
     count = 0
     temp_file_list = []
     stats_filename = input_fasta_file + ".stats"
@@ -161,6 +161,7 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
         temp_output_file = temp_file + '.raw.out'
         #print 'temp file is ', temp_file
         write_to_file(temp_file, input_fasta_sequences)
+        append_to_file(fasta_filtered_file, input_fasta_sequences)
         get_seq_end_time = time.time()
         time_to_get_seqences = get_seq_end_time - get_seq_start_time
         #print 'time to get ', len(sequence_ids), 'sequences for ', prf, ': ', time_to_get_seqences
@@ -184,10 +185,10 @@ def run_pfsearch_binary(arg_list, profiles, seqs_dict, input_fasta_file, command
         #    append_to_file(temp_err_file, "command to run: " +  cmd_string + ' \n')
         #    with open(temp_output_file, 'a') as out_temp_file:
         #        out_temp_file.write(output)
-        output = clean_output(output)
+        #output = clean_output(output)
         if output.strip():
             with open(output_file, 'a') as out_file:
-                out_file.write(output)
+                out_file.write(output + '\n')
         #if count > prf_half:
         #    break
 
@@ -215,7 +216,8 @@ if __name__ == "__main__":
         arg_list = sys.argv
         profiles_list_filename = arg_list[1]
         fasta_file = arg_list[2]
-        stats_filename = arg_list[3]
+        fasta_filtered_file = arg_list[3]
+        #stats_filename = arg_list[3]
         output_file = arg_list[4]
         model_dir = arg_list[5]
         command_index = 6
@@ -225,6 +227,7 @@ if __name__ == "__main__":
 
         #create the output file in case we don't have any matches
         open(output_file, 'a').close()
+        open(fasta_filtered_file, 'a').close()
 
         start_time = time.time()
 
@@ -241,7 +244,7 @@ if __name__ == "__main__":
 
             #stats_filename = fasta_file + ".stats"
             #run the pfsearch binary
-            pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, fasta_file, command_index)
+            pfsearch_cmd_run_count = run_pfsearch_binary(arg_list, profiles,seqs_dict, fasta_file, fasta_filtered_file, command_index)
             sys.stderr.write('prfs: ' + str(pfsearch_cmd_run_count))
     except:
         print(sys.version)

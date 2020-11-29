@@ -92,7 +92,7 @@
                   value="0.081 0.015 0.054 0.061 0.040 0.068 0.022 0.057 0.056 0.093 0.025 0.045 0.049 0.039 0.057 0.068 0.058 0.067 0.013 0.032"/>
         <!--Add TMHMM model-->
         <property name="pathToTmhmmModel" ref="pathToModelFileId-2.0c"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -115,7 +115,7 @@
         <property name="filteredMatchDAO" ref="tmhmmFilteredMatchDAO-2.0c"/>
         <property name="serialGroup" value="PARSE_TMHMM"/>
         <property name="retries" value="3"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <bean id="stepTMHMMDeleteRawOutput-2.0c"
@@ -123,7 +123,7 @@
           parent="abstractTMHMMStep-2.0c">
         <property name="dependsUpon" ref="stepTMHMMParseOutput-2.0c"/>
         <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <!-- ######################## Dependencies ############################  -->

@@ -62,7 +62,7 @@
         <property name="fullPathToBinary" value="${binary.mobidb.path}"/>
         <property name="fullPathToBinDirectory" value="${binary.mobidb.binx.path}"/>
         <property name="binarySwitches" value="${mobidb.binary.switches} ${mobidb.binary.cpu.switches}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -77,7 +77,7 @@
         <property name="dependsUpon" ref="stepMobiDBRunBinary"/>
         <property name="stepDescription" value="Parse the MobiDB binary output and store as Filtered matches."/>
 
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="filteredMatchDAO" ref="mobidbFilteredMatchDAO"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.mobidb.MobiDBMatchParser">
@@ -97,7 +97,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
             </list>
         </property>
 
