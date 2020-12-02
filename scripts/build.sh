@@ -26,6 +26,7 @@ python3 -V
 echo " checking python version"
 cp -r data/hamap/2020_01 data/hamap/2020_05
 cp -r data/cdd/3.17 data/cdd/3.18
+python3 initial_setup.py
 ./interproscan.sh -i test_proteins.fasta -f tsv -dp -appl sfld, prints,smart,pfam,pirsf,tigrfam,prositeprofiles,prositepatterns,gene3d,superfamily
 #./interproscan.sh -i test_all_appl.fasta -f tsv -dp -exclappl cdd, hamap
 ./interproscan.sh -i test_all_appl.fasta -f tsv -dp -appl hamap
