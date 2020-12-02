@@ -27,7 +27,7 @@
         <!--<jetty.version>9.4.19.v20190610</jetty.version>-->
 <!--        <jetty.version>9.4.16.v20190411</jetty.version>-->
 <!--        <jetty.version>9.4.24.v20191120</jetty.version> -->
-	<jetty.version>9.4.34.v20201102</jetty.version>
+	<jetty.version>9.4.35.v20201120</jetty.version>
         <i5.version>${project.version}</i5.version>
     </properties>
 
