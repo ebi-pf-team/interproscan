@@ -58,13 +58,13 @@
             <version>1.4</version>
         </dependency>
 
-       <!-- start end -->
+       <!-- start 
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
         </dependency>
-       <!-- start end -->
+        end -->
 
     </dependencies>
 
