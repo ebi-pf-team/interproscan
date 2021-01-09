@@ -20,10 +20,10 @@
 
     <bean id="jdbcOracleDataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${ip.jdbc.driverClassName}"/>
-        <property name="url" value="${ip.jdbc.connection.url}"/>
-        <property name="username" value="${ip.jdbc.username}"/>
-        <property name="password" value="${ip.jdbc.password}"/>
+<!--        <property name="driverClassName" value="${ip.jdbc.driverClassName}"/>-->
+<!--        <property name="url" value="${ip.jdbc.connection.url}"/>-->
+<!--        <property name="username" value="${ip.jdbc.username}"/>-->
+<!--        <property name="password" value="${ip.jdbc.password}"/>-->
     </bean>
 
     <!-- Entry row callback handler -->

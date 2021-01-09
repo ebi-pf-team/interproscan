@@ -69,16 +69,39 @@
     </bean>
 
 
-    <!--    Step 3 -->
+    <!-- STEP 3: Runs pirsf.pl perl script and writes the raw result to the specified output file-->
+    <bean id="stepPIRSRRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsr.RunPIRSRBinaryStep"
+          parent="abstractPIRSRStep">
+        <!-- In example command line below, replace _ with -
+        -->
+        <!--General step properties-->
+        <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
+        <property name="stepDescription" value="Run pirsf.pl binary for selected proteins"/>
+        <property name="retries" value="3"/>
+        <!--More specific properties-->
+        
+        <property name="fullPathToBinary" value="${pirsr.binary.path}"/>
+        <property name="pathToRulesJson" value="${pirsr.rules.path}"/>
+<!--        <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>-->
+        <property name="pathToInputTsv" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
+    </bean>
+
+
+    <!--        Step 4-->
     <bean id="stepPIRSRStoreRawMatches"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3ParseStep"
           parent="abstractPIRSRStep">
-        <property name="dependsUpon" ref="stepPIRSRRunHmmer3"/>
+        <property name="dependsUpon" ref="stepPIRSRRunBinary"/>
         <property name="stepDescription" value="Parse the PIRSR hmmer3 output and store matches."/>
         <property name="serialGroup" value="PARSE_PIRSR"/>
 
         <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.PIRSRHmmer3MatchParser">
                 <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PIRSR"/>
                 <constructor-arg type="java.lang.String" ref="pirsrSignatureLibraryReleaseVersion"/>
 
@@ -88,20 +111,49 @@
                         <property name="hmmKey" value="ACCESSION"/>
                     </bean>
                 </property>
-                <!-- <property name="pirsrHierarchyFilePath" value="${pirsr.hierarchy.file.path}"/> -->
             </bean>
         </property>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="outputOneFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-<!--        <property name="excludeSites" value="${exclude.sites.from.output}"/>-->
+        <property name="outputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
-<!--        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>-->
+        <property name="rawSiteDAO"  ref="pirsrRawSiteDAO"/>
     </bean>
 
+    <!--    Step 5-->
+    <bean id="stepPIRSRDeleteJobFiles"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractPIRSRStep">
+        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the fasta file and the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputOneFileTemplate"/>
+            </list>
+        </property>
+        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
+    </bean>
 
-
-
-
+    <bean id="stepPIRSRPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSRHmmer3FilterStep"
+          parent="abstractPIRSRStep">
+        <property name="dependsUpon" ref="stepPIRSRStoreRawMatches"/>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="stepDescription" value="Store raw PIRSR matches as filtered matches"/>
+        <property name="signatureLibraryRelease" ref="pirsrSignatureLibraryReleaseVersion"/>
+        <!--<property name="postProcessor"/> No post processing required-->
+        <property name="filteredMatchAndSiteDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PIRSRHmmer3FilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
+        </property>
+        <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <property name="rawMatchDAO" ref="pirsrRawMatchDAO"/>
+        <property name="rawSiteDAO" ref="pirsrRawSiteDAO"/>
+    </bean>
 
     <!-- ######################## Dependencies ############################  -->
     <bean id="pirsrRawMatchDAO"

@@ -25,6 +25,8 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
 
     private static final Logger LOGGER = LogManager.getLogger(RunPIRSRBinaryStep.class.getName());
 
+    private String fullPathToPython;
+
     private String fullPathToBinary;
 
     private String pathToRulesJson;
@@ -42,6 +44,11 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
 
     // private String sitesAnnotationFileName;
 
+
+    public void setFullPathToPython(String fullPathToPython) {
+        this.fullPathToPython = fullPathToPython;
+    }
+
     @Required
     public void setFullPathToBinary(String fullPathToBinary) {
         this.fullPathToBinary = fullPathToBinary;
@@ -57,6 +64,9 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
         this.pathToInputTsv = pathToInputTsv;
     }
 
+    public String getPathToInputTsv() {
+        return pathToInputTsv;
+    }
 
 
 
@@ -78,9 +88,7 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
     //     this.inputFileNameDomTbloutTemplate = inputFileNameDomTbloutTemplate;
     // }
 
-    // public String getInputFileNameAlignmentsTemplate() {
-    //     return inputFileNameAlignmentsTemplate;
-    // }
+
 
     // @Required
     // public void setInputFileNameAlignmentsTemplate(String inputFileNameAlignmentsTemplate) {
@@ -101,11 +109,18 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
 
+        final String inputFileNameRawOut = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getPathToInputTsv());
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
-        // final String inputFileNameRawOut = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameRawOutTemplate());
+
         // final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameDomTbloutTemplate());
         // final String inputFileNameAlignments = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameAlignmentsTemplate());
+
+        if(this.fullPathToPython.trim().isEmpty()){
+            command.add("python3");
+        }else{
+            command.add(this.fullPathToPython);
+        }
 
         command.add(fullPathToBinary);
 
@@ -113,7 +128,7 @@ public class RunPIRSRBinaryStep extends RunBinaryStep {
         command.add(pathToRulesJson);
 
         command.add("-i");
-        command.add(pathToInputTsv);
+        command.add(inputFileNameRawOut);
 
         // command.add("-s");
         // command.add(sitesAnnotationFileName);

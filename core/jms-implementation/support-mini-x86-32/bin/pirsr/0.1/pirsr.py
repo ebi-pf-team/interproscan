@@ -26,7 +26,7 @@ import argparse
 import csv
 import json
 import re
-
+import parsehmmer
 
 
 def process_row(row, rule):
@@ -43,10 +43,13 @@ def process_row(row, rule):
     seq_from = int(row[5])
     seq_to = int(row[6])
     seq_align = row[7]
+    dom_score = row[8]
+    dom_evalue = row[9]
     global result
 
     if not sequence_id in result:
         result[sequence_id] = {}
+        result[sequence_id]["domainMatches"] = {}
 
     map = map_hmm_to_seq(hmm_from, hmm_align, seq_align)
 
@@ -54,7 +57,7 @@ def process_row(row, rule):
 
     for grp in rule['Groups'].keys():
 
-        if model_id in result[sequence_id]:
+        if model_id in result[sequence_id]["domainMatches"] :
             next
 
         pass_count = 0
@@ -87,15 +90,18 @@ def process_row(row, rule):
             rule_sites.extend(rule['Groups'][grp])
 
     if rule_sites:
-        result[sequence_id][model_id] = {
+        #        result[sequence_id] = {
+        result[sequence_id]["domainMatches"][model_id] = {
+            'domScore': dom_score,
+            'domEvalue': dom_evalue,
             'hmmFrom': hmm_from,
             'hmmTo': hmm_to,
             'hmmAlign': hmm_align,
             'seqFrom': seq_from,
             'seqTo': seq_to,
             'seqAlign': seq_align,
-            'RuleSites': rule_sites,
-            'Scope': rule['Scope'],
+            'ruleSites': rule_sites,
+            'scope': rule['Scope'],
         }
 
 
@@ -125,12 +131,14 @@ if __name__ == '__main__':
 
     ap = argparse.ArgumentParser()
 
-    ap.add_argument("-i", "--query", required=True, help="query tsv input file")
+    #ap.add_argument("-i", "--query", required=True, help="query tsv input file")
+    ap.add_argument("-i", "--query", required=True, help="query hmmer input file")
     ap.add_argument("-r", "--rules", required=True, help="processed json rules file")
     ap.add_argument("-o", "--out", required=True, help="output json results file")
     args = vars(ap.parse_args())
 
-    tsv_name = args['query']
+    hmmer3_raw_output = args['query']
+    #tsv_name = args['query']
     rules_name = args['rules']
     out_file = args['out']
 
@@ -140,21 +148,22 @@ if __name__ == '__main__':
     with open(rules_name) as rulesfile:
         rules_hash = json.load(rulesfile)
 
+    raw_matches = parsehmmer.parse(hmmer3_raw_output)
 
-    with open(tsv_name) as tsvfile:
-        reader = csv.reader(tsvfile, delimiter='\t')
-        for row in reader:
-            if not bool(row):
-                break
-            if row[1] in rules_hash:
-                rule = rules_hash[row[1]]
-                process_row(row, rule)
-            else:
-                print('ERROR: nonexistent rule ' + row[1] + ' in rules file')
+    for row in raw_matches:
+        if not bool(row):
+            break
+        if row[1] in rules_hash:
+            rule = rules_hash[row[1]]
+            process_row(row, rule)
+        else:
+            print('ERROR: nonexistent rule ' + row[1] + ' in rules file')
 
 
     with open(out_file, 'w') as out_file:
         json.dump(result, out_file, indent=4,)
+    hmmer3_output_tsv = hmmer3_raw_output.strip().replace('raw', 'tsv')
+    raw_matches = parsehmmer.print(raw_matches, hmmer3_output_tsv)
 
     print ("Done.")
 
