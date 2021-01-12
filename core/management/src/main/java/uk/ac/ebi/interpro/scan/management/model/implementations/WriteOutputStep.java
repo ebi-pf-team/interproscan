@@ -77,6 +77,8 @@ public class WriteOutputStep extends Step {
 
     private String interProScanVersion;
 
+    private boolean disableHtmlOutput = true;
+
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
@@ -150,6 +152,14 @@ public class WriteOutputStep extends Step {
         this.entryHierarchy = entryHierarchy;
     }
 
+    public boolean isDisableHtmlOutput() {
+        return disableHtmlOutput;
+    }
+
+    public void setDisableHtmlOutput(boolean disableHtmlOutput) {
+        this.disableHtmlOutput = disableHtmlOutput;
+    }
+
     /**
      * Sets/persists new unique protein xref identifiers in cases where they are non unique (same ID, different sequences).
      */
@@ -212,7 +222,7 @@ public class WriteOutputStep extends Step {
         }
 
         List<FileOutputFormat> outputFormatsList = new ArrayList<>(outputFormats);
-        if (outputFormatsList.contains(FileOutputFormat.HTML)){
+        if (disableHtmlOutput && outputFormatsList.contains(FileOutputFormat.HTML)){
             outputFormatsList.remove(FileOutputFormat.HTML);
             if(! outputFormatsList.contains(FileOutputFormat.JSON)) {
                 outputFormatsList.add(FileOutputFormat.JSON);
