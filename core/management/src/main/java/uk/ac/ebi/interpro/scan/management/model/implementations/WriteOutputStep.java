@@ -818,6 +818,10 @@ public class WriteOutputStep extends Step {
 
     private void outputToHTML(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
+        String htmlMessage = "Your requested output formats include HTML. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
+        //LOGGER.info(svgMessage);
+        System.out.println(Utilities.getTimeNow() + " " + htmlMessage);
+
         writeGraphicalProteinMatches(htmlResultWriter, stepInstance);
         List<Path> resultFiles = htmlResultWriter.getResultFiles();
         // E.g. resultFiles =
@@ -849,7 +853,7 @@ public class WriteOutputStep extends Step {
     private void outputToSVG(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
         //If the archive mode is switched off single SVG files should be written to the global output directory
-        String svgMessage = "You have requested to output in SVG. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
+        String svgMessage = "Your requested output formats include SVG. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
 	//LOGGER.info(svgMessage);
         System.out.println(Utilities.getTimeNow() + " " + svgMessage);
         if (!archiveSVGOutput) {
