@@ -27,6 +27,7 @@
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="matchDAO" ref="matchDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+        <property name="kvStoreDelayMilliseconds" value="${kvstore.delay.milliseconds}"/>
 
     </bean>
 
