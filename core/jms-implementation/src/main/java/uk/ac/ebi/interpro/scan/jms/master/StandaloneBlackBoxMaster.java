@@ -217,7 +217,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
                     if (scheduleGCTime >= 30 * 60 * 1000){
                         scheduleGCStart = System.currentTimeMillis();
-                        Utilities.verboseLog(10,
+                        Utilities.verboseLog(20,
                         "stepInstanceDAO.count() " + stepInstanceDAO.count()
                                 + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                 + " minimumStepsExpected : " + minimumStepsExpected
@@ -314,7 +314,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
                 if (scheduleGCTime >= 30 * 60 * 1000){
                     scheduleGCStart = System.currentTimeMillis();
-                    Utilities.verboseLog(10,
+                    Utilities.verboseLog(20,
                             "stepInstanceDAO.count() " + stepInstanceDAO.count()
                                     + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                     + " minimumStepsExpected : " + minimumStepsExpected

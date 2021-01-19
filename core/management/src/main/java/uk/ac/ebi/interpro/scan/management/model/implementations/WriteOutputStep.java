@@ -77,6 +77,8 @@ public class WriteOutputStep extends Step {
 
     private String interProScanVersion;
 
+    private boolean disableHtmlOutput = true;
+
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
     public static final String OUTPUT_FILE_PATH_KEY = "OUTPUT_PATH";
@@ -148,6 +150,14 @@ public class WriteOutputStep extends Step {
     @Required
     public void setEntryHierarchy(EntryHierarchy entryHierarchy) {
         this.entryHierarchy = entryHierarchy;
+    }
+
+    public boolean isDisableHtmlOutput() {
+        return disableHtmlOutput;
+    }
+
+    public void setDisableHtmlOutput(boolean disableHtmlOutput) {
+        this.disableHtmlOutput = disableHtmlOutput;
     }
 
     /**
