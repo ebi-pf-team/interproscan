@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
 
 /**
  * Parser for PIRSR HMMER3 output
- *
- *
  */
 public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteParser {
 
@@ -131,17 +129,19 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
         }
 
         Map<String, Set<PIRSRHmmer3RawMatch>> rawMatchGroups = new HashMap<>();
-        for (RawProtein<PIRSRHmmer3RawMatch> rawProtein: filtertedRawProteinMap.values()){
+        for (RawProtein<PIRSRHmmer3RawMatch> rawProtein : rawProteinMap.values()) {
             String sequenceIdentifier = rawProtein.getProteinIdentifier();
-            Collection <PIRSRHmmer3RawMatch> filteredRawMatches =  rawProtein.getMatches();
+            Collection<PIRSRHmmer3RawMatch> filteredRawMatches = rawProtein.getMatches();
             for (PIRSRHmmer3RawMatch rawMatch : filteredRawMatches) {
                 String modelAc = rawMatch.getModelId();
                 String key = sequenceIdentifier + "_" + modelAc;
+                //update Scope
+                Utilities.verboseLog(30, "matchgroup_key " + key + " :" + rawMatch.toString());
                 if (rawMatchGroups.keySet().contains(key)) {
                     Set<PIRSRHmmer3RawMatch> matchesForKey = rawMatchGroups.get(key);
                     matchesForKey.add(rawMatch);
-                }else{
-                    Set<PIRSRHmmer3RawMatch> matchesForKey =  new HashSet<>();
+                } else {
+                    Set<PIRSRHmmer3RawMatch> matchesForKey = new HashSet<>();
                     matchesForKey.add(rawMatch);
                     rawMatchGroups.put(key, matchesForKey);
                 }
@@ -155,10 +155,14 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
 
         int siteCount = rawSites.size();
         Utilities.verboseLog(30, "Parsed site count: " + siteCount);
+        Utilities.verboseLog(30, "rawMatchGroups #: " + rawMatchGroups.size());
         int promotedSiteCont = 0;
         int correctSiteCoordinatesCount = 0;
         for (PIRSRHmmer3RawSite rawSite : rawSites) {
-            if (siteInMatchLocation(rawSite,  rawMatchGroups)){
+            Utilities.verboseLog(30, "Consider RawSite : " + rawSite.toString());
+            if (siteInMatchLocation(rawSite, rawMatchGroups)) {
+                Utilities.verboseLog(30, "RawSite : " + rawSite.toString());
+
                 // add to the sites
                 //filteredRawSites.add(rawSite);
                 String sequenceId = rawSite.getSequenceIdentifier();
@@ -171,17 +175,17 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                     rawProteinSiteMap.put(sequenceId, rawProteinSite);
                 }
 
-                correctSiteCoordinatesCount ++;
-            }else{
-                Utilities.verboseLog(1100, "Site NOT withing match location site - " + rawSite.toString());
+                correctSiteCoordinatesCount++;
+            } else {
+                Utilities.verboseLog(30, "Site NOT withing match location site - " + rawSite.toString());
             }
 
         }
         int totalSiteCount = promotedSiteCont + siteCount;
-        Utilities.verboseLog(1100, "Sites within match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
+        Utilities.verboseLog(30, "Sites within match location site :" + correctSiteCoordinatesCount + " out of " + totalSiteCount);
 
         //print the matches with sites
-        Utilities.verboseLog(25,"Matches and sites --- ooo ---");
+        Utilities.verboseLog(25, "Matches and sites --- ooo ---");
         if (Utilities.verboseLogLevel >= 25) {
             for (RawProtein<PIRSRHmmer3RawMatch> rawProtein : filtertedRawProteinMap.values()) {
                 String sequenceIdentifier = rawProtein.getProteinIdentifier();
@@ -218,11 +222,10 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
     }
 
     /**
-     *
      * @param modelMatch
      * @return
      */
-    private String getMatchDetails(PIRSRHmmer3RawMatch modelMatch){
+    private String getMatchDetails(PIRSRHmmer3RawMatch modelMatch) {
         final List<String> mappingFields = new ArrayList<>();
         mappingFields.add(modelMatch.getSequenceIdentifier());
         mappingFields.add(modelMatch.getModelId());
@@ -239,7 +242,6 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
     }
 
     /**
-     *
      * @param rawMatches
      * @return
      */
@@ -259,36 +261,49 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
         return matchGroups;
     }
 
-    private Set<PIRSRHmmer3RawMatch> getPromotedRawMatches(PIRSRHmmer3RawMatch rawMatch, Set<String> parents) {
-        Set<PIRSRHmmer3RawMatch> promotedRawMatches = new HashSet();
-        String childModelId = rawMatch.getModelId();
-        //Utilities.verboseLog(1100, "Promoted match for " + childModelId + " with parents: " + parents);
-        for (String modelAc : parents) {
-            if (!childModelId.equals(modelAc)) {
-                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
-            }
-        }
-        return promotedRawMatches;
-    }
+//    private Set<PIRSRHmmer3RawMatch> getPromotedRawMatches(PIRSRHmmer3RawMatch rawMatch, Set<String> parents) {
+//        Set<PIRSRHmmer3RawMatch> promotedRawMatches = new HashSet();
+//        String childModelId = rawMatch.getModelId();
+//        //Utilities.verboseLog(1100, "Promoted match for " + childModelId + " with parents: " + parents);
+//        for (String modelAc : parents) {
+//            if (!childModelId.equals(modelAc)) {
+//                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
+//            }
+//        }
+//        return promotedRawMatches;
+//    }
+//
+//    public PIRSRHmmer3RawSite getRawSite(PIRSRHmmer3RawSite rawSite, String modelAc) {
+//        //Utilities.verboseLog( "Get promoted sites for : " + rawSite.getModelId() + " modelAc: " + modelAc);
+//        PIRSRHmmer3RawSite promotedRawSite = new PIRSRHmmer3RawSite(
+//                rawSite.getSequenceIdentifier(),
+//                rawSite.getTitle(),
+//                rawSite.getResidues(),
+//                rawSite.getLabel(),
+//                rawSite.getFirstStart(),
+//                rawSite.getLastEnd(),
+//                rawSite.getHmmStart(),
+//                rawSite.getHmmEnd(),
+//                rawSite.getGroup(),
+//                modelAc,
+//                rawSite.getSignatureLibraryRelease());
+//
+//        //Utilities.verboseLog(1100, "Promoted site for " + rawSite.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawSite);
+//        return promotedRawSite;
+//    }
 
-    public PIRSRHmmer3RawSite getRawSite(PIRSRHmmer3RawSite rawSite, String modelAc) {
-        //Utilities.verboseLog( "Get promoted sites for : " + rawSite.getModelId() + " modelAc: " + modelAc);
-        PIRSRHmmer3RawSite promotedRawSite = new PIRSRHmmer3RawSite(rawSite.getSequenceIdentifier(),
-                rawSite.getTitle(), rawSite.getResidues(), modelAc, rawSite.getSignatureLibraryRelease());
-
-        //Utilities.verboseLog(1100, "Promoted site for " + rawSite.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawSite);
-        return promotedRawSite;
-    }
-
-    private boolean siteInMatchLocation(PIRSRHmmer3RawSite rawSite, Map<String, Set<PIRSRHmmer3RawMatch>> rawMatchGroups){
+    private boolean siteInMatchLocation(PIRSRHmmer3RawSite rawSite, Map<String, Set<PIRSRHmmer3RawMatch>> rawMatchGroups) {
 
         String key = rawSite.getSequenceIdentifier() + "_" + rawSite.getModelId();
         int firstStart = rawSite.getFirstStart();
         int lastEnd = rawSite.getLastEnd();
         Set<PIRSRHmmer3RawMatch> rawMatches = rawMatchGroups.get(key);
+        Utilities.verboseLog(30, "group raw matches key -> " + key);
         if (rawMatches != null) {
-            for (PIRSRHmmer3RawMatch rawMatch : rawMatches){
-                if (! (firstStart > rawMatch.getLocationEnd() || rawMatch.getLocationStart() > lastEnd )){
+            Utilities.verboseLog(30, "raw matches -> " + rawMatches.size());
+            for (PIRSRHmmer3RawMatch rawMatch : rawMatches) {
+                Utilities.verboseLog(firstStart + "-" + lastEnd + " vs " + rawMatch.getLocationStart() + "-" + rawMatch.getLocationEnd());
+                if (!(firstStart > rawMatch.getLocationEnd() || rawMatch.getLocationStart() > lastEnd)) {
                     return true;
                 }
             }
@@ -298,17 +313,17 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
 
     }
 
-    private Set<PIRSRHmmer3RawSite> getPromotedRawSites(PIRSRHmmer3RawSite rawSite, Set<String> parents) {
-        Set<PIRSRHmmer3RawSite> promotedRawSites = new HashSet();
-        String childModelId = rawSite.getModelId();
-        //Utilities.verboseLog( "Get promoted sites for : " + childModelId + " with parents: " + parents);
-        for (String modelAc : parents) {
-            if (!childModelId.equals(modelAc)) {
-                promotedRawSites.add(getRawSite(rawSite, modelAc));
-            }
-        }
-        return promotedRawSites;
-    }
+//    private Set<PIRSRHmmer3RawSite> getPromotedRawSites(PIRSRHmmer3RawSite rawSite, Set<String> parents) {
+//        Set<PIRSRHmmer3RawSite> promotedRawSites = new HashSet();
+//        String childModelId = rawSite.getModelId();
+//        //Utilities.verboseLog( "Get promoted sites for : " + childModelId + " with parents: " + parents);
+//        for (String modelAc : parents) {
+//            if (!childModelId.equals(modelAc)) {
+//                promotedRawSites.add(getRawSite(rawSite, modelAc));
+//            }
+//        }
+//        return promotedRawSites;
+//    }
 
     public MatchData parseFileInput(InputStream is) throws IOException {
         Map<String, RawProtein<T>> rawResults = new HashMap<>();
@@ -332,22 +347,24 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
             */
 
 
-            String jsonInString2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(createSequenceMatches());
+            //TODO remove this test
+            //String jsonInString2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(createSequenceMatches());
 
-            System.out.println(jsonInString2);
+            //System.out.println(jsonInString2);
 
             //new try
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, SimpleSequenceMatch> jsonMap = new HashMap();
 
             //jsonMap2 = mapper.readValue(jsonInString2, new TypeReference<Map<String, SimpleSequenceMatch>>(){});
-            jsonMap = mapper.readValue(is, new TypeReference<Map<String, SimpleSequenceMatch>>(){});
+            jsonMap = mapper.readValue(is, new TypeReference<Map<String, SimpleSequenceMatch>>() {
+            });
 
 
-            for (String key: jsonMap.keySet()) {
+            for (String key : jsonMap.keySet()) {
                 //SimpleSequenceMatch object = (SimpleSequenceMatch) jsonMap.get(key);
 //                SimpleSequenceMatch object = (SimpleSequenceMatch) jsonMap.get(key);
-                System.out.println("Primary key (SequenceID)::" + key);
+                System.out.println("jsonMap Primary key (SequenceID)::" + key);
                 //Class obj = jsonMap.getClass();
                 //System.out.println("type::" + obj.toString());
                 //System.out.println("type canon::" + obj.getTypeName());
@@ -357,7 +374,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                 //System.out.println("object type canon::" + object.getTypeName());
 
                 SimpleSequenceMatch simpleObject = (SimpleSequenceMatch) jsonMap.get(key);
-                System.out.println("SimpleSequenceMatch : " + simpleObject.toString());
+                System.out.println("jsonMap object for key " + key + " : SimpleSequenceMatch : " + simpleObject.toString());
                 /*
                 for(Map.Entry<String, SimpleDomainMatch> domainEntry : simpleObject.getDomainMatches().entrySet()){
                     System.out.println("map item : " + domainEntry.getKey()+" "+ domainEntry.getValue());
@@ -377,52 +394,71 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                 //if (! key.equalsIgnoreCase("6")){
                 //    continue;
                 //}
+                int count = 0;
                 for (Map.Entry<String, SimpleDomainMatch> domainEntry : simpleObject.getDomainMatches().entrySet()) {
+                    count ++;
                     String sequenceId = key;
                     String modelId = domainEntry.getKey();
-                    System.out.println("Secondary key (ModelId)::" + modelId);
+                    System.out.println(count + ": Secondary key (ModelId)::" + modelId);
 
 
-                    System.out.println("type of this object with entry key " +  sequenceId  + " is: " + domainEntry.getValue().toString());
+                    System.out.println(count + ": type of this object with entry key " + sequenceId + " is: " + domainEntry.getValue().toString());
                     SimpleDomainMatch simpleDomainMatch = (SimpleDomainMatch) domainEntry.getValue();
-                    System.out.println("This simpleDomainMatch is a(n) " + domainEntry.getClass().getClass().getSimpleName());
+                    System.out.println(count + ": This simpleDomainMatch is a(n) " + domainEntry.getClass().getClass().getSimpleName());
                     modelId = modelId.split("-")[0];
 
-                    System.out.println("simpleDomainMatch : " + simpleDomainMatch.toString());
-                        PIRSRHmmer3RawMatch pirsrHmmer3RawMatch =
-                                new PIRSRHmmer3RawMatch(
-                                        sequenceId,modelId,
-                                        signatureLibrary,
-                                        signatureLibraryRelease,
-                                        simpleDomainMatch.getSeqFrom(),
-                                        simpleDomainMatch.getSeqTo(),
-                                        simpleDomainMatch.getDomEvalue(), //evalue,
-                                        simpleDomainMatch.getDomScore(), //score,
-                                        simpleDomainMatch.getHmmFrom(),
-                                        simpleDomainMatch.getHmmTo(),
-                                        "[]",
-                                        simpleDomainMatch.getDomScore(), //locationScore,
-                                        1, //envStart,
-                                        2, //envEnd,
-                                        0, //expectedAcuracy,
-                                        0, //sequenceBias,
-                                        0, //domainCeVale,
-                                        simpleDomainMatch.getDomEvalue(), //domainIeValue,
-                                        1 //domainBias
-                                        );
-                        rawMatches.add(pirsrHmmer3RawMatch);
-                        List<RuleSite> ruleSites = simpleDomainMatch.getRuleSites();
-                        for (RuleSite ruleSite: ruleSites) {
-                            PIRSRHmmer3RawSite pirsrHmmer3RawSite = new PIRSRHmmer3RawSite(
-                                    sequenceId,
-                                    ruleSite.getDesc(),
-                                    "N6",
-                                    modelId,
-                                    getSignatureLibraryRelease()
-                                    );
-                            rawSites.add(pirsrHmmer3RawSite);
+                    System.out.println(count + ": simpleDomainMatch : " + simpleDomainMatch.toString());
+                    PIRSRHmmer3RawMatch pirsrHmmer3RawMatch =
+                            new PIRSRHmmer3RawMatch(
+                                    sequenceId, modelId,
+                                    signatureLibrary,
+                                    signatureLibraryRelease,
+                                    simpleDomainMatch.getSeqFrom(),
+                                    simpleDomainMatch.getSeqTo(),
+                                    simpleDomainMatch.getDomEvalue(), //evalue,
+                                    simpleDomainMatch.getDomScore(), //score,
+                                    simpleDomainMatch.getHmmFrom(),
+                                    simpleDomainMatch.getHmmTo(),
+                                    "[]",
+                                    simpleDomainMatch.getDomScore(), //locationScore,
+                                    1, //envStart,
+                                    2, //envEnd,
+                                    0, //expectedAcuracy,
+                                    0, //sequenceBias,
+                                    0, //domainCeVale,
+                                    simpleDomainMatch.getDomEvalue(), //domainIeValue,
+                                    1,  //domainBias
+                                    simpleDomainMatch.getScope().toString()
+                            );
+                    rawMatches.add(pirsrHmmer3RawMatch);
+                    List<RuleSite> ruleSites = simpleDomainMatch.getRuleSites();
+                    System.out.println(count + ": process sites : " + ruleSites.toString());
+                    for (RuleSite ruleSite : ruleSites) {
+                        String condition = ruleSite.getCondition();
+                        Utilities.verboseLog(30, "Condition: " + condition + " len : " + condition.length());
+                        if (condition.contains("[")){
+                            condition =  condition.replace("[", "").replace("]", "");
+                            condition = condition.replace("'", "");
                         }
-
+                        String residues = condition;
+                        Utilities.verboseLog(30, "Condition (residues): " + residues + " -> " + ruleSite.getStart() + "-" +
+                                ruleSite.getEnd());
+                        PIRSRHmmer3RawSite pirsrHmmer3RawSite = new PIRSRHmmer3RawSite(
+                                sequenceId,
+                                ruleSite.getDesc(),
+                                residues,
+                                ruleSite.getLabel(),
+                                ruleSite.getStart(),
+                                ruleSite.getEnd(),
+                                ruleSite.getHmmStart(),
+                                ruleSite.getHmmEnd(),
+                                Integer.parseInt(ruleSite.getGroup()),
+                                modelId,
+                                getSignatureLibraryRelease()
+                        );
+                        rawSites.add(pirsrHmmer3RawSite);
+                        Utilities.verboseLog(30, "pirsrHmmer3RawSite:" + pirsrHmmer3RawSite.toString());
+                    }
 
 
                 }
@@ -497,7 +533,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
 
     private Map<String, SimpleSequenceMatch> createSequenceMatches() {
         Map<String, SimpleSequenceMatch> simpleSequenceMatchMap = new LinkedHashMap<>();
-        for (int index= 1; index < 4; index ++){
+        for (int index = 1; index < 4; index++) {
             String key = String.valueOf(index);
             SimpleSequenceMatch simpleSequenceMatch = new SimpleSequenceMatch();
             Map<String, SimpleDomainMatch> domainMatches = new LinkedHashMap<>();
@@ -518,8 +554,8 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
             RuleSite rulesite1 = new RuleSite(
                     "Lipid",
                     "they are lipids",
-                    2,2,
-                    5,5,
+                    2, 2,
+                    5, 5,
                     "3",
                     "[GAST]"
             );
@@ -527,8 +563,8 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
             RuleSite rulesite2 = new RuleSite(
                     "Lipid",
                     "dna binding",
-                    2,2,
-                    5,5,
+                    2, 2,
+                    5, 5,
                     "3",
                     "[GAST2]"
             );

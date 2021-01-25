@@ -107,6 +107,19 @@ public abstract class RawSite implements Serializable {
         this.setLastEnd(lastEnd);
     }
 
+    protected RawSite(String sequenceIdentifier, String modelId, String title, String residues, int firstStart, int lastEnd,
+                      SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        this.setSequenceIdentifier(sequenceIdentifier);
+        this.setModelId(modelId);
+        this.title = title;
+        this.residues = residues;
+        this.setSignatureLibrary(signatureLibrary);
+        this.setSignatureLibraryRelease(signatureLibraryRelease);
+
+        this.setFirstStart(firstStart);
+        this.setLastEnd(lastEnd);
+
+    }
 
     public Long getId() {
         return id;

@@ -122,6 +122,7 @@
 
         <!--Raw Sites-->
         <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawSite</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawSite</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite</class>
 
         <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>

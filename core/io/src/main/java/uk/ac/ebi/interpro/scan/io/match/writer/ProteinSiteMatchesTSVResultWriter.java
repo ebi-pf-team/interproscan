@@ -78,7 +78,14 @@ public class ProteinSiteMatchesTSVResultWriter extends ProteinMatchesResultWrite
                                         mappingFields.add(siteLocation.getResidue());
                                         mappingFields.add(Integer.toString(siteLocation.getStart()));
                                         mappingFields.add(Integer.toString(siteLocation.getEnd()));
-                                        mappingFields.add((site.getDescription() == null ? "" : site.getDescription()));
+                                        mappingFields.add((site.getDescription() == null ? "-" : site.getDescription()));
+                                        if (site instanceof Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site){
+                                            Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site hmmer3Site = (Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site) site;
+                                            mappingFields.add(Integer.toString(hmmer3Site.getHmmStart()));
+                                            mappingFields.add(Integer.toString(hmmer3Site.getHmmEnd()));
+                                            mappingFields.add(Integer.toString(hmmer3Site.getGroup()));
+                                            mappingFields.add(hmmer3Site.getLabel());
+                                        }
 
                                         this.tsvWriter.write(mappingFields);
 //                                Utilities.verboseLog(mappingFields.toString());

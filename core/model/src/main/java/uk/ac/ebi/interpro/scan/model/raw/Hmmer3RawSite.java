@@ -29,6 +29,12 @@ public abstract class Hmmer3RawSite extends RawSite {
         super(sequenceIdentifier, modelId, title, residues, signatureLibrary, signatureLibraryRelease);
     }
 
+    public Hmmer3RawSite(String sequenceIdentifier, String modelId, String title, String residues,
+                         int firstStart, int lastEnd,
+                         SignatureLibrary signatureLibrary, String signatureLibraryRelease) {
+        super(sequenceIdentifier, modelId, title, residues, firstStart, lastEnd, signatureLibrary, signatureLibraryRelease);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

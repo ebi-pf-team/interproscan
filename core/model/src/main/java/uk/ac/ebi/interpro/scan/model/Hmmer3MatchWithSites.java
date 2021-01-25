@@ -37,11 +37,27 @@ import java.util.Set;
 @XmlType(name = "Hmmer3MatchWithSitesType")
 public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSites.Hmmer3LocationWithSites> implements Serializable {
 
+
+    private String scope;
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
     protected Hmmer3MatchWithSites() {
     }
 
     public Hmmer3MatchWithSites(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations) {
         super(signature, signatureModels, score, evalue, locations);
+    }
+
+    public Hmmer3MatchWithSites(Signature signature, String signatureModels, double score, double evalue, Set<Hmmer3MatchWithSites.Hmmer3LocationWithSites> locations, String scope) {
+        super(signature, signatureModels, score, evalue, locations);
+        this.scope = scope;
     }
 
     @Override
@@ -199,11 +215,60 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         @XmlType(name = "Hmmer3SiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
         public static class Hmmer3Site extends HmmerSite {
 
+
+            private String label;
+            private int group;
+
+            private int hmmStart;
+            private int hmmEnd;
+
+            public String getLabel() {
+                return label;
+            }
+
+            public void setLabel(String label) {
+                this.label = label;
+            }
+
+            public int getGroup() {
+                return group;
+            }
+
+            public void setGroup(int group) {
+                this.group = group;
+            }
+
+            public int getHmmStart() {
+                return hmmStart;
+            }
+
+            public void setHmmStart(int hmmStart) {
+                this.hmmStart = hmmStart;
+            }
+
+            public int getHmmEnd() {
+                return hmmEnd;
+            }
+
+            public void setHmmEnd(int hmmEnd) {
+                this.hmmEnd = hmmEnd;
+            }
+
             protected Hmmer3Site() {
             }
 
             public Hmmer3Site(String description, Set<SiteLocation> siteLocations) {
                 super(description, siteLocations);
+            }
+
+            public Hmmer3Site(String description,   String label, int hmmStart,
+                              int hmmEnd,
+                              int group, Set<SiteLocation> siteLocations) {
+                super(description, siteLocations);
+                this.label = label;
+                this.hmmStart = hmmStart;
+                this.hmmEnd = hmmEnd;
+                this.group = group;
             }
 
             @Override

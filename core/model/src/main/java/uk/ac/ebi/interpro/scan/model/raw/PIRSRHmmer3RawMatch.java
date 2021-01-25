@@ -7,7 +7,7 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 
 /**
- * Raw site match for PIRSR.
+ * Raw  match for PIRSR.
  */
 @Entity
 @Table(name = PIRSRHmmer3RawMatch.TABLE_NAME, indexes = {
@@ -21,6 +21,17 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
 
     public static final String TABLE_NAME = "PIRSR_HMMER3_RAW_MATCH";
 
+    private String scope;
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+
     protected PIRSRHmmer3RawMatch() {
     }
 
@@ -32,9 +43,10 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
                               double locationScore,
                               int envelopeStart, int envelopeEnd,
                               double expectedAccuracy, double fullSequenceBias,
-                              double domainCeValue, double domainIeValue, double domainBias) {
+                              double domainCeValue, double domainIeValue, double domainBias, String scope) {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias);
+        this.scope = scope;
     }
 
     public PIRSRHmmer3RawMatch getNewRawMatch(String modelAc){
@@ -46,7 +58,7 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
                 this.getLocationScore(),
                 this.getEnvelopeStart(), this.getEnvelopeEnd(),
                 this.getExpectedAccuracy(), this.getFullSequenceBias(),
-                this.getDomainCeValue(), this.getDomainIeValue(), this.getDomainBias());
+                this.getDomainCeValue(), this.getDomainIeValue(), this.getDomainBias(), this.getScope());
         //Utilities.verboseLog(1100, "Promoted match for " + this.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
         return promotedRawMatch;
     }

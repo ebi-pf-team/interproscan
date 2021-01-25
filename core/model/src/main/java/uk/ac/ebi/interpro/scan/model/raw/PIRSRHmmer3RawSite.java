@@ -2,6 +2,7 @@ package uk.ac.ebi.interpro.scan.model.raw;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -22,16 +23,81 @@ public class PIRSRHmmer3RawSite extends Hmmer3RawSite implements Comparable<PIRS
 
     public static final String TABLE_NAME = "PIRSR_HMMER3_RAW_SITE";
 
-    protected PIRSRHmmer3RawSite() {
+    @Column (name = "SITE_LABEL")
+    String label;
+
+    @Column (name = "SITE_GROUP")
+    int group;
+
+    @Column //(name = "HMMSTART")
+    int hmmStart;
+
+    @Column //(name = "HMMEND")
+    int hmmEnd;
+
+    protected PIRSRHmmer3RawSite(){
+
+    }
+
+    public PIRSRHmmer3RawSite(String sequenceIdentifier,
+                              String title,
+                              String residues,
+                              String model,
+                              String signatureLibraryRelease) {
+        super(sequenceIdentifier, model, title, residues, SignatureLibrary.PIRSR, signatureLibraryRelease);
     }
 
     public PIRSRHmmer3RawSite(String sequenceIdentifier,
                              String title,
                              String residues,
+                             String label,
+                             int start,
+                             int end,
+                             int hmmStart,
+                             int hmmEnd,
+                             int group,
                              String model,
                              String signatureLibraryRelease) {
-        super(sequenceIdentifier, model, title, residues, SignatureLibrary.PIRSR, signatureLibraryRelease);
+        super(sequenceIdentifier, model, title, residues, start, end, SignatureLibrary.PIRSR, signatureLibraryRelease);
+        this.label = label;
+        this.hmmStart = hmmStart;
+        this.hmmEnd = hmmEnd;
+        this.group = group;
     }
+
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
+    public int getHmmStart() {
+        return hmmStart;
+    }
+
+    public void setHmmStart(int hmmStart) {
+        this.hmmStart = hmmStart;
+    }
+
+    public int getHmmEnd() {
+        return hmmEnd;
+    }
+
+    public void setHmmEnd(int hmmEnd) {
+        this.hmmEnd = hmmEnd;
+    }
+
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -61,4 +127,13 @@ public class PIRSRHmmer3RawSite extends Hmmer3RawSite implements Comparable<PIRS
         return 0;
     }
 
+//    @Override
+//    public String toString() {
+//        return "PIRSRHmmer3RawSite{" +
+//                "label='" + label + '\'' +
+//                ", group=" + group +
+//                ", hmmStart=" + hmmStart +
+//                ", hmmEnd=" + hmmEnd +
+//                '}';
+//    }
 }
