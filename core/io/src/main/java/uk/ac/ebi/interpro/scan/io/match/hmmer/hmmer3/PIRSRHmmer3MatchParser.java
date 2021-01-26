@@ -69,6 +69,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
     private final SignatureLibrary signatureLibrary;
     private final String signatureLibraryRelease;
 
+    //private ProteinDAO proteinDAO;
 
     private PIRSRHmmer3MatchParser() {
         signatureLibrary = null;
@@ -132,6 +133,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
         for (RawProtein<PIRSRHmmer3RawMatch> rawProtein : rawProteinMap.values()) {
             String sequenceIdentifier = rawProtein.getProteinIdentifier();
             Collection<PIRSRHmmer3RawMatch> filteredRawMatches = rawProtein.getMatches();
+
             for (PIRSRHmmer3RawMatch rawMatch : filteredRawMatches) {
                 String modelAc = rawMatch.getModelId();
                 String key = sequenceIdentifier + "_" + modelAc;
@@ -398,6 +400,8 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                 for (Map.Entry<String, SimpleDomainMatch> domainEntry : simpleObject.getDomainMatches().entrySet()) {
                     count ++;
                     String sequenceId = key;
+//                    Protein protein = proteinDAO.getProtein(key);
+//                    String sequence =  protein.getSequence();
                     String modelId = domainEntry.getKey();
                     System.out.println(count + ": Secondary key (ModelId)::" + modelId);
 
@@ -405,7 +409,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                     System.out.println(count + ": type of this object with entry key " + sequenceId + " is: " + domainEntry.getValue().toString());
                     SimpleDomainMatch simpleDomainMatch = (SimpleDomainMatch) domainEntry.getValue();
                     System.out.println(count + ": This simpleDomainMatch is a(n) " + domainEntry.getClass().getClass().getSimpleName());
-                    modelId = modelId.split("-")[0];
+                    //modelId = modelId.split("-")[0]; // dont split as the h2db should be able to handle this
 
                     System.out.println(count + ": simpleDomainMatch : " + simpleDomainMatch.toString());
                     PIRSRHmmer3RawMatch pirsrHmmer3RawMatch =
@@ -428,31 +432,51 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                                     0, //domainCeVale,
                                     simpleDomainMatch.getDomEvalue(), //domainIeValue,
                                     1,  //domainBias
-                                    simpleDomainMatch.getScope().toString()
+                                    simpleDomainMatch.getScope().toString(),
+                                    simpleDomainMatch.getSeqAlign(),
+                                    simpleDomainMatch.getHmmAlign()
                             );
                     rawMatches.add(pirsrHmmer3RawMatch);
                     List<RuleSite> ruleSites = simpleDomainMatch.getRuleSites();
                     System.out.println(count + ": process sites : " + ruleSites.toString());
+                    String seqAlignment = simpleDomainMatch.getSeqAlign();
+                    String hmmAlign = simpleDomainMatch.getHmmAlign();
+
                     for (RuleSite ruleSite : ruleSites) {
+                        int residueStart = simpleDomainMatch.getSeqFrom() + ruleSite.getStart() - 1;
+                        int residueEnd = simpleDomainMatch.getSeqFrom() + ruleSite.getEnd() - 1;
+                        //the residue positions are defined in terms of the alignment, though
+                        String residues = seqAlignment.substring(ruleSite.getStart()-1, ruleSite.getEnd());
+                        String residuesConst = seqAlignment.substring(1,2);
+                        Utilities.verboseLog(30, "seqAlignment: " + seqAlignment + "\n");
+                        Utilities.verboseLog(30, "residues :" + seqAlignment.substring(ruleSite.getStart(), ruleSite.getEnd()) +
+                                " position on the alignment: " + ruleSite.getStart() + "-" +  ruleSite.getEnd());
+                        Utilities.verboseLog(30, "residuesConst :" + residuesConst + " position on the alignm: " + 1 + "-" +  2);
+                        Utilities.verboseLog(30, "residue :" + residues + " position on the sequ: " + residueStart + "-" +  residueEnd);
+
                         String condition = ruleSite.getCondition();
                         Utilities.verboseLog(30, "Condition: " + condition + " len : " + condition.length());
-                        if (condition.contains("[")){
-                            condition =  condition.replace("[", "").replace("]", "");
-                            condition = condition.replace("'", "");
-                        }
-                        String residues = condition;
-                        Utilities.verboseLog(30, "Condition (residues): " + residues + " -> " + ruleSite.getStart() + "-" +
-                                ruleSite.getEnd());
+
+//                        if (condition.contains("[")){
+//                            condition =  condition.replace("[", "").replace("]", "");
+//                            condition = condition.replace("'", "");
+//                        }
+//                        String residues = condition;
+//                        Utilities.verboseLog(30, "Condition (residues): " + residues + " -> " + ruleSite.getStart() + "-" +
+//                                ruleSite.getEnd());
                         PIRSRHmmer3RawSite pirsrHmmer3RawSite = new PIRSRHmmer3RawSite(
                                 sequenceId,
                                 ruleSite.getDesc(),
                                 residues,
                                 ruleSite.getLabel(),
-                                ruleSite.getStart(),
-                                ruleSite.getEnd(),
+                                residueStart,
+                                residueEnd,
                                 ruleSite.getHmmStart(),
                                 ruleSite.getHmmEnd(),
                                 Integer.parseInt(ruleSite.getGroup()),
+                                ruleSite.getStart(),
+                                ruleSite.getEnd(),
+                                condition,
                                 modelId,
                                 getSignatureLibraryRelease()
                         );
