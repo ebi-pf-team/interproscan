@@ -23,6 +23,9 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
 
     private String scope;
 
+    private  String seqAlignment;
+    private String hmmAlignment;
+
     public String getScope() {
         return scope;
     }
@@ -31,6 +34,21 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
         this.scope = scope;
     }
 
+    public String getSeqAlignment() {
+        return seqAlignment;
+    }
+
+    public void setSeqAlignment(String seqAlignment) {
+        this.seqAlignment = seqAlignment;
+    }
+
+    public String getHmmAlignment() {
+        return hmmAlignment;
+    }
+
+    public void setHmmAlignment(String hmmAlignment) {
+        this.hmmAlignment = hmmAlignment;
+    }
 
     protected PIRSRHmmer3RawMatch() {
     }
@@ -43,10 +61,13 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
                               double locationScore,
                               int envelopeStart, int envelopeEnd,
                               double expectedAccuracy, double fullSequenceBias,
-                              double domainCeValue, double domainIeValue, double domainBias, String scope) {
+                              double domainCeValue, double domainIeValue, double domainBias, String scope,
+                               String seqAlignment, String hmmAlignment) {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy, fullSequenceBias, domainCeValue, domainIeValue, domainBias);
         this.scope = scope;
+        this.seqAlignment = seqAlignment;
+        this.hmmAlignment = hmmAlignment;
     }
 
     public PIRSRHmmer3RawMatch getNewRawMatch(String modelAc){
@@ -58,7 +79,8 @@ public class PIRSRHmmer3RawMatch extends Hmmer3RawMatch {
                 this.getLocationScore(),
                 this.getEnvelopeStart(), this.getEnvelopeEnd(),
                 this.getExpectedAccuracy(), this.getFullSequenceBias(),
-                this.getDomainCeValue(), this.getDomainIeValue(), this.getDomainBias(), this.getScope());
+                this.getDomainCeValue(), this.getDomainIeValue(), this.getDomainBias(), this.getScope(),
+                this.getSeqAlignment(), this.getHmmAlignment());
         //Utilities.verboseLog(1100, "Promoted match for " + this.getModelId() + " with new model: " + modelAc + " ::::- " + promotedRawMatch);
         return promotedRawMatch;
     }

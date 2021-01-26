@@ -23,6 +23,12 @@ public class PIRSRHmmer3RawSite extends Hmmer3RawSite implements Comparable<PIRS
 
     public static final String TABLE_NAME = "PIRSR_HMMER3_RAW_SITE";
 
+    int ruleAlignStart;
+
+    int ruleAlignEnd;
+
+    String ruleCondition;
+
     @Column (name = "SITE_LABEL")
     String label;
 
@@ -56,15 +62,44 @@ public class PIRSRHmmer3RawSite extends Hmmer3RawSite implements Comparable<PIRS
                              int hmmStart,
                              int hmmEnd,
                              int group,
+                             int ruleAlignStart,
+                             int ruleAlignEnd,
+                             String ruleCondition,
                              String model,
                              String signatureLibraryRelease) {
         super(sequenceIdentifier, model, title, residues, start, end, SignatureLibrary.PIRSR, signatureLibraryRelease);
+        this.ruleAlignStart = ruleAlignStart;
+        this.ruleAlignEnd = ruleAlignEnd;
+        this.ruleCondition = ruleCondition;
         this.label = label;
         this.hmmStart = hmmStart;
         this.hmmEnd = hmmEnd;
         this.group = group;
     }
 
+    public int getRuleAlignStart() {
+        return ruleAlignStart;
+    }
+
+    public void setRuleAlignStart(int ruleAlignStart) {
+        this.ruleAlignStart = ruleAlignStart;
+    }
+
+    public int getRuleAlignEnd() {
+        return ruleAlignEnd;
+    }
+
+    public void setRuleAlignEnd(int ruleAlignEnd) {
+        this.ruleAlignEnd = ruleAlignEnd;
+    }
+
+    public String getRuleCondition() {
+        return ruleCondition;
+    }
+
+    public void setRuleCondition(String ruleCondition) {
+        this.ruleCondition = ruleCondition;
+    }
 
     public String getLabel() {
         return label;

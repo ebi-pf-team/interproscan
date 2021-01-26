@@ -153,12 +153,14 @@ public class SimpleDomainMatch {
     @Override
     public String toString() {
         return "SimpleDomainMatch{" +
-                "hmmFrom=" + hmmFrom +
+                "domScore=" + domScore +
+                ", domEvalue=" + domEvalue +
+                ", hmmFrom=" + hmmFrom +
                 ", hmmTo=" + hmmTo +
-                ", HmmAlign='" + hmmAlign + '\'' +
+                ", hmmAlign='" + hmmAlign + '\'' +
                 ", seqFrom=" + seqFrom +
                 ", seqTo=" + seqTo +
-                ", mathAlign='" + seqAlign + '\'' +
+                ", seqAlign='" + seqAlign + '\'' +
                 ", ruleSites=" + ruleSites +
                 ", scope=" + scope +
                 '}';

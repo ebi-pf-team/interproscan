@@ -72,6 +72,8 @@ public class PIRSRHmmer3ParserSupport extends AbstractHmmer3ParserSupport<PIRSRH
                 domainMatch.getCEvalue(),
                 domainMatch.getIEvalue(),
                 domainMatch.getBias(),
+                "scope",
+                domainMatch.getAlignment(),
                 ""
         );
     }
