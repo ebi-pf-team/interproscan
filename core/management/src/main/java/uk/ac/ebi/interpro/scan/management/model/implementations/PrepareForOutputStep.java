@@ -273,21 +273,64 @@ public class PrepareForOutputStep extends Step {
 
         Long middleProtein = topProteinId / 2;
 
+        int maxTryCount = 12;
+
+        int totalWaitTime = 0;
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
             //Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
-            Protein protein = proteinDAO.getProtein(proteinKey);
+            int tryCount = 0;
+            Protein protein = null;
+            while (tryCount <= maxTryCount) {
+                try {
+                    protein = proteinDAO.getProtein(proteinKey);
+                } catch (Exception exception) {
+                    //dont recover but sleep for a few seconds and try again
+
+                    Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
+
+                    exception.printStackTrace();
+                    if (tryCount >= maxTryCount) {
+                        Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
+                                + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                                " retries : " + tryCount);
+                        throw new IllegalStateException("Failed to get the associated proteinobject: + " + proteinKey);
+                    }
+                    //how long to wait for files to be available ??
+                    int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
+                    if (getKvStoreDelayMilliseconds() < waitTime) {
+                        if (waitTime > 120 * 1000) {
+                            waitTime = 120 * 1000;
+                        }
+                        Utilities.sleep(waitTime);
+                    } else {
+                        delayForKVStore();
+                    }
+                    totalWaitTime += waitTime;
+                    Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
+
+                }
+                tryCount++;
+            }
+            if (totalWaitTime > 0){
+                Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
+                        + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                        " retries : " + tryCount);
+            }
             if (protein != null) {
                 proteinCount++;
+            } else {
+                throw new IllegalStateException("Failed to get the associated proteinobject: + " + proteinKey);
             }
 
+            totalWaitTime = 0;
             for (String signatureLibraryName : signatureLibraryNames) {
                 final String dbKey = proteinKey + signatureLibraryName;
 
                 Set<Match> matches = null;
                 //try this say three times
-                int tryCount = 0;
-                while (tryCount <= 3) {
+                tryCount = 0;
+                while (tryCount <= maxTryCount) {
                     try {
                         matches = matchDAO.getMatchSet(dbKey);
                     } catch (Exception exception) {
@@ -297,17 +340,20 @@ public class PrepareForOutputStep extends Step {
 
                         exception.printStackTrace();
                         if (tryCount >= 3) {
+                            Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
+                                    + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                                    " retries : " + tryCount);
                             throw new IllegalStateException("Failed to get matches from the DB for key " + dbKey);
                         }
                         //how long to wait for files to be available ??
                         int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
-                        if (getNfsDelayMilliseconds() < waitTime) {
+                        if (getKvStoreDelayMilliseconds() < waitTime) {
                             if (waitTime > 120 * 1000) {
                                 waitTime = 120 * 1000;
                             }
                             Utilities.sleep(waitTime);
                         } else {
-                            delayForNfs();
+                            delayForKVStore();
                         }
 
                         Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
@@ -331,6 +377,11 @@ public class PrepareForOutputStep extends Step {
                     }
                 }
             }
+            if (totalWaitTime > 0){
+                Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
+                        + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                        " retries : " + tryCount);
+            }
 
             //TDO Temp check what breaks if you dont do pre-marshalling
             //String xmlProtein = writer.marshal(protein);
@@ -344,7 +395,7 @@ public class PrepareForOutputStep extends Step {
 
             proteinDAO.persist(proteinKey, protein);
             //help garbage collection??
-            if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)){
+            if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)) {
                 Utilities.printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
             }
         }
