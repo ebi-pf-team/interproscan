@@ -437,6 +437,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                                     simpleDomainMatch.getHmmAlign()
                             );
                     rawMatches.add(pirsrHmmer3RawMatch);
+                    Utilities.verboseLog(30, "pirsrHmmer3RawMatch:" + pirsrHmmer3RawMatch.toString());
                     List<RuleSite> ruleSites = simpleDomainMatch.getRuleSites();
                     System.out.println(count + ": process sites : " + ruleSites.toString());
                     String seqAlignment = simpleDomainMatch.getSeqAlign();
@@ -480,7 +481,11 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                                 modelId,
                                 getSignatureLibraryRelease()
                         );
-                        rawSites.add(pirsrHmmer3RawSite);
+                        if (siteInMatchLocation(pirsrHmmer3RawSite, pirsrHmmer3RawMatch)) {
+                            rawSites.add(pirsrHmmer3RawSite);
+                        } else {
+                            LOGGER.warn("Site not in LOcation" );
+                        }
                         Utilities.verboseLog(30, "pirsrHmmer3RawSite:" + pirsrHmmer3RawSite.toString());
                     }
 
@@ -606,4 +611,24 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
 
         return simpleSequenceMatchMap;
     }
+
+
+    private boolean siteInMatchLocation(PIRSRHmmer3RawSite rawSite, PIRSRHmmer3RawMatch rawMatch){
+
+        String sequenceIdentifier = rawSite.getSequenceIdentifier();
+        String modelId = rawSite.getModelId();
+        int firstStart = rawSite.getFirstStart();
+        int lastEnd = rawSite.getLastEnd();
+        if (sequenceIdentifier.equalsIgnoreCase(rawMatch.getSequenceIdentifier()) &&
+                modelId.equalsIgnoreCase(rawMatch.getModelId())) {
+            if (! (firstStart > rawMatch.getLocationEnd() || rawMatch.getLocationStart() > lastEnd )){
+                    return true;
+            }
+        }
+
+        return false;
+
+    }
+
+
 }

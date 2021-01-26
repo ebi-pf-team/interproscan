@@ -59,8 +59,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog(110, "temp dir: " + getWorkingTemporaryDirectoryPath());
+            Utilities.verboseLog(20, "temp dir: " + getWorkingTemporaryDirectoryPath());
         }
+        Utilities.verboseLog(20, "temp dir: " + getWorkingTemporaryDirectoryPath());
 
         Utilities.verboseLog(110, "Old values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
