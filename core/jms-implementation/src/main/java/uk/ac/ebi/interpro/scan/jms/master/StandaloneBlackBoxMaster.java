@@ -78,16 +78,16 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         if (! (getMaxConcurrentInVmWorkerCount() == workerQueueJmsContainer.getMaxConcurrentConsumers())){
             int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
-//            if (getMaxConcurrentInVmWorkerCount() > 4){
-//                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
-//            }
-//            if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
-//                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
-//            }
+
             workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog(1100, "minNumberOfCPUCores: " + minNumberOfCPUCores
+            setConcurrentInVmWorkerCount(minNumberOfCPUCores); // set the mini int the master the same as provided
+
+            Utilities.verboseLog(30, "minNumberOfCPUCores: " + minNumberOfCPUCores
                     + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
+
+            //update the parameters
+            //params.put(StepInstanceCreatingStep.WORKER_NUMBER_KEY, Integer.toString(getConcurrentInVmWorkerCount()));
         }else{
             //set the minconsumercount to value given by user in the properties file
             //TODO check if this is necessary as the container should handle dynamic scaling

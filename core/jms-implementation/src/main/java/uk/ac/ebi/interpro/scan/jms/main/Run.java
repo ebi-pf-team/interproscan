@@ -681,7 +681,7 @@ public class Run extends AbstractI5Runner {
                 int numberOfCPUCores = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.CPU.getLongOpt()));
                 if (numberOfCPUCores == 0) {
                     LOGGER.warn("--cpu 0 is not allowed, updated to --cpu 1");
-                    numberOfCPUCores = 1;
+                    numberOfCPUCores = 2;
                 }
                 if (bbMaster instanceof StandaloneBlackBoxMaster) {
                     //deal with cpu cores
