@@ -1,26 +1,20 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.hibernate.Hibernate;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
-import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesJSONResultWriter;
-import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,17 +72,11 @@ public class PrepareForOutputStep extends Step {
 
         Utilities.verboseLog(110, "temporaryFileDirectory: " + temporaryFileDirectory);
 
-        int proteinCount = 0;
-        int matchCount = 0;
-
         Set<String> signatureLibraryNames = new HashSet<>();
 
         for (SignatureLibrary sig : SignatureLibrary.values()) {
             signatureLibraryNames.add(sig.getName());
         }
-
-        int proteinRawCount = 0;
-        Protein exampleProtein = null;
 
         if (bottomProteinId == 1) {
             Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
@@ -147,9 +135,46 @@ public class PrepareForOutputStep extends Step {
             proteinBreakPoints.add(breakIndex);
         }
 
+        int maxTryCount = 12;
+        int totalWaitTime = 0;
+
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
-            Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+            //
+            //deal with the case of updated sst files
+            int tryCount = 0;
+            Protein protein = null;
+            while (tryCount <= maxTryCount) {
+                try {
+                    protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+                } catch (Exception exception) {
+                    //dont recover but sleep for a few seconds and try again
+                    Utilities.verboseLog(100, "Exception type: " + exception.getClass());
+
+                    if (tryCount >= maxTryCount) {
+                        Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
+                                + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                                " retries : " + tryCount);
+                        exception.printStackTrace();
+                        throw new IllegalStateException("Failed to get the associated proteinobject in processNucleotideSequences: + " + proteinKey);
+                    }
+                    //how long to wait for files to be available ??
+                    int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
+                    if (getKvStoreDelayMilliseconds() < waitTime) {
+                        if (waitTime > 120 * 1000) {
+                            waitTime = 120 * 1000;
+                        }
+                        Utilities.sleep(waitTime);
+                    } else {
+                        delayForKVStore();
+                    }
+                    totalWaitTime += waitTime;
+                    Utilities.verboseLog(110, "  Prepare for output - Slept for at least in processNucleotideSequences" + waitTime + " millis");
+
+                }
+                tryCount++;
+            }
+
             //Protein protein = proteinDAO.getProtein(proteinKey);
             if (protein == null) {
                 continue;
@@ -194,7 +219,7 @@ public class PrepareForOutputStep extends Step {
 
         processesReadyForXMLMarshalling.add(proteinRange);
         try {
-            //set a break clause in case something amis happens
+            //set a break clause in case something amiss happens
             while (processesReadyForXMLMarshalling.size() < expectedPrepareJobCount) {
                 Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling.size()
                         + " expectedPrepareJobCount: " + expectedPrepareJobCount);
@@ -285,15 +310,14 @@ public class PrepareForOutputStep extends Step {
                     protein = proteinDAO.getProtein(proteinKey);
                 } catch (Exception exception) {
                     //dont recover but sleep for a few seconds and try again
-
                     Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
 
-                    exception.printStackTrace();
                     if (tryCount >= maxTryCount) {
                         Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
                                 + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
                                 " retries : " + tryCount);
-                        throw new IllegalStateException("Failed to get the associated proteinobject: + " + proteinKey);
+                        exception.printStackTrace();
+                        throw new IllegalStateException("Failed to get the associated proteinobject in simulateMarshalling: + " + proteinKey);
                     }
                     //how long to wait for files to be available ??
                     int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
@@ -306,7 +330,7 @@ public class PrepareForOutputStep extends Step {
                         delayForKVStore();
                     }
                     totalWaitTime += waitTime;
-                    Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
+                    Utilities.verboseLog(110, "  Prepare for output - simulateMarshalling - Slept for at least " + waitTime + " millis");
 
                 }
                 tryCount++;
@@ -319,7 +343,7 @@ public class PrepareForOutputStep extends Step {
             if (protein != null) {
                 proteinCount++;
             } else {
-                throw new IllegalStateException("Failed to get the associated proteinobject: + " + proteinKey);
+                throw new IllegalStateException("Failed to get the associated proteinobject in simulateMarshalling: + " + proteinKey);
             }
 
             totalWaitTime = 0;
@@ -334,14 +358,13 @@ public class PrepareForOutputStep extends Step {
                         matches = matchDAO.getMatchSet(dbKey);
                     } catch (Exception exception) {
                         //dont recover but sleep for a few seconds and try again
-
                         Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
 
-                        exception.printStackTrace();
                         if (tryCount >= 3) {
                             Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
                                     + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
                                     " retries : " + tryCount);
+                            exception.printStackTrace();
                             throw new IllegalStateException("Failed to get matches from the DB for key " + dbKey);
                         }
                         //how long to wait for files to be available ??
@@ -382,7 +405,7 @@ public class PrepareForOutputStep extends Step {
                         " retries : " + tryCount);
             }
 
-            //TDO Temp check what breaks if you dont do pre-marshalling
+            //TODO Temp check what breaks if you dont do pre-marshalling
             //String xmlProtein = writer.marshal(protein);
 
             protein.getOpenReadingFrames().size();
@@ -398,13 +421,7 @@ public class PrepareForOutputStep extends Step {
                 Utilities.printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
             }
         }
-        //}catch (JAXBException e){
-        //    e.printStackTrace();
-        //}catch (XMLStreamException e) {
-        //    e.printStackTrace();
-        //}
 
-        //remove the temp xmls file
         deleteTmpMarshallingFile(outputPath);
     }
 
@@ -515,107 +532,6 @@ public class PrepareForOutputStep extends Step {
         deleteTmpMarshallingFile(outputPath);
     }
 
-
-    private void outputNTToXML(StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences, String temporaryFileDirectory) throws IOException {
-        if (!sequenceType.equalsIgnoreCase("n")) {
-            return;
-        }
-        final boolean isSlimOutput = false;
-        final String interProScanVersion = "5-34";
-
-        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
-        Utilities.verboseLog(110, " Prepare For OutputStep - outputNTToXML: " + outputPath);
-
-        Long bottomProteinId = stepInstance.getBottomProtein();
-        Long topProteinId = stepInstance.getTopProtein();
-
-        try (ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter(outputPath, isSlimOutput)) {
-            //writer.header(interProScanVersion);
-            if (bottomProteinId != null && topProteinId != null) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
-                }
-                Utilities.verboseLog(110, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
-                int count = 0;
-                writer.header(interProScanVersion);
-                //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
-                for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
-                    //writer.write(nucleotideSequence, sequenceType, isSlimOutput);
-                    String xmlNucleotideSequence = writer.marshal(nucleotideSequence);
-                    //writer.write(",");
-
-                    String key = nucleotideSequence.getMd5();
-                    Hibernate.initialize(nucleotideSequence);
-                    nucleotideSequenceDAO.getMaximumPrimaryKey();
-
-                    nucleotideSequenceDAO.persist(key, nucleotideSequence);
-                    if (Utilities.verboseLogLevel > 0) {
-                        Utilities.verboseLog(1100, "Prepae OutPut xmlNucleotideSequence : " + xmlNucleotideSequence);
-                    }
-                }
-
-                Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
-
-
-            }
-            writer.close();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    private void outputToJSON(StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences, String temporaryFileDirectory) throws IOException {
-        Utilities.verboseLog(110, " WriteOutputStep - outputToJSON ");
-
-        boolean isSlimOutput = false;
-
-        Utilities.verboseLog(110, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
-//        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
-//            //old way??
-//            //writer.write(matchesHolder, proteinDAO, sequenceType, isSlimOutput);
-//
-//        }
-        //Try writing to JSOn from this module
-
-        Long bottomProteinId = stepInstance.getBottomProtein();
-        Long topProteinId = stepInstance.getTopProtein();
-
-        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.JSON);
-
-        final Map<String, String> parameters = stepInstance.getParameters();
-        //final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
-        //final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
-        //final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
-        //writer.setMapToInterProEntries(mapToInterProEntries);
-        //writer.setMapToGO(mapToGO);
-        // writer.setMapToPathway(mapToPathway);
-        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
-            final String interProScanVersion = "5-34";
-            writer.header(interProScanVersion);
-            if (bottomProteinId != null && topProteinId != null) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
-                }
-                Utilities.verboseLog(110, " WriteOutputStep -JSON new " + " There are " + topProteinId + " proteins.");
-                int count = 0;
-                for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
-
-                    writer.write(nucleotideSequence);
-                    count++;
-                    if (count < nucleotideSequences.size()) {
-                        writer.write(","); // More proteins/nucleotide sequences to follow
-                    }
-
-                }
-            }
-            writer.footer();
-        }
-
-    }
 
     Path getFinalPath(StepInstance stepInstance, String temporaryFileDirectory, FileOutputFormat fileOutputFormat) {
         //stepInstance.buildFullyQualifiedFilePath();

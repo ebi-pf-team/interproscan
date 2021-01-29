@@ -31,6 +31,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private StatsUtil statsUtil;
 
+    private String runId;
+
     private DefaultMessageListenerContainer workerQueueJmsContainer;
 
     private static final int MEGA = 1024 * 1024;
@@ -51,6 +53,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLog( 20, " verboseLog: " + Utilities.verboseLog
                 + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
+        if (runId == null) {
+            String[] fileTokens = getWorkingTemporaryDirectoryPath().split("\\/");
+            this.runId = fileTokens[fileTokens.length -1];
+        }
+        System.out.println(Utilities.getTimeNow() + " RunID: " + runId);
+
         int runStatus = 11;
         if(verboseLogLevel >= 110) {
             Utilities.verboseLog(110, "DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
@@ -58,8 +66,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog(40, "temp dir: " + getWorkingTemporaryDirectoryPath());
+
         }
+        Utilities.verboseLog(20, "temp dir: " + getWorkingTemporaryDirectoryPath());
 
         Utilities.verboseLog(110, "Old values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
@@ -390,6 +399,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
-
+    public void setRunId(String runId) {
+        this.runId = runId;
+    }
 
 }

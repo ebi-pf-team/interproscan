@@ -665,12 +665,15 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster) {
-                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
-                    final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
+            if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+                final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
+                if (bbMaster instanceof StandaloneBlackBoxMaster) {
+                    ((StandaloneBlackBoxMaster) master).setRunId(runId);
 //                    final ResourceMonitor resourceMonitor = (ResourceMonitor) ctx.getBean("resourceMonitor");
 //                    resourceMonitor.setRunId(runId);
+                }
+                if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster) {
+                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
                 }
             }
             //deal with cpu cores specified by user
