@@ -51,6 +51,8 @@ public class Utilities {
     public static int cpuCount = 1;
     public static int prepareOutputInstances = 1;
 
+    public static volatile int gcRunCount;
+
     public static String createUniqueJobName(int jobNameLength) {
         StringBuffer sb = new StringBuffer();
         for (int x = 0; x < jobNameLength; x++) {
@@ -537,10 +539,11 @@ public class Utilities {
         //Getting the runtime reference from system
         Runtime runtime = Runtime.getRuntime();
 
-        Utilities.verboseLog(30, "##### Heap utilization statistics [MB]  at " + stepName + " ##### before ");
+        Utilities.verboseLog(30, "##### " + gcRunCount + "Heap utilization statistics [MB]  at " + stepName + " ##### before ");
 
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         Utilities.verboseLog(30, "Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + usedMemoryBefore / mb
                 + "\t Free Memory:"
                 + runtime.freeMemory() / mb
                 + "\t Total Memory:" + runtime.totalMemory() / mb
@@ -553,12 +556,19 @@ public class Utilities {
 
         System.gc();
 
-        Utilities.verboseLog(30, "##### Heap utilization statistics [MB]  at " + stepName + " ##### after");
-
+        gcRunCount ++;
+        Utilities.verboseLog(30, "##### " + gcRunCount + " Heap utilization statistics [MB]  at " + stepName + " ##### after");
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        long memoryRecovered = usedMemoryAfter - usedMemoryBefore;
+        long percentageOfMemoryRecovered = memoryRecovered * 100 / runtime.totalMemory();
         Utilities.verboseLog(30, "Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb
+                + usedMemoryAfter / mb
                 + "\t Free Memory:"
                 + runtime.freeMemory() / mb
+                + "\t memoryRecovered :"
+                + memoryRecovered / mb
+                + "\t percentageOfMemoryRecovered :"
+                + percentageOfMemoryRecovered
                 + "\t Total Memory:" + runtime.totalMemory() / mb
                 + "\t Max Memory:" + runtime.maxMemory() / mb);
     }

@@ -201,7 +201,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                     if (proteinsCount >= 2000 && progressMeter % 25 == 0) {
                         Utilities.verboseLog(30, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                     }
-                    if (progressMeter % 10 == 0) {
+                    if (progressMeter % 20 == 0) {
                         Utilities.printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
                     }
                 }
