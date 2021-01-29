@@ -343,6 +343,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     @Override
     public Set<Protein> getPrecalculated(Set<Protein> proteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
+        String proteinRange = "[" + proteinRanges.get("bottom") + "-" + proteinRanges.get("top") + "]";
+
         // Check if the precalc service is configure and available.
         Utilities.verboseLog(110, "Start getPrecalculated for " + proteins.size() + " proteins");
         if (!preCalcMatchClient.isConfigured()) {
@@ -444,7 +446,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
 
 
-            Utilities.verboseLog(110, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(30, proteinRange + " Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
@@ -494,7 +496,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (timetaken > 0) {
                 lookupTimeMillis = timetaken / 1000000;
             }
-            Utilities.verboseLog(110, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(30, proteinRange + " Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             return precalculatedProteins;
 
