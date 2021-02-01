@@ -437,14 +437,14 @@ public class PrepareForOutputStep extends Step {
 
         //if (observedTryCounts4Proteins.size() > 0) {
             String kvGetStats4Proteins = getTryCountStats(observedTryCounts4Proteins);
-            System.out.println(Utilities.getTimeNow() + " " +
-                    proteinRange + " protcount " + kvGetStats4Proteins
+            System.out.println(Utilities.getTimeNow() + " Info: " +
+                    proteinRange + " pcounts " + kvGetStats4Proteins
             );
         //}
         //if (observedTryCounts4Matches.size() > 0) {
             String kvGetStats4Matches = getTryCountStats(observedTryCounts4Matches);
-            System.out.println(Utilities.getTimeNow() + " " +
-                    proteinRange + " matchcount " + kvGetStats4Matches
+            System.out.println(Utilities.getTimeNow() + " Info: " +
+                    proteinRange + " mcounts " + kvGetStats4Matches
             );
         //}
         deleteTmpMarshallingFile(outputPath);
@@ -733,7 +733,7 @@ public class PrepareForOutputStep extends Step {
             }
         }
 
-        return "tryCounts:" + tryCount + "maxTrycount:" + maxTrycount + " maxtotalWaitTime: " + maxtotalWaitTime;
+        return " tryCounts:" + tryCount + " maxTrycount:" + maxTrycount + " maxtotalWaitTime: " + maxtotalWaitTime;
     }
 
 }
