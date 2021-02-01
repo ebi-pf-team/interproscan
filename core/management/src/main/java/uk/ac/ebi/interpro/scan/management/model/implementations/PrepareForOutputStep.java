@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
@@ -138,6 +139,8 @@ public class PrepareForOutputStep extends Step {
         int maxTryCount = 12;
         int totalWaitTime = 0;
 
+        ArrayList<Pair<Integer,Integer>> observedTryCounts = new ArrayList<>();
+
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
             //
@@ -174,7 +177,7 @@ public class PrepareForOutputStep extends Step {
                 }
                 tryCount++;
             }
-
+            observedTryCounts.add(Pair.of(tryCount, totalWaitTime));
             //Protein protein = proteinDAO.getProtein(proteinKey);
             if (protein == null) {
                 continue;
@@ -300,11 +303,15 @@ public class PrepareForOutputStep extends Step {
         int maxTryCount = 12;
 
         int totalWaitTime = 0;
+        ArrayList<Pair<Integer,Integer>> observedTryCounts4Proteins = new ArrayList<>();
+        ArrayList<Pair<Integer,Integer>> observedTryCounts4Matches = new ArrayList<>();
+
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
             //Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
             int tryCount = 0;
             Protein protein = null;
+            totalWaitTime = 0;
             while (tryCount <= maxTryCount) {
                 try {
                     protein = proteinDAO.getProtein(proteinKey);
@@ -339,7 +346,10 @@ public class PrepareForOutputStep extends Step {
                 Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
                         + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
                         " retries : " + tryCount);
+                observedTryCounts4Proteins.add(Pair.of(tryCount, totalWaitTime));
             }
+
+
             if (protein != null) {
                 proteinCount++;
             } else {
@@ -353,6 +363,7 @@ public class PrepareForOutputStep extends Step {
                 Set<Match> matches = null;
                 //try this say three times
                 tryCount = 0;
+                totalWaitTime = 0;
                 while (tryCount <= maxTryCount) {
                     try {
                         matches = matchDAO.getMatchSet(dbKey);
@@ -377,11 +388,17 @@ public class PrepareForOutputStep extends Step {
                         } else {
                             delayForKVStore();
                         }
-
+                        totalWaitTime += waitTime;
                         Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
 
                     }
                     tryCount++;
+                }
+                if (totalWaitTime > 0){
+                    Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
+                            + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                            " retries : " + tryCount);
+                    observedTryCounts4Matches.add(Pair.of(tryCount, totalWaitTime));
                 }
 
                 if (matches != null) {
@@ -399,11 +416,7 @@ public class PrepareForOutputStep extends Step {
                     }
                 }
             }
-            if (totalWaitTime > 0){
-                Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
-                        + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                        " retries : " + tryCount);
-            }
+
 
             //TODO Temp check what breaks if you dont do pre-marshalling
             //String xmlProtein = writer.marshal(protein);
@@ -422,6 +435,18 @@ public class PrepareForOutputStep extends Step {
             }
         }
 
+        //if (observedTryCounts4Proteins.size() > 0) {
+            String kvGetStats4Proteins = getTryCountStats(observedTryCounts4Proteins);
+            System.out.println(Utilities.getTimeNow() + " " +
+                    proteinRange + " protcount " + kvGetStats4Proteins
+            );
+        //}
+        //if (observedTryCounts4Matches.size() > 0) {
+            String kvGetStats4Matches = getTryCountStats(observedTryCounts4Matches);
+            System.out.println(Utilities.getTimeNow() + " " +
+                    proteinRange + " matchcount " + kvGetStats4Matches
+            );
+        //}
         deleteTmpMarshallingFile(outputPath);
     }
 
@@ -694,5 +719,21 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
+    private String getTryCountStats(ArrayList<Pair<Integer,Integer>> observedTryCounts){
+        String tryCountStats = "";
+        int tryCount = observedTryCounts.size();
+        int maxTrycount = 0;
+        int maxtotalWaitTime = 0;
+        for (Pair<Integer,Integer> tryCountEntry: observedTryCounts) {
+            if (maxTrycount < tryCountEntry.getLeft()) {
+                maxTrycount = tryCountEntry.getLeft();
+            }
+            if (maxtotalWaitTime < tryCountEntry.getRight()) {
+                maxtotalWaitTime = tryCountEntry.getRight();
+            }
+        }
+
+        return "tryCounts:" + tryCount + "maxTrycount:" + maxTrycount + " maxtotalWaitTime: " + maxtotalWaitTime;
+    }
 
 }
