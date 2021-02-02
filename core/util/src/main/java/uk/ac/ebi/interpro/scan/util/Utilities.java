@@ -535,13 +535,14 @@ public class Utilities {
 
     public static void printMemoryUsage(String stepName){
         int mb = 1024*1024;
-
+        boolean runGC = false;
         //Getting the runtime reference from system
         Runtime runtime = Runtime.getRuntime();
 
-        Utilities.verboseLog(30, "##### " + gcRunCount + "Heap utilization statistics [MB]  at " + stepName + " ##### before ");
+        Utilities.verboseLog(30, "##### " + gcRunCount + " Heap utilization statistics [MB]  at " + stepName + " ##### before ");
 
         long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        long freeMemory = runtime.freeMemory() / mb;
         Utilities.verboseLog(30, "Used Memory:"
                 + usedMemoryBefore / mb
                 + "\t Free Memory:"
@@ -554,7 +555,16 @@ public class Utilities {
             return;
         }
 
-        System.gc();
+        if (runtime.totalMemory() == runtime.maxMemory()
+                && ( freeMemory < 500 )) {
+            runGC = true;
+            Utilities.verboseLog(30, "Gc condition met " + freeMemory);
+        }
+        if (runGC) {
+            System.gc();
+        } else {
+            return;
+        }
 
         gcRunCount ++;
         Utilities.verboseLog(30, "##### " + gcRunCount + " Heap utilization statistics [MB]  at " + stepName + " ##### after");
