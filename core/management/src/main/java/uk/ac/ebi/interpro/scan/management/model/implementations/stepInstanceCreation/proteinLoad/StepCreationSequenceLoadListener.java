@@ -220,7 +220,7 @@ public class StepCreationSequenceLoadListener
                     Utilities.verboseLog(120, "rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins);
                     rawMaxProteins = 1;
                 }
-                int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
+                int maxProteins = (int) (Math.ceil(rawMaxProteins / 100.0) * 100); // to the nearest 100
                 Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                 for (Step step : matchLookupJob.getSteps()) {
                     //StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);

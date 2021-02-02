@@ -483,8 +483,21 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                     Utilities.verboseLog(110, "Analysis versions ARE Consistent ..  populateProteinMatches : kvSequenceEntryMatches " + kvSequenceEntryMatches.size() +
                             " kvSequenceEntrySites: " + kvSequenceEntrySites.size());
                 }
-                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
-                Utilities.verboseLog(110, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size());
+                //deal with failures to convert the lookup matches to i5 matches
+                try {
+                    lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
+                    Utilities.verboseLog(110, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size());
+                } catch (Exception e) {
+                    //deal with the exceptions coming from the convert process
+                    //diffilcult to recover
+                    Utilities.verboseLog(10, "Failed to convert precalculated Protein Matches:  " + precalculatedProteins.size() +
+                            " , they will be calculated manually");
+                    Utilities.verboseLog(e.getMessage());
+                    e.printStackTrace();
+                    Utilities.printMemoryUsage("After exception in lookup " +  proteinRange);
+                    Utilities.sleep(10 * 1000); //
+                    return null;
+                }
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )

@@ -372,12 +372,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
      * @param status Exit code to use
      */
     private void systemExit(int status){
+        Utilities.verboseLog(" Exit status: " + status);
         try {
             databaseCleaner.closeDatabaseCleaner();
             LOGGER.debug("Ending");
             Thread.sleep(500); // cool off, then exit
         } catch (Exception e){
             e.printStackTrace();
+            System.err.println("InterProScan analysis failed.");
         } finally {
             cleanUpWorkingDirectory();
             // Always exit
