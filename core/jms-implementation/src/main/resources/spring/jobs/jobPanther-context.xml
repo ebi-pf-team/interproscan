@@ -73,10 +73,10 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
@@ -94,8 +94,8 @@
         <property name="binarySwitches" value="${pantherscore.binary.switches}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="inputFilePantherFamilyNames" value="${panther.names.tab}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
-        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
 
@@ -115,7 +115,7 @@
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherRunBinary"/>
         <property name="stepDescription" value="Parse the output from Panther"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser">
                 <!--TODO: Figure out how to handle signature library release-->
@@ -132,7 +132,7 @@
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherParseOutput"/>
         <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 

@@ -55,13 +55,13 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
 
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
 
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="outputAlignments" value="true"/>
-        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
+        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalysisOutputAlignmentsFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -73,13 +73,13 @@
         <property name="dependsUpon" ref="stepSFLDRunHmmer3"/>
         <property name="stepDescription" value="Run sfld postprocessing binary for selected proteins"/>
         <property name="requiresDatabaseAccess" value="false"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
 
         <property name="fullPathToBinary" value="${sfld.postprocess.command}"/>
         <property name="usesFileOutputSwitch" value="true" />
-        <property name="inputFileNameRawOutTemplate" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
-        <property name="inputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
+        <property name="inputFileNameRawOutTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
+        <property name="inputFileNameAlignmentsTemplate" ref="rawAnalysisOutputAlignmentsFileTemplate"/>
         <property name="sitesAnnotationFileName" value="${sfld.sites.annotation.file.path}"/>
     </bean>
 
@@ -105,7 +105,7 @@
                 <property name="sfldHierarchyFilePath" value="${sfld.hierarchy.file.path}"/>
             </bean>
         </property>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="rawSiteDAO"  ref="sfldRawSiteDAO"/>
@@ -120,7 +120,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
             </list>
         </property>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>

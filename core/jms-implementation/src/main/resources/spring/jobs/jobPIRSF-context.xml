@@ -47,10 +47,10 @@
         <property name="fullPathToHmmFile" value="${pirsf.sfhmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -73,8 +73,8 @@
         <property name="sfHmmAllPath" value="${pirsf.sfhmm.path}"/>
         <property name="pirsfDatPath" value="${pirsf.dat.path}"/>
         <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>
-        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -86,7 +86,7 @@
         <property name="stepDescription" value="Parse the PIRSF binary output and store as raw matches."/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
         <property name="retries" value="3"/>
-        <property name="pirsfBinaryOutputFileName" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="pirsfBinaryOutputFileName" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer3.PirsfHmmer3RawMatchParser">
                 <constructor-arg ref="latestPIRSFSignatureLibraryRelease"/>
@@ -106,9 +106,9 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
-                <ref bean="rawAnalaysisOutputDomTbloutFileTemplate"/>
-                <ref bean="rawAnalaysisOutputOneFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputDomTbloutFileTemplate"/>
+                <ref bean="rawAnalysisOutputOneFileTemplate"/>
             </list>
         </property>
 

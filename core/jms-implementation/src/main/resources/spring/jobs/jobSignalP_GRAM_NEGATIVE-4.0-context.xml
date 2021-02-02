@@ -79,7 +79,7 @@
         <property name="binarySwitches" value="${signalp.gramnegative.binary.switches}"/>
         <property name="retries" value="3"/>
         <property name="perlCommand" value="${perl.command}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="fullPathToSignalPBinary" ref="fullPathToSignalPBinary"/>
         <!--Path to a Perl library directory (in this case a Perl library provided by SignalP which is necessary to run the script)-->
@@ -102,7 +102,7 @@
                   value="Parse the output from the SignalP binary and persist as filtered matches"/>
         <property name="serialGroup" value="PARSE_SIGNALP"/>
         <property name="retries" value="3"/>
-        <property name="signalPBinaryOutputFileName" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="signalPBinaryOutputFileName" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.SignalPFilteredMatchDAOImpl">
                 <constructor-arg value="4.0"/>
@@ -127,7 +127,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
                 <ref bean="tempOptionCheckOutputFileTemplate"/>
             </list>
         </property>

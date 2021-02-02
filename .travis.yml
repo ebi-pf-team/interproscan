@@ -5,7 +5,8 @@ python: 3.8
 sudo: required
 env:
   matrix:
-  - OS_TYPE=centos OS_VERSION=7
+#  #- OS_TYPE=centos OS_VERSION=7
+  - OS_TYPE=ubuntu OS_VERSION=18.04
   - OS_TYPE=ubuntu OS_VERSION=20.04
   
 services:
@@ -39,9 +40,9 @@ before_install:
 
 branches:
   only:
+  - release-5.48-83.0
+  - release-5.49-83.0
   - dev
-  - master
-  - release-5.47-82.0
   except:
   - new_master
 

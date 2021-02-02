@@ -48,7 +48,6 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.periodicGCCall = periodicGCCall;
 
-
         Utilities.verboseLog( 20, " verboseLog: " + Utilities.verboseLog
                 + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
@@ -117,6 +116,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         long nowAfterLoadingDatabase = now;
 
         Utilities.cpuCount = workerQueueJmsContainer.getMaxConcurrentConsumers();
+
+        Utilities.verboseLog(30, "Working TemporaryDirectory: " + getWorkingTemporaryDirectoryPath());
 
         try {
             loadInMemoryDatabase();
