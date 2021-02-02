@@ -43,7 +43,7 @@ fi
 python initial_setup.py
 
 "$JAVA" \
- -XX:ParallelGCThreads=8
+ -XX:ParallelGCThreads=8 \
  -Xms1028M -Xmx6072M \
  -jar  interproscan-5.jar $@ -u $USER_DIR
 
