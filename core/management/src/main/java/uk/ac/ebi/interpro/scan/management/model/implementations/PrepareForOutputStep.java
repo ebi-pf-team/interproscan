@@ -139,7 +139,7 @@ public class PrepareForOutputStep extends Step {
         int maxTryCount = 12;
         int totalWaitTime = 0;
 
-        ArrayList<Pair<Integer,Integer>> observedTryCounts = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> observedTryCounts = new ArrayList<>();
 
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
@@ -150,30 +150,14 @@ public class PrepareForOutputStep extends Step {
             while (tryCount <= maxTryCount) {
                 try {
                     protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+                    break;
                 } catch (Exception exception) {
                     //dont recover but sleep for a few seconds and try again
                     Utilities.verboseLog(100, "Exception type: " + exception.getClass());
-
-                    if (tryCount >= maxTryCount) {
-                        Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
-                                + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                                " retries : " + tryCount);
-                        exception.printStackTrace();
-                        throw new IllegalStateException("Failed to get the associated proteinobject in processNucleotideSequences: + " + proteinKey);
-                    }
                     //how long to wait for files to be available ??
                     int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
-                    if (getKvStoreDelayMilliseconds() < waitTime) {
-                        if (waitTime > 120 * 1000) {
-                            waitTime = 120 * 1000;
-                        }
-                        Utilities.sleep(waitTime);
-                    } else {
-                        delayForKVStore();
-                    }
-                    totalWaitTime += waitTime;
-                    Utilities.verboseLog(110, "  Prepare for output - Slept for at least in processNucleotideSequences" + waitTime + " millis");
-
+                    String errorMessage = "Failed to get the associated proteinobject in processNucleotideSequences: + " + proteinKey;
+                    totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
                 }
                 tryCount++;
             }
@@ -282,10 +266,6 @@ public class PrepareForOutputStep extends Step {
             LOGGER.info("Load " + topProteinId + " proteins from the db.");
         }
         int count = 0;
-
-        //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
-
-
         int proteinCount = 0;
         int matchCount = 0;
 
@@ -298,13 +278,12 @@ public class PrepareForOutputStep extends Step {
             signatureLibraryNames.add(sig.getName());
         }
 
-
         Long middleProtein = topProteinId / 2;
         int maxTryCount = 12;
 
         int totalWaitTime = 0;
-        ArrayList<Pair<Integer,Integer>> observedTryCounts4Proteins = new ArrayList<>();
-        ArrayList<Pair<Integer,Integer>> observedTryCounts4Matches = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> observedTryCounts4Proteins = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> observedTryCounts4Matches = new ArrayList<>();
 
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
@@ -315,45 +294,29 @@ public class PrepareForOutputStep extends Step {
             while (tryCount <= maxTryCount) {
                 try {
                     protein = proteinDAO.getProtein(proteinKey);
+                    break; //otherwise we have an infinite loop
                 } catch (Exception exception) {
                     //dont recover but sleep for a few seconds and try again
                     Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
-
-                    if (tryCount >= maxTryCount) {
-                        Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
-                                + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                                " retries : " + tryCount);
-                        exception.printStackTrace();
-                        throw new IllegalStateException("Failed to get the associated proteinobject in simulateMarshalling: + " + proteinKey);
-                    }
-                    //how long to wait for files to be available ??
                     int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
-                    if (getKvStoreDelayMilliseconds() < waitTime) {
-                        if (waitTime > 120 * 1000) {
-                            waitTime = 120 * 1000;
-                        }
-                        Utilities.sleep(waitTime);
-                    } else {
-                        delayForKVStore();
-                    }
-                    totalWaitTime += waitTime;
-                    Utilities.verboseLog(110, "  Prepare for output - simulateMarshalling - Slept for at least " + waitTime + " millis");
-
+                    String errorMessage = "Proteing get: There is a problem processing results for protein internal Identifier: " + proteinIndex +
+                            ". You may not get the matches for this protein in the final results. You should report the errors.";
+                    totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
                 }
                 tryCount++;
             }
-            if (totalWaitTime > 0){
+            if (totalWaitTime > 0) {
                 Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
-                        + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                        + " millis, average wait time " + totalWaitTime / tryCount + " millis, " +
                         " retries : " + tryCount);
                 observedTryCounts4Proteins.add(Pair.of(tryCount, totalWaitTime));
             }
 
-
             if (protein != null) {
                 proteinCount++;
             } else {
-                throw new IllegalStateException("Failed to get the associated proteinobject in simulateMarshalling: + " + proteinKey);
+                LOGGER.warn("Failed to get match results for protein identifier: + " + proteinKey);
+                continue;
             }
 
             totalWaitTime = 0;
@@ -367,36 +330,20 @@ public class PrepareForOutputStep extends Step {
                 while (tryCount <= maxTryCount) {
                     try {
                         matches = matchDAO.getMatchSet(dbKey);
+                        break;
                     } catch (Exception exception) {
                         //dont recover but sleep for a few seconds and try again
                         Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
-
-                        if (tryCount >= 3) {
-                            Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
-                                    + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                                    " retries : " + tryCount);
-                            exception.printStackTrace();
-                            throw new IllegalStateException("Failed to get matches from the DB for key " + dbKey);
-                        }
-                        //how long to wait for files to be available ??
                         int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
-                        if (getKvStoreDelayMilliseconds() < waitTime) {
-                            if (waitTime > 120 * 1000) {
-                                waitTime = 120 * 1000;
-                            }
-                            Utilities.sleep(waitTime);
-                        } else {
-                            delayForKVStore();
-                        }
-                        totalWaitTime += waitTime;
-                        Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
-
+                        String errorMessage = "Match get: There is a problem processing results for protein: " + protein.getCrossReferences().iterator().next().getIdentifier() +
+                                ". You may not get the matches for this protein in the final results. You should report the errors.";
+                        totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
                     }
                     tryCount++;
                 }
-                if (totalWaitTime > 0){
+                if (totalWaitTime > 0) {
                     Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
-                            + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                            + " millis, average wait time " + totalWaitTime / tryCount + " millis, " +
                             " retries : " + tryCount);
                     observedTryCounts4Matches.add(Pair.of(tryCount, totalWaitTime));
                 }
@@ -428,7 +375,22 @@ public class PrepareForOutputStep extends Step {
                 updateMatch(i5Match);
             }
 
-            proteinDAO.persist(proteinKey, protein);
+            //try to persist three times and then abort
+            int persistTries = 0;
+            int maxPersistTries = 4;
+            int persistTotalWaitTime = 0;
+            while (persistTries <= maxPersistTries) {
+                try {
+                    proteinDAO.persist(proteinKey, protein);
+                    break; //otherwise we have an infinite loop
+                } catch (Exception exception) {
+                    int persistWaitTime = 1000; //1000 millis is okay
+                    String errorMessage = "Persist: There is a problem processing results for protein: " + protein.getCrossReferences().iterator().next().getIdentifier() +
+                            ". You may not get the matches for this protein in the final results. You should report the errors.";
+                    persistTotalWaitTime = handleKVStoreExceptions(persistTries, maxPersistTries, persistWaitTime, persistTotalWaitTime, exception, errorMessage);
+                }
+                persistTries++;
+            }
             //help garbage collection??
             if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)) {
                 Utilities.printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
@@ -436,20 +398,52 @@ public class PrepareForOutputStep extends Step {
         }
 
         //if (observedTryCounts4Proteins.size() > 0) {
-            String kvGetStats4Proteins = getTryCountStats(observedTryCounts4Proteins);
-            System.out.println(Utilities.getTimeNow() + " Info: " +
-                    proteinRange + " pcounts " + kvGetStats4Proteins
-            );
+        String kvGetStats4Proteins = getTryCountStats(observedTryCounts4Proteins);
+        System.out.println(Utilities.getTimeNow() + " Info: " +
+                proteinRange + " pcounts " + kvGetStats4Proteins
+        );
         //}
         //if (observedTryCounts4Matches.size() > 0) {
-            String kvGetStats4Matches = getTryCountStats(observedTryCounts4Matches);
-            System.out.println(Utilities.getTimeNow() + " Info: " +
-                    proteinRange + " mcounts " + kvGetStats4Matches
-            );
+        String kvGetStats4Matches = getTryCountStats(observedTryCounts4Matches);
+        System.out.println(Utilities.getTimeNow() + " Info: " +
+                proteinRange + " mcounts " + kvGetStats4Matches
+        );
         //}
         deleteTmpMarshallingFile(outputPath);
     }
 
+    /**
+     *  if the kvstore is returning some exception, its mostly due to file system problems,
+     *  so allow to try again
+     *
+     * @param tryCount
+     * @param maxTryCount
+     * @param waitTime
+     * @param totalWaitTime
+     * @param exc
+     * @param errorMessage
+     * @return
+     */
+    private int handleKVStoreExceptions(int tryCount, int maxTryCount, int waitTime, int totalWaitTime, Exception exc, String errorMessage) {
+        if (tryCount < maxTryCount - 1) {
+            if (getKvStoreDelayMilliseconds() < waitTime) {
+                if (waitTime > 120 * 1000) {
+                    waitTime = 120 * 1000;
+                }
+                Utilities.sleep(waitTime);
+            } else {
+                delayForKVStore();
+                waitTime = getKvStoreDelayMilliseconds();
+            }
+            totalWaitTime += waitTime;
+            Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
+        } else {
+            exc.printStackTrace();
+            LOGGER.warn(errorMessage);
+        }
+
+        return totalWaitTime;
+    }
 
     private void outputToXML(StepInstance stepInstance, String sequenceType, Set<Long> nucleotideSequenceIds, String temporaryFileDirectory) throws IOException {
         if (!sequenceType.equalsIgnoreCase("n")) {
@@ -719,21 +713,21 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
-    private String getTryCountStats(ArrayList<Pair<Integer,Integer>> observedTryCounts){
+    private String getTryCountStats(ArrayList<Pair<Integer, Integer>> observedTryCounts) {
         String tryCountStats = "";
         int tryCount = observedTryCounts.size();
-        int maxTrycount = 0;
+        int maxTryCount = 0;
         int maxtotalWaitTime = 0;
-        for (Pair<Integer,Integer> tryCountEntry: observedTryCounts) {
-            if (maxTrycount < tryCountEntry.getLeft()) {
-                maxTrycount = tryCountEntry.getLeft();
+        for (Pair<Integer, Integer> tryCountEntry : observedTryCounts) {
+            if (maxTryCount < tryCountEntry.getLeft()) {
+                maxTryCount = tryCountEntry.getLeft();
             }
             if (maxtotalWaitTime < tryCountEntry.getRight()) {
                 maxtotalWaitTime = tryCountEntry.getRight();
             }
         }
 
-        return " tryCounts:" + tryCount + " maxTrycount:" + maxTrycount + " maxtotalWaitTime: " + maxtotalWaitTime;
+        return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
     }
 
 }

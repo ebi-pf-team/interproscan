@@ -490,7 +490,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 } catch (Exception e) {
                     //deal with the exceptions coming from the convert process
                     //diffilcult to recover
-                    Utilities.verboseLog(10, "Failed to convert precalculated Protein Matches:  " + precalculatedProteins.size() +
+                    Utilities.verboseLog(10, "Failed to convert precalculated Protein Matches:  "  + precalculatedProteins.size() +
                             " , they will be calculated manually");
                     Utilities.verboseLog(e.getMessage());
                     e.printStackTrace();
