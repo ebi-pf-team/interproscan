@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.prosite;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
@@ -17,9 +17,9 @@ import java.util.List;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class RunPsScanStep extends RunBinaryStep {
+public class RunPatternScanStep extends RunBinaryStep {
 
-    private static final Logger LOGGER = LogManager.getLogger(RunPsScanStep.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RunPatternScanStep.class.getName());
 
     private String fullPathToPsScanPerlScript;
 
@@ -109,24 +109,24 @@ public class RunPsScanStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         List<String> command = new ArrayList<String>();
-        command.add(this.getFullPathToPfscanBinary());
 
-//        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
-//          command.add("-w");
-//          command.add(this.getFullPathToPfsearchBinary());
-//        }else{
-//          command.add("--pfscan");
-//          command.add(this.getFullPathToPfscanBinary());
-//        }
-//        if (this.getFullPathToConfirmatoryProfiles() != null && this.getFullPathToConfirmatoryProfiles().length() > 0) {
-//            command.add("-b");
-//            command.add(this.getFullPathToConfirmatoryProfiles());
-//        }
-        command.addAll(this.getBinarySwitchesAsList());
-
+        command.add(this.getFullPathToPsScanPerlScript());
+        command.add("-d");
         command.add(this.getModelFile());
+        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
+            command.add("-w");
+            command.add(this.getFullPathToPfsearchBinary());
+        }else{
+            command.add("--pfscan");
+            command.add(this.getFullPathToPfscanBinary());
+        }
+        if (this.getFullPathToConfirmatoryProfiles() != null && this.getFullPathToConfirmatoryProfiles().length() > 0) {
+            command.add("-b");
+            command.add(this.getFullPathToConfirmatoryProfiles());
+        }
+        command.addAll(this.getBinarySwitchesAsList());
         command.add(fastaFilePathName);
-        Utilities.verboseLog(100, "command: " + command);
+        Utilities.verboseLog(20, "command: " + command);
         return command;
     }
 }

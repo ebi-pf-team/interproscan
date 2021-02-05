@@ -7,7 +7,8 @@ import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.io.Serializable;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,15 @@ public class ProfilePostProcessing<T extends ProfileScanRawMatch> implements Ser
 
     private List<ProfileScanRawMatch.Level> passLevels;
 
+    private String accessionsToSkipFile = "";
+
     @Required
     public void setPassLevels(List<ProfileScanRawMatch.Level> passLevels) {
         this.passLevels = passLevels;
+    }
+
+    public void setAccessionsToSkipFile(String accessionsToSkipFile) {
+        this.accessionsToSkipFile = accessionsToSkipFile;
     }
 
     /**
@@ -49,13 +56,19 @@ public class ProfilePostProcessing<T extends ProfileScanRawMatch> implements Ser
         }
         Map<String, RawProtein<T>> filteredMatches = new HashMap<String, RawProtein<T>>();
         Utilities.verboseLog(40, "hamap proteinIdToRawMatchMap: " + proteinIdToRawMatchMap.toString());
+        List <String> profilesToSkip =  new ArrayList<>();
+        if (! accessionsToSkipFile.isEmpty()){
+            profilesToSkip = getAccessionsToSkip();
+        }
         for (String candidateProteinId : proteinIdToRawMatchMap.keySet()) {
             RawProtein<T> candidateRawProtein = proteinIdToRawMatchMap.get(candidateProteinId);
             RawProtein<T> filteredProtein = new RawProtein<T>(candidateRawProtein.getProteinIdentifier());
             Utilities.verboseLog(40, "candidateProteinId : " + candidateProteinId);
             for (T rawMatch : candidateRawProtein.getMatches()) {
                 Utilities.verboseLog(40, "hamap candidate match: " + rawMatch.toString());
-
+                if (profilesToSkip.contains(rawMatch.getModelId())){
+                    continue;
+                }
                 //if (passLevels.contains(rawMatch.getLevel())) {
                     filteredProtein.addMatch(rawMatch);
                 //}
@@ -65,5 +78,35 @@ public class ProfilePostProcessing<T extends ProfileScanRawMatch> implements Ser
             }
         }
         return filteredMatches;
+    }
+
+    private List <String>  getAccessionsToSkip(){
+        List <String> profilesToSkip =  new ArrayList<>();
+        BufferedReader reader = null;
+        try {
+
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(accessionsToSkipFile)));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String signature = line.trim();
+                if (! signature.isEmpty()) {
+                    profilesToSkip.add(signature);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return profilesToSkip;
+
     }
 }
