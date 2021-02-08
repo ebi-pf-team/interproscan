@@ -115,10 +115,10 @@ public class StepCreationSequenceLoadListener
             int idsWithoutLookupHitSize = 0;
             if (idsWithoutLookupHit != null) {
                 idsWithoutLookupHitSize = idsWithoutLookupHit.size();
-                Utilities.verboseLog(1100, "Protein without Lookup Hit (" + idsWithoutLookupHit.size() + ") range: " + idsWithoutLookupHit.get(0) + " - "
+                Utilities.verboseLog(30, "Protein without Lookup Hit (" + idsWithoutLookupHit.size() + ") range: " + idsWithoutLookupHit.get(0) + " - "
                         + idsWithoutLookupHit.get(idsWithoutLookupHitSize - 1));
             } else {
-                Utilities.verboseLog(1100, "idsWithoutLookupHit is NULL");
+                Utilities.verboseLog(30, "idsWithoutLookupHit is NULL");
             }
 
             Utilities.verboseLog(120, "topProteinId intValue(): - " + topProteinId.intValue());
@@ -153,6 +153,8 @@ public class StepCreationSequenceLoadListener
                                 + " unique input sequences were found in the match lookup server. " + extraLookupMessage);
                     }
                 }
+                Utilities.verboseLog(10, " Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
+                        + " unique input sequences were found in the match lookup server. " );
 
                 //TODO this is temp for now
 
@@ -183,7 +185,9 @@ public class StepCreationSequenceLoadListener
                         }
                         stepToStepInstances.put(step, jobStepInstances);
                         prepareOutputStepInstances.addAll(jobStepInstances);
-                        Utilities.verboseLog(30, "Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances");
+                        Utilities.verboseLog(30, "Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances" +
+                                " idsWithoutLookupHitSize: " + idsWithoutLookupHitSize );
+                        Utilities.verboseLog(30, "idsWithoutLookupHitSize: " + idsWithoutLookupHitSize);
                     }
                     Utilities.prepareOutputInstances = prepareOutputStepInstances.size();
                 } else {
@@ -282,7 +286,7 @@ public class StepCreationSequenceLoadListener
                 return;
             }
             //else
-            Utilities.verboseLog(1100, "Now create StepInstances for the regular jobs ... : useMatchLookupService: " + useMatchLookupService
+            Utilities.verboseLog(10, "Now create StepInstances for the regular jobs ... : useMatchLookupService: " + useMatchLookupService
                     + " idsWithoutLookupHit: " + (idsWithoutLookupHit != null));
             double analysisMaxCountMultiplier = 1;
             if (bottomNewSequenceId != null && topNewSequenceId != null) {
