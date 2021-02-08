@@ -368,14 +368,16 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             int finalDashIndeXForServerVersion = serverVersion.lastIndexOf("-");
             serverDataVersion = Double.parseDouble(serverVersion.substring(finalDashIndeXForServerVersion).replace("-", ""));
 
-            Utilities.verboseLog(110, "interproDataVersion: " + interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
+            Utilities.verboseLog(10, "interproDataVersion: " + interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
             if (interproscanDataVersion > serverDataVersion) {
-                Utilities.verboseLog(110, "Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
-                return null;
+                Utilities.verboseLog(10, "Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
+                //TODO remove
+                System.out.println("for TEsting: Lookup service not yet UPDATED  but CONTINUE" );
+                //return null; //uncoment together with the removal of the comment above
             } else {
-                Utilities.verboseLog(110, "Lookup service UPDATED - continue ... " + interproscanDataVersion + ":" + serverDataVersion);
+                Utilities.verboseLog(10, "Lookup service UPDATED - continue ... " + interproscanDataVersion + ":" + serverDataVersion);
             }
-            Utilities.verboseLog(110, "Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
+            Utilities.verboseLog(10, "Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
 
         } catch (Exception e) {
             LOGGER.error("Lookup version check failed ... interproscanVersion: " + interproscanVersion + ":vs Lookup version: " + lookupServerVersion);
@@ -385,8 +387,9 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         try {
             // Only proceed if the lookup client and server are in sync
             if (!isSynchronised()) {
-                Utilities.verboseLog(110, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
-                return null;
+                Utilities.verboseLog(10, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
+                System.out.println("for TEsting: The server and the client DO NOT have the same version  but CONTINUE" );
+                //return null; //uncoment together with the removal of the comment above
             } else {
                 Utilities.verboseLog(110, "TESTING only: The server and the client HAVE the same version");
             }
@@ -617,6 +620,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         int finalDashIndex = interproscanVersion.lastIndexOf("-");
         String interproDataVersion = interproscanVersion.substring(finalDashIndex);
         Utilities.verboseLog(1100, "Lookup isSynchronised? interproDataVersion: " + interproDataVersion + " serverVersion:" + serverVersion);
+
         if (!(serverVersion.endsWith(interproDataVersion))) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
