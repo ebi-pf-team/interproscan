@@ -168,7 +168,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             Utilities.verboseLog(140, "modelToMatchesMap size:  " + modelToMatchesMap.values().size());
             int simpleMatchCount = 0;
 
-            Utilities.verboseLog(30, lookup2IdRunID + " modelToMatchesMap after pre-process " + modelToMatchesMap.values().size());
+            Utilities.verboseLog(110, lookup2IdRunID + " modelToMatchesMap size after pre-process " + modelToMatchesMap.values().size());
 
             for (List<SimpleLookupMatch> matchesForModel : modelToMatchesMap.values()) {
                 assert matchesForModel.size() > 0;
@@ -370,25 +370,20 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             }
         }
         if (totalMatches > 0) {
-            Utilities.verboseLog(30, lookup2IdRunID + " Total persist time seconds " +
-                    (persistTime / 1000) + " persist time per match  millis = " + ((persistTime ) / totalMatches) +
+            Utilities.verboseLog(30, lookup2IdRunID + " Total persist time millis " +
+                    (persistTime) + " and persist time per match  millis = " + ((persistTime ) / totalMatches) +
                     " for " + totalMatches +  " matches");
         }
-        Utilities.verboseLog(30, lookup2IdRunID + " totalSignatureQueryTime : " + totalSignatureQueryTime +
-                "totalSigQueries: " + sigQueriesCount );
-
+        if (sigQueriesCount > 0) {
+            Utilities.verboseLog(30, lookup2IdRunID + " totalSignatureQueryTime : " + totalSignatureQueryTime +
+                    " totalSigQueries: " + sigQueriesCount + " avge sigquery per call : " + (totalSignatureQueryTime / sigQueriesCount));
+        }
         Utilities.verboseLog(30, lookup2IdRunID + " Completed converting and persisting this batch exampleKey: " + exampleKey);
     }
 
 
     void persist(Protein protein, Match match) {
-//        Utilities.verboseLog(1100, "proteinId: " + protein.getId() + " DBSTORE: " + matchDAO.getDbStore().getDbName()
-//                + ", DB Store  = " + matchDAO.getDbStore().getKVDBStore()
-//                + ", DB Store type = " + matchDAO.getDbStore().getKVDBType());
-
         matchDAO.persist(protein.getMd5(), match);
-        //matchDAO.persist("test1", match);
-
     }
 
     /**
@@ -401,25 +396,26 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
     public boolean persistMatch(Set<Match> matches, String dbKey) {
         Utilities.verboseLog(120, "Start persistMatch  " + dbKey + " matches size : " + matches.size());
         Set<Match> matchSet = matchDAO.getMatchSet(dbKey);
-        StringBuffer superfamilyCheck = new StringBuffer("Superfamily check: ");
+        //StringBuffer superfamilyCheck = new StringBuffer("Superfamily check: ");
         if (matchSet == null) {
             Utilities.verboseLog(120, "set new matches " + dbKey + " matches size : " + matches.size());
             matchSet = matches;
-            superfamilyCheck.append(" matchset is Null - ");
+            //superfamilyCheck.append(" matchset is Null - ");
         } else {
             int oldMatchSetSize = matchSet.size();
             Utilities.verboseLog(120, "Found matches for this key key " + dbKey + " oldMatchSetSize : " + oldMatchSetSize + " new matchSet size : " + matchSet.size());
             matchSet.addAll(matches);
-            superfamilyCheck.append(" matchset has " + oldMatchSetSize + " matches already");
-            superfamilyCheck.append(" matchset has " + oldMatchSetSize + " matches already");
+            //superfamilyCheck.append(" matchset has " + oldMatchSetSize + " matches already");
+            //superfamilyCheck.append(" matchset has " + oldMatchSetSize + " matches already");
         }
-        superfamilyCheck.append(" - added " + matches.size() + " matches");
+        //superfamilyCheck.append(" - added " + matches.size() + " matches");
         Utilities.verboseLog(130, "Persist to Converetd lkpup Matches to kvMatchStore: key " + dbKey + " match count:  : " + matchSet.size());
         matchDAO.persist(dbKey, matchSet);
-        Set<Match> matchSet2 = matchDAO.getMatchSet(dbKey);
-        superfamilyCheck.append(" final matchCount = " + matchSet2.size());
-        Utilities.verboseLog(140, superfamilyCheck.toString());
-        Utilities.verboseLog(120, "End persistMatch  - kvMatchStore MatchSet: key " + dbKey + " match count:  : " + matchSet2.size());
+        //Set<Match> matchSet2 = matchDAO.getMatchSet(dbKey);
+
+        //uperfamilyCheck.append(" final matchCount = " + matchSet2.size());
+        //Utilities.verboseLog(140, superfamilyCheck.toString());
+        //Utilities.verboseLog(120, "End persistMatch  - kvMatchStore MatchSet: key " + dbKey + " match count:  : " + matchSet2.size());
         return true; // ??
     }
 

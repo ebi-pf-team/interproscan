@@ -69,9 +69,6 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
      * @param data
      */
     public void put(byte[] key, byte[] data) {
-        //System.out.println(dbName  +":put [byte byte ] key :" + key);
-        //levelDBStore.put(key, data);
-
         //due to compression etc, the insert might fail
         int maxRetries = 8;
         for (int retries = 0;retries < maxRetries; retries++) {
