@@ -15,6 +15,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.awt.desktop.SystemSleepEvent;
 import java.util.*;
 
 /**
@@ -122,9 +123,13 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         Map<String, List<KVSequenceEntry>> mapKVSequenceEntryForSites = getMapKVSequenceEntry(kvSiteSequenceEntries);
 
         // Collection of BerkeleyMatches of different kinds.
-        //Utilities.verboseLog(110, "Start comvert lookup matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size());
+        //Utilities.verboseLog(30, "Start comvert lookup matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size());
         Utilities.verboseLog(30, lookup2IdRunID + " Start convert lookup matches to i5 matches:  kvSequenceEntries : " + kvSequenceEntries.size());
         String exampleKey = null;
+        long persistTime = 0;
+        int totalMatches = 0;
+        long totalSignatureQueryTime = 0;
+        int sigQueriesCount = 0;
         for (KVSequenceEntry lookupMatch : kvSequenceEntries) {
             //now we ahave a list
 
@@ -162,6 +167,9 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             //we have to get all the matches and not just the first match
             Utilities.verboseLog(140, "modelToMatchesMap size:  " + modelToMatchesMap.values().size());
             int simpleMatchCount = 0;
+
+            Utilities.verboseLog(30, lookup2IdRunID + " modelToMatchesMap after pre-process " + modelToMatchesMap.values().size());
+
             for (List<SimpleLookupMatch> matchesForModel : modelToMatchesMap.values()) {
                 assert matchesForModel.size() > 0;
 
@@ -205,7 +213,9 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(debugString);
                     }
+                    long startSignatureQuery =  System.currentTimeMillis();
                     Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library and s.signatureLibraryRelease.version = :version");
+
                     sigQuery.setParameter("sig_ac", simpleMatch.getSignatureAccession());
                     sigQuery.setParameter("library", sigLib);
 
@@ -218,6 +228,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 //                    List<Signature> signatures = null;
                     @SuppressWarnings("unchecked") List<Signature> signatures = sigQuery.getResultList();
 //                        signatures = sigQuery.getResultList();
+
+                    long getSignatureTime = System.currentTimeMillis() - startSignatureQuery;
+                    totalSignatureQueryTime +=  getSignatureTime;
+                    sigQueriesCount ++;
 
                     Signature signature = null;
                     if (LOGGER.isDebugEnabled()) {
@@ -267,17 +281,18 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                             // One or multiple locations for this match on a given protein for this modelAc
                             //Utilities.verboseLog(110, "consider dbKey:  " + dbKey + " matchesForModel: " + matchesForModel.size() );
                             simpleMatchCount++;
-                            Utilities.verboseLog(140, "simpleMatchCount :  " + simpleMatchCount + " signatureAc: " + simpleMatch.getSignatureAccession() +
-                                    " expected matches: " + matchesForModel.size());
-                            for (SimpleLookupMatch simpleLookupMatchDisplay : matchesForModel) {
-                                Utilities.verboseLog(120, "simpleLookupMatchDisplay: [\n" +
-                                        " sequence: " + prot.getId() +
-                                        " md5: " + simpleLookupMatchDisplay.getProteinMD5() +
-                                        " location: " + simpleLookupMatchDisplay.getSequenceStart() + " - " + simpleLookupMatchDisplay.getSequenceEnd() +
-                                        " fragments: " + simpleLookupMatchDisplay.getFragments() +
-                                        " \n ]");
+                            if (Utilities.verboseLogLevel >= 140 ) {
+                                Utilities.verboseLog(140, "simpleMatchCount :  " + simpleMatchCount + " signatureAc: " + simpleMatch.getSignatureAccession() +
+                                        " expected matches: " + matchesForModel.size());
+                                for (SimpleLookupMatch simpleLookupMatchDisplay : matchesForModel) {
+                                    Utilities.verboseLog(120, "simpleLookupMatchDisplay: [\n" +
+                                            " sequence: " + prot.getId() +
+                                            " md5: " + simpleLookupMatchDisplay.getProteinMD5() +
+                                            " location: " + simpleLookupMatchDisplay.getSequenceStart() + " - " + simpleLookupMatchDisplay.getSequenceEnd() +
+                                            " fragments: " + simpleLookupMatchDisplay.getFragments() +
+                                            " \n ]");
+                                }
                             }
-
                             if (matchesForModel.size() == 1) {
                                 Utilities.verboseLog(130, "Convert match for:  " + simpleMatch.getProteinMD5());
                                 Utilities.verboseLog(130, "simpleMatch : " + simpleMatch.toString() + " signature:  " + signature.getName());
@@ -291,7 +306,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 Utilities.verboseLog(110, "Lookup Match :-  " + simpleMatch.getProteinMD5() + "  "
                                         + simpleMatch.getSequenceStart() + " - " + simpleMatch.getSequenceEnd());
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
-                                Utilities.verboseLog(140, "i5 Lookup Converted Match :-  " + i5Match);
+                                Utilities.verboseLog(50, lookup2IdRunID + " i5 Lookup Converted Match :-  " + i5Match);
                                 Utilities.verboseLog(140, "----");
 
                                 if (i5Match != null) {
@@ -311,7 +326,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     Utilities.verboseLog(130, "Persist to kvMatchStore: key " + dbKey + " singleton match: " +
                                             coordinates + " match size: " + matchSet.size());
                                     //matchDAO.persist(dbKey, matchSet);
+                                    long startPersist = System.currentTimeMillis();
+                                    totalMatches += matchSet.size();
                                     persistMatch(matchSet, dbKey);
+                                    persistTime  = persistTime + (System.currentTimeMillis() - startPersist);
                                 } else {
                                     LOGGER.warn("i5 Lookup Converted Match is NULL");
                                     Utilities.verboseLog(1100, "i5 Lookup Converted Match is NULL");
@@ -333,7 +351,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     }
                                     Set<Match> matchSet = new HashSet<>(i5Matches);
                                     Utilities.verboseLog(130, "Persist to kvMatchStore: key " + dbKey + " matches : " + matchSet.size());
+                                    long startPersist = System.currentTimeMillis();
                                     persistMatch(matchSet, dbKey);
+                                    totalMatches += matchSet.size();
+                                    persistTime  = persistTime + (System.currentTimeMillis() - startPersist);
                                 }
                             }
                         } else {
@@ -348,6 +369,14 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                 Utilities.verboseLog(110, "End matches for model ");
             }
         }
+        if (totalMatches > 0) {
+            Utilities.verboseLog(30, lookup2IdRunID + " Total persist time seconds " +
+                    (persistTime / 1000) + " persist time per match  millis = " + ((persistTime ) / totalMatches) +
+                    " for " + totalMatches +  " matches");
+        }
+        Utilities.verboseLog(30, lookup2IdRunID + " totalSignatureQueryTime : " + totalSignatureQueryTime +
+                "totalSigQueries: " + sigQueriesCount );
+
         Utilities.verboseLog(30, lookup2IdRunID + " Completed converting and persisting this batch exampleKey: " + exampleKey);
     }
 
