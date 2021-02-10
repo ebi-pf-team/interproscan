@@ -555,7 +555,7 @@ public class Utilities {
             return;
         }
 
-        if (runtime.totalMemory() == runtime.maxMemory()
+        if ((runtime.maxMemory() - runtime.totalMemory() < 1000 )
                 && ( freeMemory < 1000 )) {
             runGC = true;
             Utilities.verboseLog(30, "Gc condition met " + freeMemory);
