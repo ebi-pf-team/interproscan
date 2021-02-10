@@ -214,6 +214,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         LOGGER.debug(debugString);
                     }
                     long startSignatureQuery =  System.currentTimeMillis();
+
                     Query sigQuery = entityManager.createQuery("select distinct s from Signature s where s.accession = :sig_ac and s.signatureLibraryRelease.library = :library and s.signatureLibraryRelease.version = :version");
 
                     sigQuery.setParameter("sig_ac", simpleMatch.getSignatureAccession());

@@ -371,9 +371,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             Utilities.verboseLog(10, "interproDataVersion: " + interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
             if (interproscanDataVersion > serverDataVersion) {
                 Utilities.verboseLog(10, "Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
-                //TODO remove
-                System.out.println("for TEsting: Lookup service not yet UPDATED  but CONTINUE" );
-                //return null; //uncoment together with the removal of the comment above
+                return null;
             } else {
                 Utilities.verboseLog(10, "Lookup service UPDATED - continue ... " + interproscanDataVersion + ":" + serverDataVersion);
             }
@@ -388,8 +386,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             // Only proceed if the lookup client and server are in sync
             if (!isSynchronised()) {
                 Utilities.verboseLog(10, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
-                System.out.println("for TEsting: The server and the client DO NOT have the same version  but CONTINUE" );
-                //return null; //uncoment together with the removal of the comment above
+                return null; //coment if testing lookupmatch version check l of the comment above
             } else {
                 Utilities.verboseLog(110, "TESTING only: The server and the client HAVE the same version");
             }
@@ -625,9 +622,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }
-
         return true;
-
     }
 
     /**

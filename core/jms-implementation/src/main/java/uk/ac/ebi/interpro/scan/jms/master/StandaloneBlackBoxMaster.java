@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FinaliseInitialSetupStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -152,6 +153,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             Long scheduleGCStart = System.currentTimeMillis();
             int allowedWaitTimeMultiplier = 0;
             boolean controlledLogging = false;
+            boolean submittedFinaliseStep = false;
             while (!shutdownCalled) {
                 boolean completed = true;
                 runStatus = 41;
@@ -201,6 +203,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             priority = LOW_PRIORITY;
                         }else {
                             priority = LOW_PRIORITY;
+                        }
+
+                        //when lookup is happening progres report may not be accurate
+                        if (step instanceof FinaliseInitialSetupStep and !(unfinshedStepInstances.con)) {
+                            submittedFinaliseStep = true;
                         }
                         //if inteproscan is onthe last step, watermark this point
                         if (step instanceof WriteOutputStep) {
@@ -261,7 +268,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 statsUtil.setTotalJobs(totalStepInstances);
                 statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
-                statsUtil.displayMasterProgress();
+                if ( submittedFinaliseStep ) {
+                    statsUtil.displayMasterProgress();
+                }
 
 
                 // Close down (break out of loop) if the analyses are all complete.
