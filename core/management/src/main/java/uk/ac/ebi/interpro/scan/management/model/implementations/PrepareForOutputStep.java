@@ -249,8 +249,6 @@ public class PrepareForOutputStep extends Step {
 
         Utilities.verboseLog(110, " Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
 
-        //LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
-
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
         Long proteinsConsidered = topProteinId - bottomProteinId;
@@ -399,13 +397,13 @@ public class PrepareForOutputStep extends Step {
 
         //if (observedTryCounts4Proteins.size() > 0) {
         String kvGetStats4Proteins = getTryCountStats(observedTryCounts4Proteins);
-        System.out.println(Utilities.getTimeNow() + " Info: " +
+        Utilities.verboseLog(10, " Info: " +
                 proteinRange + " pcounts " + kvGetStats4Proteins
         );
         //}
         //if (observedTryCounts4Matches.size() > 0) {
         String kvGetStats4Matches = getTryCountStats(observedTryCounts4Matches);
-        System.out.println(Utilities.getTimeNow() + " Info: " +
+        Utilities.verboseLog(10," Info: " +
                 proteinRange + " mcounts " + kvGetStats4Matches
         );
         //}
@@ -665,6 +663,7 @@ public class PrepareForOutputStep extends Step {
             if (matchEntry.getGoXRefs() != null) {
                 matchEntry.getGoXRefs().size();
             }
+            //should we check if pathways have been requested?
             matchEntry.getPathwayXRefs();
             if (matchEntry.getPathwayXRefs() != null) {
                 matchEntry.getPathwayXRefs().size();
