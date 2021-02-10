@@ -299,7 +299,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 Utilities.verboseLog(130, "simpleMatch : " + simpleMatch.toString() + " signature:  " + signature.getName());
                                 if (sequenceSiteHits != null) {
                                     Utilities.verboseLog(130, " \n sequenceSiteHits  size: " + sequenceSiteHits.size());
-                                    Utilities.verboseLog(130, " \n sequenceSiteHits  :" + sequenceSiteHits.toString());
+                                    //Utilities.verboseLog(130, " \n sequenceSiteHits  :" + sequenceSiteHits.toString());
                                 } else {
                                     Utilities.verboseLog(130, " \n sequenceSiteHits  is NULL:");
                                 }
@@ -307,10 +307,11 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                 Utilities.verboseLog(110, "Lookup Match :-  " + simpleMatch.getProteinMD5() + "  "
                                         + simpleMatch.getSequenceStart() + " - " + simpleMatch.getSequenceEnd());
                                 Match i5Match = matchConverter.convertMatch(simpleMatch, sequenceSiteHits, signature);
-                                Utilities.verboseLog(50, lookup2IdRunID + " i5 Lookup Converted Match :-  " + i5Match);
                                 Utilities.verboseLog(140, "----");
 
                                 if (i5Match != null) {
+                                    Utilities.verboseLog(50, lookup2IdRunID + " i5 Lookup Converted Match :-  " + i5Match.getId()); //avoid using complete objects in verbose
+
                                     prot.addMatch(i5Match);
                                     //*****Initialize goxrefs and pathwayxrefs collections *******
                                     /*
@@ -454,6 +455,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
             if (matchEntry.getGoXRefs() != null) {
                 matchEntry.getGoXRefs().size();
             }
+            //update only if pathways are requested
             matchEntry.getPathwayXRefs();
             if (matchEntry.getPathwayXRefs() != null) {
                 matchEntry.getPathwayXRefs().size();
@@ -466,8 +468,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         for (KVSequenceEntry kvSequenceEntry : kvSiteSequenceEntries) {
             List<KVSequenceEntry> kvSequenceEntryList = mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5());
             if (kvSequenceEntryList != null) {
-                Utilities.verboseLog(140, "We already have the sites for : " + kvSequenceEntry.getProteinMD5());
-                Utilities.verboseLog(140, "kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString());
+                if (Utilities.verboseLogLevel >= 140) {
+                    Utilities.verboseLog(140, "We already have the sites for : " + kvSequenceEntry.getProteinMD5());
+                    Utilities.verboseLog(140, "kvSequenceEntry in the Map: " + mapKVSequenceEntry.get(kvSequenceEntry.getProteinMD5()).toString());
+                }
             } else {
                 kvSequenceEntryList = new ArrayList<>();
             }
