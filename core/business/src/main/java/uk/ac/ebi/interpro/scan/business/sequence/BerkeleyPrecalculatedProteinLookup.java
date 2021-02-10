@@ -368,14 +368,14 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             int finalDashIndeXForServerVersion = serverVersion.lastIndexOf("-");
             serverDataVersion = Double.parseDouble(serverVersion.substring(finalDashIndeXForServerVersion).replace("-", ""));
 
-            Utilities.verboseLog(10, "interproDataVersion: " + interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
+            Utilities.verboseLog(110, "interproDataVersion: " + interproscanDataVersion + " serverDataVersion: " + serverDataVersion);
             if (interproscanDataVersion > serverDataVersion) {
-                Utilities.verboseLog(10, "Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
+                Utilities.verboseLog(110, "Lookup service not yet UPDATED - interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
                 return null;
             } else {
-                Utilities.verboseLog(10, "Lookup service UPDATED - continue ... " + interproscanDataVersion + ":" + serverDataVersion);
+                Utilities.verboseLog(110, "Lookup service UPDATED - continue ... " + interproscanDataVersion + ":" + serverDataVersion);
             }
-            Utilities.verboseLog(10, "Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
+            Utilities.verboseLog(110, "Lookup isSynchronised? interproDataVersion: " + interproscanDataVersion + " serverVersion:" + serverVersion);
 
         } catch (Exception e) {
             LOGGER.error("Lookup version check failed ... interproscanVersion: " + interproscanVersion + ":vs Lookup version: " + lookupServerVersion);
@@ -385,7 +385,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         try {
             // Only proceed if the lookup client and server are in sync
             if (!isSynchronised()) {
-                Utilities.verboseLog(10, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
+                Utilities.verboseLog(110, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
                 return null; //coment if testing lookupmatch version check l of the comment above
             } else {
                 Utilities.verboseLog(110, "TESTING only: The server and the client HAVE the same version");

@@ -206,7 +206,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         }
 
                         //when lookup is happening progres report may not be accurate
-                        if (step instanceof FinaliseInitialSetupStep and !(unfinshedStepInstances.con)) {
+                        if (step instanceof FinaliseInitialSetupStep && !(unfinshedStepInstances.contains(step))) {
                             submittedFinaliseStep = true;
                         }
                         //if inteproscan is onthe last step, watermark this point
