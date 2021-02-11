@@ -397,7 +397,26 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
      */
     public boolean persistMatch(Set<Match> matches, String dbKey) {
         Utilities.verboseLog(120, "Start persistMatch  " + dbKey + " matches size : " + matches.size());
-        Set<Match> matchSet = matchDAO.getMatchSet(dbKey);
+        Set<Match> matchSet = null;
+        int tryCount = 0;
+        int maxTryCount = 8;
+        int totalWaitTime = 0;
+        Long proteinsConsidered = 800l; //max proteins considered per time
+        while (tryCount <= maxTryCount) {
+            try {
+                matchSet = matchDAO.getMatchSet(dbKey);
+                break; //avoid infinite loop
+            } catch (Exception exception) {
+                //dont recover but sleep for a few seconds and try again
+                Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
+                int waitTime = (proteinsConsidered.intValue() / 800) * 2 * 1000;
+                String errorMessage = "Get MatchSet: There is a problem processing results for matchset internal Identifier: " + dbKey +
+                        ". You should report the errors if this problem persists. match calculations will continue.";
+                totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
+            }
+            tryCount++;
+        }
+
         //StringBuffer superfamilyCheck = new StringBuffer("Superfamily check: ");
         if (matchSet == null) {
             Utilities.verboseLog(120, "set new matches " + dbKey + " matches size : " + matches.size());
@@ -480,6 +499,31 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
         }
 
         return mapKVSequenceEntry;
+    }
+
+    /**
+     *  if the kvstore is returning some exception, its mostly due to file system problems,
+     *  so allow to try again
+     *
+     * @param tryCount
+     * @param maxTryCount
+     * @param waitTime
+     * @param totalWaitTime
+     * @param exc
+     * @param errorMessage
+     * @return
+     */
+    private int handleKVStoreExceptions(int tryCount, int maxTryCount, int waitTime, int totalWaitTime, Exception exc, String errorMessage) {
+        if (tryCount < maxTryCount - 1) {
+            Utilities.sleep(waitTime);
+            totalWaitTime += waitTime;
+            Utilities.verboseLog(110, "  get matchset - wait for for at least " + waitTime + " millis");
+        } else {
+            exc.printStackTrace();
+            LOGGER.warn(errorMessage);
+        }
+
+        return totalWaitTime;
     }
 
     @Override

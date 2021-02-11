@@ -155,7 +155,7 @@ public class PrepareForOutputStep extends Step {
                     //dont recover but sleep for a few seconds and try again
                     Utilities.verboseLog(100, "Exception type: " + exception.getClass());
                     //how long to wait for files to be available ??
-                    int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
+                    int waitTime = (proteinsConsidered.intValue() / 2000) * 2 * 1000;
                     String errorMessage = "Failed to get the associated proteinobject in processNucleotideSequences: + " + proteinKey;
                     totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
                 }
@@ -296,7 +296,7 @@ public class PrepareForOutputStep extends Step {
                 } catch (Exception exception) {
                     //dont recover but sleep for a few seconds and try again
                     Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
-                    int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
+                    int waitTime = (proteinsConsidered.intValue() / 1000) * 1 * 1000;
                     String errorMessage = "Proteing get: There is a problem processing results for protein internal Identifier: " + proteinIndex +
                             ". You may not get the matches for this protein in the final results. You should report the errors.";
                     totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
@@ -332,7 +332,7 @@ public class PrepareForOutputStep extends Step {
                     } catch (Exception exception) {
                         //dont recover but sleep for a few seconds and try again
                         Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
-                        int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
+                        int waitTime = (proteinsConsidered.intValue() / 1000) * 1 * 1000;
                         String errorMessage = "Match get: There is a problem processing results for protein: " + protein.getCrossReferences().iterator().next().getIdentifier() +
                                 ". You may not get the matches for this protein in the final results. You should report the errors.";
                         totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
@@ -426,7 +426,7 @@ public class PrepareForOutputStep extends Step {
         if (tryCount < maxTryCount - 1) {
             if (getKvStoreDelayMilliseconds() < waitTime) {
                 if (waitTime > 120 * 1000) {
-                    waitTime = 120 * 1000;
+                    waitTime = 6 * 1000;
                 }
                 Utilities.sleep(waitTime);
             } else {
