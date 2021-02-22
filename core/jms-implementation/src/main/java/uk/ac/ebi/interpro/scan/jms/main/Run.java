@@ -151,7 +151,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.48-83.0";
+            String i5Version = "5.50-84.0";
             String i5BuildType = "64-Bit";
             //32bitMessage:i5BuildType = "32-Bit";
 
@@ -665,12 +665,15 @@ public class Run extends AbstractI5Runner {
                 }
             }
 
-            if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster) {
-                if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
-                    final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
-                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
+            if (parsedCommandLine.hasOption(I5Option.CLUSTER_RUN_ID.getLongOpt())) {
+                final String runId = parsedCommandLine.getOptionValue(I5Option.CLUSTER_RUN_ID.getLongOpt());
+                if (bbMaster instanceof StandaloneBlackBoxMaster) {
+                    ((StandaloneBlackBoxMaster) master).setRunId(runId);
 //                    final ResourceMonitor resourceMonitor = (ResourceMonitor) ctx.getBean("resourceMonitor");
 //                    resourceMonitor.setRunId(runId);
+                }
+                if (bbMaster instanceof SingleSeqOptimisedBlackBoxMaster) {
+                    ((SingleSeqOptimisedBlackBoxMaster) master).setRunId(runId);
                 }
             }
             //deal with cpu cores specified by user
@@ -678,7 +681,7 @@ public class Run extends AbstractI5Runner {
                 int numberOfCPUCores = Integer.parseInt(parsedCommandLine.getOptionValue(I5Option.CPU.getLongOpt()));
                 if (numberOfCPUCores == 0) {
                     LOGGER.warn("--cpu 0 is not allowed, updated to --cpu 1");
-                    numberOfCPUCores = 1;
+                    numberOfCPUCores = 2;
                 }
                 if (bbMaster instanceof StandaloneBlackBoxMaster) {
                     //deal with cpu cores

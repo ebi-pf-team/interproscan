@@ -256,7 +256,7 @@ public abstract class AbstractMaster implements Master {
                 FileUtils.forceDelete(dir);
             }
         }catch (IOException e) {
-            LOGGER.warn("Unable to delete temporary directory " + dir.getAbsolutePath());
+            LOGGER.warn("Master process unable to delete temporary directory " + dir.getAbsolutePath());
             //e.printStackTrace();
         }
     }

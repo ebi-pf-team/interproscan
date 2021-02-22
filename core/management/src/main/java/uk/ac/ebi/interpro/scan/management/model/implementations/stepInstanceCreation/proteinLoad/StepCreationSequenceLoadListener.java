@@ -165,7 +165,7 @@ public class StepCreationSequenceLoadListener
                         Utilities.verboseLog(120, "rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins); //info
                         rawMaxProteins = 1;
                     }
-                    int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
+                    int maxProteins = (int) (Math.ceil(rawMaxProteins / 400.0) * 400);
                     Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                     Utilities.verboseLog(1100, "Create prepare output jobs for this run ...");
 
@@ -214,13 +214,18 @@ public class StepCreationSequenceLoadListener
                 Utilities.verboseLog(1100, "Have a matchLookupJob Job: " + matchLookupJob);
 
                 //round this number to nearest thousand
+                if (workerNumber > 8){
+                    //until memoryleak is fixed restrict this to 8
+                    Utilities.verboseLog(30, "Original workerNumber =  " + workerNumber + " for " + topProteinId + " proteins" );
+                    workerNumber = 8;
+                }
                 int rawMaxProteins = (int) (topProteinId / workerNumber);
 
                 if (rawMaxProteins < 1) {
                     Utilities.verboseLog(120, "rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins);
                     rawMaxProteins = 1;
                 }
-                int maxProteins = (int) (Math.ceil(rawMaxProteins / 1000.0) * 1000);
+                int maxProteins = (int) (Math.ceil(rawMaxProteins / 100.0) * 100); // to the nearest 100
                 Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                 for (Step step : matchLookupJob.getSteps()) {
                     //StepInstance stepInstance = new StepInstance(step, bottomProteinId, topProteinId, null, null);

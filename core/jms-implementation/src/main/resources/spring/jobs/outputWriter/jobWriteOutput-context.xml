@@ -27,6 +27,7 @@
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="matchDAO" ref="matchDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+        <property name="kvStoreDelayMilliseconds" value="${kvstore.delay.milliseconds}"/>
 
     </bean>
 
@@ -59,6 +60,7 @@
         <!--If set to TRUE, the archive will be compressed as well-->
         <property name="compressHtmlAndSVGOutput" value="true"/>
         <property name="excludeSites" value="${exclude.sites.from.output}"/>
+        <property name="disableHtmlOutput" value="${disable.html.output}"/>
         <property name="entryHierarchy" ref="entryHierarchy"/>
     </bean>
 

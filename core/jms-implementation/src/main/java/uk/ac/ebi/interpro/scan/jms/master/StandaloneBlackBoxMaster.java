@@ -7,6 +7,7 @@ import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
+import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.proteinLoad.FinaliseInitialSetupStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -31,6 +32,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private StatsUtil statsUtil;
 
+    private String runId;
+
     private DefaultMessageListenerContainer workerQueueJmsContainer;
 
     private static final int MEGA = 1024 * 1024;
@@ -51,6 +54,12 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLog( 20, " verboseLog: " + Utilities.verboseLog
                 + " verboseLogLevel: " + Utilities.verboseLogLevel);
 
+        if (runId == null) {
+            String[] fileTokens = getWorkingTemporaryDirectoryPath().split("\\/");
+            this.runId = fileTokens[fileTokens.length -1];
+        }
+        System.out.println(Utilities.getTimeNow() + " RunID: " + runId);
+
         int runStatus = 11;
         if(verboseLogLevel >= 110) {
             Utilities.verboseLog(110, "DEBUG " + "Available processors: " + Runtime.getRuntime().availableProcessors());
@@ -58,8 +67,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog(40, "temp dir: " + getWorkingTemporaryDirectoryPath());
+
         }
+        Utilities.verboseLog(20, "temp dir: " + getWorkingTemporaryDirectoryPath());
 
         Utilities.verboseLog(110, "Old values - inVmWorkers min: " + workerQueueJmsContainer.getConcurrentConsumers() + " max: " + workerQueueJmsContainer.getMaxConcurrentConsumers());
 
@@ -69,16 +79,16 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
         if (! (getMaxConcurrentInVmWorkerCount() == workerQueueJmsContainer.getMaxConcurrentConsumers())){
             int minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
-//            if (getMaxConcurrentInVmWorkerCount() > 4){
-//                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount() / 2;
-//            }
-//            if (getMaxConcurrentInVmWorkerCount() < getConcurrentInVmWorkerCount()) {
-//                minNumberOfCPUCores = getMaxConcurrentInVmWorkerCount();
-//            }
+
             workerQueueJmsContainer.setConcurrentConsumers(minNumberOfCPUCores);
             workerQueueJmsContainer.setMaxConcurrentConsumers(getMaxConcurrentInVmWorkerCount());
-            Utilities.verboseLog(1100, "minNumberOfCPUCores: " + minNumberOfCPUCores
+            setConcurrentInVmWorkerCount(minNumberOfCPUCores); // set the mini int the master the same as provided
+
+            Utilities.verboseLog(30, "minNumberOfCPUCores: " + minNumberOfCPUCores
                     + " MaxConcurrentInVmWorkerCount: " + getMaxConcurrentInVmWorkerCount() );
+
+            //update the parameters
+            //params.put(StepInstanceCreatingStep.WORKER_NUMBER_KEY, Integer.toString(getConcurrentInVmWorkerCount()));
         }else{
             //set the minconsumercount to value given by user in the properties file
             //TODO check if this is necessary as the container should handle dynamic scaling
@@ -143,6 +153,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
             Long scheduleGCStart = System.currentTimeMillis();
             int allowedWaitTimeMultiplier = 0;
             boolean controlledLogging = false;
+            boolean submittedFinaliseStep = false;
             while (!shutdownCalled) {
                 boolean completed = true;
                 runStatus = 41;
@@ -192,6 +203,11 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             priority = LOW_PRIORITY;
                         }else {
                             priority = LOW_PRIORITY;
+                        }
+
+                        //when lookup is happening progres report may not be accurate
+                        if (step instanceof FinaliseInitialSetupStep && !(unfinshedStepInstances.contains(step))) {
+                            submittedFinaliseStep = true;
                         }
                         //if inteproscan is onthe last step, watermark this point
                         if (step instanceof WriteOutputStep) {
@@ -252,7 +268,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 statsUtil.setTotalJobs(totalStepInstances);
                 statsUtil.setUnfinishedJobs(totalUnfinishedStepInstances);
 //                final boolean statsAvailable = statsUtil.pollStatsBrokerJobQueue();
-                statsUtil.displayMasterProgress();
+                if ( submittedFinaliseStep ) {
+                    statsUtil.displayMasterProgress();
+                }
 
 
                 // Close down (break out of loop) if the analyses are all complete.
@@ -363,12 +381,14 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
      * @param status Exit code to use
      */
     private void systemExit(int status){
+        Utilities.verboseLog(" Exit status: " + status);
         try {
             databaseCleaner.closeDatabaseCleaner();
             LOGGER.debug("Ending");
             Thread.sleep(500); // cool off, then exit
         } catch (Exception e){
             e.printStackTrace();
+            System.err.println("InterProScan analysis failed.");
         } finally {
             cleanUpWorkingDirectory();
             // Always exit
@@ -390,6 +410,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         this.statsUtil = statsUtil;
     }
 
-
+    public void setRunId(String runId) {
+        this.runId = runId;
+    }
 
 }
