@@ -15,7 +15,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.awt.desktop.SystemSleepEvent;
+//import java.awt.desktop.SystemSleepEvent;
 import java.util.*;
 
 /**
