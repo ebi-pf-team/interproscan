@@ -22,7 +22,7 @@
     <properties>
         <!--<jetty.version>9.3.6.v20151106</jetty.version>-->
 <!--        <jetty.version>9.4.16.v20190411</jetty.version>-->
-        <jetty.version>9.4.29.v20200521</jetty.version>
+        <jetty.version>11.0.0</jetty.version>
     </properties>
 
     <dependencies>
