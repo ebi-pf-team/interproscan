@@ -25,7 +25,7 @@
           class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">
         <property name="proteinsNotInLookupDB" ref="kvStoreProteinsNotInLookup"/>
         <property name="dbStore" ref="kvStoreProteins"/>
-        <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" />
+        <!-- <property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit" /> -->
     </bean>
 
     <bean id="matchDAO"
@@ -86,9 +86,12 @@
 
     <!-- othe beans usefull for persistence-->
 
-    <!-- protein that have no matches in the lookup service-->
-    <bean id="proteinsWithoutLookupHit" class="org.eclipse.jetty.util.ConcurrentHashSet">
-    </bean>
+    <!-- protein that have no matches in the lookup service
+
+      <bean id="proteinsWithoutLookupHit" class="org.eclipse.jetty.util.ConcurrentHashSet">
+      </bean>
+
+    -->
 
     <bean id="kvStoreProteins"
           class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
