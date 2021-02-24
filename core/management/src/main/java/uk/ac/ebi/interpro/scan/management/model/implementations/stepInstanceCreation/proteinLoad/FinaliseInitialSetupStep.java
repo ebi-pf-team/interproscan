@@ -3,7 +3,8 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCre
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.eclipse.jetty.util.ConcurrentHashSet;
+//import org.eclipse.jetty.util.ConcurrentHashSet;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks;

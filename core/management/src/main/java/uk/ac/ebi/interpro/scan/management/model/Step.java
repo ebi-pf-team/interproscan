@@ -105,6 +105,8 @@ public abstract class Step implements BeanNameAware {
      */
     private int nfsDelayMilliseconds;
 
+    private int kvStoreDelayMilliseconds;
+
     public String getId() {
         return id;
     }
@@ -209,6 +211,14 @@ public abstract class Step implements BeanNameAware {
         return nfsDelayMilliseconds;
     }
 
+    public int getKvStoreDelayMilliseconds() {
+        return kvStoreDelayMilliseconds;
+    }
+
+    public void setKvStoreDelayMilliseconds(int kvStoreDelayMilliseconds) {
+        this.kvStoreDelayMilliseconds = kvStoreDelayMilliseconds;
+    }
+
     @Required
     public void setRetries(int retries) {
         this.retries = retries;
@@ -227,6 +237,26 @@ public abstract class Step implements BeanNameAware {
                 Thread.sleep(nfsDelayMilliseconds);
             } catch (InterruptedException e) {
                 throw new IllegalStateException("InterruptedException thrown when attempting to sleep for NFS delay.", e);
+            }
+        }
+    }
+
+    /**
+     * This convenience method allows a delay to be called on a Step implementation, with the duration
+     * of the delay determined by the kvStoreDelayMilliseconds bean property.
+     * <p/>
+     * This method has to be called explicitly from the execute method, so it is not called willy-nilly when not
+     * required.
+     *
+     * Some filesystems take long time to make the file updates visible to other threads so this method tries to
+     * mitigate that
+     */
+    protected void delayForKVStore() {
+        if (kvStoreDelayMilliseconds > 0) {
+            try {
+                Thread.sleep(kvStoreDelayMilliseconds);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("InterruptedException thrown when attempting to sleep for KVStore filesystem delay.", e);
             }
         }
     }

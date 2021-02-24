@@ -51,6 +51,12 @@ public class SingleSeqOptimisedBlackBoxMaster extends AbstractBlackBoxMaster {
         Utilities.verboseLogLevel = verboseLogLevel;
         Utilities.mode = "singleseq";
 
+        if (runId == null) {
+            String[] fileTokens = getWorkingTemporaryDirectoryPath().split("\\/");
+            this.runId = fileTokens[fileTokens.length -1];
+        }
+        System.out.println(Utilities.getTimeNow() + " RunID: " + runId);
+
         int runStatus = 11;
 
         if(verboseLog){
