@@ -310,10 +310,10 @@ public class PrepareForOutputStep extends Step {
             totalWaitTime = 0;
             while (tryCount <= maxTryCount) {
                 try {
-                    int randomInt =  random.nextInt(3 - 1) + 1;  //TODO remove test
-                    if (randomInt == 1) {
-                        throw new IllegalStateException("Root cause of this error is not known... but proteinindex :" + proteinIndex);
-                    }
+                    //int randomInt =  random.nextInt(3 - 1) + 1;  //TODO remove test
+                    //if (randomInt == 1) {
+                    //    throw new IllegalStateException("Root cause of this error is not known... but proteinindex :" + proteinIndex);
+                    //}
                     protein = proteinDAO.getProtein(proteinKey);
                     break; //otherwise we have an infinite loop
                 } catch (Exception exception) {
@@ -455,10 +455,10 @@ public class PrepareForOutputStep extends Step {
      */
     private int handleKVStoreExceptions(int tryCount, int maxTryCount, int waitTime, int totalWaitTime, Exception exc, String errorMessage) {
         if (tryCount < maxTryCount - 1) {
-            int randomInt =  random.nextInt(12000 - 1000) + 1000;  //get random number and use to calculate wait time
+            int randomInt =  random.nextInt(6000 - 400) + 400;  //get random number and use to calculate wait time
             waitTime = (randomInt * tryCount) + waitTime;
             if (getKvStoreDelayMilliseconds() < waitTime) {
-                if (waitTime > 120 * 1000) {
+                if (waitTime > 90 * 1000) {
                     waitTime = 6 * 1000;
                 }
                 Utilities.sleep(waitTime);
