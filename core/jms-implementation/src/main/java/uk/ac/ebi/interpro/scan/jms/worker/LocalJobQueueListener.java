@@ -218,17 +218,23 @@ public class LocalJobQueueListener implements MessageListener {
                 LOGGER.error("The exception is :");
                 e.printStackTrace();  //TODO only for testing
 
-                LOGGER.error("2. The exception is :" + e.toString());
+                //LOGGER.error("2. The exception is :" + e.toString());
                 LOGGER.error("StepExecution with errors - stepName: " + stepName);
 
                 //let us try to get the root cause of the exception
                 if (e instanceof UnexpectedRollbackException) {
                     UnexpectedRollbackException uexc = (UnexpectedRollbackException) e;
                     //print the root cause
-                    uexc.getRootCause().printStackTrace();
-                    uexc.getMostSpecificCause().printStackTrace();
+                    if (uexc.getRootCause() != null) {
+                        uexc.getRootCause().printStackTrace();
+                    }
+                    if (uexc.getMostSpecificCause() != null) {
+                        uexc.getMostSpecificCause().printStackTrace();
+                    }
                 }
-                e.getCause().printStackTrace();
+                if(e.getCause() != null) {
+                    e.getCause().printStackTrace();
+                }
 
 
                 // Something went wrong in the execution - try to send back failure

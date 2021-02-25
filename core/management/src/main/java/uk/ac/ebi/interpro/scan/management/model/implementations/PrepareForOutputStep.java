@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
+import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -36,6 +37,8 @@ public class PrepareForOutputStep extends Step {
     final Set<String> processesReadyForXMLMarshalling = new HashSet<>();
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
+
+    Random random = new Random();
 
     public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
 
@@ -82,7 +85,19 @@ public class PrepareForOutputStep extends Step {
         if (bottomProteinId == 1) {
             Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
         }
+        //exponentioanl backoff setup for failure
+        int proteinSetFactor = topProteinId.intValue() * 2000 / 1000; //use the input range size
+        int randomInt =  random.nextInt(60 - 30) + 30;  // random number betwen 60 and 120 seconds
 
+        int randomMilliSeconds = proteinSetFactor + (randomInt *  1000);
+        int exponentionalBackOffTime = randomMilliSeconds * ( stepInstance.getExecutions().size()  - 1);
+        Utilities.verboseLog(10, "How many executions  of this Step have we done before including this Step: "
+                + stepInstance.getExecutions().size());
+        if (exponentionalBackOffTime > 0){
+            Utilities.verboseLog(10, "randomMilliSeconds: " + randomMilliSeconds + " ExponentionalBackOffTime: " + exponentionalBackOffTime);
+            Utilities.sleep(exponentionalBackOffTime);
+            Utilities.verboseLog(10, "Backed off for : " + exponentionalBackOffTime);
+        }
 
         try {
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
@@ -101,8 +116,13 @@ public class PrepareForOutputStep extends Step {
             }
             Utilities.verboseLog(1100, "Completed prepraring the protein range  ..." + proteinRange);
         } catch (IOException e) {
-            LOGGER.warn("Problem with marshalling in the  Prepare proteins for output step");
+            LOGGER.warn("Problem (IOException on marshalling)  in the  Prepare proteins for output step " + proteinRange);
             e.printStackTrace();
+            throw new IllegalStateException(e.getMessage()); //Exception(e.getMessage());
+        } catch (Exception e){
+            LOGGER.warn("Error in Prepare proteins for output step - " + proteinRange);
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -282,7 +302,6 @@ public class PrepareForOutputStep extends Step {
         int totalWaitTime = 0;
         ArrayList<Pair<Integer, Integer>> observedTryCounts4Proteins = new ArrayList<>();
         ArrayList<Pair<Integer, Integer>> observedTryCounts4Matches = new ArrayList<>();
-
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
             //Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
@@ -291,6 +310,10 @@ public class PrepareForOutputStep extends Step {
             totalWaitTime = 0;
             while (tryCount <= maxTryCount) {
                 try {
+                    int randomInt =  random.nextInt(3 - 1) + 1;  //TODO remove test
+                    if (randomInt == 1) {
+                        throw new IllegalStateException("Root cause of this error is not known... but proteinindex :" + proteinIndex);
+                    }
                     protein = proteinDAO.getProtein(proteinKey);
                     break; //otherwise we have an infinite loop
                 } catch (Exception exception) {
@@ -408,6 +431,14 @@ public class PrepareForOutputStep extends Step {
         );
         //}
         deleteTmpMarshallingFile(outputPath);
+
+        int randomInt =  random.nextInt(3 - 1) + 1;  //TODO remove test
+        if (randomInt == 1) {
+            LOGGER.warn("Exception will be thrown... here for test");
+            throw new ParseException("Testing Root cause of ... ... ... but proteins range is : " + proteinRange +
+                    " \n How many times have we run this step before : " + stepInstance.getExecutions().size() );
+        }
+
     }
 
     /**
@@ -424,6 +455,8 @@ public class PrepareForOutputStep extends Step {
      */
     private int handleKVStoreExceptions(int tryCount, int maxTryCount, int waitTime, int totalWaitTime, Exception exc, String errorMessage) {
         if (tryCount < maxTryCount - 1) {
+            int randomInt =  random.nextInt(12000 - 1000) + 1000;  //get random number and use to calculate wait time
+            waitTime = (randomInt * tryCount) + waitTime;
             if (getKvStoreDelayMilliseconds() < waitTime) {
                 if (waitTime > 120 * 1000) {
                     waitTime = 6 * 1000;

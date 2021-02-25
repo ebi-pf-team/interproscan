@@ -181,11 +181,13 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             }else {
                 delayForNfs();
             }
+
             Utilities.verboseLog(110, "  FinaliseStep - Slept for at least " + waitTime + " millis");
         }else{
             Utilities.verboseLog(110, " FinaliseStep - no waiting for the kvstore matchDB as protein count is < 16000: count = " + topProtein);
         }
-
+        int numberOfSteps = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+        Utilities.verboseLog(10, "FinaliseInitialSetup: Generated " + numberOfSteps + " total (new) steps for processing");
     }
 
 }
