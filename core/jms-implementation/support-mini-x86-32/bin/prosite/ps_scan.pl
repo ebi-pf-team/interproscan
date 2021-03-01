@@ -2,11 +2,11 @@
 
 # ps_scan - a PROSITE scanning program
 #
-# Revision: 1.87
+# Revision: 1.90
 #
-# Copyright (C) 2001-2011 Swiss Institute of Bioinformatics
+# Copyright (C) 2001-2020 SIB Swiss Institute of Bioinformatics
 # Authors:
-#   edouard.decastro@isb-sib.ch
+#   edouard.decastro@sib.swiss
 #   Alexandre Gattiker
 #   Beatrice Cuche (evaluated_by post-processing)
 #   Lorenzo Cerutti (FTREP method)
@@ -34,11 +34,7 @@ use IO::File;
 use Carp qw(confess cluck);
 use vars qw(@ISA $VERSION $errpos $errstr);
 use strict;
-use FileHandle;
-use Digest::MD5 qw(md5 md5_hex md5_base64);
-use Sys::Hostname;
-use File::Path qw(remove_tree);
-use File::Basename;
+
 
 ################################################################################
 # integrated subs taken from Prosite.pm module:
@@ -314,145 +310,6 @@ sub prositeToRegexp {
     return $regexp;
 }
 
-
-# Checks that a user-entered pattern is parseable, returning an error message
-# or undef TODO: <A-T-[<GE] should be an error
-sub checkPatternSyntax {
-    my $pattern = shift;
-    my $c1 = 0;
-    my $c2 = 0;
-    my ($c_open_square, $c_open_curly, $c_open_paren) = (0, 0, 0);
-    my ($c_close_square, $c_close_curly, $c_close_paren) = (0, 0, 0);
-    if ($pattern =~ /(-){2,}/ || $pattern =~ /([,\-\(\)\{\}\[\]\<\>]){2,}]/) {
-        return "duplicate character \"$1\"";
-    }
-    if ($pattern !~ /[a-zA-Z]/) {
-        return "pattern has no characters";
-    }
-    if ($pattern =~ /-\(/) {
-        return "dash before (";
-    }
-    if ($pattern =~ /([JOU])/i) {
-        return "pattern contains letter \"$1\" which is not an amino acid";
-    }
-    if (length($pattern) > 200) {
-        return "pattern is longer than the limit of 200 characters";
-    }
-    elsif ($pattern =~ /^\[[a-z]+\]$/i) {
-        return "pattern is too degenerate";
-    }
-    else {
-        my $ambig;
-        my $ambig_complement;
-        my $range;
-        my %count;
-        my @ambig;
-        foreach (split(//,$pattern)) {
-            unless ($c1 == $c2 || $c1 == $c2 +1) {
-            # always close parentheses before opening a new one!
-                return "nested parentheses are forbidden";
-            }
-            if (/[\[\{\(]/) {
-                $c1++;
-                if (/\[/) {
-                    $ambig = " ";
-                    $c_open_square++;
-                }
-                elsif (/\{/) {
-                    $ambig_complement = " ";
-                    $c_open_curly++;
-                }
-                elsif (/\(/) {
-                    $range = " ";
-                    $c_open_paren++;
-                }
-            }
-            elsif (/[\]\}\)]/) {
-                $c2++;
-                if (/\]/) {
-                    %count = ();
-                    if (length($ambig) < 3) {
-                        return "no real ambiguity inside []";
-                    }
-                    else {
-                        @ambig = split(//, $ambig);
-                        for (@ambig) {
-                            $count{$_}++;
-                        }
-                        for (sort keys %count) {
-                            if ($count{$_} ne 1) {
-                            return "string inside square brackets \"
-                                $ambig\" contains duplicates";
-                            }
-                        }
-                    }
-                    $ambig = "";
-                    $c_close_square++;
-                }
-                elsif (/\}/) {
-                    $ambig_complement = "";
-                    $c_close_curly++;
-                }
-                elsif (/\)/) {
-                    $range =~ s/^\s+//;
-                    if ($range =~ /^(\d+),(\d+)$/) {
-                        if ($1 >= $2) {
-                            return "range \"$range\" is invalid
-                                (second term must be greater than first)";
-                        }
-                    }
-                    elsif ($range !~ /^\d+$/){
-                        return "range \"$range\" is invalid";
-                    }
-                    $range = "";
-                    $c_close_paren++;
-                }
-            }
-            elsif ($range) {
-                if (!/[\d,]/) {
-                    return "incorrect range \"$range\"";
-                }
-                $range .= $_;
-            }
-            elsif ($ambig) {
-                if (!/[A-Z<>]/) {# [G>] is allowed, e.g. PS00267, PS00539
-                    return "wrong syntax for ambiguity : \"$ambig \"";
-                }
-                if (/([BZ])/) {
-                    return "ambiguous amino acid \"
-                        $1\" not allowed within ambiguity";
-                }
-                $ambig .= $_;
-            }
-            elsif ($ambig_complement) {
-                if (!/[A-Z]/) {
-                    return "wrong syntax for ambiguity :
-                        \"$ambig_complement\"";
-                }
-                $ambig_complement .= $_;
-            }
-            else {# amino acid or anchor, or * quantifier
-                if (/([^A-Zx\-<>*])/) {
-                    return "invalid character : \"$1\"";
-                }
-            }
-        }
-        if ($c1 != $c2) {
-            return "unbalanced (), [] or {}";
-        }
-        elsif ($c_open_square != $c_close_square) {
-            return "unbalanced []";
-        }
-        elsif ($c_open_curly != $c_close_curly) {
-            return "unbalanced {}";
-        }
-        elsif ($c_open_paren != $c_close_paren) {
-            return "unbalanced ()";
-        }
-    }
-    return undef;
-}
-
 sub parseProsite {
     local $_ = shift;
     my $ac = $1 if /^AC   (\w+)/m;
@@ -681,7 +538,7 @@ sub group_matches
 # initializations & parameters processing
 
 BEGIN {
-   $VERSION = '1.88';
+   $VERSION = '1.90';
 }
 
 # Can we use the IPC::Open2 module to communicate with
@@ -760,7 +617,7 @@ Other expert options:
                        normalized score value. -R and -C options can be
                        combined.
   --pfscan <path>    : pathname to pfscan executable (if not defined will be
-                       'pfscan', so executable has to be found within PATH env). 
+                       'pfscan', so executable has to be found within PATH env).
                        This option could be used e.g. to use pftool v3 pfscanV3.
 
 Note:
@@ -796,10 +653,7 @@ my $opt_filterheader;
 my $opt_reverse;
 my $opt_shuffle;
 my $opt_no_postprocessing;
-my $opt_tmpdir;
 
-#prosite_profiles dir
-my $prosite_files_dir;
 
 # list of prosite 'dat' files to be scanned
 my @prosite_files;
@@ -844,12 +698,10 @@ GetOptions (
     "x=i" => \$opt_max_x,
     "l=i" => \$opt_level,
     "o=s" => \$opt_format,
-    "y=s" => \$prosite_files_dir,
     "d=s" => \@prosite_files,
     "p=s" => \@motifAC_or_userpattern,
     "e=s" => \@entries,
     "f=s" => \@followpp,
-    "t=s" => \$opt_tmpdir,
     # a: undocumented, just for PROSITE team to test repeat post-processing
     # on any normal ('!' level0) profile...
     "a"   => \$opt_rep_pp_4allprofiles,
@@ -885,13 +737,6 @@ if ( $opt_pfsearch ) {
     # integer cutoff forces raw scores
     $opt_raw = $1 if defined($opt_cutoff) and $opt_cutoff=~ /^(\d+)$/mg;
 }
-
-if (!$prosite_files_dir) {
-   $prosite_files_dir = "data/prosite/2018_02/prosite_models";
-   print STDERR "not defined $prosite_files_dir";
-}
-
-
 my $use_pfsearchV3 = index( $opt_pfsearch, 'pfsearchV3') != -1 ? 1 : 0;
 
 
@@ -904,58 +749,6 @@ $opt_format =~ tr/A-Z/a-z/;
 die "ERROR:Output format must be one of $formats_string\n"
     unless grep {$_ eq $opt_format} @formats;
 my $opt_psa_or_msa = $opt_format eq "msa" || $opt_format eq "psa";
-
-## start script to deal with clean temp dir setup
-
-my $jobHostname =  hostname;
-
-my $i5InputFastaFile = @ARGV[-1];
-
-my($i5InputFastaFileBase, $i5InputFastaFilePath, $i5InputFastaFileSuffix) = fileparse($i5InputFastaFile);
-#my $i5InputFileBase = basename($i5InputFastaFile);
-
-if (not (defined $opt_tmpdir and length $opt_tmpdir)){
-   $opt_tmpdir = $i5InputFastaFilePath; 
-}
-my $curI5WorkDir = "${opt_tmpdir}/${jobHostname}";
-
-unless(-e $curI5WorkDir or mkdir $curI5WorkDir) {
-        die "Unable to create $curI5WorkDir";
-}
-
-my $count;
-opendir(my $dh, $curI5WorkDir) or die "opendir($curI5WorkDir): $!";
-while (my $de = readdir($dh)) {
-  next if $de =~ /^\./ or $de =~ /config_file/;
-  $count++;
-}
-closedir($dh);
-
-if ($count > 2000){
- $curI5WorkDir = "${curI5WorkDir}_1";
- unless(-e $curI5WorkDir or mkdir $curI5WorkDir) {
-        die "Unable to create new dir $curI5WorkDir";
- }
-}
-
-(my $i5InputFileBase_we = $i5InputFastaFileBase) =~ s/\.[^.]+$//;
-
-#print "$i5InputFastaFile and $i5InputFastaFileBase and $i5InputFileBase_we\n\n";
-my $i5TmpDirBase = "tmpdir_$i5InputFileBase_we";
-my $infiledigest = md5_hex($i5InputFileBase_we);
-my $i5PrositeTmpDir = "${curI5WorkDir}/${i5TmpDirBase}/";
-
-#print "tmpdir is $i5PrositeTmpDir\n";
-
-unless(-e $i5PrositeTmpDir or mkdir $i5PrositeTmpDir) {
-        die "Unable to create $i5PrositeTmpDir";
-}
-
-$TMPDIR = $i5PrositeTmpDir;
-
-## end script to deal with temp dir
-
-
 
 # user patterns specified with -p option
 my @userpat;
@@ -986,7 +779,6 @@ if ( !@prosite_files && !@userpat ) {
         die "prosite.dat file not found, please use the -d option";
     }
 }
-
 
 # -b option with no pathname specified: find default evaluator.dat
 if ( defined($opt_miniprofiles) && !$opt_miniprofiles ) {
@@ -1929,8 +1721,8 @@ sub do_profile_scan {
             }
             close DETECT;
         }
-        @pre_command = ( $use_pfsearchV3 ? 
-        	"$opt_pfsearch -o1 -c$cutoff $PROSITE" : "$opt_pfsearch $fasta -lxz $PROSITE" );
+        @pre_command = ( $use_pfsearchV3 ?
+        	"$opt_pfsearch -o1 -L $level_min $PROSITE" : "$opt_pfsearch $fasta -lxz $PROSITE" );
         	# p.s. if input is not fasta, pfsearchV3 will fail!
         @post_command = ( $use_pfsearchV3 ? "" : "C=$cutoff" );
     }
@@ -1938,7 +1730,7 @@ sub do_profile_scan {
         if ($level_arg eq 0) { # yes default scan l=0 is internally run at -1 (so that postprocessing could consider weak matches)
             $level_arg = -1;
         }
-        @pre_command  = $use_pfscan_v3 ? "$PFSCAN --matrix-only -o3 -L$level_arg $PROSITE" : "$PFSCAN -flxz -v -C$level_arg";
+        @pre_command  = $use_pfscan_v3 ? "$PFSCAN --matrix-only -o4 -L$level_arg $PROSITE" : "$PFSCAN -flxz -v -C$level_arg";
         @post_command = $use_pfscan_v3 ? "" : $PROSITE;
     }
     my $out;
@@ -1956,8 +1748,7 @@ sub do_profile_scan {
         }
         my $cmd = "@pre_command $seqfile @post_command > $PFSCAN_TMP";
         # launch pftool scan command
-        #print "cmd to run: $cmd";
-        system $cmd and die "Could not execute $cmd";
+        system $cmd and die "Could not execute $cmd: $!";
         unlink $seqfile unless defined $seqfile_to_scan;
         my $pfscan_fh = new IO::File($PFSCAN_TMP)
             or die "Cannot open $PFSCAN_TMP: $!";
@@ -1986,6 +1777,7 @@ sub do_profile_scan {
         $out = scanProfiles($reader, $level_min-1);
         close $reader or die "Error $? with $cmd";
         waitpid $pid, 0; #avoid defunct kid processes
+	die "Could not execute $cmd; returned: $?" if $?;
     }
     unlink $PFSCAN_TMP;
     if ($opt_format eq "msa") {# if output format is MSA run psa2msa
@@ -2255,20 +2047,16 @@ sub processMotif {
             # if $opt_pfsearch: save data to tmp profile
             if (!$last_profile_tmp_filename || $opt_pfsearch) {
                 # open new profile temp
-                my $profile_model_name = $prosite_files_dir."/".$ac.".prf";
-                #close PROFILE_TMP if ($last_profile_tmp_filename);
+                close PROFILE_TMP if ($last_profile_tmp_filename);
                 # close previous one
-                $last_profile_tmp_filename=$profile_model_name;
-                #$last_profile_tmp_filename=tmpnam();
-
+                $last_profile_tmp_filename=tmpnam();
                 # get new temp file name
-                #open PROFILE_TMP, ">$last_profile_tmp_filename"
-                #    or die "Cannot open $last_profile_tmp_filename: $!";
+                open PROFILE_TMP, ">$last_profile_tmp_filename"
+                    or die "Cannot open $last_profile_tmp_filename: $!";
             }
             # save profile to temp file
-            # not for now
-            #print PROFILE_TMP $ps_entry
-            #    or die "can't print to $last_profile_tmp_filename: $!\n";
+            print PROFILE_TMP $ps_entry
+                or die "can't print to $last_profile_tmp_filename: $!\n";
         }
         push @MotifInfo,
             [$ac, $id, $type, $de, undef, $skip, $cutoffs,
@@ -2381,8 +2169,6 @@ sub main {
     }
     # delete profile temp file(s)
     foreach my $tmp_prf ( map { $_->[7] } @MotifInfo ) {
-        #dont do anything for now
-        #print $tmp_prf
-        #unlink $tmp_prf if $tmp_prf;
+        unlink $tmp_prf if $tmp_prf;
     }
 }
