@@ -432,13 +432,12 @@ public class PrepareForOutputStep extends Step {
         //}
         deleteTmpMarshallingFile(outputPath);
 
-        int randomInt =  random.nextInt(3 - 1) + 1;  //TODO remove test
-        if (randomInt == 1) {
-            LOGGER.warn("Exception will be thrown... here for test");
-            throw new ParseException("Testing Root cause of ... ... ... but proteins range is : " + proteinRange +
-                    " \n How many times have we run this step before : " + stepInstance.getExecutions().size() );
-        }
-
+        //int randomInt =  random.nextInt(3 - 1) + 1;  //TODO remove test
+        //if (randomInt == 1) {
+        //    LOGGER.warn("Exception will be thrown... here for test");
+        //    throw new ParseException("Testing Root cause of ... ... ... but proteins range is : " + proteinRange +
+        //            " \n How many times have we run this step before : " + stepInstance.getExecutions().size() );
+        //}
     }
 
     /**
