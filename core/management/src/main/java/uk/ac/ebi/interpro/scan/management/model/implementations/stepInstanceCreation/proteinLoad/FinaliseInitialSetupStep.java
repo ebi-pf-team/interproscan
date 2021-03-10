@@ -162,6 +162,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         StepCreationSequenceLoadListener sequenceLoadListener =
                 new StepCreationSequenceLoadListener(analysisJobs, completionJob, prepareOutputJob, matchLookupJob, finalInitialJob, initialSetupSteps, stepInstance.getParameters());
         sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
+        sequenceLoadListener.setMaxConcurrentThreadsForPrepareOutputStep(1);
 
         finaliseInitialSetupTasks.execute(sequenceLoadListener, analysisJobMap,  useMatchLookupService);
 

@@ -38,6 +38,7 @@ public class StepCreationSequenceLoadListener
     private Job matchLookupJob;
     private Job finaliseInitialStepsJob;
     private boolean initialSetupSteps;
+    private int maxConcurrentThreadsForPrepareOutputStep = 1;
 
     public void setCompletionJob(Job completionJob) {
         this.completionJob = completionJob;
@@ -57,6 +58,10 @@ public class StepCreationSequenceLoadListener
 
     public void setInitialSetupSteps(boolean initialSetupSteps) {
         this.initialSetupSteps = initialSetupSteps;
+    }
+
+    public void setMaxConcurrentThreadsForPrepareOutputStep(int maxConcurrentThreadsForPrepareOutputStep) {
+        this.maxConcurrentThreadsForPrepareOutputStep = maxConcurrentThreadsForPrepareOutputStep;
     }
 
     /**
@@ -168,6 +173,10 @@ public class StepCreationSequenceLoadListener
                         rawMaxProteins = 1;
                     }
                     int maxProteins = (int) (Math.ceil(rawMaxProteins / 400.0) * 400);
+
+                    if (maxConcurrentThreadsForPrepareOutputStep == 1) {
+                        maxProteins = topProteinId.intValue();
+                    }
                     Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                     Utilities.verboseLog(1100, "Create prepare output jobs for this run ...");
 
