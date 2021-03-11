@@ -36,7 +36,7 @@
 
     <!-- STEP 2 -->
     <bean id="stepPrositeProfilesRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPrositeProfilesBinaryStep"
           parent="abstractPrositeProfileStep">
         <!-- In example command line below, replace _ with -
           Prosite Profiles:
@@ -45,14 +45,16 @@
           /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.113/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.113/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile"/>
         <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
-        <property name="binarySwitches" value="${pfscanv3.binary.switches.prositeprofiles} ${pfscanv3.cpu.switch.prositeprofiles}"/>
+        <property name="binarySwitches" value="${pfsearchv3.binary.switches.prositeprofiles} ${pfsearchv3.cpu.switch.prositeprofiles}"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${prosite.profiles.models.path}"/>
+        <property name="modelsDir" value="${prosite.profiles.models.dir}"/>
         <property name="fullPathToPfscanBinary" value="${binary.pfscanv3.path}"/>
         <property name="fullPathToPfsearchBinary" value="${binary.pfsearchv3.path}"/>
+        <property name="fullPathToRunPrositeBinary" value="${binary.runprosite.path}"/>
         <property name="usePfsearch" value="${psscan.prositeprofiles.usepfsearch}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
