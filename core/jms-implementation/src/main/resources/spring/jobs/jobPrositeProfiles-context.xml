@@ -52,6 +52,7 @@
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${prosite.profiles.models.path}"/>
         <property name="modelsDir" value="${prosite.profiles.models.dir}"/>
+        <property name="fullPathToPython" value="${python3.command}"/>
         <property name="fullPathToPfscanBinary" value="${binary.pfscanv3.path}"/>
         <property name="fullPathToPfsearchBinary" value="${binary.pfsearchv3.path}"/>
         <property name="fullPathToRunPrositeBinary" value="${binary.runprosite.path}"/>

@@ -22,6 +22,7 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
     private static final Logger LOGGER = LogManager.getLogger(RunPrositeProfilesBinaryStep.class.getName());
 
     private String fullPathToPsScanPerlScript;
+    private String fullPathToPython;
 
     private String fullPathToPfscanBinary;
     private String fullPathToPfsearchBinary;
@@ -44,6 +45,14 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
     @Required
     public void setFullPathToPsScanPerlScript(String fullPathToPsScanPerlScript) {
         this.fullPathToPsScanPerlScript = fullPathToPsScanPerlScript;
+    }
+    
+    public String getFullPathToPython() {
+	return fullPathToPython;
+    }
+
+    public void setFullPathToPython(String fullPathToPython) {
+        this.fullPathToPython = fullPathToPython;
     }
 
     public String getFastaFileNameTemplate() {
@@ -128,7 +137,7 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate()); 
         List<String> command = new ArrayList<String>();
-        command.add("python3");
+        command.add(this.getFullPathToPython());
         command.add(this.getFullPathToRunPrositeBinary());
 
 //        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
