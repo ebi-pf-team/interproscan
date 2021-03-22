@@ -154,7 +154,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
         Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap<>();
 
         if (cathResolverRecordMap != null) {
-            Utilities.verboseLog(1100, "cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
+            Utilities.verboseLog(30, "cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
             BufferedReader reader = null;
             try {
                 //domTblInputStream = new FileInputStream(domTblOutputFileName);
@@ -229,8 +229,8 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                         }
                     }
                 }
-                Utilities.verboseLog(110, "DomTblDomainMatch count : " + domtblMatchCount);
-                Utilities.verboseLog(110, "matchData protein count : " + matchData.values().size());
+                Utilities.verboseLog(30, "DomTblDomainMatch count : " + domtblMatchCount);
+                Utilities.verboseLog(30, "matchData protein count : " + matchData.values().size());
             } catch (IOException e) {
                 throw new IllegalStateException("IOException thrown when attempting to parse " + domTblOutputFileName);
             } finally {
