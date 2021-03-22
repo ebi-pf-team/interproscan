@@ -513,6 +513,7 @@
 
     <bean id="finaliseInitialSetupTasks" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks">
         <property name="sequenceLoader" ref="proteinLoader"/>
+        <property name="maxConcurrentThreadsForPrepareOutputStep" value="1"/>
         <!--TODO check -->
         <property name="proteinDAO" ref="proteinDAO"/>
         <!--<property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit"/>-->

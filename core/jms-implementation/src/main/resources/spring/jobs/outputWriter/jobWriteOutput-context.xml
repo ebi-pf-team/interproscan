@@ -23,7 +23,7 @@
         <!-- This step is made dependent on the steps created by the protein load listener -->
         <property name="stepDescription" value="Prepare proteins for output of the completed analysis"/>
         <property name="createStepInstancesForNewProteins" value="false"/>
-        <property name="retries" value="0"/>
+        <property name="retries" value="6"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="matchDAO" ref="matchDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
@@ -45,7 +45,7 @@
         <!-- This step is made dependent on the steps created by the protein load listener -->
         <property name="stepDescription" value="Write output for completed analysis"/>
         <property name="createStepInstancesForNewProteins" value="false"/>
-        <property name="retries" value="0"/>
+        <property name="retries" value="3"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
         <property name="matchDAO" ref="matchDAO"/>

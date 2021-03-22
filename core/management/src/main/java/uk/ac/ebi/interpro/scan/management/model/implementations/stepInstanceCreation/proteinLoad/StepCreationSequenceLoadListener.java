@@ -38,6 +38,7 @@ public class StepCreationSequenceLoadListener
     private Job matchLookupJob;
     private Job finaliseInitialStepsJob;
     private boolean initialSetupSteps;
+    private int maxConcurrentThreadsForPrepareOutputStep = 1;
 
     public void setCompletionJob(Job completionJob) {
         this.completionJob = completionJob;
@@ -57,6 +58,10 @@ public class StepCreationSequenceLoadListener
 
     public void setInitialSetupSteps(boolean initialSetupSteps) {
         this.initialSetupSteps = initialSetupSteps;
+    }
+
+    public void setMaxConcurrentThreadsForPrepareOutputStep(int maxConcurrentThreadsForPrepareOutputStep) {
+        this.maxConcurrentThreadsForPrepareOutputStep = maxConcurrentThreadsForPrepareOutputStep;
     }
 
     /**
@@ -115,10 +120,10 @@ public class StepCreationSequenceLoadListener
             int idsWithoutLookupHitSize = 0;
             if (idsWithoutLookupHit != null) {
                 idsWithoutLookupHitSize = idsWithoutLookupHit.size();
-                Utilities.verboseLog(1100, "Protein without Lookup Hit (" + idsWithoutLookupHit.size() + ") range: " + idsWithoutLookupHit.get(0) + " - "
+                Utilities.verboseLog(30, "Protein without Lookup Hit (" + idsWithoutLookupHit.size() + ") range: " + idsWithoutLookupHit.get(0) + " - "
                         + idsWithoutLookupHit.get(idsWithoutLookupHitSize - 1));
             } else {
-                Utilities.verboseLog(1100, "idsWithoutLookupHit is NULL");
+                Utilities.verboseLog(30, "idsWithoutLookupHit is NULL");
             }
 
             Utilities.verboseLog(120, "topProteinId intValue(): - " + topProteinId.intValue());
@@ -153,6 +158,8 @@ public class StepCreationSequenceLoadListener
                                 + " unique input sequences were found in the match lookup server. " + extraLookupMessage);
                     }
                 }
+                Utilities.verboseLog(10, " Match lookup info: " + percentageOfProteinsinLookup + "% of the " + topProteinId.intValue()
+                        + " unique input sequences were found in the match lookup server. " );
 
                 //TODO this is temp for now
 
@@ -166,6 +173,10 @@ public class StepCreationSequenceLoadListener
                         rawMaxProteins = 1;
                     }
                     int maxProteins = (int) (Math.ceil(rawMaxProteins / 400.0) * 400);
+
+                    if (maxConcurrentThreadsForPrepareOutputStep == 1) {
+                        maxProteins = topProteinId.intValue();
+                    }
                     Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                     Utilities.verboseLog(1100, "Create prepare output jobs for this run ...");
 
@@ -183,7 +194,9 @@ public class StepCreationSequenceLoadListener
                         }
                         stepToStepInstances.put(step, jobStepInstances);
                         prepareOutputStepInstances.addAll(jobStepInstances);
-                        Utilities.verboseLog(30, "Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances");
+                        Utilities.verboseLog(30, "Created " + prepareOutputStepInstances.size() + " prepareOutput StepInstances" +
+                                " idsWithoutLookupHitSize: " + idsWithoutLookupHitSize );
+                        Utilities.verboseLog(30, "idsWithoutLookupHitSize: " + idsWithoutLookupHitSize);
                     }
                     Utilities.prepareOutputInstances = prepareOutputStepInstances.size();
                 } else {
@@ -287,7 +300,7 @@ public class StepCreationSequenceLoadListener
                 return;
             }
             //else
-            Utilities.verboseLog(1100, "Now create StepInstances for the regular jobs ... : useMatchLookupService: " + useMatchLookupService
+            Utilities.verboseLog(10, "Now create StepInstances for the regular jobs ... : useMatchLookupService: " + useMatchLookupService
                     + " idsWithoutLookupHit: " + (idsWithoutLookupHit != null));
             double analysisMaxCountMultiplier = 1;
             if (bottomNewSequenceId != null && topNewSequenceId != null) {
