@@ -211,6 +211,14 @@ public abstract class Step implements BeanNameAware {
         return nfsDelayMilliseconds;
     }
 
+    public int getKvStoreDelayMilliseconds() {
+        return kvStoreDelayMilliseconds;
+    }
+
+    public void setKvStoreDelayMilliseconds(int kvStoreDelayMilliseconds) {
+        this.kvStoreDelayMilliseconds = kvStoreDelayMilliseconds;
+    }
+
     @Required
     public void setRetries(int retries) {
         this.retries = retries;

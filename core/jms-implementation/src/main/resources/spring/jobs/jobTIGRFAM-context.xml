@@ -49,7 +49,7 @@
         <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.tigrfam} ${hmmer3.hmmsearch.cpu.switch.tigrfam}"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToHmmFile" value="${tigrfam.hmm.path}"/>
@@ -82,7 +82,7 @@
                 </property>
             </bean>
         </property>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="rawMatchDAO" ref="tigrfamRawMatchDAO"/>
     </bean>
 
@@ -92,7 +92,7 @@
         <property name="dependsUpon" ref="stepTIGRFAMStoreRawMatches"/>
         <property name="stepDescription"
                   value="Delete the raw output file following successful parsing and persistence"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <!-- TODO - Check for changes - presumably now using different objects to store the results? -->

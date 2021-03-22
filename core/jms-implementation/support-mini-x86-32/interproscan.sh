@@ -40,9 +40,11 @@ then
     exit 1
 fi
 
+python initial_setup.py
+
 "$JAVA" \
--XX:+UseParallelGC -XX:ParallelGCThreads=4  \
- -Xms1028M -Xmx6072M \
--jar  interproscan-5.jar $@ -u $USER_DIR
+ -XX:ParallelGCThreads=8 \
+ -Xms2028M -Xmx9216M \
+ -jar  interproscan-5.jar $@ -u $USER_DIR
 
 #end

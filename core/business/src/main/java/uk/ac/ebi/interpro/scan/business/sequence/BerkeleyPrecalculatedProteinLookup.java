@@ -201,7 +201,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                     if (proteinsCount >= 2000 && progressMeter % 25 == 0) {
                         Utilities.verboseLog(30, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
                     }
-                    if (progressMeter % 10 == 0) {
+                    if (progressMeter % 20 == 0) {
                         Utilities.printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
                     }
                 }
@@ -343,6 +343,8 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     @Override
     public Set<Protein> getPrecalculated(Set<Protein> proteins, Map<String, SignatureLibraryRelease> analysisJobMap) {
+        String proteinRange = "[" + proteinRanges.get("bottom") + "-" + proteinRanges.get("top") + "]";
+
         // Check if the precalc service is configure and available.
         Utilities.verboseLog(110, "Start getPrecalculated for " + proteins.size() + " proteins");
         if (!preCalcMatchClient.isConfigured()) {
@@ -384,7 +386,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             // Only proceed if the lookup client and server are in sync
             if (!isSynchronised()) {
                 Utilities.verboseLog(110, "TESTING only: The server and the client DO NOT have the same version or some other errror ");
-                return null;
+                return null; //coment if testing lookupmatch version check l of the comment above
             } else {
                 Utilities.verboseLog(110, "TESTING only: The server and the client HAVE the same version");
             }
@@ -444,7 +446,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             }
 
 
-            Utilities.verboseLog(110, "Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(30, proteinRange + " Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
@@ -481,8 +483,21 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                     Utilities.verboseLog(110, "Analysis versions ARE Consistent ..  populateProteinMatches : kvSequenceEntryMatches " + kvSequenceEntryMatches.size() +
                             " kvSequenceEntrySites: " + kvSequenceEntrySites.size());
                 }
-                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
-                Utilities.verboseLog(110, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size());
+                //deal with failures to convert the lookup matches to i5 matches
+                try {
+                    lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
+                    Utilities.verboseLog(110, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size());
+                } catch (Exception e) {
+                    //deal with the exceptions coming from the convert process
+                    //diffilcult to recover
+                    Utilities.verboseLog(10, "Failed to convert precalculated Protein Matches:  "  + precalculatedProteins.size() +
+                            " , they will be calculated manually");
+                    Utilities.verboseLog(e.getMessage());
+                    e.printStackTrace();
+                    Utilities.printMemoryUsage("After exception in lookup " +  proteinRange);
+                    Utilities.sleep(10 * 1000); //
+                    return null;
+                }
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
@@ -494,7 +509,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             if (timetaken > 0) {
                 lookupTimeMillis = timetaken / 1000000;
             }
-            Utilities.verboseLog(110, "Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
+            Utilities.verboseLog(30, proteinRange + " Time to convert to i5 matches " + kvSequenceEntryXML.getMatches().size() + " matches for " + md5s.length + " proteins: " + lookupTimeMillis + " millis");
 
             return precalculatedProteins;
 
@@ -602,13 +617,12 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         int finalDashIndex = interproscanVersion.lastIndexOf("-");
         String interproDataVersion = interproscanVersion.substring(finalDashIndex);
         Utilities.verboseLog(1100, "Lookup isSynchronised? interproDataVersion: " + interproDataVersion + " serverVersion:" + serverVersion);
+
         if (!(serverVersion.endsWith(interproDataVersion))) {
             displayLookupSynchronisationError(interproscanVersion, serverVersion);
             return false;
         }
-
         return true;
-
     }
 
     /**

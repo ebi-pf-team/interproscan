@@ -127,6 +127,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             if (interProEntry != null) {
                                 mappingFields.add(interProEntry.getAccession());
                                 mappingFields.add(interProEntry.getDescription());
+
                                 if (mapToGO) {
                                     List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
                                     Collections.sort(goXRefs, new GoXrefComparator());
@@ -140,7 +141,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                                         }
                                         mappingFields.add(sb.toString());
                                     } else {
-                                        mappingFields.add("");
+                                        mappingFields.add("-");
                                     }
                                 }
                                 if (mapToPathway) {
@@ -158,9 +159,12 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                                         }
                                         mappingFields.add(sb.toString());
                                     } else {
-                                        mappingFields.add("");
+                                        mappingFields.add("-");
                                     }
                                 }
+                            } else {
+                                mappingFields.add("-"); // for accession
+                                mappingFields.add("-"); // for description
                             }
                         }
                         this.tsvWriter.write(mappingFields);

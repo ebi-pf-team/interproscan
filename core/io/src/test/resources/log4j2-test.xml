@@ -20,6 +20,10 @@
             <appender-ref ref="consoleappender"/>
         </logger>
 
+        <logger name="uk.ac.ebi.interpro.scan.io.cli.CommandLineConversationImplTest" level="debug">
+            <appender-ref ref="consoleappender"/>
+        </logger>
+
         <Root level="warn">
         <appender-ref ref="consoleappender"/>
         </Root>

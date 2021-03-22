@@ -1,26 +1,21 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
-import org.hibernate.Hibernate;
+import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
-import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesJSONResultWriter;
-import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.management.model.implementations.writer.TarArchiveBuilder;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,7 +65,7 @@ public class PrepareForOutputStep extends Step {
 
         Utilities.verboseLog(110, " PrepareForOutputStep :  There are " + (topProteinId - bottomProteinId) + " proteins.");
 
-        Long totalNucleotideSequences =  nucleotideSequenceDAO.count();
+        Long totalNucleotideSequences = nucleotideSequenceDAO.count();
 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Starting step with Id " + this.getId());
@@ -78,17 +73,11 @@ public class PrepareForOutputStep extends Step {
 
         Utilities.verboseLog(110, "temporaryFileDirectory: " + temporaryFileDirectory);
 
-        int proteinCount = 0;
-        int matchCount = 0;
-
         Set<String> signatureLibraryNames = new HashSet<>();
 
         for (SignatureLibrary sig : SignatureLibrary.values()) {
             signatureLibraryNames.add(sig.getName());
         }
-
-        int proteinRawCount = 0;
-        Protein exampleProtein = null;
 
         if (bottomProteinId == 1) {
             Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
@@ -122,7 +111,7 @@ public class PrepareForOutputStep extends Step {
         //
         //should we deal with nucleotides here
         //Utilities.verboseLog(1100, "proteinWithXref: \n" +  proteinWithXref.toString());
-        Utilities.verboseLog(30, "Start processNucleotideSequences - total size expected : " + totalNucleotideSequences );
+        Utilities.verboseLog(30, "Start processNucleotideSequences - total size expected : " + totalNucleotideSequences);
         final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
 
         final Set<Long> nucleotideSequenceIds = new HashSet<>();
@@ -147,9 +136,32 @@ public class PrepareForOutputStep extends Step {
             proteinBreakPoints.add(breakIndex);
         }
 
+        int maxTryCount = 12;
+        int totalWaitTime = 0;
+
+        ArrayList<Pair<Integer, Integer>> observedTryCounts = new ArrayList<>();
+
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
-            Protein protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+            //
+            //deal with the case of updated sst files
+            int tryCount = 0;
+            Protein protein = null;
+            while (tryCount <= maxTryCount) {
+                try {
+                    protein = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
+                    break;
+                } catch (Exception exception) {
+                    //dont recover but sleep for a few seconds and try again
+                    Utilities.verboseLog(100, "Exception type: " + exception.getClass());
+                    //how long to wait for files to be available ??
+                    int waitTime = (proteinsConsidered.intValue() / 2000) * 2 * 1000;
+                    String errorMessage = "Failed to get the associated proteinobject in processNucleotideSequences: + " + proteinKey;
+                    totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
+                }
+                tryCount++;
+            }
+            observedTryCounts.add(Pair.of(tryCount, totalWaitTime));
             //Protein protein = proteinDAO.getProtein(proteinKey);
             if (protein == null) {
                 continue;
@@ -165,13 +177,13 @@ public class PrepareForOutputStep extends Step {
                     Long seqId = seq.getId();
                     //nucleotideSequences.add(seq);
                     nucleotideSequenceIds.add(seqId); //store the Id
-                    allNucleotideSequenceIds.put(seqId,seqId);
+                    allNucleotideSequenceIds.put(seqId, seqId);
                     //                    Hibernate.initialize(seq);
                     //                    nucleotideSequenceDAO.persist(key, seq);
                 }
             }
             //help garbage collection??
-            if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)){
+            if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)) {
                 Utilities.printMemoryUsage("processNucleotideSequences: GC scheduled at breakIndex = " + proteinIndex);
             }
             if (proteinCount % 500 == 0) {
@@ -183,19 +195,19 @@ public class PrepareForOutputStep extends Step {
         }
         Utilities.verboseLog(30, proteinRange + " Completed creating the nucleotideSequences and resp. " +
                 "nucleotideSequenceIds: " + nucleotideSequenceIds.size()
-                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
+                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size());
         int expectedPrepareJobCount = Utilities.prepareOutputInstances;
 
         Utilities.verboseLog(30, proteinRange + " Start to prepare XML for nucleotideSequences - "
-                +  " cpu count: " + Utilities.cpuCount
-                + " expectedPrepareJobCount "  + expectedPrepareJobCount);
+                + " cpu count: " + Utilities.cpuCount
+                + " expectedPrepareJobCount " + expectedPrepareJobCount);
         //maybe wait
         //some nucleotides dont have ORFs??
 
         processesReadyForXMLMarshalling.add(proteinRange);
         try {
-            //set a break clause in case something amis happens
-            while(processesReadyForXMLMarshalling.size() < expectedPrepareJobCount ) {
+            //set a break clause in case something amiss happens
+            while (processesReadyForXMLMarshalling.size() < expectedPrepareJobCount) {
                 Utilities.verboseLog(30, proteinRange + " processesReadyForXMLMarshalling: " + processesReadyForXMLMarshalling.size()
                         + " expectedPrepareJobCount: " + expectedPrepareJobCount);
                 Thread.sleep(30 * 1000);
@@ -207,7 +219,7 @@ public class PrepareForOutputStep extends Step {
                 " processesReadyForXMLMarshalling : " + processesReadyForXMLMarshalling.size() +
                 " nucleotideSequenceIds: " + nucleotideSequenceIds.size()
                 + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size()
-                + " totalNucleotideSequences: " + totalNucleotideSequences );
+                + " totalNucleotideSequences: " + totalNucleotideSequences);
 
         if (nucleotideSequenceIds.size() > 0) {
             try {
@@ -221,7 +233,7 @@ public class PrepareForOutputStep extends Step {
         }
         Utilities.verboseLog(30, proteinRange + "Completed marshalling to XML for nucleotideSequences size: " +
                 "nucleotideSequenceIds: " + nucleotideSequenceIds.size()
-                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size() );
+                + " allNucleotideSequenceIds: " + allNucleotideSequenceIds.size());
     }
 
 
@@ -236,8 +248,6 @@ public class PrepareForOutputStep extends Step {
         Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
 
         Utilities.verboseLog(110, " Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
-
-        //LOGGER.warn(" Prepare For OutputStep - prepare to output proteins for XML: " + outputPath);
 
         Long bottomProteinId = stepInstance.getBottomProtein();
         Long topProteinId = stepInstance.getTopProtein();
@@ -254,10 +264,6 @@ public class PrepareForOutputStep extends Step {
             LOGGER.info("Load " + topProteinId + " proteins from the db.");
         }
         int count = 0;
-
-        //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
-
-
         int proteinCount = 0;
         int matchCount = 0;
 
@@ -270,8 +276,12 @@ public class PrepareForOutputStep extends Step {
             signatureLibraryNames.add(sig.getName());
         }
 
-
         Long middleProtein = topProteinId / 2;
+        int maxTryCount = 12;
+
+        int totalWaitTime = 0;
+        ArrayList<Pair<Integer, Integer>> observedTryCounts4Proteins = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> observedTryCounts4Matches = new ArrayList<>();
 
         int maxTryCount = 12;
 
@@ -281,46 +291,33 @@ public class PrepareForOutputStep extends Step {
             //Protein protein  = proteinDAO.getProteinAndCrossReferencesByProteinId(proteinIndex);
             int tryCount = 0;
             Protein protein = null;
+            totalWaitTime = 0;
             while (tryCount <= maxTryCount) {
                 try {
                     protein = proteinDAO.getProtein(proteinKey);
+                    break; //otherwise we have an infinite loop
                 } catch (Exception exception) {
                     //dont recover but sleep for a few seconds and try again
-
                     Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
-
-                    exception.printStackTrace();
-                    if (tryCount >= maxTryCount) {
-                        Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
-                                + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                                " retries : " + tryCount);
-                        throw new IllegalStateException("Failed to get the associated proteinobject: + " + proteinKey);
-                    }
-                    //how long to wait for files to be available ??
-                    int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
-                    if (getKvStoreDelayMilliseconds() < waitTime) {
-                        if (waitTime > 120 * 1000) {
-                            waitTime = 120 * 1000;
-                        }
-                        Utilities.sleep(waitTime);
-                    } else {
-                        delayForKVStore();
-                    }
-                    totalWaitTime += waitTime;
-                    Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
-
+                    int waitTime = (proteinsConsidered.intValue() / 1000) * 1 * 1000;
+                    String errorMessage = "Proteing get: There is a problem processing results for protein internal Identifier: " + proteinIndex +
+                            ". You may not get the matches for this protein in the final results. You should report the errors.";
+                    totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
                 }
                 tryCount++;
             }
-            if (totalWaitTime > 0){
+            if (totalWaitTime > 0) {
                 Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
-                        + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
+                        + " millis, average wait time " + totalWaitTime / tryCount + " millis, " +
                         " retries : " + tryCount);
+                observedTryCounts4Proteins.add(Pair.of(tryCount, totalWaitTime));
             }
+
             if (protein != null) {
                 proteinCount++;
             } else {
-                throw new IllegalStateException("Failed to get the associated proteinobject: + " + proteinKey);
+                LOGGER.warn("Failed to get match results for protein identifier: + " + proteinKey);
+                continue;
             }
 
             totalWaitTime = 0;
@@ -330,36 +327,26 @@ public class PrepareForOutputStep extends Step {
                 Set<Match> matches = null;
                 //try this say three times
                 tryCount = 0;
+                totalWaitTime = 0;
                 while (tryCount <= maxTryCount) {
                     try {
                         matches = matchDAO.getMatchSet(dbKey);
+                        break;
                     } catch (Exception exception) {
                         //dont recover but sleep for a few seconds and try again
-
                         Utilities.verboseLog(1100, "Exception type: " + exception.getClass());
-
-                        exception.printStackTrace();
-                        if (tryCount >= 3) {
-                            Utilities.verboseLog(110, "  Prepare for output - Total wait time : " + totalWaitTime
-                                    + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                                    " retries : " + tryCount);
-                            throw new IllegalStateException("Failed to get matches from the DB for key " + dbKey);
-                        }
-                        //how long to wait for files to be available ??
-                        int waitTime = (proteinsConsidered.intValue() / 8000) * 60 * 1000;
-                        if (getKvStoreDelayMilliseconds() < waitTime) {
-                            if (waitTime > 120 * 1000) {
-                                waitTime = 120 * 1000;
-                            }
-                            Utilities.sleep(waitTime);
-                        } else {
-                            delayForKVStore();
-                        }
-
-                        Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
-
+                        int waitTime = (proteinsConsidered.intValue() / 1000) * 1 * 1000;
+                        String errorMessage = "Match get: There is a problem processing results for protein: " + protein.getCrossReferences().iterator().next().getIdentifier() +
+                                ". You may not get the matches for this protein in the final results. You should report the errors.";
+                        totalWaitTime = handleKVStoreExceptions(tryCount, maxTryCount, waitTime, totalWaitTime, exception, errorMessage);
                     }
                     tryCount++;
+                }
+                if (totalWaitTime > 0) {
+                    Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
+                            + " millis, average wait time " + totalWaitTime / tryCount + " millis, " +
+                            " retries : " + tryCount);
+                    observedTryCounts4Matches.add(Pair.of(tryCount, totalWaitTime));
                 }
 
                 if (matches != null) {
@@ -383,7 +370,8 @@ public class PrepareForOutputStep extends Step {
                         " retries : " + tryCount);
             }
 
-            //TDO Temp check what breaks if you dont do pre-marshalling
+
+            //TODO Temp check what breaks if you dont do pre-marshalling
             //String xmlProtein = writer.marshal(protein);
 
             protein.getOpenReadingFrames().size();
@@ -393,22 +381,75 @@ public class PrepareForOutputStep extends Step {
                 updateMatch(i5Match);
             }
 
-            proteinDAO.persist(proteinKey, protein);
+            //try to persist three times and then abort
+            int persistTries = 0;
+            int maxPersistTries = 4;
+            int persistTotalWaitTime = 0;
+            while (persistTries <= maxPersistTries) {
+                try {
+                    proteinDAO.persist(proteinKey, protein);
+                    break; //otherwise we have an infinite loop
+                } catch (Exception exception) {
+                    int persistWaitTime = 1000; //1000 millis is okay
+                    String errorMessage = "Persist: There is a problem processing results for protein: " + protein.getCrossReferences().iterator().next().getIdentifier() +
+                            ". You may not get the matches for this protein in the final results. You should report the errors.";
+                    persistTotalWaitTime = handleKVStoreExceptions(persistTries, maxPersistTries, persistWaitTime, persistTotalWaitTime, exception, errorMessage);
+                }
+                persistTries++;
+            }
             //help garbage collection??
             if (bottomProteinId == 1 && proteinBreakPoints.contains(proteinIndex)) {
                 Utilities.printMemoryUsage("after GC scheduled at breakIndex = " + proteinIndex);
             }
         }
-        //}catch (JAXBException e){
-        //    e.printStackTrace();
-        //}catch (XMLStreamException e) {
-        //    e.printStackTrace();
-        //}
 
-        //remove the temp xmls file
+        //if (observedTryCounts4Proteins.size() > 0) {
+        String kvGetStats4Proteins = getTryCountStats(observedTryCounts4Proteins);
+        Utilities.verboseLog(10, " Info: " +
+                proteinRange + " pcounts " + kvGetStats4Proteins
+        );
+        //}
+        //if (observedTryCounts4Matches.size() > 0) {
+        String kvGetStats4Matches = getTryCountStats(observedTryCounts4Matches);
+        Utilities.verboseLog(10," Info: " +
+                proteinRange + " mcounts " + kvGetStats4Matches
+        );
+        //}
         deleteTmpMarshallingFile(outputPath);
     }
 
+    /**
+     *  if the kvstore is returning some exception, its mostly due to file system problems,
+     *  so allow to try again
+     *
+     * @param tryCount
+     * @param maxTryCount
+     * @param waitTime
+     * @param totalWaitTime
+     * @param exc
+     * @param errorMessage
+     * @return
+     */
+    private int handleKVStoreExceptions(int tryCount, int maxTryCount, int waitTime, int totalWaitTime, Exception exc, String errorMessage) {
+        if (tryCount < maxTryCount - 1) {
+            if (getKvStoreDelayMilliseconds() < waitTime) {
+                if (waitTime > 120 * 1000) {
+                    waitTime = 6 * 1000;
+                }
+                Utilities.sleep(waitTime);
+            } else {
+                delayForKVStore();
+                waitTime = getKvStoreDelayMilliseconds();
+            }
+            totalWaitTime += waitTime;
+            Utilities.verboseLog(110, "  Prepare for output - Slept for at least " + waitTime + " millis");
+        } else {
+            exc.printStackTrace();
+            LOGGER.warn(errorMessage);
+        }
+
+        return totalWaitTime;
+    }
 
     private void outputToXML(StepInstance stepInstance, String sequenceType, Set<Long> nucleotideSequenceIds, String temporaryFileDirectory) throws IOException {
         if (!sequenceType.equalsIgnoreCase("n")) {
@@ -434,9 +475,9 @@ public class PrepareForOutputStep extends Step {
         for (Long breakIndex = 500l; breakIndex <= nucleotideCount; breakIndex += 500) {
             proteinBreakPoints.add(breakIndex);
         }
-        if (bottomProteinId == 1 ){
+        if (bottomProteinId == 1) {
             Utilities.printMemoryUsage("outputToXML: start proessing the nucleotides for xml" + proteinRange
-                            + " nucleotideCount: " + nucleotideCount );
+                    + " nucleotideCount: " + nucleotideCount);
         }
 
         try (ProteinMatchesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesXMLJAXBFragmentsResultWriter(outputPath, NucleotideSequence.class, isSlimOutput)) {
@@ -452,7 +493,7 @@ public class PrepareForOutputStep extends Step {
                 writer.header(interProScanVersion, "nucleotide-sequence-matches");
                 //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
                 for (Long nucleotideSequenceId : nucleotideSequenceIds) {
-                    if (processedNucleotideSequences.contains(nucleotideSequenceId)){
+                    if (processedNucleotideSequences.contains(nucleotideSequenceId)) {
                         continue;
                     }
                     //else claim
@@ -476,8 +517,8 @@ public class PrepareForOutputStep extends Step {
                     int orfCountPerSequence = 0;
                     for (OpenReadingFrame orf : nucleotideSequenceInH2.getOpenReadingFrames()) {
                         Protein protein = orf.getProtein();
-                        orfCount ++;
-                        orfCountPerSequence ++;
+                        orfCount++;
+                        orfCountPerSequence++;
                         // String proteinKey = Long.toString(protein.getId());
                         //Protein proteinMarshalled = proteinDAO.getProtein(proteinKey);
                         //protein = proteinMarshalled;
@@ -493,9 +534,9 @@ public class PrepareForOutputStep extends Step {
                     nucleotideSequenceDAO.persist(nucleotideSequenceKey, nucleotideSequenceInH2);
                     //Utilities.verboseLog(1100, "Prepae OutPut xmlNucleotideSequence : " + nucleotideSequenceId + " -- "); // +  xmlNucleotideSequence);
                     //break;
-                    if (bottomProteinId == 1 && proteinBreakPoints.contains(orfCount)){
+                    if (bottomProteinId == 1 && proteinBreakPoints.contains(orfCount)) {
                         Utilities.printMemoryUsage("outputToXML " + proteinRange + " scheduled at orfcount breakIndex = "
-                                + orfCount + " ns count: " + count + " of "+ nucleotideSequenceIds.size()
+                                + orfCount + " ns count: " + count + " of " + nucleotideSequenceIds.size()
                                 + " All processedNucleotideSequences: " + processedNucleotideSequences.size());
                     }
                 }
@@ -516,107 +557,6 @@ public class PrepareForOutputStep extends Step {
         deleteTmpMarshallingFile(outputPath);
     }
 
-
-    private void outputNTToXML(StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences, String temporaryFileDirectory) throws IOException {
-        if (!sequenceType.equalsIgnoreCase("n")) {
-            return;
-        }
-        final boolean isSlimOutput = false;
-        final String interProScanVersion = "5-34";
-
-        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.XML);
-        Utilities.verboseLog(110, " Prepare For OutputStep - outputNTToXML: " + outputPath);
-
-        Long bottomProteinId = stepInstance.getBottomProtein();
-        Long topProteinId = stepInstance.getTopProtein();
-
-        try (ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter writer = new ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter(outputPath, isSlimOutput)) {
-            //writer.header(interProScanVersion);
-            if (bottomProteinId != null && topProteinId != null) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
-                }
-                Utilities.verboseLog(110, " WriteOutputStep -XML new " + " There are " + topProteinId + " proteins.");
-                int count = 0;
-                writer.header(interProScanVersion);
-                //final Set<NucleotideSequence> nucleotideSequences = new HashSet<>();
-                for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
-                    //writer.write(nucleotideSequence, sequenceType, isSlimOutput);
-                    String xmlNucleotideSequence = writer.marshal(nucleotideSequence);
-                    //writer.write(",");
-
-                    String key = nucleotideSequence.getMd5();
-                    Hibernate.initialize(nucleotideSequence);
-                    nucleotideSequenceDAO.getMaximumPrimaryKey();
-
-                    nucleotideSequenceDAO.persist(key, nucleotideSequence);
-                    if (Utilities.verboseLogLevel > 0) {
-                        Utilities.verboseLog(1100, "Prepae OutPut xmlNucleotideSequence : " + xmlNucleotideSequence);
-                    }
-                }
-
-                Utilities.verboseLog(1100, "WriteOutPut nucleotideSequences size: " + nucleotideSequences.size());
-
-
-            }
-            writer.close();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    private void outputToJSON(StepInstance stepInstance, String sequenceType, Set<NucleotideSequence> nucleotideSequences, String temporaryFileDirectory) throws IOException {
-        Utilities.verboseLog(110, " WriteOutputStep - outputToJSON ");
-
-        boolean isSlimOutput = false;
-
-        Utilities.verboseLog(110, " WriteOutputStep - outputToJSON json-slim? " + isSlimOutput);
-//        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
-//            //old way??
-//            //writer.write(matchesHolder, proteinDAO, sequenceType, isSlimOutput);
-//
-//        }
-        //Try writing to JSOn from this module
-
-        Long bottomProteinId = stepInstance.getBottomProtein();
-        Long topProteinId = stepInstance.getTopProtein();
-
-        Path outputPath = getFinalPath(stepInstance, temporaryFileDirectory, FileOutputFormat.JSON);
-
-        final Map<String, String> parameters = stepInstance.getParameters();
-        //final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_PATHWAY));
-        //final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get(MAP_TO_GO));
-        //final boolean mapToInterProEntries = mapToPathway || mapToGO || Boolean.TRUE.toString().equals(parameters.get(MAP_TO_INTERPRO_ENTRIES));
-        //writer.setMapToInterProEntries(mapToInterProEntries);
-        //writer.setMapToGO(mapToGO);
-        // writer.setMapToPathway(mapToPathway);
-        try (ProteinMatchesJSONResultWriter writer = new ProteinMatchesJSONResultWriter(outputPath, isSlimOutput)) {
-            final String interProScanVersion = "5-34";
-            writer.header(interProScanVersion);
-            if (bottomProteinId != null && topProteinId != null) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Load " + topProteinId + " proteins from the db.");
-                }
-                Utilities.verboseLog(110, " WriteOutputStep -JSON new " + " There are " + topProteinId + " proteins.");
-                int count = 0;
-                for (NucleotideSequence nucleotideSequence : nucleotideSequences) {
-
-                    writer.write(nucleotideSequence);
-                    count++;
-                    if (count < nucleotideSequences.size()) {
-                        writer.write(","); // More proteins/nucleotide sequences to follow
-                    }
-
-                }
-            }
-            writer.footer();
-        }
-
-    }
 
     Path getFinalPath(StepInstance stepInstance, String temporaryFileDirectory, FileOutputFormat fileOutputFormat) {
         //stepInstance.buildFullyQualifiedFilePath();
@@ -731,6 +671,7 @@ public class PrepareForOutputStep extends Step {
             if (matchEntry.getGoXRefs() != null) {
                 matchEntry.getGoXRefs().size();
             }
+            //should we check if pathways have been requested?
             matchEntry.getPathwayXRefs();
             if (matchEntry.getPathwayXRefs() != null) {
                 matchEntry.getPathwayXRefs().size();
@@ -739,13 +680,13 @@ public class PrepareForOutputStep extends Step {
     }
 
     /**
-     *  get the proteins in range - expensive in terms of memeory usage, so need benachmarking
+     * get the proteins in range - expensive in terms of memeory usage, so need benachmarking
      *
      * @param bottomProteinId
      * @param topProteinId
      * @return
      */
-    private Set<Protein> getProteinInRange(Long bottomProteinId, Long topProteinId){
+    private Set<Protein> getProteinInRange(Long bottomProteinId, Long topProteinId) {
         Set<Protein> proteinsInRange = new HashSet<>();
         for (Long proteinIndex = bottomProteinId; proteinIndex <= topProteinId; proteinIndex++) {
             String proteinKey = Long.toString(proteinIndex);
@@ -779,5 +720,21 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
+    private String getTryCountStats(ArrayList<Pair<Integer, Integer>> observedTryCounts) {
+        String tryCountStats = "";
+        int tryCount = observedTryCounts.size();
+        int maxTryCount = 0;
+        int maxtotalWaitTime = 0;
+        for (Pair<Integer, Integer> tryCountEntry : observedTryCounts) {
+            if (maxTryCount < tryCountEntry.getLeft()) {
+                maxTryCount = tryCountEntry.getLeft();
+            }
+            if (maxtotalWaitTime < tryCountEntry.getRight()) {
+                maxtotalWaitTime = tryCountEntry.getRight();
+            }
+        }
+
+        return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
+    }
 
 }

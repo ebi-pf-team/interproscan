@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.io.match.coils;
 
-import junit.framework.TestCase;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -19,7 +18,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0
  */
-public class CoilsMatchParserTest extends TestCase {
+public class CoilsMatchParserTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CoilsMatchParserTest.class.getName());
 

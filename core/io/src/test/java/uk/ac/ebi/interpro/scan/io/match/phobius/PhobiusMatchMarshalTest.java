@@ -1,9 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.match.phobius;
 
-import junit.framework.TestCase;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import uk.ac.ebi.interpro.scan.model.PhobiusMatch;
@@ -26,7 +30,7 @@ import java.util.Set;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PhobiusMatchMarshalTest extends TestCase {
+public class PhobiusMatchMarshalTest{
 
     private static final Logger LOGGER = LogManager.getLogger(PhobiusMatchMarshalTest.class.getName());
 

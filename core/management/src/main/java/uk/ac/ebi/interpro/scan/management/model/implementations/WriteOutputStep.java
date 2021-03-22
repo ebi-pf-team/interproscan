@@ -222,6 +222,22 @@ public class WriteOutputStep extends Step {
         }
 
         List<FileOutputFormat> outputFormatsList = new ArrayList<>(outputFormats);
+        if (disableHtmlOutput && outputFormatsList.contains(FileOutputFormat.HTML)){
+            outputFormatsList.remove(FileOutputFormat.HTML);
+            if(! outputFormatsList.contains(FileOutputFormat.JSON)) {
+                outputFormatsList.add(FileOutputFormat.JSON);
+            }
+        }
+
+	//boolean jsonForSVG = false;
+        //System.out.println(Utilities.getTimeNow() + " explicitPath:" + explicitPath + " svg check: " + outputFormatsList.contains(FileOutputFormat.SVG)  + ""json check :" + 
+	//	outputFormatsList.contains(FileOutputFormat.JSON) );
+        //LOGGER.warn(" explicitPath:" + explicitPath + " svg check: " + outputFormatsList.contains(FileOutputFormat.SVG)  + ""json check :" +
+	//	outputFormatsList.contains(FileOutputFormat.JSON) );)
+        //if (explicitPath && outputFormatsList.contains(FileOutputFormat.SVG) && (! outputFormatsList.contains(FileOutputFormat.JSON)) ) {
+	//    jsonForSVG = true;
+	//}
+
         Collections.sort(outputFormatsList, Collections.reverseOrder());
 
         //always handle xml first ??
@@ -279,6 +295,7 @@ public class WriteOutputStep extends Step {
                         break;
                     case HTML:
                         //Replace the default temp dir with the user specified one
+                        
                         if (temporaryFileDirectory != null) {
                             if (htmlResultWriter == null) {
                                 throw new IllegalStateException("htmlResultWriter is null ");
@@ -288,6 +305,9 @@ public class WriteOutputStep extends Step {
                         outputToHTML(outputPath, stepInstance);
                         break;
                     case SVG:
+                        //if (jsonForSVG){
+			//    outputToJSON(outputPath, stepInstance, sequenceType, false);
+			//}
                         //Replace the default temp dir with the user specified one
                         if (temporaryFileDirectory != null) {
                             svgResultWriter.setTempDirectory(temporaryFileDirectory);
@@ -799,6 +819,10 @@ public class WriteOutputStep extends Step {
 
     private void outputToHTML(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
+        String htmlMessage = "Your requested output formats include HTML. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
+        //LOGGER.info(svgMessage);
+        System.out.println(Utilities.getTimeNow() + " " + htmlMessage);
+
         writeGraphicalProteinMatches(htmlResultWriter, stepInstance);
         List<Path> resultFiles = htmlResultWriter.getResultFiles();
         // E.g. resultFiles =
@@ -830,6 +854,9 @@ public class WriteOutputStep extends Step {
     private void outputToSVG(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
         //If the archive mode is switched off single SVG files should be written to the global output directory
+        String svgMessage = "Your requested output formats include SVG. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
+	//LOGGER.info(svgMessage);
+        System.out.println(Utilities.getTimeNow() + " " + svgMessage);
         if (!archiveSVGOutput) {
             final String outputDirPath = path.toAbsolutePath().toString();
             svgResultWriter.setTempDirectory(outputDirPath);

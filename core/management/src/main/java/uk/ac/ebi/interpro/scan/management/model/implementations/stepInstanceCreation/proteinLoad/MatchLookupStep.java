@@ -3,7 +3,8 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCre
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.eclipse.jetty.util.ConcurrentHashSet;
+//import org.eclipse.jetty.util.ConcurrentHashSet;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.business.sequence.BerkeleyPrecalculatedProteinLookup;
@@ -56,9 +57,9 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
 
     private int proteinPrecalcLookupBatchSize = 100;
 
-    final private ConcurrentHashSet<Protein> proteinsAwaitingPrecalcLookup = new ConcurrentHashSet<>();
+    final private Set<Protein> proteinsAwaitingPrecalcLookup = ConcurrentHashMap.newKeySet(); //new ConcurrentHashSet<>();
 
-    final private ConcurrentHashSet<Protein> proteinsAwaitingPersistence = new ConcurrentHashSet<>();
+    final private Set<Protein> proteinsAwaitingPersistence = ConcurrentHashMap.newKeySet(); // new ConcurrentHashSet<>();
 
     private Long bottomProteinId;
 
@@ -197,7 +198,7 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
         if (stepInstance.getParameters().containsKey(USE_MATCH_LOOKUP_SERVICE)) {
             useMatchLookupService = Boolean.parseBoolean(stepInstance.getParameters().get(USE_MATCH_LOOKUP_SERVICE));
         }
-        final ConcurrentHashSet<Protein> localPrecalculatedProteinsTest = new ConcurrentHashSet<>();
+        final Set<Protein> localPrecalculatedProteinsTest = ConcurrentHashMap.newKeySet(); //new ConcurrentHashSet<>();
         if(useMatchLookupService){
             final List<Protein> proteins = proteinDAO.getProteinsBetweenIds(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
             //            final PrecalculatedProteinLookup precalculatedProteinLookup ;

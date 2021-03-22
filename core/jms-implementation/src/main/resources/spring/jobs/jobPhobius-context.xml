@@ -72,7 +72,7 @@
         <property name="stepDescription" value="Run Phobius Binary for selected proteins"/>
         <property name="fullPathToBinary" ref="pathToPhobiusPerlScript"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -92,7 +92,7 @@
         <property name="dependsUpon" ref="stepPhobiusRunBinary"/>
         <property name="stepDescription" value="Parse the output from Phobius"/>
         <property name="serialGroup" value="PARSE_PHOBIUS"/>
-        <property name="outputFileTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PhobiusFilteredMatchDAO">
                 <constructor-arg ref="signatureLibraryReleasePhobius"/>
@@ -113,7 +113,7 @@
           parent="abstractPhobiusStep">
         <property name="dependsUpon" ref="stepPhobiusParseStoreOutput"/>
         <property name="stepDescription" value="Delete the phobius output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: job_phobius  !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

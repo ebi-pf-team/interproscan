@@ -1,9 +1,13 @@
 package uk.ac.ebi.interpro.scan.io.prints;
 
-import junit.framework.TestCase;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.model.Signature;
@@ -22,7 +26,7 @@ import java.util.Map;
  * @since 1.0-SNAPSHOT
  */
 
-public class PrintsParserTest extends TestCase {
+public class PrintsParserTest  {
 
     private static final Logger LOGGER = LogManager.getLogger(PrintsParserTest.class.getName());
 
@@ -41,7 +45,7 @@ public class PrintsParserTest extends TestCase {
         Map<String, String> accessionToAbstract = kdatParser.parse();
         assertEquals(testAccessions.length, accessionToAbstract.size());
         for (String testAccession : testAccessions) {
-            assertTrue("Accession missing from final Map: " + testAccession, accessionToAbstract.keySet().contains(testAccession));
+            assertTrue( accessionToAbstract.keySet().contains(testAccession), "Accession missing from final Map: " + testAccession);
             String printsAbstract = accessionToAbstract.get(testAccession);
             assertNotNull(printsAbstract);
             assertNotNull(printsAbstract);

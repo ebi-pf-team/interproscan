@@ -85,36 +85,43 @@
         <constructor-arg value="[PROTSTART]_[PROTEND].fasta"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputFileTemplate" class="java.lang.String">
+    <bean id="fastaFileNameFilteredTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].filtered.fasta"/>
+    </bean>
+
+    <bean id="rawAnalysisOutputFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.out"/>
     </bean>
 
+    <bean id="rawAnalysisOutputFileAltTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.alt.out"/>
+    </bean>
+
+    <bean id="rawAnalysisOutputFileAltFilteredTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].raw.alt.filtered.out"/>
+    </bean>
 
     <bean id="rawAnalysisOutputOneFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND]_one.raw.out"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputOneFileTemplate" class="java.lang.String">
-        <constructor-arg value="[PROTSTART]_[PROTEND]_one.raw.out"/>
-    </bean>
-
-    <bean id="rawAnalaysisOutputTwoFileTemplate" class="java.lang.String">
+    <bean id="rawAnalysisOutputTwoFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND]_two.raw.out"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputThreeFileTemplate" class="java.lang.String">
+    <bean id="rawAnalysisOutputThreeFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND]_three.raw.out"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputTbloutFileTemplate" class="java.lang.String">
+    <bean id="rawAnalysisOutputTbloutFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.tblout.out"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputDomTbloutFileTemplate" class="java.lang.String">
+    <bean id="rawAnalysisOutputDomTbloutFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.domtblout.out"/>
     </bean>
 
-    <bean id="rawAnalaysisOutputAlignmentsFileTemplate" class="java.lang.String">
+    <bean id="rawAnalysisOutputAlignmentsFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.align.out"/>
     </bean>
 

@@ -5,12 +5,12 @@
     <parent>
         <artifactId>precalcmatches</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.45-80.0</version>
+        <version>5.50-84.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
-    <version>5.45-80.0</version>
+    <version>5.50-84.0</version>
     <name>interpro-match-lookup</name>
     <!--<name>Precalculated Match Lookup - Server</name>-->
     <packaging>war</packaging>
@@ -24,9 +24,10 @@
     </repositories>
 
     <properties>
-        <!--<jetty.version>9.4.19.v20190610</jetty.version>-->
+        <!--<jetty.version>11.0.0</jetty.version>-->
 <!--        <jetty.version>9.4.16.v20190411</jetty.version>-->
-        <jetty.version>9.4.24.v20191120</jetty.version>
+<!--        <jetty.version>9.4.24.v20191120</jetty.version> -->
+	<jetty.version>11.0.0</jetty.version>
         <i5.version>${project.version}</i5.version>
     </properties>
 
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>berkeley</artifactId>
-            <version>5.45-80.0</version>
+            <version>5.50-84.0</version>
             <exclusions>
                 <!--Exclude transitive dependency to surefire -->
                 <exclusion>
@@ -373,7 +374,7 @@
                         <!--<artifactId>jetty-console</artifactId>-->
                         <groupId>org.fcrepo</groupId>
                         <artifactId>jetty-console-maven-plugin</artifactId>
-                        <version>1.61</version>
+                        <version>1.63</version>
                         <executions>
                             <execution>
                                 <goals>

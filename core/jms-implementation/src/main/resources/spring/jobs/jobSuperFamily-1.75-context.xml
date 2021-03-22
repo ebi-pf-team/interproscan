@@ -46,7 +46,7 @@
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.superfamily} ${hmmer3.hmmsearch.cpu.switch.superfamily}"/>
         <property name="fullPathToHmmFile" value="${superfamily.hmm.path.3.0}"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -71,7 +71,7 @@
         <property name="fullPathToModelTabFile" value="${superfamily.model.tab.path.1.75}"/>
         <property name="fullPathToPDBJ95DFile" value="${superfamily.pdbj95d.path.1.75}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="hmmer3ResultsFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="hmmer3ResultsFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="binaryOutputFileNameTemplate" ref="superFamilyBinaryOutputFileTemplate-1.75"/>
         <property name="outputFileNameTemplate" ref="superFamilyBinaryStandardOutputFileTemplate-1.75"/>
         <property name="requiresDatabaseAccess" value="false"/>
@@ -110,7 +110,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
                 <ref bean="superFamilyBinaryOutputFileTemplate-1.75"/>
                 <ref bean="superFamilyBinaryStandardOutputFileTemplate-1.75"/>
             </list>
