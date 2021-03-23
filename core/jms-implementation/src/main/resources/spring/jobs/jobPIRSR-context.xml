@@ -56,14 +56,14 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
 
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
 
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalaysisOutputDomTbloutFileTemplate"/>
+        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="outputAlignments" value="true"/>
         <!--        the raw output should have the alignments -->
-        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalaysisOutputAlignmentsFileTemplate"/>
+        <property name="outputFileNameAlignmentsTemplate" ref="rawAnalysisOutputAlignmentsFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
@@ -84,8 +84,8 @@
         <property name="fullPathToBinary" value="${pirsr.binary.path}"/>
         <property name="pathToRulesJson" value="${pirsr.rules.path}"/>
 <!--        <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>-->
-        <property name="pathToInputTsv" ref="rawAnalaysisOutputFileTemplate"/>
-        <property name="outputFileNameTemplate" ref="rawAnalaysisOutputOneFileTemplate"/>
+        <property name="pathToInputTsv" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="fullPathToPython" value="${python3.command}"/>
@@ -129,7 +129,7 @@
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
-                <ref bean="rawAnalaysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
                 <ref bean="rawAnalysisOutputOneFileTemplate"/>
             </list>
         </property>

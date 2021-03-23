@@ -447,16 +447,26 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                         int residueStart = simpleDomainMatch.getSeqFrom() + ruleSite.getStart() - 1;
                         int residueEnd = simpleDomainMatch.getSeqFrom() + ruleSite.getEnd() - 1;
                         //the residue positions are defined in terms of the alignment, though
+                        //check if the residue are inside the alignment
+                        if (ruleSite.getStart() >= seqAlignment.length() ) {
+                          //there are several such cases so just give a warning if verbose output is enabled
+                          Utilities.verboseLog(30, "Site residue is outside alignment: pirsrHmmer3RawMatch: " 
+					+ pirsrHmmer3RawMatch.getLocationStart() + "-" + pirsrHmmer3RawMatch.getLocationEnd() 
+                                        + " rule site : " + ruleSite.getStart() + "-" +  ruleSite.getEnd());
+                          Utilities.verboseLog(30, "seqAlignment: " + seqAlignment + "\n");
+                          Utilities.verboseLog(30, "ruleSite: " + ruleSite+ "\n");
+                          continue;
+                        }
                         String residues = seqAlignment.substring(ruleSite.getStart()-1, ruleSite.getEnd());
                         String residuesConst = seqAlignment.substring(1,2);
-                        Utilities.verboseLog(30, "seqAlignment: " + seqAlignment + "\n");
-                        Utilities.verboseLog(30, "residues :" + seqAlignment.substring(ruleSite.getStart(), ruleSite.getEnd()) +
+                        Utilities.verboseLog(30, "seqAlignment: (" + seqAlignment.length() + ")" + seqAlignment + "\n");
+                        Utilities.verboseLog(30, "residues : " + seqAlignment.substring(ruleSite.getStart(), ruleSite.getEnd()) +
                                 " position on the alignment: " + ruleSite.getStart() + "-" +  ruleSite.getEnd());
                         Utilities.verboseLog(30, "residuesConst :" + residuesConst + " position on the alignm: " + 1 + "-" +  2);
-                        Utilities.verboseLog(30, "residue :" + residues + " position on the sequ: " + residueStart + "-" +  residueEnd);
+                        Utilities.verboseLog(30, "residue :" + residues + " position on the sequence: " + residueStart + "-" +  residueEnd);
 
                         String condition = ruleSite.getCondition();
-                        Utilities.verboseLog(30, "Condition: " + condition + " len : " + condition.length());
+                        Utilities.verboseLog(30, "Condition: " + condition + " length : " + condition.length());
 
 //                        if (condition.contains("[")){
 //                            condition =  condition.replace("[", "").replace("]", "");
@@ -484,7 +494,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                         if (siteInMatchLocation(pirsrHmmer3RawSite, pirsrHmmer3RawMatch)) {
                             rawSites.add(pirsrHmmer3RawSite);
                         } else {
-                            LOGGER.warn("Site not in LOcation" );
+                            LOGGER.warn("Site not in Location" );
                         }
                         Utilities.verboseLog(30, "pirsrHmmer3RawSite:" + pirsrHmmer3RawSite.toString());
                     }
