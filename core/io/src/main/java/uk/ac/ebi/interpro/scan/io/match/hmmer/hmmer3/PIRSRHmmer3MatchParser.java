@@ -24,6 +24,7 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Parser for PIRSR HMMER3 output
@@ -443,17 +444,21 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                     String seqAlignment = simpleDomainMatch.getSeqAlign();
                     String hmmAlign = simpleDomainMatch.getHmmAlign();
 
+                    Utilities.verboseLog(30, "sequenceAlignmentPositionMap" + simpleDomainMatch.getSeqFrom() + " - " + simpleDomainMatch.getSeqTo());
+		    Map<Integer, Integer> sequenceAlignmentPositionMap = getPositionMap(seqAlignment, simpleDomainMatch.getSeqFrom());
+                    Utilities.verboseLog(30, "hmmAlignmentPositionMap: " + simpleDomainMatch.getHmmFrom() + " - " + simpleDomainMatch.getHmmTo());
+		    Map<Integer, Integer> hmmAlignmentPositionMap = getPositionMap(hmmAlign, simpleDomainMatch.getHmmFrom());
+
                     for (RuleSite ruleSite : ruleSites) {
                         Utilities.verboseLog(30, "Consider --> " + ruleSite.toString());
-                        //resStart = seqAlignStart + ( ruleSiteHmmStart - seqHmmStart)
-                     	//resEnd = resStart + ( ruleSiteHmmend - ruleSiteHmmStart)
                         int residueStart = simpleDomainMatch.getSeqFrom() + (ruleSite.getHmmStart() - simpleDomainMatch.getHmmFrom());
                         int residueEnd = residueStart + (ruleSite.getHmmEnd() - ruleSite.getHmmStart());
-                 
+                        String residues = null;
+
                         //the residue positions are defined in terms of the alignment, though
-                        int residueStartOnseqAlign = residueStart - simpleDomainMatch.getSeqFrom();
-                        int residueEndOnseqAlign = residueStartOnseqAlign + (residueEnd - residueStart);
-			String residues = seqAlignment.substring(residueStartOnseqAlign, residueEndOnseqAlign + 1);
+                        //int residueStartOnseqAlign = residueStart - simpleDomainMatch.getSeqFrom();
+                        //int residueEndOnseqAlign = residueStartOnseqAlign + (residueEnd - residueStart);
+			//String residues = seqAlignment.substring(residueStartOnseqAlign, residueEndOnseqAlign + 1);
                         //check if the residue are inside the alignment
                         //if ( >= seqAlignment.length() ) {
                         //  //there are several such cases so just give a warning if verbose output is enabled
@@ -466,15 +471,47 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                         //}
 			
                         //String residues = seqAlignment.substring(residueStart - simpleDomainMatch.getSeqFrom(), residueEnd - );
-                        String residuesConst = seqAlignment.substring(1,2);
-                        Utilities.verboseLog(30, "seqAlignment: (" + seqAlignment.length() + ")" + seqAlignment + "\n");
-                        Utilities.verboseLog(30, "residues : " + seqAlignment.substring(residueStartOnseqAlign, residueEndOnseqAlign + 1) +
-                                " position on the alignment: " + residueStartOnseqAlign + "-" +  residueEndOnseqAlign);
-                        Utilities.verboseLog(30, "residuesConst :" + residuesConst + " position on the alignm: " + 1 + "-" +  2);
-                        Utilities.verboseLog(30, "residue :" + residues + " position on the sequence: " + residueStart + "-" +  residueEnd);
+                        // String residuesConst = seqAlignment.substring(1,2);
+                        Utilities.verboseLog(30, "seqAlignment: (" + seqAlignment.length() + ") " + seqAlignment + "\n");
+                        Utilities.verboseLog(30, "hmmAlignment: (" + hmmAlign.length() + ") " + hmmAlign + "\n");
+                        //Utilities.verboseLog(30, "residues : " + seqAlignment.substring(residueStartOnseqAlign, residueEndOnseqAlign + 1) +
+                        //        " position on the alignment: " + residueStartOnseqAlign + "-" +  residueEndOnseqAlign);
+                        //Utilities.verboseLog(30, "residuesConst :" + residuesConst + " position on the alignm: " + 1 + "-" +  2);
+                        //Utilities.verboseLog(30, "residue :" + residues + " position on the sequence: " + residueStart + "-" +  residueEnd);
 
                         String condition = ruleSite.getCondition();
                         Utilities.verboseLog(30, "Condition: " + condition + " length : " + condition.length());
+
+                        //use the sequencePositionMap
+			Integer startKey = ruleSite.getHmmStart();
+                        boolean residueCoordinatesFound = false;
+			if (hmmAlignmentPositionMap.containsKey(startKey)) {
+				int residueStartOnseqAlignFromMap = hmmAlignmentPositionMap.get(startKey); 
+                                int endKey = ruleSite.getHmmEnd();
+                                if (hmmAlignmentPositionMap.containsKey(endKey)) {
+                        		int residueEndOnseqAlignFromMap = hmmAlignmentPositionMap.get(endKey); 
+
+					String residuesFromMap = seqAlignment.substring(residueStartOnseqAlignFromMap,residueEndOnseqAlignFromMap + 1);
+                                        residues = residuesFromMap;
+					residueStart = simpleDomainMatch.getSeqFrom() + residueStartOnseqAlignFromMap;
+					residueEnd = simpleDomainMatch.getSeqFrom() + residueEndOnseqAlignFromMap;
+                        		Utilities.verboseLog(30, "residues from sequencePositionMap: " + residuesFromMap + 
+						" -- position on the alignment: " + residueStartOnseqAlignFromMap + "-" +   residueEndOnseqAlignFromMap +
+						" -- position on the sequence: " + residueStart + "-" + residueEnd
+						);
+					//int residueStartOnSequence = sequencePositionMap.get() ...;
+					residueCoordinatesFound = true;
+				}
+                        
+			}
+			if ( !residueCoordinatesFound) {
+				Utilities.verboseLog(30, "Problem parsing the alignment for residues");
+				continue;
+			}
+			if (! checkCondition(residues, condition)) {
+                          Utilities.verboseLog(30, "residues fail the check : " + residues + " not in  " + condition);
+			  continue;
+			}
 
 //                        if (condition.contains("[")){
 //                            condition =  condition.replace("[", "").replace("]", "");
@@ -649,5 +686,51 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
 
     }
 
+    private Map<Integer, Integer> getPositionMap(String alignment, int aliStart) {
+        Map<Integer, Integer> positionMap = new HashMap();
+        int sequenceAlignmentPosition = aliStart;
+        Integer positionkey = aliStart;
+	for(int index = 0, alignmentLength = alignment.length() ; index < alignmentLength ; index++) { 
+	    char sequenceChar = alignment.charAt(index);       
+	    if (Character.isLetter(sequenceChar)) {
+                //sequenceAlignmentPosition ++                
+            	positionMap.put(positionkey, index) ;
+                positionkey ++;
+            } else {
+                //skip
+	    }
+	}
+	Utilities.verboseLog(30, positionMap.toString());        
+	return positionMap;
+    }
 
+    private boolean checkCondition(String residues, String condition) {
+	condition = condition.replace("-", "");
+	condition = condition.replace("(", "{");
+	condition = condition.replace(")", "}");
+	condition = condition.replace("x", ".");
+	Utilities.verboseLog(30, "condition: " + condition);
+
+	//less strict check
+	boolean residueChecksCondition = false;
+	Pattern pattern = Pattern.compile(condition);
+        Matcher matcher = pattern.matcher(residues);
+        if (matcher.matches()) {
+            residueChecksCondition = true;
+	} else {
+	   // make another check, so as not be too strict
+           boolean secondCheckPass = false;
+	   for (int index = 0; index < residues.length(); index++){
+	   	String searchString = String.valueOf(residues.charAt(index));        
+		if (condition.contains(searchString)) {
+                    residueChecksCondition = true;
+		} else {
+		    residueChecksCondition = false;
+		    break;
+       		}
+	   }
+	}
+
+	return residueChecksCondition;
+    }
 }
