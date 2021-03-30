@@ -26,7 +26,7 @@ import argparse
 import csv
 import json
 import re
-import parsehmmer
+import parsehmmer #2 as parsehmmer
 
 
 def process_row(row, rule):
@@ -78,6 +78,7 @@ def process_row(row, rule):
             else:
                 print("Target sequence out of alignment borders for query " +
                       model_id+' on hit '+sequence_id)
+                print(str('hhmfrom: ' +str(hmm_from) + ', hmmStart: ' + str(pos['hmmStart'])) +', hmmEnd: ' + str(pos['hmmEnd']) + ', len map:' + str(len(map))  );
                 target_seq = ''
 
 
@@ -88,10 +89,12 @@ def process_row(row, rule):
         if len(rule['Groups'][grp]) == pass_count:
             # a group passes only if the whole group is a pass
             rule_sites.extend(rule['Groups'][grp])
+            #print(
 
     if rule_sites:
         #        result[sequence_id] = {
-        result[sequence_id]["domainMatches"][model_id] = {
+        
+        domHit = {
             'domScore': dom_score,
             'domEvalue': dom_evalue,
             'hmmFrom': hmm_from,
@@ -103,6 +106,17 @@ def process_row(row, rule):
             'ruleSites': rule_sites,
             'scope': rule['Scope'],
         }
+        domHits =  []
+        if model_id in result[sequence_id]["domainMatches"]:
+            domHits = result[sequence_id]["domainMatches"][model_id]
+            domHits.append(domHit)
+        else:
+            domHits.append(domHit)
+        result[sequence_id]["domainMatches"][model_id] = domHits
+        print ('domainMatches found .... ' + model_id + ' ---' + sequence_id)
+        print ('how many dom hits :' + str(len(domHits)))
+        print (result[sequence_id]["domainMatches"][model_id])
+       
 
 
 
@@ -150,9 +164,11 @@ if __name__ == '__main__':
 
     raw_matches = parsehmmer.parse(hmmer3_raw_output)
 
+    print('process the matches ... ' )
     for row in raw_matches:
         if not bool(row):
             break
+        print (row)
         if row[1] in rules_hash:
             rule = rules_hash[row[1]]
             process_row(row, rule)
@@ -163,7 +179,7 @@ if __name__ == '__main__':
     with open(out_file, 'w') as out_file:
         json.dump(result, out_file, indent=4,)
     hmmer3_output_tsv = hmmer3_raw_output.strip().replace('raw', 'tsv')
-    raw_matches = parsehmmer.print(raw_matches, hmmer3_output_tsv)
+    raw_matches = parsehmmer.print2file(raw_matches, hmmer3_output_tsv)
 
     print ("Done.")
 

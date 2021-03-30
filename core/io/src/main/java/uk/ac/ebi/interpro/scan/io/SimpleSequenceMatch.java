@@ -9,27 +9,27 @@ import java.util.Map;
 
 public class SimpleSequenceMatch {
 
-     Map<String, SimpleDomainMatch> domainMatches = new HashMap<>();
+     Map<String, List<SimpleDomainMatch>> domainMatches = new HashMap<>();
 
-    public SimpleSequenceMatch(Map<String, SimpleDomainMatch> domainMatches) {
+    public SimpleSequenceMatch(Map<String, List<SimpleDomainMatch>> domainMatches) {
         this.domainMatches = domainMatches;
     }
 
     public SimpleSequenceMatch() {
     }
 
-    public Map<String, SimpleDomainMatch> getDomainMatches() {
+    public Map<String, List<SimpleDomainMatch>> getDomainMatches() {
         return domainMatches;
     }
 
-    public void setDomainMatches(Map<String, SimpleDomainMatch> domainMatches) {
+    public void setDomainMatches(Map<String, List<SimpleDomainMatch>> domainMatches) {
         this.domainMatches = domainMatches;
     }
 
     @Override
     public String toString() {
         return "SimpleSequenceMatch{" +
-                "domainMatches=" + domainMatches +
+                "domainMatches=" + domainMatches.toString() +
                 '}';
     }
 }
