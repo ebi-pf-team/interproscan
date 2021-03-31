@@ -117,7 +117,8 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
 
         // Prepare entry 2 pathway cross references
-        Set<PathwayXref> pathwayXrefs = (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
+        //FIXME disable this and load them during the PrepareOutPut Step
+        Set<PathwayXref> pathwayXrefs = null; // (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
         if (pathwayXrefs == null) {
             pathwayXrefs = new HashSet<PathwayXref>();
         }
