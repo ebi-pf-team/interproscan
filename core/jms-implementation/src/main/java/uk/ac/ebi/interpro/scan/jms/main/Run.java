@@ -26,6 +26,7 @@ import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.exception.InvalidInputException;
 import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
+import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
@@ -428,14 +429,30 @@ public class Run extends AbstractI5Runner {
 
                 }
 
+                LevelDBStore kvStoreEntry = null;
                 LevelDBStore kvStoreProteins = null;
                 LevelDBStore kvStoreProteinsNotInLookup = null;
                 LevelDBStore kvStoreProteinsOther = null;
                 LevelDBStore kvStoreMatches = null;
                 LevelDBStore kvStoreNucleotides = null;
 
+                boolean entryDBInitialSetup = false;
+                if (mode.equals(Mode.INSTALLER) ) {
+                    // configure the entriedDB for the Loading of models
+                    entryDBInitialSetup = true;
+                    kvStoreEntry = (LevelDBStore) ctx.getBean("kvStoreEntry");
+                    configureKVStoreEntry(kvStoreEntry, workingTemporaryDirectory, entryDBInitialSetup);
+
+                    EntryKVDAO entryKVDAO = (EntryKVDAO) ctx.getBean("entryKVDAO");
+                    entryKVDAO.checkKVDBStores();
+                }
+
                 if (!workingTemporaryDirectory.isEmpty()) {
                     // configure the KVStores
+
+                    // configure the entriedDB
+                    kvStoreEntry = (LevelDBStore) ctx.getBean("kvStoreEntry");
+
                     kvStoreProteins = (LevelDBStore) ctx.getBean("kvStoreProteins");
                     //System.out.println(Utilities.getTimeNow() + " kvStoreProteins name : " + kvStoreProteins.getDbName());
                     kvStoreProteinsNotInLookup = (LevelDBStore) ctx.getBean("kvStoreProteinsNotInLookup");
@@ -452,8 +469,11 @@ public class Run extends AbstractI5Runner {
 
                     //System.out.println(Utilities.getTimeNow() + " workingTemporaryDirectory  : " + workingTemporaryDirectory);
                     configureKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
-
+                    configureKVStoreEntry(kvStoreEntry, workingTemporaryDirectory, entryDBInitialSetup);
                     //System.out.println(Utilities.getTimeNow() + " kvStoreProteinsNotInLookup name - take 2 : " + kvStoreProteinsNotInLookup.toString());
+
+                    EntryKVDAO entryKVDAO = (EntryKVDAO) ctx.getBean("entryKVDAO");
+                    entryKVDAO.checkKVDBStores();
 
                     ProteinDAO proteinDAO = (ProteinDAO) ctx.getBean("proteinDAO");
                     proteinDAO.checkKVDBStores();
@@ -475,7 +495,8 @@ public class Run extends AbstractI5Runner {
                 runnable.run();
 
                 if (!workingTemporaryDirectory.isEmpty()) {
-                    closeKVStores(kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+                    closeKVStores(kvStoreEntry, kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
+
                 }
 
             }
@@ -1702,19 +1723,38 @@ public class Run extends AbstractI5Runner {
         kvStoreNucleotides.setLevelDBStore(kvStoreNucleotidesDBPath);
 
     }
+    public static void configureKVStoreEntry(LevelDBStore kvStoreEntry, String tempDir, boolean entryDBInitialSetup) {
+        if (entryDBInitialSetup){
+            System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
+            System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
+            String kvstoreDir = "work/kvs";
+            String kvstoreBase = kvstoreDir; //tempDir + File.separator + kvstoreDir;
+            String kvStoreEntryDBPath = kvstoreBase + File.separator + kvStoreEntry.getDbName();
+            kvStoreEntry.setLevelDBStore(kvStoreEntryDBPath);
+            System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
+                    " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
+        } else {
+            System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
+            System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
+            String kvstoreDir = "kvstore";
+            String kvstoreBase = tempDir + File.separator + kvstoreDir;
+            String kvStoreEntryDBPath = kvstoreBase + File.separator + kvStoreEntry.getDbName();
+            Utilities.verboseLog(110, " kvStoreProteinsDBPath: " + kvStoreEntryDBPath);
+            kvStoreEntry.setLevelDBStore(kvStoreEntryDBPath);
+            System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
+                    " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
+        }
 
-    public static void closeKVStores(LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup, LevelDBStore kvStoreProteinsOther,
+    }
+
+    public static void closeKVStores(LevelDBStore kvStoreEntry, LevelDBStore kvStoreProteins, LevelDBStore kvStoreProteinsNotInLookup, LevelDBStore kvStoreProteinsOther,
                                      LevelDBStore kvStoreMatches, LevelDBStore kvStoreNucleotides, String tempDir) {
+        kvStoreEntry.close();
         kvStoreProteins.close();
-
         kvStoreProteinsNotInLookup.close();
-
         //kvStoreProteinsOther.close();
-
         kvStoreMatches.close();
-
         kvStoreNucleotides.close();
-
     }
 
 

@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsRes
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
@@ -30,6 +31,7 @@ public class PrepareForOutputStep extends Step {
     //DAOs
     private ProteinDAO proteinDAO;
     private MatchDAO matchDAO;
+    private EntryKVDAO entryKVDAO;
 
     final ConcurrentHashMap<Long, Long> allNucleotideSequenceIds = new ConcurrentHashMap<>();
     final ConcurrentHashMap<Long, Boolean> processedNucleotideSequences = new ConcurrentHashMap<>();
@@ -45,6 +47,10 @@ public class PrepareForOutputStep extends Step {
 
     public void setMatchDAO(MatchDAO matchDAO) {
         this.matchDAO = matchDAO;
+    }
+
+    public void setEntryKVDAO(EntryKVDAO entryKVDAO) {
+        this.entryKVDAO = entryKVDAO;
     }
 
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
@@ -83,6 +89,16 @@ public class PrepareForOutputStep extends Step {
             Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
         }
 
+        if (entryKVDAO == null) {
+            Utilities.verboseLog(30, "entryKVDAO is null ");
+        }else {
+            Utilities.verboseLog(30, entryKVDAO.toString());
+            if (entryKVDAO.getKvStoreEntry() != null) {
+                Utilities.verboseLog(30,  "dbname :" + entryKVDAO.getKvStoreEntry().getDbName());
+            }else {
+                Utilities.verboseLog(30, "entryKVDAO.getKvStoreEntry() is null  ");
+            }
+        }
 
         try {
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
@@ -356,6 +372,31 @@ public class PrepareForOutputStep extends Step {
                         //match.getSignature().getEntry();
                         //try update with cross refs etc
                         //updateMatch(match);
+                        Utilities.verboseLog(30, "kvs store entryDB: " + entryKVDAO.getDbStore().getDbName() + " store : " +
+                                entryKVDAO.getDbStore().getKVDBStore() );
+                        Entry simpleEntry = match.getSignature().getEntry();
+                        if ( simpleEntry != null) {
+                            String entryAc = simpleEntry.getAccession();
+                            if (entryAc.equalsIgnoreCase("IPR002072")){
+                                Utilities.verboseLog(30, "Print simpleEntry " + simpleEntry.toString() +
+                                        " pathways: " + simpleEntry.getPathwayXRefs().iterator().next());
+                            }
+                            entryKVDAO.persist(entryAc, simpleEntry);
+                            Utilities.verboseLog(30, "Persisted Entry - " + entryAc);
+                            Entry entry = entryKVDAO.getEntry(entryAc);
+                            match.getSignature().setEntry(entry);
+                            //match.getSignature().setEntry(entry);
+                            if (entryAc.equalsIgnoreCase("IPR002072")){
+                                Utilities.verboseLog(30, "Print Entry " + entry.toString() +
+                                        " pathways: " + entry.getPathwayXRefs().iterator().next());
+                            }
+                        }
+                        try {
+                            Set<Entry> allentriesInDb = entryKVDAO.getEntries();
+                            Utilities.verboseLog(30, " allentriesInDb- " + allentriesInDb.size());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         protein.addMatch(match);
                         matchCount++;
                     }

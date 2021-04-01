@@ -69,6 +69,11 @@ abstract class KVDBImpl implements KVDB, AutoCloseable {
         return data;
     }
 
+    public byte[] serialize(Entry entry) {
+        byte[] data = SerializationUtils.serialize(entry);
+        return data;
+    }
+
     public byte[] serialize(Protein protein) {
         byte[] data = SerializationUtils.serialize(protein);
         return data;
@@ -96,6 +101,10 @@ abstract class KVDBImpl implements KVDB, AutoCloseable {
         return key;
     }
 
+    public Entry asEntry(byte[] byteEntry) {
+        Entry data = (Entry) SerializationUtils.deserialize(byteEntry);
+        return data;
+    }
 
     public Set<Match> asMatchSet(byte[] byteMatchSet) {
         Set<Match> data = (Set<Match>) SerializationUtils.deserialize(byteMatchSet);
