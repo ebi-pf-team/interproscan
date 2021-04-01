@@ -498,6 +498,9 @@ public class Run extends AbstractI5Runner {
                     closeKVStores(kvStoreEntry, kvStoreProteins, kvStoreProteinsNotInLookup, kvStoreProteinsOther, kvStoreMatches, kvStoreNucleotides, workingTemporaryDirectory);
 
                 }
+                if (mode.equals(Mode.INSTALLER) ) {
+                    kvStoreEntry.close();
+                }
 
             }
 
@@ -1727,8 +1730,7 @@ public class Run extends AbstractI5Runner {
         if (entryDBInitialSetup){
             System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
             System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
-            String kvstoreDir = "work/kvs";
-            String kvstoreBase = kvstoreDir; //tempDir + File.separator + kvstoreDir;
+            String kvstoreBase = kvStoreEntry.getDbPath();
             String kvStoreEntryDBPath = kvstoreBase + File.separator + kvStoreEntry.getDbName();
             kvStoreEntry.setLevelDBStore(kvStoreEntryDBPath);
             System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
@@ -1736,12 +1738,25 @@ public class Run extends AbstractI5Runner {
         } else {
             System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
             System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
-            String kvstoreDir = "kvstore";
-            String kvstoreBase = tempDir + File.separator + kvstoreDir;
-            String kvStoreEntryDBPath = kvstoreBase + File.separator + kvStoreEntry.getDbName();
-            Utilities.verboseLog(110, " kvStoreProteinsDBPath: " + kvStoreEntryDBPath);
-            kvStoreEntry.setLevelDBStore(kvStoreEntryDBPath);
-            System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
+            String kvstoreInstalledBase = kvStoreEntry.getDbPath();
+            String kvStoreInstalledEntryDBPath = kvstoreInstalledBase + File.separator + kvStoreEntry.getDbName();
+
+            System.out.println(Utilities.getTimeNow() + " kvStoreInstalledEntryDBPath: " + kvStoreInstalledEntryDBPath);
+            String kvstoreWorkDir = "kvstore";
+            String kvstoreWorkBase = tempDir + File.separator + kvstoreWorkDir;
+            String kvStoreWorkEntryDBPath = kvstoreWorkBase + File.separator + kvStoreEntry.getDbName();
+
+            File sourceDirectory = new File(kvStoreInstalledEntryDBPath);
+            File destinationDirectory = new File(kvStoreWorkEntryDBPath);
+            try {
+                FileUtils.copyDirectory(sourceDirectory, destinationDirectory);
+            } catch (IOException e) {
+                LOGGER.error("Unable  to continue, cp installed to workdir " + kvStoreInstalledEntryDBPath +  " to  "  +  kvStoreWorkEntryDBPath);
+                e.printStackTrace();
+            }
+
+            kvStoreEntry.setLevelDBStore(kvStoreWorkEntryDBPath);
+            System.out.println(Utilities.getTimeNow() + " kvStoreWorkEntryDBPath: " + kvStoreWorkEntryDBPath +
                     " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
         }
 

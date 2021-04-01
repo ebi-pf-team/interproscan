@@ -97,10 +97,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public void processRow(ResultSet resultSet) throws SQLException {
         // Get query row result
         final String entryAc = resultSet.getString(1);
-        String[] specialEntries = {"IPR020408", "IPR037152", "IPR006034", "IPR027473", "IPR002072"};
-        if (! Arrays.asList(specialEntries).contains(entryAc)){
-            return;
-        }
+//        String[] specialEntries = {"IPR020408", "IPR037152", "IPR006034", "IPR027473", "IPR002072"};
+//        if (! Arrays.asList(specialEntries).contains(entryAc)){
+//            return;
+//        }
         final String entryType = resultSet.getString(2);
         final String name = resultSet.getString(3);
         final String checked = resultSet.getString(4);

@@ -101,11 +101,8 @@
 
     <bean id="kvStoreEntry"
           class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
-<!--        <constructor-arg value="${kvstore.entrydb.path}"/>-->
-        <property name="dbName" value="iprEntryDB"/>
+        <property name="dbName" value="entryDB"/>
         <property name="dbPath" value="${kvstore.entrydb.path}"/>
-
-        <!--        <property name="levelDBStore" value="${kvstore.entrydb.path}"/>-->
     </bean>
 
     <bean id="kvStoreProteins"

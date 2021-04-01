@@ -372,31 +372,38 @@ public class PrepareForOutputStep extends Step {
                         //match.getSignature().getEntry();
                         //try update with cross refs etc
                         //updateMatch(match);
-                        Utilities.verboseLog(30, "kvs store entryDB: " + entryKVDAO.getDbStore().getDbName() + " store : " +
-                                entryKVDAO.getDbStore().getKVDBStore() );
                         Entry simpleEntry = match.getSignature().getEntry();
                         if ( simpleEntry != null) {
                             String entryAc = simpleEntry.getAccession();
                             if (entryAc.equalsIgnoreCase("IPR002072")){
-                                Utilities.verboseLog(30, "Print simpleEntry " + simpleEntry.toString() +
-                                        " pathways: " + simpleEntry.getPathwayXRefs().iterator().next());
+                                Utilities.verboseLog(30, "Print simpleEntry " + simpleEntry.toString() );
+                                if (! simpleEntry.getPathwayXRefs().isEmpty()) {
+                                    Utilities.verboseLog(30, " simple pathways: " + simpleEntry.getPathwayXRefs().iterator().next());
+                                } else {
+                                    Utilities.verboseLog(30, " pathways are empty");
+                                }
                             }
-                            entryKVDAO.persist(entryAc, simpleEntry);
-                            Utilities.verboseLog(30, "Persisted Entry - " + entryAc);
-                            Entry entry = entryKVDAO.getEntry(entryAc);
-                            match.getSignature().setEntry(entry);
-                            //match.getSignature().setEntry(entry);
-                            if (entryAc.equalsIgnoreCase("IPR002072")){
-                                Utilities.verboseLog(30, "Print Entry " + entry.toString() +
-                                        " pathways: " + entry.getPathwayXRefs().iterator().next());
+                            //entryKVDAO.persist(entryAc, simpleEntry);
+                            //Utilities.verboseLog(30, "Persisted Entry - " + entryAc);
+                            try {
+                                Entry entry = entryKVDAO.getEntry(entryAc);
+                                match.getSignature().setEntry(entry);
+                                //match.getSignature().setEntry(entry);
+                                if (entryAc.equalsIgnoreCase("IPR002072")) {
+                                    Utilities.verboseLog(30, "Print Entry " + entry.toString() +
+                                            " new kvs pathways: " + entry.getPathwayXRefs().iterator().next());
+                                }
+                            } catch (Exception e) {
+                                LOGGER.warn("Could get the entry in the kvstore " + entryAc);
+                                e.printStackTrace();
                             }
                         }
-                        try {
-                            Set<Entry> allentriesInDb = entryKVDAO.getEntries();
-                            Utilities.verboseLog(30, " allentriesInDb- " + allentriesInDb.size());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            Set<Entry> allentriesInDb = entryKVDAO.getEntries();
+//                            Utilities.verboseLog(30, " allentriesInDb- " + allentriesInDb.size());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
                         protein.addMatch(match);
                         matchCount++;
                     }
