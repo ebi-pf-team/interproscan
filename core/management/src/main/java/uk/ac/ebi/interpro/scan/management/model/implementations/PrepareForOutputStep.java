@@ -12,6 +12,8 @@ import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.persistence.installer.Entry2GoDAO;
+import uk.ac.ebi.interpro.scan.persistence.installer.Entry2PathwayDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import javax.xml.bind.JAXBException;
@@ -33,11 +35,17 @@ public class PrepareForOutputStep extends Step {
     private MatchDAO matchDAO;
     private EntryKVDAO entryKVDAO;
 
+    private Entry2GoDAO entry2GoDAO;
+    private Entry2PathwayDAO entry2PathwayDAO;
+    private NucleotideSequenceDAO nucleotideSequenceDAO;
+
     final ConcurrentHashMap<Long, Long> allNucleotideSequenceIds = new ConcurrentHashMap<>();
     final ConcurrentHashMap<Long, Boolean> processedNucleotideSequences = new ConcurrentHashMap<>();
     final Set<String> processesReadyForXMLMarshalling = new HashSet<>();
 
-    private NucleotideSequenceDAO nucleotideSequenceDAO;
+    private Map<String, Collection<GoXref>> entry2GoXrefsMap;
+    private Map<String, Collection<PathwayXref>> entry2PathwayXrefsMap;
+
 
     public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
 
@@ -51,6 +59,14 @@ public class PrepareForOutputStep extends Step {
 
     public void setEntryKVDAO(EntryKVDAO entryKVDAO) {
         this.entryKVDAO = entryKVDAO;
+    }
+
+    public void setEntry2GoDAO(Entry2GoDAO entry2GoDAO) {
+        this.entry2GoDAO = entry2GoDAO;
+    }
+
+    public void setEntry2PathwayDAO(Entry2PathwayDAO entry2PathwayDAO) {
+        this.entry2PathwayDAO = entry2PathwayDAO;
     }
 
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
@@ -386,7 +402,8 @@ public class PrepareForOutputStep extends Step {
                             //entryKVDAO.persist(entryAc, simpleEntry);
                             //Utilities.verboseLog(30, "Persisted Entry - " + entryAc);
                             try {
-                                Entry entry = entryKVDAO.getEntry(entryAc);
+                                Entry entry =  updateEntryXrefs(simpleEntry);
+                                //Entry entry = entryKVDAO.getEntry(entryAc);
                                 match.getSignature().setEntry(entry);
                                 //match.getSignature().setEntry(entry);
                                 if (entryAc.equalsIgnoreCase("IPR002072")) {
@@ -719,6 +736,55 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
+    public Entry  updateEntryXrefs(Entry entry) {
+        String entryAc = entry.getAccession();
+        Set<GoXref> goXrefs = (Set<GoXref>) entry2GoXrefsMap.get(entryAc);
+        Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) entry2PathwayXrefsMap.get(entryAc);
+
+        return new Entry.Builder(entryAc)
+                .goCrossReferences(goXrefs)
+                .pathwayCrossReferences(pathwayXrefs)
+                .updateXrefs(entry);
+    }
+
+
+
+    //FIXME calling this in multiple threads might cause a problem
+    public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
+        if (entry2GoXrefsMap == null) {
+            if (checkIfDAOAreUsable()) {
+                LOGGER.info("Loading entry to go xrefs...");
+                entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
+                if (entry2GoXrefsMap == null) {
+                    throw new RuntimeException("Could not load any entry to go mappings from external database!");
+                }
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(entry2GoXrefsMap.size() + " mappings loaded.");
+                }
+                Utilities.printMemoryUsage("PrepareForOutPut");
+            }
+        }
+        return entry2GoXrefsMap;
+    }
+
+    public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
+        if (entry2PathwayXrefsMap == null) {
+            if (checkIfDAOAreUsable()) {
+                LOGGER.info("Loading entry to pathway xrefs...");
+                entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
+                if (entry2PathwayXrefsMap == null) {
+                    throw new RuntimeException("Could not load any entry to pathway mappings from external database!");
+                }
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(entry2PathwayXrefsMap.size() + " mappings loaded.");
+                }
+                Utilities.printMemoryUsage("PrepareForOutPut");
+            }
+        }
+        return entry2PathwayXrefsMap;
+    }
+
+
     /**
      * get the proteins in range - expensive in terms of memeory usage, so need benachmarking
      *
@@ -777,4 +843,10 @@ public class PrepareForOutputStep extends Step {
         return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
     }
 
+    private boolean checkIfDAOAreUsable() {
+        if (entry2GoDAO == null || entry2PathwayDAO == null ) {
+            throw new IllegalStateException("One or some DAOs entry2GoDAO or  entry2PathwayDAO are not initialised successfully!");
+        }
+        return true;
+    }
 }

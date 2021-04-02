@@ -1732,6 +1732,12 @@ public class Run extends AbstractI5Runner {
             System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
             String kvstoreBase = kvStoreEntry.getDbPath();
             String kvStoreEntryDBPath = kvstoreBase + File.separator + kvStoreEntry.getDbName();
+            try {
+                FileUtils.deleteDirectory(new File(kvStoreEntryDBPath));
+            } catch (IOException e) {
+                LOGGER.error("Unable  to delete/initialise directory " + kvStoreEntryDBPath);
+                e.printStackTrace();
+            }
             kvStoreEntry.setLevelDBStore(kvStoreEntryDBPath);
             System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
                     " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());

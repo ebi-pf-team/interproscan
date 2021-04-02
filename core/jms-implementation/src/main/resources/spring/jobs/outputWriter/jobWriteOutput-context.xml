@@ -6,6 +6,9 @@
 
     <!--Imports-->
     <import resource="classpath:/spring/persistence/datasource-context.xml"/>
+    <!-- FIXME the following   may not exactly work -->
+    <import resource="classpath:spring/installer/interpro-db-access-context.xml"/>
+
     <import resource="classpath:/spring/jobs/outputWriter/EntryHierarchy-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/xml/xmlWriter-context.xml"/>
     <import resource="classpath:/spring/jobs/outputWriter/html/htmlWriter-context.xml"/>
@@ -28,6 +31,8 @@
         <property name="matchDAO" ref="matchDAO"/>
         <property name="entryKVDAO" ref="entryKVDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
+        <property name="entry2GoDAO" ref="entry2GoDAO"/>
+        <property name="entry2PathwayDAO" ref="entry2PathwayDAO"/>
         <property name="kvStoreDelayMilliseconds" value="${kvstore.delay.milliseconds}"/>
 
     </bean>
