@@ -85,12 +85,15 @@ public class ProteinSiteMatchesTSVResultWriter extends ProteinMatchesResultWrite
 					    description = featureType + ": " + description;
 					}					
 					mappingFields.add(description);
+                                        /* not necessary for the data warehouse
                                         if (site instanceof Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site){
                                             Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site hmmer3Site = (Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site) site;					    
                                             mappingFields.add(Integer.toString(hmmer3Site.getHmmStart()));
                                             mappingFields.add(Integer.toString(hmmer3Site.getHmmEnd()));
                                             mappingFields.add(Integer.toString(hmmer3Site.getGroup()));
                                         }
+
+                                         */
                                         this.tsvWriter.write(mappingFields);
 //                                Utilities.verboseLog(mappingFields.toString());
                                     }
