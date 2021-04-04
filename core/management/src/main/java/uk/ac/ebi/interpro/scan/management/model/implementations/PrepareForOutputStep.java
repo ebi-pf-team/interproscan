@@ -3,6 +3,9 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -23,6 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,8 +40,6 @@ public class PrepareForOutputStep extends Step {
     private MatchDAO matchDAO;
     private EntryKVDAO entryKVDAO;
 
-    private Entry2GoDAO entry2GoDAO;
-    private Entry2PathwayDAO entry2PathwayDAO;
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
     final ConcurrentHashMap<Long, Long> allNucleotideSequenceIds = new ConcurrentHashMap<>();
@@ -59,14 +62,6 @@ public class PrepareForOutputStep extends Step {
 
     public void setEntryKVDAO(EntryKVDAO entryKVDAO) {
         this.entryKVDAO = entryKVDAO;
-    }
-
-    public void setEntry2GoDAO(Entry2GoDAO entry2GoDAO) {
-        this.entry2GoDAO = entry2GoDAO;
-    }
-
-    public void setEntry2PathwayDAO(Entry2PathwayDAO entry2PathwayDAO) {
-        this.entry2PathwayDAO = entry2PathwayDAO;
     }
 
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
@@ -738,8 +733,8 @@ public class PrepareForOutputStep extends Step {
 
     public Entry  updateEntryXrefs(Entry entry) {
         String entryAc = entry.getAccession();
-        Set<GoXref> goXrefs = (Set<GoXref>) entry2GoXrefsMap.get(entryAc);
-        Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) entry2PathwayXrefsMap.get(entryAc);
+        Set<GoXref> goXrefs = (Set<GoXref>) getGoXrefsByEntryAc(entryAc); //entry2GoXrefsMap.get(entryAc);
+        Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) getPathwayXrefsByEntryAc(entryAc); //(Set<PathwayXref>) entry2PathwayXrefsMap.get(entryAc);
 
         return new Entry.Builder(entryAc)
                 .goCrossReferences(goXrefs)
@@ -747,9 +742,26 @@ public class PrepareForOutputStep extends Step {
                 .updateXrefs(entry);
     }
 
+    public Collection<GoXref> getGoXrefsByEntryAc(String entryAc) {
+        Set<GoXref> result = new HashSet<>();
+        try {
+            String identifier = "GO:0003677";
+            String name = "non-motile cilium assembly ";
+            String nameCode = "P";
+            GoCategory category = GoCategory.parseNameCode(nameCode);
+            GoXref goXref =  new GoXref("GO:0003677", name, category);
+            result.add(goXref);
+
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
+        }
+        return result;
+    }
 
 
     //FIXME calling this in multiple threads might cause a problem
+    /*
     public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
         if (entry2GoXrefsMap == null) {
             if (checkIfDAOAreUsable()) {
@@ -767,6 +779,48 @@ public class PrepareForOutputStep extends Step {
         return entry2GoXrefsMap;
     }
 
+
+     */
+
+    /*
+    void test() {
+        result = this.jdbcTemplate
+                .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id WHERE i2g.entry_ac = :entry_ac",
+                        namedParameters,
+                        new RowMapper<GoXref>() {
+                            public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                String identifier = rs.getString("go_id");
+                                String name = rs.getString("name");
+                                String nameCode = rs.getString("category");
+                                GoCategory category = GoCategory.parseNameCode(nameCode);
+                                return new GoXref(identifier, name, category);
+                            }
+                        });
+    }
+
+
+     */
+    public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
+        Set<PathwayXref> result = new HashSet<>();
+        String query = "SELECT DBCODE, AC, NAME FROM INTERPRO.ENTRY2PATHWAY WHERE ENTRY_AC = :entry_ac";
+        try {
+            String entryAc2 = "IPR003527";
+            String dbcode = "r";
+            String dbName = decodeDbCode(dbcode);
+            String pcode = "R-SPO-450341";
+            String desc = "Activation of the AP-1 family of transcription factors";
+
+            PathwayXref pxref = new PathwayXref(dbcode, pcode, desc);
+            result.add(pxref);
+
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
+        }
+        return result;
+    }
+
+    /*
     public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
         if (entry2PathwayXrefsMap == null) {
             if (checkIfDAOAreUsable()) {
@@ -782,6 +836,15 @@ public class PrepareForOutputStep extends Step {
             }
         }
         return entry2PathwayXrefsMap;
+    }
+
+     */
+
+    private String decodeDbCode(String dbCode) {
+        if (dbCode != null && dbCode.length() > 0) {
+            return PathwayXref.PathwayDatabase.parseDatabaseCode(dbCode.charAt(0)).toString();
+        }
+        return null;
     }
 
 
@@ -843,10 +906,4 @@ public class PrepareForOutputStep extends Step {
         return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
     }
 
-    private boolean checkIfDAOAreUsable() {
-        if (entry2GoDAO == null || entry2PathwayDAO == null ) {
-            throw new IllegalStateException("One or some DAOs entry2GoDAO or  entry2PathwayDAO are not initialised successfully!");
-        }
-        return true;
-    }
 }
