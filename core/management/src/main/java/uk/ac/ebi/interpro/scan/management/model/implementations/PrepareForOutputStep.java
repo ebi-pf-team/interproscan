@@ -49,6 +49,10 @@ public class PrepareForOutputStep extends Step {
     private Map<String, Collection<GoXref>> entry2GoXrefsMap;
     private Map<String, Collection<PathwayXref>> entry2PathwayXrefsMap;
 
+    private Map<String, String> goMap;
+    private Map<String, String> entry2GoMap;
+    private Map<String, String> entry2PathwayMap;
+    private Map<String, String> pathwayMap;
 
     public static final String SEQUENCE_TYPE = "SEQUENCE_TYPE";
 
@@ -730,6 +734,11 @@ public class PrepareForOutputStep extends Step {
             }
         }
     }
+
+    public  void getPathwayMap(){
+        
+    }
+
 
     public Entry  updateEntryXrefs(Entry entry) {
         String entryAc = entry.getAccession();
