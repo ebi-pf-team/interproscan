@@ -118,14 +118,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
 
         // Prepare entry 2 GO cross references
-        Set<GoXref> goXrefs = (Set<GoXref>) getEntry2GoXrefsMap().get(entryAc);
+        Set<GoXref> goXrefs = null; //disable for now (Set<GoXref>) getEntry2GoXrefsMap().get(entryAc);
         if (goXrefs == null) {
             goXrefs = new HashSet<GoXref>();
         }
 
         // Prepare entry 2 pathway cross references
         //FIXME disable this and load them during the PrepareOutPut Step
-        Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
+        Set<PathwayXref> pathwayXrefs =  null; //disable for now (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
         if (pathwayXrefs == null) {
             pathwayXrefs = new HashSet<PathwayXref>();
         }
@@ -135,14 +135,15 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         Release release = getInterProRelease();
         entry.addRelease(release);
 
-        entryKVDAO.persist(entryAc, entry); //persist entry with all xrefs
+        //the entryKVDAO is inefficient creates 400Gb of data
+        //entryKVDAO.persist(entryAc, entry); //persist entry with all xrefs
 
-        Set<GoXref> emptyGoXrefs = new HashSet<>();
-        Set<PathwayXref> emptyPathwayXrefs = new HashSet<>();
-        Entry simpleEntry = buildEntry(entryAc, shortName, type, name, emptyGoXrefs, emptyPathwayXrefs);
-        simpleEntry.addRelease(release);
+        //Set<GoXref> emptyGoXrefs = new HashSet<>();
+        //Set<PathwayXref> emptyPathwayXrefs = new HashSet<>();
+        //Entry simpleEntry = buildEntry(entryAc, shortName, type, name, emptyGoXrefs, emptyPathwayXrefs);
+        //simpleEntry.addRelease(release);
 
-        entries.add(simpleEntry);  //add the entry without refs
+        entries.add(entry);  //add the entry without refs
 
 
         //persistence step
