@@ -21,6 +21,12 @@
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
     <!-- Common DAO Beans (where possible, make them more local to where they are required) -->
+
+    <bean id="entryKVDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.EntryKVDAOImpl">
+        <property name="dbStore" ref="kvStoreEntry"/>
+    </bean>
+
     <bean id="proteinDAO"
           class="uk.ac.ebi.interpro.scan.persistence.ProteinDAOImpl">
         <property name="proteinsNotInLookupDB" ref="kvStoreProteinsNotInLookup"/>
@@ -92,6 +98,12 @@
       </bean>
 
     -->
+
+    <bean id="kvStoreEntry"
+          class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">
+        <property name="dbName" value="entryDB"/>
+        <property name="dbPath" value="${kvstore.entrydb.path}"/>
+    </bean>
 
     <bean id="kvStoreProteins"
           class="uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore">

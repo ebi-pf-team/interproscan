@@ -3,24 +3,36 @@ package uk.ac.ebi.interpro.scan.management.model.implementations;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.*;
+import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
+import uk.ac.ebi.interpro.scan.persistence.installer.Entry2GoDAO;
+import uk.ac.ebi.interpro.scan.persistence.installer.Entry2PathwayDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonParser;
+
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,12 +43,21 @@ public class PrepareForOutputStep extends Step {
     //DAOs
     private ProteinDAO proteinDAO;
     private MatchDAO matchDAO;
+    private EntryKVDAO entryKVDAO;
+
+    private NucleotideSequenceDAO nucleotideSequenceDAO;
 
     final ConcurrentHashMap<Long, Long> allNucleotideSequenceIds = new ConcurrentHashMap<>();
     final ConcurrentHashMap<Long, Boolean> processedNucleotideSequences = new ConcurrentHashMap<>();
     final Set<String> processesReadyForXMLMarshalling = new HashSet<>();
 
-    private NucleotideSequenceDAO nucleotideSequenceDAO;
+    private Map<String, Collection<GoXref>> entry2GoXrefsMap;
+    private Map<String, Collection<PathwayXref>> entry2PathwayXrefsMap;
+
+    private Map<String,  List<String>> gotermsMap;
+    private Map<String,  List<String>> entry2GoTermsMap;
+    private Map<String, List<String>> entry2PathwayMap;
+    private Map<String, List<String>> pathwayMap;
 
     Random random = new Random();
 
@@ -48,6 +69,10 @@ public class PrepareForOutputStep extends Step {
 
     public void setMatchDAO(MatchDAO matchDAO) {
         this.matchDAO = matchDAO;
+    }
+
+    public void setEntryKVDAO(EntryKVDAO entryKVDAO) {
+        this.entryKVDAO = entryKVDAO;
     }
 
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
@@ -85,6 +110,7 @@ public class PrepareForOutputStep extends Step {
         if (bottomProteinId == 1) {
             Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
         }
+<<<<<<< HEAD
         //exponentioanl backoff setup for failure
         int proteinSetFactor = topProteinId.intValue() * 2000 / 1000; //use the input range size
         int randomInt =  random.nextInt(60 - 30) + 30;  // random number betwen 60 and 120 seconds
@@ -97,9 +123,29 @@ public class PrepareForOutputStep extends Step {
             Utilities.verboseLog(10, "randomMilliSeconds: " + randomMilliSeconds + " ExponentionalBackOffTime: " + exponentionalBackOffTime);
             Utilities.sleep(exponentionalBackOffTime);
             Utilities.verboseLog(10, "Backed off for : " + exponentionalBackOffTime);
+=======
+
+        if (entryKVDAO == null) {
+            Utilities.verboseLog(30, "entryKVDAO is null ");
+        }else {
+            Utilities.verboseLog(30, entryKVDAO.toString());
+            if (entryKVDAO.getKvStoreEntry() != null) {
+                Utilities.verboseLog(30,  "dbname :" + entryKVDAO.getKvStoreEntry().getDbName());
+            }else {
+                Utilities.verboseLog(30, "entryKVDAO.getKvStoreEntry() is null  ");
+            }
+>>>>>>> test_pathways
         }
 
         try {
+            //get pathway data
+            getPathwayMap();
+            getEntry2PathwayMap();
+
+            getGoTermsMap();
+            getEntry2GoTermsMap();
+
+            //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
             simulateMarshalling(stepInstance, "p", temporaryFileDirectory);
             Utilities.verboseLog(1100, "Pre-marshall the nucleotide sequences ...");
@@ -380,6 +426,40 @@ public class PrepareForOutputStep extends Step {
                         //match.getSignature().getEntry();
                         //try update with cross refs etc
                         //updateMatch(match);
+                        Entry simpleEntry = match.getSignature().getEntry();
+                        if ( simpleEntry != null) {
+                            String entryAc = simpleEntry.getAccession();
+                            if (entryAc.equalsIgnoreCase("IPR002072")){
+                                Utilities.verboseLog(30, "Print simpleEntry " + simpleEntry.toString() );
+                                if (! simpleEntry.getPathwayXRefs().isEmpty()) {
+                                    Utilities.verboseLog(30, " simple pathways: " + simpleEntry.getPathwayXRefs().iterator().next());
+                                } else {
+                                    Utilities.verboseLog(30, " pathways are empty");
+                                }
+                            }
+                            //entryKVDAO.persist(entryAc, simpleEntry);
+                            //Utilities.verboseLog(30, "Persisted Entry - " + entryAc);
+                            try {
+                                Entry entry =  updateEntryXrefs(simpleEntry);
+                                //Entry entry = entryKVDAO.getEntry(entryAc);
+                                match.getSignature().setEntry(entry);
+                                //match.getSignature().setEntry(entry);
+                                if (entryAc.equalsIgnoreCase("IPR002072")) {
+                                    Utilities.verboseLog(30, "Print Entry " + entry.getAccession() +
+                                            " pathwayId size: " + entry.getPathwayXRefs().size() +
+                                            " new kvs pathways: " + entry.getPathwayXRefs().iterator().next());
+                                }
+                            } catch (Exception e) {
+                                LOGGER.warn("Could get the entry in the kvstore " + entryAc);
+                                e.printStackTrace();
+                            }
+                        }
+//                        try {
+//                            Set<Entry> allentriesInDb = entryKVDAO.getEntries();
+//                            Utilities.verboseLog(30, " allentriesInDb- " + allentriesInDb.size());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
                         protein.addMatch(match);
                         matchCount++;
                     }
@@ -708,6 +788,228 @@ public class PrepareForOutputStep extends Step {
             }
         }
     }
+
+    public  void getPathwayMap() {
+        //Map<String, String> pathwayMap = new HashMap<>();
+
+        try {
+            FileInputStream is = new FileInputStream(new File("work/kvs/idb/pathways.json"));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            Map<String, List<String>> jsonMap = new HashMap();
+            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
+            });
+            pathwayMap = jsonMap;
+
+            for (String key : jsonMap.keySet()) {
+                List<String> pathwayLine = (List<String>) jsonMap.get(key);
+                Utilities.verboseLog(30," pathwayLine: " + key +  " -" + pathwayLine);
+                break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public  void getEntry2PathwayMap() {
+        //Map<String, String> entry2PathwayMap = new HashMap<>();
+
+        try {
+            FileInputStream is = new FileInputStream(new File("work/kvs/idb/pathways.ipr.json"));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            Map<String, List<String>> jsonMap = new HashMap();
+            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
+            });
+            entry2PathwayMap = jsonMap;
+
+            for (String key : jsonMap.keySet()) {
+                List<String> pathwayLine = (List<String>) jsonMap.get(key);
+                Utilities.verboseLog(30," entry2pathway: " + key + " = " + pathwayLine);
+                break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public  void getGoTermsMap() {
+        try {
+            FileInputStream is = new FileInputStream(new File("work/kvs/idb/goterms.json"));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            Map<String, List<String>> jsonMap = new HashMap();
+            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
+            });
+            gotermsMap = jsonMap;
+
+            for (String key : gotermsMap.keySet()) {
+                List<String> gotermLine = (List<String>) gotermsMap.get(key);
+                Utilities.verboseLog(30," gotermLine: " + key +  " -" + gotermLine);
+                break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public  void getEntry2GoTermsMap(){
+
+        try {
+            FileInputStream is = new FileInputStream(new File("work/kvs/idb/goterms.ipr.json"));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            Map<String, List<String>> jsonMap = new HashMap();
+            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
+            });
+            entry2GoTermsMap = jsonMap;
+
+            for (String key : entry2GoTermsMap.keySet()) {
+                List<String> gotermLine = (List<String>) entry2GoTermsMap.get(key);
+                Utilities.verboseLog(30," entry2GoTermsMap: " + key + " = " + gotermLine);
+                break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public Entry  updateEntryXrefs(Entry entry) {
+        String entryAc = entry.getAccession();
+        Set<GoXref> goXrefs = (Set<GoXref>) getGoXrefsByEntryAc(entryAc); //entry2GoXrefsMap.get(entryAc);
+        Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) getPathwayXrefsByEntryAc(entryAc); //(Set<PathwayXref>) entry2PathwayXrefsMap.get(entryAc);
+
+        return new Entry.Builder(entryAc)
+                .goCrossReferences(goXrefs)
+                .pathwayCrossReferences(pathwayXrefs)
+                .updateXrefs(entry);
+    }
+
+    public Collection<GoXref> getGoXrefsByEntryAc(String entryAc) {
+        Set<GoXref> result = new HashSet<>();
+        try {
+            if (! entry2GoTermsMap.containsKey(entryAc)) {
+                Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
+                return result;
+            }
+            List<String> goIDs = (ArrayList<String>) entry2GoTermsMap.get(entryAc);
+            Utilities.verboseLog(30, "Go-terms list for  " + entryAc + ": " + goIDs.size());
+            for (String goId: goIDs) {
+                //i2g.entry_ac, g.go_id, g.name, g.category
+                List<String> goLine = (List<String>) gotermsMap.get(goId);
+                String goKey = goLine.get(1);
+                String goName = goLine.get(2);
+                String goCategoryCode = goLine.get(3);
+                GoCategory category = GoCategory.parseNameCode(goCategoryCode);
+                GoXref goXref =  new GoXref(goId, goName, category);
+
+                result.add(goXref);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
+        }
+        return result;
+
+    }
+
+
+    //FIXME calling this in multiple threads might cause a problem
+    /*
+    public Map<String, Collection<GoXref>> getEntry2GoXrefsMap() {
+        if (entry2GoXrefsMap == null) {
+            if (checkIfDAOAreUsable()) {
+                LOGGER.info("Loading entry to go xrefs...");
+                entry2GoXrefsMap = entry2GoDAO.getAllGoXrefs();
+                if (entry2GoXrefsMap == null) {
+                    throw new RuntimeException("Could not load any entry to go mappings from external database!");
+                }
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(entry2GoXrefsMap.size() + " mappings loaded.");
+                }
+                Utilities.printMemoryUsage("PrepareForOutPut");
+            }
+        }
+        return entry2GoXrefsMap;
+    }
+
+
+     */
+
+    /*
+    void test() {
+        result = this.jdbcTemplate
+                .query("SELECT i2g.entry_ac, g.go_id, g.name, g.category from INTERPRO.INTERPRO2GO i2g JOIN go.terms@GOAPRO g ON i2g.go_id = g.go_id WHERE i2g.entry_ac = :entry_ac",
+                        namedParameters,
+                        new RowMapper<GoXref>() {
+                            public GoXref mapRow(ResultSet rs, int rowNum) throws SQLException {
+                                String identifier = rs.getString("go_id");
+                                String name = rs.getString("name");
+                                String nameCode = rs.getString("category");
+                                GoCategory category = GoCategory.parseNameCode(nameCode);
+                                return new GoXref(identifier, name, category);
+                            }
+                        });
+    }
+
+
+     */
+    public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
+        Set<PathwayXref> result = new HashSet<>();
+        try {
+            if (! entry2PathwayMap.containsKey(entryAc)) {
+                Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
+                return result;
+            }
+            List<String> pathwayIDs = (ArrayList<String>) entry2PathwayMap.get(entryAc);
+            Utilities.verboseLog(30, "pathway list for  " + entryAc + ": " + pathwayIDs.size());
+            for (String pathwayId: pathwayIDs) {
+                List<String> pathwayLine = (List<String>) pathwayMap.get(pathwayId);
+                String pathwayKey = pathwayLine.get(2);
+
+                String dbcode = pathwayLine.get(1);
+                String dbName = decodeDbCode(dbcode);
+                String desc = pathwayLine.get(3);
+
+                PathwayXref pxref = new PathwayXref(pathwayId, desc, dbName);
+                result.add(pxref);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
+                    "or is wrong configured. For more info take a look at the stack trace!", e);
+        }
+        return result;
+    }
+
+    /*
+    public Map<String, Collection<PathwayXref>> getEntry2PathwayXrefsMap() {
+        if (entry2PathwayXrefsMap == null) {
+            if (checkIfDAOAreUsable()) {
+                LOGGER.info("Loading entry to pathway xrefs...");
+                entry2PathwayXrefsMap = entry2PathwayDAO.getAllPathwayXrefs();
+                if (entry2PathwayXrefsMap == null) {
+                    throw new RuntimeException("Could not load any entry to pathway mappings from external database!");
+                }
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(entry2PathwayXrefsMap.size() + " mappings loaded.");
+                }
+                Utilities.printMemoryUsage("PrepareForOutPut");
+            }
+        }
+        return entry2PathwayXrefsMap;
+    }
+
+     */
+
+    private String decodeDbCode(String dbCode) {
+        if (dbCode != null && dbCode.length() > 0) {
+            return PathwayXref.PathwayDatabase.parseDatabaseCode(dbCode.charAt(0)).toString();
+        }
+        return null;
+    }
+
 
     /**
      * get the proteins in range - expensive in terms of memeory usage, so need benachmarking

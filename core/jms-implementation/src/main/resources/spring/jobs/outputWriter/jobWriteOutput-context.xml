@@ -26,6 +26,7 @@
         <property name="retries" value="6"/>
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="matchDAO" ref="matchDAO"/>
+        <property name="entryKVDAO" ref="entryKVDAO"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
         <property name="kvStoreDelayMilliseconds" value="${kvstore.delay.milliseconds}"/>
 

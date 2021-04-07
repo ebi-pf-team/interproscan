@@ -31,6 +31,7 @@
     <bean id="entryRowCallbackHandler" class="uk.ac.ebi.interpro.scan.persistence.installer.EntryRowCallbackHandler">
         <!--Hibernate DAOs-->
         <property name="entryDAO" ref="entryDAO"/>
+        <property name="entryKVDAO" ref="entryKVDAO"/>
         <property name="signatureDAO" ref="signatureDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
         <!--JDBC DAOs-->
