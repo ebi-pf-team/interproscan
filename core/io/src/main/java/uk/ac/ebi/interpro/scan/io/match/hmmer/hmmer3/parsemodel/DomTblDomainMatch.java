@@ -147,6 +147,35 @@ public class DomTblDomainMatch implements Serializable {
 //        this.acc = sequenceDomainMatch.getAcc();
     }
 
+    public DomTblDomainMatch(String targetIdentifier, String queryName,
+            double sequenceEValue, double sequenceScore, double sequenceBias,
+            double domainCEvalue, double domainIEvalue, double domainScore, double domainBias,
+            int domainHmmfrom, int domainHmmto, int domainAliFrom, int domainAliTo,
+            int domainEnvFrom, int domainEnvTo, double domainAccuracy) {
+
+            this.targetIdentifier = targetIdentifier;
+            queryName = queryName;
+
+        //signatureLibraryRelease,
+        this.sequenceEValue = sequenceEValue;
+        this.sequenceScore = sequenceScore;
+        this.sequenceBias = sequenceBias;
+
+        this.domainCEvalue = domainCEvalue;
+        this.domainIEvalue = domainIEvalue;
+        this.domainScore = domainScore;
+        this.domainBias = domainBias;
+
+        this.domainHmmfrom = domainHmmfrom;
+        this.domainHmmto = domainHmmto;
+        this.domainAliFrom = domainAliFrom;
+        this.domainAliTo = domainAliTo;
+        this.domainEnvFrom = domainEnvFrom;
+        this.domainEnvTo = domainEnvTo;
+
+        this.domainAccuracy = domainAccuracy;
+    }
+
     public String getTargetIdentifier() {
         return targetIdentifier;
     }
