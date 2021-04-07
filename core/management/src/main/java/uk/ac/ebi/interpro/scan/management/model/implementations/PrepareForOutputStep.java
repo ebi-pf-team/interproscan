@@ -110,7 +110,7 @@ public class PrepareForOutputStep extends Step {
         if (bottomProteinId == 1) {
             Utilities.printMemoryUsage("at start of preparing  [" + proteinRange + " proteins");
         }
-<<<<<<< HEAD
+
         //exponentioanl backoff setup for failure
         int proteinSetFactor = topProteinId.intValue() * 2000 / 1000; //use the input range size
         int randomInt =  random.nextInt(60 - 30) + 30;  // random number betwen 60 and 120 seconds
@@ -119,11 +119,11 @@ public class PrepareForOutputStep extends Step {
         int exponentionalBackOffTime = randomMilliSeconds * ( stepInstance.getExecutions().size()  - 1);
         Utilities.verboseLog(10, "How many executions  of this Step have we done before including this Step: "
                 + stepInstance.getExecutions().size());
-        if (exponentionalBackOffTime > 0){
+        if (exponentionalBackOffTime > 0) {
             Utilities.verboseLog(10, "randomMilliSeconds: " + randomMilliSeconds + " ExponentionalBackOffTime: " + exponentionalBackOffTime);
             Utilities.sleep(exponentionalBackOffTime);
             Utilities.verboseLog(10, "Backed off for : " + exponentionalBackOffTime);
-=======
+        }
 
         if (entryKVDAO == null) {
             Utilities.verboseLog(30, "entryKVDAO is null ");
@@ -134,7 +134,6 @@ public class PrepareForOutputStep extends Step {
             }else {
                 Utilities.verboseLog(30, "entryKVDAO.getKvStoreEntry() is null  ");
             }
->>>>>>> test_pathways
         }
 
         try {
