@@ -29,8 +29,6 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
         super(path);
         this.proteinSequence = proteinSequence;
         this.tsvWriter = new TSVWriter(super.fileWriter);
-        //familyRecords = parseCathFamilyFile();
-        //System.out.println("familyRecords: # " + familyRecords.keySet().size());
     }
 
 
@@ -184,14 +182,13 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
     public Map<String, String> parseCathFamilyFile() throws IOException {
 
-
         final Map<String, String> records = new HashMap<>();
 
         // Some example lines to parse:
         // 3.30.56.60      "XkdW-like"
         //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
         //3.90.330.10     "Nitrile Hydratase; Chain A"
-        String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+        String cathFamilyFile = "data/members/gene3d/4.3.0/cath-family-names.txt";
 
         BufferedReader reader = null;
         try {

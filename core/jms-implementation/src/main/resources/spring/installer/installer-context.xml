@@ -35,6 +35,7 @@
                     <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
                     <property name="modelFiles" value="file:${gene3d.model2sf_map.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="cathFamilyFile" value="${gene3d.cath.family.names}"/>
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
 

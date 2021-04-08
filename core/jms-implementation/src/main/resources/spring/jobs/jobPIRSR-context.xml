@@ -19,7 +19,7 @@
         <property name="maxProteins" value="${analysis.max.sequence.count.PIRSR}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
-        <!--<property name="doRunLocally" value="true"/>-->
+        <property name="doRunLocally" value="true"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
