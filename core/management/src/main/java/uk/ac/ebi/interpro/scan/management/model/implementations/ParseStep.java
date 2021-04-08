@@ -94,7 +94,7 @@ public abstract class ParseStep<T extends RawMatch> extends Step {
 
         InputStream is = null;
         final String fileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputFileTemplate());
-        final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputOneFileTemplate());
+        //final String outputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, getOutputOneFileTemplate());
         LOGGER.debug("Output fileName: " + fileName);
         try {
             is = new FileInputStream(fileName);
