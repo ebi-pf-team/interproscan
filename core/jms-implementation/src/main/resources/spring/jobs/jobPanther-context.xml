@@ -66,8 +66,8 @@
         <property name="dependsUpon" ref="stepPantherWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
-        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
-        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer33.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.panther} ${hmmer3.hmmsearch.cpu.switch.panther}"/>
         <property name="fullPathToHmmFile" value="${panther.hmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
