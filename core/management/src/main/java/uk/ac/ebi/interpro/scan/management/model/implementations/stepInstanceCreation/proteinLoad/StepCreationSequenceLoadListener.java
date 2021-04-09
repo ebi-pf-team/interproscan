@@ -226,18 +226,20 @@ public class StepCreationSequenceLoadListener
                 LOGGER.debug("Have a matchLookupJob Job.");
                 Utilities.verboseLog(1100, "Have a matchLookupJob Job: " + matchLookupJob);
 
-                //round this number to nearest thousand
-                if (workerNumber > 8){
-                    //until memoryleak is fixed restrict this to 8
+               //TODO to remove after the memory leak is fixed
+//                if (workerNumber > 8){
+//                    //until memoryleak is fixed restrict this to 8
                     Utilities.verboseLog(30, "Original workerNumber =  " + workerNumber + " for " + topProteinId + " proteins" );
-                    workerNumber = 8;
-                }
+//                    workerNumber = 8;
+//                }
+
                 int rawMaxProteins = (int) (topProteinId / workerNumber);
 
                 if (rawMaxProteins < 1) {
                     Utilities.verboseLog(120, "rawMaxProteins <= 1, rawMaxProteins for matchLookup:- " + rawMaxProteins);
                     rawMaxProteins = 1;
                 }
+                //round this number to nearest 100
                 int maxProteins = (int) (Math.ceil(rawMaxProteins / 100.0) * 100); // to the nearest 100
                 Utilities.verboseLog(30, "workerNumber =  " + workerNumber + ", maxProteins for matchLookup:- " + maxProteins);
                 for (Step step : matchLookupJob.getSteps()) {

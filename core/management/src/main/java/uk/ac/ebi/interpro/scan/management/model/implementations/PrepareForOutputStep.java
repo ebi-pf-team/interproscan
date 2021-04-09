@@ -54,10 +54,10 @@ public class PrepareForOutputStep extends Step {
     private Map<String, Collection<GoXref>> entry2GoXrefsMap;
     private Map<String, Collection<PathwayXref>> entry2PathwayXrefsMap;
 
-    private Map<String,  List<String>> gotermsMap;
-    private Map<String,  List<String>> entry2GoTermsMap;
-    private Map<String, List<String>> entry2PathwayMap;
-    private Map<String, List<String>> pathwayMap;
+    private ConcurrentHashMap<String,  List<String>> gotermsMap;
+    private ConcurrentHashMap<String,  List<String>> entry2GoTermsMap;
+    private ConcurrentHashMap<String, List<String>> entry2PathwayMap;
+    private ConcurrentHashMap<String, List<String>> pathwayMap;
 
     Random random = new Random();
 
@@ -141,6 +141,7 @@ public class PrepareForOutputStep extends Step {
             getPathwayMap();
             getEntry2PathwayMap();
 
+            //get goterms
             getGoTermsMap();
             getEntry2GoTermsMap();
 
@@ -791,6 +792,10 @@ public class PrepareForOutputStep extends Step {
     public  void getPathwayMap() {
         //Map<String, String> pathwayMap = new HashMap<>();
 
+        if (pathwayMap != null){
+            return;
+        }
+
         try {
             FileInputStream is = new FileInputStream(new File("work/kvs/idb/pathways.json"));
             ObjectMapper mapper = new ObjectMapper();
@@ -798,7 +803,7 @@ public class PrepareForOutputStep extends Step {
             Map<String, List<String>> jsonMap = new HashMap();
             jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
             });
-            pathwayMap = jsonMap;
+            pathwayMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : jsonMap.keySet()) {
                 List<String> pathwayLine = (List<String>) jsonMap.get(key);
@@ -814,6 +819,9 @@ public class PrepareForOutputStep extends Step {
     public  void getEntry2PathwayMap() {
         //Map<String, String> entry2PathwayMap = new HashMap<>();
 
+        if (entry2PathwayMap != null){
+            return;
+        }
         try {
             FileInputStream is = new FileInputStream(new File("work/kvs/idb/pathways.ipr.json"));
             ObjectMapper mapper = new ObjectMapper();
@@ -821,7 +829,7 @@ public class PrepareForOutputStep extends Step {
             Map<String, List<String>> jsonMap = new HashMap();
             jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
             });
-            entry2PathwayMap = jsonMap;
+            entry2PathwayMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : jsonMap.keySet()) {
                 List<String> pathwayLine = (List<String>) jsonMap.get(key);
@@ -835,6 +843,10 @@ public class PrepareForOutputStep extends Step {
     }
 
     public  void getGoTermsMap() {
+
+        if (gotermsMap != null){
+            return;
+        }
         try {
             FileInputStream is = new FileInputStream(new File("work/kvs/idb/goterms.json"));
             ObjectMapper mapper = new ObjectMapper();
@@ -842,7 +854,7 @@ public class PrepareForOutputStep extends Step {
             Map<String, List<String>> jsonMap = new HashMap();
             jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
             });
-            gotermsMap = jsonMap;
+            gotermsMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : gotermsMap.keySet()) {
                 List<String> gotermLine = (List<String>) gotermsMap.get(key);
@@ -855,6 +867,9 @@ public class PrepareForOutputStep extends Step {
     }
 
     public  void getEntry2GoTermsMap(){
+        if (entry2GoTermsMap != null){
+            return;
+        }
 
         try {
             FileInputStream is = new FileInputStream(new File("work/kvs/idb/goterms.ipr.json"));
@@ -863,7 +878,7 @@ public class PrepareForOutputStep extends Step {
             Map<String, List<String>> jsonMap = new HashMap();
             jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
             });
-            entry2GoTermsMap = jsonMap;
+            entry2GoTermsMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : entry2GoTermsMap.keySet()) {
                 List<String> gotermLine = (List<String>) entry2GoTermsMap.get(key);
