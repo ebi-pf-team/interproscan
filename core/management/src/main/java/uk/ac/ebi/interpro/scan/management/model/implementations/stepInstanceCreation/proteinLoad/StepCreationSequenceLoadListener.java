@@ -350,6 +350,7 @@ public class StepCreationSequenceLoadListener
                             LOGGER.debug("Job for which StepInstances are being created: " + job.getId());
                         }
 
+                        Utilities.verboseLog(30, "if job.isDoRunLocally() || idsWithoutLookupHit != null || (!useMatchLookupService) : " + job.getId());
                         Utilities.verboseLog(1100, "Job for which StepInstances are being created: " + job.getId());
                         for (Step step : job.getSteps()) {
                             if (step.isCreateStepInstancesForNewProteins()) {
