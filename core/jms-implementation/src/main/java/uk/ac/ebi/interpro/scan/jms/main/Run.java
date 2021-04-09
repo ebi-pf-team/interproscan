@@ -1728,8 +1728,8 @@ public class Run extends AbstractI5Runner {
     }
     public static void configureKVStoreEntry(LevelDBStore kvStoreEntry, String tempDir, boolean entryDBInitialSetup) {
         if (entryDBInitialSetup){
-            System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
-            System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
+            //System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
+            //System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
             String kvstoreBase = kvStoreEntry.getDbPath();
             String kvStoreEntryDBPath = kvstoreBase + File.separator + kvStoreEntry.getDbName();
             try {
@@ -1739,15 +1739,15 @@ public class Run extends AbstractI5Runner {
                 e.printStackTrace();
             }
             kvStoreEntry.setLevelDBStore(kvStoreEntryDBPath);
-            System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
-                    " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
+            //System.out.println(Utilities.getTimeNow() + " kvStoreEntryDBPath: " + kvStoreEntryDBPath +
+            //        " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
         } else {
-            System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
-            System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
+            //System.out.println(Utilities.getTimeNow() + " getDbPath: " + kvStoreEntry.getDbPath());
+            //System.out.println(Utilities.getTimeNow() + " getDbName: " + kvStoreEntry.getDbName());
             String kvstoreInstalledBase = kvStoreEntry.getDbPath();
             String kvStoreInstalledEntryDBPath = kvstoreInstalledBase + File.separator + kvStoreEntry.getDbName();
 
-            System.out.println(Utilities.getTimeNow() + " kvStoreInstalledEntryDBPath: " + kvStoreInstalledEntryDBPath);
+            //System.out.println(Utilities.getTimeNow() + " kvStoreInstalledEntryDBPath: " + kvStoreInstalledEntryDBPath);
             String kvstoreWorkDir = "kvstore";
             String kvstoreWorkBase = tempDir + File.separator + kvstoreWorkDir;
             String kvStoreWorkEntryDBPath = kvstoreWorkBase + File.separator + kvStoreEntry.getDbName();
@@ -1762,8 +1762,8 @@ public class Run extends AbstractI5Runner {
             }
 
             kvStoreEntry.setLevelDBStore(kvStoreWorkEntryDBPath);
-            System.out.println(Utilities.getTimeNow() + " kvStoreWorkEntryDBPath: " + kvStoreWorkEntryDBPath +
-                    " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
+//            System.out.println(Utilities.getTimeNow() + " kvStoreWorkEntryDBPath: " + kvStoreWorkEntryDBPath +
+//                    " kvStoreEntry.getDbPath(): " + kvStoreEntry.getDbPath());
         }
 
     }

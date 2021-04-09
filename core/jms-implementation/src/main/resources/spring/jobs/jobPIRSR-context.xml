@@ -10,7 +10,7 @@
     <bean id="jobPIRSR" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="PIRSR is a database of protein families based on hidden Markov models (HMMs) and Site Rules."/>
         <property name="analysis" value="true"/>
-        <!--<property name="doRunLocally" value="true"/>-->
+        <property name="doRunLocally" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleasePIRSR"/>
     </bean>
 

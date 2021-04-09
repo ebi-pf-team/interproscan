@@ -302,6 +302,14 @@ public class StepCreationSequenceLoadListener
             //else
             Utilities.verboseLog(10, "Now create StepInstances for the regular jobs ... : useMatchLookupService: " + useMatchLookupService
                     + " idsWithoutLookupHit: " + (idsWithoutLookupHit != null));
+
+            Utilities.verboseLog(1100, "Range of protein database IDs for which analysis StepInstances need to be created: " + bottomNewSequenceId + " - " + topNewSequenceId);
+            Utilities.verboseLog(1100, "Range of protein database IDs for which NO StepInstances need to be created: " + bottomPrecalculatedSequenceId + " - " + topPrecalculatedSequenceId);
+            Utilities.verboseLog(1100, "Range of protein database IDs for which the COMPLETION StepInstances need to be created: " + bottomProteinId + " - " + topProteinId);
+
+            Utilities.verboseLog(10, "bottomProteinId : " + bottomProteinId + " topProteinId : " + topProteinId  +
+                   " bottomNewSequenceId: " + bottomNewSequenceId + " topNewSequenceId: " +  topNewSequenceId +
+                   " bottomPrecalculatedSequenceId: " + bottomPrecalculatedSequenceId + " topPrecalculatedSequenceId: " + topPrecalculatedSequenceId);
             double analysisMaxCountMultiplier = 1;
             if (bottomNewSequenceId != null && topNewSequenceId != null) {
                 if (!useMatchLookupService) {
@@ -339,12 +347,16 @@ public class StepCreationSequenceLoadListener
                     Utilities.verboseLog(120,"analysisMaxCountMultiplier :  " + analysisMaxCountMultiplier + " idsWithoutLookupHitSize: " + idsWithoutLookupHitSize);
                 }
 
+                Utilities.verboseLog(30, "Loop through the list of jobs  :  " + jobs.getJobList().size());
+                Utilities.verboseLog(30, "Loop through the list of jobs verbose  :  " + jobs.getJobList().toString());
                 for (Job job : jobs.getJobList()) {
                     //Only create new step instances for analysis which aren't integrated in the lookup service
                     //These jobs are flagged with 'doRunLocally'=TRUE
                     //or when we have idsWithoutLookupHit
                     //or when we are not using the lookup service
 
+                    Utilities.verboseLog(30, "Considering " + job.getLibraryRelease().getLibrary().getName() + " do runlocally: " +
+                            job.isDoRunLocally());
                     if (job.isDoRunLocally() || idsWithoutLookupHit != null || (!useMatchLookupService)) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Job for which StepInstances are being created: " + job.getId());

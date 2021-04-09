@@ -29,7 +29,8 @@ fi
 
 # Check Java version is supported
 
-JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | head -n 1 | awk -F '"' '{print $2}' )
+#JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | head -n 1 | awk -F '"' '{print $2}' )
+JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | sed -n '/version/p' | awk -F '"' '{print $2}' )
 JAVA_MAJOR_VERSION_FULL="$( cut -d ';' -f 1 <<< "$JAVA_VERSION" )"
 JAVA_MAJOR_VERSION="${JAVA_MAJOR_VERSION_FULL%%.*}"
 if [[ "${JAVA_MAJOR_VERSION}" -lt "11" ]];
@@ -40,7 +41,7 @@ then
     exit 1
 fi
 
-python initial_setup.py
+python3 initial_setup.py
 
 "$JAVA" \
  -XX:ParallelGCThreads=8 \
