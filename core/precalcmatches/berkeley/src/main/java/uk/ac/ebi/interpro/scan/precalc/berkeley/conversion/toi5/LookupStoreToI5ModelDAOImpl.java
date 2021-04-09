@@ -313,14 +313,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                                     Utilities.verboseLog(50, lookup2IdRunID + " i5 Lookup Converted Match :-  " + i5Match.getId()); //avoid using complete objects in verbose
 
                                     prot.addMatch(i5Match);
-                                    //*****Initialize goxrefs and pathwayxrefs collections *******
-                                    /*
-                                    Hibernate.initialize(i5Match.getSignature().getEntry().getPathwayXRefs());
-                                    Hibernate.initialize(i5Match.getSignature().getEntry().getGoXRefs());
-                                    i5Match.getSignature().getEntry().getPathwayXRefs().size();
-                                    i5Match.getSignature().getEntry().getGoXRefs().size();
 
-                                    */
                                     Set<Match> matchSet = new HashSet<>();
                                     updateMatch(i5Match);
                                     matchSet.add(i5Match);

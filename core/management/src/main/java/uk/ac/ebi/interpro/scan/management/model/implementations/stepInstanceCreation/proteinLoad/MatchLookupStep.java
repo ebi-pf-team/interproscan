@@ -275,64 +275,9 @@ public class MatchLookupStep extends Step implements StepInstanceCreatingStep {
             e.printStackTrace();
         }
 
-
-
         Utilities.verboseLog(110, " Match Lookup Step  "  + proteinRange + "  - done");
     }
 
-
-    /**
-     *
-     * @param analysisJobMap
-     */
-    /*
-    private void lookupProteins(StepInstance stepInstance, Map<String, SignatureLibraryRelease> analysisJobMap) {
-        if (proteinsAwaitingPrecalcLookup.size() > 0) {
-            final boolean usingLookupService = precalculatedProteinLookup != null;
-            if (! usingLookupService){
-                proteinInsertBatchSize = proteinInsertBatchSizeNoLookup;
-            }
-
-
-            final Set<Protein> localPrecalculatedProteins = (usingLookupService)
-                    ? precalculatedProteinLookup.getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap)
-                    : null;
-
-
-            //Set<Protein> localPrecalculatedProteins = proteinsAwaitingPrecalcLookup;
-
-//            if(proteinLookup.isAnalysisVersionConsistent(analysisJobMap)){
-//
-//            }
-
-            // Put precalculated proteins into a Map of MD5 to Protein;
-            if (localPrecalculatedProteins != null) {
-                Utilities.verboseLog(1100, "We have precalculated proteins: " +  localPrecalculatedProteins.size());
-                final Map<String, Protein> md5ToPrecalcProtein = new HashMap<>(localPrecalculatedProteins.size());
-                for (Protein precalc : localPrecalculatedProteins) {
-                    md5ToPrecalcProtein.put(precalc.getMd5(), precalc);
-                }
-
-                for (Protein protein : proteinsAwaitingPrecalcLookup) {
-                    if (md5ToPrecalcProtein.keySet().contains(protein.getMd5())) {
-                        precalculatedProteins.add(md5ToPrecalcProtein.get(protein.getMd5()));
-                    } else {
-                        addProteinToBatch(protein);
-                    }
-                }
-            } else {
-                //there are no matches or we are not using the lookup match service
-                Utilities.verboseLog(1100, "There are NO matches for these proteins: " +  proteinsAwaitingPrecalcLookup.size());
-                for (Protein protein : proteinsAwaitingPrecalcLookup) {
-                    addProteinToBatch(protein);
-                }
-            }
-            // All dealt with, so clear.
-            proteinsAwaitingPrecalcLookup.clear();
-        }
-    }
-
-*/
 
     /**
      * Adds a protein to the batch of proteins to be persisted.  If the maximum

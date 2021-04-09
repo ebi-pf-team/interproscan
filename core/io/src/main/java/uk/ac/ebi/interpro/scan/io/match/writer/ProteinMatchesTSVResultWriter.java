@@ -56,9 +56,14 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
             for (Match match : matches) {
 //                Utilities.verboseLog(1100, "print-match: " + match);
                 final Signature signature = match.getSignature();
+
                 final String signatureAc = signature.getAccession();
                 final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
                 final String analysis = signatureLibrary.getName();
+                //for PIRSR predicted regions without the corrresponding sites dont mean much
+                if (signatureLibrary.getName().equals(SignatureLibrary.PIRSR.getName())){
+                    continue;
+                }
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
                 //if (signatureName != null && signatureName.isBlank() && signatureAc.contains(prefix)) {  TODO revert to blank

@@ -216,10 +216,16 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         public static class Hmmer3Site extends HmmerSite {
 
 
+            @Column (name = "SITE_LABEL")
             private String label;
+
+            @Column (name = "SITE_GROUP")
             private int group;
 
+            @Column //(name = "HMMSTART")
             private int hmmStart;
+
+            @Column //(name = "HMMEND")
             private int hmmEnd;
 
             public String getLabel() {
@@ -259,6 +265,10 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
 
             public Hmmer3Site(String description, Set<SiteLocation> siteLocations) {
                 super(description, siteLocations);
+                this.label = null;
+                this.hmmStart = 0;
+                this.hmmEnd = 0;
+                this.group = 0;
             }
 
             public Hmmer3Site(String description,   String label, int hmmStart,
