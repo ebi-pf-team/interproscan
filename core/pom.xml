@@ -102,7 +102,7 @@
         <hibernate.entity.manager.version>5.4.2.Final</hibernate.entity.manager.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <groovy.version>3.0.4</groovy.version>
-        <guava.version>27.1-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <hsqldb.version>2.4.1</hsqldb.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <!--<mysql.version>5.1.12</mysql.version>-->

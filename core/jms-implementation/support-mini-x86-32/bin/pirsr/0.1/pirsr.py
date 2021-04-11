@@ -61,7 +61,6 @@ def process_row(row, rule):
             next
 
         pass_count = 0
-        
 
         for pos in rule['Groups'][grp]:
             condition = pos['condition']
@@ -80,7 +79,6 @@ def process_row(row, rule):
                       model_id+' on hit '+sequence_id)
                 print(str('hhmfrom: ' +str(hmm_from) + ', hmmStart: ' + str(pos['hmmStart'])) +', hmmEnd: ' + str(pos['hmmEnd']) + ', len map:' + str(len(map))  );
                 target_seq = ''
-
 
             if re.search('\A' + condition + '\Z', target_seq):
                 # we have a pass
@@ -138,9 +136,6 @@ def map_hmm_to_seq(hmm_pos, hmm, seq):
 
     return map
 
-
-
-
 if __name__ == '__main__':
 
     ap = argparse.ArgumentParser()
@@ -157,7 +152,6 @@ if __name__ == '__main__':
     out_file = args['out']
 
     result = {}
-
 
     with open(rules_name) as rulesfile:
         rules_hash = json.load(rulesfile)
@@ -178,8 +172,8 @@ if __name__ == '__main__':
 
     with open(out_file, 'w') as out_file:
         json.dump(result, out_file, indent=4,)
-    hmmer3_output_tsv = hmmer3_raw_output.strip().replace('raw', 'tsv')
-    raw_matches = parsehmmer.print2file(raw_matches, hmmer3_output_tsv)
+    #hmmer3_output_tsv = hmmer3_raw_output.strip().replace('raw', 'tsv')
+    #raw_matches = parsehmmer.print2file(raw_matches, hmmer3_output_tsv)
 
     print ("Done.")
 

@@ -373,7 +373,9 @@ def parse(output_file):
 def print2file(matches, output_file):
   with open(output_file,  "w") as outf:
     for match in matches:
-        hit_info = f"{match[0]}\t{match[1]}\t{match[2]}\t{match[3]}\t{match[4]}\t{match[5]}\t{match[6]}\t{match[7]}\n"
+        #only works in python 3.5 or later, so disable
+        #hit_info = f"{match[0]}\t{match[1]}\t{match[2]}\t{match[3]}\t{match[4]}\t{match[5]}\t{match[6]}\t{match[7]}\n"
+        hit_info = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(match[0], match[1], match[2], match[3], match[4], match[5], match[6], match[7])
         outf.write(hit_info)
 
 
