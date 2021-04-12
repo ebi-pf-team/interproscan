@@ -389,8 +389,9 @@ def print_matches(matches, hmmmode, output_file):
         end = hit['aliend']
         matchalign = hit['matchalign'][0]
         hmmalign = hit['hmmalign'][0]
-        hmmfrom = hit['hmmstart'][0]
+        hmmstart = hit['hmmstart'][0]
         hmmend = hit['hmmend'][0]
-        hit_info = f"{seq_id}\t{hmm_id}\t{hmmfrom}\t{hmmend}\t{hmmalign}\t{start}\t{end}\t{matchalign}\n"
+        #hit_info = f"{seq_id}\t{hmm_id}\t{hmmfrom}\t{hmmend}\t{hmmalign}\t{start}\t{end}\t{matchalign}\n"
+        hit_info = "{seq_id}\t{hmm_id}\t{hmmstart}\t{hmmend}\t{hmmalign}\t{start}\t{end}\t{matchalign}\n".format(seq_id,hmm_id,hmmstart,hmmend,hmmalign,start,end,matchalign)
         outf.write(hit_info)
 
