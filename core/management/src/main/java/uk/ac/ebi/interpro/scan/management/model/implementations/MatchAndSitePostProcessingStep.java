@@ -126,7 +126,7 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
             proteinIdToRawProteinMap.put(rawProtein.getProteinIdentifier(), rawProtein);
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(110, " Retrieved " + rawProteins.size() + " protein(s) to post-process."
+        Utilities.verboseLog(30, " Retrieved " + rawProteins.size() + " protein(s) to post-process."
                 + " A total of " + matchCount + " raw matches.");
 
         Map<String, RawProtein<A>> filteredMatches;
@@ -160,17 +160,17 @@ public class MatchAndSitePostProcessingStep<A extends RawMatch, B extends Match,
                     Utilities.verboseLog(1100, "rep filtered site: " + repRawSite );
                     break;
                 }
-                Utilities.verboseLog(1100, "Filtered rawSites count: " + rawSites.size() );
+                Utilities.verboseLog(30, "Filtered rawSites count: " + rawSites.size() );
             }
         }
-        Utilities.verboseLog(1100, "Filtered matches: " + filteredMatches.values().size() +  "  Filtered sites: " + rawSites.size()  );
+        Utilities.verboseLog(30, "Filtered matches: " + filteredMatches.values().size() +  "  Filtered sites: " + rawSites.size()  );
         filteredMatchAndSiteDAO.persist(filteredMatches.values(), rawSites);
 
         matchCount = 0;
         for (final RawProtein rawProtein : filteredMatches.values()) {
             matchCount += rawProtein.getMatches().size();
         }
-        Utilities.verboseLog(110,  "  " + filteredMatches.size() + " proteins passed through post processing."
+        Utilities.verboseLog(30,  "  " + filteredMatches.size() + " proteins passed through post processing."
                 + " and a total of " + matchCount + " matches PASSED.");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(filteredMatches.size() + " proteins passed through post processing.");

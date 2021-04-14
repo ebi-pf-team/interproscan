@@ -5,6 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+
+import org.springframework.transaction.UnexpectedRollbackException;
+
 import uk.ac.ebi.interpro.scan.jms.activemq.StepExecutionTransaction;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -176,7 +179,7 @@ public class LocalJobQueueListener implements MessageListener {
                 stepName = stepExecution.getStepInstance().getStepId();
                 Long stepId = stepExecution.getStepInstance().getId();
                 String proteinRange = stepExecution.getStepInstance().getBottomProtein() + "-" + stepExecution.getStepInstance().getTopProtein();
-                if ( stepExecution.getStepInstance().getBottomProtein() == null){
+                if (stepExecution.getStepInstance().getBottomProtein() == null) {
                     proteinRange = "000-000";
                 }
                 messageName = stepName + ": " + proteinRange;
@@ -185,7 +188,7 @@ public class LocalJobQueueListener implements MessageListener {
                 final String timeNow1 = Utilities.getTimeNow();
 //                Utilities.verboseLog(1100, "verboseLogLevel :" + Utilities.verboseLogLevel);
 
-                Utilities.verboseLog(0, "thread#: " + threadId + " Processing " + stepName.replace("step", "")  + " JobNo #: " + localCount
+                Utilities.verboseLog(0, "thread#: " + threadId + " Processing " + stepName.replace("step", "") + " JobNo #: " + localCount
                         + " - stepInstanceId = " + stepId + " [" + proteinRange + "]");
                 Utilities.verboseLog(110, "\n stepInstance: " + stepExecution.getStepInstance().toString());
 
@@ -205,7 +208,7 @@ public class LocalJobQueueListener implements MessageListener {
                 LOGGER.debug("thread#: " + threadId + " Finished Processing " + stepName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
 
                 statsUtil.jobFinished(messageName);
-                Utilities.verboseLog(110,"Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
+                Utilities.verboseLog(110, "Finished Processing " + messageName + " JobCount #: " + localCount + " - stepInstanceId = " + stepId);
 
             } catch (Exception e) {
                 //todo: reinstate self termination for remote workers. Disabled to make process more robust for local workers.
@@ -215,8 +218,24 @@ public class LocalJobQueueListener implements MessageListener {
                 LOGGER.error("The exception is :");
                 e.printStackTrace();  //TODO only for testing
 
-                LOGGER.error("2. The exception is :" + e.toString());
+                //LOGGER.error("2. The exception is :" + e.toString());
                 LOGGER.error("StepExecution with errors - stepName: " + stepName);
+
+                //let us try to get the root cause of the exception
+                if (e instanceof UnexpectedRollbackException) {
+                    UnexpectedRollbackException uexc = (UnexpectedRollbackException) e;
+                    //print the root cause
+                    if (uexc.getRootCause() != null) {
+                        uexc.getRootCause().printStackTrace();
+                    }
+                    if (uexc.getMostSpecificCause() != null) {
+                        uexc.getMostSpecificCause().printStackTrace();
+                    }
+                }
+                if(e.getCause() != null) {
+                    e.getCause().printStackTrace();
+                }
+
 
                 // Something went wrong in the execution - try to send back failure
                 // message to the broker.  This in turn may fail if it is the JMS connection

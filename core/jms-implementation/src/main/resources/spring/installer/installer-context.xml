@@ -35,6 +35,7 @@
                     <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
                     <property name="modelFiles" value="file:${gene3d.model2sf_map.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="cathFamilyFile" value="${gene3d.cath.family.names}"/>
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
 
@@ -122,6 +123,14 @@
                     <property name="modelFiles" value="file:${pirsf.sfhmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPIRSF"/>
+                </bean>
+
+		 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PIRSR"/>
+                    <property name="releaseVersionNumber" value="${pirsr.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${pirsr.srhmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPIRSR"/>
                 </bean>
 
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">

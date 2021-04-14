@@ -29,8 +29,6 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
         super(path);
         this.proteinSequence = proteinSequence;
         this.tsvWriter = new TSVWriter(super.fileWriter);
-        //familyRecords = parseCathFamilyFile();
-        //System.out.println("familyRecords: # " + familyRecords.keySet().size());
     }
 
 
@@ -58,9 +56,14 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
             for (Match match : matches) {
 //                Utilities.verboseLog(1100, "print-match: " + match);
                 final Signature signature = match.getSignature();
+
                 final String signatureAc = signature.getAccession();
                 final SignatureLibrary signatureLibrary = signature.getSignatureLibraryRelease().getLibrary();
                 final String analysis = signatureLibrary.getName();
+                //for PIRSR predicted regions without the corrresponding sites dont mean much
+                if (signatureLibrary.getName().equals(SignatureLibrary.PIRSR.getName())){
+                    continue;
+                }
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
                 //if (signatureName != null && signatureName.isBlank() && signatureAc.contains(prefix)) {  TODO revert to blank
@@ -184,14 +187,13 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
     public Map<String, String> parseCathFamilyFile() throws IOException {
 
-
         final Map<String, String> records = new HashMap<>();
 
         // Some example lines to parse:
         // 3.30.56.60      "XkdW-like"
         //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
         //3.90.330.10     "Nitrile Hydratase; Chain A"
-        String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+        String cathFamilyFile = "data/members/gene3d/4.3.0/cath-family-names.txt";
 
         BufferedReader reader = null;
         try {

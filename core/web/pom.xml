@@ -5,7 +5,7 @@
     <parent>
         <artifactId>interproscan</artifactId>
         <groupId>uk.ac.ebi.interpro.scan</groupId>
-        <version>5.50-84.0</version>
+        <version>5.51-85.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,14 +15,13 @@
     <packaging>jar</packaging>
 
     <name>InterProScan Web</name>
-    <version>5.50-84.0</version>
+    <version>5.51-85.0</version>
     <description>InterProScan Web</description>
     <url>http://www.ebi.ac.uk/interpro/</url>
 
     <properties>
-        <!--<jetty.version>9.3.6.v20151106</jetty.version>-->
-<!--        <jetty.version>9.4.16.v20190411</jetty.version>-->
-        <jetty.version>9.4.34.v20201102</jetty.version>
+<!--        <jetty.version>9.4.34.v20201102</jetty.version>-->
+        <jetty.version>11.0.0</jetty.version>
     </properties>
 
     <dependencies>
@@ -30,12 +29,12 @@
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-model</artifactId>
-            <version>5.50-84.0</version>
+            <version>5.51-85.0</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.interpro.scan</groupId>
             <artifactId>interproscan-business</artifactId>
-            <version>5.50-84.0</version>
+            <version>5.51-85.0</version>
         </dependency>
 
         <!--  Spring -->

@@ -15,6 +15,7 @@
     <import resource="jobMobiDBLite-context.xml"/>
     <import resource="jobPanther-context.xml"/>
     <import resource="jobPIRSF-context.xml"/>
+    <import resource="jobPIRSR-context.xml"/>
 
     <import resource="jobPfam-context.xml"/>
     <import resource="jobPhobius-context.xml"/>
@@ -60,6 +61,7 @@
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
                 <ref bean="jobPIRSF" />
+                <ref bean="jobPIRSR" />
                 <ref bean="jobPRINTS-42.0"/>
                 <ref bean="jobPrositeProfiles"/>
                 <ref bean="jobPrositePatterns"/>
@@ -511,6 +513,7 @@
 
     <bean id="finaliseInitialSetupTasks" class="uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks">
         <property name="sequenceLoader" ref="proteinLoader"/>
+        <property name="maxConcurrentThreadsForPrepareOutputStep" value="1"/>
         <!--TODO check -->
         <property name="proteinDAO" ref="proteinDAO"/>
         <!--<property name="proteinsWithoutLookupHit" ref="proteinsWithoutLookupHit"/>-->

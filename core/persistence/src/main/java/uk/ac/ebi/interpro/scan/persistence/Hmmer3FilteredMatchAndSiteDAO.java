@@ -6,8 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawSite;
+import uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawSite;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.*;
 
@@ -174,17 +176,34 @@ abstract class Hmmer3FilteredMatchAndSiteDAO<T extends Hmmer3RawMatch, E extends
             for (E rawSite : rawSites) {
                 if (rawMatch.getModelId().equalsIgnoreCase(rawSite.getModelId())) {
                     if (siteInLocationRange(rawMatch, rawSite)) {
+
                         final String siteTitle = rawSite.getTitle();
                         final String[] residueCoordinateList = rawSite.getResidues().split(",");
                         Set<SiteLocation> siteLocations = new HashSet<>();
-                        for (String residueAnnot : residueCoordinateList) {
-                            residueAnnot = residueAnnot.trim();
-                            String residue = residueAnnot.substring(0, 1);
-                            int position = Integer.parseInt(residueAnnot.substring(1));
-                            SiteLocation siteLocation = new SiteLocation(residue, position, position);
+                        Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site site = null;
+
+                        if (rawMatch.getModelId().startsWith("PIRSR")) {
+                            PIRSRHmmer3RawSite pirsrHmmer3RawSite = (PIRSRHmmer3RawSite) rawSite;
+                            SiteLocation siteLocation = new SiteLocation(pirsrHmmer3RawSite.getResidues(), pirsrHmmer3RawSite.getFirstStart(), pirsrHmmer3RawSite.getLastEnd());
+                            Utilities.verboseLog(30, siteLocation.toString());
                             siteLocations.add(siteLocation);
+                            site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site(
+                                    siteTitle,
+                                    pirsrHmmer3RawSite.getLabel(),
+                                    pirsrHmmer3RawSite.getHmmStart(),
+                                    pirsrHmmer3RawSite.getHmmEnd(),
+                                    pirsrHmmer3RawSite.getGroup(),
+                                    siteLocations);
+                        }else {
+                            for (String residueAnnot : residueCoordinateList) {
+                                residueAnnot = residueAnnot.trim();
+                                String residue = residueAnnot.substring(0, 1);
+                                int position = Integer.parseInt(residueAnnot.substring(1));
+                                SiteLocation siteLocation = new SiteLocation(residue, position, position);
+                                siteLocations.add(siteLocation);
+                            }
+                            site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site(siteTitle, siteLocations);
                         }
-                        Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site site = new Hmmer3MatchWithSites.Hmmer3LocationWithSites.Hmmer3Site(siteTitle, siteLocations);
 
                         hmmerSites.add(site);
                     }

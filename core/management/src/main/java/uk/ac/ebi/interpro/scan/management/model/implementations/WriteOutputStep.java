@@ -775,6 +775,7 @@ public class WriteOutputStep extends Step {
         String analysisJobNames = parameters.get(StepInstanceCreatingStep.ANALYSIS_JOB_NAMES_KEY);
         if (analysisJobNames == null ||
                 analysisJobNames.toLowerCase().contains("cdd") ||
+                analysisJobNames.toLowerCase().contains("pirsr") ||
                 analysisJobNames.toLowerCase().contains("sfld")) {
             final boolean excludeSites = Boolean.TRUE.toString().equals(parameters.get(StepInstanceCreatingStep.EXCLUDE_SITES));
             if (!excludeSites) {

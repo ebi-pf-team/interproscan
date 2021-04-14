@@ -154,13 +154,14 @@ public class Gene3DParseAndPersistOutputStep extends Step {
         Map<String, RawProtein<Gene3dHmmer3RawMatch>> matchData = new HashMap<>();
 
         if (cathResolverRecordMap != null) {
-            Utilities.verboseLog(1100, "cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
+            Utilities.verboseLog(30, "cath-resolve-hits-map-size: " + cathResolverRecordMap.values().size());
             BufferedReader reader = null;
             try {
                 //domTblInputStream = new FileInputStream(domTblOutputFileName);
                 //domainTblLineMatchMap = hmmer3DomTblParser.parse(domTblInputStream);
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(domTblOutputFileName)));
                 int lineNumber = 0;
+                int cathMatches = 0;
                 int domtblMatchCount = 0;
                 String line;
                 String mode = "hmmsearch";
@@ -171,66 +172,92 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                     //use hmmscan output
                     mode = "hmmscan";
                 }
+                Map <String, DomTblDomainMatch> domTblDomainMatches = new HashMap<>();
                 while ((line = reader.readLine()) != null) {
                     lineNumber++;
                     // Look for a domain data line. we may not need this but for now we need to map the cath resolve hits to what is found inthe domtblout
                     Matcher domainDataLineMatcher = DomTblDomainMatch.getDomainDataLineMatcher(line, mode);
                     if (domainDataLineMatcher.matches()) {
-                        domtblMatchCount ++;
+                        domtblMatchCount++;
                         DomTblDomainMatch domTblDomainMatch = new DomTblDomainMatch(domainDataLineMatcher, mode);
-
-//                        String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
+                        //                        String domainLineKey = domTblDomainMatch.getDomTblDominLineKey();
                         String domainLineKey = domTblDomainMatch.getGene3DDomTblDominLineKey(mode);
-
-                        Set<CathResolverRecord> cathResolverRecords = cathResolverRecordMap.get(domainLineKey);
+                        domTblDomainMatches.put(domainLineKey, domTblDomainMatch);
+                    }
+                }
+                for (String domainLineKey: cathResolverRecordMap.keySet()) {
+                    Set<CathResolverRecord> cathResolverRecords = cathResolverRecordMap.get(domainLineKey);
 //                        Utilities.verboseLog(1100, "domainLineKey: " + domainLineKey + "\n"
 //                                + "domTblDomainMatch: " + domTblDomainMatch + "\n"
 //                                + "cathResolverRecord: " + cathResolverRecord + "\n"
 //                                + "mode : " +  "\n");
-                        //the cutoff should be in te properties file
-                        if (cathResolverRecords != null && domTblDomainMatch.getSequenceEValue() < gene3dEvalueCutoff ) {
+                    for (CathResolverRecord cathResolverRecord:cathResolverRecords) {
+                        //get modelId from the Cathresolveoutput
+                        cathMatches ++;
+                        String gene3dModelAccession = cathResolverRecord.getModelId().split("\\-")[0];
+                        String modelAccession = gene3dModelAccession;
 
-                            String modelAccession = domTblDomainMatch.getQueryName();
-                            //1o7jA01-i1
-                            String gene3dModelAccession = modelAccession.split("\\-")[0];
-                            LOGGER.debug("gene3d modelAccession: " + gene3dModelAccession + " from - " + modelAccession);
-                            for (CathResolverRecord cathResolverRecord:cathResolverRecords) {
-                                //get modelId from the Cathresolveoutput
-                                gene3dModelAccession = cathResolverRecord.getModelId().split("\\-")[0];
-                                modelAccession = gene3dModelAccession;
+                        //we dont deal with discontinuous domains currently, or we do??
+                        String[] domainRegions = cathResolverRecord.getResolvedStartsStopsPosition().split(",");
+                        final UUID splitGroup = UUID.randomUUID();
 
-                                //we dont deal with discontinuous domains currently, or we do??
-                                String[] domainRegions = cathResolverRecord.getResolvedStartsStopsPosition().split(",");
-
-                                final UUID splitGroup = UUID.randomUUID();
-
-                                boolean isDiscontinuous = (domainRegions.length > 1);
-
-                                for (String domainRegion : domainRegions) {
-                                    String[] locations = domainRegion.split("-");
-                                    int locationStart = Integer.parseInt(locations[0]);
-                                    int locationEnd = Integer.parseInt(locations[1]);
-
-                                    Gene3dHmmer3RawMatch gene3dHmmer3RawMatch = createRawMatch(signatureLibraryRelease, domTblDomainMatch, cathResolverRecord, modelAccession, locationStart, locationEnd);
-                                    if (isDiscontinuous) {
-                                        gene3dHmmer3RawMatch.setSplitGroup(splitGroup);
-                                    }
-                                    String sequenceIdentifier = gene3dHmmer3RawMatch.getSequenceIdentifier();
-                                    if (matchData.containsKey(sequenceIdentifier)) {
-                                        RawProtein<Gene3dHmmer3RawMatch> rawProtein = matchData.get(sequenceIdentifier);
-                                        rawProtein.addMatch(gene3dHmmer3RawMatch);
-                                    } else {
-                                        RawProtein<Gene3dHmmer3RawMatch> rawProtein = new RawProtein<Gene3dHmmer3RawMatch>(sequenceIdentifier);
-                                        rawProtein.addMatch(gene3dHmmer3RawMatch);
-                                        matchData.put(sequenceIdentifier, rawProtein);
-                                    }
+                        boolean isDiscontinuous = (domainRegions.length > 1);
+                        DomTblDomainMatch domTblDomainMatch = null;
+                        if (domTblDomainMatches.containsKey(domainLineKey))
+                            domTblDomainMatch = domTblDomainMatches.get(domainLineKey);
+                        else {
+                            int minStartPosition = 999999;
+                            int maxEndPosition = 0;
+                            for (String domainRegion : domainRegions) {
+                                String[] locations = domainRegion.split("-");
+                                int locationStart = Integer.parseInt(locations[0]);
+                                if (locationStart < minStartPosition) {
+                                    minStartPosition = locationStart;
+                                }
+                                int locationEnd = Integer.parseInt(locations[1]);
+                                if (locationEnd > maxEndPosition) {
+                                    maxEndPosition = locationEnd;
                                 }
                             }
+                            //
+                            String targetIdentifier = cathResolverRecord.getQueryProteinId();
+                            domTblDomainMatch = new DomTblDomainMatch(targetIdentifier, modelAccession,
+                                    cathResolverRecord.getCondEvalue(), cathResolverRecord.getScore(), 0.0,
+                                    cathResolverRecord.getCondEvalue(), cathResolverRecord.getIndpEvalue(), cathResolverRecord.getScore(),
+                                    0.0,
+                                    0, 0, minStartPosition, maxEndPosition,
+                                    0, 0, 0);
+
+                        }
+                        Utilities.verboseLog(30, cathMatches + " : cathResolverRecord  : " + cathResolverRecord.toString());
+                        //check e-values??
+                        if (domTblDomainMatch.getSequenceEValue() < gene3dEvalueCutoff) {
+                            for (String domainRegion : domainRegions) {
+                                String[] locations = domainRegion.split("-");
+                                int locationStart = Integer.parseInt(locations[0]);
+                                int locationEnd = Integer.parseInt(locations[1]);
+
+                                Gene3dHmmer3RawMatch gene3dHmmer3RawMatch = createRawMatch(signatureLibraryRelease, domTblDomainMatch, cathResolverRecord, modelAccession, locationStart, locationEnd);
+                                if (isDiscontinuous) {
+                                    gene3dHmmer3RawMatch.setSplitGroup(splitGroup);
+                                }
+                                String sequenceIdentifier = gene3dHmmer3RawMatch.getSequenceIdentifier();
+                                if (matchData.containsKey(sequenceIdentifier)) {
+                                    RawProtein<Gene3dHmmer3RawMatch> rawProtein = matchData.get(sequenceIdentifier);
+                                    rawProtein.addMatch(gene3dHmmer3RawMatch);
+                                } else {
+                                    RawProtein<Gene3dHmmer3RawMatch> rawProtein = new RawProtein<Gene3dHmmer3RawMatch>(sequenceIdentifier);
+                                    rawProtein.addMatch(gene3dHmmer3RawMatch);
+                                    matchData.put(sequenceIdentifier, rawProtein);
+                                }
+                            }
+                        } else {
+                            Utilities.verboseLog(30, "DomTblDomainMatch evalue  < gene3dEvalueCutoff: " + domTblDomainMatch.toString());
                         }
                     }
                 }
-                Utilities.verboseLog(110, "DomTblDomainMatch count : " + domtblMatchCount);
-                Utilities.verboseLog(110, "matchData protein count : " + matchData.values().size());
+                Utilities.verboseLog(30, "DomTblDomainMatch count : " + domtblMatchCount);
+                Utilities.verboseLog(30, "matchData protein count : " + matchData.values().size());
             } catch (IOException e) {
                 throw new IllegalStateException("IOException thrown when attempting to parse " + domTblOutputFileName);
             } finally {

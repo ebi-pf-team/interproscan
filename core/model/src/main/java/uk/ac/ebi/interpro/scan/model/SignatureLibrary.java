@@ -39,6 +39,7 @@ public enum SignatureLibrary {
     SMART("SMART", "Description to be added", true),
     SUPERFAMILY("SUPERFAMILY", "Description to be added", true),
     PIRSF("PIRSF", "Family classification system at the Protein Information Resource", true),
+    PIRSR("PIRSR", "Family classification system - Residue level at the Protein Information Resource", false),
     PRINTS("PRINTS", "Description to be added", true),
     PRODOM("ProDom", "Description to be added", true),
     PROSITE_PATTERNS("ProSitePatterns", "Description to be added", true),

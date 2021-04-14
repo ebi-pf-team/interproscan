@@ -26,6 +26,7 @@ public class FinaliseInitialSetupTasks {
 
     private ProteinDAO proteinDAO;
 
+    private int maxConcurrentThreadsForPrepareOutputStep = 1;
 
     @Required
     public void setProteinDAO(ProteinDAO proteinDAO) {
@@ -37,10 +38,15 @@ public class FinaliseInitialSetupTasks {
         this.sequenceLoader = sequenceLoader;
     }
 
+   public void setMaxConcurrentThreadsForPrepareOutputStep (int maxConcurrentThreadsForPrepareOutputStep){
+       this.maxConcurrentThreadsForPrepareOutputStep = maxConcurrentThreadsForPrepareOutputStep;
+   }
+
      @Transactional
     public void execute(SequenceLoadListener sequenceLoaderListener, Map<String, SignatureLibraryRelease> analysisJobMap, boolean useMatchLookupService) {
         sequenceLoader.setDisplayLookupMessage(false);
         sequenceLoader.setUseMatchLookupService(useMatchLookupService);
+
         LOGGER.debug("Entered FinaliseInitialSetupTasks execute method");
         Utilities.verboseLog(1100, "Entered FinaliseInitialSetupTasks execute method");
 
@@ -101,7 +107,6 @@ public class FinaliseInitialSetupTasks {
         }else{
             Utilities.verboseLog(1100, "FinaliseInitialSetupTasks ...  proteinsNotInLookup is NULL : " );
         }
-
 
         sequenceLoaderListener.sequencesLoaded(bottomProteinId, topProteinId, bottomPrecalculatedSequenceId, topPrecalculatedSequenceId, useMatchLookupService, idsWithoutLookupHit);
         //sequenceLoader.persist(sequenceLoaderListener, analysisJobMap);

@@ -3,7 +3,8 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCre
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.eclipse.jetty.util.ConcurrentHashSet;
+//import org.eclipse.jetty.util.ConcurrentHashSet;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.interpro.scan.business.sequence.fasta.FinaliseInitialSetupTasks;
@@ -161,6 +162,7 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
         StepCreationSequenceLoadListener sequenceLoadListener =
                 new StepCreationSequenceLoadListener(analysisJobs, completionJob, prepareOutputJob, matchLookupJob, finalInitialJob, initialSetupSteps, stepInstance.getParameters());
         sequenceLoadListener.setStepInstanceDAO(stepInstanceDAO);
+        sequenceLoadListener.setMaxConcurrentThreadsForPrepareOutputStep(1);
 
         finaliseInitialSetupTasks.execute(sequenceLoadListener, analysisJobMap,  useMatchLookupService);
 
@@ -180,11 +182,13 @@ public class FinaliseInitialSetupStep extends Step implements StepInstanceCreati
             }else {
                 delayForNfs();
             }
+
             Utilities.verboseLog(110, "  FinaliseStep - Slept for at least " + waitTime + " millis");
         }else{
             Utilities.verboseLog(110, " FinaliseStep - no waiting for the kvstore matchDB as protein count is < 16000: count = " + topProtein);
         }
-
+        int numberOfSteps = stepInstanceDAO.retrieveUnfinishedStepInstances().size();
+        Utilities.verboseLog(10, "FinaliseInitialSetup: Generated " + numberOfSteps + " total (new) steps for processing");
     }
 
 }

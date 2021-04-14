@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.50-84.0</version>
+    <version>5.51-85.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
@@ -102,7 +102,7 @@
         <hibernate.entity.manager.version>5.4.2.Final</hibernate.entity.manager.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <groovy.version>3.0.4</groovy.version>
-        <guava.version>27.1-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <hsqldb.version>2.4.1</hsqldb.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <!--<mysql.version>5.1.12</mysql.version>-->

@@ -33,6 +33,8 @@ import uk.ac.ebi.interpro.scan.persistence.kvstore.KVDB;
 import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.persistence.Query;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -60,7 +62,7 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
 
     protected KVDB proteinsNotInLookupDB;
 
-    private Set<Protein> proteinsWithoutLookupHit;
+    private Set<Protein> proteinsWithoutLookupHit = ConcurrentHashMap.newKeySet();
 
     Map<Long, Protein> proteinIdsWithoutLookupHit;
 

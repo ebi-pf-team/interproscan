@@ -6,15 +6,13 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.persistence.EntryDAO;
+import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.ReleaseDAO;
 import uk.ac.ebi.interpro.scan.persistence.SignatureDAO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents the whole entry loading process for the I5 installer (uk.ac.ebi.interpro.scan.jms.installer.Installer).
@@ -48,6 +46,7 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
 
     // I5 model Hibernate DAOs
     private EntryDAO entryDAO;
+    private EntryKVDAO entryKVDAO;
     private SignatureDAO signatureDAO;
     private ReleaseDAO releaseDAO;
 
@@ -60,6 +59,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     @Required
     public void setEntryDAO(EntryDAO entryDAO) {
         this.entryDAO = entryDAO;
+    }
+
+    public void setEntryKVDAO(EntryKVDAO entryKVDAO) {
+        this.entryKVDAO = entryKVDAO;
     }
 
     @Required
@@ -94,6 +97,10 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
     public void processRow(ResultSet resultSet) throws SQLException {
         // Get query row result
         final String entryAc = resultSet.getString(1);
+//        String[] specialEntries = {"IPR020408", "IPR037152", "IPR006034", "IPR027473", "IPR002072"};
+//        if (! Arrays.asList(specialEntries).contains(entryAc)){
+//            return;
+//        }
         final String entryType = resultSet.getString(2);
         final String name = resultSet.getString(3);
         final String checked = resultSet.getString(4);
@@ -111,13 +118,14 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         }
 
         // Prepare entry 2 GO cross references
-        Set<GoXref> goXrefs = (Set<GoXref>) getEntry2GoXrefsMap().get(entryAc);
+        Set<GoXref> goXrefs = null; //disable for now (Set<GoXref>) getEntry2GoXrefsMap().get(entryAc);
         if (goXrefs == null) {
             goXrefs = new HashSet<GoXref>();
         }
 
         // Prepare entry 2 pathway cross references
-        Set<PathwayXref> pathwayXrefs = (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
+        //FIXME disable this and load them during the PrepareOutPut Step
+        Set<PathwayXref> pathwayXrefs =  null; //disable for now (Set<PathwayXref>) getEntry2PathwayXrefsMap().get(entryAc);
         if (pathwayXrefs == null) {
             pathwayXrefs = new HashSet<PathwayXref>();
         }
@@ -127,7 +135,16 @@ public class EntryRowCallbackHandler implements RowCallbackHandler {
         Release release = getInterProRelease();
         entry.addRelease(release);
 
-        entries.add(entry);
+        //the entryKVDAO is inefficient creates 400Gb of data
+        //entryKVDAO.persist(entryAc, entry); //persist entry with all xrefs
+
+        //Set<GoXref> emptyGoXrefs = new HashSet<>();
+        //Set<PathwayXref> emptyPathwayXrefs = new HashSet<>();
+        //Entry simpleEntry = buildEntry(entryAc, shortName, type, name, emptyGoXrefs, emptyPathwayXrefs);
+        //simpleEntry.addRelease(release);
+
+        entries.add(entry);  //add the entry without refs
+
 
         //persistence step
         if (entries.size() == BATCH_COMMIT_SIZE) {

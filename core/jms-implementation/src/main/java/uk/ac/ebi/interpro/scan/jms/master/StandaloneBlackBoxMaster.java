@@ -67,7 +67,6 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             System.out.println(Utilities.getTimeNow() + " verboseLog: " + verboseLog + " verboseLogLevel: " + verboseLogLevel);
             System.out.println(Utilities.getTimeNow() + " DEBUG inVmWorkers min:" + getConcurrentInVmWorkerCount() + " max: " + getMaxConcurrentInVmWorkerCount());
-
         }
         Utilities.verboseLog(20, "temp dir: " + getWorkingTemporaryDirectoryPath());
 
@@ -234,7 +233,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
                     if (scheduleGCTime >= 30 * 60 * 1000){
                         scheduleGCStart = System.currentTimeMillis();
-                        Utilities.verboseLog(10,
+                        Utilities.verboseLog(20,
                         "stepInstanceDAO.count() " + stepInstanceDAO.count()
                                 + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                 + " minimumStepsExpected : " + minimumStepsExpected
@@ -333,7 +332,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                 Long scheduleGCTime = System.currentTimeMillis() - scheduleGCStart;
                 if (scheduleGCTime >= 30 * 60 * 1000){
                     scheduleGCStart = System.currentTimeMillis();
-                    Utilities.verboseLog(10,
+                    Utilities.verboseLog(20,
                             "stepInstanceDAO.count() " + stepInstanceDAO.count()
                                     + " stepInstancesCreatedByLoadStep : " + stepInstancesCreatedByLoadStep
                                     + " minimumStepsExpected : " + minimumStepsExpected

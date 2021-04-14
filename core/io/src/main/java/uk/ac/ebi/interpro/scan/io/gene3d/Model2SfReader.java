@@ -24,7 +24,7 @@ public final class Model2SfReader extends AbstractModelFileParser {
 
     private String prefix = "G3DSA:";
 
-    String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+    String cathFamilyFile = "data/gene3d/4.3.0/cath-family-names.txt";
 
     /**
      * Optional bean method, should the prefix be different to the default value.
@@ -126,7 +126,7 @@ public final class Model2SfReader extends AbstractModelFileParser {
         // 3.30.56.60      "XkdW-like"
         //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
         //3.90.330.10     "Nitrile Hydratase; Chain A"
-        String cathFamilyFile = "data/gene3d/4.2.0/cath-family-names.txt";
+        //String cathFamilyFile = "data/gene3d/4.3.0/cath-family-names.txt";
 
         BufferedReader reader = null;
         try {

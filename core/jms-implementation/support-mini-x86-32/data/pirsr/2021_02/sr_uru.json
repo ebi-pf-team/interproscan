@@ -1,0 +1,445 @@
+{
+   "PIRSR016496-2" : {
+      "Scope" : [
+         "Archaea",
+         "Eukaryota",
+         "Bacteria"
+      ],
+      "Groups" : {
+         "1" : [
+            {
+               "condition" : "K",
+               "group" : "1",
+               "hmmEnd" : 15,
+               "label" : "SITE",
+               "desc" : "Transition state stabilizer.",
+               "end" : 14,
+               "hmmStart" : 15,
+               "start" : 14
+            }
+         ]
+      },
+      "Size" : "unlimited",
+      "DC" : "Domain",
+      "Related" : "None",
+      "TR" : "PIRSF; PIRSF016496; -; 1",
+      "AC" : "PIRSR016496-2",
+      "Feature" : {
+         "model" : "SRHMM016496-2",
+         "from" : "Q9HLX1"
+      }
+   },
+   "PIRSR000726-1" : {
+      "Size" : "unlimited",
+      "Scope" : [
+         "Bacteria"
+      ],
+      "Groups" : {
+         "2" : [
+            {
+               "start" : 45,
+               "hmmStart" : 44,
+               "end" : 45,
+               "desc" : "Substrate.",
+               "label" : "BINDING",
+               "hmmEnd" : 44,
+               "group" : "2",
+               "condition" : "T"
+            },
+            {
+               "hmmEnd" : 74,
+               "group" : "2",
+               "condition" : "E",
+               "start" : 119,
+               "end" : 119,
+               "hmmStart" : 74,
+               "desc" : "Substrate.",
+               "label" : "BINDING"
+            }
+         ],
+         "6" : [
+            {
+               "hmmStart" : 182,
+               "end" : 258,
+               "start" : 257,
+               "label" : "NP_BIND",
+               "desc" : "ATP.",
+               "hmmEnd" : 183,
+               "condition" : "K-V",
+               "group" : "6"
+            }
+         ],
+         "1" : [
+            {
+               "group" : "1",
+               "condition" : "K-x(2)-G",
+               "hmmEnd" : 9,
+               "desc" : "ATP.",
+               "label" : "NP_BIND",
+               "start" : 8,
+               "end" : 11,
+               "hmmStart" : 6
+            }
+         ],
+         "3" : [
+            {
+               "group" : "3",
+               "condition" : "T-D",
+               "hmmEnd" : 147,
+               "desc" : "ATP.",
+               "label" : "NP_BIND",
+               "start" : 221,
+               "end" : 222,
+               "hmmStart" : 146
+            }
+         ],
+         "4" : [
+            {
+               "hmmEnd" : 152,
+               "condition" : "Y",
+               "group" : "4",
+               "end" : 227,
+               "hmmStart" : 152,
+               "start" : 227,
+               "label" : "BINDING",
+               "desc" : "ATP; via amide nitrogen and carbonyl oxygen."
+            }
+         ],
+         "5" : [
+            {
+               "hmmEnd" : 157,
+               "group" : "5",
+               "condition" : "R",
+               "start" : 232,
+               "end" : 232,
+               "hmmStart" : 157,
+               "desc" : "ATP.",
+               "label" : "BINDING"
+            }
+         ]
+      },
+      "TR" : "PIRSF; PIRSF000726; -; 1",
+      "AC" : "PIRSR000726-1",
+      "Feature" : {
+         "model" : "SRHMM000726-1",
+         "from" : "P08660"
+      },
+      "Related" : "None",
+      "DC" : "Domain"
+   },
+   "PIRSR016502-1" : {
+      "AC" : "PIRSR016502-1",
+      "Feature" : {
+         "model" : "SRHMM016502-1",
+         "from" : "Q5QF96"
+      },
+      "TR" : "PIRSF; PIRSF016502; -; 1",
+      "DC" : "Domain",
+      "Related" : "None",
+      "Size" : "unlimited",
+      "Groups" : {
+         "1" : [
+            {
+               "group" : "1",
+               "condition" : "T",
+               "hmmEnd" : 293,
+               "desc" : "Important for channel permeability.",
+               "label" : "SITE",
+               "start" : 334,
+               "hmmStart" : 293,
+               "end" : 334
+            }
+         ]
+      },
+      "Scope" : [
+         "Eukaryota",
+         "Bacteria"
+      ]
+   },
+   "PIRSR016496-1" : {
+      "DC" : "Domain",
+      "Related" : "None",
+      "AC" : "PIRSR016496-1",
+      "Feature" : {
+         "from" : "Q9HLX1",
+         "model" : "SRHMM016496-1"
+      },
+      "TR" : "PIRSF; PIRSF016496; -; 1",
+      "Groups" : {
+         "5" : [
+            {
+               "condition" : "[GAST]",
+               "group" : "5",
+               "hmmEnd" : 152,
+               "label" : "BINDING",
+               "desc" : "Substrate; via amide nitrogen.",
+               "end" : 143,
+               "hmmStart" : 152,
+               "start" : 143
+            }
+         ],
+         "8" : [
+            {
+               "start" : 201,
+               "end" : 201,
+               "hmmStart" : 214,
+               "desc" : "ATP; via carbonyl oxygen.",
+               "label" : "BINDING",
+               "hmmEnd" : 214,
+               "group" : "8",
+               "condition" : "[GAST]"
+            }
+         ],
+         "7" : [
+            {
+               "hmmEnd" : 183,
+               "condition" : "Y-x(4)-K",
+               "group" : "7",
+               "hmmStart" : 178,
+               "end" : 174,
+               "start" : 169,
+               "label" : "NP_BIND",
+               "desc" : "ATP."
+            }
+         ],
+         "1" : [
+            {
+               "condition" : "K-x(3)-S",
+               "group" : "1",
+               "hmmEnd" : 10,
+               "label" : "NP_BIND",
+               "desc" : "ATP.",
+               "hmmStart" : 6,
+               "end" : 9,
+               "start" : 5
+            }
+         ],
+         "9" : [
+            {
+               "condition" : "K",
+               "group" : "9",
+               "hmmEnd" : 218,
+               "label" : "BINDING",
+               "desc" : "ATP.",
+               "end" : 205,
+               "hmmStart" : 218,
+               "start" : 205
+            }
+         ],
+         "6" : [
+            {
+               "hmmStart" : 173,
+               "end" : 164,
+               "start" : 164,
+               "label" : "BINDING",
+               "desc" : "ATP.",
+               "hmmEnd" : 173,
+               "condition" : "D",
+               "group" : "6"
+            }
+         ],
+         "2" : [
+            {
+               "label" : "BINDING",
+               "desc" : "Substrate; via amide nitrogen.",
+               "end" : 45,
+               "hmmStart" : 50,
+               "start" : 45,
+               "condition" : "[GAST]",
+               "group" : "2",
+               "hmmEnd" : 50
+            }
+         ],
+         "4" : [
+            {
+               "hmmStart" : 55,
+               "end" : 50,
+               "start" : 50,
+               "label" : "BINDING",
+               "desc" : "Substrate.",
+               "hmmEnd" : 55,
+               "condition" : "H",
+               "group" : "4"
+            }
+         ],
+         "3" : [
+            {
+               "label" : "BINDING",
+               "desc" : "ATP; via amide nitrogen.",
+               "end" : 46,
+               "hmmStart" : 51,
+               "start" : 46,
+               "condition" : "[GAST]",
+               "group" : "3",
+               "hmmEnd" : 51
+            }
+         ]
+      },
+      "Scope" : [
+         "Archaea",
+         "Eukaryota",
+         "Bacteria"
+      ],
+      "Size" : "unlimited"
+   },
+   "PIRSR037293-1" : {
+      "AC" : "PIRSR037293-1",
+      "Feature" : {
+         "model" : "SRHMM037293-1",
+         "from" : "Q9DC23"
+      },
+      "TR" : "PIRSF; PIRSF037293; -; 1",
+      "DC" : "Domain",
+      "Related" : "None",
+      "Size" : "unlimited",
+      "Groups" : {
+         "1" : [
+            {
+               "desc" : "Redox-active.",
+               "label" : "DISULFID",
+               "start" : 158,
+               "hmmStart" : 159,
+               "end" : 161,
+               "group" : "1",
+               "condition" : "C-x(2)-C",
+               "hmmEnd" : 162
+            }
+         ],
+         "2" : [
+            {
+               "hmmEnd" : 484,
+               "condition" : "C-x(2)-C",
+               "group" : "2",
+               "end" : 483,
+               "hmmStart" : 481,
+               "start" : 480,
+               "label" : "DISULFID",
+               "desc" : "Redox-active."
+            }
+         ],
+         "4" : [
+            {
+               "group" : "4",
+               "condition" : "C-x(2)-C",
+               "hmmEnd" : 704,
+               "desc" : "Redox-active.",
+               "label" : "DISULFID",
+               "start" : 700,
+               "end" : 703,
+               "hmmStart" : 701
+            }
+         ],
+         "3" : [
+            {
+               "desc" : "Redox-active.",
+               "label" : "DISULFID",
+               "start" : 588,
+               "hmmStart" : 589,
+               "end" : 591,
+               "group" : "3",
+               "condition" : "C-x(2)-C",
+               "hmmEnd" : 592
+            }
+         ]
+      },
+      "Scope" : [
+         "Eukaryota"
+      ]
+   },
+   "PIRSR002855-1" : {
+      "Groups" : {
+         "1" : [
+            {
+               "label" : "MOD_RES",
+               "desc" : "N6-murein peptidoglycan lysine.",
+               "hmmStart" : 78,
+               "end" : 78,
+               "start" : 78,
+               "condition" : "K",
+               "group" : "1",
+               "hmmEnd" : 78
+            }
+         ]
+      },
+      "Scope" : [
+         "Bacteria"
+      ],
+      "Size" : "unlimited",
+      "Related" : "None",
+      "DC" : "Domain",
+      "AC" : "PIRSR002855-1",
+      "Feature" : {
+         "model" : "SRHMM002855-1",
+         "from" : "P69776"
+      },
+      "TR" : "PIRSF; PIRSF002855; -; 1"
+   },
+   "PIRSR000077-4" : {
+      "DC" : "Domain",
+      "Related" : "None",
+      "TR" : "PIRSF; PIRSF000077; -; 1",
+      "Feature" : {
+         "from" : "P0AA25",
+         "model" : "SRHMM000077-4"
+      },
+      "AC" : "PIRSR000077-4",
+      "Scope" : [
+         "Eukaryota",
+         "Bacteria",
+         "Archaea"
+      ],
+      "Groups" : {
+         "1" : [
+            {
+               "start" : 33,
+               "hmmStart" : 31,
+               "end" : 36,
+               "desc" : "Redox-active.",
+               "label" : "DISULFID",
+               "hmmEnd" : 34,
+               "group" : "1",
+               "condition" : "C-x(2)-C"
+            }
+         ]
+      },
+      "Size" : "unlimited"
+   },
+   "PIRSR002855-2" : {
+      "Size" : "unlimited",
+      "Groups" : {
+         "1" : [
+            {
+               "hmmEnd" : 21,
+               "condition" : "C",
+               "group" : "1",
+               "hmmStart" : 21,
+               "end" : 21,
+               "start" : 21,
+               "label" : "LIPID",
+               "desc" : "N-palmitoyl cysteine."
+            },
+            {
+               "start" : 21,
+               "end" : 21,
+               "hmmStart" : 21,
+               "desc" : "S-diacylglycerol cysteine.",
+               "label" : "LIPID",
+               "hmmEnd" : 21,
+               "group" : "1",
+               "condition" : "C"
+            }
+         ]
+      },
+      "Scope" : [
+         "Bacteria"
+      ],
+      "AC" : "PIRSR002855-2",
+      "Feature" : {
+         "model" : "SRHMM002855-2",
+         "from" : "P69776"
+      },
+      "TR" : "PIRSF; PIRSF002855; -; 1",
+      "Related" : "None",
+      "DC" : "Domain"
+   }
+}

@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.persistence.kvstore;
 import uk.ac.ebi.interpro.scan.model.Match;
 import uk.ac.ebi.interpro.scan.model.NucleotideSequence;
 import uk.ac.ebi.interpro.scan.model.Protein;
+import uk.ac.ebi.interpro.scan.model.Entry;
 
 import org.iq80.leveldb.DB;
 
@@ -36,6 +37,8 @@ public interface KVDB {
 
     byte[] serialize(Serializable value);
 
+    byte[] serialize(Entry entry);
+
     byte[] serialize(Protein protein);
 
 //    byte[] serialize(Match match);
@@ -50,6 +53,9 @@ public interface KVDB {
 //
 //    static Match asDeserializedMatch(byte[] byteMatch);
 //
+
+    Entry asEntry(byte[] byteEntry);
+
     Protein asProtein(byte[] byteProtein);
 
     Match asMatch(byte[] byteMatch);

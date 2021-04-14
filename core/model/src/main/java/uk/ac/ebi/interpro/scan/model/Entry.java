@@ -209,6 +209,17 @@ public class Entry implements Serializable {
             return entry;
         }
 
+        public Entry updateXrefs(Entry entry) {
+
+            if (!goCrossReferences.isEmpty()) {
+                entry.setGoXRefs(goCrossReferences);
+            }
+            if (!pathwayXRefs.isEmpty()) {
+                entry.setPathwayXRefs(pathwayXRefs);
+            }
+            return entry;
+        }
+
         public Builder name(String name) {
             this.name = name;
             return this;

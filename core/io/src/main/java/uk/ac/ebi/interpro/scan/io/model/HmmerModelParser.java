@@ -46,6 +46,8 @@ public class HmmerModelParser extends AbstractModelFileParser {
      */
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^ACC\\s+([A-Z0-9]+)\\.?.*$");
 
+    private static final Pattern ACCESSION_PATTERN_PIRSR = Pattern.compile("^ACC\\s+(.+)$");
+
     private static final Pattern LENGTH_LINE = Pattern.compile("^LENG\\s+([0-9]+)$");
 
     private static final String END_OF_RECORD = "//";
@@ -97,6 +99,9 @@ public class HmmerModelParser extends AbstractModelFileParser {
                             case 'A':
                                 if (accession == null) {
                                     accession = extractValue(ACCESSION_PATTERN, line, 1);
+                                    if (accession.startsWith("PIRSR")){  //deal with the PIRSR specific pattern
+                                        accession = extractValue(ACCESSION_PATTERN_PIRSR, line, 1);
+                                    }
                                 }
                                 break;
                             case 'D':

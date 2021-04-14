@@ -117,10 +117,12 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
 
         <!--Raw Sites-->
         <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawSite</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawSite</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawSite</class>
 
         <class>uk.ac.ebi.interpro.scan.management.model.StepExecution</class>

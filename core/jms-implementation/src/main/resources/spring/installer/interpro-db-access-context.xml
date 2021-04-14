@@ -18,6 +18,7 @@
         <constructor-arg ref="jdbcOracleDataSource"/>
     </bean>
 
+<!--    uncoment some parts if dont want to connect to Oracle DB-->
     <bean id="jdbcOracleDataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${ip.jdbc.driverClassName}"/>
@@ -31,6 +32,7 @@
     <bean id="entryRowCallbackHandler" class="uk.ac.ebi.interpro.scan.persistence.installer.EntryRowCallbackHandler">
         <!--Hibernate DAOs-->
         <property name="entryDAO" ref="entryDAO"/>
+        <property name="entryKVDAO" ref="entryKVDAO"/>
         <property name="signatureDAO" ref="signatureDAO"/>
         <property name="releaseDAO" ref="releaseDAO"/>
         <!--JDBC DAOs-->
