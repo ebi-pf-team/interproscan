@@ -109,23 +109,24 @@ public class RunPsScanStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         List<String> command = new ArrayList<String>();
-        command.add(this.getFullPathToPsScanPerlScript());
-        command.add("-d");
-        command.add(this.getModelFile());
-        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
-          command.add("-w");
-          command.add(this.getFullPathToPfsearchBinary());
-        }else{
-          command.add("--pfscan");
-          command.add(this.getFullPathToPfscanBinary());
-        }
-        if (this.getFullPathToConfirmatoryProfiles() != null && this.getFullPathToConfirmatoryProfiles().length() > 0) {
-            command.add("-b");
-            command.add(this.getFullPathToConfirmatoryProfiles());
-        }
+        command.add(this.getFullPathToPfscanBinary());
+
+//        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
+//          command.add("-w");
+//          command.add(this.getFullPathToPfsearchBinary());
+//        }else{
+//          command.add("--pfscan");
+//          command.add(this.getFullPathToPfscanBinary());
+//        }
+//        if (this.getFullPathToConfirmatoryProfiles() != null && this.getFullPathToConfirmatoryProfiles().length() > 0) {
+//            command.add("-b");
+//            command.add(this.getFullPathToConfirmatoryProfiles());
+//        }
         command.addAll(this.getBinarySwitchesAsList());
+
+        command.add(this.getModelFile());
         command.add(fastaFilePathName);
-        Utilities.verboseLog(1100, "command: " + command);
+        Utilities.verboseLog(100, "command: " + command);
         return command;
     }
 }

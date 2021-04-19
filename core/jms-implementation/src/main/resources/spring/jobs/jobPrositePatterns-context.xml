@@ -36,7 +36,7 @@
 
     <!-- STEP 2 -->
     <bean id="stepPrositePatternRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPatternScanStep"
           parent="abstractPrositePatternStep">
         <!-- In example command line below, replace _ with -
           Prosite Profiles:
@@ -50,9 +50,9 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${prosite.models.path}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscan.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearch.path}"/>
+        <property name="modelFile" value="${prosite.patterns.models.path}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.pfscanv3.path}"/>
+        <property name="fullPathToPfsearchBinary" value="${binary.pfsearchv3.path}"/>
         <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
