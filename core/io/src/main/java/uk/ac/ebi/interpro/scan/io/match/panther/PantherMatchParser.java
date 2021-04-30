@@ -86,14 +86,21 @@ public final class PantherMatchParser
             //Hit envelope end
             final String envLocationEndString = splitLine[12].trim();
             //sub family full id
-            final String fullSubFamilyName = splitLine[13].trim();
-            if (splitLine.length >= 15) {
-                //go annotations
-                final String goTerms = splitLine[13].trim();
-                if (splitLine.length >= 16) {
+            final String annotations = splitLine[13].trim();
+            if (annotations.length() > 0) {
+                final String[] annotSplitLine = annotations.split("\\s+");
+                final String fullSubFamilyName = annotSplitLine[0].trim();
+                String goTerms = "";
+                if (annotSplitLine.length >= 2) {
                     //go annotations
-                    final String pcTerm = splitLine[14].trim();
+                    goTerms = annotSplitLine[1].trim();
                 }
+                String pcTerm ="";
+                if (annotSplitLine.length >= 3) {
+                    //go annotations
+                    pcTerm = annotSplitLine[1].trim();
+                }
+                Utilities.verboseLog(30, "SF:2" + fullSubFamilyName + " goTerms: " + goTerms + " pcTerm: ");
             }
 
             // HMM length
@@ -130,7 +137,7 @@ public final class PantherMatchParser
                     aliLocationEnd,
                     evalue,
                     score,
-                    fullSubFamilyName,
+                    pantherFamilyId,
                     hmmLocationStart,
                     hmmLocationEnd,
                     hmmLength,
