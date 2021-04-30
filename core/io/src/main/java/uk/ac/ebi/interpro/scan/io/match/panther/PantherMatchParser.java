@@ -40,6 +40,10 @@ public final class PantherMatchParser
 
     @Override
     protected PantherRawMatch createMatch(String line) {
+        if (line.startsWith("query_id")) {
+            LOGGER.warn("This is a header line .");
+            return null;
+        }
         if (line == null || line.length() == 0) {
             LOGGER.warn("Couldn't parse the given raw match line, because it is NULL or of length 0.");
             return null;
@@ -53,32 +57,59 @@ public final class PantherMatchParser
         }
         final String[] splitLine = line.split("\\t");
         //Utilities.verboseLog(110, "splitLine.length: " + splitLine.length);
-        if (splitLine.length == 9) {
+        //query_id	panther_id	panther_sf	score	evalue	dom_score	dom_evalue	hmm_start	hmm_end	ali_start	ali_end	env_start	env_end	annotations
+        if (splitLine.length >= 14) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();
             //Parse Panther family ID
-            final String modelId = splitLine[1].trim();
+            final String pantherFamilyId = splitLine[1].trim();
             //Parse family name
-            final String familyName = splitLine[2].trim();
-            //Parse E-Value
-            final String eValueString = splitLine[3].trim();
+            final String subFamilyName = splitLine[2].trim();
             //Hit score provided by Panther
-            final String scoreString = splitLine[4].trim();
-            //Hit HMM start and end
-            final String hmmLocationStartEnd = splitLine[5].trim();
+            final String scoreString = splitLine[3].trim();
+            //Parse E-Value
+            final String eValueString = splitLine[4].trim();
+            //Hit domain score provided by Panther
+            final String domainScoreString = splitLine[5].trim();
+            //Hit domain evalue provided by Panther
+            final String domainEValueStringString = splitLine[6].trim();
+            //Hit HMM start
+            final String hmmLocationStartString = splitLine[7].trim();
+            //Hit HMM end
+            final String hmmLocationEndString = splitLine[8].trim();
+            //Hit aligment start
+            final String aliLocationStartString = splitLine[9].trim();
             //Hit aligment start and end
-            final String aliLocationStartEnd = splitLine[6].trim();
-            //Hit envelope start and end
-            final String envLocationStartEnd = splitLine[7].trim();
+            final String aliLocationEndString = splitLine[10].trim();
+            //Hit envelope start
+            final String envLocationStartString = splitLine[11].trim();
+            //Hit envelope end
+            final String envLocationEndString = splitLine[12].trim();
+            //sub family full id
+            final String fullSubFamilyName = splitLine[13].trim();
+            if (splitLine.length >= 15) {
+                //go annotations
+                final String goTerms = splitLine[13].trim();
+                if (splitLine.length >= 16) {
+                    //go annotations
+                    final String pcTerm = splitLine[14].trim();
+                }
+            }
+
             // HMM length
-            final String hmmLengthString = splitLine[8].trim();
+           // final String hmmLengthString = splitLine[8].trim();
 
             //Transform raw parsed values
             double score = 0.0d;
             double evalue = 0.0d;
-            int[] hmmLocation = parseLocation(hmmLocationStartEnd);
-            int[] aliLocation = parseLocation(aliLocationStartEnd);
-            int[] envLocation = parseLocation(envLocationStartEnd);
+
+            int hmmLocationStart = Integer.parseInt(hmmLocationStartString);
+            int hmmLocationEnd = Integer.parseInt(hmmLocationEndString);
+            int aliLocationStart = Integer.parseInt(aliLocationStartString);
+            int aliLocationEnd = Integer.parseInt(aliLocationEndString);
+            int envLocationStart = Integer.parseInt(envLocationStartString);
+            int envLocationEnd = Integer.parseInt(envLocationEndString);
+
             int hmmLength = 0;
 
             if (scoreString.length() > 0 && !".".equals(scoreString)) {
@@ -87,25 +118,25 @@ public final class PantherMatchParser
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
                 evalue = Double.parseDouble(eValueString);
             }
-            if (hmmLengthString.length() > 0) {
-                hmmLength = Integer.parseInt(hmmLengthString);
-            }
+//            if (hmmLengthString.length() > 0) {
+//                hmmLength = Integer.parseInt(hmmLengthString);
+//            }
 
             return new PantherRawMatch(
                     sequenceIdentifier,
-                    modelId,
+                    pantherFamilyId,
                     getSignatureLibraryRelease(),
-                    aliLocation[0],
-                    aliLocation[1],
+                    aliLocationStart,
+                    aliLocationEnd,
                     evalue,
                     score,
-                    familyName,
-                    hmmLocation[0],
-                    hmmLocation[1],
+                    fullSubFamilyName,
+                    hmmLocationStart,
+                    hmmLocationEnd,
                     hmmLength,
-                    HmmBounds.calculateHmmBounds(envLocation[0], envLocation[1], aliLocation[0], aliLocation[1]),
-                    envLocation[0],
-                    envLocation[1]);
+                    HmmBounds.calculateHmmBounds(envLocationStart,envLocationEnd, aliLocationStart, aliLocationEnd),
+                    envLocationStart,
+                    envLocationEnd);
         }
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
         LOGGER.warn("Unexpected Raw match line: " + line);
