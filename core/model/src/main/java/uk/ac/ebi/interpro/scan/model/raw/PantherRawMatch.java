@@ -100,15 +100,15 @@ public class PantherRawMatch extends RawMatch {
     public PantherRawMatch getSubFamilyRawMatch(){
         return new PantherRawMatch (
                 super.getSequenceIdentifier(),
-                subFamilyModelId,
-                subFamilyModelId,
+                this.subFamilyModelId,
+                this.subFamilyModelId,
                 this.annotationsNodeId,
                 getSignatureLibraryRelease(),
                 super.getLocationStart(),
                 super.getLocationEnd(),
                 this.evalue,
                 this.score,
-                this.familyName,
+                this.subFamilyModelId,
                 this.hmmStart,
                 this.hmmEnd,
                 this.hmmLength,

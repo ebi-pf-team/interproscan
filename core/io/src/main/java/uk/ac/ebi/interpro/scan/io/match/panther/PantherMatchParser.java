@@ -132,6 +132,8 @@ public final class PantherMatchParser
 //                hmmLength = Integer.parseInt(hmmLengthString);
 //            }
 
+            Utilities.verboseLog(20, "subFamilyModelIdPart: "+ subFamilyModelIdPart + " annotationsNodeId: "
+                    + annotationsNodeId + " annotations: " + annotations);
             return new PantherRawMatch(
                     sequenceIdentifier,
                     pantherFamilyId,
@@ -151,6 +153,7 @@ public final class PantherMatchParser
                     envLocationEnd,
                     annotations);
         }
+
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
         LOGGER.warn("Unexpected Raw match line: " + line);
         return null;

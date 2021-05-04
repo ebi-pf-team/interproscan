@@ -45,6 +45,13 @@ public class PantherPostProcessor implements Serializable {
         for (RawProtein<PantherRawMatch> rawProtein : rawProteins) {
             rawMatchCounter += rawProtein.getMatches().size();
             RawProtein<PantherRawMatch> filtered = processProtein(rawProtein);
+            //promote subFamily
+            RawProtein<PantherRawMatch> promoted = createSubFamilyMatch(rawProtein);
+            if (promoted != null){
+                for (PantherRawMatch rawProteinMatch : promoted.getMatches()) {
+                    filtered.addMatch(rawProteinMatch);
+                }
+            }
             filteredMatchesCounter += filtered.getMatches().size();
             filteredMatches.add(filtered);
         }
@@ -82,9 +89,16 @@ public class PantherPostProcessor implements Serializable {
      */
     private RawProtein<PantherRawMatch> createSubFamilyMatch(final RawProtein<PantherRawMatch> rawProtein) {
         RawProtein<PantherRawMatch> result = new RawProtein<>(rawProtein.getProteinIdentifier());
+        boolean matchRep = false;
         for (PantherRawMatch rawProteinMatch : rawProtein.getMatches()) {
-            PantherRawMatch subFamilyRawMatch = rawProteinMatch.getSubFamilyRawMatch();
-            result.addMatch(rawProteinMatch);
+            if (rawProteinMatch.getSubFamilyModelId() != null) {
+                PantherRawMatch subFamilyRawMatch = rawProteinMatch.getSubFamilyRawMatch();
+                result.addMatch(subFamilyRawMatch);
+                if (! matchRep) {
+                    Utilities.verboseLog(30, rawProteinMatch.toString() + "\n" + subFamilyRawMatch.toString());
+                }
+            }
+
         }
         return result;
     }
