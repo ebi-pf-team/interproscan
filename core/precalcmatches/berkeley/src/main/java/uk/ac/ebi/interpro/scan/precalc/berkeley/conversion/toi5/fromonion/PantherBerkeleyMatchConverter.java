@@ -7,11 +7,13 @@ import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.BerkeleyMatchCon
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyLocation;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyMatch;
 
+import javax.persistence.Column;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
  *         Date: 12/08/11
  *         Time: 11:14
  *         <p/>
@@ -27,7 +29,16 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
             return null;
         }
         Set<PantherMatch.PantherLocation> locations = new HashSet<>(berkeleyMatch.getLocations().size());
+
+        String annotationsNodeId = "";
+
+        String annotations = "";
         for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
+
+            //the annotationsNodeId is in the level columns
+            annotationsNodeId = berkeleyLocation.getLevel();
+            //the annotations is in the sequence features column
+            annotations = berkeleyLocation.getSeqFeature();
 
             final HmmBounds bounds;
             if (berkeleyLocation.getHmmBounds() == null || berkeleyLocation.getHmmBounds().isEmpty()) {
@@ -47,8 +58,11 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
                 signature,
                 berkeleyMatch.getSignatureModels(),
                 locations,
+                annotationsNodeId,
                 valueOrZero(berkeleyMatch.getSequenceEValue()),
                 "Not available",
-                valueOrZero(berkeleyMatch.getSequenceScore()));
+                valueOrZero(berkeleyMatch.getSequenceScore()),
+                annotations
+                );
     }
 }

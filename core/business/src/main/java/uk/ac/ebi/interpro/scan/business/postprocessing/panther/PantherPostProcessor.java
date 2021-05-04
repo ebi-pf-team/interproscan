@@ -73,4 +73,19 @@ public class PantherPostProcessor implements Serializable {
         }
         return result;
     }
+
+    /**
+     * Promote the subFamily annotation into a seprate Match
+     *
+     * @param rawProtein
+     * @return
+     */
+    private RawProtein<PantherRawMatch> createSubFamilyMatch(final RawProtein<PantherRawMatch> rawProtein) {
+        RawProtein<PantherRawMatch> result = new RawProtein<>(rawProtein.getProteinIdentifier());
+        for (PantherRawMatch rawProteinMatch : rawProtein.getMatches()) {
+            PantherRawMatch subFamilyRawMatch = rawProteinMatch.getSubFamilyRawMatch();
+            result.addMatch(rawProteinMatch);
+        }
+        return result;
+    }
 }

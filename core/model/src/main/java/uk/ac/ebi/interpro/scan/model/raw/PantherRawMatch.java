@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.Table;
  *
  * @author Antony Quinn
  * @author Maxim Scheremetjew
+ * @author Gift Nuka
  * @version $Id$
  */
 @Entity
@@ -35,6 +37,12 @@ public class PantherRawMatch extends RawMatch {
     private String familyName;
 
     @Column
+    private String subFamilyModelId;
+
+    @Column
+    private String annotationsNodeId;
+
+    @Column
     private double score;
 
     @Column(nullable = false)
@@ -55,6 +63,8 @@ public class PantherRawMatch extends RawMatch {
     @Column(nullable = false)
     private int envelopeEnd;
 
+    @Column
+    private String annotations;
 
     protected PantherRawMatch() {
     }
@@ -65,11 +75,16 @@ public class PantherRawMatch extends RawMatch {
      * @param familyName The name of the Panther family/subfamily (for instance SYNAPTOTAGMIN).
      */
     public PantherRawMatch(String sequenceIdentifier, String model,
+                           String subFamilyModelId,
+                           String annotationsNodeId,
                            String signatureLibraryRelease,
                            int locationStart, int locationEnd,
                            double evalue, double score, String familyName,
-                           int hmmStart, int hmmEnd, int hmmLength, String hmmBounds, int envelopeStart, int envelopeEnd) {
+                           int hmmStart, int hmmEnd, int hmmLength, String hmmBounds, int envelopeStart, int envelopeEnd,
+                           String annotations) {
         super(sequenceIdentifier, model, SignatureLibrary.PANTHER, signatureLibraryRelease, locationStart, locationEnd);
+        this.subFamilyModelId = subFamilyModelId;
+        this.annotationsNodeId = annotationsNodeId;
         setEvalue(evalue);
         this.score = score;
         this.familyName = familyName;
@@ -79,6 +94,46 @@ public class PantherRawMatch extends RawMatch {
         this.hmmBounds = hmmBounds;
         this.envelopeStart = envelopeStart;
         this.envelopeEnd = envelopeEnd;
+        this.annotations = annotations;
+    }
+
+    public PantherRawMatch getSubFamilyRawMatch(){
+        return new PantherRawMatch (
+                super.getSequenceIdentifier(),
+                subFamilyModelId,
+                subFamilyModelId,
+                this.annotationsNodeId,
+                getSignatureLibraryRelease(),
+                super.getLocationStart(),
+                super.getLocationEnd(),
+                this.evalue,
+                this.score,
+                this.familyName,
+                this.hmmStart,
+                this.hmmEnd,
+                this.hmmLength,
+                HmmBounds.calculateHmmBounds(this.envelopeStart,this.envelopeEnd, super.getLocationStart(), super.getLocationEnd()),
+                this.envelopeStart,
+                this.envelopeEnd,
+                this.annotations
+        );
+    }
+
+
+    public String getSubFamilyModelId() {
+        return subFamilyModelId;
+    }
+
+    public void setSubFamilyModelId(String subFamilyModelId) {
+        this.subFamilyModelId = subFamilyModelId;
+    }
+
+    public String getAnnotationsNodeId() {
+        return annotationsNodeId;
+    }
+
+    public void setAnnotationsNodeId(String annotationsNodeId) {
+        this.annotationsNodeId = annotationsNodeId;
     }
 
     public double getEvalue() {
@@ -152,4 +207,14 @@ public class PantherRawMatch extends RawMatch {
     public void setEnvelopeEnd(int envelopeEnd) {
         this.envelopeEnd = envelopeEnd;
     }
+
+    public String getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(String annotations) {
+        this.annotations = annotations;
+    }
+
+
 }

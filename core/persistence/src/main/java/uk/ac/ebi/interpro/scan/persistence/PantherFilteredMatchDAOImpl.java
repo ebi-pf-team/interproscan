@@ -79,9 +79,11 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                                 currentSignature,
                                 currentSignatureAc,
                                 locations,
+                                lastRawMatch.getAnnotationsNodeId(),
                                 lastRawMatch.getEvalue(),
                                 lastRawMatch.getFamilyName(),
-                                lastRawMatch.getScore()
+                                lastRawMatch.getScore(),
+                                lastRawMatch.getAnnotations()
                         );
                         //protein.addMatch(match); //may not be needed
                         proteinMatches.add(match);
@@ -126,9 +128,11 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         currentSignature,
                         currentSignatureAc,
                         locations,
+                        lastRawMatch.getAnnotationsNodeId(),
                         lastRawMatch.getEvalue(),
                         lastRawMatch.getFamilyName(),
-                        lastRawMatch.getScore()
+                        lastRawMatch.getScore(),
+                        lastRawMatch.getAnnotations()
                 );
                 //protein.addMatch(match);  //may not be needed
                 proteinMatches.add(match);

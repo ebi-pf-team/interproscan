@@ -63,33 +63,36 @@ public final class PantherMatchParser
             final String sequenceIdentifier = splitLine[0].trim();
             //Parse Panther family ID
             final String pantherFamilyId = splitLine[1].trim();
-            //Parse family name
-            final String subFamilyName = splitLine[2].trim();
+            //Parse sub family id
+            final String subFamilyModelIdPart = splitLine[2].trim();
+            final String subFamilyModelId = pantherFamilyId + ":" + subFamilyModelIdPart;
+            //Parse  annotation node Id
+            final String annotationsNodeId = splitLine[3].trim();
             //Hit score provided by Panther
-            final String scoreString = splitLine[3].trim();
+            final String scoreString = splitLine[4].trim();
             //Parse E-Value
-            final String eValueString = splitLine[4].trim();
+            final String eValueString = splitLine[5].trim();
             //Hit domain score provided by Panther
-            final String domainScoreString = splitLine[5].trim();
+            final String domainScoreString = splitLine[6].trim();
             //Hit domain evalue provided by Panther
-            final String domainEValueStringString = splitLine[6].trim();
+            final String domainEValueStringString = splitLine[7].trim();
             //Hit HMM start
-            final String hmmLocationStartString = splitLine[7].trim();
+            final String hmmLocationStartString = splitLine[8].trim();
             //Hit HMM end
-            final String hmmLocationEndString = splitLine[8].trim();
+            final String hmmLocationEndString = splitLine[9].trim();
             //Hit aligment start
-            final String aliLocationStartString = splitLine[9].trim();
+            final String aliLocationStartString = splitLine[10].trim();
             //Hit aligment start and end
-            final String aliLocationEndString = splitLine[10].trim();
+            final String aliLocationEndString = splitLine[11].trim();
             //Hit envelope start
-            final String envLocationStartString = splitLine[11].trim();
+            final String envLocationStartString = splitLine[12].trim();
             //Hit envelope end
-            final String envLocationEndString = splitLine[12].trim();
+            final String envLocationEndString = splitLine[13].trim();
             //sub family full id
-            final String annotations = splitLine[13].trim();
+            final String annotations = splitLine[14].trim();
             if (annotations.length() > 0) {
                 final String[] annotSplitLine = annotations.split("\\s+");
-                final String fullSubFamilyName = annotSplitLine[0].trim();
+                final String fullSubFamilyModelID = annotSplitLine[0].trim();
                 String goTerms = "";
                 if (annotSplitLine.length >= 2) {
                     //go annotations
@@ -100,7 +103,7 @@ public final class PantherMatchParser
                     //go annotations
                     pcTerm = annotSplitLine[1].trim();
                 }
-                Utilities.verboseLog(30, "SF:2" + fullSubFamilyName + " goTerms: " + goTerms + " pcTerm: ");
+                Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms + " pcTerm: ");
             }
 
             // HMM length
@@ -132,6 +135,8 @@ public final class PantherMatchParser
             return new PantherRawMatch(
                     sequenceIdentifier,
                     pantherFamilyId,
+                    subFamilyModelId,
+                    annotationsNodeId,
                     getSignatureLibraryRelease(),
                     aliLocationStart,
                     aliLocationEnd,
@@ -143,7 +148,8 @@ public final class PantherMatchParser
                     hmmLength,
                     HmmBounds.calculateHmmBounds(envLocationStart,envLocationEnd, aliLocationStart, aliLocationEnd),
                     envLocationStart,
-                    envLocationEnd);
+                    envLocationEnd,
+                    annotations);
         }
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
         LOGGER.warn("Unexpected Raw match line: " + line);
