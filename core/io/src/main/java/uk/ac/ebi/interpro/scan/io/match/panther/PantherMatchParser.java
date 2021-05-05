@@ -105,7 +105,8 @@ public final class PantherMatchParser
                     pcTerm = annotSplitLine[1].trim();
                 }
                 Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
-                formattedAnnotations = subFamilyModelId + "\t" + goTerms;
+                formattedAnnotations = subFamilyModelId + " " + goTerms + " " + pcTerm;
+                formattedAnnotations = formattedAnnotations.trim();
                 if (formattedAnnotations.length() > 4000) {
                     LOGGER.warn( "Large Go-terms field: formattedAnnotations size > 4000: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );
                     if (formattedAnnotations.length() > 4000) {
