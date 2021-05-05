@@ -101,12 +101,15 @@ public final class PantherMatchParser
                 }
                 String pcTerm ="";
                 if (annotSplitLine.length >= 3) {
-                    //go annotations
+                    //pcTerm annotations
                     pcTerm = annotSplitLine[1].trim();
                 }
-                Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms + " pcTerm: ");
+                Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
                 formattedAnnotations = subFamilyModelId + "\t" + goTerms;
-                Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms + " pcTerm: ");
+                if (formattedAnnotations.length() > 4000) {
+                    Utilities.verboseLog(30, "formattedAnnotations size: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );
+                }
+                Utilities.verboseLog(30, "formattedAnnotations size:" + formattedAnnotations.length() );
             }
 
             // HMM length
