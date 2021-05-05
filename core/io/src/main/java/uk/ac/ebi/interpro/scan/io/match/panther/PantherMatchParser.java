@@ -107,8 +107,9 @@ public final class PantherMatchParser
                 Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
                 formattedAnnotations = subFamilyModelId + "\t" + goTerms;
                 if (formattedAnnotations.length() > 4000) {
-                    Utilities.verboseLog(30, "formattedAnnotations size: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );
+                    Utilities.verboseLog(30, "formattedAnnotations size: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );                    
                 }
+                
                 Utilities.verboseLog(30, "formattedAnnotations size:" + formattedAnnotations.length() );
             }
 
