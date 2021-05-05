@@ -49,7 +49,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     @Column
     private String annotationsNodeId;
 
-    @Column
+    @Column (length = 8000)
     private String annotations;
 
     protected PantherMatch() {

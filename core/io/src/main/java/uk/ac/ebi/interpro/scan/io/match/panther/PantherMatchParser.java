@@ -90,6 +90,7 @@ public final class PantherMatchParser
             final String envLocationEndString = splitLine[13].trim();
             //sub family full id
             final String annotations = splitLine[14].trim();
+            String formattedAnnotations = annotations;
             if (annotations.length() > 0) {
                 final String[] annotSplitLine = annotations.split("\\s+");
                 final String fullSubFamilyModelID = annotSplitLine[0].trim();
@@ -103,6 +104,8 @@ public final class PantherMatchParser
                     //go annotations
                     pcTerm = annotSplitLine[1].trim();
                 }
+                Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms + " pcTerm: ");
+                formattedAnnotations = subFamilyModelId + "\t" + goTerms;
                 Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms + " pcTerm: ");
             }
 
@@ -151,7 +154,7 @@ public final class PantherMatchParser
                     HmmBounds.calculateHmmBounds(envLocationStart,envLocationEnd, aliLocationStart, aliLocationEnd),
                     envLocationStart,
                     envLocationEnd,
-                    annotations);
+                    formattedAnnotations);
         }
 
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");

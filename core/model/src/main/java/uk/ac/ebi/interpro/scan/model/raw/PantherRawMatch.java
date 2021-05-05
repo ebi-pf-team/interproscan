@@ -63,7 +63,7 @@ public class PantherRawMatch extends RawMatch {
     @Column(nullable = false)
     private int envelopeEnd;
 
-    @Column
+    @Column (length = 8000)
     private String annotations;
 
     protected PantherRawMatch() {
