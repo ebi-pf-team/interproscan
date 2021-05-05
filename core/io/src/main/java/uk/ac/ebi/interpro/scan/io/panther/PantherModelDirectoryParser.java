@@ -176,7 +176,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                     if (columns.length == 2) {  //we also have a family name
                         familyName = columns[1];
                     } else {  //we don't have a family name
-                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + " columns!" + "columns: " + columns);
+                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + " columns!" + "columns [0]: " + columns[0]);
                     }
                     pantherFamilies ++;
                     result.put(familyId, familyName);
