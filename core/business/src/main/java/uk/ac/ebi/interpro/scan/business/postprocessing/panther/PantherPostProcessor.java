@@ -95,7 +95,8 @@ public class PantherPostProcessor implements Serializable {
                 PantherRawMatch subFamilyRawMatch = rawProteinMatch.getSubFamilyRawMatch();
                 result.addMatch(subFamilyRawMatch);
                 if (! matchRep) {
-                    Utilities.verboseLog(30, rawProteinMatch.toString() + "\n" + subFamilyRawMatch.toString());
+                    Utilities.verboseLog(30, "fam match: " + rawProteinMatch.toString() + "\n sub fam match: " + subFamilyRawMatch.toString());
+                    matchRep = true;
                 }
             }
 
