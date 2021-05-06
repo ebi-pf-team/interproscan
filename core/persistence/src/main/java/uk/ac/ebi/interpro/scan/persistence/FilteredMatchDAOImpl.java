@@ -239,6 +239,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             LOGGER.warn("Failed to get some of the analysis models from h2 db: # " + missingModelIDs.size());
             LOGGER.warn("First missing model : " + missingModelIDs.get(0));
             LOGGER.warn("result Model Ids count:  " + resultModelIds.size());
+            LOGGER.warn("the missing models: " + missingModelIDs.toString());
         }
 
         //
