@@ -221,7 +221,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     LOGGER.warn("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
                 }
             }
-            Utilities.verboseLog(30, "signatureModels count: " + modelCount);
+            Utilities.verboseLog(100, "signatureModels count: " + modelCount);
         }
         //check which models are missing and why?
 
