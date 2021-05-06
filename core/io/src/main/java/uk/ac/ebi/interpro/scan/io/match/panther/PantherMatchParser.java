@@ -145,7 +145,7 @@ public final class PantherMatchParser
 //            }
 
             Utilities.verboseLog(20, "subFamilyModelIdPart: "+ subFamilyModelIdPart + " annotationsNodeId: "
-                    + annotationsNodeId + " annotations: " + annotations);
+                    + annotationsNodeId + " annotations size: " + annotations.length());
             return new PantherRawMatch(
                     sequenceIdentifier,
                     pantherFamilyId,
