@@ -103,6 +103,7 @@
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
+        <property name="serialGroup" value="PANTHER_BINARY"/>
 
     </bean>
 
