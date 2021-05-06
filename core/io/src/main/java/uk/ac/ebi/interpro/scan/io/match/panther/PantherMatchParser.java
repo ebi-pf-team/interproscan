@@ -65,7 +65,11 @@ public final class PantherMatchParser
             final String pantherFamilyId = splitLine[1].trim();
             //Parse sub family id
             final String subFamilyModelIdPart = splitLine[2].trim();
-            final String subFamilyModelId = pantherFamilyId + ":" + subFamilyModelIdPart;
+            String subFamilyModelId = null;
+            //the subfamily maybe empty
+            if ( subFamilyModelIdPart.strip().length() != 0) {
+                subFamilyModelId = pantherFamilyId + ":" + subFamilyModelIdPart;
+            }
             //Parse  annotation node Id
             final String annotationsNodeId = splitLine[3].trim();
             //Hit score provided by Panther
@@ -104,8 +108,12 @@ public final class PantherMatchParser
                     //pcTerm annotations
                     pcTerm = annotSplitLine[1].trim();
                 }
-                Utilities.verboseLog(30, "SF:2" + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
-                formattedAnnotations = subFamilyModelId + " " + goTerms + " " + pcTerm;
+                Utilities.verboseLog(50, "subfamily: " + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
+                if (fullSubFamilyModelID.strip().length() == 0){
+                    formattedAnnotations = "-" + " " + goTerms + " " + pcTerm;
+                } else {
+                    formattedAnnotations = fullSubFamilyModelID.strip() + " " + goTerms + " " + pcTerm;
+                }
                 formattedAnnotations = formattedAnnotations.strip();
                 if (formattedAnnotations.length() > 4000) {
                     LOGGER.warn( "Large Go-terms field: formattedAnnotations size > 4000: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );
@@ -114,7 +122,7 @@ public final class PantherMatchParser
                         formattedAnnotations = formattedAnnotations.substring(0,7990);
                     }
                 }
-                Utilities.verboseLog(30, "formattedAnnotations size:" + formattedAnnotations.length() );
+                Utilities.verboseLog(50, "formattedAnnotations size:" + formattedAnnotations.length() );
             }
 
             // HMM length
@@ -143,7 +151,7 @@ public final class PantherMatchParser
 //                hmmLength = Integer.parseInt(hmmLengthString);
 //            }
 
-            Utilities.verboseLog(20, "subFamilyModelIdPart: "+ subFamilyModelIdPart + " annotationsNodeId: "
+            Utilities.verboseLog(50, "subFamilyModelIdPart: "+ subFamilyModelIdPart + " annotationsNodeId: "
                     + annotationsNodeId + " annotations size: " + annotations.length());
             return new PantherRawMatch(
                     sequenceIdentifier,
