@@ -9,6 +9,7 @@ package uk.ac.ebi.interpro.scan.management.model;
  * serial group depends upon database locking concerns.
  *
  * @author Phil Jones
+ * @author Gift Nuka
  * @version $Id$
  * @since 1.0
  */
@@ -24,6 +25,7 @@ public enum SerialGroup {
     LOAD_PROTEINS,
     LOAD_NUCLEIC_ACID,
     MATCH_LOOKUP,
+    PANTHER_BINARY,
     PARSE_GENE3D,
     PARSE_MOBIDB,
     PARSE_PFAM_A,
