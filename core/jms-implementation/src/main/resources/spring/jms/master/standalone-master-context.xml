@@ -56,6 +56,8 @@
         <property name="periodicGCCall" value="${periodic.gc.call}"/>
         <property name="verboseLog" value="${verbose.log}"/>
         <property name="verboseLogLevel" value="${verbose.log.level}"/>
+        <property name="pantherBinaryControlFactor" value="${panther.binary.control.factor}"/>
+
 
     </bean>
 

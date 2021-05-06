@@ -31,6 +31,8 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private static final Logger LOGGER = LogManager.getLogger(StandaloneBlackBoxMaster.class.getName());
 
+    int pantherBinaryControlFactor = 1;
+
     private StatsUtil statsUtil;
 
     private String runId;
@@ -178,9 +180,9 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                                 List<StepInstance> serialGroupInstances = stepInstanceDAO.getSerialGroupInstances(stepInstance, jobs);
                                 if (serialGroupInstances != null) {
                                     int pantherBinaryStepsSumitted = serialGroupInstances.size();
-                                    if (pantherBinaryStepsSumitted > (Utilities.cpuCount / 2)) {
-                                        Utilities.verboseLog(30, " pantherBinaryStepsSumitted > (Utilities.cpuCount / 2: "
-                                                + pantherBinaryStepsSumitted  + " vs cpuCount:" + Utilities.cpuCount);
+                                    if (pantherBinaryStepsSumitted > (Utilities.cpuCount / controlPantherBinaryControlFactor)) {
+                                        Utilities.verboseLog(30, " pantherBinaryStepsSumitted > (Utilities.cpuCount / " + pantherBinaryControlFactor
+                                            + " : "    + pantherBinaryStepsSumitted  + " vs cpuCount:" + Utilities.cpuCount);
                                         continue;
                                     }
                                 }
@@ -419,6 +421,10 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         //System.exit(status);
     }
 
+
+    public void setPantherBinaryControlFactor(int pantherBinaryControlFactor) {
+        this.pantherBinaryControlFactor = pantherBinaryControlFactor;
+    }
 
     /**
      *
