@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import uk.ac.ebi.interpro.scan.jms.stats.StatsUtil;
+import uk.ac.ebi.interpro.scan.management.model.SerialGroup;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.stepInstanceCreation.StepInstanceCreatingStep;
 import uk.ac.ebi.interpro.scan.management.model.implementations.WriteOutputStep;
@@ -168,6 +169,24 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     }
                     completed &= stepInstance.haveFinished(jobs);
                     if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
+                        final Step step = stepInstance.getStep(jobs);
+
+                        if (step instanceof RunPsScanStep) {
+                            if (SerialGroup.PANTHER_BINARY.equals(stepInstance.getStep(jobs).getSerialGroup())) {
+                                //FOr other purposes may be 1 step per pantherBinary group would suffice
+                                //Panther Bianry is memory intensive, so a hack to reduce the RAM requirments for production
+                                List<StepInstance> serialGroupInstances = stepInstanceDAO.getSerialGroupInstances(stepInstance, jobs);
+                                if (serialGroupInstances != null) {
+                                    int pantherBinaryStepsSumitted = serialGroupInstances.size();
+                                    if (pantherBinaryStepsSumitted > (Utilities.cpuCount / 2)) {
+                                        Utilities.verboseLog(30, " pantherBinaryStepsSumitted > (Utilities.cpuCount / 2: "
+                                                + pantherBinaryStepsSumitted  + " vs cpuCount:" + Utilities.cpuCount);
+                                        continue;
+                                    }
+                                }
+
+                            }
+                        }
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Step submitted:" + stepInstance);
                         }
@@ -175,7 +194,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         if (resubmission) {
                             LOGGER.warn("StepInstance " + stepInstance.getId() + " is being re-run following a failure.");
                         }
-                        final Step step = stepInstance.getStep(jobs);
+
                         // Only set up message selectors for high memory requirements if a suitable worker runner has been set up.
 
                         // Serial groups should be high priority, however exclude WriteFastaFileStep from this
