@@ -240,6 +240,19 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             LOGGER.warn("First missing model : " + missingModelIDs.get(0));
             LOGGER.warn("result Model Ids count:  " + resultModelIds.size());
         }
+
+        //
+        final Query query =
+                entityManager.createQuery(
+                        "select s, m from Signature s, Model m " +
+                                "where s.id = m.signature.id " +
+                                "and s.signatureLibraryRelease.version = :version " +
+                                "and s.signatureLibraryRelease.library = :signatureLibrary");
+        query.setParameter("signatureLibrary", signatureLibrary);
+        query.setParameter("version", signatureLibraryRelease);
+        @SuppressWarnings("unchecked") List<Object[]> signatureModels = query.getResultList();
+        Utilities.verboseLog(30, "signatureModels count: " + signatureModels.size());
+
         return result;
     }
 
