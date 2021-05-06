@@ -208,7 +208,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(signatureModelQueryMessage);
             }
-            Utilities.verboseLog(30, signatureModelQueryMessage);
+            //Utilities.verboseLog(30, signatureModelQueryMessage);
 
 
             int modelCount = 0;
@@ -239,20 +239,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
             LOGGER.warn("Failed to get some of the analysis models from h2 db: # " + missingModelIDs.size());
             LOGGER.warn("First missing model : " + missingModelIDs.get(0));
             LOGGER.warn("result Model Ids count:  " + resultModelIds.size());
-            LOGGER.warn("the missing models: " + missingModelIDs.toString());
+            //LOGGER.warn("the missing models: " + missingModelIDs.toString());
         }
-
-        //
-        final Query query =
-                entityManager.createQuery(
-                        "select s, m from Signature s, Model m " +
-                                "where s.id = m.signature.id " +
-                                "and s.signatureLibraryRelease.version = :version " +
-                                "and s.signatureLibraryRelease.library = :signatureLibrary");
-        query.setParameter("signatureLibrary", signatureLibrary);
-        query.setParameter("version", signatureLibraryRelease);
-        @SuppressWarnings("unchecked") List<Object[]> signatureModels = query.getResultList();
-        Utilities.verboseLog(30, "signatureModels count: " + signatureModels.size());
 
         return result;
     }
