@@ -61,6 +61,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
 
                 final String description = signature.getDescription();
 
+
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
                     locationCount += locations.size();
@@ -164,6 +165,12 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
 //                            prefix = ",";
 //                        }
 //                        mappingFields.add(listOfLocationFragments.toString());
+                        //add the Panther annotations details
+                        if (match instanceof PantherMatch) {
+                            PantherMatch pantherMatch = (PantherMatch) match;
+                            mappingFields.add(pantherMatch.getAnnotationsNodeId());
+                            mappingFields.add(pantherMatch.getAnnotations());
+                        }
 
                         this.tsvWriter.write(mappingFields);
                     }

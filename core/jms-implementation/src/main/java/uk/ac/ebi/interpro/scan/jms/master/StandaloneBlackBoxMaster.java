@@ -31,7 +31,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
     private static final Logger LOGGER = LogManager.getLogger(StandaloneBlackBoxMaster.class.getName());
 
-    int pantherBinaryControlFactor = 1;
+    Double pantherBinaryControlFactor = 1.0;
 
     private StatsUtil statsUtil;
 
@@ -172,6 +172,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                     if (stepInstance.canBeSubmitted(jobs) && stepInstanceDAO.serialGroupCanRun(stepInstance, jobs)) {
                         final Step step = stepInstance.getStep(jobs);
 
+                        final SerialGroup serialGroup = stepInstance.getStep(jobs).getSerialGroup();
                         if (SerialGroup.PANTHER_BINARY.equals(stepInstance.getStep(jobs).getSerialGroup())) {
                             //FOr other purposes may be 1 step per pantherBinary group would suffice
                             //Panther Bianry is memory intensive, so a hack to reduce the RAM requirments for production
@@ -179,8 +180,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                             if (serialGroupInstances != null && pantherBinaryControlFactor > 1) {
                                 int pantherBinaryStepsSubmitted = serialGroupInstances.size();
                                 if (pantherBinaryStepsSubmitted > (Utilities.cpuCount / pantherBinaryControlFactor)) {
-                                    Utilities.verboseLog(30, " pantherBinaryStepsSumitted > (Utilities.cpuCount / " + pantherBinaryControlFactor
-                                            + " : " + pantherBinaryStepsSubmitted + " vs cpuCount:" + Utilities.cpuCount);
+                                    Long pantherSerialGroupCheckStart = System.currentTimeMillis();
+                                    Utilities.verboseLog(30, serialGroup + " - pantherBinaryStepsSumitted > (Utilities.cpuCount / "
+                                            + pantherBinaryControlFactor
+                                            + ") : " + pantherBinaryStepsSubmitted + " vs cpuCount:" + Utilities.cpuCount);
+                                    for (StepInstance stepInstanceSerialCheck : serialGroupInstances) {
+                                        Utilities.verboseLog(50, stepInstanceSerialCheck.getStepId() + " " + stepInstanceSerialCheck.getStepInstanceState().toString());
+                                    }
                                     continue;
                                 }
                             }
@@ -227,7 +233,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         if (step instanceof FinaliseInitialSetupStep && !(unfinshedStepInstances.contains(step))) {
                             submittedFinaliseStep = true;
                         }
-                        //if inteproscan is onthe last step, watermark this point
+                        //if interproscan is on the last step, watermark this point
                         if (step instanceof WriteOutputStep) {
                             Utilities.verboseLog(1100, "Processing WriteOutputStep ...");
                             StatsUtil.setForceDisplayProgress(true);
@@ -421,7 +427,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
     }
 
 
-    public void setPantherBinaryControlFactor(int pantherBinaryControlFactor) {
+    public void setPantherBinaryControlFactor(Double pantherBinaryControlFactor) {
         this.pantherBinaryControlFactor = pantherBinaryControlFactor;
     }
 
