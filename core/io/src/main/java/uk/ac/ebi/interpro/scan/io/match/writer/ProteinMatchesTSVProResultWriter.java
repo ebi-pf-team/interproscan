@@ -169,7 +169,8 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                         if (match instanceof PantherMatch) {
                             PantherMatch pantherMatch = (PantherMatch) match;
                             mappingFields.add(pantherMatch.getAnnotationsNodeId());
-                            mappingFields.add(pantherMatch.getAnnotations());
+                            //disable anot as they can be processed from the data file and would just use up space in the db for each protein
+                            //mappingFields.add(pantherMatch.getAnnotations());
                         }
 
                         this.tsvWriter.write(mappingFields);
