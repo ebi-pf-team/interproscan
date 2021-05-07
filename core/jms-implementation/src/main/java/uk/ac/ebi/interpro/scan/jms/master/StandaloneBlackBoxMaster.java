@@ -146,7 +146,7 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
 
             //initialise slow steps
             List<String> slowSteps = new ArrayList<String>();
-            slowSteps.add("stepPantherRunHmmer3");
+            //slowSteps.add("stepPantherRunHmmer3");
             slowSteps.add("stepSMARTRunBinary");
             //slowSteps.add("stepPrositeProfilesRunBinary");
             // If there is an embeddedWorkerFactory (i.e. this Master is running in stand-alone mode)
@@ -173,24 +173,13 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
                         final Step step = stepInstance.getStep(jobs);
 
                         final SerialGroup serialGroup = stepInstance.getStep(jobs).getSerialGroup();
-                        if (SerialGroup.PANTHER_BINARY.equals(stepInstance.getStep(jobs).getSerialGroup())) {
-                            //FOr other purposes may be 1 step per pantherBinary group would suffice
-                            //Panther Bianry is memory intensive, so a hack to reduce the RAM requirments for production
-                            List<StepInstance> serialGroupInstances = stepInstanceDAO.getSerialGroupInstances(stepInstance, jobs);
-                            if (serialGroupInstances != null && pantherBinaryControlFactor > 1) {
-                                int pantherBinaryStepsSubmitted = serialGroupInstances.size();
-                                if (pantherBinaryStepsSubmitted > (Utilities.cpuCount / pantherBinaryControlFactor)) {
-                                    Long pantherSerialGroupCheckStart = System.currentTimeMillis();
-                                    Utilities.verboseLog(30, serialGroup + " - pantherBinaryStepsSumitted > (Utilities.cpuCount / "
-                                            + pantherBinaryControlFactor
-                                            + ") : " + pantherBinaryStepsSubmitted + " vs cpuCount:" + Utilities.cpuCount);
-                                    for (StepInstance stepInstanceSerialCheck : serialGroupInstances) {
-                                        Utilities.verboseLog(50, stepInstanceSerialCheck.getStepId() + " " + stepInstanceSerialCheck.getStepInstanceState().toString());
-                                    }
-                                    continue;
-                                }
-                            }
 
+                        if (SerialGroup.PANTHER_BINARY.equals(serialGroup)) {
+                            //deal with panther binary
+                            List<StepInstance> serialGroupInstances = stepInstanceDAO.getSerialGroupInstances(stepInstance, jobs);
+                            if(! pantherBinaryCanRun(serialGroup, serialGroupInstances)) {
+                                continue;
+                            }
                         }
 
                         if (LOGGER.isDebugEnabled()) {
@@ -426,6 +415,28 @@ public class StandaloneBlackBoxMaster extends AbstractBlackBoxMaster {
         //System.exit(status);
     }
 
+    boolean pantherBinaryCanRun(SerialGroup serialGroup, List<StepInstance> serialGroupInstances){
+            if (SerialGroup.PANTHER_BINARY.equals(serialGroup)) {
+                //FOr other purposes may be 1 step per pantherBinary group would suffice
+                //Panther Bianry is memory intensive, so a hack to reduce the RAM requirments for production
+
+                if (serialGroupInstances != null && pantherBinaryControlFactor > 1) {
+                    int pantherBinaryStepsSubmitted = serialGroupInstances.size();
+                    if (pantherBinaryStepsSubmitted >= (Utilities.cpuCount / pantherBinaryControlFactor)) {
+                        Long pantherSerialGroupCheckStart = System.currentTimeMillis();
+                        Utilities.verboseLog(30, serialGroup + " - pantherBinaryStepsSumitted > (Utilities.cpuCount / "
+                                + pantherBinaryControlFactor
+                                + ") : " + pantherBinaryStepsSubmitted + " vs cpuCount:" + Utilities.cpuCount);
+//                        for (StepInstance stepInstanceSerialCheck : serialGroupInstances) {
+//                            Utilities.verboseLog(50, stepInstanceSerialCheck.getStepId() + " " + stepInstanceSerialCheck.getStepInstanceState().toString());
+//                        }
+                        return false;
+                    }
+                }
+
+            }
+            return true;
+    }
 
     public void setPantherBinaryControlFactor(Double pantherBinaryControlFactor) {
         this.pantherBinaryControlFactor = pantherBinaryControlFactor;
