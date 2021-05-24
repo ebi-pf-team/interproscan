@@ -17,6 +17,7 @@ public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMat
         if (match == null || signature == null) {
             return null;
         }
+        //where do we store the annotations Node ID
         String annotationsNodeId = "";
 
         String annotations = "";
@@ -35,10 +36,10 @@ public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMat
                 bounds, valueOrZero(match.getEnvelopeStart()), valueOrZero(match.getEnvelopeEnd())
         ));
 
-        //TODO the annotationsNodeId is in the level columns
-        annotationsNodeId = "AN??"; // match.getLevel();
+        //TODO the annotationsNodeId is either seqFeature or in the level columns, decide
+        annotationsNodeId = match.getSeqFeature(); //"AN??"; // match.getLevel();
         //the annotations is in the sequence features column
-        annotations = match.getSeqFeature();
+        annotations = ""; // eventually get these from the panther node2annot mapping ;
 
         return new PantherMatch(
                 signature,

@@ -16,6 +16,7 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -35,6 +36,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name = "PantherMatchType")
+@JsonIgnoreProperties({"annotations"})
 public class PantherMatch extends Match<PantherMatch.PantherLocation> {
 
     @Column(nullable = false)
@@ -114,7 +116,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         return annotations;
     }
 
-    @XmlAttribute(required = true)
+    //@XmlAttribute(required = true)
     public void setAnnotations(String annotations) {
         this.annotations = annotations;
     }

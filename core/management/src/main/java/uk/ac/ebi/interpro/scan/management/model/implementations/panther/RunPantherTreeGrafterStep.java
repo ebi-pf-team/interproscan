@@ -98,6 +98,8 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
+        final String treeGrafterTemplate =  this.getFastaFileNameTemplate().replace("fasta", "tg");
+        final String treeGrafterTempdirectory = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, treeGrafterTemplate);
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
@@ -137,10 +139,8 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
             command.add("-o");
             command.add(outputFilePathName);
         }
-
-        command.add("-v");
-        command.add("DEBUG");
-        command.add("-k");
+        command.add("-t");
+        command.add(treeGrafterTempdirectory);
 
         Utilities.verboseLog(1100, "binary cmd to run: " + command.toString());
         return command;
