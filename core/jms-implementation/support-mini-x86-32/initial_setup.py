@@ -37,13 +37,13 @@ def can_run_hmmscan(hmms_path):
     exts = ['.h3p', '.h3m', '.h3f', '.h3i']
     return all([os.path.isfile(hmms_path + ext) for ext in exts])
 
-def get_hmm_models_props(ipr_properties):
+def get_hmm_models_props(ipr_properties, hmmpress_force):
     hmm_paths = []
     for key, value in ipr_properties.items():
         if 'hmm.path' in key and not ('smart' in key or 'tmhmm' in key):
             if not os.path.isfile(value):
                 continue
-            if not can_run_hmmscan(value):
+            if hmmpress_force or not can_run_hmmscan(value):
                 hmm_paths.append(value)
     return hmm_paths
 
@@ -63,12 +63,12 @@ if __name__ == "__main__":
     hmmer33_dir = ipr_properties['binary.hmmer33.path']
     hmmpress_path = hmmer3_dir + '/hmmpress'
     hmmpress33_path = hmmer33_dir + '/hmmpress'
-    hmm_models_paths = get_hmm_models_props(ipr_properties)
+    hmm_models_paths = get_hmm_models_props(ipr_properties, hmmpress_force)
     if (len(hmm_models_paths) > 0):
         print("Checking any hmm models that need indexing ... this may take a few minutes")
         sys.stdout.flush()
         for  hmms_path in  sorted(hmm_models_paths):
-            if not can_run_hmmscan(hmms_path):
+            if hmmpress_force or not can_run_hmmscan(hmms_path):
                 if 'superfam' in hmms_path or 'sfld' in hmms_path:
                     run_hmmpress(hmmpress_path, hmmpress_force, hmms_path.strip())
                 else:
