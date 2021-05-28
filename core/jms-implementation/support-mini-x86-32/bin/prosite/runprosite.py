@@ -57,7 +57,7 @@ if __name__ == "__main__":
         try:
             for el in models:
                 #print (el)
-                cmd = f"{binary_command} {pfsearch_cmd_switches} {el} {fasta_file} "
+                #cmd = f"{binary_command} {pfsearch_cmd_switches} {el} {fasta_file} "
                 cmd = "{} {} {} {} ".format(binary_command, pfsearch_cmd_switches, el, fasta_file)
                 #print (cmd)
                 #runSystemCall(cmd)
