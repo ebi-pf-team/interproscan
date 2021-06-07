@@ -41,7 +41,7 @@ before_install:
 
 branches:
   only:
-  - release-5.48-83.0
+  - master
   - release-5.50-84.0
   - dev
   except:
@@ -56,5 +56,6 @@ notifications:
   email:  
     recipients:  
     - nuka@ebi.ac.uk  
+    - tgrego@ebi.ac.uk  
     on_success: always  
     on_failure: always
