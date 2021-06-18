@@ -58,8 +58,8 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
 
         //MF_01458|FtsH	1	-1	UPI00043D6473	658	1179	13110	32.021942	+	Q
 
-        if (line.strip().isEmpty()){
-        //if (line.isEmpty()){ /for the lookupmatch to compile
+        //if (line.strip().isEmpty()){
+        if (line.isEmpty()){ //for the lookupmatch to compile
             return null;
         }
         PrositeSequenceMatch sequenceMatch = new PrositeSequenceMatch(line);
