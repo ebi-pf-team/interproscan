@@ -57,7 +57,10 @@ public final class PantherMatchParser
         }
         final String[] splitLine = line.split("\\t");
         //Utilities.verboseLog(110, "splitLine.length: " + splitLine.length);
-        //query_id	panther_id	panther_sf	score	evalue	dom_score	dom_evalue	hmm_start	hmm_end	ali_start	ali_end	env_start	env_end	annotations
+        /*
+            Header of TreeGrafter's output:
+            query_id	panther_id	panther_sf	node_id	score	evalue	dom_score	dom_evalue	hmm_start	hmm_end	ali_start	ali_end	env_start	env_end	annotations
+         */
         if (splitLine.length >= 14) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();

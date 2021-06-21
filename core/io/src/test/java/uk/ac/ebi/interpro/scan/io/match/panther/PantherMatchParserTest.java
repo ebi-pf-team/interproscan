@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-// import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParserTest;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -43,44 +42,21 @@ public class PantherMatchParserTest {
     @Test
     public void testCreateMatch() throws IOException {
         //Test of real Panther raw match line
-        //String rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR10024:SF2\tGB DEF: HYPOTHETICAL PROTEIN FLJ45597\t2.3e-141\t480.5\t1-341\t1-341\t1-341\t341";
-        String rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR45716\tSYNAPTOTAGMIN-LIKE PROTEIN 2\t3.8e-30\t107.2\t397-770\t33-566\t3-572\t970";
-
-        //String rawMatchLine2 = "O31533\tPTHR43828:SF3\tL-ASPARAGINASE 1-RELATED\t8.7e-119\t399.2\t19-375\t24-369\t1-370\t376";
-
-// FIXME
-// We are getting a null value!
-// First test will immediately fail
-
-/*
+        String rawMatchLine = "tr|Q4Q8C9|Q4Q8C9_LEIMA\tPTHR10000\tSF48\tAN11\t210.8\t2e-64\t210.7\t2.2e-64\t4\t265\t2\t259\t1\t259\tSF:PTHR10000:SF48;NAME:Pyridoxal phosphate phosphatase YbhA;";
+        PantherRawMatch result = instance.createMatch(rawMatchLine);
         assertNotNull(result,"CreateMatch method returned a NULL value!");
-        assertEquals( result.getSequenceIdentifier(), "tr|Q6ZSE3|Q6ZSE3_HUMAN");
-        assertEquals( result.getModelId(), "PTHR45716");
-        assertEquals(result.getFamilyName(), "SYNAPTOTAGMIN-LIKE PROTEIN 2");
-        assertEquals(new Double("3.8e-30"), result.getEvalue());
-        assertEquals(new Double("107.2"), result.getScore());
-        assertEquals(397, result.getHmmStart());
-        assertEquals(770, result.getHmmEnd());
-        assertEquals(970, result.getHmmLength());
-        assertEquals("..", result.getHmmBounds());
-        assertEquals(33, result.getLocationStart());
-        assertEquals(566, result.getLocationEnd());
-        assertEquals(3, result.getEnvelopeStart());
-        assertEquals(572, result.getEnvelopeEnd());
-        //location start, end is missing
-        rawMatchLine = "tr|Q6ZSE3|Q6ZSE3_HUMAN\tPTHR10024:SF2\tGB DEF: HYPOTHETICAL PROTEIN FLJ45597\t2.3e-141\t480.5";
-        assertNull( instance.createMatch(rawMatchLine), "Result of createMatch method should be NULL!");
-        //
-        assertNull( instance.createMatch(null), "Result of createMatch method should be NULL!");
-        //
-        assertNull( instance.createMatch(""), "Result of createMatch method should be NULL!");
-
-        String panther_results_file_path = PantherMatchParserTest.class.getClassLoader().getResource(TEST_FILE_PATH).getFile();
-
-        InputStream is = PantherMatchParserTest.class.getClassLoader().getResourceAsStream(panther_results_file_path);
-        LOGGER.warn("panther_results_file_path: " + panther_results_file_path);
-*/
-        // Set<RawProtein<PantherRawMatch>> pantherRawProteins =  instance.parse(is);
-        // assertEquals("The set of parsed raw proteins should not be empty", true, pantherRawProteins.size()== 0);
+        assertEquals( result.getSequenceIdentifier(), "tr|Q4Q8C9|Q4Q8C9_LEIMA");
+        assertEquals( result.getModelId(), "PTHR10000");
+        assertEquals(result.getFamilyName(), "PTHR10000");
+        assertEquals(new Double("2e-64"), result.getEvalue());
+        assertEquals(new Double("210.8"), result.getScore());
+        assertEquals(4, result.getHmmStart());
+        assertEquals(265, result.getHmmEnd());
+        assertEquals(0, result.getHmmLength());
+        assertEquals(".]", result.getHmmBounds());
+        assertEquals(2, result.getLocationStart());
+        assertEquals(259, result.getLocationEnd());
+        assertEquals(1, result.getEnvelopeStart());
+        assertEquals(259, result.getEnvelopeEnd());
     }
 }
