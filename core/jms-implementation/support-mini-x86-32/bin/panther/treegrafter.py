@@ -16,7 +16,7 @@ from tglib.re_matcher import re_matcher
 
 
 def process_matches_raxml(matches):
-    
+
     results = results_header
 
     for pthr in matches:
@@ -111,7 +111,7 @@ def generate_fasta_for_panthr(pthr, matches):
 
     # print(query_fasta)
 
-    fasta_out_file = os.path.join(options['tmp_folder'], f'{pthr}_query.fasta')
+    fasta_out_file = os.path.join(options['tmp_folder'], pthr + '_query.fasta')
 
     with open(fasta_out_file, 'w') as outfile:
         outfile.write(query_fasta)
@@ -130,8 +130,8 @@ def stringify(query_id):
 def _generateFasta(pathr, query_id, querymsf):
 
     # use static dir paths for testing. these are provided
-    fasta_in_file = os.path.join(options['msf_tree_folder'], f'{pathr}.AN.fasta')
-    fasta_out_file = os.path.join(options['tmp_folder'], f'{query_id}.{pathr}.fasta')
+    fasta_in_file = os.path.join(options['msf_tree_folder'], pathr + '.AN.fasta')
+    fasta_out_file = os.path.join(options['tmp_folder'], query_id + '.' + pathr + '.fasta')
 
     with open(fasta_out_file, 'w') as outfile:
         with open(fasta_in_file, 'r') as infile:
@@ -207,21 +207,23 @@ def _run_epang(pthr, query_fasta, annotations):
 
     # print(query_fasta)
 
-    referece_fasta = os.path.join(options['msf_tree_folder'], f'{pthr}.AN.fasta')
+    referece_fasta = os.path.join(options['msf_tree_folder'], pthr + '.AN.fasta')
     # print(referece_fasta)
 
-    bifurnewick_in = os.path.join(options['msf_tree_folder'], f'{pthr}.bifurcate.newick')
+    bifurnewick_in = os.path.join(options['msf_tree_folder'], pthr + '.bifurcate.newick')
 
     epang_dir = os.path.join(options['tmp_folder'], pthr + '_epang')
 
     os.mkdir(epang_dir)
 
-    epang_cmd = 'epa-ng -G 0.05 -m WAG -T 4 -t ' + bifurnewick_in + \
+    if not options['algo_bin']:
+        options['algo_bin'] = 'epa-ng'
+
+
+    epang_cmd = options['algo_bin'] + \
+                ' -G 0.05 -m WAG -T 4 -t ' + bifurnewick_in + \
                 ' -s ' + referece_fasta + \
                 ' -q ' + query_fasta + ' -w ' + epang_dir + ' >/dev/null'
-
-    if options['algo_bin']:
-        epang_cmd = options['algo_bin'] + '/' + epang_cmd
 
     logger.debug('running epa_ng cmd: ' + epang_cmd)
 
@@ -238,18 +240,19 @@ def _run_raxml(pathr, query_id, fasta_file, annotations, pthr_matches):
 
     # print(fasta_file)
 
-    bifurnewick_in = os.path.join(options['msf_tree_folder'], f'{pathr}.bifurcate.newick')
+    bifurnewick_in = os.path.join(options['msf_tree_folder'], pathr + '.bifurcate.newick')
 
-    raxml_dir = os.path.join(options['tmp_folder'], f'{pathr}_{query_id}_raxml')
+    raxml_dir = os.path.join(options['tmp_folder'], pathr + '_' + query_id + '_raxml')
 
     os.mkdir(raxml_dir)
 
-    raxml_cmd = 'raxmlHPC-PTHREADS-SSE3 -f y -p 12345 -t ' + bifurnewick_in + \
+    if not options['algo_bin']:
+        options['algo_bin'] = 'raxmlHPC-PTHREADS-SSE3'
+
+    raxml_cmd = options['algo_bin'] + \
+                ' -f y -p 12345 -t ' + bifurnewick_in + \
                 ' -G 0.05 -m PROTGAMMAWAG -T 4 -s ' + fasta_file + \
                 ' -n ' + pathr + ' -w ' + raxml_dir + ' >/dev/null'
-
-    if options['algo_bin']:
-        raxml_cmd = options['algo_bin'] + '/' + raxml_cmd
 
     # print('RAXML_CMD: ' + raxml_cmd)
 
@@ -291,6 +294,7 @@ def _run_raxml(pathr, query_id, fasta_file, annotations, pthr_matches):
             query_id + "\t" +
             pathr + "\t" +
             pthrsf + "\t" +
+            str(commonAN) + "\t" +
             pthr_matches['score'][x] + "\t" +
             pthr_matches['evalue'][x] + "\t" +
             pthr_matches['domscore'][x] + "\t" +
@@ -418,7 +422,7 @@ def process_tree(pthr, result_tree, pthr_matches):
             pthrsf = pthrsf_match.group(1)
         else:
             logger.warning("parsing annotations, could not get SF family for " + str(commonAN))
-            
+
         # print(pthrsf)
 
         # print(pthr_matches)
@@ -428,9 +432,10 @@ def process_tree(pthr, result_tree, pthr_matches):
         for x in range(0, len(pthr_matches[query_id]['hmmstart'])):
             # print(x)
             results_pthr.append(
-                query_id + "\t" + 
-                pthr + "\t" + 
+                query_id + "\t" +
+                pthr + "\t" +
                 pthrsf + "\t" +
+                str(commonAN) + "\t" +
                 pthr_matches[query_id]['score'][x] + "\t" +
                 pthr_matches[query_id]['evalue'][x] + "\t" +
                 pthr_matches[query_id]['domscore'][x] + "\t" +
@@ -539,27 +544,23 @@ def _commonancestor(pathr, mapANs):
 
 def runhmmr():
 
-    
+
     options['hmmr_out'] = os.path.join(options['hmmr_dir'],
         os.path.basename(options['fasta_input']) + \
         '.' + options['hmmr_mode'] + '.out')
 
     panther_hmm = os.path.join(options['data_folder'], 'famhmm/binHmm')
 
-
-    # the binary
-    hmmr_cmd = options['hmmr_mode']
-
     # path to binary
-    if options['hmmr_bin']:
-        hmmr_cmd = options['hmmr_bin'] + '/' + hmmr_cmd
+    if not options['hmmr_bin']:
+        options['hmmr_bin'] = options['hmmr_mode']
 
-    # all the rest
-    hmmr_cmd = hmmr_cmd + ' --notextw --cpu ' + str(options['hmmr_cpus']) + \
-        ' -Z ' + options['hmmr_Z'] + ' -E ' + options['hmmr_E'] + ' --domE ' + options['hmmr_domE'] + ' --incdomE ' + options['hmmr_incdomE'] + \
+    # build the command
+    hmmr_cmd = options['hmmr_bin'] + \
+        ' --notextw --cpu ' + str(options['hmmr_cpus']) + \
+        ' -Z ' +  str(options['hmmr_Z']) + ' -E ' +  str(options['hmmr_E']) + ' --domE ' +  str(options['hmmr_domE']) + ' --incdomE ' +  str(options['hmmr_incdomE']) + \
         ' -o ' + options['hmmr_out'] + \
         ' ' + panther_hmm + ' ' + options['fasta_input'] + ' > /dev/null'
-
 
     exit_status = os.system(hmmr_cmd)
 
@@ -746,7 +747,7 @@ def parsehmmscan(hmmer_out):
                     line = fp.readline()
 
                     matches[matchpthr][query_id]['matchalign'].append(line.split()[2])
-    
+
                     line = fp.readline()
 
                     # print(json.dumps(matches[matchpthr][query_id], indent=4))
@@ -874,8 +875,8 @@ def parsehmmsearch(hmmer_out):
 
                     # match_store[query_id] = {
                     current_match = {
-                        'panther_id': matchpthr, 
-                        'score': score_store[query_id], 
+                        'panther_id': matchpthr,
+                        'score': score_store[query_id],
                         'align': {
                             'hmmalign': [],
                             'matchalign': [],
@@ -960,7 +961,7 @@ def parsehmmsearch(hmmer_out):
                     hmmalign_seq = hmmalign_array[2]
 
 
-                    
+
                     # match_store[query_id]['align']['hmmalign'].append(hmmalign_seq)
 
                     line = fp.readline()
@@ -1094,7 +1095,7 @@ def get_args():
 
     ap.add_argument(
         '-hb', '--hbin', default=None,
-        help='path to hmmer bin directory, PATH if None')
+        help='path to hmmer binary, PATH if None')
 
     ap.add_argument(
         '-hm', '--hmode', default='hmmsearch', choices=['hmmscan', 'hmmsearch'],
@@ -1106,7 +1107,7 @@ def get_args():
 
     ap.add_argument(
         '-ab', '--abin',
-        help='path to RAxML/EPA-ng bin directory, PATH if None')
+        help='path to RAxML/EPA-ng binary, PATH if None')
 
     ap.add_argument(
         '-hc', '--hcpus', default=1, type=int,
@@ -1171,7 +1172,7 @@ def get_args():
 
 
 def align_length(pthr):
-    pthr_fasta_file = os.path.join(options['msf_tree_folder'], f'{pthr}.AN.fasta')
+    pthr_fasta_file = os.path.join(options['msf_tree_folder'], pthr + '.AN.fasta')
 
     try:
         with open(pthr_fasta_file) as f:
@@ -1230,6 +1231,7 @@ if __name__ == '__main__':
     if args['tmp'] is None:
         options['tmp_folder'] = tempfile.mkdtemp()
     else:
+        os.makedirs(args['tmp'], exist_ok=True)
         options['tmp_folder'] = tempfile.mkdtemp(dir=args['tmp'])
     if options['hmmr_dir'] is None:
         options['hmmr_dir'] = options['tmp_folder']
@@ -1258,10 +1260,10 @@ if __name__ == '__main__':
         quit()
 
 
-    results_header = ["query_id\tpanther_id\tpanther_sf\tscore\tevalue\tdom_score\tdom_evalue\thmm_start\thmm_end\tali_start\tali_end\tenv_start\tenv_end\tannotations\n"]
+    results_header = ["query_id\tpanther_id\tpanther_sf\tnode_id\tscore\tevalue\tdom_score\tdom_evalue\thmm_start\thmm_end\tali_start\tali_end\tenv_start\tenv_end\tannotations\n"]
 
 
-    # print(json.dumps(options, indent=4))    
+    # print(json.dumps(options, indent=4))
 
     if options['hmmr_out'] is None:
         logger.info('Running ' + options['hmmr_mode'])
