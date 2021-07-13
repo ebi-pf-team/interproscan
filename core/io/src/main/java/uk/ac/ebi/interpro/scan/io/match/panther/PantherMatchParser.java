@@ -41,7 +41,7 @@ public final class PantherMatchParser
     @Override
     protected PantherRawMatch createMatch(String line) {
         if (line.startsWith("query_id")) {
-            LOGGER.warn("This is a header line .");
+            //LOGGER.warn("This is a header line .");
             return null;
         }
         if (line == null || line.length() == 0) {
