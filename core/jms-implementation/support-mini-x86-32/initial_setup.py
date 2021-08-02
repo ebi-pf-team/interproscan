@@ -19,8 +19,8 @@ def load_properties(filepath, sep='=', comment_char='#'):
             if stripped_line and not stripped_line.startswith(comment_char):
                 key_value = stripped_line.split(sep)
                 key = key_value[0].strip()
-                value = sep.join(key_value[1:]).strip().strip('"') 
-                ipr_properties[key] = value 
+                value = sep.join(key_value[1:]).strip().strip('"')
+                ipr_properties[key] = value
     data_directory  =  ipr_properties['data.directory']
     bin_directory = ipr_properties['bin.directory']
     ipr_properties_resolved_paths = {}
@@ -47,11 +47,17 @@ def get_hmm_models_props(ipr_properties, hmmpress_force):
                 hmm_paths.append(value)
     return hmm_paths
 
-def run_hmmpress(hmmpress_path, hmms_path):
+def run_hmmpress(hmmpress_path, hmmpress_force, hmms_path):
     #run([hmmpress_path,hmms_path])
-    call([hmmpress_path,hmms_path])
+    if  hmmpress_force:
+        call([hmmpress_path, '-f', hmms_path])
+    else:
+        call([hmmpress_path, hmms_path])
 
 if __name__ == "__main__":
+    hmmpress_force = False  # use if the indices need to be rebuilt
+    if len(sys.argv) > 1 and sys.argv[1] == '-f':
+        hmmpress_force = True
     ipr_properties = load_properties('interproscan.properties')
     hmmer3_dir = ipr_properties['binary.hmmer3.path']
     hmmer33_dir = ipr_properties['binary.hmmer33.path']
@@ -64,8 +70,8 @@ if __name__ == "__main__":
         for  hmms_path in  sorted(hmm_models_paths):
             if hmmpress_force or not can_run_hmmscan(hmms_path):
                 if 'superfam' in hmms_path or 'sfld' in hmms_path:
-                    run_hmmpress(hmmpress_path, hmms_path.strip())
+                    run_hmmpress(hmmpress_path, hmmpress_force, hmms_path.strip())
                 else:
-                    run_hmmpress(hmmpress33_path, hmms_path.strip())
+                    run_hmmpress(hmmpress33_path, hmmpress_force, hmms_path.strip())
         print('Completed indexing the hmm models.')
 
