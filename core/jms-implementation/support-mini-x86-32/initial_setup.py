@@ -19,8 +19,8 @@ def load_properties(filepath, sep='=', comment_char='#'):
             if stripped_line and not stripped_line.startswith(comment_char):
                 key_value = stripped_line.split(sep)
                 key = key_value[0].strip()
-                value = sep.join(key_value[1:]).strip().strip('"') 
-                ipr_properties[key] = value 
+                value = sep.join(key_value[1:]).strip().strip('"')
+                ipr_properties[key] = value
     data_directory  =  ipr_properties['data.directory']
     bin_directory = ipr_properties['bin.directory']
     ipr_properties_resolved_paths = {}
