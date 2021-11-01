@@ -106,7 +106,7 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
 
         command.add(fullPathToPython);
         command.add(fullPathToBinary);
-        command.add(fastaFilePathName)
+        command.add(fastaFilePathName);
         command.add(inputFileNameHmmerRawOutput);
         command.add(pantherModelsDirectory);
 
@@ -114,6 +114,9 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
             command.add("-o");
             command.add(outputFilePathName);
         }
+
+        command.add("--epa-ng");
+        command.add(fullPathToEPANGBinary);
 
         command.add("-T");
         command.add(treeGrafterTempdirectory);
