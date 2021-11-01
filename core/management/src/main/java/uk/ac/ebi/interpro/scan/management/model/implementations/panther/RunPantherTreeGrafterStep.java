@@ -102,45 +102,23 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
         final String treeGrafterTempdirectory = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, treeGrafterTemplate);
         final String fastaFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
-
-        //final String inputFileNameDomTblout = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameHmmerRawOutputTemplate());
-
         final String inputFileNameHmmerRawOutput = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileNameHmmerRawOutputTemplate());
-
-
-        //final String inputFilePantherFamilyNames = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFilePantherFamilyNames());
-        //treegrafter.py --out output/panther15/tg.v16.run1.out
-        // -d /hps/nobackup/production/interpro/nuka/i5/panther/panther16/v16/data
-        // -t temp/hx-noah-31-04.ebi.ac.uk_20210429_155843053_c3kq/
-        // -ab bin/ -f /hps/nobackup/production/interpro/nuka/i5/release/interproscan-5.51-85.0/test_all_appl.fasta
-        // -v DEBUG -k
 
         command.add(fullPathToPython);
         command.add(fullPathToBinary);
-        command.add("-d");
-        command.add(pantherModelsDirectory);
-//        command.add("-m");
-//        if (forceHmmsearch || Utilities.getSequenceCount() > 10) {
-//            command.add("hmmsearch");
-//        }else{
-//            command.add("hmmscan");
-//        }
-        command.add("-ab");
-        command.add(fullPathToEPANGBinary);
-        command.add("-f");
-        command.add(fastaFilePathName);
-        command.add("-ho");
+        command.add(fastaFilePathName)
         command.add(inputFileNameHmmerRawOutput);
+        command.add(pantherModelsDirectory);
 
-        command.addAll(this.getBinarySwitchesAsList());
-
-        // output file option
         if(this.isUsesFileOutputSwitch()){
             command.add("-o");
             command.add(outputFilePathName);
         }
-        command.add("-t");
+
+        command.add("-T");
         command.add(treeGrafterTempdirectory);
+
+        command.addAll(this.getBinarySwitchesAsList());
 
         Utilities.verboseLog(1100, "binary cmd to run: " + command.toString());
         return command;
