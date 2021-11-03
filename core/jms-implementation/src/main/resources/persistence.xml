@@ -101,6 +101,7 @@
 
         <class>uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch</class>
 
+        <class>uk.ac.ebi.interpro.scan.model.raw.AntiFamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch</class>

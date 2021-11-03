@@ -53,6 +53,7 @@
 
                 <!-- Analyses -->
                 <!--Old versions are not present because they aren't in the H2 database anymore-->
+                <ref bean="jobAntiFam"/>
                 <ref bean="jobCDD"/>
                 <ref bean="jobCoils"/>
                 <ref bean="jobGene3d"/>
