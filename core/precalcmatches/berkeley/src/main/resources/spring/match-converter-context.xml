@@ -9,26 +9,27 @@
           class="uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.LookupStoreToI5ModelDAOImpl">
         <property name="signatureLibraryToMatchConverter">
             <map>
-                <entry key="MOBIDB_LITE" value-ref="mobidbLookupMatchConverter"/>
+                <entry key="ANTIFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="CDD" value-ref="rpsblastLookupMatchConverter"/>
+                <entry key="COILS" value-ref="coilsLookupMatchConverter"/>
                 <entry key="GENE3D" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
+                <entry key="MOBIDB_LITE" value-ref="mobidbLookupMatchConverter"/>
+                <entry key="PANTHER" value-ref="pantherLookupMatchConverter"/>
+                <entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PIRSF" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PRINTS" value-ref="printsLookupMatchConverter"/>
-                <entry key="TIGRFAM" value-ref="hmmer3LookupMatchConverter"/>
-                <entry key="COILS" value-ref="coilsLookupMatchConverter"/>
+                <entry key="PRODOM" value-ref="prodomLookupMatchConverter"/>
                 <entry key="PROSITE_PATTERNS" value-ref="prositePatternsLookupMatchConverter"/>
                 <entry key="PROSITE_PROFILES" value-ref="prositeProfilesLookupMatchConverter"/>
-                <entry key="PANTHER" value-ref="pantherLookupMatchConverter"/>
-                <entry key="SUPERFAMILY" value-ref="superfamilyLookupMatchConverter"/>
-                <entry key="PRODOM" value-ref="prodomLookupMatchConverter"/>
-                <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
                 <entry key="SFLD" value-ref="hmmer3WithSitesLookupMatchConverter"/>
-                <entry key="SMART" value-ref="hmmer2LookupMatchConverter"/>
                 <entry key="SIGNALP_EUK" value-ref="signalpLookupMatchConverter"/>
                 <entry key="SIGNALP_GRAM_NEGATIVE" value-ref="signalpLookupMatchConverter"/>
                 <entry key="SIGNALP_GRAM_POSITIVE" value-ref="signalpLookupMatchConverter"/>
-                <entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>
+                <entry key="SMART" value-ref="hmmer2LookupMatchConverter"/>
+                <entry key="SUPERFAMILY" value-ref="superfamilyLookupMatchConverter"/>
+                <entry key="TIGRFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="TMHMM" value-ref="tmhmmLookupMatchConverter"/>
             </map>
         </property>
