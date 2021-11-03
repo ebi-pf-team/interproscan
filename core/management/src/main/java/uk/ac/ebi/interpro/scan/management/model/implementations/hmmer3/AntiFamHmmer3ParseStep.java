@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3;
 
 import uk.ac.ebi.interpro.scan.management.model.implementations.ParseStep;
-import uk.ac.ebi.interpro.scan.model.raw.AntiFamdHmmer3RawMatchs;
+import uk.ac.ebi.interpro.scan.model.raw.AntiFamHmmer3RawMatch;
 
 /**
  * Represents parsing step for AntiFam.
@@ -9,5 +9,5 @@ import uk.ac.ebi.interpro.scan.model.raw.AntiFamdHmmer3RawMatchs;
  * @author Matthias Blum
  * @version $Id$
  */
-public class AntiFamdHmmer3ParseStep extends ParseStep<AntiFamdHmmer3RawMatch> {
+public class AntiFamHmmer3ParseStep extends ParseStep<AntiFamHmmer3RawMatch> {
 }
