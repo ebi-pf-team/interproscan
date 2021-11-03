@@ -15,6 +15,13 @@
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
             <list>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="ANTIFAM"/>
+                    <property name="releaseVersionNumber" value="${antifam.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${antifam.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobAntiFam"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.cdd.CDDModelParser">
                     <property name="signatureLibrary" value="CDD"/>
                     <property name="releaseVersionNumber" value="${cdd.signature.library.release}"/>

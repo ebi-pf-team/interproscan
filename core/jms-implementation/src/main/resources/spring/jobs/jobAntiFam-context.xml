@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: ANTIFAM ############################  -->
+    <bean id="jobAntiFam" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="
+AntiFam is a resource of profile-HMMs designed to identify spurious protein predictions."/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseAntiFam"/>
+    </bean>
+
+    <bean id="abstractAntiFamStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobAntiFam"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.ANTIFAM}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepAntiFamWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractAntiFamStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepAntiFamRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractAntiFamStep">
+        <property name="dependsUpon" ref="stepAntiFamWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER 3 Binary for selected proteins"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.antifam} ${hmmer3.hmmsearch.cpu.switch.antifam}"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToHmmFile" value="${antifam.hmm.path}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepAntiFamDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractAntiFamStep">
+        <property name="dependsUpon" ref="stepAntiFamRunHmmer3"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of HMMER3"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+
+    <bean id="stepAntiFamStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.AntiFamHmmer3ParseStep"
+          parent="abstractAntiFamStep">
+        <property name="dependsUpon" ref="stepAntiFamRunHmmer3"/>
+        <property name="stepDescription" value="Parse the output from HMMER3."/>
+        <property name="serialGroup" value="PARSE_ANTIFAM"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+                <property name="useHmmsearch" value="true"/>
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.AntiFamHmmer3ParserSupport">
+                        <property name="signatureLibraryRelease" ref="antiFamSignatureLibraryReleaseVersion"/>
+                        <property name="hmmKey" value="ACCESSION"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="antifamRawMatchDAO"/>
+    </bean>
+
+    <bean id="stepAntiFamDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractAntiFamStep">
+        <property name="dependsUpon" ref="stepAntiFamStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+    </bean>
+
+    <bean id="stepAntiFamPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.AntiFamHmmer3FilterStep"
+          parent="abstractAntiFamStep">
+        <property name="dependsUpon" ref="stepAntiFamStoreRawMatches"/>
+        <property name="signatureLibraryRelease" ref="antiFamSignatureLibraryReleaseVersion"/>
+        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.AntiFamHmmer3FilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
+        </property>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="rawMatchDAO" ref="antifamRawMatchDAO"/>
+        <property name="signatureLibrary" value="ANTIFAM"/>
+        <property name="filter">
+            <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
+        </property>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: ANTIFAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="antifamRawMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.AntiFamHmmer3RawMatch"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseAntiFam" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="ANTIFAM"/>
+        <constructor-arg type="java.lang.String" ref="antiFamSignatureLibraryReleaseVersion"/>
+    </bean>
+
+
+    <bean id="antiFamSignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="${antifam.signature.library.release}"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
