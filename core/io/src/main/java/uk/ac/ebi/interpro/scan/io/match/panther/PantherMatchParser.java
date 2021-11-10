@@ -109,7 +109,7 @@ public final class PantherMatchParser
                 String pcTerm ="";
                 if (annotSplitLine.length >= 3) {
                     //pcTerm annotations
-                    pcTerm = annotSplitLine[1].trim();
+                    pcTerm = annotSplitLine[2].trim();
                 }
                 Utilities.verboseLog(50, "subfamily: " + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
                 if (fullSubFamilyModelID.strip().length() == 0){
