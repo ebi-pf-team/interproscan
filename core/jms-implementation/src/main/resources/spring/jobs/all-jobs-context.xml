@@ -113,6 +113,10 @@
         <constructor-arg value="[PROTSTART]_[PROTEND]_three.raw.out"/>
     </bean>
 
+    <bean id="rawAnalysisOutputFourFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND]_four.raw.out"/>
+    </bean>
+
     <bean id="rawAnalysisOutputTbloutFileTemplate" class="java.lang.String">
         <constructor-arg value="[PROTSTART]_[PROTEND].raw.tblout.out"/>
     </bean>
