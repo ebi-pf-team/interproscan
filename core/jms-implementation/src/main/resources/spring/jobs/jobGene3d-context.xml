@@ -15,7 +15,7 @@
         <property name="libraryRelease" ref="signatureLibraryReleaseGene3d"/>
     </bean>
 
-    <bean id="abstractGene3dStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+    <bean id="abstractCathGene3dStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobGene3d"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.GENE3D}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
@@ -23,18 +23,18 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <bean id="stepGene3dWriteFasta"
+    <bean id="stepCathGene3dWriteFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractGene3dStep">
+          parent="abstractCathGene3dStep">
         <property name="stepDescription" value="Create FASTA file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <bean id="stepGene3dRunHmmer3"
+    <bean id="stepCathGene3dRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dWriteFasta"/>
+          parent="abstractCathGene3dStep">
+        <property name="dependsUpon" ref="stepCathGene3dWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer33.hmmscan.path}"/>
         <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
@@ -51,10 +51,10 @@
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
     </bean>
 
-    <bean id="stepRunCathResolveHitsStep"
+    <bean id="stepCathGene3dRunCathResolveHitsStep"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunCathResolveHitsBinaryStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dRunHmmer3"/>
+          parent="abstractCathGene3dStep">
+        <property name="dependsUpon" ref="stepCathGene3dRunHmmer3"/>
         <property name="stepDescription" value="Run CathResolveHits"/>
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
         <property name="crhInputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
@@ -64,10 +64,10 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepRunAssignCathFamiliesStep"
+    <bean id="stepCathGene3dRunAssignCathFamiliesStep"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.RunAssignCathFamilyBinaryStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepRunCathResolveHitsStep"/>
+          parent="abstractCathGene3dStep">
+        <property name="dependsUpon" ref="stepCathGene3dRunCathResolveHitsStep"/>
         <property name="stepDescription" value="Run AssignCathFamilyStep"/>
         <property name="forceHmmsearch" value="${gene3d.hmmsearch.force}"/>
         <property name="inputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
@@ -80,13 +80,13 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <bean id="stepGene3dParseOutputs"
+    <bean id="stepCathGene3dParseOutputs"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.gene3d.Gene3DParseAndPersistOutputStep"
-          parent="abstractGene3dStep">
+          parent="abstractCathGene3dStep">
         <property name="dependsUpon" >
                 <list>
-                    <!--<ref bean="stepGene3dRunHmmer3"/>-->
-                    <ref bean="stepRunAssignCathFamiliesStep"/>
+                    <!--<ref bean="stepCathGene3dRunHmmer3"/>-->
+                    <ref bean="stepCathGene3dRunAssignCathFamiliesStep"/>
                 </list>
         </property>
         <property name="stepDescription" value="Parse output from HMMER3 and CathResolveHits"/>
@@ -95,7 +95,7 @@
         <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
 
         <property name="serialGroup" value="PARSE_GENE3D"/>
-        <property name="rawMatchDAO" ref="gene3dRawMatchDAO"/>
+        <property name="rawMatchDAO" ref="cathGene3dRawMatchDAO"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO">
                 <property name="dbStore" ref="kvStoreMatches"/>
@@ -128,10 +128,10 @@
 
     </bean>
 
-    <bean id="stepGene3dDeleteRelatedTmpFiles"
+    <bean id="stepCathGene3dDeleteRelatedTmpFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractGene3dStep">
-        <property name="dependsUpon" ref="stepGene3dParseOutputs"/>
+          parent="abstractCathGene3dStep">
+        <property name="dependsUpon" ref="stepCathGene3dParseOutputs"/>
         <property name="stepDescription" value="Delete output piped from SSF after post-processing has run"/>
         <property name="fileNameTemplate">
             <list>
@@ -146,7 +146,7 @@
 
     <!-- ######################## Dependencies ############################  -->
 
-    <bean id="gene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+    <bean id="cathGene3dRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
         <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch"/>
     </bean>
 
