@@ -30,6 +30,14 @@
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
 
+                <bean class="uk.ac.ebi.interpro.scan.io.funfam.FunFamModelParser">
+                    <property name="signatureLibrary" value="FUNFAM"/>
+                    <property name="releaseVersionNumber" value="${funfam.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${funfam.data.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="JobFunFam"/>
+                </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
                     <property name="signatureLibrary" value="GENE3D"/>
                     <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
