@@ -99,7 +99,7 @@ public class HmmerModelParser extends AbstractModelFileParser {
                             case 'A':
                                 if (accession == null) {
                                     accession = extractValue(ACCESSION_PATTERN, line, 1);
-                                    if (accession.startsWith("PIRSR")){  //deal with the PIRSR specific pattern
+                                    if (accession != null && accession.startsWith("PIRSR")){  //deal with the PIRSR specific pattern
                                         accession = extractValue(ACCESSION_PATTERN_PIRSR, line, 1);
                                     }
                                 }
