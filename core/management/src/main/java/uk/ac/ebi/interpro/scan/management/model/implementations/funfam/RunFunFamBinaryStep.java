@@ -13,12 +13,15 @@ import java.util.List;
 public class RunFunFamBinaryStep extends RunBinaryStep {
     private static final Logger LOGGER = LogManager.getLogger(RunFunFamBinaryStep.class.getName());
     private String fullPathToPython;
-    private String fullPathToBinary;
-    private String fullPathToModelsDirectory;
-    private String fullPathToHmmsearchBinary;
+    private String fullPathToPythonBinary;
     private String fastaFileNameTemplate;
-    private String inputFileTemplate;
-    private String outputFileTemplate;
+    private String cathAssignedFileNameTemplace;
+    private String fullPathToModelsDirectory;
+    private String outputFileNameDomTbloutTemplate;
+    private String fullPathToHmmsearchBinary;
+    private String hmmsearchBinarySwitches;
+    private String fullPathToCathResolveBinary;
+    private String cathResolveBinarySwitches;
 
     public String getFullPathToPython() {
         return fullPathToPython;
@@ -29,49 +32,13 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
         this.fullPathToPython = fullPathToPython;
     }
 
-    public String getFullPathToBinary() {
-        return fullPathToBinary;
+    public String getFullPathToPythonBinary() {
+        return fullPathToPythonBinary;
     }
 
     @Required
-    public void setFullPathToBinary(String fullPathToBinary) {
-        this.fullPathToBinary = fullPathToBinary;
-    }
-
-    public String getFullPathToModelsDirectory() {
-        return fullPathToModelsDirectory;
-    }
-
-    @Required
-    public void setFullPathToModelsDirectory(String fullPathToModelsDirectory) {
-        this.fullPathToModelsDirectory = fullPathToModelsDirectory;
-    }
-
-    public String getFullPathToHmmsearchBinary() {
-        return fullPathToHmmsearchBinary;
-    }
-
-    @Required
-    public void setFullPathToHmmsearchBinary(String fullPathToHmmsearchBinary) {
-        this.fullPathToHmmsearchBinary = fullPathToHmmsearchBinary;
-    }
-
-    public String getInputFileTemplate() {
-        return inputFileTemplate;
-    }
-
-    @Required
-    public void setInputFileTemplate(String inputFileTemplate) {
-        this.inputFileTemplate = inputFileTemplate;
-    }
-
-    public String getOutputFileTemplate() {
-        return outputFileTemplate;
-    }
-
-    @Required
-    public void setOutputFileTemplate(String outputFileTemplate) {
-        this.outputFileTemplate = outputFileTemplate;
+    public void setFullPathToPythonBinary(String fullPathToPythonBinary) {
+        this.fullPathToPythonBinary = fullPathToPythonBinary;
     }
 
     public String getFastaFileNameTemplate() {
@@ -83,39 +50,106 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
         this.fastaFileNameTemplate = fastaFileNameTemplate;
     }
 
-    /**
-     * Implementations of this method should return a List<String> containing all the components of the command line to be called
-     * including any arguments. The StepInstance and temporary file are provided to allow parameters to be built. Use
-     * stepInstance.buildFullyQualifiedFilePath to assist building paths.
-     *
-     * @param stepInstance           containing the parameters for executing.
-     * @param temporaryFileDirectory is the relative path in which files are stored.
-     * @return elements of the command in a list.
-     */
+    public String getCathAssignedFileNameTemplace() {
+        return cathAssignedFileNameTemplace;
+    }
+
+    @Required
+    public void setCathAssignedFileNameTemplace(String cathAssignedFileNameTemplace) {
+        this.cathAssignedFileNameTemplace = cathAssignedFileNameTemplace;
+    }
+
+    public String getFullPathToModelsDirectory() {
+        return fullPathToModelsDirectory;
+    }
+
+    @Required
+    public void setFullPathToModelsDirectory(String fullPathToModelsDirectory) {
+        this.fullPathToModelsDirectory = fullPathToModelsDirectory;
+    }
+
+    public String getOutputFileNameDomTbloutTemplate() {
+        return outputFileNameDomTbloutTemplate;
+    }
+
+    @Required
+    public void setOutputFileNameDomTbloutTemplate(String outputFileNameDomTbloutTemplate) {
+        this.outputFileNameDomTbloutTemplate = outputFileNameDomTbloutTemplate;
+    }
+
+    public String getFullPathToHmmsearchBinary() {
+        return fullPathToHmmsearchBinary;
+    }
+
+    @Required
+    public void setFullPathToHmmsearchBinary(String fullPathToHmmsearchBinary) {
+        this.fullPathToHmmsearchBinary = fullPathToHmmsearchBinary;
+    }
+
+    public String getHmmsearchBinarySwitches() {
+        return hmmsearchBinarySwitches;
+    }
+
+    public void setHmmsearchBinarySwitches(String hmmsearchBinarySwitches) {
+        this.hmmsearchBinarySwitches = hmmsearchBinarySwitches;
+    }
+
+    public String getFullPathToCathResolveBinary() {
+        return fullPathToCathResolveBinary;
+    }
+
+    @Required
+    public void setFullPathToCathResolveBinary(String fullPathToCathResolveBinary) {
+        this.fullPathToCathResolveBinary = fullPathToCathResolveBinary;
+    }
+
+    public String getCathResolveBinarySwitches() {
+        return cathResolveBinarySwitches;
+    }
+
+    public void setCathResolveBinarySwitches(String cathResolveBinarySwitches) {
+        this.cathResolveBinarySwitches = cathResolveBinarySwitches;
+    }
+
     @Override
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
-        final String inputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getInputFileTemplate());
-        final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileTemplate());
+        final String inputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getCathAssignedFileNameTemplace());
+        final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
+        final String domTblOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameDomTbloutTemplate());
 
         List<String> command = new ArrayList<String>();
         command.add(this.getFullPathToPython());
-        command.add(this.getFullPathToBinary());
-        command.add(fastaFilePath);
-        command.add(inputFilePath);
-        command.add(this.getFullPathToModelsDirectory());
+        command.add(this.getFullPathToPythonBinary());
+        command.add("-o");
+        command.add(outputFilePath);
+        command.add("--domtblout");
+        command.add(domTblOutputFilePath);
 
-        command.add("--binary");
+        command.add("--hmmsearch");
         command.add(this.getFullPathToHmmsearchBinary());
 
-        String binarySwitches = this.getBinarySwitches();
+        String binarySwitches = this.getHmmsearchBinarySwitches();
         if (binarySwitches != null && !binarySwitches.isEmpty()) {
-            command.add("--flags");
+            command.add("--hmmsearch-flags");
             command.add('"' + binarySwitches + '"');
         }
 
-        command.add("-o");
-        command.add(outputFilePath);
+        command.add("--cath-resolve-hits");
+        command.add(this.getFullPathToCathResolveBinary());
+
+        binarySwitches = this.getCathResolveBinarySwitches();
+        if (binarySwitches != null && !binarySwitches.isEmpty()) {
+            command.add("--cath-resolve-hits-flags");
+            command.add('"' + binarySwitches + '"');
+        }
+
+        command.add("-T");
+        command.add(temporaryFileDirectory);
+
+        command.add(fastaFilePath);
+        command.add(inputFilePath);
+        command.add(this.getFullPathToModelsDirectory());
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(command.toString());
