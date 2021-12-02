@@ -14,33 +14,27 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.SimpleFileVisitor;
+import java.util.*;
 
 public class FunFamModelParser extends AbstractModelFileParser {
     @Override
     public SignatureLibraryRelease parse() throws IOException {
-        SignatureLibrary library = this.getSignatureLibrary();
-        String versionNumber = this.getReleaseVersionNumber();
-        SignatureLibraryRelease release = new SignatureLibraryRelease(library, versionNumber);
+        Set<Signature> signatures = new HashSet<>();
 
         for (Resource modelFile : modelFiles) {
-            Files.walkFileTree(modelFile.getFile().toPath(), new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(modelFile.getFile().toPath(), new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     HmmerModelParser parser = new HmmerModelParser();
-                    parser.setSignatureLibrary(library);
-                    parser.setReleaseVersionNumber(versionNumber);
                     parser.setModelFiles(new FileSystemResource(file.toFile()));
-
-                    for (Signature signature : parser.parse().getSignatures()) {
-                        release.addSignature(signature);
-                    }
-
+                    signatures.addAll(parser.parse().getSignatures());
                     return FileVisitResult.CONTINUE;
                 }
-
             });
         }
 
-        return release;
+        SignatureLibrary library = this.getSignatureLibrary();
+        String versionNumber = this.getReleaseVersionNumber();
+        return new SignatureLibraryRelease(library, versionNumber, signatures);
     }
 }
