@@ -24,6 +24,7 @@ public enum SerialGroup {
     LOAD_PROTEINS,
     LOAD_NUCLEIC_ACID,
     MATCH_LOOKUP,
+    PARSE_FUNFAM,
     PARSE_GENE3D,
     PARSE_MOBIDB,
     PARSE_PFAM_A,
