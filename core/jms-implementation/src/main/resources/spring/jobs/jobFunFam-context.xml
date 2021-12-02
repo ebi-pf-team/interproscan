@@ -6,7 +6,7 @@
 
     <import resource="../persistence/persistence-config-context.xml"/>
 
-    <!-- ######################## JOB: Gene 3D ############################  -->
+    <!-- ######################## JOB: FunFam ############################  -->
     <bean id="jobFunFam" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
                   value="Prediction of functional annotations for novel, uncharacterized sequences."/>
@@ -87,7 +87,7 @@
         <property name="fullPathToPythonBinary" value="${binary.funfam.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="cathAssignedFileNameTemplace" ref="rawAnalysisOutputTwoFileTemplate"/>
-        <property name="fullPathToModelsDirectory" value="${funfam.models.dir}}"/>
+        <property name="fullPathToModelsDirectory" value="${funfam.hmm.path}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputThreeFileTemplate"/>
         <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
@@ -106,10 +106,10 @@
         <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalysisOutputThreeFileTemplate"/>
         <property name="hmmsearchDomTblOutputFileNameTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
 
-        <property name="serialGroup" value="PARSE_GENE3D"/>
+        <property name="serialGroup" value="PARSE_FUNFAM"/>
         <property name="rawMatchDAO" ref="cathFunFamRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.Gene3dHmmer3FilteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.FunFamHmmer3FilteredMatchDAO">
                 <property name="dbStore" ref="kvStoreMatches"/>
                 <property name="matchDAO" ref="matchDAO"/>
             </bean>
@@ -121,7 +121,6 @@
             <bean class="uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser"/>
         </property>
         <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
-        <property name="gene3dEvalueCutoff" value="${gene3d.evalue.cutoff}"/>
         <property name="retries" value="3"/>
 
     </bean>
@@ -145,16 +144,16 @@
     <!-- ######################## Dependencies ############################  -->
 
     <bean id="cathFunFamRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
-        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch"/>
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.FunFamHmmer3RawMatch"/>
     </bean>
 
     <bean id="signatureLibraryReleaseFunFam" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
-        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="GENE3D"/>
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="FUNFAM"/>
         <constructor-arg type="java.lang.String" ref="latestGene3dSignatureLibraryRelease"/>
     </bean>
 
     <bean id="latestGene3dSignatureLibraryRelease" class="java.lang.String">
-        <constructor-arg value="${gene3d.signature.library.release}"/>
+        <constructor-arg value="${funfam.signature.library.release}"/>
     </bean>
 
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->

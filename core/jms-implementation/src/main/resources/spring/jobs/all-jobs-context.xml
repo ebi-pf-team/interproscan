@@ -10,6 +10,7 @@
 
     <import resource="jobCDD-context.xml"/>
     <import resource="jobCoils-context.xml"/>
+    <import resource="jobFunFam-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
     <import resource="jobHAMAP-context.xml"/>
     <import resource="jobMobiDBLite-context.xml"/>
@@ -54,6 +55,7 @@
                 <!--Old versions are not present because they aren't in the H2 database anymore-->
                 <ref bean="jobCDD"/>
                 <ref bean="jobCoils"/>
+                <ref bean="jobFunFam"/>
                 <ref bean="jobGene3d"/>
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobMobiDBLite"/>

@@ -11,6 +11,7 @@
             <map>
                 <entry key="MOBIDB_LITE" value-ref="mobidbLookupMatchConverter"/>
                 <entry key="CDD" value-ref="rpsblastLookupMatchConverter"/>
+                <entry key="FUNFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="GENE3D" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PIRSF" value-ref="hmmer3LookupMatchConverter"/>
