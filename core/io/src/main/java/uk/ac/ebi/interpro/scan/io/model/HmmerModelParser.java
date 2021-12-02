@@ -54,7 +54,6 @@ public class HmmerModelParser extends AbstractModelFileParser {
 
     private static final String NON_ASCII = "[^\\x00-\\x7F]";
 
-
     @Transactional
     public SignatureLibraryRelease parse() throws IOException {
         LOGGER.debug("Starting to parse hmm file.");
@@ -89,6 +88,8 @@ public class HmmerModelParser extends AbstractModelFileParser {
                                 if (END_OF_RECORD.equals(line.trim())) {
                                     if (accession != null) {
                                         release.addSignature(createSignature(accession, name, description, length, release, modelBuf));
+                                    } else if (name != null) {
+                                        release.addSignature(createSignature(name, null, description, length, release, modelBuf));
                                     }
                                     accession = null;
                                     name = null;
@@ -129,6 +130,8 @@ public class HmmerModelParser extends AbstractModelFileParser {
                 // marker is missing!
                 if (accession != null) {
                     release.addSignature(createSignature(accession, name, description, length, release, modelBuf));
+                } else if (name != null) {
+                    release.addSignature(createSignature(name, null, description, length, release, modelBuf));
                 }
             }
             finally {
