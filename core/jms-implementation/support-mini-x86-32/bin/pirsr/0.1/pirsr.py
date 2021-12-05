@@ -62,7 +62,9 @@ def process_row(row, rule):
 
         pass_count = 0
 
+        pos_num = -1
         for pos in rule['Groups'][grp]:
+            pos_num += 1
             condition = pos['condition']
 
             condition = re.sub('-', '', condition)
@@ -84,13 +86,20 @@ def process_row(row, rule):
                 # we have a pass
                 pass_count += 1
 
+                # expand possible Nter / Cter positions to seq_from / seq_to
+                if rule['Groups'][grp][pos_num]['start'] == 'Nter':
+                    print("Nter rule")
+                    rule['Groups'][grp][pos_num]['start'] = seq_from
+                if rule['Groups'][grp][pos_num]['end'] == 'Cter':
+                    print("Nter rule")
+                    rule['Groups'][grp][pos_num]['end'] = seq_to
+
         if len(rule['Groups'][grp]) == pass_count:
             # a group passes only if the whole group is a pass
             rule_sites.extend(rule['Groups'][grp])
-            #print(
+
 
     if rule_sites:
-        #        result[sequence_id] = {
 
         domHit = {
             'domScore': dom_score,
