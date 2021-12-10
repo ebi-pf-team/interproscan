@@ -107,7 +107,7 @@
         <commons-lang3.version>3.9</commons-lang3.version>
         <!--<mysql.version>5.1.12</mysql.version>-->
         <slf4j.version>1.7.30</slf4j.version>
-        <log4j.version>2.13.3</log4j.version>
+        <log4j.version>2.15.0</log4j.version>
         <xmlunit.version>2.6.2</xmlunit.version>
         <httpclient.version>4.5.9</httpclient.version>
         <!--<jaxb-api.version>2.3.2</jaxb-api.version>-->
