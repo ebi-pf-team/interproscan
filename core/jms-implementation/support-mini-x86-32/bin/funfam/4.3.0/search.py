@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shutil
 import subprocess as sp
 import sys
 import tempfile
@@ -43,7 +44,7 @@ Filter and search FunFams with hmmsearch.
     hmmsearch_flags = args.hmmsearch_flags.strip('"\'').split()
     cath_resolve_binary = args.cath_resolve_hits
     cath_resolve_flags = args.cath_resolve_hits_flags.strip('"\'').split()
-    tempdir = args.tempdir
+    tempdir = tempfile.mkdtemp(dir=args.tempdir)
    
     families = {}
     with open(tabfile, "rt") as fh:
@@ -60,7 +61,6 @@ Filter and search FunFams with hmmsearch.
                 if os.path.isfile(hmmfile):
                     families[cath_family_id] = hmmfile
 
-    os.makedirs(tempdir, exist_ok=True)
     tmpoutput = os.path.join(tempdir, "output.tmp")
     tmpdomtblout = os.path.join(tempdir, "domtblout.tmp")
     tmpresolved = os.path.join(tempdir, "resolved.tmp")
@@ -103,7 +103,7 @@ Filter and search FunFams with hmmsearch.
 
             if exit_code != 0:
                 raise RuntimeError("error while running cath-resolve-hits: "
-                                   "{}".format(' '.join(cmd)))            
+                                   "{}".format(' '.join(cmd)))
 
             with open(tmpresolved, "rt") as fh3:
                 for line in fh3:
@@ -117,9 +117,7 @@ Filter and search FunFams with hmmsearch.
         if fh2:
             fh2.close()
 
-        os.unlink(tmpoutput)
-        os.unlink(tmpdomtblout)
-        os.unlink(tmpresolved)
+        shutil.rmtree(tempdir)
 
 
 if __name__ == '__main__':
