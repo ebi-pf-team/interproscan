@@ -1,10 +1,7 @@
 package uk.ac.ebi.interpro.scan.business.postprocessing.panther;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,86 +15,41 @@ import java.util.Set;
  * @version $Id$
  */
 public class PantherPostProcessor implements Serializable {
-
-    private static final Logger LOGGER = LogManager.getLogger(PantherPostProcessor.class.getName());
-
-    private final double eValueCutoff;
-
-    public PantherPostProcessor(double eValue) {
-        this.eValueCutoff = eValue;
-    }
-
-    public double geteValueCutoff() {
-        return eValueCutoff;
+    public PantherPostProcessor() {
     }
 
     /**
-     * Returns a set of filtered matches.
+     * Promotes Panther/TreeGrafter subfamilies matches
      *
-     * @param rawProteins Raw proteins , with associated raw matches.
-     * @return Filtered Panther matches.
+     * @param rawProteins Raw proteins, with associated matches.
+     * @return Promoted Panther matches.
      */
     public Set<RawProtein<PantherRawMatch>> process(Set<RawProtein<PantherRawMatch>> rawProteins) {
-        LOGGER.info("Filtering PANTHER raw matches...");
-        Set<RawProtein<PantherRawMatch>> filteredMatches = new HashSet<>();
-        int rawMatchCounter = 0;
-        int filteredMatchesCounter = 0;
+        Set<RawProtein<PantherRawMatch>> results = new HashSet<>();
+
         for (RawProtein<PantherRawMatch> rawProtein : rawProteins) {
-            rawMatchCounter += rawProtein.getMatches().size();
-            RawProtein<PantherRawMatch> filtered = processProtein(rawProtein);
-            //promote subFamily
             RawProtein<PantherRawMatch> promoted = createSubFamilyMatch(rawProtein);
-            if (promoted != null){
-                for (PantherRawMatch rawProteinMatch : promoted.getMatches()) {
-                    filtered.addMatch(rawProteinMatch);
-                }
+            for (PantherRawMatch rawProteinMatch : promoted.getMatches()) {
+                rawProtein.addMatch(rawProteinMatch);
             }
-            filteredMatchesCounter += filtered.getMatches().size();
-            filteredMatches.add(filtered);
+            results.add(rawProtein);
         }
-        String filterMessage =  "Finished filtering of PANTHER raw matches. Printing out Summary... \n"
-            + "Original number of raw matches: " + rawMatchCounter + "\n"
-            + "Number of discarded raw matches: " + (rawMatchCounter - filteredMatchesCounter) + "\n";
 
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(filterMessage);
-        }
-        Utilities.verboseLog(30, filterMessage);
-        return filteredMatches;
+        return results;
     }
 
     /**
-     * Filter raw matches just by E-Value cutoff.
-     */
-    private RawProtein<PantherRawMatch> processProtein(final RawProtein<PantherRawMatch> rawProtein) {
-        RawProtein<PantherRawMatch> result = new RawProtein<>(rawProtein.getProteinIdentifier());
-        for (PantherRawMatch rawProteinMatch : rawProtein.getMatches()) {
-            if (rawProteinMatch.getEvalue() <= geteValueCutoff()) {
-                result.addMatch(rawProteinMatch);
-            } else {
-                LOGGER.info("Discarding the following protein raw match because it is not hold on the evalue cutoff: " + rawProteinMatch.getModelId());
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Promote the subFamily annotation into a seprate Match
+     * Promote the subFamily annotation into a separate Match
      *
-     * @param rawProtein
-     * @return
+     * @param rawProtein Raw protein, with associated matches.
+     * @return Panther matches
      */
     private RawProtein<PantherRawMatch> createSubFamilyMatch(final RawProtein<PantherRawMatch> rawProtein) {
         RawProtein<PantherRawMatch> result = new RawProtein<>(rawProtein.getProteinIdentifier());
-        boolean matchRep = false;
         for (PantherRawMatch rawProteinMatch : rawProtein.getMatches()) {
             if (rawProteinMatch.getSubFamilyModelId() != null) {
                 PantherRawMatch subFamilyRawMatch = rawProteinMatch.getSubFamilyRawMatch();
                 result.addMatch(subFamilyRawMatch);
-//                if (! matchRep) {
-//                    Utilities.verboseLog(30, "fam match: " + rawProteinMatch.toString() + "\n sub fam match: " + subFamilyRawMatch.toString());
-//                    matchRep = true;
-//                }
             }
 
         }

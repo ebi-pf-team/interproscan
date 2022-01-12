@@ -168,10 +168,7 @@
         <property name="serialGroup" value="PANTHER_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" ref="latestPantherSignatureLibraryRelease"/>
         <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
-                <!--TODO: Figure out how to handle this cut-off evalue-->
-                <constructor-arg value="1e-11"/>
-            </bean>
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor"/>
         </property>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="filteredMatchDAO">
