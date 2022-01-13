@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 /**
  * Parser for PANTHER output. Parses a single line of the raw result.
@@ -61,7 +60,7 @@ public final class PantherMatchParser
             Header of TreeGrafter's output:
             query_id	panther_id	panther_sf	node_id	score	evalue	dom_score	dom_evalue	hmm_start	hmm_end	ali_start	ali_end	env_start	env_end	annotations
          */
-        if (splitLine.length >= 14) {
+        if (splitLine.length >= 15) {
             //Protein Id
             final String sequenceIdentifier = splitLine[0].trim();
             //Parse Panther family ID
@@ -95,41 +94,14 @@ public final class PantherMatchParser
             final String envLocationStartString = splitLine[12].trim();
             //Hit envelope end
             final String envLocationEndString = splitLine[13].trim();
-            //sub family full id
-            final String annotations = splitLine[14].trim();
-            String formattedAnnotations = annotations;
-            if (annotations.length() > 0) {
-                final String[] annotSplitLine = annotations.split("\\s+");
-                final String fullSubFamilyModelID = annotSplitLine[0].trim();
-                String goTerms = "";
-                if (annotSplitLine.length >= 2) {
-                    //go annotations
-                    goTerms = annotSplitLine[1].trim();
-                }
-                String pcTerm ="";
-                if (annotSplitLine.length >= 3) {
-                    //pcTerm annotations
-                    pcTerm = annotSplitLine[2].trim();
-                }
-                Utilities.verboseLog(50, "subfamily: " + fullSubFamilyModelID + " goTerms: " + goTerms.length() + " pcTerm: ");
-                if (fullSubFamilyModelID.strip().length() == 0){
-                    formattedAnnotations = "-" + " " + goTerms + " " + pcTerm;
-                } else {
-                    formattedAnnotations = fullSubFamilyModelID.strip() + " " + goTerms + " " + pcTerm;
-                }
-                formattedAnnotations = formattedAnnotations.strip();
-                if (formattedAnnotations.length() > 4000) {
-                    Utilities.verboseLog(30, "formattedAnnotations size: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );                    
-                    if (formattedAnnotations.length() >= 8000) {
-                        LOGGER.warn( "Large Go-terms field: formattedAnnotations size > 8000: " + formattedAnnotations.length() + " annot: " + formattedAnnotations );
-                        formattedAnnotations = formattedAnnotations.substring(0,7990);
-                    }
-                }
-                Utilities.verboseLog(50, "formattedAnnotations size:" + formattedAnnotations.length() );
-            }
+            //PAINT annotations
+            String annotations = splitLine[14].trim();
 
-            // HMM length
-           // final String hmmLengthString = splitLine[8].trim();
+            if (annotations.equals("-")) {
+                annotations = "";
+            } else if (annotations.length() >= 8000) {
+                annotations = annotations.substring(0, 7990);
+            }
 
             //Transform raw parsed values
             double score = 0.0d;
@@ -150,12 +122,7 @@ public final class PantherMatchParser
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
                 evalue = Double.parseDouble(eValueString);
             }
-//            if (hmmLengthString.length() > 0) {
-//                hmmLength = Integer.parseInt(hmmLengthString);
-//            }
 
-            Utilities.verboseLog(50, "subFamilyModelIdPart: "+ subFamilyModelIdPart + " annotationsNodeId: "
-                    + annotationsNodeId + " annotations size: " + annotations.length());
             return new PantherRawMatch(
                     sequenceIdentifier,
                     pantherFamilyId,
@@ -173,7 +140,7 @@ public final class PantherMatchParser
                     HmmBounds.calculateHmmBounds(envLocationStart,envLocationEnd, aliLocationStart, aliLocationEnd),
                     envLocationStart,
                     envLocationEnd,
-                    formattedAnnotations);
+                    annotations);
         }
 
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
