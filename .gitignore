@@ -11,3 +11,6 @@ core/jms-implementation/support-mini-x86-32/work/template/interpro.h2.db
 # And any grandchildren ...
 /*/*/target/
 /*/*/*/target/
+
+# Others
+**/.DS_Store
