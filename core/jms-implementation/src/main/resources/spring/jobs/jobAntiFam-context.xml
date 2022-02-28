@@ -8,8 +8,8 @@
 
     <!-- ######################## JOB: ANTIFAM ############################  -->
     <bean id="jobAntiFam" class="uk.ac.ebi.interpro.scan.management.model.Job">
-        <property name="description" value="
-AntiFam is a resource of profile-HMMs designed to identify spurious protein predictions."/>
+        <property name="description"
+                  value="AntiFam is a resource of profile-HMMs designed to identify spurious protein predictions."/>
         <property name="analysis" value="true"/>
         <property name="libraryRelease" ref="signatureLibraryReleaseAntiFam"/>
     </bean>
