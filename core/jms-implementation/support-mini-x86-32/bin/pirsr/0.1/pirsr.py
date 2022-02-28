@@ -62,7 +62,9 @@ def process_row(row, rule):
 
         pass_count = 0
 
+        pos_num = -1
         for pos in rule['Groups'][grp]:
+            pos_num += 1
             condition = pos['condition']
 
             condition = re.sub('-', '', condition)
@@ -71,27 +73,34 @@ def process_row(row, rule):
             condition = re.sub('x', '.', condition)
 
             query_seq = re.sub('-', '', seq_align)
-            
+
             if pos['hmmStart'] < len(map) and pos['hmmEnd'] < len(map):
                 target_seq = query_seq[map[pos['hmmStart']]: map[pos['hmmEnd']] + 1]
             else:
                 print("Target sequence out of alignment borders for query " +
                       model_id+' on hit '+sequence_id)
-                print(str('hhmfrom: ' +str(hmm_from) + ', hmmStart: ' + str(pos['hmmStart'])) +', hmmEnd: ' + str(pos['hmmEnd']) + ', len map:' + str(len(map))  );
+                print(str('hmmfrom: ' +str(hmm_from) + ', hmmStart: ' + str(pos['hmmStart'])) +', hmmEnd: ' + str(pos['hmmEnd']) + ', len map:' + str(len(map)) );
                 target_seq = ''
 
             if re.search('\A' + condition + '\Z', target_seq):
                 # we have a pass
                 pass_count += 1
-        
+
+                # expand possible Nter / Cter positions to seq_from / seq_to
+                if rule['Groups'][grp][pos_num]['start'] == 'Nter':
+                    print("Nter rule")
+                    rule['Groups'][grp][pos_num]['start'] = seq_from
+                if rule['Groups'][grp][pos_num]['end'] == 'Cter':
+                    print("Nter rule")
+                    rule['Groups'][grp][pos_num]['end'] = seq_to
+
         if len(rule['Groups'][grp]) == pass_count:
             # a group passes only if the whole group is a pass
             rule_sites.extend(rule['Groups'][grp])
-            #print(
+
 
     if rule_sites:
-        #        result[sequence_id] = {
-        
+
         domHit = {
             'domScore': dom_score,
             'domEvalue': dom_evalue,
@@ -114,7 +123,7 @@ def process_row(row, rule):
         print ('domainMatches found .... ' + model_id + ' ---' + sequence_id)
         print ('how many dom hits :' + str(len(domHits)))
         print (result[sequence_id]["domainMatches"][model_id])
-       
+
 
 
 
@@ -126,9 +135,12 @@ def map_hmm_to_seq(hmm_pos, hmm, seq):
     seq_pos = 0
     map = [0]
 
+    for i in range(0, hmm_pos):
+        map[hmm_pos:] = [-1]
+
     for i in range(0, len(hmm)):
         map[hmm_pos:] = [seq_pos]
-        
+
         if hmm[i:i+1] != '.':
             hmm_pos += 1
         if seq[i:i+1] != '-':
