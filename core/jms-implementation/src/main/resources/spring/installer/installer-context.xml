@@ -15,6 +15,13 @@
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
             <list>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="ANTIFAM"/>
+                    <property name="releaseVersionNumber" value="${antifam.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${antifam.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobAntiFam"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.cdd.CDDModelParser">
                     <property name="signatureLibrary" value="CDD"/>
                     <property name="releaseVersionNumber" value="${cdd.signature.library.release}"/>
@@ -22,14 +29,12 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobCDD"/>
                 </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.coils.CoilsDummyParser">
                     <property name="signatureLibrary" value="COILS"/>
                     <property name="releaseVersionNumber" value="${coils.signature.library.release}"/>
                     <property name="analysisJobId" value="jobCoils"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
                     <property name="signatureLibrary" value="GENE3D"/>
                     <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
@@ -38,36 +43,28 @@
                     <property name="cathFamilyFile" value="${gene3d.cath.family.names}"/>
                     <property name="analysisJobId" value="jobGene3d"/>
                 </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.mobidb.MobiDBDummyModelParser">
                     <property name="signatureLibrary" value="MOBIDB_LITE"/>
                     <property name="releaseVersionNumber" value="${mobidb.signature.library.release}"/>
                     <property name="analysisJobId" value="jobMobiDBLite"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="SFLD"/>
-                    <property name="releaseVersionNumber" value="${sfld.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${sfld.hmm.path}"/>
+                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
+                    <property name="signatureLibrary" value="HAMAP"/>
+                    <property name="releaseVersionNumber" value="${hamap.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${hamap.profile.models.path}"/>
+                    <property name="prositeModelType" value="ALL"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobSFLD"/>
+                    <property name="analysisJobId" value="jobHAMAP"/>
                 </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
-                    <property name="signatureLibrary" value="TMHMM"/>
-                    <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
-                    <property name="analysisJobId" value="jobTMHMM"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
+                <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
+                    <property name="signatureLibrary" value="PANTHER"/>
+                    <property name="analysisJobId" value="jobPanther"/>
+                    <property name="releaseVersionNumber" value="${panther.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${panther.models.dir}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="namesTabFile" value="names.tab"/>
                 </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.phobius.PhobiusDummyParser">
-                    <property name="signatureLibrary" value="PHOBIUS"/>
-                    <property name="releaseVersionNumber" value="${phobius.signature.library.release}"/>
-                    <property name="analysisJobId" value="jobPhobius"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PFAM"/>
                     <property name="releaseVersionNumber" value="${pfam-a.signature.library.release}"/>
@@ -75,8 +72,26 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPfam"/>
                 </bean>
-
-
+                <bean class="uk.ac.ebi.interpro.scan.io.phobius.PhobiusDummyParser">
+                    <property name="signatureLibrary" value="PHOBIUS"/>
+                    <property name="releaseVersionNumber" value="${phobius.signature.library.release}"/>
+                    <property name="analysisJobId" value="jobPhobius"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PIRSF"/>
+                    <property name="releaseVersionNumber" value="${pirsf.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${pirsf.sfhmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPIRSF"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="PIRSR"/>
+                    <property name="releaseVersionNumber" value="${pirsr.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${pirsr.srhmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobPIRSR"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
                     <property name="releaseVersionNumber" value="42.0"/>
@@ -89,17 +104,6 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPRINTS"/>
                 </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
-                    <property name="signatureLibrary" value="HAMAP"/>
-                    <property name="releaseVersionNumber" value="${hamap.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${hamap.profile.models.path}"/>
-                    <property name="prositeModelType" value="ALL"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobHAMAP"/>
-                </bean>
-
-
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
                     <property name="releaseVersionNumber" value="${prosite.patterns.signature.library.release}"/>
@@ -116,66 +120,17 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositeProfiles"/>
                 </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PIRSF"/>
-                    <property name="releaseVersionNumber" value="${pirsf.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${pirsf.sfhmm.path}"/>
+                    <property name="signatureLibrary" value="SFLD"/>
+                    <property name="releaseVersionNumber" value="${sfld.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${sfld.hmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSF"/>
+                    <property name="analysisJobId" value="jobSFLD"/>
                 </bean>
-
-		 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="PIRSR"/>
-                    <property name="releaseVersionNumber" value="${pirsr.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${pirsr.srhmm.path}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobPIRSR"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
-                    <property name="signatureLibrary" value="PANTHER"/>
-                    <property name="analysisJobId" value="jobPanther"/>
-                    <property name="releaseVersionNumber" value="${panther.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${panther.models.dir}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="namesTabFile" value="names.tab"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="TIGRFAM"/>
-                    <property name="releaseVersionNumber" value="15.0"/>
-                    <property name="modelFiles" value="file:${tigrfam.hmm.path.15.0}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobTIGRFAM-15.0"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
-                    <property name="signatureLibrary" value="SMART"/>
-                    <property name="releaseVersionNumber" value="${smart.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${smart.hmm.path}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobSMART"/>
-                </bean>
-
-                <bean class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParser">
-                    <property name="signatureLibrary" value="SUPERFAMILY"/>
-                    <property name="releaseVersionNumber" value="1.75"/>
-                    <property name="modelFiles" value="file:${superfamily.hmm.path.3.0}"/>
-                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobSuperFamily-1.75"/>
-                </bean>
-
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
                     <property name="signatureLibrary" value="SIGNALP_EUK"/>
                     <property name="releaseVersionNumber" value="${signalp_euk.signature.library.release}"/>
                     <property name="analysisJobId" value="jobSignalP_EUK"/>
-                    <property name="modelFiles" value="file:/dev/null"/>
-                </bean>
-                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
-                    <property name="signatureLibrary" value="SIGNALP_GRAM_POSITIVE"/>
-                    <property name="releaseVersionNumber" value="${signalp_gram_positive.signature.library.release}"/>
-                    <property name="analysisJobId" value="jobSignalP_GRAM_POSITIVE"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
@@ -184,7 +139,39 @@
                     <property name="analysisJobId" value="jobSignalP_GRAM_NEGATIVE"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
-
+                <bean class="uk.ac.ebi.interpro.scan.io.signalp.model.SignalPDummyParser">
+                    <property name="signatureLibrary" value="SIGNALP_GRAM_POSITIVE"/>
+                    <property name="releaseVersionNumber" value="${signalp_gram_positive.signature.library.release}"/>
+                    <property name="analysisJobId" value="jobSignalP_GRAM_POSITIVE"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="SMART"/>
+                    <property name="releaseVersionNumber" value="${smart.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${smart.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobSMART"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParser">
+                    <property name="signatureLibrary" value="SUPERFAMILY"/>
+                    <property name="releaseVersionNumber" value="1.75"/>
+                    <property name="modelFiles" value="file:${superfamily.hmm.path.3.0}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobSuperFamily-1.75"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="TIGRFAM"/>
+                    <property name="releaseVersionNumber" value="15.0"/>
+                    <property name="modelFiles" value="file:${tigrfam.hmm.path.15.0}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobTIGRFAM-15.0"/>
+                </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
+                    <property name="signatureLibrary" value="TMHMM"/>
+                    <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
+                    <property name="analysisJobId" value="jobTMHMM"/>
+                    <property name="modelFiles" value="file:/dev/null"/>
+                </bean>
             </list>
         </property>
         <property name="jdbcEntryDAO" ref="jdbcEntryDAO"/>

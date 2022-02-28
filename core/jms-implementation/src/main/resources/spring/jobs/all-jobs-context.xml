@@ -8,6 +8,7 @@
     <!--Old versions are switched off because they aren't in the database anymore-->
 
 
+    <import resource="jobAntiFam-context.xml"/>
     <import resource="jobCDD-context.xml"/>
     <import resource="jobCoils-context.xml"/>
     <import resource="jobGene3d-context.xml"/>
@@ -52,6 +53,7 @@
 
                 <!-- Analyses -->
                 <!--Old versions are not present because they aren't in the H2 database anymore-->
+                <ref bean="jobAntiFam"/>
                 <ref bean="jobCDD"/>
                 <ref bean="jobCoils"/>
                 <ref bean="jobGene3d"/>

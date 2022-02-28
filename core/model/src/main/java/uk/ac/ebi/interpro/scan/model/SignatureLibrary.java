@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 public enum SignatureLibrary {
 
     //TODO - complete descriptions of member database libraries.
+    ANTIFAM("AntiFam", "Prediction of spurious protein.", false),
     CDD("CDD", "Prediction of CDD domains", true),
     HAMAP("Hamap", "Description to be added", true),
     MOBIDB_LITE("MobiDBLite", "Predicts disordered protein regions", false),
