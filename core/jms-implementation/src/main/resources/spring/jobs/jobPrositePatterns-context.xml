@@ -51,8 +51,8 @@
         <property name="retries" value="3"/>
         <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${prosite.patterns.models.path}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.pfscanv3.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.pfsearchv3.path}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
+        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearchv3.path}"/>
         <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>

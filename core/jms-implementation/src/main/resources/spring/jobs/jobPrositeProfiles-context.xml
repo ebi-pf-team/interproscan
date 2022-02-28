@@ -53,9 +53,9 @@
         <property name="modelFile" value="${prosite.profiles.models.path}"/>
         <property name="modelsDir" value="${prosite.profiles.models.dir}"/>
         <property name="fullPathToPython" value="${python3.command}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.pfscanv3.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.pfsearchv3.path}"/>
-        <property name="fullPathToRunPrositeBinary" value="${binary.runprosite.path}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
+        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearchv3.path}"/>
+        <property name="fullPathToRunPrositeBinary" value="${binary.prosite.runprosite.path}"/>
         <property name="usePfsearch" value="${psscan.prositeprofiles.usepfsearch}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
