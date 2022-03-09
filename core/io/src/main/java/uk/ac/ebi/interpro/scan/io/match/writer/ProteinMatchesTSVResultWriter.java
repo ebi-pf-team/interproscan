@@ -23,7 +23,6 @@ import java.util.*;
 public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
     private TSVWriter tsvWriter;
-    private Map<String, String> familyRecords;
 
     public ProteinMatchesTSVResultWriter(Path path, boolean proteinSequence) throws IOException {
         super(path);
