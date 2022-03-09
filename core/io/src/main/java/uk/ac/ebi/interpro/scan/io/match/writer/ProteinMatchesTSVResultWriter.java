@@ -16,13 +16,13 @@ import java.util.*;
  * @author David Binns, EMBL-EBI, InterPro
  * @author Phil Jones, EMBL-EBI, InterPro
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Matthias Blum, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
 public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
 
     private TSVWriter tsvWriter;
-    private String prefix = "G3DSA:";
     private Map<String, String> familyRecords;
 
     public ProteinMatchesTSVResultWriter(Path path, boolean proteinSequence) throws IOException {
@@ -66,11 +66,6 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                 }
                 final String description = signature.getDescription();
                 String signatureName = signature.getName();
-                //if (signatureName != null && signatureName.isBlank() && signatureAc.contains(prefix)) {  TODO revert to blank
-                if (signatureName != null && signatureName.isEmpty() && signatureAc.contains(prefix)) {
-                    //we dont need to parse at runtime
-                    //signatureName = familyRecords.get(signatureAc);
-                }
 
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
@@ -182,47 +177,5 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
             }
         }
         return locationCount;
-    }
-
-
-    public Map<String, String> parseCathFamilyFile() throws IOException {
-
-        final Map<String, String> records = new HashMap<>();
-
-        // Some example lines to parse:
-        // 3.30.56.60      "XkdW-like"
-        //3.40.1390.30    "NIF3 (NGG1p interacting factor 3)-like"
-        //3.90.330.10     "Nitrile Hydratase; Chain A"
-        String cathFamilyFile = "data/members/gene3d/4.3.0/cath-family-names.txt";
-
-        BufferedReader reader = null;
-        try {
-            FileInputStream familyFile = new FileInputStream(cathFamilyFile);
-            reader = new BufferedReader(new InputStreamReader(familyFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] splitLine = line.split("\\s+", 2);
-//                if (splitLine[0].isEmpty()) {
-//                    throw new IllegalStateException("Unexpected format on line: " + line + " \n " + splitLine.toString());
-//                }
-
-                String accession = splitLine[0];
-                String newAccession = prefix + accession;
-                String familyName = "";
-                if (splitLine.length < 2 || splitLine[1].contains("-")) {
-                    familyName = "";
-                } else {
-                    familyName = splitLine[1];
-                }
-
-                records.put(newAccession, familyName);  // model#accession, name
-            }
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-
-        return records;
     }
 }
