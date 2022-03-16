@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
-* ProDom CRUD database operations.
+* PANTHER CRUD database operations.
 *
 * @author Matthew Fraser, EMBL-EBI, InterPro
 * @version $Id$
@@ -20,7 +20,7 @@ import java.util.Map;
 public interface PantherFilteredMatchDAO extends FilteredMatchDAO<PantherRawMatch, PantherMatch> {
 
     /**
-     * Persists a set of parsed ProDom match objects as filtered matches.
+     * Persists a set of parsed PANTHER match objects as filtered matches.
      * There is no filtering step required.
      */
     @Transactional
