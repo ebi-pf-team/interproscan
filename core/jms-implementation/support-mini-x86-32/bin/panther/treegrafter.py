@@ -35,12 +35,33 @@ def process_matches_epang(matches, datadir, tempdir, binary=None, threads=1):
             # No sequence to graft
             continue
 
+        # print out the pthr Family matches
+        for query_id in matches[pthr]:
+
+            results.append(
+                query_id + "\t" +
+                pthr + "\t" +
+                "-" + "\t" +
+                "-" + "\t" +
+                matches[pthr][query_id]['score'][0] + "\t" +
+                matches[pthr][query_id]['evalue'][0] + "\t" +
+                matches[pthr][query_id]['domscore'][0] + "\t" +
+                matches[pthr][query_id]['domevalue'][0] + "\t" +
+                matches[pthr][query_id]['hmmstart'][0] + "\t" +
+                matches[pthr][query_id]['hmmend'][0] + "\t" +
+                matches[pthr][query_id]['alifrom'][0] + "\t" +
+                matches[pthr][query_id]['alito'][0] + "\t" +
+                matches[pthr][query_id]['envfrom'][0] + "\t" +
+                matches[pthr][query_id]['envto'][0] + "\t" +
+                "-" + "\n")
+
         result_tree = _run_epang(pthr, query_fasta_file, datadir, tempdir,
                                  binary=binary, threads=threads)
+        if not result_tree:
+            # EPA-ng error (e.g tree cannot be converted to unrooted)
+            continue
 
-        pthr_results = process_tree(pthr, result_tree, matches[pthr], datadir)
-
-        results += pthr_results
+        results += process_tree(pthr, result_tree, matches[pthr], datadir)
 
     return results
 
@@ -146,12 +167,12 @@ def _run_epang(pthr, query_fasta, datadir, tempdir, binary=None, threads=1):
             "-w", outdir]
 
     exit_code = sp.call(args, stderr=sp.DEVNULL, stdout=sp.DEVNULL)
-    if exit_code != 0:
-        sys.stderr.write("error while running EPA-ng: "
-                         "{}\n.".format(' '.join(args)))
-        sys.exit(1)
+    jplace_file = os.path.join(outdir, "epa_result.jplace")
 
-    return os.path.join(outdir, "epa_result.jplace")
+    if exit_code == 0 and os.path.isfile(jplace_file):
+        return jplace_file
+
+    return None
 
 
 def process_tree(pthr, result_tree, pthr_matches, datadir):
@@ -193,29 +214,27 @@ def process_tree(pthr, result_tree, pthr_matches, datadir):
                 child_ids.append(an_label[leaf.name])
 
         common_an = _commonancestor(pthr, child_ids, datadir)
-        annot_file = os.path.join(datadir, 'PAINT_Annotations', pthr,
-                                  common_an)
+        annot_file = os.path.join(datadir, 'PAINT_Annotations', pthr + '.json')
 
         with open(annot_file, 'rt') as annot_in:
             pthrsf, annotation = json.load(annot_in)[str(common_an)]
 
-        for x in range(0, len(pthr_matches[query_id]['hmmstart'])):
-            results_pthr.append(
-                query_id + "\t" +
-                pthr + "\t" +
-                pthrsf + "\t" +
-                str(common_an) + "\t" +
-                pthr_matches[query_id]['score'][x] + "\t" +
-                pthr_matches[query_id]['evalue'][x] + "\t" +
-                pthr_matches[query_id]['domscore'][x] + "\t" +
-                pthr_matches[query_id]['domevalue'][x] + "\t" +
-                pthr_matches[query_id]['hmmstart'][x] + "\t" +
-                pthr_matches[query_id]['hmmend'][x] + "\t" +
-                pthr_matches[query_id]['alifrom'][x] + "\t" +
-                pthr_matches[query_id]['alito'][x] + "\t" +
-                pthr_matches[query_id]['envfrom'][x] + "\t" +
-                pthr_matches[query_id]['envto'][x] + "\t" +
-                (annotation or "-") + "\n")
+        results_pthr.append(
+            query_id + "\t" +
+            pthr + "\t" +
+            pthrsf + "\t" +
+            str(common_an) + "\t" +
+            pthr_matches[query_id]['score'][0] + "\t" +
+            pthr_matches[query_id]['evalue'][0] + "\t" +
+            pthr_matches[query_id]['domscore'][0] + "\t" +
+            pthr_matches[query_id]['domevalue'][0] + "\t" +
+            pthr_matches[query_id]['hmmstart'][0] + "\t" +
+            pthr_matches[query_id]['hmmend'][0] + "\t" +
+            pthr_matches[query_id]['alifrom'][0] + "\t" +
+            pthr_matches[query_id]['alito'][0] + "\t" +
+            pthr_matches[query_id]['envfrom'][0] + "\t" +
+            pthr_matches[query_id]['envto'][0] + "\t" +
+            (annotation or "-") + "\n")
 
     return results_pthr
 
