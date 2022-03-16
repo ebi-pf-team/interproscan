@@ -22,6 +22,7 @@ import java.util.Set;
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @author Gift Nuka
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -46,10 +47,9 @@ public class PantherMatchParserTest {
         PantherRawMatch result = instance.createMatch(rawMatchLine);
         assertNotNull(result,"CreateMatch method returned a NULL value!");
         assertEquals( result.getSequenceIdentifier(), "tr|Q4Q8C9|Q4Q8C9_LEIMA");
-        assertEquals( result.getModelId(), "PTHR10000");
-        assertEquals(result.getFamilyName(), "PTHR10000");
-        assertEquals(new Double("2e-64"), result.getEvalue());
-        assertEquals(new Double("210.8"), result.getScore());
+        assertEquals( result.getModelId(), "PTHR10000:SF48");
+        assertEquals(Double.valueOf("2e-64"), result.getEvalue());
+        assertEquals(Double.valueOf("210.8"), result.getScore());
         assertEquals(4, result.getHmmStart());
         assertEquals(265, result.getHmmEnd());
         assertEquals(0, result.getHmmLength());
