@@ -7,7 +7,6 @@ import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,6 +16,7 @@ import java.util.Set;
 /**
  * @author Phil Jones, EMBL-EBI
  * @author Maxim Scheremetjew
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0
  */
@@ -62,7 +62,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
             String signatureLibraryKey = null;
-            Set <Match> proteinMatches =  new HashSet<>();
+            Set <Match> proteinMatches = new HashSet<>();
             for (PantherRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
@@ -71,21 +71,16 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                 if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
                     if (currentSignatureAc != null) {
                         // Not the first...
-                        if (match != null) {
-                            //entityManager.persist(match);  // Persist the previous one.
-
-                        }
                         match = new PantherMatch(
                                 currentSignature,
                                 currentSignatureAc,
                                 locations,
                                 lastRawMatch.getAnnotationsNodeId(),
                                 lastRawMatch.getEvalue(),
-                                lastRawMatch.getFamilyName(),
+                                lastRawMatch.getModelId(),
                                 lastRawMatch.getScore(),
                                 lastRawMatch.getAnnotations()
                         );
-                        //protein.addMatch(match); //may not be needed
                         proteinMatches.add(match);
                     }
                     // Reset everything
@@ -110,10 +105,6 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                             + " raw match : " + rawMatch.toString());
                 }
 
-                // TODO Get hmmLength from model instead?
-                //Model model = holder.getModel();
-                //int hmmLength = model == null ? 0 : model.getLength();
-
                 locations.add(new PantherMatch.PantherLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
                         rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmLength(), HmmBounds.parseSymbol(rawMatch.getHmmBounds()),
                         rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
@@ -130,19 +121,15 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         locations,
                         lastRawMatch.getAnnotationsNodeId(),
                         lastRawMatch.getEvalue(),
-                        lastRawMatch.getFamilyName(),
+                        lastRawMatch.getModelId(),
                         lastRawMatch.getScore(),
                         lastRawMatch.getAnnotations()
                 );
-                //protein.addMatch(match);  //may not be needed
                 proteinMatches.add(match);
-                //entityManager.persist(match);       // Persist the last one
             }
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-            //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey);
 
-            if (proteinMatches != null && ! proteinMatches.isEmpty()) {
-                //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+            if (!proteinMatches.isEmpty()) {
                 for(Match i5Match: proteinMatches){
                     //try update with cross refs etc
                     updateMatch(i5Match);

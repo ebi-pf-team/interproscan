@@ -90,7 +90,7 @@
         <!-- EPA-NG binary       -->
         <property name="fullPathToEPANGBinary" value="${binary.epang.path}"/>
         <property name="pantherModelsDirectory" value="${panther.models.dir}"/>
-        <property name="binarySwitches" value="${pantherscore.binary.switches}"/>
+        <property name="binarySwitches" value="${panther.binary.switches}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="inputFileNameHmmerRawOutputTemplate" ref="rawAnalysisOutputFileTemplate"/>
@@ -99,30 +99,7 @@
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
         <property name="serialGroup" value="PANTHER_BINARY"/>
-
     </bean>
-
-
-<!--    &lt;!&ndash; STEP 2: Run binary &ndash;&gt;-->
-<!--    <bean id="stepPantherRunBinary"-->
-<!--          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.RunPantherScoreStep"-->
-<!--          parent="abstractPantherStep">-->
-<!--        <property name="dependsUpon" ref="stepPantherRunHmmer3"/>-->
-<!--        <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>-->
-<!--        <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>-->
-<!--        &lt;!&ndash;Add Perl command&ndash;&gt;-->
-<!--        <property name="fullPathToPython" value="${python3.command}"/>-->
-<!--        &lt;!&ndash;PantherScore python script&ndash;&gt;-->
-<!--        <property name="fullPathToBinary" value="${binary.pantherscore.path}"/>-->
-<!--        <property name="binarySwitches" value="${pantherscore.binary.switches}"/>-->
-<!--        <property name="usesFileOutputSwitch" value="true"/>-->
-<!--        <property name="inputFilePantherFamilyNames" value="${panther.names.tab}"/>-->
-<!--        <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>-->
-<!--        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>-->
-<!--        <property name="retries" value="3"/>-->
-<!--        <property name="requiresDatabaseAccess" value="false"/>-->
-
-<!--    </bean>-->
 
     <bean id="stepPantherDeleteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep" parent="abstractPantherStep">
@@ -167,9 +144,6 @@
         <property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>
         <property name="serialGroup" value="PANTHER_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" ref="latestPantherSignatureLibraryRelease"/>
-        <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor"/>
-        </property>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl">

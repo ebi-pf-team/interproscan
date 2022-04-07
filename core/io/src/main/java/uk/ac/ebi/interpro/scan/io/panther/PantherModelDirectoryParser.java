@@ -22,6 +22,7 @@ import java.util.*;
  *
  * @author Maxim Scheremetjew
  * @author Gift Nuka
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -51,7 +52,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
 
         for (Resource modelFile : modelFiles) {
-            if (modelFile.exists() && modelFile.getFile() != null) {
+            if (modelFile.exists()) {
                 Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
 
                 if (LOGGER.isDebugEnabled()) {
@@ -59,13 +60,12 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 }
                 Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
                 for (String parent : pantherParentChildMap.keySet()) {
-                    String signatureAcc = parent;
-                    String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                    release.addSignature(createSignature(signatureAcc, signatureName, release));
+                    String name = familyIdFamilyNameMap.get(parent);
+                    release.addSignature(createSignature(parent, name, release));
                     List<String> children = pantherParentChildMap.get(parent);
-                    for (String childSignatureAcc : children) {
-                        String childSignatureName = familyIdFamilyNameMap.get(childSignatureAcc);
-                        release.addSignature(createSignature(childSignatureAcc, childSignatureName, release));
+                    for (String child : children) {
+                        name = familyIdFamilyNameMap.get(child);
+                        release.addSignature(createSignature(child, name, release));
                     }
                 }
             }
@@ -152,7 +152,6 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         BufferedReader reader = null;
         int lineNumber = 0;
         int pantherFamilies = 0;
-//        System.out.println("names tab is: " + namesTabFile.getAbsolutePath());
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(namesTabFile)));
             String line;
@@ -161,26 +160,24 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 lineNumber++;
                 if (line.length() > 0 && line.startsWith("PTHR")) {
                     String[] columns = line.split("\t", 2);  //so that we have at most two strings
-                    String familyId = columns[0];
+                    String familyId = columns[0].trim();
                     familyId = familyId.replace(".mod", "");
-                    //family Id is a super family
                     if (familyId.contains(".mag")) {
+                        // familyId is a family
                         familyId = familyId.replace(".mag", "");
-                    }
-                    //family Id is a sub family
-                    else {
+                    } else {
+                        // familyId is a subfamily
                         familyId = familyId.replace(".", ":");
                     }
 
                     String familyName = "";
-                    if (columns.length == 2) {  //we also have a family name
-                        familyName = columns[1];
-                    } else {  //we don't have a family name
-                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + " columns!" + "columns [0]: " + columns[0]);
+                    if (columns.length == 2) {
+                        //we also have a family name
+                        familyName = columns[1].trim();
                     }
+
                     pantherFamilies ++;
                     result.put(familyId, familyName);
-                    Utilities.verboseLog(1100, "familyId: " +familyId + " familyName: " + familyName);
                 } else {
                     LOGGER.warn("Unexpected start of line: " + line);
                 }
