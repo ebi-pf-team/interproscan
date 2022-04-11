@@ -109,7 +109,7 @@
         <property name="serialGroup" value="PARSE_FUNFAM"/>
         <property name="rawMatchDAO" ref="cathFunFamRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.FunFamHmmer3FilteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.FunFamHmmer3FilteredMatchDAOImpl">
                 <property name="dbStore" ref="kvStoreMatches"/>
                 <property name="matchDAO" ref="matchDAO"/>
             </bean>
