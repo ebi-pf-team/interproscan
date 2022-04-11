@@ -48,7 +48,7 @@ public class CathResolveHit {
     }
 
     public String getKey() {
-        return this.getQueryIdentifier() + this.getMatchIdentifier() + this.getRegions();
+        return this.getQueryIdentifier() + '-' + this.getMatchIdentifier() + '-' + this.getRegions();
     }
 
     private CathResolveHit (String queryId, String matchId, Double score, String regions, String resolvedRegions,
