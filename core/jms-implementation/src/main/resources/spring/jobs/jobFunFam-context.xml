@@ -90,7 +90,7 @@
         <property name="fullPathToModelsDirectory" value="${funfam.hmm.path}"/>
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputThreeFileTemplate"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
+        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalysisOutputFourFileTemplate"/>
         <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
         <property name="hmmsearchBinarySwitches" value="${hmmer3.hmmsearch.switches.funfam} ${hmmer3.hmmsearch.cpu.switch.funfam}"/>
         <property name="fullPathToCathResolveBinary" value="${cath.resolve.hits.path}"/>
@@ -103,8 +103,8 @@
         <property name="dependsUpon" ref="stepCathFunFamRunBinaryStep" />
         <property name="stepDescription" value="Parse output from HMMER3 and CathResolveHits"/>
 
-        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalysisOutputThreeFileTemplate"/>
-        <property name="hmmsearchDomTblOutputFileNameTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
+        <property name="hmmsearchOutputFileNameTemplate" ref="rawAnalysisOutputThreeFileTemplate"/>
+        <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalysisOutputFourFileTemplate"/>
 
         <property name="serialGroup" value="PARSE_FUNFAM"/>
         <property name="rawMatchDAO" ref="cathFunFamRawMatchDAO"/>
@@ -114,8 +114,15 @@
                 <property name="matchDAO" ref="matchDAO"/>
             </bean>
         </property>
-        <property name="hmmer3DomTblParser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser"/>
+        <property name="hmmer3SearchMatchParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.FunFamHmmer3ParserSupport">
+                        <property name="hmmKey" value="NAME"/>
+                        <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
+                    </bean>
+                </property>
+            </bean>
         </property>
         <property name="cathResolveHitsOutputParser">
             <bean class="uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser"/>

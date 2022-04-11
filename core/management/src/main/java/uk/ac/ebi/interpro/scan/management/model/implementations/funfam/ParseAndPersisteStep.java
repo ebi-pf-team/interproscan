@@ -1,31 +1,24 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.funfam;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import uk.ac.ebi.interpro.scan.io.funfam.CathResolveHit;
 import uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser;
-import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3DomTblParser;
-import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.parsemodel.DomTblDomainMatch;
+import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
-import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.FunFamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
 
 
 public class ParseAndPersisteStep extends Step  {
-    private static final Logger LOGGER = LogManager.getLogger(ParseAndPersisteStep.class.getName());
     private String cathResolveHitsOutputFileNameTemplate;
-    private String hmmsearchDomTblOutputFileNameTemplate;
-    private Hmmer3DomTblParser hmmer3DomTblParser;
+    private String hmmsearchOutputFileNameTemplate;
+    private Hmmer3SearchMatchParser<FunFamHmmer3RawMatch> hmmer3SearchMatchParser;
     private CathResolveHitsOutputParser cathResolveHitsOutputParser;
     private String signatureLibraryRelease;
     private RawMatchDAO<FunFamHmmer3RawMatch> rawMatchDAO;
@@ -39,20 +32,20 @@ public class ParseAndPersisteStep extends Step  {
         this.cathResolveHitsOutputFileNameTemplate = cathResolveHitsOutputFileNameTemplate;
     }
 
-    public String getHmmsearchDomTblOutputFileNameTemplate() {
-        return hmmsearchDomTblOutputFileNameTemplate;
+    public String getHmmsearchOutputFileNameTemplate() {
+        return hmmsearchOutputFileNameTemplate;
     }
 
-    public void setHmmsearchDomTblOutputFileNameTemplate(String hmmsearchDomTblOutputFileNameTemplate) {
-        this.hmmsearchDomTblOutputFileNameTemplate = hmmsearchDomTblOutputFileNameTemplate;
+    public void setHmmsearchOutputFileNameTemplate(String hmmsearchOutputFileNameTemplate) {
+        this.hmmsearchOutputFileNameTemplate = hmmsearchOutputFileNameTemplate;
     }
 
-    public Hmmer3DomTblParser getHmmer3DomTblParser() {
-        return hmmer3DomTblParser;
+    public Hmmer3SearchMatchParser<FunFamHmmer3RawMatch> getHmmer3SearchMatchParser() {
+        return hmmer3SearchMatchParser;
     }
 
-    public void setHmmer3DomTblParser(Hmmer3DomTblParser hmmer3DomTblParser) {
-        this.hmmer3DomTblParser = hmmer3DomTblParser;
+    public void setHmmer3SearchMatchParser(Hmmer3SearchMatchParser<FunFamHmmer3RawMatch> hmmer3SearchMatchParser) {
+        this.hmmer3SearchMatchParser = hmmer3SearchMatchParser;
     }
 
     public CathResolveHitsOutputParser getCathResolveHitsOutputParser() {
@@ -90,99 +83,70 @@ public class ParseAndPersisteStep extends Step  {
     @Override
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
-            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
+        String hmmsearchOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getHmmsearchOutputFileNameTemplate());
         String cathResolveHitsOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getCathResolveHitsOutputFileNameTemplate());
-        String domTblOutputFileName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getHmmsearchDomTblOutputFileNameTemplate());
+
+        Set<RawProtein<FunFamHmmer3RawMatch>> rawProteins;
+        try (InputStream is = new FileInputStream(hmmsearchOutputFileName)) {
+            rawProteins = this.getHmmer3SearchMatchParser().parse(is);
+        } catch (IOException e) {
+            throw new IllegalStateException("IOException thrown when attempting to parse " + hmmsearchOutputFileName, e);
+        }
 
         Map<String, CathResolveHit> cathResolveHits;
-        try (BufferedReader reader =
-                     new BufferedReader(new FileReader(cathResolveHitsOutputFileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(cathResolveHitsOutputFileName))) {
             cathResolveHits = CathResolveHit.parse(reader);
         } catch (IOException e) {
             throw new IllegalStateException("IOException thrown when attempting to parse " + cathResolveHitsOutputFileName, e);
         }
 
-        Map<String, DomTblDomainMatch> domains = new HashMap<>();
-        try (BufferedReader reader =
-                     new BufferedReader(new FileReader(domTblOutputFileName))) {
-            String line;
-            String mode = "hmmsearch";
-            while ((line = reader.readLine()) != null) {
-                Matcher matcher = DomTblDomainMatch.getDomainDataLineMatcher(line, mode);
-                if (matcher.matches()) {
-                    DomTblDomainMatch match = new DomTblDomainMatch(matcher, mode);
-                    domains.put(match.getDomTblDominLineKey(), match);
-                }
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("IOException thrown when attempting to parse " + domTblOutputFileName, e);
-        }
-
         Map<String, RawProtein<FunFamHmmer3RawMatch>> matches = new HashMap<>();
-        for (String key: cathResolveHits.keySet()) {
-            CathResolveHit hit = cathResolveHits.get(key);
-            String[] domainRegions = hit.getResolvedRegions().split(",");
+        for (RawProtein<FunFamHmmer3RawMatch> protein: rawProteins) {
+            for (FunFamHmmer3RawMatch match: protein.getMatches()) {
+                String key = match.getSequenceIdentifier() + '-' + match.getModelId() + '-' + match.getEnvelopeStart() + '-' + match.getEnvelopeEnd();
+                CathResolveHit hit = cathResolveHits.get(key);
 
-            DomTblDomainMatch domain = domains.get(key);
-            if (domain == null) {
-                int minStartPosition = -1;
-                int maxEndPosition = -1;
+                if (hit != null) {
+                    UUID splitGroup = UUID.randomUUID();
+                    String[] domainRegions = hit.getResolvedRegions().split(",");
+                    boolean isDiscontinuous = domainRegions.length > 1;
+                    for (String domainRegion: domainRegions) {
+                        String[] positions = domainRegion.split("-");
+                        int startPosition = Integer.parseInt(positions[0]);
+                        int endPosition = Integer.parseInt(positions[1]);
 
-                for (String domainRegion: domainRegions) {
-                    String[] positions = domainRegion.split("-");
-                    int startPosition = Integer.parseInt(positions[0]);
-                    int endPosition = Integer.parseInt(positions[1]);
+                        FunFamHmmer3RawMatch newMatch = new FunFamHmmer3RawMatch(
+                                match.getSequenceIdentifier(),
+                                match.getModelId(),
+                                this.getSignatureLibraryRelease(),
+                                startPosition,
+                                endPosition,
+                                match.getEvalue(),
+                                match.getScore(),
+                                match.getHmmStart(),
+                                match.getHmmEnd(),
+                                match.getHmmBounds(),
+                                match.getLocationScore(),
+                                match.getEnvelopeStart(),
+                                match.getEnvelopeEnd(),
+                                match.getExpectedAccuracy(),
+                                match.getFullSequenceBias(),
+                                match.getDomainCeValue(),
+                                match.getDomainIeValue(),
+                                match.getDomainBias(),
+                                match.getAlignment()
+                        );
 
-                    if (minStartPosition == -1 || startPosition < minStartPosition) {
-                        minStartPosition = startPosition;
+                        if (isDiscontinuous) {
+                            newMatch.setSplitGroup(splitGroup);
+                        }
+
+                        matches.computeIfAbsent(match.getSequenceIdentifier(), k -> new RawProtein<>(k)).addMatch(match);
                     }
-
-                    if (maxEndPosition == -1 || endPosition > maxEndPosition)
-                        maxEndPosition = endPosition;
                 }
-
-                domain = new DomTblDomainMatch(hit.getQueryIdentifier(), hit.getMatchIdentifier(), hit.getCondEvalue(),
-                        hit.getScore(), 0.0, hit.getCondEvalue(), hit.getIndpEvalue(), hit.getScore(),
-                        0.0, 0, 0, minStartPosition, maxEndPosition,
-                        0, 0, 0.0);
-            }
-
-            UUID splitGroup = UUID.randomUUID();
-            boolean isDiscontinuous = domainRegions.length > 1;
-            for (String domainRegion: domainRegions) {
-                String[] positions = domainRegion.split("-");
-                int startPosition = Integer.parseInt(positions[0]);
-                int endPosition = Integer.parseInt(positions[1]);
-
-                FunFamHmmer3RawMatch match = new FunFamHmmer3RawMatch(
-                        domain.getTargetIdentifier(),
-                        hit.getMatchIdentifier(),
-                        this.getSignatureLibraryRelease(),
-                        startPosition,
-                        endPosition, domain.getSequenceEValue(),
-                        domain.getSequenceScore(),
-                        domain.getDomainHmmfrom(),
-                        domain.getDomainHmmto(),
-                        HmmBounds.calculateHmmBounds(domain.getDomainEnvFrom(), domain.getDomainEnvTo(), startPosition, endPosition),
-                        domain.getDomainScore(),
-                        domain.getDomainEnvFrom(),
-                        domain.getDomainEnvTo(),
-                        domain.getDomainAccuracy(),
-                        domain.getSequenceBias(),
-                        hit.getCondEvalue(),
-                        hit.getIndpEvalue(),
-                        domain.getDomainBias()
-                );
-
-                if (isDiscontinuous) {
-                    match.setSplitGroup(splitGroup);
-                }
-
-                matches.computeIfAbsent(match.getSequenceIdentifier(), k -> new RawProtein<>(k)).addMatch(match);
             }
         }
 

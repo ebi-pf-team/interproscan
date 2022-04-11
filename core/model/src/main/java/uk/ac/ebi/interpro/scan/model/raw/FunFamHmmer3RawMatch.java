@@ -17,6 +17,9 @@ public class FunFamHmmer3RawMatch extends Hmmer3RawMatch {
     @Transient
     public static final String TABLE_NAME = "FUNFAM_HMMER3_RAW_MATCH";
 
+    @Column(nullable = false, length = 4000)
+    private String alignment;
+
     protected FunFamHmmer3RawMatch() {
     }
 
@@ -28,9 +31,18 @@ public class FunFamHmmer3RawMatch extends Hmmer3RawMatch {
                                 double locationScore,
                                 int envelopeStart, int envelopeEnd,
                                 double expectedAccuracy, double fullSequenceBias,
-                                double domainCeValue, double domainIeValue, double domainBias) {
+                                double domainCeValue, double domainIeValue, double domainBias, String alignment) {
         super(sequenceIdentifier, model, SignatureLibrary.FUNFAM, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
                 fullSequenceBias, domainCeValue, domainIeValue, domainBias);
+        this.setAlignment(alignment);
+    }
+
+    public String getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(String alignment) {
+        this.alignment = alignment;
     }
 }

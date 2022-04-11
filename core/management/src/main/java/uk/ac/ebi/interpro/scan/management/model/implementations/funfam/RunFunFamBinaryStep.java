@@ -17,7 +17,7 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
     private String fastaFileNameTemplate;
     private String cathAssignedFileNameTemplace;
     private String fullPathToModelsDirectory;
-    private String outputFileNameDomTbloutTemplate;
+    private String cathResolveHitsOutputFileNameTemplate;
     private String fullPathToHmmsearchBinary;
     private String hmmsearchBinarySwitches;
     private String fullPathToCathResolveBinary;
@@ -68,13 +68,13 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
         this.fullPathToModelsDirectory = fullPathToModelsDirectory;
     }
 
-    public String getOutputFileNameDomTbloutTemplate() {
-        return outputFileNameDomTbloutTemplate;
+    public String getCathResolveHitsOutputFileNameTemplate() {
+        return cathResolveHitsOutputFileNameTemplate;
     }
 
     @Required
-    public void setOutputFileNameDomTbloutTemplate(String outputFileNameDomTbloutTemplate) {
-        this.outputFileNameDomTbloutTemplate = outputFileNameDomTbloutTemplate;
+    public void setCathResolveHitsOutputFileNameTemplate(String cathResolveHitsOutputFileNameTemplate) {
+        this.cathResolveHitsOutputFileNameTemplate = cathResolveHitsOutputFileNameTemplate;
     }
 
     public String getFullPathToHmmsearchBinary() {
@@ -115,16 +115,12 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
         final String inputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getCathAssignedFileNameTemplace());
-        final String outputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
-        final String domTblOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameDomTbloutTemplate());
+        final String hmmsearchOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
+        final String cathResolveHitsOutputFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getCathResolveHitsOutputFileNameTemplate());
 
         List<String> command = new ArrayList<String>();
         command.add(this.getFullPathToPython());
         command.add(this.getFullPathToPythonBinary());
-        command.add("-o");
-        command.add(outputFilePath);
-        command.add("--domtblout");
-        command.add(domTblOutputFilePath);
 
         command.add("--hmmsearch");
         command.add(this.getFullPathToHmmsearchBinary());
@@ -150,6 +146,8 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
         command.add(fastaFilePath);
         command.add(inputFilePath);
         command.add(this.getFullPathToModelsDirectory());
+        command.add(hmmsearchOutputFilePath);
+        command.add(cathResolveHitsOutputFilePath);
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(command.toString());
