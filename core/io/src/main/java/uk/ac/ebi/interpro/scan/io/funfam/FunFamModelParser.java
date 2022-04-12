@@ -8,6 +8,8 @@ import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
@@ -22,11 +24,22 @@ import java.util.*;
  */
 
 public class FunFamModelParser extends AbstractModelFileParser {
-    private static String prefix = "G3DSA:";
+    private final static String prefix = "G3DSA:";
+    private String funfamNamesFile;
+
+    public String getFunfamNamesFile() {
+        return funfamNamesFile;
+    }
+
+    public void setFunfamNamesFile(String funfamNamesFile) {
+        this.funfamNamesFile = funfamNamesFile;
+    }
 
     @Override
     public SignatureLibraryRelease parse() throws IOException {
         SignatureLibraryRelease release = new SignatureLibraryRelease(this.getSignatureLibrary(), this.getReleaseVersionNumber());
+
+        Map<String, String> names = this.parseNames();
 
         for (Resource modelFile : modelFiles) {
             Files.walkFileTree(modelFile.getFile().toPath(), new SimpleFileVisitor<>() {
@@ -36,13 +49,15 @@ public class FunFamModelParser extends AbstractModelFileParser {
                     parser.setModelFiles(new FileSystemResource(file.toFile()));
 
                     for (Signature s: parser.parse().getSignatures()) {
+                        String name = names.get(s.getAccession());
+
                         Set<Model> models = new HashSet<>();
                         for (Model m: s.getModels().values()) {
-                            models.add(new Model(m.getAccession(), m.getName(), m.getDescription(), m.getLength()));
+                            models.add(new Model(m.getAccession(), m.getName(), name != null ? name : m.getDescription(), m.getLength()));
                         }
 
                         Signature ns = new Signature(FunFamModelParser.prefix + s.getAccession(), s.getName(),
-                                s.getType(), s.getDescription(), s.getAbstract(), release, models);
+                                s.getType(), name != null ? name : s.getDescription(), s.getAbstract(), release, models);
                         release.addSignature(ns);
                     }
 
@@ -53,4 +68,26 @@ public class FunFamModelParser extends AbstractModelFileParser {
 
         return release;
     }
+
+    private Map<String, String> parseNames() throws IOException {
+        Map<String, String> names = new HashMap<>();
+
+        try (FileReader freader = new FileReader(this.getFunfamNamesFile());
+             BufferedReader breader = new BufferedReader(freader)) {
+            String line;
+
+            while ((line = breader.readLine()) != null) {
+                String[] values = line.split("\\s+", 2);
+
+                if (values.length == 2 && !values[1].equals("-")) {
+                    names.put(values[0], values[1]);
+                }
+            }
+
+        }
+
+        return names;
+    }
+
+
 }

@@ -35,6 +35,7 @@
                     <property name="releaseVersionNumber" value="${funfam.signature.library.release}"/>
                     <property name="modelFiles" value="file:${funfam.hmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="funfamNamesFile" value="${funfam.names.path}"/>
                     <property name="analysisJobId" value="jobFunFam"/>
                 </bean>
 
