@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  * @author Phil Jones, EMBL-EBI, InterPro
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
  * @author Gift Nuka, EMBL-EBI, InterPro
+ * @author Matthias Blum, EMBL-EBI, InterPro
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -132,6 +133,12 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Integer.toString(hmmer3Location.getEnvelopeEnd()));
                             mappingFields.add(Double.toString(hmmer3Location.getScore()));
                             mappingFields.add(Double.toString(hmmer3Location.getEvalue()));
+
+                            String alignment = hmmer3Location.getAlignment();
+                            if (alignment == null || alignment.isEmpty())
+                                mappingFields.add("-");
+                            else
+                                mappingFields.add(alignment);
                         }
                         if (location instanceof Hmmer2Match.Hmmer2Location) {
                             Hmmer2Match.Hmmer2Location hmmerLocation = (Hmmer2Match.Hmmer2Location) location;
