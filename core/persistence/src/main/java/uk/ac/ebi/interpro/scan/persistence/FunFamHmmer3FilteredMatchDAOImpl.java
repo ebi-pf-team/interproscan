@@ -97,9 +97,11 @@ public class FunFamHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<Fun
                 this.updateMatch(match);
             }
 
-            final String dbKey = Long.toString(protein.getId()) + signatureLibraryRelease;
-            Set<Hmmer3Match> matches = new HashSet<>(splitGroups.values());
-            this.matchDAO.persist(dbKey, matches);
+            if (splitGroups.size() > 0) {
+                final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
+                Set<Hmmer3Match> matches = new HashSet<>(splitGroups.values());
+                this.matchDAO.persist(dbKey, matches);
+            }
         }
     }
 }
