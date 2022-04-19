@@ -17,7 +17,7 @@
 
     <bean id="abstractCathFunFamStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobFunFam"/>
-        <property name="maxProteins" value="${analysis.max.sequence.count.GENE3D}"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.FUNFAM}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
