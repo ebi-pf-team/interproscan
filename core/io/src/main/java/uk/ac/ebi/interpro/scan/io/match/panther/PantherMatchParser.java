@@ -94,7 +94,7 @@ public final class PantherMatchParser
 
             String annotations = splitLine[14].trim();
             if (annotations.equals("-")) {
-                annotations = "";
+                annotations = null;
             } else if (annotations.length() >= 8000) {
                 annotations = annotations.substring(0, 7990);
             }
