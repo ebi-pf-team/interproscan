@@ -24,6 +24,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +38,7 @@ import java.util.Set;
  */
 @Entity
 @XmlType(name = "PantherMatchType")
-@JsonIgnoreProperties({"annotations"})
+//@JsonIgnoreProperties({"annotations"})
 public class PantherMatch extends Match<PantherMatch.PantherLocation> {
 
     @Column(nullable = false)
@@ -76,7 +78,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
                 this.getAnnotationsNodeId(), this.getEvalue(), this.getFamilyName(), this.getScore(), this.getAnnotations());
     }
 
-    @XmlAttribute(required = true)
+    @XmlAttribute
     public String getAnnotationsNodeId() {
         return annotationsNodeId;
     }
@@ -112,11 +114,12 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         this.score = score;
     }
 
+    @XmlElement
+    // @XmlTransient
     public String getAnnotations() {
         return annotations;
     }
 
-    //@XmlAttribute(required = true)
     public void setAnnotations(String annotations) {
         this.annotations = annotations;
     }
