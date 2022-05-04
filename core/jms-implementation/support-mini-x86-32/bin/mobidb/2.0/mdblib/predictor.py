@@ -223,7 +223,7 @@ class GlobPlot(Predictor):
         super(GlobPlot, self).__init__(_input_file, _bin_directory, _architecture)
         self.threshold = _threshold[self.tag]
 
-        self.command = "python {0}/GlobPipe.py 10 15 74 4 5 {1} {0}/bin{2}".format(
+        self.command = "python2 {0}/GlobPipe.py 10 15 74 4 5 {1} {0}/bin{2}".format(
             self.bin_directory, self.input_file, self.architecture
         )
 
@@ -425,7 +425,7 @@ class DynaMine(Predictor):
         super(DynaMine, self).__init__(_input_file, _bin_directory, _architecture)
         self.threshold = _threshold[self.tag]
 
-        self.command = 'python {}/runFasta.py {}'.format(self.bin_directory, self.input_file)
+        self.command = 'python2 {}/runFasta.py {}'.format(self.bin_directory, self.input_file)
 
     def parse(self, output):
         probs = [float(line.split()[-1]) for line in output.decode('utf-8').split("\n")[3:] if line]
