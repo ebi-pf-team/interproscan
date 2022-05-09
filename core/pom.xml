@@ -98,7 +98,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Dependency versions -->
-        <spring.version>5.2.20.RELEASE</spring.version>
+        <spring.version>5.2.21.RELEASE</spring.version>
         <hibernate.entity.manager.version>5.4.2.Final</hibernate.entity.manager.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <groovy.version>3.0.4</groovy.version>
@@ -540,15 +540,9 @@
 
     <developers>
         <developer>
-            <id>gnuka</id>
-            <name>Gift Nuka</name>
-            <email>nuka@ebi.ac.uk</email>
-            <organization>EMBL-EBI</organization>
-        </developer>
-        <developer>
-            <id>mfraser</id>
-            <name>Matthew Fraser</name>
-            <email>matthew@ebi.ac.uk</email>
+            <id>mblum</id>
+            <name>Matthias Blum</name>
+            <email>mblum@ebi.ac.uk</email>
             <organization>EMBL-EBI</organization>
         </developer>
     </developers>
