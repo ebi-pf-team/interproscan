@@ -19,7 +19,7 @@
         <repository>
             <id>spring-ext</id>
             <name>Spring External Dependencies Repository</name>
-            <url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
+            <url>https://svn.code.sf.net/p/springframework/svn/repos/repo-ext/</url>
         </repository>
     </repositories>
 
