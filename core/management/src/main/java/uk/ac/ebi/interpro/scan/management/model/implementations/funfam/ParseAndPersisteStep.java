@@ -8,6 +8,7 @@ import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.FunFamHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
+import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
@@ -103,6 +104,7 @@ public class ParseAndPersisteStep extends Step  {
             throw new IllegalStateException("IOException thrown when attempting to parse " + cathResolveHitsOutputFileName, e);
         }
 
+        final CigarAlignmentEncoder cigarEncoder = new CigarAlignmentEncoder();
         Map<String, RawProtein<FunFamHmmer3RawMatch>> matches = new HashMap<>();
         for (RawProtein<FunFamHmmer3RawMatch> protein: rawProteins) {
             for (FunFamHmmer3RawMatch match: protein.getMatches()) {
@@ -137,14 +139,14 @@ public class ParseAndPersisteStep extends Step  {
                                 match.getDomainCeValue(),
                                 match.getDomainIeValue(),
                                 match.getDomainBias(),
-                                match.getAlignment()
+                                cigarEncoder.encode(match.getAlignment())
                         );
 
                         if (isDiscontinuous) {
                             newMatch.setSplitGroup(splitGroup);
                         }
 
-                        matches.computeIfAbsent(match.getSequenceIdentifier(), k -> new RawProtein<>(k)).addMatch(match);
+                        matches.computeIfAbsent(match.getSequenceIdentifier(), k -> new RawProtein<>(k)).addMatch(newMatch);
                     }
                 }
             }
