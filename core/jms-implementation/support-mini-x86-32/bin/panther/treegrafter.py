@@ -26,7 +26,7 @@ class ReMatcher:
 
 
 def process_matches_epang(matches, datadir, tempdir, binary=None, threads=1):
-    results = []
+    results = {}
 
     for pthr in matches:
         query_fasta_file = generate_fasta_for_panthr(pthr, matches[pthr],
@@ -37,23 +37,21 @@ def process_matches_epang(matches, datadir, tempdir, binary=None, threads=1):
 
         # print out the pthr Family matches
         for query_id in matches[pthr]:
-
-            results.append(
-                query_id + "\t" +
-                pthr + "\t" +
-                "-" + "\t" +
-                "-" + "\t" +
-                matches[pthr][query_id]['score'][0] + "\t" +
-                matches[pthr][query_id]['evalue'][0] + "\t" +
-                matches[pthr][query_id]['domscore'][0] + "\t" +
-                matches[pthr][query_id]['domevalue'][0] + "\t" +
-                matches[pthr][query_id]['hmmstart'][0] + "\t" +
-                matches[pthr][query_id]['hmmend'][0] + "\t" +
-                matches[pthr][query_id]['alifrom'][0] + "\t" +
-                matches[pthr][query_id]['alito'][0] + "\t" +
-                matches[pthr][query_id]['envfrom'][0] + "\t" +
-                matches[pthr][query_id]['envto'][0] + "\t" +
-                "-" + "\n")
+            results[query_id] = (
+                    query_id + "\t"
+                    + pthr + "\t"
+                    + matches[pthr][query_id]['score'][0] + "\t"
+                    + matches[pthr][query_id]['evalue'][0] + "\t"
+                    + matches[pthr][query_id]['domscore'][0] + "\t"
+                    + matches[pthr][query_id]['domevalue'][0] + "\t"
+                    + matches[pthr][query_id]['hmmstart'][0] + "\t"
+                    + matches[pthr][query_id]['hmmend'][0] + "\t"
+                    + matches[pthr][query_id]['alifrom'][0] + "\t"
+                    + matches[pthr][query_id]['alito'][0] + "\t"
+                    + matches[pthr][query_id]['envfrom'][0] + "\t"
+                    + matches[pthr][query_id]['envto'][0] + "\t"
+                    + "-" + "\n"
+            )
 
         result_tree = _run_epang(pthr, query_fasta_file, datadir, tempdir,
                                  binary=binary, threads=threads)
@@ -61,9 +59,11 @@ def process_matches_epang(matches, datadir, tempdir, binary=None, threads=1):
             # EPA-ng error (e.g tree cannot be converted to unrooted)
             continue
 
-        results += process_tree(pthr, result_tree, matches[pthr], datadir)
+        for result in process_tree(pthr, result_tree, matches[pthr], datadir):
+            query_id = result[0]
+            results[query_id] = result
 
-    return results
+    return list(results.values())
 
 
 def generate_fasta_for_panthr(pthr, matches, datadir, tempdir):
@@ -214,27 +214,26 @@ def process_tree(pthr, result_tree, pthr_matches, datadir):
                 child_ids.append(an_label[leaf.name])
 
         common_an = _commonancestor(pthr, child_ids, datadir)
-        annot_file = os.path.join(datadir, 'PAINT_Annotations', pthr + '.json')
 
-        with open(annot_file, 'rt') as annot_in:
-            pthrsf, annotation = json.load(annot_in)[str(common_an)]
+        annot_file = os.path.join(datadir, 'PAINT_Annotations', pthr + '.json')
+        with open(annot_file, 'rt') as fh:
+            pthrsf, _, _, _ = json.load(fh)[common_an]
 
         results_pthr.append(
-            query_id + "\t" +
-            pthr + "\t" +
-            pthrsf + "\t" +
-            str(common_an) + "\t" +
-            pthr_matches[query_id]['score'][0] + "\t" +
-            pthr_matches[query_id]['evalue'][0] + "\t" +
-            pthr_matches[query_id]['domscore'][0] + "\t" +
-            pthr_matches[query_id]['domevalue'][0] + "\t" +
-            pthr_matches[query_id]['hmmstart'][0] + "\t" +
-            pthr_matches[query_id]['hmmend'][0] + "\t" +
-            pthr_matches[query_id]['alifrom'][0] + "\t" +
-            pthr_matches[query_id]['alito'][0] + "\t" +
-            pthr_matches[query_id]['envfrom'][0] + "\t" +
-            pthr_matches[query_id]['envto'][0] + "\t" +
-            (annotation or "-") + "\n")
+            query_id + "\t"
+            + (pthrsf or pthr) + "\t"
+            + pthr_matches[query_id]['score'][0] + "\t"
+            + pthr_matches[query_id]['evalue'][0] + "\t"
+            + pthr_matches[query_id]['domscore'][0] + "\t"
+            + pthr_matches[query_id]['domevalue'][0] + "\t"
+            + pthr_matches[query_id]['hmmstart'][0] + "\t"
+            + pthr_matches[query_id]['hmmend'][0] + "\t"
+            + pthr_matches[query_id]['alifrom'][0] + "\t"
+            + pthr_matches[query_id]['alito'][0] + "\t"
+            + pthr_matches[query_id]['envfrom'][0] + "\t"
+            + pthr_matches[query_id]['envto'][0] + "\t"
+            + common_an + "\n"
+        )
 
     return results_pthr
 
@@ -464,30 +463,63 @@ def align_length(pthr, datadir):
     return seq_length
 
 
-def main():
-    parser = argparse.ArgumentParser(description="""\
-TreeGrafter is a tool for annotating uncharacterized
-protein sequences, using annotated phylogenetic trees.
-    """)
-    parser.add_argument("fasta", help="fasta file")
-    parser.add_argument("hmmsearch", help="hmmsearch output file")
-    parser.add_argument("datadir", help="TreeGrafter data directory")
-    parser.add_argument("-e", dest="evalue", type=float,
-                        metavar="FLOAT", help="e-value cutoff")
-    parser.add_argument("-o", dest="output", metavar="FILE",
-                        help="write output to FILE",
-                        default="-")
-    parser.add_argument("--epa-ng", dest="epang",
-                        help="location of the EPA-ng binary")
-    parser.add_argument("-t", dest="threads", type=int, default=1,
-                        help="number of threads to run EPA-ng with")
-    parser.add_argument("-T", dest="tempdir", metavar="DIR",
-                        help="create temporary files in DIR",
-                        default=tempfile.gettempdir())
-    parser.add_argument("--keep", action="store_true",
-                        help="keep temporary directory")
-    args = parser.parse_args()
+def prepare(args):
+    datadir = args.datadir
 
+    sys.stderr.write("Loading PAINT annotations\n")
+    paintdir = os.path.join(datadir, "PAINT_Annotations")
+    paintfile = os.path.join(paintdir, "PAINT_Annotatations_TOTAL.txt")
+
+    families = {}
+    with open(paintfile, "rt") as fh:
+        for i, line in enumerate(fh):
+            fam_an_id, annotations, graft_point = line.rstrip().split("\t")
+            fam_id, node_id = fam_an_id.split(':')
+
+            try:
+                fam = families[fam_id]
+            except KeyError:
+                fam = families[fam_id] = {}
+
+            go_terms = []
+            protein_class = subfam_id = None
+            for annotation in re.split(r"\s+|;", annotations):
+                if re.fullmatch(r"PTHR\d+:(SF\d+)", annotation):
+                    subfam_id = annotation
+                elif re.fullmatch(r"GO:\d{7}", annotation):
+                    go_terms.append(annotation)
+                elif re.fullmatch(r"PC\d{5}", annotation):
+                    protein_class = annotation
+
+            fam[node_id] = (subfam_id, go_terms, protein_class, graft_point)
+
+            if (i + 1) % 100000 == 0:
+                sys.stderr.write("\t{:,} lines processed\n".format(i+1))
+
+    for fam_id, obj in families.items():
+        with open(os.path.join(paintdir, fam_id + ".json"), "wt") as fh:
+            json.dump(obj, fh)
+
+    sys.stderr.write("Updating sequences\n")
+    msfdir = os.path.join(datadir, "Tree_MSF")
+    for name in os.listdir(msfdir):
+        if name.endswith(".fasta"):
+            src = os.path.join(msfdir, name)
+            dst = src + ".tmp"
+            with open(src, "rt") as fh1, open(dst, "wt") as fh2:
+                for line in fh1:
+                    if line[0] == ">":
+                        fh2.write(line)
+                    else:
+                        # Replace Selenocysteine (U) and Pyrrolysine (O) AA
+                        # by the undetermined AA character (X).
+                        fh2.write(re.sub(r"[UO]", r"X", line.upper()))
+
+            os.unlink(src)
+            os.rename(dst, src)
+
+
+def run(args):
     if not os.path.isfile(args.fasta):
         sys.stderr.write("Error: {}: "
                          "no such file.\n".format(args.fasta))
@@ -515,9 +547,9 @@ protein sequences, using annotated phylogenetic trees.
     else:
         fh = open(args.output, "wt")
 
-    fh.write("query_id\tpanther_id\tpanther_sf\tnode_id\tscore\tevalue\t"
-             "dom_score\tdom_evalue\thmm_start\thmm_end\tali_start\t"
-             "ali_end\tenv_start\tenv_end\tannotations\n")
+    fh.write("query_id\tpanther_id\tscore\tevalue\tdom_score\tdom_evalue\t"
+             "hmm_start\thmm_end\tali_start\tali_end\tenv_start\tenv_end\t"
+             "node_id\n")
 
     try:
         results = process_matches_epang(matches, args.datadir, tempdir,
@@ -532,6 +564,42 @@ protein sequences, using annotated phylogenetic trees.
 
         if not args.keep:
             shutil.rmtree(tempdir)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="""\
+TreeGrafter is a tool for annotating uncharacterized
+protein sequences, using annotated phylogenetic trees.
+    """)
+
+    subparsers = parser.add_subparsers()
+
+    parser_pre = subparsers.add_parser("prepare")
+    parser_pre.add_argument("datadir", help="PANTHER/TreeGrafter data directory")
+    parser_pre.set_defaults(func=prepare)
+
+    parser_run = subparsers.add_parser("run")
+    parser_run.add_argument("fasta", help="fasta file")
+    parser_run.add_argument("hmmsearch", help="hmmsearch output file")
+    parser_run.add_argument("datadir", help="TreeGrafter data directory")
+    parser_run.add_argument("-e", dest="evalue", type=float,
+                            metavar="FLOAT", help="e-value cutoff")
+    parser_run.add_argument("-o", dest="output", metavar="FILE",
+                            help="write output to FILE",
+                            default="-")
+    parser_run.add_argument("--epa-ng", dest="epang",
+                            help="location of the EPA-ng binary")
+    parser_run.add_argument("-t", dest="threads", type=int, default=1,
+                            help="number of threads to run EPA-ng with")
+    parser_run.add_argument("-T", dest="tempdir", metavar="DIR",
+                            help="create temporary files in DIR",
+                            default=tempfile.gettempdir())
+    parser_run.add_argument("--keep", action="store_true",
+                            help="keep temporary directory")
+    parser_run.set_defaults(func=run)
+
+    args = parser.parse_args()
+    args.func(args)
 
 
 if __name__ == '__main__':

@@ -1,12 +1,12 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
+import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,6 +24,15 @@ import java.util.Set;
 public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> implements PantherFilteredMatchDAO {
 
     private static final Logger LOGGER = LogManager.getLogger(PantherFilteredMatchDAOImpl.class.getName());
+    private String paintDirectory;
+
+    public String getPaintDirectory() {
+        return paintDirectory;
+    }
+
+    public void setPaintDirectory(String paintDirectory) {
+        this.paintDirectory = paintDirectory;
+    }
 
     /**
      * Sets the class of the model that the DOA instance handles.
@@ -75,11 +84,9 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                                 currentSignature,
                                 currentSignatureAc,
                                 locations,
-                                lastRawMatch.getAnnotationsNodeId(),
                                 lastRawMatch.getEvalue(),
-                                lastRawMatch.getModelId(),
                                 lastRawMatch.getScore(),
-                                lastRawMatch.getAnnotations()
+                                lastRawMatch.getAnnotationsNodeId()
                         );
                         proteinMatches.add(match);
                     }
@@ -119,11 +126,9 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         currentSignature,
                         currentSignatureAc,
                         locations,
-                        lastRawMatch.getAnnotationsNodeId(),
                         lastRawMatch.getEvalue(),
-                        lastRawMatch.getModelId(),
                         lastRawMatch.getScore(),
-                        lastRawMatch.getAnnotations()
+                        lastRawMatch.getAnnotationsNodeId()
                 );
                 proteinMatches.add(match);
             }
@@ -152,5 +157,4 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
         }
         return true;
     }
-
 }

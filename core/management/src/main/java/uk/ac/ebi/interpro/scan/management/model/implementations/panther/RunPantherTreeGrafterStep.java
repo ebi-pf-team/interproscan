@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.panther;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -106,6 +105,7 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
 
         command.add(fullPathToPython);
         command.add(fullPathToBinary);
+        command.add("run");
         command.add(fastaFilePathName);
         command.add(inputFileNameHmmerRawOutput);
         command.add(pantherModelsDirectory);

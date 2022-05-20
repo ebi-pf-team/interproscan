@@ -56,16 +56,12 @@ public class PantherRawMatch extends RawMatch {
     @Column
     private String annotationsNodeId;
 
-    @Column (length = 8000)
-    private String annotations;
-
     protected PantherRawMatch() {
     }
 
     public PantherRawMatch(String sequenceIdentifier, String modelId, String signatureLibraryRelease, int locationStart,
                            int locationEnd, double evalue, double score, int hmmStart, int hmmEnd, int hmmLength,
-                           String hmmBounds, int envelopeStart, int envelopeEnd, String annotationsNodeId,
-                           String annotations) {
+                           String hmmBounds, int envelopeStart, int envelopeEnd, String annotationsNodeId) {
         super(sequenceIdentifier, modelId, SignatureLibrary.PANTHER, signatureLibraryRelease, locationStart, locationEnd);
         this.evalue = evalue;
         this.score = score;
@@ -75,8 +71,6 @@ public class PantherRawMatch extends RawMatch {
         this.hmmBounds = hmmBounds;
         this.envelopeStart = envelopeStart;
         this.envelopeEnd = envelopeEnd;
-        this.annotationsNodeId = annotationsNodeId;
-        this.annotations = annotations;
         this.annotationsNodeId = annotationsNodeId;
     }
 
@@ -150,13 +144,5 @@ public class PantherRawMatch extends RawMatch {
 
     public void setAnnotationsNodeId(String annotationsNodeId) {
         this.annotationsNodeId = annotationsNodeId;
-    }
-
-    public String getAnnotations() {
-        return annotations;
-    }
-
-    public void setAnnotations(String annotations) {
-        this.annotations = annotations;
     }
 }

@@ -16,16 +16,14 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +39,9 @@ import java.util.Set;
 //@JsonIgnoreProperties({"annotations"})
 public class PantherMatch extends Match<PantherMatch.PantherLocation> {
 
+    @Column
+    private String accession;
+
     @Column(nullable = false)
     private double evalue;
 
@@ -53,20 +54,24 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     @Column
     private String annotationsNodeId;
 
-    @Column (length = 8000)
-    private String annotations;
+    @Column
+    private String proteinClass;
+
+    @Column
+    private String graftPoint;
+
+    @OneToMany()
+    private Set<GoXref> goXrefs = new HashSet<>();
 
     protected PantherMatch() {
     }
 
-    public PantherMatch(Signature signature, String signatureModels, Set<PantherLocation> locations,
-                        String annotationsNodeId, double evalue, String familyName, double score, String annotations) {
+    public PantherMatch(Signature signature, String signatureModels, Set<PantherLocation> locations, double evalue,
+                        double score, String annotationsNodeId) {
         super(signature, signatureModels, locations);
-        setAnnotationsNodeId(annotationsNodeId);
         setEvalue(evalue);
-        this.familyName = familyName;
-        this.score = score;
-        setAnnotations(annotations);
+        setScore(score);
+        setAnnotationsNodeId(annotationsNodeId);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -75,7 +80,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
             clonedLocations.add((PantherLocation) location.clone());
         }
         return new PantherMatch(this.getSignature(), this.getSignatureModels(), clonedLocations,
-                this.getAnnotationsNodeId(), this.getEvalue(), this.getFamilyName(), this.getScore(), this.getAnnotations());
+                this.getEvalue(), this.getScore(), this.getAnnotationsNodeId());
     }
 
     @XmlAttribute
@@ -114,14 +119,36 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         this.score = score;
     }
 
-    @XmlElement
-    // @XmlTransient
-    public String getAnnotations() {
-        return annotations;
+    public String getAccession() {
+        return accession;
     }
 
-    public void setAnnotations(String annotations) {
-        this.annotations = annotations;
+    public void setAccession(String accession) {
+        this.accession = accession;
+    }
+
+    public String getProteinClass() {
+        return proteinClass;
+    }
+
+    public void setProteinClass(String proteinClass) {
+        this.proteinClass = proteinClass;
+    }
+
+    public String getGraftPoint() {
+        return graftPoint;
+    }
+
+    public void setGraftPoint(String graftPoint) {
+        this.graftPoint = graftPoint;
+    }
+
+    public Set<GoXref> getGoXrefs() {
+        return goXrefs;
+    }
+
+    public void setGoXrefs(Set<GoXref> goXrefs) {
+        this.goXrefs = goXrefs;
     }
 
     @Override

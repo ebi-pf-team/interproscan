@@ -52,58 +52,39 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        /*
-            Header of TreeGrafter's output:
-            query_id	panther_id	panther_sf	node_id	score	evalue	dom_score	dom_evalue	hmm_start	hmm_end	ali_start	ali_end	env_start	env_end	annotations
-         */
-        if (splitLine.length >= 15) {
+
+        if (splitLine.length == 13) {
             final String sequenceId = splitLine[0].trim();
-            final String familyId = splitLine[1].trim();
-            final String subfamilyId = splitLine[2].trim();
+            final String matchId = splitLine[1].trim();
 
-            String modelId;
-            if (subfamilyId.length() != 0 && !subfamilyId.equals("-")) {
-                modelId = familyId + ":" + subfamilyId;
-            } else {
-                modelId = familyId;
-            }
-
-            String nodeId = splitLine[3].trim();;
-            if (nodeId.length() == 0 || nodeId.equals("-")) {
-                nodeId = null;
-            }
-
-            final String scoreString = splitLine[4].trim();
+            final String scoreString = splitLine[2].trim();
             double score = 0.0d;
             if (scoreString.length() > 0 && !".".equals(scoreString)) {
                 score = Double.parseDouble(scoreString);
             }
 
-            final String eValueString = splitLine[5].trim();
+            final String eValueString = splitLine[3].trim();
             double evalue = 0.0d;
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
                 evalue = Double.parseDouble(eValueString);
             }
 
-            final int hmmLocationStart = Integer.parseInt(splitLine[8].trim());
-            final int hmmLocationEnd = Integer.parseInt(splitLine[9].trim());
-            final int aliLocationStart = Integer.parseInt(splitLine[10].trim());
-            final int aliLocationEnd = Integer.parseInt(splitLine[11].trim());
-            final int envLocationStart = Integer.parseInt(splitLine[12].trim());
-            final int envLocationEnd = Integer.parseInt(splitLine[13].trim());
+            final int hmmLocationStart = Integer.parseInt(splitLine[6].trim());
+            final int hmmLocationEnd = Integer.parseInt(splitLine[7].trim());
+            final int aliLocationStart = Integer.parseInt(splitLine[8].trim());
+            final int aliLocationEnd = Integer.parseInt(splitLine[9].trim());
+            final int envLocationStart = Integer.parseInt(splitLine[10].trim());
+            final int envLocationEnd = Integer.parseInt(splitLine[11].trim());
 
-            String annotations = splitLine[14].trim();
-            if (annotations.equals("-")) {
-                annotations = null;
-            } else if (annotations.length() >= 8000) {
-                annotations = annotations.substring(0, 7990);
+            String nodeId = splitLine[12].trim();;
+            if (nodeId.length() == 0 || nodeId.equals("-")) {
+                nodeId = null;
             }
 
             int hmmLength = 0;
-
             return new PantherRawMatch(
                     sequenceId,
-                    modelId,
+                    matchId,
                     getSignatureLibraryRelease(),
                     aliLocationStart,
                     aliLocationEnd,
@@ -115,8 +96,7 @@ public final class PantherMatchParser
                     HmmBounds.calculateHmmBounds(envLocationStart,envLocationEnd, aliLocationStart, aliLocationEnd),
                     envLocationStart,
                     envLocationEnd,
-                    nodeId,
-                    annotations);
+                    nodeId);
         }
 
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
