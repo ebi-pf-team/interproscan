@@ -60,13 +60,18 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
                 }
                 Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
                 for (String parent : pantherParentChildMap.keySet()) {
-                    String name = familyIdFamilyNameMap.get(parent);
-                    release.addSignature(createSignature(parent, name, release));
+                    String parentName = familyIdFamilyNameMap.get(parent);
+
+                    Set<Model> models = new HashSet<>();
+                    models.add(new Model(parent, parentName, null));
+
                     List<String> children = pantherParentChildMap.get(parent);
                     for (String child : children) {
-                        name = familyIdFamilyNameMap.get(child);
-                        release.addSignature(createSignature(child, name, release));
+                        String childName = familyIdFamilyNameMap.get(child);
+                        models.add(new Model(child, childName, null));
                     }
+
+                    release.addSignature(new Signature(parent, parentName, null, null, null, release, models));
                 }
             }
         }
@@ -200,13 +205,5 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
         Utilities.verboseLog(1100, "pantherFamilies #: " + pantherFamilies);
         return result;
-    }
-
-    /**
-     * Creates and returns an instance of signature.
-     */
-    private Signature createSignature(String accession, String name, SignatureLibraryRelease release) {
-        Model model = new Model(accession, name, null); //TODO Also populate hmmLength from the panther.hmm now? Maybe for PANTHER 13.0+
-        return new Signature(accession, name, null, null, null, release, Collections.singleton(model));
     }
 }

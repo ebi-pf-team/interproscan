@@ -8,10 +8,7 @@ import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
@@ -57,6 +54,9 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
      */
     @Override
     public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+        Map<String, Set<Match>> toPersist = new HashMap<>();
+        Set<String> toLoad = new HashSet<>();
+
         for (RawProtein<PantherRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -65,9 +65,8 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             }
 
             Set<PantherMatch.PantherLocation> locations = null;
-            String currentSignatureAc = null;
-            SignatureModelHolder holder = null;
-            Signature currentSignature = null;
+            String matchId = null;
+            Signature signature = null;
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
             String signatureLibraryKey = null;
@@ -77,26 +76,26 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     continue;
                 }
                 // If the first raw match, or moved to a different match...
-                if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
-                    if (currentSignatureAc != null) {
+                if (matchId == null || !matchId.equals(rawMatch.getModelId())) {
+                    if (matchId != null) {
                         // Not the first...
                         match = new PantherMatch(
-                                currentSignature,
-                                currentSignatureAc,
+                                signature,
+                                matchId,
                                 locations,
                                 lastRawMatch.getEvalue(),
                                 lastRawMatch.getScore(),
                                 lastRawMatch.getAnnotationsNodeId()
                         );
+                        toLoad.add(signature.getAccession());
                         proteinMatches.add(match);
                     }
                     // Reset everything
                     locations = new HashSet<>();
-                    currentSignatureAc = rawMatch.getModelId();
-                    holder = modelIdToSignatureMap.get(currentSignatureAc);
-                    currentSignature = holder.getSignature();
-                    if (currentSignature == null) {
-                        throw new IllegalStateException("Cannot find PANTHER signature " + currentSignatureAc + " in the database.");
+                    matchId = rawMatch.getModelId();
+                    signature = modelIdToSignatureMap.get(matchId).getSignature();
+                    if (signature == null) {
+                        throw new IllegalStateException("Cannot find PANTHER signature " + matchId + " in the database.");
                     }
                 }
                 if (LOGGER.isDebugEnabled()) {
@@ -107,7 +106,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     LOGGER.error("PANTHER match is out of range: "
                             + " protein length = " + protein.getSequenceLength()
                             + " raw match : " + rawMatch.toString());
-                    throw new IllegalStateException("PANTHER match location is out of range " + currentSignatureAc
+                    throw new IllegalStateException("PANTHER match location is out of range " + matchId
                             + " protein length = " + protein.getSequenceLength()
                             + " raw match : " + rawMatch.toString());
                 }
@@ -117,19 +116,20 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
                 lastRawMatch = rawMatch;
                 if(signatureLibraryKey == null){
-                    signatureLibraryKey = currentSignature.getSignatureLibraryRelease().getLibrary().getName();
+                    signatureLibraryKey = signature.getSignatureLibraryRelease().getLibrary().getName();
                 }
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
                 match = new PantherMatch(
-                        currentSignature,
-                        currentSignatureAc,
+                        signature,
+                        matchId,
                         locations,
                         lastRawMatch.getEvalue(),
                         lastRawMatch.getScore(),
                         lastRawMatch.getAnnotationsNodeId()
                 );
+                toLoad.add(signature.getAccession());
                 proteinMatches.add(match);
             }
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
@@ -139,8 +139,17 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     //try update with cross refs etc
                     updateMatch(i5Match);
                 }
-                matchDAO.persist(dbKey, proteinMatches);
+
+                toPersist.put(dbKey, proteinMatches);
             }
+        }
+
+        for (String accession: toLoad) {
+
+        }
+
+        for (Map.Entry<String, Set<Match>> entry: toPersist.entrySet()) {
+            matchDAO.persist(entry.getKey(), entry.getValue());
         }
     }
 
