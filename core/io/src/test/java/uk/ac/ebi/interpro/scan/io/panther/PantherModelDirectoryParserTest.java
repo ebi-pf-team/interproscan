@@ -10,6 +10,7 @@ import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,17 +27,14 @@ public class PantherModelDirectoryParserTest {
 
     private PantherModelDirectoryParser parser;
 
-    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/12.0";
-    private static final String PANTHER_TEST_VERSION = "12.0";
+    private static final String PANTHER_TEST_MODEL_DIR = "data/panther/16.0";
+    private static final String PANTHER_TEST_VERSION = "16.0";
     private static final String PANTHER_TEST_NAMES_TAB_FILE = "names.tab";
 
     @BeforeEach
     public void setUp() {
         parser = new PantherModelDirectoryParser();
     }
-
-
-
 
     @Test
     public void testPantherModelParser() throws IOException {
@@ -45,40 +43,48 @@ public class PantherModelDirectoryParserTest {
         parser.setSignatureLibrary(SignatureLibrary.PANTHER);
         parser.setReleaseVersionNumber(PANTHER_TEST_VERSION);
         parser.setNamesTabFile(PANTHER_TEST_NAMES_TAB_FILE);
-        //
+
         assertEquals(SignatureLibrary.PANTHER, parser.getSignatureLibrary());
         assertEquals(PANTHER_TEST_VERSION, parser.getReleaseVersionNumber());
         assertEquals(PANTHER_TEST_NAMES_TAB_FILE, parser.getNamesTabFileStr());
-        //
         SignatureLibraryRelease sigLib = parser.parse();
-        //
         assertNotNull(sigLib);
         assertEquals(PANTHER_TEST_VERSION, sigLib.getVersion());
         assertEquals(SignatureLibrary.PANTHER, sigLib.getLibrary());
         assertNotNull(sigLib.getSignatures());
-        //3 super and 11 sub family signature
-        assertEquals(8, sigLib.getSignatures().size());
+        assertEquals(3, sigLib.getSignatures().size());
 
         boolean foundExpectedSignature = false;
         for (Signature signature : sigLib.getSignatures()) {
             assertNotNull(signature);
             assertNotNull(signature.getAccession());
             assertNotNull(signature.getName());
-            if ("PTHR43828:SF3".equals(signature.getAccession())) {
-                foundExpectedSignature = true;
-                assertEquals("L-ASPARAGINASE 2", signature.getName());
-            }
             assertNotNull(signature.getModels());
-            assertEquals(1, signature.getModels().size());
-            String modelAc = signature.getModels().keySet().iterator().next();
-            assertNotNull(modelAc);
-            assertEquals(signature.getAccession(), modelAc);
-            Model model = signature.getModels().get(modelAc);
-            assertNotNull(model);
-            assertEquals(signature.getAccession(), model.getAccession());
-            assertEquals(signature.getName(), model.getName());
-            assertEquals(signature.getDescription(), model.getDescription());
+
+            for (Map.Entry<String, Model> entry: signature.getModels().entrySet()) {
+                String modelAccession = entry.getKey();
+                Model model = entry.getValue();
+                assertNotNull(modelAccession);
+                assertNotNull(model);
+                assertEquals(model.getAccession(), modelAccession);
+            }
+
+            if (signature.getAccession().equals("PTHR23076")) {
+                foundExpectedSignature = true;
+                assertEquals("METALLOPROTEASE M41 FTSH", signature.getName());
+
+                Map<String, Model> models = signature.getModels();
+                signature.getModels().get("PTHR23076:SF97");
+                assertNotNull(models);
+                assertEquals(24, models.size());
+
+                Model model = signature.getModels().get("PTHR23076:SF97");
+                assertNotNull(model);
+                assertEquals("PTHR23076:SF97", model.getAccession());
+                assertEquals("ATP-DEPENDENT ZINC METALLOPROTEASE YME1L1", model.getName());
+            }
         }
+
         assertTrue(foundExpectedSignature);
     }
 }
