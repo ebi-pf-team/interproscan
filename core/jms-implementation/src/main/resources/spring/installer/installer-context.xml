@@ -125,7 +125,7 @@
                     <property name="analysisJobId" value="jobPIRSF"/>
                 </bean>
 
-		 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="PIRSR"/>
                     <property name="releaseVersionNumber" value="${pirsr.signature.library.release}"/>
                     <property name="modelFiles" value="file:${pirsr.srhmm.path}"/>
