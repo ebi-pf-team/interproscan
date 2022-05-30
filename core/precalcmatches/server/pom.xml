@@ -24,10 +24,10 @@
     </repositories>
 
     <properties>
-        <!--<jetty.version>11.0.0</jetty.version>-->
+        <!--<jetty.version>11.0.2</jetty.version>-->
 <!--        <jetty.version>9.4.16.v20190411</jetty.version>-->
 <!--        <jetty.version>9.4.24.v20191120</jetty.version> -->
-	<jetty.version>11.0.0</jetty.version>
+	<jetty.version>11.0.2</jetty.version>
         <i5.version>${project.version}</i5.version>
     </properties>
 
