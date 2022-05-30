@@ -33,8 +33,6 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
 
     private String inputFileNameHmmerRawOutputTemplate;
 
-    private String inputFilePantherFamilyNames;
-
     private boolean forceHmmsearch = true;
 
 
@@ -68,14 +66,6 @@ public class RunPantherTreeGrafterStep extends RunBinaryStep {
 
     public void setInputFileNameHmmerRawOutputTemplate(String inputFileNameHmmerRawOutputTemplate) {
         this.inputFileNameHmmerRawOutputTemplate = inputFileNameHmmerRawOutputTemplate;
-    }
-
-    public String getInputFilePantherFamilyNames() {
-        return inputFilePantherFamilyNames;
-    }
-
-    public void setInputFilePantherFamilyNames(String inputFilePantherFamilyNames) {
-        this.inputFilePantherFamilyNames = inputFilePantherFamilyNames;
     }
 
     public String getFullPathToPython() {
