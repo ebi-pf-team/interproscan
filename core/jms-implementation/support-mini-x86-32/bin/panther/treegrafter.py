@@ -491,7 +491,8 @@ def prepare(args):
                 elif re.fullmatch(r"PC\d{5}", annotation):
                     protein_class = annotation
 
-            fam[node_id] = (subfam_id, go_terms, protein_class, graft_point)
+            fam[node_id] = (subfam_id, ",".join(go_terms), protein_class,
+                            graft_point)
 
             if (i + 1) % 100000 == 0:
                 sys.stderr.write("\t{:,} lines processed\n".format(i+1))
@@ -599,7 +600,12 @@ protein sequences, using annotated phylogenetic trees.
     parser_run.set_defaults(func=run)
 
     args = parser.parse_args()
-    args.func(args)
+    try:
+        func = args.func
+    except AttributeError:
+        parser.error("too few arguments")
+    else:
+        func(args)
 
 
 if __name__ == '__main__':
