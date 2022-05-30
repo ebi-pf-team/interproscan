@@ -17,10 +17,6 @@ public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMat
         if (match == null || signature == null) {
             return null;
         }
-        //where do we store the annotations Node ID
-        String annotationsNodeId = "";
-
-        String annotations = "";
 
         final HmmBounds bounds;
         if (match.getHmmBounds() == null || match.getHmmBounds().isEmpty()) {
@@ -36,20 +32,13 @@ public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMat
                 bounds, valueOrZero(match.getEnvelopeStart()), valueOrZero(match.getEnvelopeEnd())
         ));
 
-        //TODO the annotationsNodeId is either seqFeature or in the level columns, decide
-        annotationsNodeId = match.getSeqFeature(); //"AN??"; // match.getLevel();
-        //the annotations is in the sequence features column
-        annotations = ""; // eventually get these from the panther node2annot mapping ;
-
         return new PantherMatch(
                 signature,
                 match.getModelAccession(),
                 locations,
-                annotationsNodeId,
                 valueOrZero(match.getSequenceEValue()),
-                "Not available",
                 valueOrZero(match.getSequenceScore()),
-                annotations
+                match.getSeqFeature()
         );
     }
 }
