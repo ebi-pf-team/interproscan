@@ -1,21 +1,15 @@
 package uk.ac.ebi.interpro.scan.io.match.panther;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
 
 /**
  * Tests createMatch method of PantherMatchParser class.
@@ -43,7 +37,7 @@ public class PantherMatchParserTest {
     @Test
     public void testCreateMatch() throws IOException {
         //Test of real Panther raw match line
-        String rawMatchLine = "tr|Q4Q8C9|Q4Q8C9_LEIMA\tPTHR10000\tSF48\tAN11\t210.8\t2e-64\t210.7\t2.2e-64\t4\t265\t2\t259\t1\t259\tSF:PTHR10000:SF48;NAME:Pyridoxal phosphate phosphatase YbhA;";
+        String rawMatchLine = "tr|Q4Q8C9|Q4Q8C9_LEIMA\tPTHR10000:SF48\t210.8\t2e-64\t210.7\t2.2e-64\t4\t265\t2\t259\t1\t259\tAN11";
         PantherRawMatch result = instance.createMatch(rawMatchLine);
         assertNotNull(result,"CreateMatch method returned a NULL value!");
         assertEquals( result.getSequenceIdentifier(), "tr|Q4Q8C9|Q4Q8C9_LEIMA");
