@@ -2,7 +2,6 @@ package uk.ac.ebi.interpro.scan.io.panther;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
@@ -28,15 +27,14 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
     private static final Logger LOGGER = LogManager.getLogger(PantherModelDirectoryParser.class.getName());
 
-    private String namesTabFileStr;
+    private String namesTabFile;
 
-    @Required
-    public void setNamesTabFile(String namesTabFile) {
-        this.namesTabFileStr = namesTabFile;
+    public String getNamesTabFile() {
+        return namesTabFile;
     }
 
-    public String getNamesTabFileStr() {
-        return namesTabFileStr;
+    public void setNamesTabFile(String namesTabFile) {
+        this.namesTabFile = namesTabFile;
     }
 
     /**
@@ -51,7 +49,7 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
         for (Resource modelFile : modelFiles) {
             if (modelFile.exists()) {
-                File file = new File(modelFile.getFile() + "/" + this.getNamesTabFileStr());
+                File file = new File(modelFile.getFile() + "/" + this.getNamesTabFile());
                 Map<String, String> id2name = parseNames(file);
                 Map<String, List<String>> parent2children = new HashMap<>();
 

@@ -46,7 +46,7 @@ public class PantherModelDirectoryParserTest {
 
         assertEquals(SignatureLibrary.PANTHER, parser.getSignatureLibrary());
         assertEquals(PANTHER_TEST_VERSION, parser.getReleaseVersionNumber());
-        assertEquals(PANTHER_TEST_NAMES_TAB_FILE, parser.getNamesTabFileStr());
+        assertEquals(PANTHER_TEST_NAMES_TAB_FILE, parser.getNamesTabFile());
         SignatureLibraryRelease sigLib = parser.parse();
         assertNotNull(sigLib);
         assertEquals(PANTHER_TEST_VERSION, sigLib.getVersion());
