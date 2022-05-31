@@ -36,8 +36,8 @@ public class PrepareForOutputStep extends Step {
     private MatchDAO matchDAO;
     private EntryKVDAO entryKVDAO;
 
-    private Resource entryKVPath;
-    private Resource pantherDataPath;
+    private String entryKVPath;
+    private String pantherDataPath;
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
@@ -73,19 +73,19 @@ public class PrepareForOutputStep extends Step {
         this.nucleotideSequenceDAO = nucleotideSequenceDAO;
     }
 
-    public Resource getEntryKVPath() {
+    public String getEntryKVPath() {
         return entryKVPath;
     }
 
-    public void setEntryKVPath(Resource entryKVPath) {
+    public void setEntryKVPath(String entryKVPath) {
         this.entryKVPath = entryKVPath;
     }
 
-    public Resource getPantherDataPath() {
+    public String getPantherDataPath() {
         return pantherDataPath;
     }
 
-    public void setPantherDataPath(Resource pantherDataPath) {
+    public void setPantherDataPath(String pantherDataPath) {
         this.pantherDataPath = pantherDataPath;
     }
 
@@ -431,7 +431,7 @@ public class PrepareForOutputStep extends Step {
                         if (match instanceof PantherMatch) {
                             PantherMatch panterMatch = (PantherMatch) match;
                             String signatureAc = panterMatch.getSignature().getAccession();
-                            File file = new File(this.getPantherDataPath().getFile() + "/" + signatureAc + ".json");
+                            File file = new File(this.getPantherDataPath() + "/" + signatureAc + ".json");
 
                             if (panterMatch.getAnnotationsNodeId() != null && file.isFile()) {
                                 ObjectMapper mapper = new ObjectMapper();

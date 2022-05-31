@@ -27,8 +27,8 @@
         <property name="proteinDAO" ref="proteinDAO"/>
         <property name="matchDAO" ref="matchDAO"/>
         <property name="entryKVDAO" ref="entryKVDAO"/>
-        <property name="entryKVPath" value="file:${kvstore.entrydb.path}"/>
-        <property name="pantherDataPath" value="file:${panther.models.dir}/PAINT_Annotations"/>
+        <property name="entryKVPath" value="${kvstore.entrydb.path}"/>
+        <property name="pantherDataPath" value="${panther.models.dir}/PAINT_Annotations"/>
         <property name="nucleotideSequenceDAO" ref="nucleotideSequenceDAO"/>
         <property name="kvStoreDelayMilliseconds" value="${kvstore.delay.milliseconds}"/>
     </bean>
