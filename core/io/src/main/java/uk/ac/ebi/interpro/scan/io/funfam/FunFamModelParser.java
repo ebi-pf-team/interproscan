@@ -49,15 +49,20 @@ public class FunFamModelParser extends AbstractModelFileParser {
                     parser.setModelFiles(new FileSystemResource(file.toFile()));
 
                     for (Signature s: parser.parse().getSignatures()) {
+                        // e.g. 3.40.50.1170-FF-000001
+                        String accession = s.getAccession();
                         String name = names.get(s.getAccession());
+
+                        String[] parts = accession.split("-");
+                        // e.g. G3DSA:3.40.50.1170:FF:000001
+                        accession = FunFamModelParser.prefix + parts[0] + ":FF:" + parts[2];
 
                         Set<Model> models = new HashSet<>();
                         for (Model m: s.getModels().values()) {
                             models.add(new Model(m.getAccession(), m.getName(), name != null ? name : m.getDescription(), m.getLength()));
                         }
 
-                        Signature ns = new Signature(FunFamModelParser.prefix + s.getAccession(), s.getName(),
-                                s.getType(), name != null ? name : s.getDescription(), s.getAbstract(), release, models);
+                        Signature ns = new Signature(accession, s.getName(), s.getType(), name != null ? name : s.getDescription(), s.getAbstract(), release, models);
                         release.addSignature(ns);
                     }
 
