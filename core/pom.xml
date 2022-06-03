@@ -68,7 +68,7 @@
         <guava.version>29.0-jre</guava.version>
         <hsqldb.version>2.4.1</hsqldb.version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <log4j.version>2.17.1</log4j.version>
         <xmlunit.version>2.6.2</xmlunit.version>
         <httpclient.version>4.5.9</httpclient.version>
@@ -120,7 +120,7 @@
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>slf4j-reload4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
 
