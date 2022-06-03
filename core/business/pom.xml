@@ -17,17 +17,17 @@
     <name>InterProScan Business Logic</name>
     <description>InterProScan Business Logic</description>
 
-    <url>http://www.ebi.ac.uk/interpro/</url>
+    <url>https://www.ebi.ac.uk/interpro/</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
     <organization>
         <name>European Bioinformatics Institute</name>
-        <url>http://www.ebi.ac.uk/</url>
+        <url>https://www.ebi.ac.uk/</url>
     </organization>
 
     <dependencies>
