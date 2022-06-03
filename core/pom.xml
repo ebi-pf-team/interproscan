@@ -10,14 +10,14 @@
 
     <packaging>pom</packaging>
     <name>InterProScan</name>
-    <url>http://www.ebi.ac.uk/interpro/</url>
+    <url>https://www.ebi.ac.uk/interpro/</url>
     <description>InterProScan is the software package that allows sequences (protein and nucleic) to be scanned against
         InterPro's signatures.
     </description>
 
     <organization>
         <name>European Bioinformatics Institute</name>
-        <url>http://www.ebi.ac.uk/</url>
+        <url>https://www.ebi.ac.uk/</url>
     </organization>
 
 
@@ -30,18 +30,6 @@
             <id>ossrh_staging</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-
-        <!--<snapshotRepository>-->
-        <!--<id>localhost-nexus-snapshots</id>-->
-        <!--<name>Local Nexus snapshot repository</name>-->
-        <!--<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>-->
-        <!--</snapshotRepository>-->
-        <!--<repository>-->
-        <!--<id>localhost-nexus-staging</id>-->
-        <!--<name>Local Nexus release repository</name>-->
-        <!--<url>http://localhost:8081/nexus/content/repositories/releases/</url>-->
-        <!--</repository>-->
-
     </distributionManagement>
 
     <scm>
@@ -55,31 +43,6 @@
             https://github.com/ebi-pf-team/interproscan.git
         </url>
     </scm>
-
-    <!--<repositories>-->
-
-    <!--<repository>-->
-    <!--<id>apache-maven-snapshots</id>-->
-    <!--<name>Apache snapshot repository</name>-->
-    <!--<url>http://repository.apache.org/snapshots/</url>-->
-    <!--<layout>default</layout>-->
-    <!--</repository>-->
-
-    <!--<repository>-->
-    <!--<id>JBoss</id>-->
-    <!--<name>JBoss releases</name>-->
-    <!--<url>http://repository.jboss.org/nexus/content/groups/public</url>-->
-    <!--</repository>-->
-
-    <!--&lt;!&ndash; Required for sleepycat (BerkelyDB) &ndash;&gt;-->
-    <!--<repository>-->
-    <!--<id>oracleReleases</id>-->
-    <!--<name>Oracle Released Java Packages</name>-->
-    <!--<url>http://download.oracle.com/maven</url>-->
-    <!--<layout>default</layout>-->
-    <!--</repository>-->
-
-    <!--</repositories>-->
 
     <licenses>
         <license>
@@ -105,13 +68,10 @@
         <guava.version>29.0-jre</guava.version>
         <hsqldb.version>2.4.1</hsqldb.version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <!--<mysql.version>5.1.12</mysql.version>-->
         <slf4j.version>1.7.30</slf4j.version>
         <log4j.version>2.17.1</log4j.version>
         <xmlunit.version>2.6.2</xmlunit.version>
         <httpclient.version>4.5.9</httpclient.version>
-        <!--<jaxb-api.version>2.3.2</jaxb-api.version>-->
-<!--        <jaxb-api.version>2.3.1</jaxb-api.version>-->
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
 
         <mvn.war.version>3.2.2</mvn.war.version>
@@ -124,7 +84,6 @@
         <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <!--<maven-surefire-plugin.version> 3.0.0-M1</maven-surefire-plugin.version>-->
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
     </properties>
@@ -139,13 +98,10 @@
         <module>web</module>
         <module>management</module>
         <module>jms-implementation</module>
-         <module>precalcmatches</module>
+        <module>precalcmatches</module>
     </modules>
 
-    <!-- TODO: Define inherited POM settings for modules (see model/pom.xml) -->
     <dependencies>
-
-
         <!-- Logging -->
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
         <dependency>
@@ -162,66 +118,11 @@
             <type>pom</type>
         </dependency>
 
-
-        <!--<dependency>-->
-            <!--<groupId>org.apache.logging.log4j</groupId>-->
-            <!--<artifactId>log4j-core</artifactId>-->
-            <!--<version>${log4j.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>log4j</groupId>-->
-            <!--<artifactId>log4j</artifactId>-->
-            <!--<version>1.2.14</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
-
-<!--        <dependency>-->
-<!--            <groupId>org.slf4j</groupId>-->
-<!--            <artifactId>slf4j-log4j12</artifactId>-->
-<!--            <version>${slf4j.version}</version>-->
-<!--        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j -->
-        <!--TODO check and reinstall this dependency
-        -->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>jcl-over-slf4j</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-        <!--</dependency>-->
-
-
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-simple</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-            <!--&lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-nop</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-jdk14</artifactId>-->
-            <!--<version>${slf4j.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>commons-logging</groupId>-->
-            <!--<artifactId>commons-logging</artifactId>-->
-            <!--<version>1.2</version>-->
-        <!--</dependency>-->
 
         <!-- Spring framework dependencies -->
         <dependency>
@@ -248,21 +149,6 @@
             <version>${spring.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jaxb</groupId>-->
-<!--            <artifactId>jaxb-runtime</artifactId>-->
-<!--            <version>${jaxb-api.version}</version>-->
-<!--            &lt;!&ndash;<version>2.3.2</version>&ndash;&gt;-->
-<!--            &lt;!&ndash;<version>2.4.0-b180830.0438</version>&ndash;&gt;-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.jaxb</groupId>-->
-<!--            <artifactId>jaxb-jxc</artifactId> &lt;!&ndash;schema generation&ndash;&gt;-->
-<!--            <version>${jaxb-api.version}</version>-->
-<!--            &lt;!&ndash;<version>2.4.0-b180830.0438</version>&ndash;&gt;-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -274,16 +160,6 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-
-        <!-- Test scope only -->
-
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-        <!--<dependency>-->
-            <!--<groupId>org.junit.jupiter</groupId>-->
-            <!--<artifactId>junit-jupiter-api</artifactId>-->
-            <!--<version>5.4.2</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -297,13 +173,6 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>junit</groupId>-->
-            <!--<artifactId>junit</artifactId>-->
-            <!--<version>4.12</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
 
         <!-- Spring test integration -->
         <dependency>
@@ -329,39 +198,6 @@
             <artifactId>joda-time</artifactId>
             <version>2.10.2</version>
         </dependency>
-
-        <!-- Use surefire -->
-        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-        <!--
-        <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surefire-plugin.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-nop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-jdk14</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        -->
-
     </dependencies>
 
     <repositories>
@@ -400,29 +236,11 @@
                 </dependencies>
             </plugin>
 
-
-            <!--surefire plugin -->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                <!--<version>${maven-surefire-plugin.version}</version>-->
-            <!--</plugin>-->
-
             <!-- TODO recheck these seems t be some duplicate depencies-->
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
-
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.junit.platform</groupId>-->
-                        <!--<artifactId>junit-platform-surefire-provider</artifactId>-->
-                        <!--<version>1.3.2</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-
             </plugin>
 
             <!-- JavaDocs (generate: mvn javadoc:javadoc, package: mvn javadoc:jar) -->
@@ -437,23 +255,14 @@
                 <executions>
                 </executions>
             </plugin>
+
             <!-- Create JAR of source files (source:jar, source:test-jar) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
-                    <!--<execution>-->
-                    <!--<id>attach-sources</id>-->
-                    <!--<goals>-->
-                    <!--<goal>jar</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
                 </executions>
-                <!--configuration>
-                    <finalName>filename-of-generated-jar-file</finalName>
-                    <attach>false</attach>
-                    </configuration-->
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -474,17 +283,14 @@
                     <escapeString>\</escapeString>
                 </configuration>
             </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
-                    <configuration>
-                        <rules><dependencyConvergence/></rules>
-                    </configuration>
-                </plugin>
-
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <configuration>
+                    <rules><dependencyConvergence/></rules>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
