@@ -37,6 +37,8 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
     private String pfamHmmDataPath;
 
+    private int minMatchLength;
+
     @Required
     public void setClanFileParser(ClanFileParser clanFileParser) {
         this.clanFileParser = clanFileParser;
@@ -55,6 +57,14 @@ public class PfamHMMER3PostProcessing implements Serializable {
     @Required
     public void setPfamHmmDataPath(String pfamHmmDataPath) {
         this.pfamHmmDataPath = pfamHmmDataPath;
+    }
+
+    public int getMinMatchLength() {
+        return minMatchLength;
+    }
+
+    public void setMinMatchLength(int minMatchLength) {
+        this.minMatchLength = minMatchLength;
     }
 
     /**
@@ -301,12 +311,12 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 }
                 //now add the processed discontinuous matches for further post processing or filtering into actual matches
                 for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
-                    filteredRawProtein.addMatch(rawDiscontinuousMatch);
+                    int matchLength = rawDiscontinuousMatch.getLocationEnd() - rawDiscontinuousMatch.getLocationStart() + 1;
+                    if (matchLength >= this.getMinMatchLength()) {
+                        filteredRawProtein.addMatch(rawDiscontinuousMatch);
+                    }
                 }
-
-                    //resolve the location fragments
-            } else {
-                String fragmentType = "c";
+            } else if (pfamHmmer3RawMatch.getLocationEnd() - pfamHmmer3RawMatch.getLocationStart() + 1 >= this.getMinMatchLength()) {
                 filteredRawProtein.addMatch(pfamHmmer3RawMatch);
             }
         }
@@ -519,5 +529,4 @@ public class PfamHMMER3PostProcessing implements Serializable {
         }
         return altPfamHmmData;
     }
-
 }
