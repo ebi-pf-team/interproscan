@@ -37,21 +37,21 @@ def process_matches_epang(matches, datadir, tempdir, binary=None, threads=1):
 
         # print out the pthr Family matches
         for query_id in matches[pthr]:
-            results[query_id] = (
-                    query_id + "\t"
-                    + pthr + "\t"
-                    + matches[pthr][query_id]['score'][0] + "\t"
-                    + matches[pthr][query_id]['evalue'][0] + "\t"
-                    + matches[pthr][query_id]['domscore'][0] + "\t"
-                    + matches[pthr][query_id]['domevalue'][0] + "\t"
-                    + matches[pthr][query_id]['hmmstart'][0] + "\t"
-                    + matches[pthr][query_id]['hmmend'][0] + "\t"
-                    + matches[pthr][query_id]['alifrom'][0] + "\t"
-                    + matches[pthr][query_id]['alito'][0] + "\t"
-                    + matches[pthr][query_id]['envfrom'][0] + "\t"
-                    + matches[pthr][query_id]['envto'][0] + "\t"
-                    + "-" + "\n"
-            )
+            results[query_id] = [
+                query_id,
+                pthr,
+                matches[pthr][query_id]['score'][0],
+                matches[pthr][query_id]['evalue'][0],
+                matches[pthr][query_id]['domscore'][0],
+                matches[pthr][query_id]['domevalue'][0],
+                matches[pthr][query_id]['hmmstart'][0],
+                matches[pthr][query_id]['hmmend'][0],
+                matches[pthr][query_id]['alifrom'][0],
+                matches[pthr][query_id]['alito'][0],
+                matches[pthr][query_id]['envfrom'][0],
+                matches[pthr][query_id]['envto'][0],
+                "-"
+            ]
 
         result_tree = _run_epang(pthr, query_fasta_file, datadir, tempdir,
                                  binary=binary, threads=threads)
