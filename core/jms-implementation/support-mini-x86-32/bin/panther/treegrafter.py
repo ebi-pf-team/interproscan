@@ -187,13 +187,11 @@ def process_tree(pthr, result_tree, pthr_matches, datadir):
         an_label['AN' + an] = 'R' + r
         an_label['R' + r] = 'AN' + an
 
-    newick_string = re.sub(
-        r'(AN\d+)?\:\d+\.\d+{(\d+)}', r'R\g<2>', tree_string)
+    newick_string = re.sub(r'(AN\d+)?\:\d+\.\d+{(\d+)}', r'R\g<2>',
+                           tree_string)
 
-    newick_string = re.sub(
-        r'AN\d+', r'', newick_string)
-    newick_string = re.sub(
-        r'BI\d+', r'', newick_string)
+    newick_string = re.sub(r'AN\d+', r'', newick_string)
+    newick_string = re.sub(r'BI\d+', r'', newick_string)
     mytree = Phylo.read(NewickIO.StringIO(newick_string), 'newick')
     results_pthr = []
 
@@ -219,21 +217,21 @@ def process_tree(pthr, result_tree, pthr_matches, datadir):
         with open(annot_file, 'rt') as fh:
             pthrsf, _, _, _ = json.load(fh)[common_an]
 
-        results_pthr.append(
-            query_id + "\t"
-            + (pthrsf or pthr) + "\t"
-            + pthr_matches[query_id]['score'][0] + "\t"
-            + pthr_matches[query_id]['evalue'][0] + "\t"
-            + pthr_matches[query_id]['domscore'][0] + "\t"
-            + pthr_matches[query_id]['domevalue'][0] + "\t"
-            + pthr_matches[query_id]['hmmstart'][0] + "\t"
-            + pthr_matches[query_id]['hmmend'][0] + "\t"
-            + pthr_matches[query_id]['alifrom'][0] + "\t"
-            + pthr_matches[query_id]['alito'][0] + "\t"
-            + pthr_matches[query_id]['envfrom'][0] + "\t"
-            + pthr_matches[query_id]['envto'][0] + "\t"
-            + common_an + "\n"
-        )
+        results_pthr.append([
+            query_id,
+            pthrsf or pthr,
+            pthr_matches[query_id]['score'][0],
+            pthr_matches[query_id]['evalue'][0],
+            pthr_matches[query_id]['domscore'][0],
+            pthr_matches[query_id]['domevalue'][0],
+            pthr_matches[query_id]['hmmstart'][0],
+            pthr_matches[query_id]['hmmend'][0],
+            pthr_matches[query_id]['alifrom'][0],
+            pthr_matches[query_id]['alito'][0],
+            pthr_matches[query_id]['envfrom'][0],
+            pthr_matches[query_id]['envto'][0],
+            common_an
+        ])
 
     return results_pthr
 
