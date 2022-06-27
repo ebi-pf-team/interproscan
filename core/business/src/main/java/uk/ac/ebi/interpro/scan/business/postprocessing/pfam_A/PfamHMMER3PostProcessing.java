@@ -22,6 +22,7 @@ import java.util.*;
  * Pfam.
  *
  * @author Phil Jones
+ * @author Matthias Blum
  * @version $Id: PfamHMMER3PostProcessing.java,v 1.10 2009/11/09 13:35:50 craigm Exp $
  * @since 1.0
  */
@@ -199,23 +200,8 @@ public class PfamHMMER3PostProcessing implements Serializable {
             }
         }
 
-
-//        Utilities.verboseLog(1100, "nestedModelsMap count:" + nestedModelsMap.keySet().size());
-//        for (String testKey : nestedModelsMap.keySet()) {
-//            if (testKey.contains("PF01193")) {
-//                Utilities.verboseLog(1100, "testKey: " + testKey + " ne models: " + nestedModelsMap.get(testKey).toString());
-//            }
-//        }
-        Utilities.verboseLog(localVerboseLevel,"The matches found so far: ");
-        for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
-            Utilities.verboseLog(localVerboseLevel,pfamHmmer3RawMatch.getModelId() + " [" +
-                    pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
-        }
-        Utilities.verboseLog(localVerboseLevel,"  --ooo--- ");
         for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
             String modelId = pfamHmmer3RawMatch.getModelId();
-            Utilities.verboseLog(localVerboseLevel,"ModelId to consider: " + modelId + " region: [" +
-                    pfamHmmer3RawMatch.getLocationStart() + "-" + pfamHmmer3RawMatch.getLocationEnd() + "]");
 
             Set<String> nestedModels = nestedModelsMap.get(modelId);
             Utilities.verboseLog(localVerboseLevel,"nestedModels: " + nestedModels);
@@ -265,13 +251,6 @@ public class PfamHMMER3PostProcessing implements Serializable {
                             continue;
                         }
 
-//                        if (fragment.getStart() < newLocationStart) {
-//                            newLocationStart =
-//                        }
-//                        if (fragment.getEnd() > newLocationEnd) {
-//                            newLocationStart =
-//                        }
-
                         if(fragmentDCStatus ==  DCStatus.CONTINUOUS){
                             fragmentDCStatus = null;
                         }
@@ -316,12 +295,11 @@ public class PfamHMMER3PostProcessing implements Serializable {
                         filteredRawProtein.addMatch(rawDiscontinuousMatch);
                     }
                 }
-            } else if (pfamHmmer3RawMatch.getLocationEnd() - pfamHmmer3RawMatch.getLocationStart() + 1 >= this.getMinMatchLength()) {
+            } else if ((pfamHmmer3RawMatch.getLocationEnd() - pfamHmmer3RawMatch.getLocationStart() + 1) >= this.getMinMatchLength()) {
                 filteredRawProtein.addMatch(pfamHmmer3RawMatch);
             }
         }
 
-        //return filteredMatches;
         return filteredRawProtein;
     }
 
