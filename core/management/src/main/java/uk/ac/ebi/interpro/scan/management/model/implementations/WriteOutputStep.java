@@ -1,9 +1,8 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.XmlWriter;
@@ -36,12 +35,12 @@ import java.util.*;
 
 /**
  * Writes all matches for a slice of proteins to a file.
- * <p/>
  * Should be run once analysis is complete.
  *
  * @author David Binns
  * @author Maxim Scheremetjew
  * @author Phil Jones
+ * @author Matthias Blum
  */
 
 public class WriteOutputStep extends Step {
@@ -76,8 +75,6 @@ public class WriteOutputStep extends Step {
     private EntryHierarchy entryHierarchy;
 
     private String interProScanVersion;
-
-    private boolean disableHtmlOutput = true;
 
     public static final String OUTPUT_EXPLICIT_FILE_PATH_KEY = "EXPLICIT_OUTPUT_FILE_PATH";
 
@@ -152,14 +149,6 @@ public class WriteOutputStep extends Step {
         this.entryHierarchy = entryHierarchy;
     }
 
-    public boolean isDisableHtmlOutput() {
-        return disableHtmlOutput;
-    }
-
-    public void setDisableHtmlOutput(boolean disableHtmlOutput) {
-        this.disableHtmlOutput = disableHtmlOutput;
-    }
-
     /**
      * Sets/persists new unique protein xref identifiers in cases where they are non unique (same ID, different sequences).
      */
@@ -222,22 +211,6 @@ public class WriteOutputStep extends Step {
         }
 
         List<FileOutputFormat> outputFormatsList = new ArrayList<>(outputFormats);
-        if (disableHtmlOutput && outputFormatsList.contains(FileOutputFormat.HTML)){
-            outputFormatsList.remove(FileOutputFormat.HTML);
-            if(! outputFormatsList.contains(FileOutputFormat.JSON)) {
-                outputFormatsList.add(FileOutputFormat.JSON);
-            }
-        }
-
-	//boolean jsonForSVG = false;
-        //System.out.println(Utilities.getTimeNow() + " explicitPath:" + explicitPath + " svg check: " + outputFormatsList.contains(FileOutputFormat.SVG)  + ""json check :" + 
-	//	outputFormatsList.contains(FileOutputFormat.JSON) );
-        //LOGGER.warn(" explicitPath:" + explicitPath + " svg check: " + outputFormatsList.contains(FileOutputFormat.SVG)  + ""json check :" +
-	//	outputFormatsList.contains(FileOutputFormat.JSON) );)
-        //if (explicitPath && outputFormatsList.contains(FileOutputFormat.SVG) && (! outputFormatsList.contains(FileOutputFormat.JSON)) ) {
-	//    jsonForSVG = true;
-	//}
-
         Collections.sort(outputFormatsList, Collections.reverseOrder());
 
         //always handle xml first ??
@@ -819,10 +792,6 @@ public class WriteOutputStep extends Step {
 
     private void outputToHTML(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" file = "/home/matthew/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.html.tar.gz"
-        String htmlMessage = "Your requested output formats include HTML. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
-        //LOGGER.info(svgMessage);
-        System.out.println(Utilities.getTimeNow() + " " + htmlMessage);
-
         writeGraphicalProteinMatches(htmlResultWriter, stepInstance);
         List<Path> resultFiles = htmlResultWriter.getResultFiles();
         // E.g. resultFiles =
@@ -854,9 +823,6 @@ public class WriteOutputStep extends Step {
     private void outputToSVG(final Path path, StepInstance stepInstance) throws IOException {
         // E.g. for "-b OUT" outputDir = "~/Projects/github-i5/interproscan/core/jms-implementation/target/interproscan-5-dist/OUT.svg.tar.gz"
         //If the archive mode is switched off single SVG files should be written to the global output directory
-        String svgMessage = "Your requested output formats include SVG. This output format is deprecated and will be removed in the second quarter of 2021. Instead, you can choose to use a JSON output and generate a graphical output in PNG, PDF, etc. See https://interproscan-docs.readthedocs.io/en/latest/OutputFormats.html#";
-	//LOGGER.info(svgMessage);
-        System.out.println(Utilities.getTimeNow() + " " + svgMessage);
         if (!archiveSVGOutput) {
             final String outputDirPath = path.toAbsolutePath().toString();
             svgResultWriter.setTempDirectory(outputDirPath);

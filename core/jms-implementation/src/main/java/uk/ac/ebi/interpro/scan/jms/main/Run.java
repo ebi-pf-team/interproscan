@@ -4,18 +4,10 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
-
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-
-//port org.apache.commons.lang3.StringUtils;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
@@ -26,17 +18,16 @@ import uk.ac.ebi.interpro.scan.jms.converter.Converter;
 import uk.ac.ebi.interpro.scan.jms.exception.InvalidInputException;
 import uk.ac.ebi.interpro.scan.jms.master.*;
 import uk.ac.ebi.interpro.scan.jms.monitoring.MasterControllerApplication;
-import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
-import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 import uk.ac.ebi.interpro.scan.jms.worker.WorkerImpl;
 import uk.ac.ebi.interpro.scan.management.model.Job;
 import uk.ac.ebi.interpro.scan.management.model.JobStatusWrapper;
 import uk.ac.ebi.interpro.scan.management.model.Jobs;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-
+import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
+import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
 import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
+import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
 import java.io.FilePermission;
@@ -49,6 +40,8 @@ import java.security.AccessController;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+//port org.apache.commons.lang3.StringUtils;
 
 /**
  * The main entry point for the the master and workers in a
@@ -849,8 +842,8 @@ public class Run extends AbstractI5Runner {
         }
         //Get the value for the (-o) option if specified
         else if (haveSetOutputFileName) {
-            if (parsedOutputFormats == null || parsedOutputFormats.length != 1 || "html".equalsIgnoreCase(parsedOutputFormats[0]) || "svg".equalsIgnoreCase(parsedOutputFormats[0])) {
-                System.out.println("\n\nYou must indicate a single output format excluding HTML and SVG using the -f option if you wish to set an explicit output file name.");
+            if (parsedOutputFormats == null || parsedOutputFormats.length != 1) {
+                System.out.println("\n\nYou must indicate a single output format using the -f option if you wish to set an explicit output file name.");
                 System.exit(2);
             }
 
@@ -1125,11 +1118,11 @@ public class Run extends AbstractI5Runner {
             // The user manually specified at least one output format, now check it's OK
             for (String outputFormat : outputFormats) {
                 if (!FileOutputFormat.isExtensionValid(outputFormat)) {
-                    System.out.println("\n\n" + "The specified output file format " + outputFormat + " was not recognised." + "\n\n");
+                    System.out.println("Error: the specified output file format " + outputFormat + " was not recognised.");
                     System.exit(1);
                 } else if (!mode.equals(Mode.CONVERT) && outputFormat.equalsIgnoreCase("raw")) {
                     // RAW output (InterProScan 4 TSV output) is only allowed in CONVERT mode
-                    System.out.println("\n\n" + "The specified output file format " + outputFormat + " is only supported in " + Mode.CONVERT.name() + " mode." + "\n\n");
+                    System.out.println("Error: the specified output file format " + outputFormat + " is only supported in " + Mode.CONVERT.name() + " mode.");
                     System.exit(1);
                 }
             }
