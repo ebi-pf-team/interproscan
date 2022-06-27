@@ -1,7 +1,7 @@
 package uk.ac.ebi.interpro.scan.io;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,7 +48,7 @@ public enum FileOutputFormat {
      */
     public static boolean isExtensionValid(String extension) {
         for (FileOutputFormat format : FileOutputFormat.values()) {
-            if (extension.equalsIgnoreCase(format.getFileExtension())) {
+            if (format != FileOutputFormat.HTML && format != FileOutputFormat.SVG && extension.equalsIgnoreCase(format.getFileExtension())) {
                 return true;
             }
         }
