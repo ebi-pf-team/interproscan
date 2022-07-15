@@ -20,8 +20,7 @@
     <url>http://www.ebi.ac.uk/interpro/</url>
 
     <properties>
-<!--        <jetty.version>9.4.34.v20201102</jetty.version>-->
-        <jetty.version>11.0.2</jetty.version>
+        <jetty.version>11.0.10</jetty.version>
     </properties>
 
     <dependencies>
