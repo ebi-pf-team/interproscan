@@ -1,0 +1,33 @@
+# STOCKHOLM 1.0
+#=GF ID   1-cysPrx_C
+#=GF AC   PF10417.12
+#=GF DE   C-terminal domain of 1-Cys peroxiredoxin
+#=GF GA   21.1; 21.1;
+#=GF TP   Domain
+#=GF ML   40
+//
+# STOCKHOLM 1.0
+#=GF ID   120_Rick_ant
+#=GF AC   PF12574.11
+#=GF DE   120 KDa Rickettsia surface antigen
+#=GF GA   25; 25;
+#=GF TP   Family
+#=GF ML   238
+//
+# STOCKHOLM 1.0
+#=GF ID   12TM_1
+#=GF AC   PF09847.12
+#=GF DE   Membrane protein of 12 TMs
+#=GF GA   33.2; 33.2;
+#=GF TP   Family
+#=GF ML   449
+#=GF CL   CL0181
+//
+# STOCKHOLM 1.0
+#=GF ID   Hormone_4
+#=GF AC   PF00220.20
+#=GF DE   Neurohypophysial hormones, N-terminal Domain
+#=GF GA   17.1; 17.1;
+#=GF TP   Family
+#=GF ML   9
+//

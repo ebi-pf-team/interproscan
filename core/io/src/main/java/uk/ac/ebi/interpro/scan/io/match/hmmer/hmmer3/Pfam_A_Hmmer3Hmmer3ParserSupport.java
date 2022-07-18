@@ -91,48 +91,40 @@ public class Pfam_A_Hmmer3Hmmer3ParserSupport implements Hmmer3ParserSupport<Pfa
         try {
             for (SequenceMatch sequenceMatch : methodMatches.getSequenceMatches().values()) {
                 for (DomainMatch domainMatch : sequenceMatch.getDomainMatches()) {
+                    /*
+                    Either retrieve the correct RawSequenceIdentifer, or create a new one
+                    and add it to the Map.
+                    */
+                    RawProtein<PfamHmmer3RawMatch> rawProtein = rawResults.get(sequenceMatch.getSequenceIdentifier());
+                    if (rawProtein == null) {
+                        rawProtein = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getSequenceIdentifier());
+                        rawResults.put(sequenceMatch.getSequenceIdentifier(), rawProtein);
+                    }
 
-                    // Find out if the sequence match / domain match pass the GA cutoff.
-                    // hmmer3 handles cutoff correctly, so we will disable this check
-//                    if ((sequenceMatch.getScore() >= gaValuesRetriever.getSequenceGAForAccession(methodMatches.getModelAccession()))
-//                            &&
-//                            (domainMatch.getScore() >= gaValuesRetriever.getDomainGAForAccession(methodMatches.getModelAccession()))) {
-
-                        // Good sequence / domain match, so add to the rawResults.
-
-                        // Either retrieve the correct RawSequenceIdentifer, or create a new one
-                        // and add it to the Map.
-                        RawProtein<PfamHmmer3RawMatch> rawProtein = rawResults.get(sequenceMatch.getSequenceIdentifier());
-                        if (rawProtein == null) {
-                            rawProtein = new RawProtein<PfamHmmer3RawMatch>(sequenceMatch.getSequenceIdentifier());
-                            rawResults.put(sequenceMatch.getSequenceIdentifier(), rawProtein);
-                        }
-
-                        final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
-                                sequenceMatch.getSequenceIdentifier(),
-                                methodMatches.getModelAccession(),
-                                signatureLibrary,
-                                signatureLibraryRelease,
-                                domainMatch.getAliFrom(),
-                                domainMatch.getAliTo(),
-                                sequenceMatch.getEValue(),
-                                sequenceMatch.getScore(),
-                                domainMatch.getHmmfrom(),
-                                domainMatch.getHmmto(),
-                                domainMatch.getHmmBounds(),
-                                domainMatch.getScore(),
-                                domainMatch.getEnvFrom(),
-                                domainMatch.getEnvTo(),
-                                domainMatch.getAcc(),
-                                sequenceMatch.getBias(),
-                                domainMatch.getCEvalue(),
-                                domainMatch.getIEvalue(),
-                                domainMatch.getBias()
-                        );
-                        rawProtein.addMatch(match);
-//                    } // End of testing if pass GA cutoff.
-                } // End of looping over domain matches
-            } // End of looping over sequence matches
+                    final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
+                            sequenceMatch.getSequenceIdentifier(),
+                            methodMatches.getModelAccession(),
+                            signatureLibrary,
+                            signatureLibraryRelease,
+                            domainMatch.getAliFrom(),
+                            domainMatch.getAliTo(),
+                            sequenceMatch.getEValue(),
+                            sequenceMatch.getScore(),
+                            domainMatch.getHmmfrom(),
+                            domainMatch.getHmmto(),
+                            domainMatch.getHmmBounds(),
+                            domainMatch.getScore(),
+                            domainMatch.getEnvFrom(),
+                            domainMatch.getEnvTo(),
+                            domainMatch.getAcc(),
+                            sequenceMatch.getBias(),
+                            domainMatch.getCEvalue(),
+                            domainMatch.getIEvalue(),
+                            domainMatch.getBias()
+                    );
+                    rawProtein.addMatch(match);
+                }
+            }
         } catch (ParseException e) {
             throw new IllegalStateException("Unable to parse the GA values from the HMM library.", e);
         }
