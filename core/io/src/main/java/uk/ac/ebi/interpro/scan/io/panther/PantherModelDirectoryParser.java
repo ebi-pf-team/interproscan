@@ -123,8 +123,11 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
                     String familyName = "";
                     if (columns.length == 2) {
-                        //we also have a family name
                         familyName = columns[1].trim();
+
+                        if (familyName.endsWith("NOT NAMED")) {
+                            familyName = "";
+                        }
                     }
 
                     result.put(familyId, familyName);
