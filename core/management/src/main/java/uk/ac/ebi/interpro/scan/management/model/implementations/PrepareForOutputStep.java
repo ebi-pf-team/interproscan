@@ -439,13 +439,15 @@ public class PrepareForOutputStep extends Step {
                                 String[] nodeAnnotations = familyAnnotations.get(panterMatch.getAnnotationsNodeId());
 
                                 if (nodeAnnotations != null && nodeAnnotations.length == 4) {
-                                    String[] goTerms = nodeAnnotations[1].split(",");
+                                    String goTerms = nodeAnnotations[1];
                                     String proteinClass = nodeAnnotations[2];
                                     String graftPoint = nodeAnnotations[3];
 
                                     Set<GoXref> goXrefs = new HashSet<>();
-                                    for (String goTerm: goTerms) {
-                                        goXrefs.add(new GoXref(goTerm, null, null));
+                                    if (goTerms != null) {
+                                        for (String goTerm: goTerms.split(",")) {
+                                            goXrefs.add(new GoXref(goTerm, null, null));
+                                        }
                                     }
 
                                     panterMatch.setProteinClass(proteinClass);
