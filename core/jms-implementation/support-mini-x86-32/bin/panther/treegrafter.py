@@ -555,8 +555,8 @@ def run(args):
                                         binary=args.epang,
                                         threads=args.threads)
 
-        for line in results:
-            fh.write(line)
+        for hit in results:
+            fh.write("\t".join(map(str, hit)) + "\n")
     finally:
         if fh is not sys.stdout:
             fh.close()
