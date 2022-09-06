@@ -31,7 +31,7 @@ export EMBOSS_DATA="$BIN_DIR"/nucleotide
 
 # Check Java is installed
 JAVA=$(type -p java)
-if [[ "$JAVA" == "" ]]; then
+if [ -z "$JAVA" ]; then
     echo "Java not found. Please install Java 11 and place it on your path,"
     echo "or edit the interproscan.sh script to refer to your Java installation."
     exit 1
