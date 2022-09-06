@@ -29,12 +29,11 @@ fi
 export EMBOSS_ACDROOT="$BIN_DIR"/nucleotide
 export EMBOSS_DATA="$BIN_DIR"/nucleotide
 
-
 # Check Java is installed
 JAVA=$(type -p java)
 if [[ "$JAVA" == "" ]]; then
-    printf 'Java not found. Please install Java 11 and place it on your path,\n'
-    printf 'or edit the interproscan.sh script to refer to your Java installation.\n'.
+    echo "Java not found. Please install Java 11 and place it on your path,"
+    echo "or edit the interproscan.sh script to refer to your Java installation."
     exit 1
 fi
 
@@ -42,20 +41,21 @@ fi
 JAVA_VERSION=$("$JAVA" -Xms32M -Xmx32M -version 2>&1 | sed -n '/version/p' | awk -F '"' '{print $2}' )
 JAVA_MAJOR_VERSION_FULL="$( cut -d ';' -f 1 <<< "$JAVA_VERSION" )"
 JAVA_MAJOR_VERSION="${JAVA_MAJOR_VERSION_FULL%%.*}"
-if [[ "${JAVA_MAJOR_VERSION}" -lt "11" ]];
+if [ "${JAVA_MAJOR_VERSION}" -lt 11 ];
 then
-    printf 'Java version 11 is required to run InterProScan.\n'
-    printf 'Detected version %s\n' "${JAVA_VERSION}"
-    printf 'Please install the correct version.\n'
+    echo "Java version 11 is required to run InterProScan."
+    echo "Detected version ${JAVA_VERSION}"
+    echo "Please install the correct version."
     exit 1
 fi
 
-exit 0
-
-python3 initial_setup.py
+if ! python3 setup.py "$PROPERTIES"
+then
+    exit 1
+fi
 
 "$JAVA" \
  -XX:ParallelGCThreads=8 \
  -Xms2028M -Xmx4000M \
- "$PROPERTY"
+ $PROPERTY \
  -jar interproscan-5.jar $@ -u $USER_DIR
