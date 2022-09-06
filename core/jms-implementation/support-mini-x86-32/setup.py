@@ -6,9 +6,10 @@ import subprocess as sp
 import sys
 
 
-def load_properties(file):
-    properties = {}
+PROPERTIES="interproscan.properties"
 
+
+def load_properties(file, properties):
     with open(file, "rt") as fh:
         for line in map(str.strip, fh):
             if not line or line[0] == "#":
@@ -57,6 +58,10 @@ def hmmpress(binary, force, database):
         sys.exit(1)
 
 
+def realpath(path):
+    return os.path.realpath(os.path.expanduser(path))
+
+
 def main():
     parser = argparse.ArgumentParser(description="index HMM databases")
     parser.add_argument("properties", help="InterProScan properties file")
@@ -64,7 +69,11 @@ def main():
                         help="re-index all HMM databases (default: off)")
     args = parser.parse_args()
 
-    properties = load_properties(args.properties)
+    properties = {}
+    load_properties(PROPERTIES, properties)
+
+    if realpath(args.properties) != realpath(PROPERTIES):
+        load_properties(args.properties, properties)
 
     ignore = {"binary.tmhmm.path", "smart.hmm.path"}
     for key, path in properties.items():
