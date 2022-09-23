@@ -146,20 +146,26 @@ public class PrepareForOutputStep extends Step {
             }
         }
 
-        try {
-            //get pathway data
-            getPathwayMap();
-            getEntry2PathwayMap();
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get("MAP_TO_GO"));
+        final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get("MAP_TO_PATHWAY"));
 
-            //get goterms
-            getGoTermsMap();
-            getEntry2GoTermsMap();
+        try {
+            if (mapToPathway) {
+                getPathwayMap();
+                getEntry2PathwayMap();
+            }
+
+            if (mapToGO) {
+                getGoTermsMap();
+                getEntry2GoTermsMap();
+            }
 
             //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
             simulateMarshalling(stepInstance, "p", temporaryFileDirectory);
             Utilities.verboseLog(1100, "Pre-marshall the nucleotide sequences ...");
-            final Map<String, String> parameters = stepInstance.getParameters();
+
             final String sequenceType = parameters.get(SEQUENCE_TYPE);
             if (sequenceType.equalsIgnoreCase("n")) {
                 Utilities.verboseLog(1100, "Dealing with nucleotide sequences ... , so pre-marshalling required");
@@ -775,26 +781,7 @@ public class PrepareForOutputStep extends Step {
         return outputPath;
     }
 
-    public void updateMatch(Match match) {
-        Entry matchEntry = match.getSignature().getEntry();
-        if (matchEntry != null) {
-            //check goterms
-            //check pathways
-            matchEntry.getGoXRefs();
-            if (matchEntry.getGoXRefs() != null) {
-                matchEntry.getGoXRefs().size();
-            }
-            //should we check if pathways have been requested?
-            matchEntry.getPathwayXRefs();
-            if (matchEntry.getPathwayXRefs() != null) {
-                matchEntry.getPathwayXRefs().size();
-            }
-        }
-    }
-
     public  void getPathwayMap() {
-        //Map<String, String> pathwayMap = new HashMap<>();
-
         if (pathwayMap != null){
             return;
         }
@@ -821,8 +808,6 @@ public class PrepareForOutputStep extends Step {
     }
 
     public  void getEntry2PathwayMap() {
-        //Map<String, String> entry2PathwayMap = new HashMap<>();
-
         if (entry2PathwayMap != null){
             return;
         }
@@ -848,7 +833,6 @@ public class PrepareForOutputStep extends Step {
     }
 
     public  void getGoTermsMap() {
-
         if (gotermsMap != null){
             return;
         }
@@ -897,7 +881,7 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
-    public Entry  updateEntryXrefs(Entry entry) {
+    public Entry updateEntryXrefs(Entry entry) {
         String entryAc = entry.getAccession();
         Set<GoXref> goXrefs = (Set<GoXref>) getGoXrefsByEntryAc(entryAc); //entry2GoXrefsMap.get(entryAc);
         Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) getPathwayXrefsByEntryAc(entryAc); //(Set<PathwayXref>) entry2PathwayXrefsMap.get(entryAc);
@@ -911,7 +895,7 @@ public class PrepareForOutputStep extends Step {
     public Collection<GoXref> getGoXrefsByEntryAc(String entryAc) {
         Set<GoXref> result = new HashSet<>();
         try {
-            if (! entry2GoTermsMap.containsKey(entryAc)) {
+            if (entry2GoTermsMap == null || !entry2GoTermsMap.containsKey(entryAc)) {
                 Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
                 return result;
             }
@@ -980,7 +964,7 @@ public class PrepareForOutputStep extends Step {
     public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
         Set<PathwayXref> result = new HashSet<>();
         try {
-            if (! entry2PathwayMap.containsKey(entryAc)) {
+            if (entry2PathwayMap == null || !entry2PathwayMap.containsKey(entryAc)) {
                 Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
                 return result;
             }
