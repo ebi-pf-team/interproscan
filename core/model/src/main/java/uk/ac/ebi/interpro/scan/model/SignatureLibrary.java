@@ -31,6 +31,7 @@ public enum SignatureLibrary {
     //TODO - complete descriptions of member database libraries.
     ANTIFAM("AntiFam", "Prediction of spurious protein.", false),
     CDD("CDD", "Prediction of CDD domains", true),
+    FUNFAM("FunFam", "Sub-classification of superfamilies into functional families", false),
     HAMAP("Hamap", "Description to be added", true),
     MOBIDB_LITE("MobiDBLite", "Predicts disordered protein regions", false),
     PHOBIUS("Phobius", "Prediction of signal peptides and trans-membrane regions", false),

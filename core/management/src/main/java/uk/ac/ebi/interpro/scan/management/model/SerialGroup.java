@@ -30,6 +30,7 @@ public enum SerialGroup {
     PARSE_ANTIFAM,
     PARSE_CDD,
     PARSE_COILS,
+    PARSE_FUNFAM,
     PARSE_GENE3D,
     PARSE_HAMAP,
     PARSE_MOBIDB,
