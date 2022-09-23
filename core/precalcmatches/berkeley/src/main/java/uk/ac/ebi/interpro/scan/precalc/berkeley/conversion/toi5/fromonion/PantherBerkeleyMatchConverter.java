@@ -12,6 +12,7 @@ import java.util.Set;
 
 /**
  * @author Phil Jones
+ * @author Gift Nuka
  *         Date: 12/08/11
  *         Time: 11:14
  *         <p/>
@@ -27,8 +28,8 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
             return null;
         }
         Set<PantherMatch.PantherLocation> locations = new HashSet<>(berkeleyMatch.getLocations().size());
-        for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
 
+        for (BerkeleyLocation berkeleyLocation : berkeleyMatch.getLocations()) {
             final HmmBounds bounds;
             if (berkeleyLocation.getHmmBounds() == null || berkeleyLocation.getHmmBounds().isEmpty()) {
                 bounds = HmmBounds.COMPLETE;   // FUDGE!  HmmBounds cannot be null...
@@ -43,12 +44,6 @@ public class PantherBerkeleyMatchConverter extends BerkeleyMatchConverter<Panthe
             ));
         }
 
-        return new PantherMatch(
-                signature,
-                berkeleyMatch.getSignatureModels(),
-                locations,
-                valueOrZero(berkeleyMatch.getSequenceEValue()),
-                "Not available",
-                valueOrZero(berkeleyMatch.getSequenceScore()));
+        throw new UnsupportedOperationException("No supported anymore.");
     }
 }

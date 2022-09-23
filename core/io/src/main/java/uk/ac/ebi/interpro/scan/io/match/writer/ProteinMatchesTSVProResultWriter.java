@@ -1,11 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
-import uk.ac.ebi.interpro.scan.io.match.panther.PantherMatchParser;
 import uk.ac.ebi.interpro.scan.model.*;
 
 import java.io.IOException;
-import java.nio.DoubleBuffer;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -60,6 +58,7 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                 final String version = signature.getSignatureLibraryRelease().getVersion();
 
                 final String description = signature.getDescription();
+
 
                 Set<Location> locations = match.getLocations();
                 if (locations != null) {
@@ -154,16 +153,11 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmer3LocationWithSite.getEvalue()));
                         }
 
-
-//                        Set<LocationFragment> locationFragments = location.getLocationFragments();
-//                        StringBuilder listOfLocationFragments = new StringBuilder();
-//                        String prefix = "";
-//                        for (LocationFragment locationFragment: locationFragments){
-//                            listOfLocationFragments.append(prefix);
-//                            listOfLocationFragments.append(getDomainRegion(locationFragment));
-//                            prefix = ",";
-//                        }
-//                        mappingFields.add(listOfLocationFragments.toString());
+                        // add the Panther annotations details
+                        if (match instanceof PantherMatch) {
+                            PantherMatch pantherMatch = (PantherMatch) match;
+                            mappingFields.add(Objects.requireNonNullElse(pantherMatch.getAnnotationsNodeId(), "-"));
+                        }
 
                         this.tsvWriter.write(mappingFields);
                     }

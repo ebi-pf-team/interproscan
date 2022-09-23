@@ -161,6 +161,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("... for " + modelIDs.size() + " model IDs.");
         }
+        Utilities.verboseLog("Models in this batch: " + modelIDs.size()) ;
 
         for (int index = 0; index < modelIDs.size(); index += MAXIMUM_IN_CLAUSE_SIZE) {
             int endIndex = index + MAXIMUM_IN_CLAUSE_SIZE;
@@ -206,8 +207,8 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     + " version: " + signatureLibraryRelease;
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(signatureModelQueryMessage);
-//            Utilities.verboseLog(signatureModelQueryMessage);
             }
+            //Utilities.verboseLog(30, signatureModelQueryMessage);
 
 
             int modelCount = 0;
@@ -220,6 +221,7 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
                     LOGGER.warn("SignatureModelHolder ERROR: model.getAccession(): " + model.getAccession() + " signature: " + signature);
                 }
             }
+            Utilities.verboseLog(100, "signatureModels count: " + modelCount);
         }
         //check which models are missing and why?
 
@@ -234,9 +236,12 @@ public abstract class FilteredMatchDAOImpl<T extends RawMatch, U extends Match> 
         }
 
         if (missingModelIDs.size() > 0) {
-            LOGGER.warn("Failed to get some of the analaysis models from h2 db: # " + missingModelIDs.size());
+            LOGGER.warn("Failed to get some of the analysis models from h2 db: # " + missingModelIDs.size());
             LOGGER.warn("First missing model : " + missingModelIDs.get(0));
+            LOGGER.warn("result Model Ids count:  " + resultModelIds.size());
+            //LOGGER.warn("the missing models: " + missingModelIDs.toString());
         }
+
         return result;
     }
 

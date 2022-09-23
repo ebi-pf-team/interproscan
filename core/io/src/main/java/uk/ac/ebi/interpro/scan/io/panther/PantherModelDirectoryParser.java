@@ -1,15 +1,12 @@
 package uk.ac.ebi.interpro.scan.io.panther;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
-import org.springframework.beans.factory.annotation.Required;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.AbstractModelFileParser;
 import uk.ac.ebi.interpro.scan.model.Model;
 import uk.ac.ebi.interpro.scan.model.Signature;
 import uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
@@ -22,6 +19,7 @@ import java.util.*;
  *
  * @author Maxim Scheremetjew
  * @author Gift Nuka
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
@@ -29,15 +27,14 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
 
     private static final Logger LOGGER = LogManager.getLogger(PantherModelDirectoryParser.class.getName());
 
-    private String namesTabFileStr;
+    private String namesTabFile;
 
-    @Required
-    public void setNamesTabFile(String namesTabFile) {
-        this.namesTabFileStr = namesTabFile;
+    public String getNamesTabFile() {
+        return namesTabFile;
     }
 
-    public String getNamesTabFileStr() {
-        return namesTabFileStr;
+    public void setNamesTabFile(String namesTabFile) {
+        this.namesTabFile = namesTabFile;
     }
 
     /**
@@ -51,22 +48,45 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
         SignatureLibraryRelease release = new SignatureLibraryRelease(library, releaseVersion);
 
         for (Resource modelFile : modelFiles) {
-            if (modelFile.exists() && modelFile.getFile() != null) {
-                Map<String, String> familyIdFamilyNameMap = readInPantherFamilyNames(modelFile);
+            if (modelFile.exists()) {
+                File file = new File(modelFile.getFile() + "/" + this.getNamesTabFile());
+                Map<String, String> id2name = parseNames(file);
+                Map<String, List<String>> parent2children = new HashMap<>();
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("number of panther families: " + familyIdFamilyNameMap.keySet().size());
-                }
-                Map<String, List<String>> pantherParentChildMap = getPantherParentChildMap(familyIdFamilyNameMap.keySet());
-                for (String parent : pantherParentChildMap.keySet()) {
-                    String signatureAcc = parent;
-                    String signatureName = familyIdFamilyNameMap.get(signatureAcc);
-                    release.addSignature(createSignature(signatureAcc, signatureName, release));
-                    List<String> children = pantherParentChildMap.get(parent);
-                    for (String childSignatureAcc : children) {
-                        String childSignatureName = familyIdFamilyNameMap.get(childSignatureAcc);
-                        release.addSignature(createSignature(childSignatureAcc, childSignatureName, release));
+                for (String id: id2name.keySet()) {
+                    String parentId;
+                    boolean isSubFamily;
+
+                    if (id.contains(":SF")) {
+                        parentId = id.split(":")[0];
+                        isSubFamily = true;
+                    } else {
+                        parentId = id;
+                        isSubFamily = false;
                     }
+
+                    List<String> children = parent2children.get(parentId);
+                    if (children == null ){
+                        children = new ArrayList<>();
+                    }
+
+                    if (isSubFamily) {
+                        children.add(id);
+                    }
+
+                    parent2children.put(parentId, children);
+                }
+
+                for (String parentId: parent2children.keySet()) {
+                    Set<Model> models = new HashSet<>();
+                    models.add(new Model(parentId, id2name.get(parentId), null));
+
+                    List<String> children = parent2children.get(parentId);
+                    for (String childId: children) {
+                        models.add(new Model(childId, id2name.get(childId), null));
+                    }
+
+                    release.addSignature(new Signature(parentId, id2name.get(parentId), null, null, null, release, models));
                 }
             }
         }
@@ -74,142 +94,47 @@ public class PantherModelDirectoryParser extends AbstractModelFileParser {
     }
 
     /**
-     * get the subfamilies and map them to their parents
-     * @param pantherFamilyNames
-     * @return
-     */
-    private Map<String, List<String>> getPantherParentChildMap(Set<String> pantherFamilyNames){
-        Map<String, List<String>> parentChildFamilyMap = new HashMap<>();
-
-        for (String family: pantherFamilyNames) {
-            String parent = getparentFamilyId(family);
-            List<String> parentChildren = parentChildFamilyMap.get(parent);
-            if (parentChildren == null ){
-                parentChildren = new ArrayList<>();
-            }
-            if (family.contains(":SF")) {
-                // add this child to the parent
-                parentChildren.add(family);
-            }
-            parentChildFamilyMap.put(parent, parentChildren);
-        }
-        return parentChildFamilyMap;
-    }
-
-    /**
-     * get parent Family ID from the familyId
-     * @param familyId
-     * @return
-     */
-    private String getparentFamilyId(String familyId){
-        String parent = null;
-        if (! familyId.contains(":SF")) {
-            //this is a parent
-            parent = familyId;
-        }else {
-            //this is a child
-            parent = familyId.split(":")[0];
-        }
-        return parent;
-    }
-
-    /**
-     * Handles parsing process of the specified file resource.
-     *
-     * param namesTabPath Tab separated file resource with 2 columns (headers: accession, names).
-     * @return A map of signature accessions and names.
-     * @throws IOException
-     */
-    private Map<String, String> readInPantherFamilyNames(Resource modelFile) throws IOException {
-        Map<String, String> result = null;
-        try {
-            String namesTabPath = modelFile.getFile().getPath() + "/" + namesTabFileStr;
-            File namesTabFile = new File(namesTabPath);
-            if (namesTabFile.exists()) {
-                result = parseTabFile(namesTabFile);
-            } else {
-                LOGGER.error("names tab file not found");
-                throw new IOException("names tab file not found");
-            }
-            LOGGER.debug(namesTabPath);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IOException("names tab file not found ...");
-        }
-
-        return result;
-    }
-
-    /**
      * Parses signature accessions and names out of the specified tab separated file.
      *
-     * @param namesTabFile Tab separated file with 2 columns.
+     * @param file Tab separated file with 2 columns.
      * @return A map of signature accessions and names.
      */
-    private Map<String, String> parseTabFile(File namesTabFile) {
-        Map<String, String> result = new HashMap<String, String>();
+    private Map<String, String> parseNames(File file) throws IOException {
+        Map<String, String> result = new HashMap<>();
 
-        BufferedReader reader = null;
-        int lineNumber = 0;
-        int pantherFamilies = 0;
-//        System.out.println("names tab is: " + namesTabFile.getAbsolutePath());
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(namesTabFile)));
+        try (FileInputStream is = new FileInputStream(file);
+             InputStreamReader sr = new InputStreamReader(is);
+             BufferedReader br =  new BufferedReader(sr)) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 line = line.trim();
-                lineNumber++;
-                if (line.length() > 0 && line.startsWith("PTHR")) {
+
+                if (line.startsWith("PTHR")) {
                     String[] columns = line.split("\t", 2);  //so that we have at most two strings
-                    String familyId = columns[0];
+                    String familyId = columns[0].trim();
                     familyId = familyId.replace(".mod", "");
-                    //family Id is a super family
                     if (familyId.contains(".mag")) {
+                        // familyId is a family
                         familyId = familyId.replace(".mag", "");
-                    }
-                    //family Id is a sub family
-                    else {
+                    } else {
+                        // familyId is a subfamily
                         familyId = familyId.replace(".", ":");
                     }
 
                     String familyName = "";
-                    if (columns.length == 2) {  //we also have a family name
-                        familyName = columns[1];
-                    } else {  //we don't have a family name
-                        LOGGER.warn("Columns is Null OR unexpected splitting of line. Line is splitted into " + columns.length + " columns!" + "columns: " + columns);
+                    if (columns.length == 2) {
+                        familyName = columns[1].trim();
+
+                        if (familyName.endsWith("NOT NAMED")) {
+                            familyName = "";
+                        }
                     }
-                    pantherFamilies ++;
+
                     result.put(familyId, familyName);
-                    Utilities.verboseLog(1100, "familyId: " +familyId + " familyName: " + familyName);
-                } else {
-                    LOGGER.warn("Unexpected start of line: " + line);
                 }
             }
-        } catch (IOException e) {
-            LOGGER.warn("Couldn't parse tab separated file with family names!", e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Couldn't close buffered reader correctly!", e);
-                }
-            }
-        }
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(lineNumber + " lines parsed.");
-            LOGGER.info(result.size() + " entries created in the map.");
         }
 
-        Utilities.verboseLog(1100, "pantherFamilies #: " + pantherFamilies);
         return result;
-    }
-
-    /**
-     * Creates and returns an instance of signature.
-     */
-    private Signature createSignature(String accession, String name, SignatureLibraryRelease release) {
-        Model model = new Model(accession, name, null); //TODO Also populate hmmLength from the panther.hmm now? Maybe for PANTHER 13.0+
-        return new Signature(accession, name, null, null, null, release, Collections.singleton(model));
     }
 }
