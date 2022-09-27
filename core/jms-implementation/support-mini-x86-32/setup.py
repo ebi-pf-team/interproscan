@@ -21,8 +21,11 @@ def load_properties(file, properties):
                 value = fields[1].strip()
                 properties[key] = value
 
-    bin_dir = properties["bin.directory"]
-    data_dir = properties["data.directory"]
+    try:
+        bin_dir = properties["bin.directory"]
+        data_dir = properties["data.directory"]
+    except KeyError:
+        return
 
     for key, value in properties.items():
         if "${bin.directory}" in value:
@@ -32,8 +35,6 @@ def load_properties(file, properties):
             value = value.replace("${data.directory}", data_dir)
 
         properties[key] = value
-
-    return properties
 
 
 def is_ready(hmmfile):
@@ -84,8 +85,12 @@ def main():
                 else:
                     bin_key = "binary.hmmer33.path"
 
-                bin_path = os.path.join(properties[bin_key], "hmmpress")
-                hmmpress(bin_path, args.force, path)
+                try:
+                    bin_path = os.path.join(properties[bin_key], "hmmpress")
+                except KeyError:
+                    continue
+                else:
+                    hmmpress(bin_path, args.force, path)
 
 
 if __name__ == '__main__':
