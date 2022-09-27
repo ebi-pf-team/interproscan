@@ -486,11 +486,6 @@ public class PrepareForOutputStep extends Step {
             //TODO Temp check what breaks if you dont do pre-marshalling
             //String xmlProtein = writer.marshal(protein);
 
-            for (Match i5Match : protein.getMatches()) {
-                //try update with cross refs etc
-                updateMatch(i5Match);
-            }
-
             //try to persist three times and then abort
             int persistTries = 0;
             int maxPersistTries = 4;
