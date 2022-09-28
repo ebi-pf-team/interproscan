@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import glob
 import os
 import subprocess as sp
 import sys
@@ -79,18 +80,25 @@ def main():
     ignore = {"binary.tmhmm.path", "smart.hmm.path"}
     for key, path in properties.items():
         if "hmm.path" in key and key not in ignore:
-            if args.force or not is_ready(path):
-                if key.startswith(("sfld", "superfamily")):
-                    bin_key = "binary.hmmer3.path"
-                else:
-                    bin_key = "binary.hmmer33.path"
+            if key.startswith(("sfld", "superfamily")):
+                bin_key = "binary.hmmer3.path"
+            else:
+                bin_key = "binary.hmmer33.path"
 
-                try:
-                    bin_path = os.path.join(properties[bin_key], "hmmpress")
-                except KeyError:
-                    continue
-                else:
-                    hmmpress(bin_path, args.force, path)
+            if os.path.isfile(path):
+                hmmfiles = [path]
+            else:
+                hmmfiles = glob.iglob(os.path.join(path, "**", "*.hmm"),
+                                      recursive=True)
+
+            for hmmfile in hmmfiles:
+                if args.force or not is_ready(hmmfile):
+                    try:
+                        bin_path = os.path.join(properties[bin_key], "hmmpress")
+                    except KeyError:
+                        continue
+                    else:
+                        hmmpress(bin_path, args.force, hmmfile)
 
 
 if __name__ == '__main__':
