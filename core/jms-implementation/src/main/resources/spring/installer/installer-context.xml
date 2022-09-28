@@ -94,11 +94,11 @@
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.prints.PvalParser">
                     <property name="signatureLibrary" value="PRINTS"/>
-                    <property name="releaseVersionNumber" value="42.0"/>
-                    <property name="modelFiles" value="file:${prints.pval.path.42.0}"/>
+                    <property name="releaseVersionNumber" value="${prints.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${prints.pval.path}"/>
                     <property name="kdatParser">
                         <bean class="uk.ac.ebi.interpro.scan.io.prints.KdatParser">
-                            <property name="kdatFileResource" value="file:${prints.kdat.path.42.0}"/>
+                            <property name="kdatFileResource" value="file:${prints.kdat.path}"/>
                         </bean>
                     </property>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
@@ -154,15 +154,15 @@
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParser">
                     <property name="signatureLibrary" value="SUPERFAMILY"/>
-                    <property name="releaseVersionNumber" value="1.75"/>
+                    <property name="releaseVersionNumber" value="${superfamily.signature.library.release}"/>
                     <property name="modelFiles" value="file:${superfamily.hmm.path.3.0}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobSuperFamily-1.75"/>
+                    <property name="analysisJobId" value="jobSuperFamily"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="TIGRFAM"/>
-                    <property name="releaseVersionNumber" value="15.0"/>
-                    <property name="modelFiles" value="file:${tigrfam.hmm.path.15.0}"/>
+                    <property name="releaseVersionNumber" value="${tigrfam.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${tigrfam.hmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobTIGRFAM-15.0"/>
                 </bean>

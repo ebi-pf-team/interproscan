@@ -7,15 +7,15 @@
     <import resource="classpath:/spring/persistence/persistence-config-context.xml"/>
 
     <!-- ######################## JOB: PRINTS ############################  -->
-    <bean id="jobPRINTS-41.1" class="uk.ac.ebi.interpro.scan.management.model.Job">
+    <bean id="jobPRINTS" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description"
-                  value="A fingerprint is a group of conserved motifs used to characterise a protein family"/>
+                  value="A compendium of protein fingerprints - a fingerprint is a group of conserved motifs used to characterise a protein family."/>
         <property name="analysis" value="true"/>
-        <property name="libraryRelease" ref="signatureLibraryReleasePrints-41.1"/>
+        <property name="libraryRelease" ref="signatureLibraryReleasePrints"/>
     </bean>
 
     <bean id="abstractPrintsStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
-        <property name="job" ref="jobPRINTS-41.1"/>
+        <property name="job" ref="jobPRINTS"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.PRINTS}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
@@ -41,8 +41,8 @@
         <property name="dependsUpon" ref="stepPrintsWriteFastaFile"/>
         <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
         <property name="fullPathToBinary" value="${binary.fingerprintscan.path}"/>
-        <property name="binarySwitches" value="-e 0.0001 -d 10 -E 257043 84355444 -fj -o 15"/>
-        <property name="fullPathToHmmFile" value="${prints.pval.path.41.1}"/>
+        <property name="binarySwitches" value="${fingerprintscan.binary.switches}"/>
+        <property name="fullPathToHmmFile" value="${prints.pval.path}"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
@@ -69,7 +69,7 @@
         <property name="printsRawMatchDAO" ref="printsRawMatchDAO"/>
         <property name="serialGroup" value="PARSE_PRINTS"/>
         <property name="retries" value="3"/>
-        <property name="signatureLibraryRelease" value="41.1"/>
+        <property name="signatureLibraryRelease" value="${prints.signature.library.release}"/>
         <property name="printsOutputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
@@ -78,7 +78,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractPrintsStep">
         <property name="dependsUpon" ref="stepPrintsParseFingerPrintScanOutput"/>
-        <property name="stepDescription" value="Delete the binary output file following successful parsing"/>
+        <property name="stepDescription" value="Delete the binary raw output file following successful parsing"/>
         <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
     </bean>
 
@@ -93,14 +93,17 @@
                 <property name="hierarchyDBParser">
                     <bean class="uk.ac.ebi.interpro.scan.io.prints.FingerPRINTSHierarchyDBParser"/>
                 </property>
-                <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path.41.1}"/>
+                <property name="fingerPRINTSHierarchyDB" value="file:${prints.hierarchy.path}"/>
             </bean>
         </property>
         <property name="serialGroup" value="PRINTS_POST_PROCESSING"/>
-        <property name="signatureLibraryRelease" value="41.1"/>
+        <property name="signatureLibraryRelease" value="${prints.signature.library.release}"/>
         <property name="rawMatchDAO" ref="printsRawMatchDAO"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl"/>
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PrintsFilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
         </property>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: Pfam-A !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
@@ -108,9 +111,9 @@
     <!-- ######################## Dependencies ############################  -->
     <bean id="printsRawMatchDAO" class="uk.ac.ebi.interpro.scan.persistence.raw.PrintsRawMatchDAOImpl"/>
 
-    <bean id="signatureLibraryReleasePrints-41.1" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+    <bean id="signatureLibraryReleasePrints" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
         <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="PRINTS"/>
-        <constructor-arg type="java.lang.String" value="41.1"/>
+        <constructor-arg type="java.lang.String" value="${prints.signature.library.release}"/>
     </bean>
     <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 </beans>
