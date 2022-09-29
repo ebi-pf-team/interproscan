@@ -1,22 +1,19 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.*;
-import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
-import uk.ac.ebi.interpro.scan.util.Utilities;
+import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Phil Jones, EMBL-EBI
  * @author Maxim Scheremetjew
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0
  */
@@ -24,6 +21,15 @@ import java.util.Set;
 public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRawMatch, PantherMatch> implements PantherFilteredMatchDAO {
 
     private static final Logger LOGGER = LogManager.getLogger(PantherFilteredMatchDAOImpl.class.getName());
+    private String paintDirectory;
+
+    public String getPaintDirectory() {
+        return paintDirectory;
+    }
+
+    public void setPaintDirectory(String paintDirectory) {
+        this.paintDirectory = paintDirectory;
+    }
 
     /**
      * Sets the class of the model that the DOA instance handles.
@@ -48,6 +54,9 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
      */
     @Override
     public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+        Map<String, Set<Match>> toPersist = new HashMap<>();
+        Set<String> toLoad = new HashSet<>();
+
         for (RawProtein<PantherRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
             if (protein == null) {
@@ -56,43 +65,37 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             }
 
             Set<PantherMatch.PantherLocation> locations = null;
-            String currentSignatureAc = null;
-            SignatureModelHolder holder = null;
-            Signature currentSignature = null;
+            String matchId = null;
+            Signature signature = null;
             PantherRawMatch lastRawMatch = null;
             PantherMatch match = null;
             String signatureLibraryKey = null;
-            Set <Match> proteinMatches =  new HashSet<>();
+            Set <Match> proteinMatches = new HashSet<>();
             for (PantherRawMatch rawMatch : rawProtein.getMatches()) {
                 if (rawMatch == null) {
                     continue;
                 }
                 // If the first raw match, or moved to a different match...
-                if (currentSignatureAc == null || !currentSignatureAc.equals(rawMatch.getModelId())) {
-                    if (currentSignatureAc != null) {
+                if (matchId == null || !matchId.equals(rawMatch.getModelId())) {
+                    if (matchId != null) {
                         // Not the first...
-                        if (match != null) {
-                            //entityManager.persist(match);  // Persist the previous one.
-
-                        }
                         match = new PantherMatch(
-                                currentSignature,
-                                currentSignatureAc,
+                                signature,
+                                matchId,
                                 locations,
                                 lastRawMatch.getEvalue(),
-                                lastRawMatch.getFamilyName(),
-                                lastRawMatch.getScore()
+                                lastRawMatch.getScore(),
+                                lastRawMatch.getAnnotationsNodeId()
                         );
-                        //protein.addMatch(match); //may not be needed
+                        toLoad.add(signature.getAccession());
                         proteinMatches.add(match);
                     }
                     // Reset everything
                     locations = new HashSet<>();
-                    currentSignatureAc = rawMatch.getModelId();
-                    holder = modelIdToSignatureMap.get(currentSignatureAc);
-                    currentSignature = holder.getSignature();
-                    if (currentSignature == null) {
-                        throw new IllegalStateException("Cannot find PANTHER signature " + currentSignatureAc + " in the database.");
+                    matchId = rawMatch.getModelId();
+                    signature = modelIdToSignatureMap.get(matchId).getSignature();
+                    if (signature == null) {
+                        throw new IllegalStateException("Cannot find PANTHER signature " + matchId + " in the database.");
                     }
                 }
                 if (LOGGER.isDebugEnabled()) {
@@ -103,48 +106,50 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                     LOGGER.error("PANTHER match is out of range: "
                             + " protein length = " + protein.getSequenceLength()
                             + " raw match : " + rawMatch.toString());
-                    throw new IllegalStateException("PANTHER match location is out of range " + currentSignatureAc
+                    throw new IllegalStateException("PANTHER match location is out of range " + matchId
                             + " protein length = " + protein.getSequenceLength()
                             + " raw match : " + rawMatch.toString());
                 }
-
-                // TODO Get hmmLength from model instead?
-                //Model model = holder.getModel();
-                //int hmmLength = model == null ? 0 : model.getLength();
 
                 locations.add(new PantherMatch.PantherLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd(),
                         rawMatch.getHmmStart(), rawMatch.getHmmEnd(), rawMatch.getHmmLength(), HmmBounds.parseSymbol(rawMatch.getHmmBounds()),
                         rawMatch.getEnvelopeStart(), rawMatch.getEnvelopeEnd()));
                 lastRawMatch = rawMatch;
                 if(signatureLibraryKey == null){
-                    signatureLibraryKey = currentSignature.getSignatureLibraryRelease().getLibrary().getName();
+                    signatureLibraryKey = signature.getSignatureLibraryRelease().getLibrary().getName();
                 }
             }
             // Don't forget the last one!
             if (lastRawMatch != null) {
                 match = new PantherMatch(
-                        currentSignature,
-                        currentSignatureAc,
+                        signature,
+                        matchId,
                         locations,
                         lastRawMatch.getEvalue(),
-                        lastRawMatch.getFamilyName(),
-                        lastRawMatch.getScore()
+                        lastRawMatch.getScore(),
+                        lastRawMatch.getAnnotationsNodeId()
                 );
-                //protein.addMatch(match);  //may not be needed
+                toLoad.add(signature.getAccession());
                 proteinMatches.add(match);
-                //entityManager.persist(match);       // Persist the last one
             }
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-            //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey);
 
-            if (proteinMatches != null && ! proteinMatches.isEmpty()) {
-                //Utilities.verboseLog(1100, "persisted matches in kvstore for key: " + dbKey + " : " + proteinMatches.size());
+            if (!proteinMatches.isEmpty()) {
                 for(Match i5Match: proteinMatches){
                     //try update with cross refs etc
                     updateMatch(i5Match);
                 }
-                matchDAO.persist(dbKey, proteinMatches);
+
+                toPersist.put(dbKey, proteinMatches);
             }
+        }
+
+        for (String accession: toLoad) {
+
+        }
+
+        for (Map.Entry<String, Set<Match>> entry: toPersist.entrySet()) {
+            matchDAO.persist(entry.getKey(), entry.getValue());
         }
     }
 
@@ -161,5 +166,4 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
         }
         return true;
     }
-
 }

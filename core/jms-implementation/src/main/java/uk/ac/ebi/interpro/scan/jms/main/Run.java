@@ -30,18 +30,14 @@ import uk.ac.ebi.interpro.scan.persistence.kvstore.LevelDBStore;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.File;
-import java.io.FilePermission;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
-import java.security.AccessController;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-//port org.apache.commons.lang3.StringUtils;
 
 /**
  * The main entry point for the the master and workers in a
@@ -147,98 +143,27 @@ public class Run extends AbstractI5Runner {
 
             String i5Version = "5.57-90.0";
             String i5BuildType = "64-Bit";
-            //32bitMessage:i5BuildType = "32-Bit";
 
-            //print version and exit
             if (parsedCommandLine.hasOption(I5Option.VERSION.getLongOpt())) {
                 printVersion(i5Version, i5BuildType);
                 System.exit(0);
             }
 
             System.out.println(Utilities.getTimeNow() + " Welcome to InterProScan-" + i5Version);
-            //32bitMessage:System.out.println(Utilities.getTimeNow() + " You are running the 32-bit version");
 
             String operatingSystem = System.getProperty("os.name");
             System.out.println(Utilities.getTimeNow() + " Running InterProScan v5 in " + mode + " mode... on " + operatingSystem);
 
-            //String config = System.getProperty("config");
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Memory free: " + Runtime.getRuntime().freeMemory() / MEGA + "MB total: " + Runtime.getRuntime().totalMemory() / MEGA + "MB max: " + Runtime.getRuntime().maxMemory() / MEGA + "MB");
                 LOGGER.info("Running in " + mode + " mode");
             }
 
-            //create the dot i5 dir/file
-            //$USER_HOME/.interproscan-5/interproscan.properties
-            if (System.getProperty("user.home") != null && !System.getProperty("user.home").isEmpty()) {
-                String dotInterproscan5Dir = System.getProperty("user.home") + "/.interproscan-5";
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("dotInterproscan5Dir : " + dotInterproscan5Dir);
-                }
-                String userInterproscan5Properties = dotInterproscan5Dir + "/interproscan.properties";
-                File userInterproscan5PropertiesFile = new File(userInterproscan5Properties);
-                if (!checkPathExistence(dotInterproscan5Dir)) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Create dotInterproscan5Dir : " + dotInterproscan5Dir);
-                    }
-                    createDirectory(dotInterproscan5Dir);
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Directory $USER_HOME/.interproscan-5/interproscan.properties  - " + dotInterproscan5Dir + " exists");
-                    }
-                }
-                //Create file if it doesnot exists
-                if (!userInterproscan5PropertiesFile.exists()) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(" Creating the  userInterproscan5Properties file : " + userInterproscan5Properties);
-                    }
-                    try {
-                        userInterproscan5PropertiesFile.createNewFile();
-                    } catch (IOException e) {
-                        LOGGER.warn("Unable to access  " + userInterproscan5Properties);
-                        //check the permisions in the directory of user.home
-                        try {
-                            String actions = "read,write";
-                            AccessController.checkPermission(new FilePermission(System.getProperty("user.home"), actions));
-//                            System.out.println("You have read/write permition to use : " + System.getProperty("user.home"));
-                        } catch (SecurityException se) {
-                            LOGGER.warn("You don't have read/write permition to use : " + System.getProperty("user.home"));
-                        }
-
-                        LOGGER.warn(e);
-                    }
-
-                }
-
-                //Deal with user supplied config file from the command line
-                String systemInterproscanProperties = userInterproscan5Properties;
-                if (System.getProperty("system.interproscan.properties") == null) {
-                    LOGGER.debug("USer has not supplied any properties file");
-                    System.setProperty("system.interproscan.properties", systemInterproscanProperties);
-                }
-            } else {
-                //system and interproscan.properties are the same in case the user has not supplied any file
-                if (System.getProperty("system.interproscan.properties") == null) {
-                    LOGGER.debug("USer has not supplied any properties file");
-                    System.setProperty("system.interproscan.properties", "interproscan.properties");
-                }
+            if (System.getProperty("system.interproscan.properties") == null) {
+                System.setProperty("system.interproscan.properties", "interproscan.properties");
             }
 
             final AbstractApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{mode.getContextXML()});
-
-            //deal with active mq
-            //System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","uk.ac.ebi.interpro.scan.management.model.StepExecution");
-            //System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","*");
-
-//            String contextFile = mode.getContextXML();
-//            XmlWebApplicationContext context = new XmlWebApplicationContext();
-//            context.setConfigLocation(contextFile);
-//            context.setServletContext(request.getServletContext());
-//            context.refresh();
-//
-//            final AbstractApplicationContext ctx = context;
-
-            // The command-line distributed mode selects a random port number for communications.
-            // This block selects the random port number and sets it on the broker.
 
             // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
             String[] analysesToRun = null;

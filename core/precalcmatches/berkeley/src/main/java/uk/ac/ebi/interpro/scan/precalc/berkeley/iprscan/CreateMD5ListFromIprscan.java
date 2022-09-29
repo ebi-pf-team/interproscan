@@ -26,16 +26,7 @@ public class CreateMD5ListFromIprscan {
 
     private static final String databaseName = "IPRSCAN";
 
-//    private static final String MD5_QUERY =
-//            "select * from (select p.md5 as protein_md5 " +
-//                    "  from iprscan.uniparc_protein p " +
-//                    "  where p.UPI <= ?) " +
-//                    "  order by protein_md5";
-
-    private static final String MD5_QUERY =
-//      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 where upi <= 'UPI00000FFFFF' order by protein_md5"; //UPI0003F7AADD
-      "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
-
+    private static final String MD5_QUERY = "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
 
     public static void main(String[] args) {
 

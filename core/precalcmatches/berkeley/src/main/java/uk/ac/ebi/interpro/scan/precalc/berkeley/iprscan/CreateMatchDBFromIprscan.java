@@ -56,39 +56,6 @@ public class CreateMatchDBFromIprscan {
     private static final int COL_IDX_ENV_END = 17;
     private static final int COL_IDX_SEQ_FEATURE = 18;
     private static final int COL_IDX_FRAGMENTS = 19;
-    //private static final int COL_IDX_ALIGNMENT = 20;
-
-//    private static final String CREATE_TEMP_TABLE =
-//            "create global temporary table  berkley_tmp_tab " +
-//                    "on commit preserve rows " +
-//                    "as " +
-//                    "select  /*+ PARALLEL */ p.md5 as protein_md5, " +
-//                    "        l.library as signature_library_name, " +
-//                    "        l.version as signature_library_release, " +
-//                    "        m.method_ac as signature_accession, " +
-//                    "        m.model_ac as model_accession, " +
-//                    "        m.score as score, " +
-//                    "        m.seqscore as sequence_score, " +
-//                    "        m.seqevalue as sequence_evalue, " +
-//                    "        m.evalue, " +
-//                    "        m.seq_start, " +
-//                    "        m.seq_end, " +
-//                    "        m.hmm_start, " +
-//                    "        m.hmm_end, " +
-//                    "        m.hmm_length, " +
-//                    "        m.hmm_bounds, " +
-//                    "        m.envelope_start, " +
-//                    "        m.envelope_end, " +
-//                    "        m.seq_feature, " +
-//                    "        m.fragments " +
-//                   // "        ,m.alignment " +
-//                    "   from (select upi,md5 from uniparc_protein where upi<='MAX_UPI') p," +
-//                    "        mv_iprscan m," +
-//                    "        INTERPRO.iprscan2dbcode r," +
-//                    "        mv_signature_library_release l" +
-//                    "  where m.upi = p.upi " +
-//                    "        AND r.iprscan_sig_lib_rel_id = m.analysis_id " +
-//                    "        AND r.iprscan_sig_lib_rel_id=l.id";
 
     private static final String QUERY_TEMPORARY_TABLE =
             "select  /*+ PARALLEL */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +

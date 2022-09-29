@@ -7,17 +7,14 @@ import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.HmmBounds;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 /**
- * Parser for PANTHER output. Parses a single line of the raw result.
- * <br/>2 example lines of Panther raw result (tab separated entries)
- * tr|Q6ZSE3|Q6ZSE3_HUMAN	PTHR10024:SF2	GB DEF: HYPOTHETICAL PROTEIN FLJ45597	2.3e-141	480.5	1-341
- * <p/>
- * UPI000000004D	PTHR24068	FAMILY NOT NAMED	6.1e-129	439.2(score)	1-147(sequence start and end)
+ * Parser for PANTHER/TreeGrafter output
  *
  * @author Maxim Scheremetjew
  * @author Antony Quinn
+ * @author Gift Nuka
+ * @author Matthias Blum
  * @version $Id$
  */
 public final class PantherMatchParser
@@ -25,7 +22,6 @@ public final class PantherMatchParser
         implements MatchParser<PantherRawMatch> {
 
     private static final Logger LOGGER = LogManager.getLogger(PantherMatchParser.class.getName());
-
 
     /**
      * Constructor is only for JUnit testing.
@@ -40,6 +36,10 @@ public final class PantherMatchParser
 
     @Override
     protected PantherRawMatch createMatch(String line) {
+        if (line.startsWith("query_id")) {
+            //LOGGER.warn("This is a header line .");
+            return null;
+        }
         if (line == null || line.length() == 0) {
             LOGGER.warn("Couldn't parse the given raw match line, because it is NULL or of length 0.");
             return null;
@@ -52,78 +52,55 @@ public final class PantherMatchParser
             }
         }
         final String[] splitLine = line.split("\\t");
-        //Utilities.verboseLog(110, "splitLine.length: " + splitLine.length);
-        if (splitLine.length == 9) {
-            //Protein Id
-            final String sequenceIdentifier = splitLine[0].trim();
-            //Parse Panther family ID
-            final String modelId = splitLine[1].trim();
-            //Parse family name
-            final String familyName = splitLine[2].trim();
-            //Parse E-Value
-            final String eValueString = splitLine[3].trim();
-            //Hit score provided by Panther
-            final String scoreString = splitLine[4].trim();
-            //Hit HMM start and end
-            final String hmmLocationStartEnd = splitLine[5].trim();
-            //Hit aligment start and end
-            final String aliLocationStartEnd = splitLine[6].trim();
-            //Hit envelope start and end
-            final String envLocationStartEnd = splitLine[7].trim();
-            // HMM length
-            final String hmmLengthString = splitLine[8].trim();
 
-            //Transform raw parsed values
+        if (splitLine.length == 13) {
+            final String sequenceId = splitLine[0].trim();
+            final String matchId = splitLine[1].trim();
+
+            final String scoreString = splitLine[2].trim();
             double score = 0.0d;
-            double evalue = 0.0d;
-            int[] hmmLocation = parseLocation(hmmLocationStartEnd);
-            int[] aliLocation = parseLocation(aliLocationStartEnd);
-            int[] envLocation = parseLocation(envLocationStartEnd);
-            int hmmLength = 0;
-
             if (scoreString.length() > 0 && !".".equals(scoreString)) {
                 score = Double.parseDouble(scoreString);
             }
+
+            final String eValueString = splitLine[3].trim();
+            double evalue = 0.0d;
             if (eValueString.length() > 0 && !".".equals(eValueString)) {
                 evalue = Double.parseDouble(eValueString);
             }
-            if (hmmLengthString.length() > 0) {
-                hmmLength = Integer.parseInt(hmmLengthString);
+
+            final int hmmLocationStart = Integer.parseInt(splitLine[6].trim());
+            final int hmmLocationEnd = Integer.parseInt(splitLine[7].trim());
+            final int aliLocationStart = Integer.parseInt(splitLine[8].trim());
+            final int aliLocationEnd = Integer.parseInt(splitLine[9].trim());
+            final int envLocationStart = Integer.parseInt(splitLine[10].trim());
+            final int envLocationEnd = Integer.parseInt(splitLine[11].trim());
+
+            String nodeId = splitLine[12].trim();;
+            if (nodeId.length() == 0 || nodeId.equals("-")) {
+                nodeId = null;
             }
 
+            int hmmLength = 0;
             return new PantherRawMatch(
-                    sequenceIdentifier,
-                    modelId,
+                    sequenceId,
+                    matchId,
                     getSignatureLibraryRelease(),
-                    aliLocation[0],
-                    aliLocation[1],
+                    aliLocationStart,
+                    aliLocationEnd,
                     evalue,
                     score,
-                    familyName,
-                    hmmLocation[0],
-                    hmmLocation[1],
+                    hmmLocationStart,
+                    hmmLocationEnd,
                     hmmLength,
-                    HmmBounds.calculateHmmBounds(envLocation[0], envLocation[1], aliLocation[0], aliLocation[1]),
-                    envLocation[0],
-                    envLocation[1]);
+                    HmmBounds.calculateHmmBounds(envLocationStart,envLocationEnd, aliLocationStart, aliLocationEnd),
+                    envLocationStart,
+                    envLocationEnd,
+                    nodeId);
         }
+
         LOGGER.warn("Couldn't parse the given raw match line, because it is of an unexpected format.");
         LOGGER.warn("Unexpected Raw match line: " + line);
         return null;
     }
-
-    private int[] parseLocation(String locationStartEnd) {
-        int locationStart = 0;
-        int locationEnd = 0;
-        if (locationStartEnd.length() > 0 && locationStartEnd.contains("-")) {
-            final String[] splitLocationStartEnd = locationStartEnd.split("-");
-            if (splitLocationStartEnd.length == 2) {
-                locationStart = Integer.parseInt(splitLocationStartEnd[0].trim());
-                locationEnd = Integer.parseInt(splitLocationStartEnd[1].trim());
-            }
-        }
-        int[] location = {locationStart, locationEnd};
-        return location;
-    }
-
 }

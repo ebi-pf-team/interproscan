@@ -1,13 +1,13 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
-import uk.ac.ebi.interpro.scan.io.ParseException;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -16,14 +16,7 @@ import uk.ac.ebi.interpro.scan.persistence.EntryKVDAO;
 import uk.ac.ebi.interpro.scan.persistence.MatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.NucleotideSequenceDAO;
 import uk.ac.ebi.interpro.scan.persistence.ProteinDAO;
-import uk.ac.ebi.interpro.scan.persistence.installer.Entry2GoDAO;
-import uk.ac.ebi.interpro.scan.persistence.installer.Entry2PathwayDAO;
 import uk.ac.ebi.interpro.scan.util.Utilities;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.JsonParser;
-
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -31,8 +24,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,6 +35,9 @@ public class PrepareForOutputStep extends Step {
     private ProteinDAO proteinDAO;
     private MatchDAO matchDAO;
     private EntryKVDAO entryKVDAO;
+
+    private String entryKVPath;
+    private String pantherDataPath;
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
@@ -77,6 +71,22 @@ public class PrepareForOutputStep extends Step {
 
     public void setNucleotideSequenceDAO(NucleotideSequenceDAO nucleotideSequenceDAO) {
         this.nucleotideSequenceDAO = nucleotideSequenceDAO;
+    }
+
+    public String getEntryKVPath() {
+        return entryKVPath;
+    }
+
+    public void setEntryKVPath(String entryKVPath) {
+        this.entryKVPath = entryKVPath;
+    }
+
+    public String getPantherDataPath() {
+        return pantherDataPath;
+    }
+
+    public void setPantherDataPath(String pantherDataPath) {
+        this.pantherDataPath = pantherDataPath;
     }
 
     @Override
@@ -136,20 +146,26 @@ public class PrepareForOutputStep extends Step {
             }
         }
 
-        try {
-            //get pathway data
-            getPathwayMap();
-            getEntry2PathwayMap();
+        final Map<String, String> parameters = stepInstance.getParameters();
+        final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get("MAP_TO_GO"));
+        final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get("MAP_TO_PATHWAY"));
 
-            //get goterms
-            getGoTermsMap();
-            getEntry2GoTermsMap();
+        try {
+            if (mapToPathway) {
+                getPathwayMap();
+                getEntry2PathwayMap();
+            }
+
+            if (mapToGO) {
+                getGoTermsMap();
+                getEntry2GoTermsMap();
+            }
 
             //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
             simulateMarshalling(stepInstance, "p", temporaryFileDirectory);
             Utilities.verboseLog(1100, "Pre-marshall the nucleotide sequences ...");
-            final Map<String, String> parameters = stepInstance.getParameters();
+
             final String sequenceType = parameters.get(SEQUENCE_TYPE);
             if (sequenceType.equalsIgnoreCase("n")) {
                 Utilities.verboseLog(1100, "Dealing with nucleotide sequences ... , so pre-marshalling required");
@@ -417,70 +433,58 @@ public class PrepareForOutputStep extends Step {
                 }
 
                 if (matches != null) {
-                    //Utilities.verboseLog(1100, "Get matches for protein  id: " + protein.getId() +  " dbKey (matchKey): " + dbKey);
                     for (Match match : matches) {
-                        String accession = match.getSignature().getAccession();
-                        Utilities.verboseLog(120, "dbKey :" + dbKey + " - " + accession); //+ " - match: " + match.getLocations()) ;
+                        if (match instanceof PantherMatch) {
+                            PantherMatch panterMatch = (PantherMatch) match;
+                            String signatureAc = panterMatch.getSignature().getAccession();
+                            File file = new File(this.getPantherDataPath() + "/" + signatureAc + ".json");
 
-                        match.getSignature().getCrossReferences();
-                        //match.getSignature().getEntry();
-                        //try update with cross refs etc
-                        //updateMatch(match);
+                            if (panterMatch.getAnnotationsNodeId() != null && file.isFile()) {
+                                ObjectMapper mapper = new ObjectMapper();
+                                Map<String, String[]> familyAnnotations = mapper.readValue(file, new TypeReference<>() {});
+                                String[] nodeAnnotations = familyAnnotations.get(panterMatch.getAnnotationsNodeId());
+
+                                if (nodeAnnotations != null && nodeAnnotations.length == 4) {
+                                    String goTerms = nodeAnnotations[1];
+                                    String proteinClass = nodeAnnotations[2];
+                                    String graftPoint = nodeAnnotations[3];
+
+                                    Set<GoXref> goXrefs = new HashSet<>();
+                                    if (goTerms != null) {
+                                        for (String goTerm: goTerms.split(",")) {
+                                            goXrefs.add(new GoXref(goTerm, null, null));
+                                        }
+                                    }
+
+                                    panterMatch.setProteinClass(proteinClass);
+                                    panterMatch.setGraftPoint(graftPoint);
+                                    panterMatch.setGoXrefs(goXrefs);
+                                }
+                            }
+
+                        }
+
                         Entry simpleEntry = match.getSignature().getEntry();
                         if ( simpleEntry != null) {
                             String entryAc = simpleEntry.getAccession();
-                            if (entryAc.equalsIgnoreCase("IPR002072")){
-                                Utilities.verboseLog(30, "Print simpleEntry " + simpleEntry.toString() );
-                                if (! simpleEntry.getPathwayXRefs().isEmpty()) {
-                                    Utilities.verboseLog(30, " simple pathways: " + simpleEntry.getPathwayXRefs().iterator().next());
-                                } else {
-                                    Utilities.verboseLog(30, " pathways are empty");
-                                }
-                            }
-                            //entryKVDAO.persist(entryAc, simpleEntry);
-                            //Utilities.verboseLog(30, "Persisted Entry - " + entryAc);
+
                             try {
                                 Entry entry =  updateEntryXrefs(simpleEntry);
-                                //Entry entry = entryKVDAO.getEntry(entryAc);
                                 match.getSignature().setEntry(entry);
-                                //match.getSignature().setEntry(entry);
-                                if (entryAc.equalsIgnoreCase("IPR002072")) {
-                                    Utilities.verboseLog(30, "Print Entry " + entry.getAccession() +
-                                            " pathwayId size: " + entry.getPathwayXRefs().size() +
-                                            " new kvs pathways: " + entry.getPathwayXRefs().iterator().next());
-                                }
                             } catch (Exception e) {
                                 LOGGER.warn("Could get the entry in the kvstore " + entryAc);
                                 e.printStackTrace();
                             }
                         }
-//                        try {
-//                            Set<Entry> allentriesInDb = entryKVDAO.getEntries();
-//                            Utilities.verboseLog(30, " allentriesInDb- " + allentriesInDb.size());
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
+
                         protein.addMatch(match);
                         matchCount++;
                     }
                 }
             }
-            if (totalWaitTime > 0){
-                Utilities.verboseLog(20, "  Prepare for output - Total wait time : " + totalWaitTime
-                        + " millis, avergage wait time " + totalWaitTime / tryCount + " millis, " +
-                        " retries : " + tryCount);
-            }
-
 
             //TODO Temp check what breaks if you dont do pre-marshalling
             //String xmlProtein = writer.marshal(protein);
-
-            protein.getOpenReadingFrames().size();
-
-            for (Match i5Match : protein.getMatches()) {
-                //try update with cross refs etc
-                updateMatch(i5Match);
-            }
 
             //try to persist three times and then abort
             int persistTries = 0;
@@ -772,32 +776,14 @@ public class PrepareForOutputStep extends Step {
         return outputPath;
     }
 
-    public void updateMatch(Match match) {
-        Entry matchEntry = match.getSignature().getEntry();
-        if (matchEntry != null) {
-            //check goterms
-            //check pathways
-            matchEntry.getGoXRefs();
-            if (matchEntry.getGoXRefs() != null) {
-                matchEntry.getGoXRefs().size();
-            }
-            //should we check if pathways have been requested?
-            matchEntry.getPathwayXRefs();
-            if (matchEntry.getPathwayXRefs() != null) {
-                matchEntry.getPathwayXRefs().size();
-            }
-        }
-    }
-
     public  void getPathwayMap() {
-        //Map<String, String> pathwayMap = new HashMap<>();
-
         if (pathwayMap != null){
             return;
         }
 
         try {
-            FileInputStream is = new FileInputStream(new File("work/kvs/idb/pathways.json"));
+            File file = new File(this.getEntryKVPath() + "/pathways.json");
+            FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, List<String>> jsonMap = new HashMap();
@@ -817,13 +803,12 @@ public class PrepareForOutputStep extends Step {
     }
 
     public  void getEntry2PathwayMap() {
-        //Map<String, String> entry2PathwayMap = new HashMap<>();
-
         if (entry2PathwayMap != null){
             return;
         }
         try {
-            FileInputStream is = new FileInputStream(new File("work/kvs/idb/pathways.ipr.json"));
+            File file = new File(this.getEntryKVPath() + "/pathways.ipr.json");
+            FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, List<String>> jsonMap = new HashMap();
@@ -843,12 +828,12 @@ public class PrepareForOutputStep extends Step {
     }
 
     public  void getGoTermsMap() {
-
         if (gotermsMap != null){
             return;
         }
         try {
-            FileInputStream is = new FileInputStream(new File("work/kvs/idb/goterms.json"));
+            File file = new File(this.getEntryKVPath() + "/goterms.json");
+            FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, List<String>> jsonMap = new HashMap();
@@ -872,7 +857,8 @@ public class PrepareForOutputStep extends Step {
         }
 
         try {
-            FileInputStream is = new FileInputStream(new File("work/kvs/idb/goterms.ipr.json"));
+            File file = new File(this.getEntryKVPath() + "/goterms.ipr.json");
+            FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, List<String>> jsonMap = new HashMap();
@@ -890,7 +876,7 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
-    public Entry  updateEntryXrefs(Entry entry) {
+    public Entry updateEntryXrefs(Entry entry) {
         String entryAc = entry.getAccession();
         Set<GoXref> goXrefs = (Set<GoXref>) getGoXrefsByEntryAc(entryAc); //entry2GoXrefsMap.get(entryAc);
         Set<PathwayXref> pathwayXrefs =  (Set<PathwayXref>) getPathwayXrefsByEntryAc(entryAc); //(Set<PathwayXref>) entry2PathwayXrefsMap.get(entryAc);
@@ -904,7 +890,7 @@ public class PrepareForOutputStep extends Step {
     public Collection<GoXref> getGoXrefsByEntryAc(String entryAc) {
         Set<GoXref> result = new HashSet<>();
         try {
-            if (! entry2GoTermsMap.containsKey(entryAc)) {
+            if (entry2GoTermsMap == null || !entry2GoTermsMap.containsKey(entryAc)) {
                 Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
                 return result;
             }
@@ -973,7 +959,7 @@ public class PrepareForOutputStep extends Step {
     public Collection<PathwayXref> getPathwayXrefsByEntryAc(String entryAc) {
         Set<PathwayXref> result = new HashSet<>();
         try {
-            if (! entry2PathwayMap.containsKey(entryAc)) {
+            if (entry2PathwayMap == null || !entry2PathwayMap.containsKey(entryAc)) {
                 Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
                 return result;
             }
@@ -1082,5 +1068,4 @@ public class PrepareForOutputStep extends Step {
 
         return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
     }
-
 }

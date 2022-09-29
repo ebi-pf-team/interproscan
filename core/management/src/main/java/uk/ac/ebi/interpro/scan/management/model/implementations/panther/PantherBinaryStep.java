@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Antony Quinn
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Gift Nuka
  * @version $Id$
  */
 public final class PantherBinaryStep extends RunBinaryStep {

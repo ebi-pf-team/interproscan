@@ -35,6 +35,16 @@
                     <property name="analysisJobId" value="jobCoils"/>
                     <property name="modelFiles" value="file:/dev/null"/>
                 </bean>
+
+                <bean class="uk.ac.ebi.interpro.scan.io.funfam.FunFamModelParser">
+                    <property name="signatureLibrary" value="FUNFAM"/>
+                    <property name="releaseVersionNumber" value="${funfam.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${funfam.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="funfamNamesFile" value="${funfam.names.path}"/>
+                    <property name="analysisJobId" value="jobFunFam"/>
+                </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.gene3d.Model2SfReader">
                     <property name="signatureLibrary" value="GENE3D"/>
                     <property name="releaseVersionNumber" value="${gene3d.signature.library.release}"/>
@@ -107,15 +117,16 @@
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
                     <property name="releaseVersionNumber" value="${prosite.patterns.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${prosite.models.path}"/>
+                    <property name="modelFiles" value="file:${prosite.patterns.models.path}"/>
                     <property name="prositeModelType" value="PATTERNS"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositePatterns"/>
                 </bean>
+
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PROFILES"/>
                     <property name="releaseVersionNumber" value="${prosite.profiles.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${prosite.models.path}"/>
+                    <property name="modelFiles" value="file:${prosite.profiles.models.path}"/>
                     <property name="prositeModelType" value="PROFILES"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositeProfiles"/>

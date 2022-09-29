@@ -37,7 +37,8 @@ public class PantherLookupMatchConverter extends LookupMatchConverter<PantherMat
                 match.getModelAccession(),
                 locations,
                 valueOrZero(match.getSequenceEValue()),
-                "Not available",
-                valueOrZero(match.getSequenceScore()));
+                valueOrZero(match.getSequenceScore()),
+                match.getSeqFeature()
+        );
     }
 }

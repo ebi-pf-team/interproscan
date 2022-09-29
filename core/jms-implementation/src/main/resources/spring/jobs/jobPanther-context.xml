@@ -17,14 +17,12 @@
             <list value-type="java.lang.String">
                 <ref bean="hmmerBinariesPath"/>
                 <ref bean="pantherHMMPath"/>
-                <ref bean="pantherNamesTab"/>
             </list>
         </property>
         <property name="mandatoryParameters">
             <map key-type="java.lang.String" value-type="java.lang.String">
                 <entry key="binary.hmmer3.hmmsearch.path" value-ref="hmmerBinariesPath"/>
                 <entry key="panther.hmm.path" value-ref="pantherHMMPath"/>
-                <entry key="panther.names.tab" value-ref="pantherNamesTab"/>
             </map>
         </property>
     </bean>
@@ -35,9 +33,6 @@
     </bean>
     <bean id="pantherHMMPath" class="java.lang.String">
         <constructor-arg value="${panther.hmm.path}"/>
-    </bean>
-    <bean id="pantherNamesTab" class="java.lang.String">
-        <constructor-arg value="${panther.names.tab}"/>
     </bean>
 
     <bean id="abstractPantherStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
@@ -80,25 +75,29 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP 2: Run binary -->
+
+    <!-- STEP 2: Run Panther binary -->
     <bean id="stepPantherRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.RunPantherScoreStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.RunPantherTreeGrafterStep"
           parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherRunHmmer3"/>
-        <property name="stepDescription" value="Run PANTHER binary for selected proteins"/>
+        <property name="stepDescription" value="Run PANTHER TreeGrafter binary for selected proteins"/>
         <property name="forceHmmsearch" value="${panther.hmmsearch.force}"/>
-        <!--Add Perl command-->
+        <!--Add Python command-->
         <property name="fullPathToPython" value="${python3.command}"/>
-        <!--PantherScore python script-->
-        <property name="fullPathToBinary" value="${binary.pantherscore.path}"/>
-        <property name="binarySwitches" value="${pantherscore.binary.switches}"/>
+        <!--Panther Treegrafter python script-->
+        <property name="fullPathToBinary" value="${binary.treegrafter.path}"/>
+        <!-- EPA-NG binary       -->
+        <property name="fullPathToEPANGBinary" value="${binary.epang.path}"/>
+        <property name="pantherModelsDirectory" value="${panther.models.dir}"/>
+        <property name="binarySwitches" value="${panther.binary.switches}"/>
         <property name="usesFileOutputSwitch" value="true"/>
-        <property name="inputFilePantherFamilyNames" value="${panther.names.tab}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="inputFileNameHmmerRawOutputTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
-
+        <property name="serialGroup" value="PANTHER_BINARY"/>
     </bean>
 
     <bean id="stepPantherDeleteFastaFile"
@@ -144,17 +143,12 @@
         <property name="stepDescription" value="Performs post processing and match persistence on Panther data"/>
         <property name="serialGroup" value="PANTHER_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" ref="latestPantherSignatureLibraryRelease"/>
-        <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor">
-                <!--TODO: Figure out how to handle this cut-off evalue-->
-                <constructor-arg value="1e-11"/>
-            </bean>
-        </property>
         <property name="rawMatchDAO" ref="pantherRawMatchDAO"/>
         <property name="filteredMatchDAO">
             <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl">
                 <property name="dbStore" ref="kvStoreMatches"/>
                 <property name="matchDAO" ref="matchDAO"/>
+                <property name="paintDirectory" value="${panther.models.dir}"/>
             </bean>
         </property>
         <property name="retries" value="3"/>

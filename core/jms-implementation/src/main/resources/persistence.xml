@@ -108,6 +108,7 @@
         <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.FunFamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch</class>

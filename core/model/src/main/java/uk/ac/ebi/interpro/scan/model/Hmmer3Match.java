@@ -20,11 +20,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -95,6 +98,9 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
         @Column(name = "post_processed", nullable = false)
         private boolean postProcessed; // Is this a native HMMER3 result or has it been post processed in some way?
 
+        @Column(name = "alignment", length = 4000, nullable = true)
+        private String alignment = null;
+
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
          */
@@ -123,6 +129,16 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
             setEnvelopeStart(envelopeStart);
             setEnvelopeEnd(envelopeEnd);
             setPostProcessed(postProcessed);
+        }
+
+        public Hmmer3Location(int start, int end, double score, double evalue,
+                              int hmmStart, int hmmEnd, int hmmLength, HmmBounds hmmBounds,
+                              int envelopeStart, int envelopeEnd, boolean postProcessed, DCStatus dcStatus, String alignment) {
+            super(new Hmmer3LocationFragment(start, end, dcStatus), score, evalue, hmmStart, hmmEnd, hmmLength, hmmBounds);
+            setEnvelopeStart(envelopeStart);
+            setEnvelopeEnd(envelopeEnd);
+            setPostProcessed(postProcessed);
+            setAlignment(alignment);
         }
 
         public Hmmer3Location(int start, int end, double score, double evalue,
@@ -159,6 +175,17 @@ public class Hmmer3Match extends HmmerMatch<Hmmer3Match.Hmmer3Location> implemen
 
         public void setPostProcessed(boolean postProcessed) {
             this.postProcessed = postProcessed;
+        }
+
+        @JsonIgnore
+        @XmlTransient
+        // @XmlElement(name = "alignment", required = false)
+        public String getAlignment() {
+            return alignment;
+        }
+
+        public void setAlignment(String alignment) {
+            this.alignment = alignment;
         }
 
         @Override

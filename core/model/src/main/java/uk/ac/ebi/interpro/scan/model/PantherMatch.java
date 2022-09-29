@@ -16,13 +16,17 @@
 
 package uk.ac.ebi.interpro.scan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,24 +41,42 @@ import java.util.Set;
 @XmlType(name = "PantherMatchType")
 public class PantherMatch extends Match<PantherMatch.PantherLocation> {
 
+    @Column
+    private String accession;
+
+    @Column
+    private String name;
+
     @Column(nullable = false)
     private double evalue;
-
-    @Column(nullable = false, name = "family_name")
-    private String familyName;
 
     @Column(nullable = false)
     private double score;
 
+    @Column
+    @JsonIgnore
+    private String annotationsNodeId;
+
+    @Column
+    private String proteinClass;
+
+    @Column
+    private String graftPoint;
+
+    @OneToMany()
+    private Set<GoXref> goXrefs = new HashSet<>();
 
     protected PantherMatch() {
     }
 
-    public PantherMatch(Signature signature, String signatureModels, Set<PantherLocation> locations, double evalue, String familyName, double score) {
-        super(signature, signatureModels, locations);
+    public PantherMatch(Signature signature, String modelAccession, Set<PantherLocation> locations, double evalue,
+                        double score, String annotationsNodeId) {
+        super(signature, modelAccession, locations);
+        setAccession(modelAccession);
+        setName(signature.getModels().get(modelAccession).getName());
         setEvalue(evalue);
-        this.familyName = familyName;
-        this.score = score;
+        setScore(score);
+        setAnnotationsNodeId(annotationsNodeId);
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -62,10 +84,20 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         for (PantherLocation location : this.getLocations()) {
             clonedLocations.add((PantherLocation) location.clone());
         }
-        return new PantherMatch(this.getSignature(), this.getSignatureModels(), clonedLocations, this.getEvalue(), this.getFamilyName(), this.getScore());
+        return new PantherMatch(this.getSignature(), this.getSignatureModels(), clonedLocations,
+                this.getEvalue(), this.getScore(), this.getAnnotationsNodeId());
     }
 
-    @XmlAttribute(required = true)
+    @XmlTransient
+    public String getAnnotationsNodeId() {
+        return annotationsNodeId;
+    }
+
+    public void setAnnotationsNodeId(String annotationsNodeId) {
+        this.annotationsNodeId = annotationsNodeId;
+    }
+
+    @XmlAttribute(name = "evalue", required = true)
     public double getEvalue() {
         return evalue;
     }
@@ -74,22 +106,58 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         this.evalue = evalue;
     }
 
-    @XmlAttribute(required = true)
-    public String getFamilyName() {
-        return familyName;
+    @XmlAttribute(name = "name")
+    public String getName() {
+        return name;
     }
 
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "score", required = true)
     public double getScore() {
         return score;
     }
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    @XmlAttribute(name = "protein-class")
+    public String getProteinClass() {
+        return proteinClass;
+    }
+
+    public void setProteinClass(String proteinClass) {
+        this.proteinClass = proteinClass;
+    }
+
+    @XmlAttribute(name = "graft-point")
+    public String getGraftPoint() {
+        return graftPoint;
+    }
+
+    public void setGraftPoint(String graftPoint) {
+        this.graftPoint = graftPoint;
+    }
+
+    @XmlElement(name="go-xref")
+    public Set<GoXref> getGoXrefs() {
+        return goXrefs;
+    }
+
+    public void setGoXrefs(Set<GoXref> goXrefs) {
+        this.goXrefs = goXrefs;
+    }
+
+    @XmlAttribute(name = "ac", required = true)
+    public String getAccession() {
+        return accession;
+    }
+
+    public void setAccession(String accession) {
+        this.accession = accession;
     }
 
     @Override
@@ -101,7 +169,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         final PantherMatch m = (PantherMatch) o;
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(familyName, m.familyName)
+                .append(name, m.name)
                 .append(score, m.score)
                 .isEquals()
                 &&
@@ -113,7 +181,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
         return new HashCodeBuilder(19, 63)
                 .appendSuper(super.hashCode())
                 .append(evalue)
-                .append(familyName)
+                .append(name)
                 .append(score)
                 .toHashCode();
     }

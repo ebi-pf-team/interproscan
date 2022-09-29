@@ -52,7 +52,7 @@
         <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pirsr} ${hmmer3.hmmsearch.cpu.switch.pirsr}"/>
-        <property name="fullPathToHmmFile" value="${pirsr.hmm.path}"/>
+        <property name="fullPathToHmmFile" value="${pirsr.srhmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
 
         <property name="usesFileOutputSwitch" value="true"/>

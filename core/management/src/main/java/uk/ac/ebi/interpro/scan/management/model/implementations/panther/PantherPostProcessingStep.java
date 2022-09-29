@@ -3,7 +3,6 @@ package uk.ac.ebi.interpro.scan.management.model.implementations.panther;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.postprocessing.panther.PantherPostProcessor;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.PantherMatch;
@@ -19,6 +18,7 @@ import java.util.Set;
  * Panther post processing step.
  *
  * @author Maxim Scheremetjew, EMBL-EBI, InterPro
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0
  */
@@ -26,8 +26,6 @@ import java.util.Set;
 public class PantherPostProcessingStep extends Step {
 
     private static final Logger LOGGER = LogManager.getLogger(PantherPostProcessingStep.class.getName());
-
-    private PantherPostProcessor postProcessor;
 
     private String signatureLibraryRelease;
 
@@ -48,10 +46,6 @@ public class PantherPostProcessingStep extends Step {
     @Required
     public void setRawMatchDAO(RawMatchDAO<PantherRawMatch> rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
-    }
-
-    public void setPostProcessor(PantherPostProcessor postProcessor) {
-        this.postProcessor = postProcessor;
     }
 
     /**
@@ -83,13 +77,7 @@ public class PantherPostProcessingStep extends Step {
                 signatureLibraryRelease
         );
 
-        // Post process
-        Set<RawProtein<PantherRawMatch>> filteredMatches = postProcessor.process(rawMatches);
-        LOGGER.info("Finally persisting filtered raw matches.");
-        filteredMatchDAO.persist(filteredMatches);
-        Utilities.verboseLog(1100, "PostProcess panther matches: protein-range : "
-                + stepInstance.getBottomProtein() + " - " + stepInstance.getTopProtein()
-                + " rawMatches count:  " + rawMatches.size());
+        filteredMatchDAO.persist(rawMatches);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Step with Id " + this.getId() + " finished.");
         }

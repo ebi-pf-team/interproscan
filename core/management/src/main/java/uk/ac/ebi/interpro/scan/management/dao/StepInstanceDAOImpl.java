@@ -118,6 +118,10 @@ public class StepInstanceDAOImpl extends GenericDAOImpl<StepInstance, String> im
         if (serialGroup == null) {
             return true;
         }
+        if (SerialGroup.PANTHER_BINARY.equals(stepInstance.getStep(jobs).getSerialGroup())) {
+            //defer to the blackbox master
+            return true;
+        }
         if (!serialGroupToStepIdMap.containsKey(serialGroup)) {
             serialGroupToStepIdMap.put(serialGroup, buildMapStepIdsInGroup(serialGroup, jobs));
         }

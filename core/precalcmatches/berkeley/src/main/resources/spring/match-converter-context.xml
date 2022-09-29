@@ -12,6 +12,7 @@
                 <entry key="ANTIFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="CDD" value-ref="rpsblastLookupMatchConverter"/>
                 <entry key="COILS" value-ref="coilsLookupMatchConverter"/>
+                <entry key="FUNFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="GENE3D" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
                 <entry key="MOBIDB_LITE" value-ref="mobidbLookupMatchConverter"/>
