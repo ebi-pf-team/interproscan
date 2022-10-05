@@ -175,7 +175,7 @@
                     <property name="releaseVersionNumber" value="${tigrfam.signature.library.release}"/>
                     <property name="modelFiles" value="file:${tigrfam.hmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
-                    <property name="analysisJobId" value="jobTIGRFAM-15.0"/>
+                    <property name="analysisJobId" value="jobTIGRFAM"/>
                 </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.tmhmm.TMHMMSignatureBuilder">
                     <property name="signatureLibrary" value="TMHMM"/>
