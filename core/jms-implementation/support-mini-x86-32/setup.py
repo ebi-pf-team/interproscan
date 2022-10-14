@@ -77,7 +77,7 @@ def main():
     if realpath(args.properties) != realpath(PROPERTIES):
         load_properties(args.properties, properties)
 
-    ignore = {"binary.tmhmm.path", "smart.hmm.path"}
+    ignore = {"binary.tmhmm.path", "funfam.hmm.path", "smart.hmm.path"}
     for key, path in properties.items():
         if "hmm.path" in key and key not in ignore:
             if key.startswith(("sfld", "superfamily")):
