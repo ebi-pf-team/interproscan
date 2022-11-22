@@ -128,7 +128,7 @@
                 <bean class="uk.ac.ebi.interpro.scan.io.superfamily.model.SuperFamilyModelParser">
                     <property name="signatureLibrary" value="SUPERFAMILY"/>
                     <property name="releaseVersionNumber" value="1.75"/>
-                    <property name="modelFiles" value="file:${superfamily.hmm.path.3.0}"/>
+                    <property name="modelFiles" value="file:${superfamily.hmm.path}"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobSuperFamily-1.75"/>
                 </bean>
