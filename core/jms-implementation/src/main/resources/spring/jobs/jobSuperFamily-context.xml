@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: SuperFamily ############################  -->
+    <bean id="jobSuperFamily" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description"
+                  value="SUPERFAMILY is a database of structural and functional annotations for all proteins and genomes."/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseSuperfamily"/>
+    </bean>
+
+    <bean id="abstractSuperFamilyStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobSuperFamily"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.SSF}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP: Prepare FASTA file for Hmmer3 and SuperFamily binary -->
+    <bean id="stepSuperFamilyWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractSuperFamilyStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <bean id="stepSuperFamilyRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractSuperFamilyStep">
+        <!--
+       Example:
+       hmmscan -E 10 -Z 15438 -o HMMER3_OUTPUT_FILE data/superfamily/1.75/hmmlib_1.75 INPUT_SEQUENCE_FILE
+        -->
+        <property name="dependsUpon" ref="stepSuperFamilyWriteFastaFile"/>
+        <property name="stepDescription" value="Run HMMER3"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmscan.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.superfamily} ${hmmer3.hmmsearch.cpu.switch.superfamily}"/>
+        <property name="fullPathToHmmFile" value="${superfamily.hmm.path}"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP: Run the SuperFamily perl script -->
+    <bean id="stepSuperFamilyRunBinary"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.superfamily.RunSuperFamilyAss3Step"
+          parent="abstractSuperFamilyStep">
+        <!--
+        Example:
+        perl ass3.pl -e 0.0001 -s data/superfamily/1.75/self_hits.tab -r data/superfamily/1.75/dir.cla.scop.txt_1.75 -m data/superfamily/1.75/model.tab -p data/superfamily/1.75/pdbj95d  -t n  -f 1 INPUT_SEQUENCE_FILE HMMER3_OUTPUT_FILE PP_OUTPUT_FILE
+        -->
+        <property name="dependsUpon" ref="stepSuperFamilyRunHmmer3"/>
+        <property name="stepDescription" value="Run ass3_single_threaded.pl perl script for selected proteins"/>
+        <property name="binarySwitches" value="-e 0.0001 -t n  -f 1"/>
+        <property name="retries" value="3"/>
+        <property name="perlCommand" value="${perl.command}"/>
+        <property name="fullPathToSuperFamilyAss3PerlScript" value="${binary.superfamily.ass3.pl.path}"/>
+        <property name="fullPathToSelfHitsFile" value="${superfamily.self.hits.path}"/>
+        <property name="fullPathToClaFile" value="${superfamily.cla.path}"/>
+        <property name="fullPathToModelTabFile" value="${superfamily.model.tab.path}"/>
+        <property name="fullPathToPDBJ95DFile" value="${superfamily.pdbj95d.path}"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="hmmer3ResultsFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="binaryOutputFileNameTemplate" ref="superFamilyBinaryOutputFileTemplate"/>
+        <property name="outputFileNameTemplate" ref="superFamilyBinaryStandardOutputFileTemplate"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <!-- STEP: Parse the SuperFamily binary output and persist the results in the database. No post processing required. -->
+    <bean id="stepSuperFamilyParseAndPersistOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.superfamily.ParseAndPersistSuperFamilyOutputStep"
+          parent="abstractSuperFamilyStep">
+        <property name="dependsUpon" ref="stepSuperFamilyRunBinary"/>
+        <property name="stepDescription"
+                  value="Parse the output from the SuperFamily binary and persist as filtered matches"/>
+        <property name="serialGroup" value="PARSE_SUPERFAMILY"/>
+        <property name="retries" value="3"/>
+        <property name="superFamilyBinaryOutputFileName" ref="superFamilyBinaryOutputFileTemplate"/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.SuperFamilyHmmer3FilteredMatchDAOImpl">
+                <constructor-arg value="${superfamily.signature.library.release}"/>
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
+        </property>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.superfamily.match.SuperFamilyHmmer3MatchParser"/>
+        </property>
+    </bean>
+
+    <!-- STEP: Remove temporary files (CAN'T remove temporary directory as there could be multiple threads
+               writing to the directory at the same time) -->
+    <bean id="stepSuperFamilyDeleteTempFiles"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractSuperFamilyStep">
+        <property name="dependsUpon" ref="stepSuperFamilyParseAndPersistOutput"/>
+        <property name="stepDescription"
+                  value="Delete the remaining temporary files following successful parsing and persistence"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
+                <ref bean="superFamilyBinaryOutputFileTemplate"/>
+                <ref bean="superFamilyBinaryStandardOutputFileTemplate"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SuperFamily !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="superFamilyBinaryOutputFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].ass3.out"/>
+    </bean>
+
+    <bean id="superFamilyBinaryStandardOutputFileTemplate" class="java.lang.String">
+        <constructor-arg value="[PROTSTART]_[PROTEND].ass3.std.out"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseSuperfamily" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SUPERFAMILY"/>
+        <constructor-arg type="java.lang.String" value="${superfamily.signature.library.release}"/>
+    </bean>
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>

@@ -53,26 +53,6 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!--
-    <bean id="stepHamapRunPFScan"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPFScanStep"
-          parent="abstractHamapHMMStep">
-        <property name="dependsUpon" ref="stepHamapHMMWriteFastaFile"/>
-        <property name="stepDescription" value="Run PFScan  for proteins in range"/>
-        <property name="binarySwitches" value="${pfscanv3.hamap.binary.switches}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileAltTemplate"/>
-        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="retries" value="3"/>
-        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${hamap.profile.models.path}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearchv3.path}"/>
-        <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
-        <property name="requiresDatabaseAccess" value="false"/>
-    </bean>
-
--->
-
     <!-- STEP 3 -->
     <bean id="stepHamapHMMRunPFSearch"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunHmmPfsearchStep"
@@ -94,25 +74,6 @@
         <property name="modelDir" value="${hamap.profile.models.dir}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
-
-    <!-- STEP 3
-    <bean id="stepHamapHMMRunWithFilterPFScan"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPFScanStep"
-          parent="abstractHamapHMMStep">
-        <property name="dependsUpon" ref="stepHamapHMMRunPFSearch"/>
-        <property name="stepDescription" value="Run PFScan  for proteins in range"/>
-        <property name="binarySwitches" value="${pfscanv3.hamap.binary.switches}"/>
-        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileAltFilteredTemplate"/>
-        <property name="fastaFileNameTemplate" ref="fastaFileNameFilteredTemplate"/>
-        <property name="retries" value="3"/>
-        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelFile" value="${hamap.profile.models.path}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearchv3.path}"/>
-        <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
-        <property name="requiresDatabaseAccess" value="false"/>
-    </bean>
-    -->
 
     <!-- STEP 4 -->
 

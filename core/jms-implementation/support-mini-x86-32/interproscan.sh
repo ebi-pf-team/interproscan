@@ -17,7 +17,7 @@ cd "$(dirname "$INSTALL_DIR")"
 BIN_DIR=$(get_bin_directory ./interproscan.properties)
 
 if [ -n "$INTERPROSCAN_CONF" ] && [ -f "$INTERPROSCAN_CONF" ]; then
-    PROPERTIES="$INTERPROSCAN_CONF"
+    PROPERTIES="$(readlink -m "$INTERPROSCAN_CONF")"
     PROPERTY="-Dsystem.interproscan.properties=${PROPERTIES}"
     BIN_DIR="$(get_bin_directory "${PROPERTIES}")"
 else

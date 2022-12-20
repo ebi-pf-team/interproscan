@@ -76,7 +76,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 //    private static final Pattern DOMAIN_SECTION_START_PATTERN = Pattern.compile("^Domains:\\s+(\\S+).*$");
 //    private static final Pattern SITE_SECTION_START_PATTERN = Pattern.compile("^Sites:\\s+(\\S+).*$");
 
-    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)(\\s+.*)?$");
+    private static final Pattern SITES_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(.*)?$");
     /**
      * This interface has a single method that
      * takes the HmmsearchOutputMethod object, containing sequence
