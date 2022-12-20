@@ -186,7 +186,9 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
 
         if (match instanceof PantherMatch) {
             seqScore = Double.toString( ((PantherMatch) match).getScore());
-        }  else if (match instanceof Hmmer3Match) {
+        } else if (match instanceof FunFamHmmer3Match) {
+            seqScore = Double.toString(((FunFamHmmer3Match) match).getScore());
+        } else if (match instanceof Hmmer3Match) {
             seqScore = Double.toString( ((Hmmer3Match) match).getScore());
         } else if (match instanceof Hmmer2Match) {
             seqScore = Double.toString(((Hmmer2Match) match).getScore());
@@ -214,6 +216,8 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
         String seqEvalue = null;
         if (match instanceof PantherMatch) {
             seqEvalue = Double.toString(((PantherMatch) match).getEvalue());
+        } else if (match instanceof FunFamHmmer3Match) {
+            seqEvalue = Double.toString(((FunFamHmmer3Match) match).getEvalue());
         } else if (match instanceof Hmmer3Match) {
             seqEvalue = Double.toString(((Hmmer3Match) match).getEvalue());
         } else if (match instanceof Hmmer2Match) {
