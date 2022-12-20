@@ -133,11 +133,17 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmer3Location.getScore()));
                             mappingFields.add(Double.toString(hmmer3Location.getEvalue()));
 
-                            String alignment = hmmer3Location.getAlignment();
-                            if (alignment == null || alignment.isEmpty())
-                                mappingFields.add("-");
-                            else
-                                mappingFields.add(alignment);
+                            if (location instanceof FunFamHmmer3Match.FunFamHmmer3Location) {
+                                FunFamHmmer3Match.FunFamHmmer3Location funFamHmmer3Location = (FunFamHmmer3Match.FunFamHmmer3Location) location;
+                                mappingFields.add(Integer.toString(funFamHmmer3Location.getHmmer3SeqStart()));
+                                mappingFields.add(Integer.toString(funFamHmmer3Location.getHmmer3SeqEnd()));
+
+                                String alignment = funFamHmmer3Location.getAlignment();
+                                if (alignment == null || alignment.isEmpty())
+                                    mappingFields.add("-");
+                                else
+                                    mappingFields.add(alignment);
+                            }
                         }
                         if (location instanceof Hmmer2Match.Hmmer2Location) {
                             Hmmer2Match.Hmmer2Location hmmerLocation = (Hmmer2Match.Hmmer2Location) location;

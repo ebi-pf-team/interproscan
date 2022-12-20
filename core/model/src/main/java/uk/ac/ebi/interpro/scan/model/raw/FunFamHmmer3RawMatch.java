@@ -20,6 +20,12 @@ public class FunFamHmmer3RawMatch extends Hmmer3RawMatch {
     @Column(nullable = false, length = 4000)
     private String alignment;
 
+    @Column(nullable = false)
+    private int resolvedLocationStart;
+
+    @Column(nullable = false)
+    private int resolvedLocationEnd;
+
     protected FunFamHmmer3RawMatch() {
     }
 
@@ -31,11 +37,14 @@ public class FunFamHmmer3RawMatch extends Hmmer3RawMatch {
                                 double locationScore,
                                 int envelopeStart, int envelopeEnd,
                                 double expectedAccuracy, double fullSequenceBias,
-                                double domainCeValue, double domainIeValue, double domainBias, String alignment) {
+                                double domainCeValue, double domainIeValue, double domainBias, String alignment,
+                                int resolvedLocationStart, int resolvedLocationEnd) {
         super(sequenceIdentifier, model, SignatureLibrary.FUNFAM, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
                 fullSequenceBias, domainCeValue, domainIeValue, domainBias);
         this.setAlignment(alignment);
+        this.setResolvedLocationStart(resolvedLocationStart);
+        this.setResolvedLocationEnd(resolvedLocationEnd);
     }
 
     public String getAlignment() {
@@ -44,5 +53,21 @@ public class FunFamHmmer3RawMatch extends Hmmer3RawMatch {
 
     public void setAlignment(String alignment) {
         this.alignment = alignment;
+    }
+
+    public int getResolvedLocationStart() {
+        return resolvedLocationStart;
+    }
+
+    public void setResolvedLocationStart(int resolvedLocationStart) {
+        this.resolvedLocationStart = resolvedLocationStart;
+    }
+
+    public int getResolvedLocationEnd() {
+        return resolvedLocationEnd;
+    }
+
+    public void setResolvedLocationEnd(int resolvedLocationEnd) {
+        this.resolvedLocationEnd = resolvedLocationEnd;
     }
 }

@@ -124,9 +124,6 @@
                 </property>
             </bean>
         </property>
-        <property name="cathResolveHitsOutputParser">
-            <bean class="uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser"/>
-        </property>
         <property name="signatureLibraryRelease" ref="latestGene3dSignatureLibraryRelease"/>
         <property name="retries" value="3"/>
 

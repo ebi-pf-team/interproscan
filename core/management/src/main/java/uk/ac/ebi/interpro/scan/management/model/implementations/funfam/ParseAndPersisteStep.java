@@ -1,7 +1,6 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.funfam;
 
 import uk.ac.ebi.interpro.scan.io.funfam.CathResolveHit;
-import uk.ac.ebi.interpro.scan.io.gene3d.CathResolveHitsOutputParser;
 import uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser;
 import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
@@ -20,7 +19,6 @@ public class ParseAndPersisteStep extends Step  {
     private String cathResolveHitsOutputFileNameTemplate;
     private String hmmsearchOutputFileNameTemplate;
     private Hmmer3SearchMatchParser<FunFamHmmer3RawMatch> hmmer3SearchMatchParser;
-    private CathResolveHitsOutputParser cathResolveHitsOutputParser;
     private String signatureLibraryRelease;
     private RawMatchDAO<FunFamHmmer3RawMatch> rawMatchDAO;
     private FilteredMatchDAO<FunFamHmmer3RawMatch, Hmmer3Match> filteredMatchDAO;
@@ -47,14 +45,6 @@ public class ParseAndPersisteStep extends Step  {
 
     public void setHmmer3SearchMatchParser(Hmmer3SearchMatchParser<FunFamHmmer3RawMatch> hmmer3SearchMatchParser) {
         this.hmmer3SearchMatchParser = hmmer3SearchMatchParser;
-    }
-
-    public CathResolveHitsOutputParser getCathResolveHitsOutputParser() {
-        return cathResolveHitsOutputParser;
-    }
-
-    public void setCathResolveHitsOutputParser(CathResolveHitsOutputParser cathResolveHitsOutputParser) {
-        this.cathResolveHitsOutputParser = cathResolveHitsOutputParser;
     }
 
     public String getSignatureLibraryRelease() {
@@ -124,8 +114,8 @@ public class ParseAndPersisteStep extends Step  {
                                 match.getSequenceIdentifier(),
                                 match.getModelId(),
                                 this.getSignatureLibraryRelease(),
-                                startPosition,
-                                endPosition,
+                                match.getLocationStart(),
+                                match.getLocationEnd(),
                                 match.getEvalue(),
                                 match.getScore(),
                                 match.getHmmStart(),
@@ -139,7 +129,9 @@ public class ParseAndPersisteStep extends Step  {
                                 match.getDomainCeValue(),
                                 match.getDomainIeValue(),
                                 match.getDomainBias(),
-                                cigarEncoder.encode(match.getAlignment())
+                                cigarEncoder.encode(match.getAlignment()),
+                                startPosition,
+                                endPosition
                         );
 
                         if (isDiscontinuous) {
