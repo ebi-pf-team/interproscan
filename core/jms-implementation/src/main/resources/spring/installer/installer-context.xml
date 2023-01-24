@@ -117,7 +117,7 @@
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PATTERNS"/>
                     <property name="releaseVersionNumber" value="${prosite.patterns.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${prosite.models.path}"/>
+                    <property name="modelFiles" value="file:${prosite.patterns.models.path}"/>
                     <property name="prositeModelType" value="PATTERNS"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositePatterns"/>
@@ -126,7 +126,7 @@
                 <bean class="uk.ac.ebi.interpro.scan.io.prosite.PrositeDatFileParser">
                     <property name="signatureLibrary" value="PROSITE_PROFILES"/>
                     <property name="releaseVersionNumber" value="${prosite.profiles.signature.library.release}"/>
-                    <property name="modelFiles" value="file:${prosite.models.path}"/>
+                    <property name="modelFiles" value="file:${prosite.profiles.models.path}"/>
                     <property name="prositeModelType" value="PROFILES"/>
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobPrositeProfiles"/>
