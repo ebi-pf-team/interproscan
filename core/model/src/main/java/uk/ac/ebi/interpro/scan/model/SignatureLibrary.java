@@ -27,8 +27,6 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "SignatureLibraryType")
 public enum SignatureLibrary {
-
-    //TODO - complete descriptions of member database libraries.
     ANTIFAM("AntiFam", "Prediction of spurious protein.", false),
     CDD("CDD", "Prediction of CDD domains", true),
     COILS("Coils", "Description to be added", false),
@@ -51,9 +49,11 @@ public enum SignatureLibrary {
     SIGNALP_GRAM_POSITIVE("SignalP_GRAM_POSITIVE", "SignalP (organism type gram-positive prokaryotes) predicts the presence and location of signal peptide cleavage sites in amino acid sequences for gram-positive prokaryotes.", false),
     SMART("SMART", "Description to be added", true),
     SUPERFAMILY("SUPERFAMILY", "Description to be added", true),
+    TMHMM("TMHMM", "Prediction of transmembrane helices in proteins.", false),
+
+    // removed libraries
     TIGRFAM("TIGRFAM", "Description to be added", true),
-    PRODOM("ProDom", "Description to be added", true),
-    TMHMM("TMHMM", "Prediction of transmembrane helices in proteins.", false);
+    PRODOM("ProDom", "Description to be added", true);
 
     private String name;
 

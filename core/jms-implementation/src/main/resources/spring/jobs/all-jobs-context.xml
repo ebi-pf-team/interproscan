@@ -59,6 +59,7 @@
                 <ref bean="jobGene3d"/>
                 <ref bean="jobHAMAP"/>
                 <ref bean="jobMobiDBLite"/>
+                <ref bean="jobNCBIfam"/>
                 <ref bean="jobPanther"/>
                 <ref bean="jobPfam"/>
                 <ref bean="jobPhobius"/>
@@ -73,7 +74,6 @@
                 <ref bean="jobSignalP_GRAM_POSITIVE"/>
                 <ref bean="jobSMART"/>
                 <ref bean="jobSuperFamily"/>
-                <ref bean="jobTIGRFAM"/>
                 <ref bean="jobTMHMM"/>
             </list>
         </property>

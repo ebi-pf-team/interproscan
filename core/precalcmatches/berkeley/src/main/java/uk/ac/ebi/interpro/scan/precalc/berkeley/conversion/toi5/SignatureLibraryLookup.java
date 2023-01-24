@@ -60,13 +60,6 @@ public final class SignatureLibraryLookup {
         libraryNameToSignatureLibrary.put("prosite profiles", SignatureLibrary.PROSITE_PROFILES);
         libraryNameToSignatureLibrary.put("prosite_pf", SignatureLibrary.PROSITE_PROFILES);
 
-        libraryNameToSignatureLibrary.put("tigrfams", SignatureLibrary.TIGRFAM);
-        libraryNameToSignatureLibrary.put("tigrfam_hmmer3", SignatureLibrary.TIGRFAM);
-        libraryNameToSignatureLibrary.put("tigr-fam", SignatureLibrary.TIGRFAM);
-        libraryNameToSignatureLibrary.put("tigr-fams", SignatureLibrary.TIGRFAM);
-        libraryNameToSignatureLibrary.put("tigr_fam", SignatureLibrary.TIGRFAM);
-        libraryNameToSignatureLibrary.put("tigr_fams", SignatureLibrary.TIGRFAM);
-
         libraryNameToSignatureLibrary.put("coils", SignatureLibrary.COILS);
         libraryNameToSignatureLibrary.put("coil", SignatureLibrary.COILS);
 
