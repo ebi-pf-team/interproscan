@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <import resource="../persistence/persistence-config-context.xml"/>
+
+    <!-- ######################## JOB: NCBIfam ############################  -->
+    <bean id="jobNCBIfam" class="uk.ac.ebi.interpro.scan.management.model.Job">
+        <property name="description" value="NCBIfam is a collection of protein families based on Hidden Markov Models (HMMs)."/>
+        <property name="analysis" value="true"/>
+        <property name="libraryRelease" ref="signatureLibraryReleaseNcbifam"/>
+    </bean>
+
+    <bean id="abstractNCBIfamStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+        <property name="job" ref="jobNCBIfam"/>
+        <property name="maxProteins" value="${analysis.max.sequence.count.NCBIFAM}"/>
+        <property name="createStepInstancesForNewProteins" value="true"/>
+        <property name="retries" value="0"/>
+        <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
+    </bean>
+
+    <!-- STEP 1 -->
+    <bean id="stepNCBIfamWriteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
+          parent="abstractNCBIfamStep">
+        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
+        <property name="stepDescription" value="Create fasta file."/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="proteinDAO" ref="proteinDAO"/>
+    </bean>
+
+    <!-- STEP 2 -->
+    <bean id="stepNCBIfamRunHmmer3"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
+          parent="abstractNCBIfamStep">
+        <property name="dependsUpon" ref="stepNCBIfamWriteFastaFile"/>
+        <property name="stepDescription" value="Run fingerprintscan Binary for selected proteins"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
+        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.ncbifam} ${hmmer3.hmmsearch.cpu.switch.ncbifam}"/>
+        <property name="usesFileOutputSwitch" value="true"/>
+        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
+        <property name="retries" value="3"/>
+        <property name="fullPathToHmmFile" value="${ncbifam.hmm.path}"/>
+        <property name="requiresDatabaseAccess" value="false"/>
+    </bean>
+
+    <bean id="stepNCBIfamDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractNCBIfamStep">
+        <property name="dependsUpon" ref="stepNCBIfamRunHmmer3"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
+    </bean>
+
+
+    <bean id="stepNCBIfamStoreRawMatches"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.ParseTigrFamHMMER3OutputStep"
+          parent="abstractNCBIfamStep">
+        <property name="dependsUpon" ref="stepNCBIfamRunHmmer3"/>
+        <property name="stepDescription" value="Parse the TigrFam binary output and store as Filtered matches."/>
+        <property name="serialGroup" value="PARSE_NCBIFAM"/>
+        <property name="parser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+                <property name="useHmmsearch" value="true"/>
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.TigrFamHmmer3ParserSupport">
+                        <property name="signatureLibraryRelease" ref="ncbifamSignatureLibraryReleaseVersion"/>
+                        <property name="hmmKey" value="ACCESSION"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="rawMatchDAO" ref="ncbifamRawMatchDAO"/>
+    </bean>
+
+    <bean id="stepNCBIfamDeleteRawOutput"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
+          parent="abstractNCBIfamStep">
+        <property name="dependsUpon" ref="stepNCBIfamStoreRawMatches"/>
+        <property name="stepDescription"
+                  value="Delete the raw output file following successful parsing and persistence"/>
+        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+    </bean>
+
+    <!-- TODO - Check for changes - presumably now using different objects to store the results? -->
+    <bean id="stepTIGRFamPostProcessing"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.TigrFamHmmer3FilterStep"
+          parent="abstractNCBIfamStep">
+        <property name="dependsUpon" ref="stepNCBIfamStoreRawMatches"/>
+        <property name="signatureLibraryRelease" ref="ncbifamSignatureLibraryReleaseVersion"/>
+        <property name="stepDescription" value="Stores raw matches as filtered matches."/>
+        <property name="filteredMatchDAO">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.TigrFamHmmer3FilteredMatchDAOImpl">
+                <property name="dbStore" ref="kvStoreMatches"/>
+                <property name="matchDAO" ref="matchDAO"/>
+            </bean>
+        </property>
+        <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
+        <property name="rawMatchDAO" ref="ncbifamRawMatchDAO"/>
+        <property name="signatureLibrary" value="NCBIFAM"/>
+        <property name="filter">
+            <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
+        </property>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: NCBIfam !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+
+    <!-- ######################## Dependencies ############################  -->
+    <bean id="ncbifamRawMatchDAO"
+          class="uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAOImpl">
+        <constructor-arg value="uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch"/>
+    </bean>
+
+    <bean id="signatureLibraryReleaseNcbifam" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="NCBIFAM"/>
+        <constructor-arg type="java.lang.String" ref="ncbifamSignatureLibraryReleaseVersion"/>
+    </bean>
+
+
+    <bean id="ncbifamSignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="${ncbifam.signature.library.release}"/>
+    </bean>
+
+    <!-- !!!!!!!!!!!!!!!!!!!!! Dependencies-END !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
+</beans>
