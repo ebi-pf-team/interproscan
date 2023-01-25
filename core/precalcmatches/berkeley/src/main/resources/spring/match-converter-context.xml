@@ -16,6 +16,7 @@
                 <entry key="GENE3D" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="HAMAP" value-ref="prositeProfilesLookupMatchConverter"/>
                 <entry key="MOBIDB_LITE" value-ref="mobidbLookupMatchConverter"/>
+                <entry key="NCBIFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PANTHER" value-ref="pantherLookupMatchConverter"/>
                 <entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3LookupMatchConverter"/>
