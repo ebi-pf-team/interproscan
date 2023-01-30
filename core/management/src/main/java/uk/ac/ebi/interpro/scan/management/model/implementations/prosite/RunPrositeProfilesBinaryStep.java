@@ -34,8 +34,6 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
 
     private Boolean usePfsearch = false;
 
-    private String modelFile;
-
    private String modelsDir;
 
     public String getFullPathToPsScanPerlScript() {
@@ -62,15 +60,6 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
     @Required
     public void setFastaFileNameTemplate(String fastaFilePathNameTemplate) {
         this.fastaFileNameTemplate = fastaFilePathNameTemplate;
-    }
-
-    public String getModelFile() {
-        return modelFile;
-    }
-
-    @Required
-    public void setModelFile(String modelFile) {
-        this.modelFile = modelFile;
     }
 
     public void setModelsDir(String modelsDir) {
@@ -139,20 +128,6 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
         List<String> command = new ArrayList<String>();
         command.add(this.getFullPathToPython());
         command.add(this.getFullPathToRunPrositeBinary());
-
-//        if (usePfsearch && this.fullPathToPfsearchBinary != null && !this.fullPathToPfsearchBinary.isEmpty()){
-//          command.add("-w");
-//          command.add(this.getFullPathToPfsearchBinary());
-//        }else{
-//          command.add("--pfscan");
-//          command.add(this.getFullPathToPfscanBinary());
-//        }
-//        if (this.getFullPathToConfirmatoryProfiles() != null && this.getFullPathToConfirmatoryProfiles().length() > 0) {
-//            command.add("-b");
-//            command.add(this.getFullPathToConfirmatoryProfiles());
-//        }
-        
-
         command.add(this.getModelsDir());
         command.add(fastaFilePathName);
         command.add(outputFilePathName);
