@@ -54,7 +54,9 @@ public class FunFamHmmer3ParserSupport extends AbstractHmmer3ParserSupport<FunFa
                 domainMatch.getCEvalue(),
                 domainMatch.getIEvalue(),
                 domainMatch.getBias(),
-                domainMatch.getAlignment()
+                domainMatch.getAlignment(),
+                0,
+                0
         );
     }
 

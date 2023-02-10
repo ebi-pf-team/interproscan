@@ -133,11 +133,12 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Double.toString(hmmer3Location.getScore()));
                             mappingFields.add(Double.toString(hmmer3Location.getEvalue()));
 
-                            String alignment = hmmer3Location.getAlignment();
-                            if (alignment == null || alignment.isEmpty())
-                                mappingFields.add("-");
-                            else
-                                mappingFields.add(alignment);
+                            if (location instanceof FunFamHmmer3Match.FunFamHmmer3Location) {
+                                FunFamHmmer3Match.FunFamHmmer3Location funFamHmmer3Location = (FunFamHmmer3Match.FunFamHmmer3Location) location;
+                                mappingFields.add(Integer.toString(funFamHmmer3Location.getHmmer3SeqStart()));
+                                mappingFields.add(Integer.toString(funFamHmmer3Location.getHmmer3SeqEnd()));
+                                mappingFields.add(funFamHmmer3Location.getAlignment());
+                            }
                         }
                         if (location instanceof Hmmer2Match.Hmmer2Location) {
                             Hmmer2Match.Hmmer2Location hmmerLocation = (Hmmer2Match.Hmmer2Location) location;
@@ -185,7 +186,9 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
 
         if (match instanceof PantherMatch) {
             seqScore = Double.toString( ((PantherMatch) match).getScore());
-        }  else if (match instanceof Hmmer3Match) {
+        } else if (match instanceof FunFamHmmer3Match) {
+            seqScore = Double.toString(((FunFamHmmer3Match) match).getScore());
+        } else if (match instanceof Hmmer3Match) {
             seqScore = Double.toString( ((Hmmer3Match) match).getScore());
         } else if (match instanceof Hmmer2Match) {
             seqScore = Double.toString(((Hmmer2Match) match).getScore());
@@ -213,6 +216,8 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
         String seqEvalue = null;
         if (match instanceof PantherMatch) {
             seqEvalue = Double.toString(((PantherMatch) match).getEvalue());
+        } else if (match instanceof FunFamHmmer3Match) {
+            seqEvalue = Double.toString(((FunFamHmmer3Match) match).getEvalue());
         } else if (match instanceof Hmmer3Match) {
             seqEvalue = Double.toString(((Hmmer3Match) match).getEvalue());
         } else if (match instanceof Hmmer2Match) {

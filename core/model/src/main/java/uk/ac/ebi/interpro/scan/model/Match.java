@@ -221,11 +221,14 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             Set<PantherMatch> pantherMatches = new LinkedHashSet<PantherMatch>();
             Set<SignalPMatch> signalPMatches = new LinkedHashSet<SignalPMatch>();
             Set<TMHMMMatch> tmhmmPMatches = new LinkedHashSet<TMHMMMatch>();
+            Set<FunFamHmmer3Match> funFamHmmer3Matches = new LinkedHashSet<>();
             for (Match m : matches) {
                 if (m instanceof RPSBlastMatch) {
                     rpsBlastMatches.add((RPSBlastMatch) m);
                 } else if (m instanceof Hmmer3MatchWithSites) {
                     hmmer3MatchesWithSites.add((Hmmer3MatchWithSites) m);
+                } else if (m instanceof FunFamHmmer3Match) {
+                    funFamHmmer3Matches.add((FunFamHmmer3Match) m);
                 } else if (m instanceof Hmmer2Match) {
                     hmmer2Matches.add((Hmmer2Match) m);
                 } else if (m instanceof Hmmer3Match) {
@@ -257,7 +260,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                 }
             }
             return new MatchesType(rpsBlastMatches, hmmer3MatchesWithSites, hmmer2Matches, hmmer3Matches, mobiDBMatches, superFamilyHmmer3Matches, fingerPrintsMatches, proDomMatches,
-                    patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches, pantherMatches, signalPMatches, tmhmmPMatches);
+                    patternScanMatches, profileScanMatches, phobiusMatches, coilsMatches, pantherMatches, signalPMatches, tmhmmPMatches, funFamHmmer3Matches);
         }
 
         /**
@@ -284,6 +287,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             matches.addAll(matchTypes.getPantherMatches());
             matches.addAll(matchTypes.getSignalPMatches());
             matches.addAll(matchTypes.getTmhmmMatches());
+            matches.addAll(matchTypes.getFunFamHmmer3Matches());
             return matches;
         }
 
@@ -340,6 +344,9 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
         @XmlElement(name = "tmhmm-match")
         private final Set<TMHMMMatch> tmhmmMatches;
 
+        @XmlElement(name = "funfamhmmer3-match")
+        private final Set<FunFamHmmer3Match> funFamHmmer3Matches;
+
 
         private MatchesType() {
             rpsBlastMatches = null;
@@ -357,6 +364,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             pantherMatches = null;
             signalPMatches = null;
             tmhmmMatches = null;
+            funFamHmmer3Matches = null;
         }
 
         public MatchesType(Set<RPSBlastMatch> rpsBlastMatches,
@@ -373,7 +381,8 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
                            Set<CoilsMatch> coilsMatches,
                            Set<PantherMatch> pantherMatches,
                            Set<SignalPMatch> signalPMatches,
-                           Set<TMHMMMatch> tmhmmMatches) {
+                           Set<TMHMMMatch> tmhmmMatches,
+                           Set<FunFamHmmer3Match> funFamHmmer3Matches) {
             this.rpsBlastMatches = rpsBlastMatches;
             this.hmmer3MatchesWithSites = hmmer3MatchesWithSites;
             this.hmmer2Matches = hmmer2Matches;
@@ -389,6 +398,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
             this.pantherMatches = pantherMatches;
             this.signalPMatches = signalPMatches;
             this.tmhmmMatches = tmhmmMatches;
+            this.funFamHmmer3Matches = funFamHmmer3Matches;
         }
 
         public Set<RPSBlastMatch> getRpsBlastMatches() {
@@ -448,6 +458,10 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
 
         public Set<TMHMMMatch> getTmhmmMatches() {
             return (tmhmmMatches == null ? Collections.<TMHMMMatch>emptySet() : tmhmmMatches);
+        }
+
+        public Set<FunFamHmmer3Match> getFunFamHmmer3Matches() {
+            return (funFamHmmer3Matches == null ? Collections.emptySet() : funFamHmmer3Matches);
         }
     }
 

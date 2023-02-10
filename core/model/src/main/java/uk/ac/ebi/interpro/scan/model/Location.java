@@ -233,6 +233,7 @@ public abstract class Location<T extends LocationFragment> implements Serializab
             Set<PantherMatch.PantherLocation> pantherLocations = new LinkedHashSet<PantherMatch.PantherLocation>();
             Set<SignalPMatch.SignalPLocation> signalPLocations = new LinkedHashSet<SignalPMatch.SignalPLocation>();
             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations = new LinkedHashSet<TMHMMMatch.TMHMMLocation>();
+            Set<FunFamHmmer3Match.FunFamHmmer3Location> funFamHmmer3Locations = new LinkedHashSet<>();
             for (Location l : locations) {
                 // Locations that extend "LocationWithSites"
                 if (l instanceof RPSBlastMatch.RPSBlastLocation) {
@@ -241,7 +242,9 @@ public abstract class Location<T extends LocationFragment> implements Serializab
                     hmmer3LocationWithSites.add((Hmmer3MatchWithSites.Hmmer3LocationWithSites) l);
                 }
                 // Locations that extend "Location"
-                else if (l instanceof Hmmer2Match.Hmmer2Location) {
+                else if (l instanceof FunFamHmmer3Match.FunFamHmmer3Location) {
+                    funFamHmmer3Locations.add((FunFamHmmer3Match.FunFamHmmer3Location) l);
+                } else if (l instanceof Hmmer2Match.Hmmer2Location) {
                     hmmer2Locations.add((Hmmer2Match.Hmmer2Location) l);
                 } else if (l instanceof Hmmer3Match.Hmmer3Location) {
                     hmmer3Locations.add((Hmmer3Match.Hmmer3Location) l);
@@ -272,7 +275,7 @@ public abstract class Location<T extends LocationFragment> implements Serializab
                 }
             }
             return new LocationsType(rpsBlastLocations, hmmer3LocationWithSites, hmmer2Locations, hmmer3Locations, mobiDBLocations, superFamilyHmmer3Locations, fingerPrintsLocations, blastProDomLocations,
-                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations);
+                    patternScanLocations, profileScanLocations, phobiusLocations, coilsLocations, pantherLocations, signalPLocations, tmhmmLocations, funFamHmmer3Locations);
         }
 
         /**
@@ -353,6 +356,9 @@ public abstract class Location<T extends LocationFragment> implements Serializab
         @XmlElement(name = "tmhmm-location")
         private final Set<TMHMMMatch.TMHMMLocation> tmhmmLocations;
 
+        @XmlElement(name = "funfamhmmer3-location")
+        private final Set<FunFamHmmer3Match.FunFamHmmer3Location> funFamHmmer3Locations;
+
         private LocationsType() {
             rpsBlastLocations = null;
             hmmer3LocationWithSites = null;
@@ -369,6 +375,7 @@ public abstract class Location<T extends LocationFragment> implements Serializab
             pantherLocations = null;
             signalPLocations = null;
             tmhmmLocations = null;
+            funFamHmmer3Locations = null;
         }
 
         public LocationsType(Set<RPSBlastMatch.RPSBlastLocation> rpsBlastLocations,
@@ -385,7 +392,8 @@ public abstract class Location<T extends LocationFragment> implements Serializab
                              Set<CoilsMatch.CoilsLocation> coilsLocations,
                              Set<PantherMatch.PantherLocation> pantherLocations,
                              Set<SignalPMatch.SignalPLocation> signalPLocations,
-                             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations) {
+                             Set<TMHMMMatch.TMHMMLocation> tmhmmLocations,
+                             Set<FunFamHmmer3Match.FunFamHmmer3Location> funFamHmmer3Locations) {
             this.rpsBlastLocations = rpsBlastLocations;
             this.hmmer3LocationWithSites = hmmer3LocationWithSites;
             this.hmmer2Locations = hmmer2Locations;
@@ -401,6 +409,7 @@ public abstract class Location<T extends LocationFragment> implements Serializab
             this.pantherLocations = pantherLocations;
             this.signalPLocations = signalPLocations;
             this.tmhmmLocations = tmhmmLocations;
+            this.funFamHmmer3Locations = funFamHmmer3Locations;
         }
 
         public Set<RPSBlastMatch.RPSBlastLocation> getRpsBlastLocations() {
@@ -460,6 +469,10 @@ public abstract class Location<T extends LocationFragment> implements Serializab
 
         public Set<TMHMMMatch.TMHMMLocation> getTMHMMLocations() {
             return (tmhmmLocations == null ? Collections.<TMHMMMatch.TMHMMLocation>emptySet() : tmhmmLocations);
+        }
+
+        public Set<FunFamHmmer3Match.FunFamHmmer3Location> getFunFamHmmer3Locations() {
+            return (funFamHmmer3Locations == null ? Collections.emptySet() : funFamHmmer3Locations);
         }
     }
 

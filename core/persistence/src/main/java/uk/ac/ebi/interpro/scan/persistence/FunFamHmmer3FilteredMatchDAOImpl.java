@@ -21,7 +21,7 @@ public class FunFamHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<Fun
             String signatureLibraryRelease = null;
 
             Collection<FunFamHmmer3RawMatch> rawMatches = rawProtein.getMatches();
-            Map<UUID, Hmmer3Match> splitGroups = new HashMap<>();
+            Map<UUID, FunFamHmmer3Match> splitGroups = new HashMap<>();
 
             for (FunFamHmmer3RawMatch m : rawMatches) {
                 if (! isLocationWithinRange(protein, m)){
@@ -44,7 +44,7 @@ public class FunFamHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<Fun
                 }
 
                 UUID groupId = m.getSplitGroup();
-                Hmmer3Match.Hmmer3Location hmmer3Location = new Hmmer3Match.Hmmer3Location(
+                FunFamHmmer3Match.FunFamHmmer3Location funFamHmmer3Location = new FunFamHmmer3Match.FunFamHmmer3Location(
                         m.getLocationStart(),
                         m.getLocationEnd(),
                         m.getLocationScore(),
@@ -57,23 +57,25 @@ public class FunFamHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<Fun
                         m.getEnvelopeEnd(),
                         true,
                         DCStatus.parseSymbol(m.getLocFragmentDCStatus()),
-                        m.getAlignment()
+                        m.getAlignment(),
+                        m.getResolvedLocationStart(),
+                        m.getResolvedLocationEnd()
                 );
                 Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment hmmer3LocationFragment = new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
-                        m.getLocationStart(),
-                        m.getLocationEnd(),
+                        m.getResolvedLocationStart(),
+                        m.getResolvedLocationEnd(),
                         DCStatus.parseSymbol(m.getLocFragmentDCStatus())
                 );
 
-                Hmmer3Match match;
+                FunFamHmmer3Match match;
 
                 if (groupId != null) {
                     // This is a discontinuous location
 
                     match = splitGroups.get(groupId);
                     if (match != null) {
-                        Set<Hmmer3Match.Hmmer3Location> locations = match.getLocations();
-                        Hmmer3Match.Hmmer3Location location = locations.iterator().next();
+                        Set<FunFamHmmer3Match.FunFamHmmer3Location> locations = match.getLocations();
+                        FunFamHmmer3Match.FunFamHmmer3Location location = locations.iterator().next();
                         for (Object objFragment: location.getLocationFragments()){
                             LocationFragment cmprLocationFragment = (LocationFragment) objFragment;
                             hmmer3LocationFragment.updateDCStatus(cmprLocationFragment);
@@ -82,15 +84,15 @@ public class FunFamHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<Fun
                         location.addLocationFragment(hmmer3LocationFragment);
 
                     } else {
-                        match = new Hmmer3Match(signature, m.getModelId(), m.getScore(), m.getEvalue(), null);
-                        match.addLocation(hmmer3Location);
+                        match = new FunFamHmmer3Match(signature, m.getModelId(), m.getScore(), m.getEvalue(), null);
+                        match.addLocation(funFamHmmer3Location);
                         splitGroups.put(groupId, match);
                     }
                 } else {
                     // This is a normal continuous location
                     groupId = UUID.randomUUID();
-                    match = new Hmmer3Match(signature, m.getModelId(), m.getScore(), m.getEvalue(), null);
-                    match.addLocation(hmmer3Location);
+                    match = new FunFamHmmer3Match(signature, m.getModelId(), m.getScore(), m.getEvalue(), null);
+                    match.addLocation(funFamHmmer3Location);
                     splitGroups.put(groupId, match);
                 }
 
@@ -99,7 +101,7 @@ public class FunFamHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<Fun
 
             if (splitGroups.size() > 0) {
                 final String dbKey = Long.toString(protein.getId()) + signatureLibrary.getName();
-                Set<Hmmer3Match> matches = new HashSet<>(splitGroups.values());
+                Set<FunFamHmmer3Match> matches = new HashSet<>(splitGroups.values());
                 this.matchDAO.persist(dbKey, matches);
             }
         }
