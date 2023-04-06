@@ -15,7 +15,7 @@
         <property name="signatureLibraryReleaseDAO" ref="signatureLibraryReleaseDAO"/>
         <property name="parsers">
             <list>
-                <!--                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="ANTIFAM"/>
                     <property name="releaseVersionNumber" value="${antifam.signature.library.release}"/>
                     <property name="modelFiles" value="file:${antifam.hmm.path}"/>
@@ -64,7 +64,7 @@
                     <property name="releaseVersionNumber" value="${mobidb.signature.library.release}"/>
                     <property name="analysisJobId" value="jobMobiDBLite"/>
                     <property name="modelFiles" value="file:/dev/null"/>
-                </bean>-->
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
                     <property name="signatureLibrary" value="NCBIFAM"/>
                     <property name="releaseVersionNumber" value="${ncbifam.signature.library.release}"/>
@@ -72,7 +72,7 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobNCBIFAM"/>
                 </bean>
-                <!--<bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
+                <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
                     <property name="analysisJobId" value="jobPanther"/>
                     <property name="releaseVersionNumber" value="${panther.signature.library.release}"/>
@@ -179,7 +179,7 @@
                     <property name="releaseVersionNumber" value="${tmhmm.signature.library.release}"/>
                     <property name="analysisJobId" value="jobTMHMM"/>
                     <property name="modelFiles" value="file:/dev/null"/>
-                </bean>-->
+                </bean>
             </list>
         </property>
         <property name="jdbcEntryDAO" ref="jdbcEntryDAO"/>
