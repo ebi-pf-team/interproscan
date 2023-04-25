@@ -33,6 +33,7 @@ public enum SerialGroup {
     PARSE_FUNFAM,
     PARSE_GENE3D,
     PARSE_HAMAP,
+    PARSE_NCBIFAM,
     PARSE_MOBIDB,
     PARSE_PANTHER,
     PARSE_PFAM_A,

@@ -92,35 +92,33 @@
 
         <!-- Raw Matches -->
         <class>uk.ac.ebi.interpro.scan.model.raw.RawMatch</class>
-
-
         <class>uk.ac.ebi.interpro.scan.model.raw.HmmerRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer2RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Hmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.MobiDBRawMatch</class>
-
         <class>uk.ac.ebi.interpro.scan.model.raw.RPSBlastRawMatch</class>
 
         <class>uk.ac.ebi.interpro.scan.model.raw.AntiFamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.FunFamHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.Gene3dHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.MobiDBRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.NCBIfamRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.PrintsRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.ProDomRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch</class>
         <class>uk.ac.ebi.interpro.scan.model.raw.ProSiteProfileRawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PIRSRHmmer3RawMatch</class>
-        <class>uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SFLDHmmer3RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.SmartRawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer2RawMatch</class>
+        <class>uk.ac.ebi.interpro.scan.model.raw.TigrFamHmmer3RawMatch</class>
 
         <!--Raw Sites-->
         <class>uk.ac.ebi.interpro.scan.model.raw.CDDRawSite</class>

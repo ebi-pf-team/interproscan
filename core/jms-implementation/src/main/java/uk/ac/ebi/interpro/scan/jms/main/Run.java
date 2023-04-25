@@ -1133,7 +1133,7 @@ public class Run extends AbstractI5Runner {
         deprecatedNames.put("SIGNALP-EUK", SignatureLibrary.SIGNALP_EUK.getName());
         deprecatedNames.put("SIGNALP-GRAM_POSITIVE", SignatureLibrary.SIGNALP_GRAM_POSITIVE.getName());
         deprecatedNames.put("SIGNALP-GRAM_NEGATIVE", SignatureLibrary.SIGNALP_GRAM_NEGATIVE.getName());
-
+        deprecatedNames.put("TIGRFAM", SignatureLibrary.NCBIFAM.getName());
 
         // List of analyses parsed from command line, exactly as the user entered them
         String[] parsedAnalyses = null;
