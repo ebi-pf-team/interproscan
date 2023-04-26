@@ -24,7 +24,7 @@
     </repositories>
 
     <properties>
-	<jetty.version>11.0.10</jetty.version>
+	<jetty.version>11.0.14</jetty.version>
         <i5.version>${project.version}</i5.version>
     </properties>
 
