@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.FileOutputFormat;
 import uk.ac.ebi.interpro.scan.io.match.writer.ProteinMatchesXMLJAXBFragmentsResultWriter;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -37,7 +36,6 @@ public class PrepareForOutputStep extends Step {
     private EntryKVDAO entryKVDAO;
 
     private String entryKVPath;
-    private String pantherDataPath;
 
     private NucleotideSequenceDAO nucleotideSequenceDAO;
 
@@ -79,14 +77,6 @@ public class PrepareForOutputStep extends Step {
 
     public void setEntryKVPath(String entryKVPath) {
         this.entryKVPath = entryKVPath;
-    }
-
-    public String getPantherDataPath() {
-        return pantherDataPath;
-    }
-
-    public void setPantherDataPath(String pantherDataPath) {
-        this.pantherDataPath = pantherDataPath;
     }
 
     @Override
@@ -156,8 +146,9 @@ public class PrepareForOutputStep extends Step {
                 getEntry2PathwayMap();
             }
 
+            // Always need to load map of GO terms because we need it for PANTHER GO terms
+            getGoTermsMap();
             if (mapToGO) {
-                getGoTermsMap();
                 getEntry2GoTermsMap();
             }
 
@@ -436,32 +427,24 @@ public class PrepareForOutputStep extends Step {
                     for (Match match : matches) {
                         if (match instanceof PantherMatch) {
                             PantherMatch panterMatch = (PantherMatch) match;
-                            String signatureAc = panterMatch.getSignature().getAccession();
-                            File file = new File(this.getPantherDataPath() + "/" + signatureAc + ".json");
 
-                            if (panterMatch.getAnnotationsNodeId() != null && file.isFile()) {
-                                ObjectMapper mapper = new ObjectMapper();
-                                Map<String, String[]> familyAnnotations = mapper.readValue(file, new TypeReference<>() {});
-                                String[] nodeAnnotations = familyAnnotations.get(panterMatch.getAnnotationsNodeId());
+                            Set<GoXref> goXrefs = new HashSet<>();
 
-                                if (nodeAnnotations != null && nodeAnnotations.length == 4) {
-                                    String goTerms = nodeAnnotations[1];
-                                    String proteinClass = nodeAnnotations[2];
-                                    String graftPoint = nodeAnnotations[3];
+                            panterMatch.getGoXrefs().forEach(
+                                    goXref -> {
+                                        String goId = goXref.getIdentifier();
+                                        List<String> goLine = gotermsMap.get(goId);
 
-                                    Set<GoXref> goXrefs = new HashSet<>();
-                                    if (goTerms != null) {
-                                        for (String goTerm: goTerms.split(",")) {
-                                            goXrefs.add(new GoXref(goTerm, null, null));
+                                        if (goLine != null) {
+                                            String goName = goLine.get(0);
+                                            String goCategoryCode = goLine.get(1);
+                                            GoCategory category = GoCategory.parseNameCode(goCategoryCode);
+                                            goXrefs.add(new GoXref(goId, goName, category));
                                         }
                                     }
+                            );
 
-                                    panterMatch.setProteinClass(proteinClass);
-                                    panterMatch.setGraftPoint(graftPoint);
-                                    panterMatch.setGoXrefs(goXrefs);
-                                }
-                            }
-
+                            panterMatch.setGoXrefs(goXrefs);
                         }
 
                         Entry simpleEntry = match.getSignature().getEntry();
@@ -786,13 +769,12 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, List<String>> jsonMap = new HashMap();
-            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
-            });
+            Map<String, List<String>> jsonMap;
+            jsonMap = mapper.readValue(is, new TypeReference<>() {});
             pathwayMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : jsonMap.keySet()) {
-                List<String> pathwayLine = (List<String>) jsonMap.get(key);
+                List<String> pathwayLine = jsonMap.get(key);
                 Utilities.verboseLog(30," pathwayLine: " + key +  " -" + pathwayLine);
                 break;
             }
@@ -811,13 +793,12 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, List<String>> jsonMap = new HashMap();
-            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
-            });
+            Map<String, List<String>> jsonMap;
+            jsonMap = mapper.readValue(is, new TypeReference<>() {});
             entry2PathwayMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : jsonMap.keySet()) {
-                List<String> pathwayLine = (List<String>) jsonMap.get(key);
+                List<String> pathwayLine = jsonMap.get(key);
                 Utilities.verboseLog(30," entry2pathway: " + key + " = " + pathwayLine);
                 break;
             }
@@ -836,13 +817,12 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, List<String>> jsonMap = new HashMap();
-            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
-            });
+            Map<String, List<String>> jsonMap;
+            jsonMap = mapper.readValue(is, new TypeReference<>() {});
             gotermsMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : gotermsMap.keySet()) {
-                List<String> gotermLine = (List<String>) gotermsMap.get(key);
+                List<String> gotermLine = gotermsMap.get(key);
                 Utilities.verboseLog(30," gotermLine: " + key +  " -" + gotermLine);
                 break;
             }
@@ -861,13 +841,12 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, List<String>> jsonMap = new HashMap();
-            jsonMap = mapper.readValue(is, new TypeReference<Map<String, List<String>>>() {
-            });
+            Map<String, List<String>> jsonMap;
+            jsonMap = mapper.readValue(is, new TypeReference<>() {});
             entry2GoTermsMap = new ConcurrentHashMap<> (jsonMap);
 
             for (String key : entry2GoTermsMap.keySet()) {
-                List<String> gotermLine = (List<String>) entry2GoTermsMap.get(key);
+                List<String> gotermLine = entry2GoTermsMap.get(key);
                 Utilities.verboseLog(30," entry2GoTermsMap: " + key + " = " + gotermLine);
                 break;
             }
@@ -894,18 +873,16 @@ public class PrepareForOutputStep extends Step {
                 Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
                 return result;
             }
-            List<String> goIDs = (ArrayList<String>) entry2GoTermsMap.get(entryAc);
+            List<String> goIDs = entry2GoTermsMap.get(entryAc);
             Utilities.verboseLog(30, "Go-terms list for  " + entryAc + ": " + goIDs.size());
             for (String goId: goIDs) {
-                //i2g.entry_ac, g.go_id, g.name, g.category
-                List<String> goLine = (List<String>) gotermsMap.get(goId);
-                String goKey = goLine.get(1);
-                String goName = goLine.get(2);
-                String goCategoryCode = goLine.get(3);
-                GoCategory category = GoCategory.parseNameCode(goCategoryCode);
-                GoXref goXref =  new GoXref(goId, goName, category);
-
-                result.add(goXref);
+                List<String> goLine = gotermsMap.get(goId);
+                if (goLine != null) {
+                    String goName = goLine.get(0);
+                    String goCategoryCode = goLine.get(1);
+                    GoCategory category = GoCategory.parseNameCode(goCategoryCode);
+                    result.add(new GoXref(goId, goName, category));
+                }
             }
         } catch (Exception e) {
             LOGGER.warn("Could not perform database query. It might be that the JDBC connection could not build " +
@@ -963,15 +940,13 @@ public class PrepareForOutputStep extends Step {
                 Utilities.verboseLog(30, "pathway list for  " + entryAc + ": 0" );
                 return result;
             }
-            List<String> pathwayIDs = (ArrayList<String>) entry2PathwayMap.get(entryAc);
+            List<String> pathwayIDs = entry2PathwayMap.get(entryAc);
             Utilities.verboseLog(30, "pathway list for  " + entryAc + ": " + pathwayIDs.size());
             for (String pathwayId: pathwayIDs) {
-                List<String> pathwayLine = (List<String>) pathwayMap.get(pathwayId);
-                String pathwayKey = pathwayLine.get(2);
-
-                String dbcode = pathwayLine.get(1);
+                List<String> pathwayLine = pathwayMap.get(pathwayId);
+                String dbcode = pathwayLine.get(0);
                 String dbName = decodeDbCode(dbcode);
-                String desc = pathwayLine.get(3);
+                String desc = pathwayLine.get(1);
 
                 PathwayXref pxref = new PathwayXref(pathwayId, desc, dbName);
                 result.add(pxref);
