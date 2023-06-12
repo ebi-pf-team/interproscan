@@ -139,6 +139,8 @@ public class PrepareForOutputStep extends Step {
         final Map<String, String> parameters = stepInstance.getParameters();
         final boolean mapToGO = Boolean.TRUE.toString().equals(parameters.get("MAP_TO_GO"));
         final boolean mapToPathway = Boolean.TRUE.toString().equals(parameters.get("MAP_TO_PATHWAY"));
+        // Note: MAP_TO_INTERPRO_ENTRIES is always true (iprlookup hard-coded to true in Run.java)
+        final boolean mapToInterPro = mapToGO || mapToPathway || Boolean.TRUE.toString().equals(parameters.get("MAP_TO_INTERPRO_ENTRIES"));
 
         try {
             if (mapToPathway) {
@@ -154,7 +156,7 @@ public class PrepareForOutputStep extends Step {
 
             //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
-            simulateMarshalling(stepInstance, "p", temporaryFileDirectory);
+            simulateMarshalling(stepInstance, "p", temporaryFileDirectory, mapToInterPro);
             Utilities.verboseLog(1100, "Pre-marshall the nucleotide sequences ...");
 
             final String sequenceType = parameters.get(SEQUENCE_TYPE);
@@ -310,7 +312,8 @@ public class PrepareForOutputStep extends Step {
     }
 
 
-    private void simulateMarshalling(StepInstance stepInstance, String sequenceType, String temporaryFileDirectory) throws IOException {
+    private void simulateMarshalling(StepInstance stepInstance, String sequenceType, String temporaryFileDirectory,
+                                     boolean mapToInterPro) throws IOException {
         if (!sequenceType.equalsIgnoreCase("p")) {
             //maybe we should simulate for all types
             //return;
@@ -448,15 +451,19 @@ public class PrepareForOutputStep extends Step {
                         }
 
                         Entry simpleEntry = match.getSignature().getEntry();
-                        if ( simpleEntry != null) {
-                            String entryAc = simpleEntry.getAccession();
+                        if (simpleEntry != null) {
+                            if (mapToInterPro) {
+                                String entryAc = simpleEntry.getAccession();
 
-                            try {
-                                Entry entry =  updateEntryXrefs(simpleEntry);
-                                match.getSignature().setEntry(entry);
-                            } catch (Exception e) {
-                                LOGGER.warn("Could get the entry in the kvstore " + entryAc);
-                                e.printStackTrace();
+                                try {
+                                    Entry entry =  updateEntryXrefs(simpleEntry);
+                                    match.getSignature().setEntry(entry);
+                                } catch (Exception e) {
+                                    LOGGER.warn("Could get the entry in the kvstore " + entryAc);
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                match.getSignature().setEntry(null);
                             }
                         }
 
