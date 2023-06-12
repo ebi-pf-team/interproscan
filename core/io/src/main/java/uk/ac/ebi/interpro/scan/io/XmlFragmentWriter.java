@@ -47,15 +47,6 @@ public class XmlFragmentWriter {
     }
 
     public void header(String interProScanVersion) throws XMLStreamException {
-        // writer.setDefaultNamespace("http://www.ebi.ac.uk");
-        /*
-        writer.writeStartDocument();
-        writer.writeStartElement("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", "protein-matches");
-        writer.writeAttribute("interProScanVersion", interProScanVersion);
-        writer.writeNamespace("", "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
-
-        */
-        //writer.writeStartElement("protein-matches");
 
     }
 

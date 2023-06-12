@@ -50,15 +50,9 @@ public class ProteinMatchesXMLJAXB2FragmentsResultWriter implements AutoCloseabl
 
         this.dmyFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        //
         try {
             bos = new BufferedOutputStream(Files.newOutputStream(path));
-
-//            this.writer = XMLOutputFactory.newFactory()
-//                    .createXMLStreamWriter(bos);
             writer = new StreamResult(bos);
-//                    .createXMLStreamWriter(System.out);
-            //writer.setDefaultNamespace("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -79,15 +73,6 @@ public class ProteinMatchesXMLJAXB2FragmentsResultWriter implements AutoCloseabl
     }
 
     public void header(String interProScanVersion) throws  XMLStreamException {
-       // writer.setDefaultNamespace("http://www.ebi.ac.uk");
-        /*
-        writer.writeStartDocument();
-        writer.writeStartElement("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", "protein-matches");
-        writer.writeAttribute("interProScanVersion", interProScanVersion);
-        writer.writeNamespace("", "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
-        */
-        //writer.writeStartElement("protein-matches");
-
     }
 
     public void write(final OutputListElement protein,  final String sequenceType, final boolean isSlimOutput) throws IOException, JAXBException {
@@ -100,15 +85,9 @@ public class ProteinMatchesXMLJAXB2FragmentsResultWriter implements AutoCloseabl
 
     }
     public void newLine() throws IOException{
-        //writer.writeComment("");
     }
 
     public void close() throws XMLStreamException, IOException {
-        /*
-        writer.writeEndDocument();
-        writer.close();
-        */
-
         System.out.println("");
     }
     /**
@@ -132,33 +111,5 @@ public class ProteinMatchesXMLJAXB2FragmentsResultWriter implements AutoCloseabl
 
 
     public void setMarshaller(Jaxb2Marshaller marshaller) {
-        //this.marshaller = marshaller;
     }
 }
-
-
-/*
-public class JMain {
-
-    public static void main(String[] args) throws Exception {
-
-
-        writer.writeStartDocument();
-        writer.writeStartElement("http://www.java2s.com", "Import");
-        writer.writeNamespace("", "http://www.java2s.com");
-        writer.writeStartElement("WorkSets");
-
-        m.marshal(new WorkSet(), writer);
-
-        writer.writeEndDocument();
-        writer.close();
-        System.out.println("");
-    }
-
-    @XmlRootElement(name = "WorkSet", namespace = "http://www.java2s.com")
-    public static class WorkSet {
-
-    }
-}
-
-*/
