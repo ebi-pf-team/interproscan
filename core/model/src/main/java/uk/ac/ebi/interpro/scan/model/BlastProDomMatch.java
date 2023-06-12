@@ -61,7 +61,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
      */
     @Entity
     @Table(name = "blast_prodom_location")
-    @XmlType(name = "BlastProDomLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "BlastProDomLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class BlastProDomLocation extends Location {
 
         @Column(nullable = false)
@@ -133,7 +133,7 @@ public class BlastProDomMatch extends Match<BlastProDomMatch.BlastProDomLocation
          */
         @Entity
         @Table(name = "blast_prodom_location_fragment")
-        @XmlType(name = "ProDomLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "ProDomLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class BlastProDomLocationFragment extends LocationFragment {
 
             protected BlastProDomLocationFragment() {

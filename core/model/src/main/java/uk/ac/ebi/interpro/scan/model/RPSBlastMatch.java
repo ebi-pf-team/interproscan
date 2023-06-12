@@ -70,8 +70,8 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
      */
     @Entity
     @Table(name = "rpsblast_location")
-    @XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
-    //@XmlType(name = "RPSBlastLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = { "start", "end", "score", "evalue"})
+    @XmlType(name = "RPSBlastLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
+    //@XmlType(name = "RPSBlastLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas", propOrder = { "start", "end", "score", "evalue"})
     public static class RPSBlastLocation extends LocationWithSites<RPSBlastLocation.RPSBlastSite, LocationFragment> {
 
         @Column(nullable = false, name = "evalue")
@@ -138,7 +138,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
          */
         @Entity
         @Table(name = "rpsblast_location_fragment")
-        @XmlType(name = "RPSBlastLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "RPSBlastLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class RPSBlastLocationFragment extends LocationFragment {
 
             protected RPSBlastLocationFragment() {
@@ -174,7 +174,7 @@ public class RPSBlastMatch extends Match<RPSBlastMatch.RPSBlastLocation> {
 
         @Entity
         @Table(name = "rpsblast_site")
-        @XmlType(name = "RPSBlastSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "RPSBlastSiteType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class RPSBlastSite extends Site {
 
             protected RPSBlastSite() {

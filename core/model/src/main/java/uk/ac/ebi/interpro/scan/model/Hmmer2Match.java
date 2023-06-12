@@ -79,7 +79,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
      */
     @Entity
     @Table(name = "hmmer2_location")
-    @XmlType(name = "Hmmer2LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "Hmmer2LocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class Hmmer2Location extends HmmerLocation<Hmmer2Location.Hmmer2LocationFragment> {
 
         /**
@@ -127,7 +127,7 @@ public class Hmmer2Match extends HmmerMatch<Hmmer2Match.Hmmer2Location> {
          */
         @Entity
         @Table(name = "hmmer2_location_fragment")
-        @XmlType(name = "Hmmer2LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "Hmmer2LocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class Hmmer2LocationFragment extends LocationFragment {
 
             protected Hmmer2LocationFragment() {

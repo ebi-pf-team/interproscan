@@ -55,7 +55,7 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
      */
     @Entity
     @Table(name = "signalp_location")
-    @XmlType(name = "SignalPLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "SignalPLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class SignalPLocation extends Location {
 
         @Column
@@ -115,7 +115,7 @@ public class SignalPMatch extends Match<SignalPMatch.SignalPLocation> {
          */
         @Entity
         @Table(name = "signalp_location_fragment")
-        @XmlType(name = "SignalPLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "SignalPLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class SignalPLocationFragment extends LocationFragment {
 
             protected SignalPLocationFragment() {

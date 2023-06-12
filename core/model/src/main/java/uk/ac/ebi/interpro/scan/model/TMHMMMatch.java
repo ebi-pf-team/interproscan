@@ -76,7 +76,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
      */
     @Entity
     @Table(name = "tmhmm_location")
-    @XmlType(name = "TMHMMLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "TMHMMLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class TMHMMLocation extends Location {
 
         @Column(nullable = true)
@@ -187,7 +187,7 @@ public class TMHMMMatch extends Match<TMHMMMatch.TMHMMLocation> {
          */
         @Entity
         @Table(name = "tmhmm_location_fragment")
-        @XmlType(name = "TMHMMLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "TMHMMLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class TMHMMLocationFragment extends LocationFragment {
 
             protected TMHMMLocationFragment() {

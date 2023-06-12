@@ -48,7 +48,7 @@
         <constructor-arg>
             <value>
             <![CDATA[
-                <protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+                <protein xmlns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas">
                     <sequence md5="e8872c7a0261b9e88e6ff47eb34e4162">MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGSRNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARKHVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGIAARDGVHCEFTVVMGTLAKAFGMTGGYVAGPAVLMDAVRARARSFVFTTALPPAVAAGALAAVRHLRGSDEERRRPAENARLTHGLLRERDIPVLSDRSPIVPVLVGEDRMCKRMSALPLERHGAYVQAIDAPSVPAGEEILRIAPSAVHETEEIHRFVDALDGIWSELGAARRV</sequence>
                     <matches/>
                 </protein>
@@ -59,7 +59,7 @@
         <!--<constructor-arg>-->
             <!--<value>-->
             <!--<![CDATA[-->
-                <!--<protein md5="e8872c7a0261b9e88e6ff47eb34e4162" xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">-->
+                <!--<protein md5="e8872c7a0261b9e88e6ff47eb34e4162" xmlns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas">-->
                     <!--<sequence>MDFFVRLARETGDRKREFLELGRKAGRFPAASTSNGEISIWCSNDYLGMGQHPDVLDAMKRSVDEYGGGSGGS-->
         <!--RNTGGTNHFHVALEREPAEPHGKEDAVLFTSGYSANEGSLSVLAGAVDDCQVFSDSANHASIIDGLRHSGARK-->
         <!--HVFRHKDGRHLEELLAAADRDKPKFIALESVHSMRGDIALLAEIAGLAKRYGAVTFLDEVHAVGMYGPGGAGI-->

@@ -274,7 +274,7 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
     /**
      * Helper class for LocationFragmentAdapter
      */
-    @XmlType(name = "locationFragmentsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "locationFragmentsType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class LocationFragmentsType {
 

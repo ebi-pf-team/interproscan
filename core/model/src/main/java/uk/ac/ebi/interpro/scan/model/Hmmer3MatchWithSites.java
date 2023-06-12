@@ -96,7 +96,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
      */
     @Entity
     @Table(name = "hmmer3_location_with_sites")
-    @XmlType(name = "Hmmer3LocationWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "Hmmer3LocationWithSitesType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class Hmmer3LocationWithSites extends HmmerLocationWithSites<Hmmer3LocationWithSites.Hmmer3LocationWithSitesFragment> {
 
         @Column(name = "envelope_start", nullable = false)
@@ -177,7 +177,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
          */
         @Entity
         @Table(name = "hmmer3_locn_frag_with_sites")
-        @XmlType(name = "Hmmer3LocationFragmentWithSitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "Hmmer3LocationFragmentWithSitesType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class Hmmer3LocationWithSitesFragment extends LocationFragment {
 
             protected Hmmer3LocationWithSitesFragment() {
@@ -212,7 +212,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
 
         @Entity
         @Table(name = "hmmer3_site")
-        @XmlType(name = "Hmmer3SiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "Hmmer3SiteType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class Hmmer3Site extends HmmerSite {
 
 

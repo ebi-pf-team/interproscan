@@ -61,7 +61,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
      */
     @Entity
     @Table(name = "pattern_scan_location")
-    @XmlType(name = "PatternScanLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "PatternScanLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class PatternScanLocation extends Location {
 
         @Enumerated(EnumType.ORDINAL)   // Using ordinal to keep the database size down.
@@ -127,7 +127,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
          * @author Antony Quinn
          * @author Phil Jones
          */
-        @XmlType(name = "LevelType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "LevelType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
         public enum Level {
 
@@ -217,7 +217,7 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
          */
         @Entity
         @Table(name = "pattern_scan_location_fragment")
-        @XmlType(name = "PatternScanLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "PatternScanLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class PatternScanLocationFragment extends LocationFragment {
 
             protected PatternScanLocationFragment() {

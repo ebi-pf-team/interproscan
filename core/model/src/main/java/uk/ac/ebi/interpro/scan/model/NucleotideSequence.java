@@ -218,7 +218,7 @@ public class NucleotideSequence implements OutputListElement, Serializable {
      * the setSequenceObject method retrieves the sequence and MD5 from this object
      * and sets them on the Protein object directly.
      */
-    @XmlType(name = "NucleotideSequenceType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "NucleotideSequenceType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private static final class Sequence {
 

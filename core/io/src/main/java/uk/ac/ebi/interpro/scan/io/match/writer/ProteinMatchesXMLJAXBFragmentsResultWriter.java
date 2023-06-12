@@ -76,7 +76,7 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
 
 //            writer = new StreamResult(bos);
 //                    .createXMLStreamWriter(System.out);
-            writer.setDefaultNamespace("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
+            writer.setDefaultNamespace("https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas");
         }catch (IOException e){
             e.printStackTrace();
         }finally {
@@ -108,9 +108,9 @@ public class ProteinMatchesXMLJAXBFragmentsResultWriter implements AutoCloseable
        // writer.setDefaultNamespace("http://www.ebi.ac.uk");
         writer.writeStartDocument();
         //bufferedWriter.write("\n");
-        writer.writeStartElement("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", localname);
+        writer.writeStartElement("https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas", localname);
         writer.writeAttribute("interproscan-version", interProScanVersion);
-        writer.writeNamespace("", "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
+        writer.writeNamespace("", "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas");
         //writer.writeStartElement("protein-matches");
 
     }

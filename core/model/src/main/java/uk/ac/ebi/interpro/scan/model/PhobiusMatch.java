@@ -67,7 +67,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
      */
     @Entity
     @Table(name = "phobius_location")
-    @XmlType(name = "PhobiusLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "PhobiusLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class PhobiusLocation extends Location {
 
         protected PhobiusLocation() {
@@ -104,7 +104,7 @@ public class PhobiusMatch extends Match<PhobiusMatch.PhobiusLocation> {
          */
         @Entity
         @Table(name = "phobius_location_fragment")
-        @XmlType(name = "PhobiusLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "PhobiusLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class PhobiusLocationFragment extends LocationFragment {
 
             protected PhobiusLocationFragment() {

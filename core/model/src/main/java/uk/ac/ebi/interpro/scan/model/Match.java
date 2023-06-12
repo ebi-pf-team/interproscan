@@ -296,7 +296,7 @@ public abstract class Match<T extends Location> implements Serializable, Cloneab
     /**
      * Helper class for MatchAdapter
      */
-    @XmlType(name = "matchesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "matchesType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class MatchesType {
         @XmlElement(name = "rpsblast-match")

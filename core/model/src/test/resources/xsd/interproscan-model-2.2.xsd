@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema elementFormDefault="qualified" version="2.2" targetNamespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" xmlns:tns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema elementFormDefault="qualified" version="2.2" targetNamespace="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" xmlns:tns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="entry" type="tns:EntryType"/>
 

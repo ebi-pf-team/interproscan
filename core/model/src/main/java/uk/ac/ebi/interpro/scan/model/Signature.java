@@ -552,7 +552,7 @@ public class Signature implements Serializable {
     /**
      * Helper class for ModelAdapter
      */
-    @XmlType(name = "modelsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "modelsType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class ModelsType {
 

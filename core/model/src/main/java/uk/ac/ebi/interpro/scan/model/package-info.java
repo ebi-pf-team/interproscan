@@ -23,7 +23,7 @@
  * @since   1.0
  */
 
-@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 @XmlJavaTypeAdapter(value = DateAdapter.class, type = Date.class)
 package uk.ac.ebi.interpro.scan.model;

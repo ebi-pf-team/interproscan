@@ -65,7 +65,7 @@ public class ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter implement
                     .createXMLStreamWriter(bufferedWriter);
 
             this.streamResult = new StreamResult(System.out);
-            writer.setDefaultNamespace("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
+            writer.setDefaultNamespace("https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas");
 
 
 
@@ -89,7 +89,7 @@ public class ProteinMatchesWithNucleotidesXMLJAXBFragmentsResultWriter implement
         writer.writeStartDocument();
         writer.writeStartElement("nucleotide-sequence-matches");
         writer.writeAttribute("interProScanVersion", interProScanVersion);
-        writer.writeDefaultNamespace("http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5");
+        writer.writeDefaultNamespace("https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas");
     }
 
     public void write(final OutputListElement protein,  final String sequenceType, final boolean isSlimOutput) throws IOException, JAXBException {

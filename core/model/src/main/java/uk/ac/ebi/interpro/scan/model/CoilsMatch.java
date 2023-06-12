@@ -61,7 +61,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
      */
     @Entity
     @Table(name = "coils_location")
-    @XmlType(name = "CoilsLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "CoilsLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class CoilsLocation extends Location {
 
         protected CoilsLocation() {
@@ -99,7 +99,7 @@ public class CoilsMatch extends Match<CoilsMatch.CoilsLocation> {
          */
         @Entity
         @Table(name = "coils_location_fragment")
-        @XmlType(name = "CoilsLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "CoilsLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class CoilsLocationFragment extends LocationFragment {
 
             protected CoilsLocationFragment() {

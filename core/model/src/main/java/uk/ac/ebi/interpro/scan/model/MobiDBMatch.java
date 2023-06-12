@@ -46,7 +46,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
      */
     @Entity
     @Table(name = "mobidb_location")
-    @XmlType(name = "MobiDBLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "MobiDBLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class MobiDBLocation extends Location {
 
         String sequenceFeature;
@@ -104,7 +104,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
          */
         @Entity
         @Table(name = "mobidb_location_fragment")
-        @XmlType(name = "MobiDBLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "MobiDBLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class MobiDBLocationFragment extends LocationFragment {
 
             protected MobiDBLocationFragment() {

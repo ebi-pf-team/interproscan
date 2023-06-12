@@ -66,7 +66,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
      */
     @Entity
     @Table(name = "profile_scan_location")
-    @XmlType(name = "ProfileScanLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "ProfileScanLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @JsonIgnoreProperties({"id", "cigarAlignment"}) // cigarAlignment is not output i the json
     public static class ProfileScanLocation extends Location {
 
@@ -159,7 +159,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
          */
         @Entity
         @Table(name = "profile_scan_location_fragment")
-        @XmlType(name = "ProfileScanLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "ProfileScanLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class ProfileScanLocationFragment extends LocationFragment {
 
             protected ProfileScanLocationFragment() {
