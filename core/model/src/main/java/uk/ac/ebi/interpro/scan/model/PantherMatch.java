@@ -64,7 +64,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     private String graftPoint;
 
     @OneToMany()
-    private Set<GoXref> goXrefs = new HashSet<>();
+    private Set<GoXref> goXRefs = new HashSet<>();
 
     protected PantherMatch() {
     }
@@ -143,12 +143,12 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     }
 
     @XmlElement(name="go-xref")
-    public Set<GoXref> getGoXrefs() {
-        return goXrefs;
+    public Set<GoXref> getGoXRefs() {
+        return goXRefs;
     }
 
-    public void setGoXrefs(Set<GoXref> goXrefs) {
-        this.goXrefs = goXrefs;
+    public void setGoXRefs(Set<GoXref> goXRefs) {
+        this.goXRefs = goXRefs;
     }
 
     @XmlAttribute(name = "ac", required = true)

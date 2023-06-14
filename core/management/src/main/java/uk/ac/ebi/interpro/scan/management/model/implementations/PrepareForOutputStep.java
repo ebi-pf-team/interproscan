@@ -433,7 +433,7 @@ public class PrepareForOutputStep extends Step {
 
                             Set<GoXref> goXrefs = new HashSet<>();
 
-                            panterMatch.getGoXrefs().forEach(
+                            panterMatch.getGoXRefs().forEach(
                                     goXref -> {
                                         String goId = goXref.getIdentifier();
                                         List<String> goLine = gotermsMap.get(goId);
@@ -447,7 +447,7 @@ public class PrepareForOutputStep extends Step {
                                     }
                             );
 
-                            panterMatch.setGoXrefs(goXrefs);
+                            panterMatch.setGoXRefs(goXrefs);
                         }
 
                         Entry simpleEntry = match.getSignature().getEntry();

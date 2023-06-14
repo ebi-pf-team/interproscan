@@ -190,7 +190,7 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
 
                                     match.setProteinClass(proteinClass);
                                     match.setGraftPoint(graftPoint);
-                                    match.setGoXrefs(goXrefs);
+                                    match.setGoXRefs(goXrefs);
                                 }
                             }
                         });

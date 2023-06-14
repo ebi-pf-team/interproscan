@@ -82,7 +82,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                         } else if (match instanceof PantherMatch) {
                             score = Double.toString(((PantherMatch) match).getEvalue());
-                            goXrefs.addAll(((PantherMatch) match).getGoXrefs());
+                            goXrefs.addAll(((PantherMatch) match).getGoXRefs());
                         } else if (match instanceof FingerPrintsMatch) {
                             score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                         }
