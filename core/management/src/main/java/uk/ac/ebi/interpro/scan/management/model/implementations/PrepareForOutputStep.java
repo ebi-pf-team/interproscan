@@ -148,15 +148,14 @@ public class PrepareForOutputStep extends Step {
                 getEntry2PathwayMap();
             }
 
-            // Always need to load map of GO terms because we need it for PANTHER GO terms
-            getGoTermsMap();
             if (mapToGO) {
+                getGoTermsMap();
                 getEntry2GoTermsMap();
             }
 
             //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
-            simulateMarshalling(stepInstance, "p", temporaryFileDirectory, mapToInterPro);
+            simulateMarshalling(stepInstance, "p", temporaryFileDirectory, mapToGO, mapToInterPro);
             Utilities.verboseLog(1100, "Pre-marshall the nucleotide sequences ...");
 
             final String sequenceType = parameters.get(SEQUENCE_TYPE);
@@ -313,7 +312,7 @@ public class PrepareForOutputStep extends Step {
 
 
     private void simulateMarshalling(StepInstance stepInstance, String sequenceType, String temporaryFileDirectory,
-                                     boolean mapToInterPro) throws IOException {
+                                     boolean mapToGo, boolean mapToInterPro) throws IOException {
         if (!sequenceType.equalsIgnoreCase("p")) {
             //maybe we should simulate for all types
             //return;
@@ -433,19 +432,21 @@ public class PrepareForOutputStep extends Step {
 
                             Set<GoXref> goXrefs = new HashSet<>();
 
-                            panterMatch.getGoXRefs().forEach(
-                                    goXref -> {
-                                        String goId = goXref.getIdentifier();
-                                        List<String> goLine = gotermsMap.get(goId);
+                            if (mapToGo) {
+                                panterMatch.getGoXRefs().forEach(
+                                        goXref -> {
+                                            String goId = goXref.getIdentifier();
+                                            List<String> goLine = gotermsMap.get(goId);
 
-                                        if (goLine != null) {
-                                            String goName = goLine.get(0);
-                                            String goCategoryCode = goLine.get(1);
-                                            GoCategory category = GoCategory.parseNameCode(goCategoryCode);
-                                            goXrefs.add(new GoXref(goId, goName, category));
+                                            if (goLine != null) {
+                                                String goName = goLine.get(0);
+                                                String goCategoryCode = goLine.get(1);
+                                                GoCategory category = GoCategory.parseNameCode(goCategoryCode);
+                                                goXrefs.add(new GoXref(goId, goName, category));
+                                            }
                                         }
-                                    }
-                            );
+                                );
+                            }
 
                             panterMatch.setGoXRefs(goXrefs);
                         }
