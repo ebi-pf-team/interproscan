@@ -311,7 +311,7 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                         score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                     } else if (match instanceof PantherMatch) {
                         score = Double.toString(((PantherMatch) match).getEvalue());
-                        goXrefs.addAll(((PantherMatch) match).getGoXRefs());
+//                        goXrefs.addAll(((PantherMatch) match).getGoXRefs());
                     } else if (match instanceof FingerPrintsMatch) {
                         score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                     }
