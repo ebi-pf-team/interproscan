@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" interproscan-version="5.31-70.0">
+<protein-matches xmlns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" interproscan-version="5.31-70.0">
     <protein>
         <sequence md5="92e4b89dd86f8ab828f57121f6d7d460">MSILFYVIFLAYLRGIQSTNMDQRTLPEDSINSLIIKLIQADILKNKLSKQMVDIKENYQNTAQKADTQQDMDADDNVKSDFQPVVSVDTDLLRQQRRYNSPRVLLSDNTPLEPPPLYLMEDYIGNSVMVNRTSRRKRYAEHKSHRGEYSVCDSESLWVTDKSSAIDIRGHQVTVLGEIKTGNSPVKQYFYETRCKEAKPVKNGCRGIDDKHWNSQCKTSQTYVRALTSENNKLVGWRWIRIDTSCVCALSRKIGRT</sequence>
         <xref id="UPI0004FABBC5" name="UPI0004FABBC5"/>

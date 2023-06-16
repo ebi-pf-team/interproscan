@@ -148,7 +148,7 @@
             <bean class="uk.ac.ebi.interpro.scan.persistence.PantherFilteredMatchDAOImpl">
                 <property name="dbStore" ref="kvStoreMatches"/>
                 <property name="matchDAO" ref="matchDAO"/>
-                <property name="paintDirectory" value="${panther.models.dir}"/>
+                <property name="paintDirectory" value="${panther.models.dir}/PAINT_Annotations"/>
             </bean>
         </property>
         <property name="retries" value="3"/>

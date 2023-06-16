@@ -31,14 +31,14 @@
             </util:map>
             <!--To include the schema location, comment out the above util:map and uncomment the following - unfortunately-->
             <!--they can't be mixed because they're different types (Boolean vs String):-->
-            <!--<protein xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" -->
+            <!--<protein xmlns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" -->
             <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-            <!--xsi:schemaLocation="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 -->
-            <!--http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd" >-->
+            <!--xsi:schemaLocation="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas -->
+            <!--https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas/interproscan-model-3.0.xsd" >-->
             <!--...-->
             <!--</protein>-->
             <!--<util:map value-type="java.lang.String">-->
-            <!--<entry value="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5 http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5/interproscan-model-3.0.xsd">-->
+            <!--<entry value="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas/interproscan-model-3.0.xsd">-->
             <!--<key>-->
             <!--<util:constant static-field="javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION"/>-->
             <!--</key>-->

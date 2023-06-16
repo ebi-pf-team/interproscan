@@ -191,7 +191,7 @@ public abstract class Site implements Serializable, Cloneable {
     /**
      * Helper class for SiteAdapter
      */
-    @XmlType(name = "sitesType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "sitesType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class SitesType {
 
@@ -339,7 +339,7 @@ public abstract class Site implements Serializable, Cloneable {
     /**
      * Helper class for ModelAdapter
      */
-    @XmlType(name = "siteLocationsType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "siteLocationsType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
     private final static class SiteLocationsType {
 

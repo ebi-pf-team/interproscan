@@ -1,5 +1,7 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.interpro.scan.model.*;
@@ -8,6 +10,8 @@ import uk.ac.ebi.interpro.scan.model.raw.PantherRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -53,9 +57,10 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
      * @param proteinIdToProteinMap a Map of Protein IDs to Protein objects
      */
     @Override
-    public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
+    public void persist(Collection<RawProtein<PantherRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelIdToSignatureMap,
+                        Map<String, Protein> proteinIdToProteinMap) {
         Map<String, Set<Match>> toPersist = new HashMap<>();
-        Set<String> toLoad = new HashSet<>();
+        Map<String, Set<PantherMatch>> signatureToMatches = new HashMap<>();
 
         for (RawProtein<PantherRawMatch> rawProtein : filteredProteins) {
             Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
@@ -87,7 +92,11 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                                 lastRawMatch.getScore(),
                                 lastRawMatch.getAnnotationsNodeId()
                         );
-                        toLoad.add(signature.getAccession());
+
+                        if (!signatureToMatches.containsKey(signature.getAccession())) {
+                            signatureToMatches.put(signature.getAccession(), new HashSet<>());
+                        }
+                        signatureToMatches.get(signature.getAccession()).add(match);
                         proteinMatches.add(match);
                     }
                     // Reset everything
@@ -129,7 +138,10 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                         lastRawMatch.getScore(),
                         lastRawMatch.getAnnotationsNodeId()
                 );
-                toLoad.add(signature.getAccession());
+                if (!signatureToMatches.containsKey(signature.getAccession())) {
+                    signatureToMatches.put(signature.getAccession(), new HashSet<>());
+                }
+                signatureToMatches.get(signature.getAccession()).add(match);
                 proteinMatches.add(match);
             }
             final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
@@ -144,8 +156,45 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
             }
         }
 
-        for (String accession: toLoad) {
+        for (String accession: signatureToMatches.keySet()) {
+            File file = new File(this.getPaintDirectory() + "/" + accession + ".json");
 
+            if (file.isFile()) {
+                Map<String, String[]> familyAnnotations;
+                ObjectMapper mapper = new ObjectMapper();
+
+                try {
+                    familyAnnotations = mapper.readValue(file, new TypeReference<>() {});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
+                signatureToMatches.get(accession).forEach(
+                        match -> {
+                            String nodeId = match.getAnnotationsNodeId();
+                            if (nodeId != null) {
+                                String[] nodeAnnotations = familyAnnotations.get(nodeId);
+
+                                if (nodeAnnotations != null && nodeAnnotations.length == 4) {
+                                    String goTerms = nodeAnnotations[1];
+                                    String proteinClass = nodeAnnotations[2];
+                                    String graftPoint = nodeAnnotations[3];
+
+                                    Set<GoXref> goXrefs = new HashSet<>();
+                                    if (goTerms != null) {
+                                        for (String goTerm: goTerms.split(",")) {
+                                            goXrefs.add(new GoXref(goTerm, null, null));
+                                        }
+                                    }
+
+                                    match.setProteinClass(proteinClass);
+                                    match.setGraftPoint(graftPoint);
+                                    match.setGoXRefs(goXrefs);
+                                }
+                            }
+                        });
+            }
         }
 
         for (Map.Entry<String, Set<Match>> entry: toPersist.entrySet()) {

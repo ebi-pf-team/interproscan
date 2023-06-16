@@ -85,48 +85,6 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         gffWriter.writeFASTASequence(identifier, sequence);
     }
 
-    protected void addAdditionalAttr(Entry interProEntry, final GFF3Feature matchFeature) {
-        if (interProEntry != null) {
-            StringBuilder dbxrefAttributeValue = new StringBuilder("\"InterPro:");
-            dbxrefAttributeValue
-                    .append(interProEntry.getAccession())
-                    .append('"');
-//            gffAttributes.add("interPro_entry_desc=" + interProEntry.getDescription());
-            if (mapToPathway) {
-                List<PathwayXref> pathwayXRefs = new ArrayList<>(interProEntry.getPathwayXRefs());
-                Collections.sort(pathwayXRefs, new PathwayXrefComparator());
-                if (pathwayXRefs.size() > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    for (PathwayXref xref : pathwayXRefs) {
-                        if (sb.length() > 0) {
-                            sb.append(VALUE_SEPARATOR_GFF3);
-                        }
-                        sb.append('"')
-                                .append(xref.getDatabaseName())
-                                .append(':')
-                                .append(xref.getIdentifier()).append('"');
-                    }
-                    dbxrefAttributeValue.append(VALUE_SEPARATOR_GFF3).append(sb.toString());
-                }
-            }
-            matchFeature.addAttribute("Dbxref", dbxrefAttributeValue.toString());
-            if (mapToGO) {
-                List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
-                Collections.sort(goXRefs, new GoXrefComparator());
-                if ((goXRefs.size() > 0)) {
-                    StringBuilder sb = new StringBuilder();
-                    for (GoXref xref : goXRefs) {
-                        if (sb.length() > 0) {
-                            sb.append(VALUE_SEPARATOR_GFF3);
-                        }
-                        sb.append('"').append(xref.getIdentifier()).append('"'); // Just writeComment the GO identifier to the output
-                    }
-                    matchFeature.addAttribute("Ontology_term", sb.toString());
-                }
-            }
-        }
-    }
-
     /**
      * Pattern matchers for match id.
      * <p/>
@@ -256,7 +214,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
 
     protected GFF3Feature buildMatchFeature(String seqId, String analysis, int locStart, int locEnd, String score,
                                             String description, String status, String date, String matchId,
-                                            String targetId, String signatureAcc, Entry entry, boolean writeAllAttributes) {
+                                            String targetId, String signatureAcc, Entry entry, boolean writeAllAttributes,
+                                            Set<GoXref> goXrefs) {
         GFF3Feature matchFeature = new GFF3Feature(seqId, analysis, "protein_match", locStart, locEnd, "+");
         matchFeature.setScore(score);
         //Build attributes for the last column in the GFF table
@@ -271,9 +230,49 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
         matchFeature.addAttribute("status", status);
         matchFeature.addAttribute("date", date);
 
-        if (mapToInterProEntries) {
-            addAdditionalAttr(entry, matchFeature);
+        if (mapToInterProEntries && entry != null) {
+            StringBuilder dbxrefAttributeValue = new StringBuilder("\"InterPro:");
+            dbxrefAttributeValue
+                    .append(entry.getAccession())
+                    .append('"');
+
+            if (mapToPathway) {
+                List<PathwayXref> pathwayXRefs = new ArrayList<>(entry.getPathwayXRefs());
+                Collections.sort(pathwayXRefs, new PathwayXrefComparator());
+                if (pathwayXRefs.size() > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (PathwayXref xref : pathwayXRefs) {
+                        if (sb.length() > 0) {
+                            sb.append(VALUE_SEPARATOR_GFF3);
+                        }
+                        sb.append('"')
+                                .append(xref.getDatabaseName())
+                                .append(':')
+                                .append(xref.getIdentifier()).append('"');
+                    }
+                    dbxrefAttributeValue.append(VALUE_SEPARATOR_GFF3).append(sb.toString());
+                }
+            }
+            matchFeature.addAttribute("Dbxref", dbxrefAttributeValue.toString());
+
+            if (mapToGO) {
+                goXrefs.addAll(entry.getGoXRefs());
+            }
         }
+
+        if (goXrefs.size() > 0) {
+            List<GoXref> goXRefsList = new ArrayList<>(goXrefs);
+            Collections.sort(goXRefsList, new GoXrefComparator());
+            StringBuilder sb = new StringBuilder();
+            for (GoXref xref : goXRefsList) {
+                if (sb.length() > 0) {
+                    sb.append(VALUE_SEPARATOR_GFF3);
+                }
+                sb.append('"').append(xref.getIdentifier()).append('"');
+            }
+            matchFeature.addAttribute("Ontology_term", sb.toString());
+        }
+
         return matchFeature;
     }
 
@@ -304,12 +303,15 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                     String score = ".";
                     String status = "T";
 
+                    Set<GoXref> goXrefs = new HashSet<>();
+
                     // To maintain compatibility, we output the same value for the score column as I4
                     // In some cases we have to take the value from the match
                     if (match instanceof SuperFamilyHmmer3Match) {
                         score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                     } else if (match instanceof PantherMatch) {
                         score = Double.toString(((PantherMatch) match).getEvalue());
+//                        goXrefs.addAll(((PantherMatch) match).getGoXRefs());
                     } else if (match instanceof FingerPrintsMatch) {
                         score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                     }
@@ -335,7 +337,8 @@ public abstract class ProteinMatchesGFFResultWriter extends ProteinMatchesResult
                             .append('_')
                             .append(locEnd);
                     GFF3Feature matchFeature = buildMatchFeature(seqId, analysis, locStart, locEnd, score, description, status,
-                            date, matchIdLocation.toString(), targetId, signatureAc, signature.getEntry(), writeAllAttributes);
+                            date, matchIdLocation.toString(), targetId, signatureAc, signature.getEntry(), writeAllAttributes,
+                            goXrefs);
                     //Write match feature to file
                     gffWriter.write(matchFeature.getGFF3FeatureLine());
                     //Add match sequence to the map

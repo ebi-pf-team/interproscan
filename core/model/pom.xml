@@ -283,7 +283,7 @@
                                     <include name = "*.java"/>
                                     <exclude name="package-info.java"/>
                                     <!-- Following does not work: -->
-<!--                                    <schema namespace="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5" file="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd" />-->
+<!--                                    <schema namespace="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" file="${project.build.schema.dir}/${project.artifactId}-${latest.interpro.schema.version}.xsd" />-->
                                 </schemagen>
                                 <!-- 'schema' child element does not work, so have to rename file by hand -->
                                 <move file="${project.build.schema.dir}/schema1.xsd"

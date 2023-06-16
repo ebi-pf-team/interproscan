@@ -82,7 +82,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
      */
     @Entity
     @Table(name = "superfamilyhmmer3_location")
-    @XmlType(name = "SuperFamilyHmmer3LocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "SuperFamilyHmmer3LocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class SuperFamilyHmmer3Location extends Location {
 
         @Column(nullable = false, name = "hmm_length")
@@ -144,7 +144,7 @@ public class SuperFamilyHmmer3Match extends Match<SuperFamilyHmmer3Match.SuperFa
          */
         @Entity
         @Table(name = "superfam_location_fragment")
-        @XmlType(name = "SuperFamilyHmmer3LocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "SuperFamilyHmmer3LocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class SuperFamilyHmmer3LocationFragment extends LocationFragment {
 
             protected SuperFamilyHmmer3LocationFragment() {

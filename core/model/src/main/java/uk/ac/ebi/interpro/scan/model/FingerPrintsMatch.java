@@ -109,7 +109,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
      */
     @Entity
     @Table(name = "finger_prints_location")
-    @XmlType(name = "FingerPrintsLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "FingerPrintsLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class FingerPrintsLocation extends Location {
 
         @Column(nullable = false)
@@ -195,7 +195,7 @@ public class FingerPrintsMatch extends Match<FingerPrintsMatch.FingerPrintsLocat
          */
         @Entity
         @Table(name = "finger_prints_location_fragment")
-        @XmlType(name = "FingerPrintsLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "FingerPrintsLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class FingerPrintsLocationFragment extends LocationFragment {
 
             protected FingerPrintsLocationFragment() {

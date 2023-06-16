@@ -64,7 +64,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     private String graftPoint;
 
     @OneToMany()
-    private Set<GoXref> goXrefs = new HashSet<>();
+    private Set<GoXref> goXRefs = new HashSet<>();
 
     protected PantherMatch() {
     }
@@ -143,12 +143,12 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     }
 
     @XmlElement(name="go-xref")
-    public Set<GoXref> getGoXrefs() {
-        return goXrefs;
+    public Set<GoXref> getGoXRefs() {
+        return goXRefs;
     }
 
-    public void setGoXrefs(Set<GoXref> goXrefs) {
-        this.goXrefs = goXrefs;
+    public void setGoXRefs(Set<GoXref> goXRefs) {
+        this.goXRefs = goXRefs;
     }
 
     @XmlAttribute(name = "ac", required = true)
@@ -194,7 +194,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
      */
     @Entity
     @Table(name = "panther_location")
-    @XmlType(name = "PantherLocationType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", propOrder = {"envelopeStart", "envelopeEnd", "hmmStart", "hmmEnd", "hmmLength", "hmmBounds"})
+    @XmlType(name = "PantherLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas", propOrder = {"envelopeStart", "envelopeEnd", "hmmStart", "hmmEnd", "hmmLength", "hmmBounds"})
     public static class PantherLocation extends Location {
 
         @Column(nullable = false, name = "hmm_start")
@@ -326,7 +326,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
          */
         @Entity
         @Table(name = "panther_location_fragment")
-        @XmlType(name = "PantherLocationFragmentType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+        @XmlType(name = "PantherLocationFragmentType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
         public static class PantherLocationFragment extends LocationFragment {
 
             protected PantherLocationFragment() {

@@ -132,7 +132,7 @@ public class SuperMatch implements Serializable {
      * @author Antony Quinn
      * @version $Id$
      */
-    @XmlType(name = "SuperMatchLocationType", propOrder = {"start", "end"}, namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "SuperMatchLocationType", propOrder = {"start", "end"}, namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class Location implements Serializable {
 
         private int start;

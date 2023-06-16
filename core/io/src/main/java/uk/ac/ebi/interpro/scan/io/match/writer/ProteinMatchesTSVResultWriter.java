@@ -74,12 +74,15 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         String score = "-";
                         String status = "T";
 
+                        Set<GoXref> goXrefs = new HashSet<>();
+
                         // To maintain compatibility, we output the same value for the score column as I4
                         // In some cases we have to take the value from the match
                         if (match instanceof SuperFamilyHmmer3Match) {
                             score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                         } else if (match instanceof PantherMatch) {
                             score = Double.toString(((PantherMatch) match).getEvalue());
+//                            goXrefs.addAll(((PantherMatch) match).getGoXRefs());
                         } else if (match instanceof FingerPrintsMatch) {
                             score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                         }
@@ -126,11 +129,12 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                                 mappingFields.add(interProEntry.getDescription());
 
                                 if (mapToGO) {
-                                    List<GoXref> goXRefs = new ArrayList<>(interProEntry.getGoXRefs());
-                                    Collections.sort(goXRefs, new GoXrefComparator());
-                                    if (goXRefs.size() > 0) {
+                                    goXrefs.addAll(interProEntry.getGoXRefs());
+                                    List<GoXref> goXRefsList = new ArrayList<>(goXrefs);
+                                    Collections.sort(goXRefsList, new GoXrefComparator());
+                                    if (goXRefsList.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
-                                        for (GoXref xref : goXRefs) {
+                                        for (GoXref xref : goXRefsList) {
                                             if (sb.length() > 0) {
                                                 sb.append(VALUE_SEPARATOR);
                                             }

@@ -52,7 +52,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
 
         // Can use \n or XML escape character (&#10;) for new line
         String expectedXml =
-                "<signature ac='PF00001' xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5'>\n" +
+                "<signature ac='PF00001' xmlns='https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas'>\n" +
                 "    <abstract>This family contains, amongst other G-protein-coupled receptors (GPCRs), " +
                 "members of the opsin family, which have been considered to be typical members " +
                 "of the rhodopsin superfamily. " +
@@ -172,7 +172,7 @@ public class SignatureTest extends AbstractXmlTest<Signature> {
 
         // Expected XML
         String expectedXml =
-            "<signature xmlns='http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5' ac='G3DSA:2.40.50.140' name='Nucleic acid-binding proteins'>" +
+            "<signature xmlns='https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas' ac='G3DSA:2.40.50.140' name='Nucleic acid-binding proteins'>" +
             "   <signature-library-release library='GENE3D' version='3.1.0'/>" +
             "</signature>";
 

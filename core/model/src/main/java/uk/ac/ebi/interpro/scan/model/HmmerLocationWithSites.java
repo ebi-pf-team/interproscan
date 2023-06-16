@@ -177,7 +177,7 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
 
     @Entity
     @Table(name = "hmmer_site")
-    @XmlType(name = "HmmerSiteType", namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5")
+    @XmlType(name = "HmmerSiteType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class HmmerSite extends Site {
 
         protected HmmerSite() {
