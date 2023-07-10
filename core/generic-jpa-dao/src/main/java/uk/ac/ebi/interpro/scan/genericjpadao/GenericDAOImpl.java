@@ -31,12 +31,12 @@ import java.util.List;
 /**
  * A generic DAO implementation that can be used with any model class.
  * Just need to inject the Model class name to use.
- * <p/>
+ * <br>
  * Provides the basic CRUD methods.
- * <p/>
+ * <br>
  * T is the model type (e.g. Protein, Model, Signature etc.)
  * PK is the type of the primary key (normally {@link java.lang.Long})
- * <p/>
+ * <br>
  * Based on the pattern described in
  * <a href ="http://www.ibm.com/developerworks/java/library/j-genericdao.html">Don't repeat the DAO!</a>
  * by Per Mellqvist (per@mellqvist.name) in IBM Developer Works Technical Library, 12 May 2006.
@@ -73,7 +73,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
      * Note that this has been set up to use constructor injection
      * because it makes it easy to sub-class GenericDAOImpl in a robust
      * manner.
-     * <p/>
+     * <br>
      * Model class specific sub-classes should define a no-argument constructor
      * that calls this constructor with the appropriate class.
      *
@@ -185,7 +185,7 @@ public class GenericDAOImpl<T, PK extends Serializable>
     /**
      * Retrieve an object that was previously persisted to the database using
      * the indicated id as primary key and go deep on the fields listed.
-     * <p/>
+     * <br>
      * TODO - Could make use of reflection to determine if the field name passed in is accessible via a public getter.
      *
      * @param id         being the primary key value of the required object.

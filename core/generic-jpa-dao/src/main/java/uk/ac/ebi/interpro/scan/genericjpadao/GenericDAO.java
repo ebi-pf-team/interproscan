@@ -24,10 +24,10 @@ import java.util.List;
 
 /**
  * Generic data access object (DAO) that can be used with any model class, providing basic CRUD methods.
- * <p/>
+ * <br>
  * T is the model type (e.g. Protein, Model, Signature etc.)
  * PK is the type of the primary key (normally {@link java.lang.Long})
- * <p/>
+ * <br>
  * Based on the pattern described in
  * <a href ="http://www.ibm.com/developerworks/java/library/j-genericdao.html">Don't repeat the DAO!</a>
  * by Per Mellqvist (per@mellqvist.name) in IBM Developer Works Technical Library, 12 May 2006.
