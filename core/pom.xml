@@ -250,7 +250,9 @@
                 <version>3.1.0</version>
                 <configuration>
                     <overview/>
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
                 </configuration>
                 <executions>
                 </executions>
