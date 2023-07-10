@@ -1,0 +1,26 @@
+name: Build and Test
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build
+        run: mvn -B package --file core/pom.xml
+      - name: Install PCRE2
+        run: sudo apt-get install -y libpcre2-8-0
+      - name: Run
+        run: |
+          cd core/jms-implementation/target/interproscan-5-dist/
+          bash interproscan.sh -i test_all_appl.fasta -dp
