@@ -1168,7 +1168,7 @@ HMM          A        C        D        E        F        G        H        I   
 HMMER3/f [3.3 | Nov 2019]
 NAME  12TM_1
 ACC   PF09847.13
-DESC  Phosphoribosylformylglycinamidine (FGAM) synthase
+DESC  Membrane protein of 12 TMs
 LENG  449
 ALPH  amino
 RF    no
