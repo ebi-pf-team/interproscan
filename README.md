@@ -1,3 +1,5 @@
+[![Build](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml/badge.svg?branch=develop)](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml)
+
 # interproscan
 
 ## What is InterProScan?
