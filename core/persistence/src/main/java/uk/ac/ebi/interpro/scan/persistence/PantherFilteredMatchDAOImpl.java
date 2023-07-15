@@ -171,29 +171,8 @@ public class PantherFilteredMatchDAOImpl extends FilteredMatchDAOImpl<PantherRaw
                 }
 
                 signatureToMatches.get(accession).forEach(
-                        match -> {
-                            String nodeId = match.getAnnotationsNodeId();
-                            if (nodeId != null) {
-                                String[] nodeAnnotations = familyAnnotations.get(nodeId);
-
-                                if (nodeAnnotations != null && nodeAnnotations.length == 4) {
-                                    String goTerms = nodeAnnotations[1];
-                                    String proteinClass = nodeAnnotations[2];
-                                    String graftPoint = nodeAnnotations[3];
-
-                                    Set<GoXref> goXrefs = new HashSet<>();
-                                    if (goTerms != null) {
-                                        for (String goTerm: goTerms.split(",")) {
-                                            goXrefs.add(new GoXref(goTerm, null, null));
-                                        }
-                                    }
-
-                                    match.setProteinClass(proteinClass);
-                                    match.setGraftPoint(graftPoint);
-                                    match.setGoXRefs(goXrefs);
-                                }
-                            }
-                        });
+                        match -> match.addAnnotations(familyAnnotations)
+                );
             }
         }
 
