@@ -428,12 +428,11 @@ public class PrepareForOutputStep extends Step {
                 if (matches != null) {
                     for (Match match : matches) {
                         if (match instanceof PantherMatch) {
-                            PantherMatch panterMatch = (PantherMatch) match;
-
+                            PantherMatch pantherMatch = (PantherMatch) match;
                             Set<GoXref> goXrefs = new HashSet<>();
 
                             if (mapToGo) {
-                                panterMatch.getGoXRefs().forEach(
+                                pantherMatch.getGoXRefs().forEach(
                                         goXref -> {
                                             String goId = goXref.getIdentifier();
                                             List<String> goLine = gotermsMap.get(goId);
@@ -448,7 +447,7 @@ public class PrepareForOutputStep extends Step {
                                 );
                             }
 
-                            panterMatch.setGoXRefs(goXrefs);
+                            pantherMatch.setGoXRefs(goXrefs);
                         }
 
                         Entry simpleEntry = match.getSignature().getEntry();
