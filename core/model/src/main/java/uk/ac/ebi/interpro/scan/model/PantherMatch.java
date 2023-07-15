@@ -17,9 +17,12 @@
 package uk.ac.ebi.interpro.scan.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -28,7 +31,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,7 +69,7 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
     @Column
     private String graftPoint;
 
-    @OneToMany()
+    @OneToMany(cascade = {CascadeType.ALL})
     private Set<GoXref> goXRefs = new HashSet<>();
 
     protected PantherMatch() {
@@ -358,6 +364,46 @@ public class PantherMatch extends Match<PantherMatch.PantherLocation> {
                 return new PantherLocationFragment(this.getStart(), this.getEnd());
             }
         }
+    }
 
+    public void addAnnotations(String paintDirectory) {
+        File file = new File(paintDirectory + "/" + this.getSignature().getAccession() + ".json");
+        if (file.isFile()) {
+            Map<String, String[]> familyAnnotations;
+            ObjectMapper mapper = new ObjectMapper();
+
+            try {
+                familyAnnotations = mapper.readValue(file, new TypeReference<>() {});
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            this.addAnnotations(familyAnnotations);
+        }
+    }
+
+    public void addAnnotations(Map<String, String[]> familyAnnotations) {
+        String nodeId = this.getAnnotationsNodeId();
+        if (nodeId != null) {
+            String[] nodeAnnotations = familyAnnotations.get(nodeId);
+
+            if (nodeAnnotations != null && nodeAnnotations.length == 4) {
+                String goTerms = nodeAnnotations[1];
+                String proteinClass = nodeAnnotations[2];
+                String graftPoint = nodeAnnotations[3];
+
+                Set<GoXref> goXrefs = new HashSet<>();
+                if (goTerms != null) {
+                    for (String goTerm: goTerms.split(",")) {
+                        goXrefs.add(new GoXref(goTerm, null, null));
+                    }
+                }
+
+                this.setProteinClass(proteinClass);
+                this.setGraftPoint(graftPoint);
+                this.setGoXRefs(goXrefs);
+            }
+        }
     }
 }
