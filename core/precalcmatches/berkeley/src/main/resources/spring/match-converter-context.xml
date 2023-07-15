@@ -36,7 +36,7 @@
             </map>
         </property>
         <property name="matchDAO" ref="matchDAO"/>
-
+        <property name="paintDirectory" value="${panther.models.dir}/PAINT_Annotations"/>
     </bean>
 
 

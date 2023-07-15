@@ -31,7 +31,17 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
     protected EntityManager entityManager;
 
+    protected String paintDirectory;
+
     protected MatchDAO matchDAO;
+
+    public String getPaintDirectory() {
+        return paintDirectory;
+    }
+
+    public void setPaintDirectory(String paintDirectory) {
+        this.paintDirectory = paintDirectory;
+    }
 
     @PersistenceContext
     protected void setEntityManager(EntityManager entityManager) {
@@ -311,6 +321,10 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
                                 if (i5Match != null) {
                                     Utilities.verboseLog(50, lookup2IdRunID + " i5 Lookup Converted Match :-  " + i5Match.getId()); //avoid using complete objects in verbose
+
+                                    if (i5Match instanceof PantherMatch) {
+                                        ((PantherMatch) i5Match).addAnnotations(this.getPaintDirectory());
+                                    }
 
                                     prot.addMatch(i5Match);
 
