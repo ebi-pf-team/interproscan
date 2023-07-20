@@ -250,10 +250,11 @@ public class ClanFileParser implements Serializable {
                 if (nestedModel == null) {
                     throw new IllegalStateException("Attempting to update PfamModel with AC " + nestedModelAc + " with nesting information, but cannot find it!");
                 }
+		// Allow circular nesting relationships...
                 // Sanity checks for potential circular relationships.  This is safe as it is called recursively.
-                if (nestingModel.isNestedIn(nestedModel)) {
-                    throw new IllegalStateException("Circularity detected in Clan file nesting relationship between model ACs " + nestedModelAc + " and " + nestingModelAc + '.');
-                }
+                //if (nestingModel.isNestedIn(nestedModel)) {
+                //    throw new IllegalStateException("Circularity detected in Clan file nesting relationship between model ACs " + nestedModelAc + " and " + nestingModelAc + '.');
+                //}
 
                 // Add the nesting relationship.
                 nestedModel.addModelThisIsNestedIn(nestingModel);
