@@ -139,6 +139,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
         // into the filteredMatches collection.
         final Set<PfamHmmer3RawMatch> seedMatches = new HashSet<PfamHmmer3RawMatch>();
 
+        // seedAlignments is ALWAYS null
         if (seedAlignments != null) {        // TODO This check can be removed, once the seed alignment stuff has been sorted.
             Utilities.verboseLog(localVerboseLevel,"seedAlignments count:" + seedAlignments.size());
             for (final SeedAlignment seedAlignment : seedAlignments) {
