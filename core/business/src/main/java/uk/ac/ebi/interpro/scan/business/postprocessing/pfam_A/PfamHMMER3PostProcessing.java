@@ -335,7 +335,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
         PfamModel twoModel = clanData.getModelByModelAccession(two.getModelId());
 
         return !(oneModel == null || twoModel == null) &&
-                (oneModel.isNestedIn(twoModel) || twoModel.isNestedIn(oneModel));
+                (oneModel.isNestedIn(twoModel, null) || twoModel.isNestedIn(oneModel, null));
 
     }
 

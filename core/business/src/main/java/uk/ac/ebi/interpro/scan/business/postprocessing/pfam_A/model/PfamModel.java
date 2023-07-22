@@ -70,8 +70,8 @@ public class PfamModel implements Serializable {
      * @param candidateModel being the model to compare with.
      * @return true if the models are nested.
      */
-    public boolean isNestedIn(PfamModel candidateModel){
-        if (candidateModel == null){
+    public boolean isNestedIn(PfamModel candidateModel, PfamModel source){
+        if (candidateModel == null || this.equals(source)){
             return false;
         }
         if (nestedIn.contains(candidateModel)){
@@ -79,7 +79,7 @@ public class PfamModel implements Serializable {
         }
         // Recurse...
         for (PfamModel parentModel : nestedIn){
-            if (parentModel.isNestedIn(candidateModel)){
+            if (parentModel.isNestedIn(candidateModel, source == null ? this : source)){
                 return true;
             }
         }
