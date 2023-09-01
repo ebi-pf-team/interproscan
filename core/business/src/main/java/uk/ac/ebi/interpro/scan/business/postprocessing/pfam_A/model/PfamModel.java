@@ -3,9 +3,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.io.Serializable;
 
 /**
@@ -70,16 +68,22 @@ public class PfamModel implements Serializable {
      * @param candidateModel being the model to compare with.
      * @return true if the models are nested.
      */
-    public boolean isNestedIn(PfamModel candidateModel){
-        if (candidateModel == null){
+    public boolean isNestedIn(PfamModel candidateModel, Set<PfamModel> trace){
+        if (candidateModel == null || (trace != null && trace.contains(this))){
             return false;
-        }
-        if (nestedIn.contains(candidateModel)){
+        } else if (nestedIn.contains(candidateModel)){
             return true;
         }
+
+        if (trace == null) {
+            trace = new HashSet<PfamModel>();
+        }
+
+        trace.add(this);
+
         // Recurse...
         for (PfamModel parentModel : nestedIn){
-            if (parentModel.isNestedIn(candidateModel)){
+            if (parentModel.isNestedIn(candidateModel, trace)){
                 return true;
             }
         }
