@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 LABEL authors="Laise Florentino (lcf@ebi.ac.uk), Matthias Blum (mblum@ebi.ac.uk)"
 
-ARG VERSION=5.63-95.0
+ARG VERSION=5.64-96.0
 ENV TZ=Europe/London
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
