@@ -1,4 +1,4 @@
-[![Build](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml/badge.svg?branch=develop)](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml)
+[![Build](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml/badge.svg)](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/interpro/interproscan?label=Docker)](https://hub.docker.com/r/interpro/interproscan)
 
 # interproscan
