@@ -1,7 +1,7 @@
-HMMER3/f [3.3.2 | Nov 2020]
+HMMER3/f [3.3 | Nov 2019]
 NAME  proB
 ACC   TIGR01027.1
-DESC  glutamate 5-kinase
+DESC  JCVI: glutamate 5-kinase
 LENG  363
 ALPH  amino
 RF    no
@@ -1114,10 +1114,10 @@ HMM          A        C        D        E        F        G        H        I   
           2.68618  4.42225  2.77519  2.73123  3.46354  2.40513  3.72494  3.29354  2.67741  2.69355  4.24690  2.90347  2.73739  3.18146  2.89801  2.37887  2.77519  2.98518  4.58477  3.61503
           0.01406  4.27118        *  0.61958  0.77255  0.00000        *
 //
-HMMER3/f [3.3.2 | Nov 2020]
+HMMER3/f [3.3 | Nov 2019]
 NAME  FtsH_fam
 ACC   TIGR01241.2
-DESC  ATP-dependent zinc metalloprotease FtsH
+DESC  JCVI: ATP-dependent zinc metalloprotease FtsH
 LENG  598
 ALPH  amino
 RF    no
@@ -2935,10 +2935,10 @@ HMM          A        C        D        E        F        G        H        I   
           2.68618  4.42225  2.77519  2.73123  3.46354  2.40513  3.72494  3.29354  2.67741  2.69355  4.24690  2.90347  2.73739  3.18146  2.89801  2.37887  2.77519  2.98518  4.58477  3.61503
           0.01491  4.21285        *  0.61958  0.77255  0.00000        *
 //
-HMMER3/f [3.3.2 | Nov 2020]
+HMMER3/f [3.3 | Nov 2019]
 NAME  ADH_synth
 ACC   TIGR01949.1
-DESC  2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase
+DESC  JCVI: 2-amino-3,7-dideoxy-D-threo-hept-6-ulosonate synthase
 LENG  255
 ALPH  amino
 RF    no
