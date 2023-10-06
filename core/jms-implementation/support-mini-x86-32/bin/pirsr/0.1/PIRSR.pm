@@ -123,7 +123,7 @@ sub process_templates {
 
 
             } else {
-                die "Failed to parse fasta block: \"$block\"\n";
+                warn ("Failed to parse fasta block: \"$block\"\n");
             }
         }
 
@@ -263,7 +263,9 @@ sub _parse_rules {
                         $group->{'label'} = $1;
                         $group->{'start'} = $2;
                         $group->{'end'} = $3;
-                        $group->{'desc'} = $5;
+                        my $desc = $5 // '';
+                        $desc =~ s/^\s+|\s+$//g;
+                        $group->{'desc'} = $desc;
 
                 } elsif ($line =~ /\AFT\s+Group\:\s+(\d+)\;\s+Condition\:\s+(.*)\z/) {
 
@@ -274,7 +276,9 @@ sub _parse_rules {
 
                 } elsif ($line =~ /\AFT\s+(.*)\z/) {
 
-                    $group->{'desc'} .= " $1";
+                    my $desc = $1 // '';
+                    $desc =~ s/^\s+|\s+$//g;
+                    $group->{'desc'} .= " $desc";
 
                 } else {
                     die "Failed to parse Group line: \"$line\"\n";
@@ -306,6 +310,12 @@ sub align_template {
 
 
     my $prot_id = $rule->{'Feature'}->{'from'};
+
+    if (!$prot_id) {
+        warn ("No from template available for rule $rule->{AC}.") if ($self->verbose);
+        $rule->{'ignore'} = 1;
+        return $rule;
+    }
 
     my $fasta_file = "$self->{data_folder}/sr_tp/${prot_id}.fa";
 
