@@ -73,7 +73,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         String score = "-";
                         String status = "T";
 
-                        Set<GoXref> goXrefs = new HashSet<>();
+                        Map<GoXref,GoXrefSources> goXrefs = new HashMap<>();
                         List<PathwayXref> pathwayXrefs = new ArrayList<>();
 
                         // To maintain compatibility, we output the same value for the score column as I4
@@ -82,7 +82,10 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                         } else if (match instanceof PantherMatch) {
                             score = Double.toString(((PantherMatch) match).getEvalue());
-                            goXrefs.addAll(((PantherMatch) match).getGoXRefs());
+
+                            for (GoXref xref : ((PantherMatch) match).getGoXRefs()) {
+                                goXrefs.put(xref, new GoXrefSources(false, true));
+                            }
                         } else if (match instanceof FingerPrintsMatch) {
                             score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                         }
@@ -127,7 +130,17 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             if (interProEntry != null) {
                                 mappingFields.add(interProEntry.getAccession());
                                 mappingFields.add(interProEntry.getDescription());
-                                goXrefs.addAll(interProEntry.getGoXRefs());
+
+                                for (GoXref xref : interProEntry.getGoXRefs()) {
+                                    GoXrefSources sourcedXref = goXrefs.get(xref);
+                                    if (sourcedXref != null) {
+                                        sourcedXref.setInInterPro(true);
+                                    } else {
+                                        sourcedXref = new GoXrefSources(true, false);
+                                        goXrefs.put(xref, sourcedXref);
+                                    }
+                                }
+
                                 pathwayXrefs = new ArrayList<>(interProEntry.getPathwayXRefs());
                             } else {
                                 mappingFields.add("-");
@@ -139,14 +152,16 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         }
 
                         if (mapToGO && !goXrefs.isEmpty()) {
-                            List<GoXref> goXRefsList = new ArrayList<>(goXrefs);
+                            List<GoXref> goXRefsList = new ArrayList<>(goXrefs.keySet());
                             goXRefsList.sort(new GoXrefComparator());
                             StringBuilder sb = new StringBuilder();
                             for (GoXref xref : goXRefsList) {
                                 if (sb.length() > 0) {
                                     sb.append(VALUE_SEPARATOR);
                                 }
-                                sb.append(xref.getIdentifier()); // Just write the GO identifier
+                                sb.append(xref.getIdentifier());
+                                GoXrefSources sourcedXref = goXrefs.get(xref);
+                                sb.append(sourcedXref.toString());
                             }
                             mappingFields.add(sb.toString());
                         } else {
@@ -181,5 +196,38 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
             }
         }
         return locationCount;
+    }
+
+    private static class GoXrefSources {
+        private boolean inInterPro;
+        private boolean inPanther;
+
+        public GoXrefSources(boolean inInterPro, boolean inPanther) {
+            this.inInterPro = inInterPro;
+            this.inPanther = inPanther;
+        }
+
+        public void setInInterPro(boolean inInterPro) {
+            this.inInterPro = inInterPro;
+        }
+
+        public void setInPanther(boolean inPanther) {
+            this.inPanther = inPanther;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            if (inInterPro && inPanther) {
+                stringBuilder.append("(InterPro,PANTHER)");
+            } else if (inInterPro) {
+                stringBuilder.append("(InterPro)");
+            } else if (inPanther) {
+                stringBuilder.append("(PANTHER)");
+            }
+
+            return stringBuilder.toString();
+        }
     }
 }
