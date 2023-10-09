@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.io.match.writer;
 
-import org.springframework.core.io.Resource;
 import uk.ac.ebi.interpro.scan.io.TSVWriter;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -75,6 +74,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                         String status = "T";
 
                         Set<GoXref> goXrefs = new HashSet<>();
+                        List<PathwayXref> pathwayXrefs = new ArrayList<>();
 
                         // To maintain compatibility, we output the same value for the score column as I4
                         // In some cases we have to take the value from the match
@@ -82,7 +82,7 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             score = Double.toString(((SuperFamilyHmmer3Match) match).getEvalue());
                         } else if (match instanceof PantherMatch) {
                             score = Double.toString(((PantherMatch) match).getEvalue());
-//                            goXrefs.addAll(((PantherMatch) match).getGoXRefs());
+                            goXrefs.addAll(((PantherMatch) match).getGoXRefs());
                         } else if (match instanceof FingerPrintsMatch) {
                             score = Double.toString(((FingerPrintsMatch) match).getEvalue());
                         }
@@ -127,47 +127,48 @@ public class ProteinMatchesTSVResultWriter extends ProteinMatchesResultWriter {
                             if (interProEntry != null) {
                                 mappingFields.add(interProEntry.getAccession());
                                 mappingFields.add(interProEntry.getDescription());
-
-                                if (mapToGO) {
-                                    goXrefs.addAll(interProEntry.getGoXRefs());
-                                    List<GoXref> goXRefsList = new ArrayList<>(goXrefs);
-                                    Collections.sort(goXRefsList, new GoXrefComparator());
-                                    if (goXRefsList.size() > 0) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (GoXref xref : goXRefsList) {
-                                            if (sb.length() > 0) {
-                                                sb.append(VALUE_SEPARATOR);
-                                            }
-                                            sb.append(xref.getIdentifier()); // Just writeComment the GO identifier to the output
-                                        }
-                                        mappingFields.add(sb.toString());
-                                    } else {
-                                        mappingFields.add("-");
-                                    }
-                                }
-                                if (mapToPathway) {
-                                    List<PathwayXref> pathwayXRefs = new ArrayList<>(interProEntry.getPathwayXRefs());
-                                    Collections.sort(pathwayXRefs, new PathwayXrefComparator());
-                                    if (pathwayXRefs.size() > 0) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (PathwayXref xref : pathwayXRefs) {
-                                            if (sb.length() > 0) {
-                                                sb.append(VALUE_SEPARATOR);
-                                            }
-                                            sb.append(xref.getDatabaseName())
-                                                    .append(": ")
-                                                    .append(xref.getIdentifier());
-                                        }
-                                        mappingFields.add(sb.toString());
-                                    } else {
-                                        mappingFields.add("-");
-                                    }
-                                }
+                                goXrefs.addAll(interProEntry.getGoXRefs());
+                                pathwayXrefs = new ArrayList<>(interProEntry.getPathwayXRefs());
                             } else {
-                                mappingFields.add("-"); // for accession
-                                mappingFields.add("-"); // for description
+                                mappingFields.add("-");
+                                mappingFields.add("-");
                             }
+                        } else {
+                            mappingFields.add("-");
+                            mappingFields.add("-");
                         }
+
+                        if (mapToGO && !goXrefs.isEmpty()) {
+                            List<GoXref> goXRefsList = new ArrayList<>(goXrefs);
+                            goXRefsList.sort(new GoXrefComparator());
+                            StringBuilder sb = new StringBuilder();
+                            for (GoXref xref : goXRefsList) {
+                                if (sb.length() > 0) {
+                                    sb.append(VALUE_SEPARATOR);
+                                }
+                                sb.append(xref.getIdentifier()); // Just write the GO identifier
+                            }
+                            mappingFields.add(sb.toString());
+                        } else {
+                            mappingFields.add("-");
+                        }
+
+                        if (mapToPathway && !pathwayXrefs.isEmpty()) {
+                            pathwayXrefs.sort(new PathwayXrefComparator());
+                            StringBuilder sb = new StringBuilder();
+                            for (PathwayXref xref : pathwayXrefs) {
+                                if (sb.length() > 0) {
+                                    sb.append(VALUE_SEPARATOR);
+                                }
+                                sb.append(xref.getDatabaseName())
+                                        .append(":")
+                                        .append(xref.getIdentifier());
+                            }
+                            mappingFields.add(sb.toString());
+                        } else {
+                            mappingFields.add("-");
+                        }
+
                         this.tsvWriter.write(mappingFields);
                     }
                 }
