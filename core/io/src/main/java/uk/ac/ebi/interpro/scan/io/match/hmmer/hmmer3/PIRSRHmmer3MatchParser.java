@@ -608,6 +608,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
         condition = condition.replace(")", "}");
         condition = condition.replace("x", ".");
         Utilities.verboseLog(50,  "condition: " + condition);
+        residues = residues.replace("-", "");
 
         //less strict check
         boolean residueChecksCondition = false;

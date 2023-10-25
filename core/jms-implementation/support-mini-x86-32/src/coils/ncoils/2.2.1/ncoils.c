@@ -252,7 +252,7 @@ void process_seq_stdin(int summary_output) {
             // new sequence
             if (s_len > 0) {
                 // not the first entry: process previous sequence
-                seq[n_seq] = '\0';
+                seq[s_len] = '\0';
                 res = (float *) malloc(strlen(seq)*sizeof(float));
                 if (summary_output)
                     predict(seq, &res, 3); /* mode = 2; 0 = column mode, 1 = fasta, 2 = concise, 3 = nothing -> use function below to output i5 format */
@@ -285,6 +285,7 @@ void process_seq_stdin(int summary_output) {
         }
     }
     if (s_len > 0) {
+        seq[s_len] = '\0';
         res = (float *) malloc(strlen(seq)*sizeof(float));
         if (summary_output)
             predict(seq, &res, 3);
