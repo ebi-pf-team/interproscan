@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema elementFormDefault="qualified" version="4.6" targetNamespace="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" xmlns:tns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:import schemaLocation="schema2.xsd"/>
+<xs:schema elementFormDefault="qualified" version="1.0" targetNamespace="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" xmlns:tns="https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="entry" type="tns:EntryType"/>
 
@@ -114,7 +112,7 @@
       <xs:element name="blastprodom-location" type="tns:BlastProDomLocationType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="coils-location" type="tns:CoilsLocationType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="fingerprints-location" type="tns:FingerPrintsLocationType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="funfamhmmer3-location" type="funFamHmmer3Location" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="funfamhmmer3-location" type="tns:FunFamHmmer3Location" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="hmmer2-location" type="tns:Hmmer2LocationType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="hmmer3-location-with-sites" type="tns:Hmmer3LocationWithSitesType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="hmmer3-location" type="tns:Hmmer3LocationType" minOccurs="0" maxOccurs="unbounded"/>
@@ -146,6 +144,7 @@
     </xs:sequence>
     <xs:attribute name="start" type="xs:int" use="required"/>
     <xs:attribute name="end" type="xs:int" use="required"/>
+    <xs:attribute name="representative" type="xs:boolean" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="locationFragmentsType" final="extension restriction">
@@ -377,6 +376,14 @@
         <xs:attribute name="motifNumber" type="xs:int" use="required"/>
         <xs:attribute name="pvalue" type="xs:double" use="required"/>
         <xs:attribute name="score" type="xs:double" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FunFamHmmer3Location">
+    <xs:complexContent>
+      <xs:extension base="tns:Hmmer3LocationType">
+        <xs:sequence/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -900,6 +907,15 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="SENSE"/>
       <xs:enumeration value="ANTISENSE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PathwayDatabase">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="META_CYC"/>
+      <xs:enumeration value="UNI_PATHWAY"/>
+      <xs:enumeration value="KEGG"/>
+      <xs:enumeration value="REACTOME"/>
     </xs:restriction>
   </xs:simpleType>
 
