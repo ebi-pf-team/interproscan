@@ -52,7 +52,7 @@
 
     <!--TODO: Read this from Maven properties-->
     <bean id="schema" class="org.springframework.core.io.FileSystemResource">
-        <constructor-arg value="target/test-classes/xsd/interproscan-model-3.0.xsd"/>
+        <constructor-arg value="target/test-classes/xsd/interproscan-model-4.7.xsd"/>
     </bean>
 
     <!-- Alternative declaration if don't need to set any additional properties:
