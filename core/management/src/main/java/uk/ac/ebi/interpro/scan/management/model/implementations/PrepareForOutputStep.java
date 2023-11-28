@@ -50,6 +50,7 @@ public class PrepareForOutputStep extends Step {
     private ConcurrentHashMap<String,  List<String>> entry2GoTermsMap;
     private ConcurrentHashMap<String, List<String>> entry2PathwayMap;
     private ConcurrentHashMap<String, List<String>> pathwayMap;
+    private ConcurrentHashMap<String, Boolean> domainsMap;
 
     Random random = new Random();
 
@@ -152,6 +153,8 @@ public class PrepareForOutputStep extends Step {
                 getGoTermsMap();
                 getEntry2GoTermsMap();
             }
+
+            getDomainsMap();
 
             //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
@@ -397,6 +400,7 @@ public class PrepareForOutputStep extends Step {
             }
 
             totalWaitTime = 0;
+            ArrayList<Domain> domains = new ArrayList<>();
             for (String signatureLibraryName : signatureLibraryNames) {
                 final String dbKey = proteinKey + signatureLibraryName;
 
@@ -450,6 +454,16 @@ public class PrepareForOutputStep extends Step {
                             pantherMatch.setGoXRefs(goXrefs);
                         }
 
+                        if (this.domainsMap.containsKey(match.getSignature().getAccession())) {
+                            boolean isPfam = this.domainsMap.get(match.getSignature().getAccession());
+                            Set<Location> locations = match.getLocations();
+                            if (locations != null) {
+                                for (Location location: locations) {
+                                    domains.add(new Domain(location, isPfam));
+                                }
+                            }
+                        }
+
                         Entry simpleEntry = match.getSignature().getEntry();
                         if (simpleEntry != null) {
                             if (mapToInterPro) {
@@ -471,6 +485,10 @@ public class PrepareForOutputStep extends Step {
                         matchCount++;
                     }
                 }
+            }
+
+            if (domains.size() > 0) {
+                selectRepresentativeDomains(domains);
             }
 
             //TODO Temp check what breaks if you dont do pre-marshalling
@@ -862,6 +880,25 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
+    public void getDomainsMap() {
+        if (domainsMap != null){
+            return;
+        }
+
+        try {
+            File file = new File(this.getEntryKVPath() + "/domains.json");
+            FileInputStream is = new FileInputStream(file);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            Map<String, Boolean> jsonMap;
+            jsonMap = mapper.readValue(is, new TypeReference<>() {});
+            domainsMap = new ConcurrentHashMap<> (jsonMap);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
     public Entry updateEntryXrefs(Entry entry) {
         String entryAc = entry.getAccession();
         Set<GoXref> goXrefs = (Set<GoXref>) getGoXrefsByEntryAc(entryAc); //entry2GoXrefsMap.get(entryAc);
@@ -1049,5 +1086,107 @@ public class PrepareForOutputStep extends Step {
         }
 
         return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
+    }
+
+    private void selectRepresentativeDomains(ArrayList<Domain> domains) {
+        Collections.sort(domains, new Comparator<Domain>() {
+            @Override
+            public int compare(Domain d1, Domain d2) {
+                if (d1.getLocation().getStart() == d2.getLocation().getStart()) {
+                    return d2.getLocation().getEnd() - d1.getLocation().getEnd();
+                }
+                return d1.getLocation().getStart() - d2.getLocation().getStart();
+            }
+        });
+
+        ArrayList<ArrayList<Domain>> groups = groupDomains(domains);
+
+        for (ArrayList<Domain> group : groups) {
+            Map<Integer, Set<Integer>> graph = new HashMap<>();
+
+            for (int i = 0; i < group.size(); i++) {
+                Set<Integer> edges = new HashSet<>();
+
+                for (int j = 0; j < group.size(); j++) {
+                    if (i != j) {
+                        edges.add(i);
+                    }
+                }
+
+                graph.put(i, edges);
+            }
+
+            for (int i = 0; i < group.size(); i++) {
+                Domain domainA = group.get(i);
+
+                for (int j = i + 1; j < group.size(); j++) {
+                    Domain domainB = group.get(j);
+
+                    if (domainA.overlaps(domainB, 0.3)) {
+                        graph.get(i).remove(j);
+                        graph.get(j).remove(i);
+                    }
+                }
+            }
+
+            List<Set<Integer>> subgroups = new DomainResolver(graph).resolve();
+
+            int maxCoverage = 0;
+            int maxPfams = 0;
+            List<Domain> bestSubgroup = null;
+            for (Set<Integer> subgroup: subgroups) {
+                Set<Integer> coverage = new HashSet<>();
+                int numPfams = 0;
+                List<Domain> candidate = new ArrayList<>();
+
+                for (int i: subgroup) {
+                    Domain domain = group.get(i);
+                    coverage.addAll(domain.getResidues());
+                    if (domain.isPfam()) {
+                        numPfams++;
+                    }
+
+                    candidate.add(domain);
+                }
+
+                int sizeCoverage = coverage.size();
+                if (sizeCoverage > maxCoverage || (sizeCoverage == maxCoverage && numPfams > maxPfams)) {
+                    maxCoverage = sizeCoverage;
+                    maxPfams = numPfams;
+                    bestSubgroup = candidate;
+                }
+            }
+
+            if (bestSubgroup != null) {
+                for (Domain domain: bestSubgroup) {
+                    domain.getLocation().setRepresentative(true);
+                }
+            }
+        }
+    }
+
+    private ArrayList<ArrayList<Domain>> groupDomains(ArrayList<Domain> domains) {
+        ArrayList<ArrayList<Domain>> groups = new ArrayList<>();
+        ArrayList<Domain> group = new ArrayList<>();
+        Domain domain = domains.get(0);
+        group.add(domain);
+        int stop = domain.getLocation().getEnd();
+
+        for (int i = 1; i < domains.size(); i++) {
+            domain = domains.get(i);
+            int start = domain.getLocation().getStart();
+
+            if (start <= stop) {
+                group.add(domain);
+            } else {
+                groups.add(group);
+                group = new ArrayList<>();
+                group.add(domain);
+                stop = domain.getLocation().getEnd();
+            }
+        }
+
+        groups.add(group);
+        return groups;
     }
 }
