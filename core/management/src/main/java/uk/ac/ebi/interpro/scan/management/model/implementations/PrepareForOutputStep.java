@@ -29,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PrepareForOutputStep extends Step {
 
     private static final Logger LOGGER = LogManager.getLogger(PrepareForOutputStep.class.getName());
+    private static final int MAX_NUM_DOMAINS_BY_GROUP = 20;
+    private static final double DOMAIN_OVERLAP_THRESHOLD = 0.3;
 
     //DAOs
     private ProteinDAO proteinDAO;
@@ -1089,25 +1091,40 @@ public class PrepareForOutputStep extends Step {
     }
 
     private void selectRepresentativeDomains(ArrayList<Domain> domains) {
-        Collections.sort(domains, new Comparator<Domain>() {
+        domains.sort(new Comparator<Domain>() {
             @Override
             public int compare(Domain d1, Domain d2) {
-                if (d1.getLocation().getStart() == d2.getLocation().getStart()) {
-                    return d2.getLocation().getEnd() - d1.getLocation().getEnd();
-                }
-                return d1.getLocation().getStart() - d2.getLocation().getStart();
+                int delta = d1.getLocation().getStart() - d2.getLocation().getStart();
+                return delta != 0 ? delta : d2.getLocation().getEnd() - d1.getLocation().getEnd();
             }
         });
 
         ArrayList<ArrayList<Domain>> groups = groupDomains(domains);
 
-        for (ArrayList<Domain> group : groups) {
-            Map<Integer, Set<Integer>> graph = new HashMap<>();
+        for (ArrayList<Domain> allDomainsInGroup : groups) {
+            allDomainsInGroup.sort(new Comparator<Domain>() {
+                @Override
+                public int compare(Domain d1, Domain d2) {
+                    int delta = d2.getResidues().size() - d1.getResidues().size();
+                    if (delta != 0) {
+                        return delta;
+                    } else if (d1.isPfam()) {
+                        return d2.isPfam() ? 0 : -1;
+                    } else if (d2.isPfam()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
 
-            for (int i = 0; i < group.size(); i++) {
+            List<Domain> bestDomainsInGroup = allDomainsInGroup.subList(0, Math.min(MAX_NUM_DOMAINS_BY_GROUP, allDomainsInGroup.size()));
+
+            Map<Integer, Set<Integer>> graph = new HashMap<>();
+            for (int i = 0; i < bestDomainsInGroup.size(); i++) {
                 Set<Integer> edges = new HashSet<>();
 
-                for (int j = 0; j < group.size(); j++) {
+                for (int j = 0; j < bestDomainsInGroup.size(); j++) {
                     if (i != j) {
                         edges.add(i);
                     }
@@ -1116,13 +1133,13 @@ public class PrepareForOutputStep extends Step {
                 graph.put(i, edges);
             }
 
-            for (int i = 0; i < group.size(); i++) {
-                Domain domainA = group.get(i);
+            for (int i = 0; i < bestDomainsInGroup.size(); i++) {
+                Domain domainA = bestDomainsInGroup.get(i);
 
-                for (int j = i + 1; j < group.size(); j++) {
-                    Domain domainB = group.get(j);
+                for (int j = i + 1; j < bestDomainsInGroup.size(); j++) {
+                    Domain domainB = bestDomainsInGroup.get(j);
 
-                    if (domainA.overlaps(domainB, 0.3)) {
+                    if (domainA.overlaps(domainB, DOMAIN_OVERLAP_THRESHOLD)) {
                         graph.get(i).remove(j);
                         graph.get(j).remove(i);
                     }
@@ -1140,7 +1157,7 @@ public class PrepareForOutputStep extends Step {
                 List<Domain> candidate = new ArrayList<>();
 
                 for (int i: subgroup) {
-                    Domain domain = group.get(i);
+                    Domain domain = bestDomainsInGroup.get(i);
                     coverage.addAll(domain.getResidues());
                     if (domain.isPfam()) {
                         numPfams++;
