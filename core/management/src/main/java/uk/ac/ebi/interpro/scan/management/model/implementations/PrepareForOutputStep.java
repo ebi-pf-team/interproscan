@@ -1095,7 +1095,7 @@ public class PrepareForOutputStep extends Step {
             @Override
             public int compare(Domain d1, Domain d2) {
                 int delta = d1.getLocation().getStart() - d2.getLocation().getStart();
-                return delta != 0 ? delta : d2.getLocation().getEnd() - d1.getLocation().getEnd();
+                return delta != 0 ? delta : d1.getLocation().getEnd() - d2.getLocation().getEnd();
             }
         });
 
@@ -1195,6 +1195,7 @@ public class PrepareForOutputStep extends Step {
 
             if (start <= stop) {
                 group.add(domain);
+                stop = Math.max(stop, domain.getLocation().getEnd());
             } else {
                 groups.add(group);
                 group = new ArrayList<>();
