@@ -7,7 +7,7 @@ import java.util.Set;
 public class Domain {
     private final Location location;
     private final Set<Integer> residues;
-    private final boolean pfam;
+    private final int databaseRank;
 
     public Location getLocation() {
         return location;
@@ -17,14 +17,14 @@ public class Domain {
         return residues;
     }
 
-    public boolean isPfam() {
-        return pfam;
+    public int getDatabaseRank() {
+        return databaseRank;
     }
 
-    public Domain(Location location, boolean isPfam) {
+    public Domain(Location location, int databaseRank) {
         this.location = location;
         this.residues = new HashSet<>();
-        this.pfam = isPfam;
+        this.databaseRank = databaseRank;
 
         Set<LocationFragment> fragments = location.getLocationFragments();
         for (LocationFragment fragment: fragments) {

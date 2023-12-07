@@ -52,7 +52,7 @@ public class PrepareForOutputStep extends Step {
     private ConcurrentHashMap<String,  List<String>> entry2GoTermsMap;
     private ConcurrentHashMap<String, List<String>> entry2PathwayMap;
     private ConcurrentHashMap<String, List<String>> pathwayMap;
-    private ConcurrentHashMap<String, Boolean> domainsMap;
+    private ConcurrentHashMap<String, Integer> domainsMap;
 
     Random random = new Random();
 
@@ -457,11 +457,11 @@ public class PrepareForOutputStep extends Step {
                         }
 
                         if (this.domainsMap.containsKey(match.getSignature().getAccession())) {
-                            boolean isPfam = this.domainsMap.get(match.getSignature().getAccession());
+                            int databaseRank = this.domainsMap.get(match.getSignature().getAccession());
                             Set<Location> locations = match.getLocations();
                             if (locations != null) {
                                 for (Location location: locations) {
-                                    domains.add(new Domain(location, isPfam));
+                                    domains.add(new Domain(location, databaseRank));
                                 }
                             }
                         }
@@ -892,7 +892,7 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, Boolean> jsonMap;
+            Map<String, Integer> jsonMap;
             jsonMap = mapper.readValue(is, new TypeReference<>() {});
             domainsMap = new ConcurrentHashMap<> (jsonMap);
         } catch (Exception ex) {
@@ -1108,13 +1108,8 @@ public class PrepareForOutputStep extends Step {
                     int delta = d2.getResidues().size() - d1.getResidues().size();
                     if (delta != 0) {
                         return delta;
-                    } else if (d1.isPfam()) {
-                        return d2.isPfam() ? 0 : -1;
-                    } else if (d2.isPfam()) {
-                        return 1;
-                    } else {
-                        return 0;
                     }
+                    return d1.getDatabaseRank() - d2.getDatabaseRank();
                 }
             });
 
@@ -1159,7 +1154,7 @@ public class PrepareForOutputStep extends Step {
                 for (int i: subgroup) {
                     Domain domain = bestDomainsInGroup.get(i);
                     coverage.addAll(domain.getResidues());
-                    if (domain.isPfam()) {
+                    if (domain.getDatabaseRank() == 0) {
                         numPfams++;
                     }
 
