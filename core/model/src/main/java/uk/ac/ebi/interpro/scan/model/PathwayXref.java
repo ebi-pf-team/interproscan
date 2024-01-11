@@ -94,6 +94,7 @@ public class PathwayXref extends Xref implements Serializable {
                 .toHashCode();
     }
 
+    @XmlType(name = "PathwayDatabase", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public enum PathwayDatabase {
 
         META_CYC('t', "MetaCyc"),

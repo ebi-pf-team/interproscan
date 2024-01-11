@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@XmlType(name = "FunFamHmmer3MatchType")
+@XmlType(name = "FunFamHmmer3MatchType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
 public class FunFamHmmer3Match extends Match<FunFamHmmer3Match.FunFamHmmer3Location> {
     @Column(nullable = false)
     private double evalue;
@@ -69,6 +69,7 @@ public class FunFamHmmer3Match extends Match<FunFamHmmer3Match.FunFamHmmer3Locat
         this.score = score;
     }
 
+    @XmlType(name = "FunFamHmmer3Location", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
     public static class FunFamHmmer3Location extends Hmmer3Match.Hmmer3Location {
         @Column(nullable = false, name = "hmmer3_seq_start")
         @JsonIgnore

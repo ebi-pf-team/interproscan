@@ -64,6 +64,9 @@ public abstract class Location<T extends LocationFragment> implements Serializab
     // 'end' is reserved word in SQL.
     private int end;
 
+    @Column(nullable = false)
+    private boolean representative = false;
+
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JsonBackReference
     private Match match;
@@ -205,6 +208,16 @@ public abstract class Location<T extends LocationFragment> implements Serializab
             this.end = end;
         }
     }
+
+    @XmlAttribute(name = "representative", required = true)
+    public boolean getRepresentative() {
+        return representative;
+    }
+
+    public void setRepresentative(boolean representative) {
+        this.representative = representative;
+    }
+
     /**
      * Ensure sub-classes of AbstractLocation are represented correctly in XML.
      *
