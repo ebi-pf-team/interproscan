@@ -141,7 +141,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.65-97.0";
+            String i5Version = "5.66-98.0";
             String i5BuildType = "64-Bit";
 
             if (parsedCommandLine.hasOption(I5Option.VERSION.getLongOpt())) {
