@@ -32,7 +32,11 @@ public class HmmerModelParser extends AbstractModelFileParser {
      * Matches the name line.
      * Group 1: Model name.
      */
-    private static final Pattern NAME_LINE = Pattern.compile("^NAME\\s+(.+)$");
+    // private static final Pattern NAME_LINE = Pattern.compile("^NAME\\s+(.+)$");
+
+    private static final Pattern NAME_LINE = Pattern.compile("^NAME\\s+(.*?)(?:\\$\\d+)?$");
+
+    // private static final Pattern NAME_LINE_SFLD = Pattern.compile("^NAME\\s+(.*?)(?:\\[\\d+\\])?$");
 
     /**
      * Matches the Description line.

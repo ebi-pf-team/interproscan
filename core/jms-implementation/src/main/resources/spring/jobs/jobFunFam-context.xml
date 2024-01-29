@@ -36,8 +36,8 @@
           parent="abstractCathFunFamStep">
         <property name="dependsUpon" ref="stepCathFunFamWriteFasta"/>
         <property name="stepDescription" value="Run HMMER3"/>
-        <property name="fullPathToHmmScanBinary" value="${binary.hmmer33.hmmscan.path}"/>
-        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="binarySwitches"
                   value="${hmmer3.hmmsearch.switches.gene3d} ${hmmer3.hmmsearch.cpu.switch.gene3d}"/>
         <property name="fullPathToHmmFile" value="${gene3d.hmm.path}"/>
@@ -91,7 +91,7 @@
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputThreeFileTemplate"/>
         <property name="cathResolveHitsOutputFileNameTemplate" ref="rawAnalysisOutputFourFileTemplate"/>
-        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="hmmsearchBinarySwitches" value="${hmmer3.hmmsearch.switches.funfam} ${hmmer3.hmmsearch.cpu.switch.funfam}"/>
         <property name="fullPathToCathResolveBinary" value="${cath.resolve.hits.path}"/>
         <property name="cathResolveBinarySwitches" value="${cath.resolve.hits.switches.funfam}"/>
