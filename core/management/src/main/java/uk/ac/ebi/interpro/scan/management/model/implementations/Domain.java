@@ -43,4 +43,24 @@ public class Domain {
 
         return false;
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.location.getMatch().getSignature().getAccession());
+        sb.append(":");
+
+        Set<LocationFragment> fragments = this.location.getLocationFragments();
+        String prefix = "";
+        for (LocationFragment fragment: fragments) {
+            sb.append(prefix);
+            sb.append(fragment.getStart());
+            sb.append("-");
+            sb.append(fragment.getEnd());
+            prefix = "";
+        }
+
+        sb.append(":");
+        sb.append(this.residues.size());
+        return sb.toString();
+    }
 }
