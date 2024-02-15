@@ -1121,7 +1121,7 @@ public class PrepareForOutputStep extends Step {
 
                 for (int j = 0; j < bestDomainsInGroup.size(); j++) {
                     if (i != j) {
-                        edges.add(i);
+                        edges.add(j);
                     }
                 }
 
@@ -1142,7 +1142,6 @@ public class PrepareForOutputStep extends Step {
             }
 
             List<Set<Integer>> subgroups = new DomainResolver(graph).resolve();
-
             int maxCoverage = 0;
             int maxPfams = 0;
             List<Domain> bestSubgroup = null;
