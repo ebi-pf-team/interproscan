@@ -41,8 +41,8 @@
         <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
-        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer33.hmmsearch.path}"/>
-        <property name="fullPathToHmmScanBinary" value="${binary.hmmer33.hmmscan.path}"/>
+        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
+        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.pirsf} ${hmmer3.hmmsearch.cpu.switch.pirsf}"/>
         <property name="fullPathToHmmFile" value="${pirsf.sfhmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -69,7 +69,7 @@
         <!--More specific properties-->
         <property name="perlCommand" value="${perl.command}"/>
         <property name="scriptPath" value="${binary.pirsf.pl.path}"/>
-        <property name="hmmerPath" value="${binary.hmmer33.path}"/>
+        <property name="hmmerPath" value="${binary.hmmer3.path}"/>
         <property name="sfHmmAllPath" value="${pirsf.sfhmm.path}"/>
         <property name="pirsfDatPath" value="${pirsf.dat.path}"/>
         <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>

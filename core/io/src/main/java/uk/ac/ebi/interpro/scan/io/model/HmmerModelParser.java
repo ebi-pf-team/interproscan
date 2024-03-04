@@ -31,8 +31,11 @@ public class HmmerModelParser extends AbstractModelFileParser {
     /**
      * Matches the name line.
      * Group 1: Model name.
+     *
+     * NOTE: SFLD NAMEs may have '\$\d+' at end of string and this will be stripped off.
+     * This numbers are used to guarantee unique names.
      */
-    private static final Pattern NAME_LINE = Pattern.compile("^NAME\\s+(.+)$");
+    private static final Pattern NAME_LINE = Pattern.compile("^NAME\\s+(.*?)(?:\\$\\d+)?$");
 
     /**
      * Matches the Description line.

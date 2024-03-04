@@ -80,10 +80,7 @@ def main():
     ignore = {"binary.tmhmm.path", "funfam.hmm.path", "smart.hmm.path"}
     for key, path in properties.items():
         if "hmm.path" in key and key not in ignore:
-            if key.startswith(("sfld", "superfamily")):
-                bin_key = "binary.hmmer3.path"
-            else:
-                bin_key = "binary.hmmer33.path"
+            bin_key = "binary.hmmer3.path"
 
             if os.path.isfile(path):
                 hmmfiles = [path]

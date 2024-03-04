@@ -48,8 +48,8 @@ public class SuperFamilyModelParser extends AbstractModelFileParser {
     private static final Pattern DESC_LINE = Pattern.compile("^DESC\\s+(.+)$");
 
     /**
-     * Matches the signature accession line (but needs "SSF" prefix adding) and if there is a version number it will be
-     * stripped off (but doesn't really apply here).
+     * Matches the signature accession line (but needs "SSF" prefix adding) and if there is a 'version' number it will be
+     * stripped off. 'version' numbers are used to guarantee unique SuperFamily ACCs.
      */
     private static final Pattern ACCESSION_PATTERN = Pattern.compile("^ACC\\s+([A-Z0-9]+)\\.?.*$");
 
