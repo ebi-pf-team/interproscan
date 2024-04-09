@@ -34,7 +34,10 @@ public class PrositePatternMatchParser extends PrositeMatchParser {
      * @return an implementation of a PfScanRawMatch object.
      */
     @Override
-    protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease, int seqStart, int seqEnd, String cigarAlign, Double score, ProfileScanRawMatch.Level profileLevel, PatternScanMatch.PatternScanLocation.Level patternLevel) {
+    protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease,
+                                              int seqStart, int seqEnd, String cigarAlign, Double score,
+                                              ProfileScanRawMatch.Level profileLevel,
+                                              PatternScanMatch.PatternScanLocation.Level patternLevel) {
         return new ProSitePatternRawMatch(
                 sequenceIdentifier,
                 model,
