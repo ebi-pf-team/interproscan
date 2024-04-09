@@ -36,23 +36,18 @@
 
     <!-- STEP 2 -->
     <bean id="stepPrositePatternRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPatternScanStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
           parent="abstractPrositePatternStep">
-        <!-- In example command line below, replace _ with -
-          Prosite Profiles:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.105/prosite.dat _-pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
-          Prosite Patterns:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.105/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.105/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositePatternWriteFastaFile"/>
-        <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
+        <property name="stepDescription" value="Run ps_scan.pl"/>
+        <property name="perlCommand" value="${perl.command}"/>
+        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
         <property name="binarySwitches" value="${psscan.prosite.patterns.binary.switches}"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
         <property name="modelFile" value="${prosite.patterns.models.path}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearchv3.path}"/>
         <property name="fullPathToConfirmatoryProfiles" value="${prosite.evaluator.models.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
