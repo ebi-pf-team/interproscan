@@ -13,7 +13,7 @@ import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PrositeProfileMatchParser extends PrositePfsearchMatchParser { //PrositeMatchParser {
+public class PrositeProfileMatchParser extends PrositePfsearchMatchParser {
 
     public PrositeProfileMatchParser(String signatureLibraryRelease) {
         super(SignatureLibrary.PROSITE_PROFILES, signatureLibraryRelease);
@@ -34,7 +34,10 @@ public class PrositeProfileMatchParser extends PrositePfsearchMatchParser { //Pr
      * @return an implementation of a PfScanRawMatch object.
      */
     @Override
-    protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease, int seqStart, int seqEnd, String cigarAlign, Double score, ProfileScanRawMatch.Level profileLevel, PatternScanMatch.PatternScanLocation.Level patternLevel) {
+    protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease,
+                                              int seqStart, int seqEnd, String cigarAlign, Double score,
+                                              ProfileScanRawMatch.Level profileLevel,
+                                              PatternScanMatch.PatternScanLocation.Level patternLevel) {
         return new ProSiteProfileRawMatch(
                 sequenceIdentifier,
                 model,
