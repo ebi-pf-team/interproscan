@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
 import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Column;
@@ -33,20 +34,21 @@ public class ProSitePatternRawMatch extends PfScanRawMatch {
 
     @Enumerated(javax.persistence.EnumType.STRING)
     @Column(nullable = false)
-    private PatternScanMatch.PatternScanLocation.Level patternLevel;
+    private ProfileScanMatch.ProfileScanLocation.LevelType patternLevel;
 
     public ProSitePatternRawMatch(String sequenceIdentifier, String model,
                                   String signatureLibraryRelease,
-                                  int locationStart, int locationEnd, String cigarAlignment, PatternScanMatch.PatternScanLocation.Level patternLevel) {
+                                  int locationStart, int locationEnd, String cigarAlignment,
+                                  ProfileScanMatch.ProfileScanLocation.LevelType patternLevel) {
         super(sequenceIdentifier, model, SignatureLibrary.PROSITE_PATTERNS, signatureLibraryRelease, locationStart, locationEnd, cigarAlignment);
         setPatternLevel(patternLevel);
     }
 
-    public void setPatternLevel(PatternScanMatch.PatternScanLocation.Level patternLevel) {
+    public void setPatternLevel(ProfileScanMatch.ProfileScanLocation.LevelType patternLevel) {
         this.patternLevel = patternLevel;
     }
 
-    public PatternScanMatch.PatternScanLocation.Level getPatternLevel() {
+    public ProfileScanMatch.ProfileScanLocation.LevelType getPatternLevel() {
         return patternLevel;
     }
 

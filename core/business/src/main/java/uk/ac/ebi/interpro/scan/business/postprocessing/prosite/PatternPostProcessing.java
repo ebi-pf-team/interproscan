@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
@@ -25,10 +26,10 @@ public class PatternPostProcessing implements Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger(PatternPostProcessing.class.getName());
 
-    private List<PatternScanMatch.PatternScanLocation.Level> passLevels;
+    private List<ProfileScanMatch.ProfileScanLocation.LevelType> passLevels;
 
     @Required
-    public void setPassLevels(List<PatternScanMatch.PatternScanLocation.Level> passLevels) {
+    public void setPassLevels(List<ProfileScanMatch.ProfileScanLocation.LevelType> passLevels) {
         this.passLevels = passLevels;
     }
 

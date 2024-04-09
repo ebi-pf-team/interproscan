@@ -1,5 +1,6 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
 import javax.persistence.Entity;
@@ -29,7 +30,8 @@ public class ProSiteProfileRawMatch extends ProfileScanRawMatch {
 
     public ProSiteProfileRawMatch(String sequenceIdentifier, String model,
                                   String signatureLibraryRelease,
-                                  int locationStart, int locationEnd, String cigarAlignment, double score, Level level) {
+                                  int locationStart, int locationEnd, String cigarAlignment, double score,
+                                  ProfileScanMatch.ProfileScanLocation.Level level) {
         super(sequenceIdentifier, model, SignatureLibrary.PROSITE_PROFILES, signatureLibraryRelease,
                 locationStart, locationEnd, cigarAlignment, score, level);
     }

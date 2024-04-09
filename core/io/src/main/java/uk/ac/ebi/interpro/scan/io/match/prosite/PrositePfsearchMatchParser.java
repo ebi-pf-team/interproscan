@@ -4,16 +4,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
-import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
-
-import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,7 +70,7 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
                     sequenceMatch.getSequenceEnd(),
                     cigarEncoder.encode(sequenceMatch.getAlignment()),
                     sequenceMatch.getScore(),
-                    ProfileScanRawMatch.Level.byLevelString(Integer.toString(sequenceMatch.getLevel())),
+                    ProfileScanMatch.ProfileScanLocation.Level.byLevelString(Integer.toString(sequenceMatch.getLevel())),
                     null
             );
         } else if (line.startsWith(START_OF_MATCH)) {
@@ -92,7 +88,7 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
                         sequenceMatch.getSequenceEnd(),
                         cigarEncoder.encode(sequenceMatch.getAlignment()),
                         sequenceMatch.getScore(),
-                        ProfileScanRawMatch.Level.byLevelString(Integer.toString(sequenceMatch.getLevel())),
+                        ProfileScanMatch.ProfileScanLocation.Level.byLevelString(Integer.toString(sequenceMatch.getLevel())),
                         null
                 );
             }
@@ -121,7 +117,6 @@ public abstract class PrositePfsearchMatchParser extends AbstractLineMatchParser
                                                        int seqEnd,
                                                        String cigarAlign,
                                                        Double score,
-                                                       ProfileScanRawMatch.Level profileLevel,
-                                                       PatternScanMatch.PatternScanLocation.Level patternLevel);
-
+                                                       ProfileScanMatch.ProfileScanLocation.Level profileLevel,
+                                                       ProfileScanMatch.ProfileScanLocation.LevelType patternLevel);
 }

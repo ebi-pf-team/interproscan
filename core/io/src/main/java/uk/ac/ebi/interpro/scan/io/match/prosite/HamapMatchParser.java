@@ -1,6 +1,7 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
 import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.HamapRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
@@ -34,7 +35,10 @@ public class HamapMatchParser extends PrositeMatchParser {
      * @return an implementation of a PfScanRawMatch object.
      */
     @Override
-    protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease, int seqStart, int seqEnd, String cigarAlign, Double score, ProfileScanRawMatch.Level profileLevel, PatternScanMatch.PatternScanLocation.Level patternLevel) {
+    protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease,
+                                              int seqStart, int seqEnd, String cigarAlign, Double score,
+                                              ProfileScanMatch.ProfileScanLocation.Level profileLevel,
+                                              ProfileScanMatch.ProfileScanLocation.LevelType patternLevel) {
         return new HamapRawMatch(
                 sequenceIdentifier,
                 model,

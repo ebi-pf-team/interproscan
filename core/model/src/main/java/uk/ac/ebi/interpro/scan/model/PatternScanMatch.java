@@ -23,9 +23,7 @@ import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -66,9 +64,9 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
 
         @Enumerated(EnumType.ORDINAL)   // Using ordinal to keep the database size down.
         @Column(nullable = false, name = "location_level")
-        private Level level;
+        private ProfileScanMatch.ProfileScanLocation.LevelType level;
 
-        @Column(nullable = false, name = "cigar_align")
+        @Column(nullable = false, length = 4000, name = "cigar_align")
         private String cigarAlignment;
 
         /**
@@ -77,18 +75,18 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
         protected PatternScanLocation() {
         }
 
-        public PatternScanLocation(int start, int end, Level level, String cigarAlignment) {
+        public PatternScanLocation(int start, int end, ProfileScanMatch.ProfileScanLocation.LevelType level, String cigarAlignment) {
             super(new PatternScanLocationFragment(start, end));
             setLevel(level);
             setCigarAlignment(cigarAlignment);
         }
 
         @XmlAttribute(required = true)
-        public Level getLevel() {
+        public ProfileScanMatch.ProfileScanLocation.LevelType getLevel() {
             return level;
         }
 
-        private void setLevel(Level level) {
+        private void setLevel(ProfileScanMatch.ProfileScanLocation.LevelType level) {
             this.level = level;
         }
 
@@ -118,71 +116,6 @@ public class PatternScanMatch extends Match<PatternScanMatch.PatternScanLocation
 
         private void setCigarAlignment(String cigarAlignment) {
             this.cigarAlignment = cigarAlignment;
-        }
-
-        /**
-         * ProSite cut-off level
-         * (see <a href="http://www.expasy.ch/prosite/prosuser.html#convent37">PROSITE User Manual</a>)
-         *
-         * @author Antony Quinn
-         * @author Phil Jones
-         */
-        @XmlType(name = "LevelType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
-        @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
-        public enum Level {
-
-            STRONG("(0)", "!"),
-            WEAK("(-1)", "?"),
-            NONE(null, "?");
-
-            private static final Map<String, Level> TAG_TO_LEVEL = new HashMap<String, Level>(Level.values().length);
-
-            static {
-                for (Level level : Level.values()) {
-                    // Note that HashMap DOES support null keys, as required for the NONE Level.
-                    TAG_TO_LEVEL.put(level.tag, level);
-                }
-            }
-
-            private final String tag;
-            private final String symbol;
-
-            Level(String tag, String symbol) {
-                this.tag = tag;
-                this.symbol = symbol;
-            }
-
-            public String getTag() {
-                return tag;
-            }
-
-            public String getTagNumber(){
-                if (tag.equals("(0)")){
-                    return "0";
-                }else if (tag.equals("(-1)")){
-                    return "-1";
-                }
-                return null;
-            }
-            public String getSymbol() {
-                return symbol;
-            }
-
-            @Override
-            public String toString() {
-                return symbol;
-            }
-
-            /**
-             * Returns enum corresponding to tag.
-             *
-             * @param tag Tag, for example null, (0) or (-1).
-             * @return Enum corresponding to tag
-             */
-            public static Level getLevelByTag(String tag) {
-                return TAG_TO_LEVEL.get(tag);
-            }
-
         }
 
         @Override

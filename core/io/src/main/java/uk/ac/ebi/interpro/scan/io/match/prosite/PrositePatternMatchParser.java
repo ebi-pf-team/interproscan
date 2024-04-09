@@ -1,10 +1,9 @@
 package uk.ac.ebi.interpro.scan.io.match.prosite;
 
-import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProSitePatternRawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 
 /**
  * Concrete parser for Prosite patterns.
@@ -36,8 +35,8 @@ public class PrositePatternMatchParser extends PrositeMatchParser {
     @Override
     protected PfScanRawMatch buildMatchObject(String sequenceIdentifier, String model, String signatureLibraryRelease,
                                               int seqStart, int seqEnd, String cigarAlign, Double score,
-                                              ProfileScanRawMatch.Level profileLevel,
-                                              PatternScanMatch.PatternScanLocation.Level patternLevel) {
+                                              ProfileScanMatch.ProfileScanLocation.Level profileLevel,
+                                              ProfileScanMatch.ProfileScanLocation.LevelType patternLevel) {
         return new ProSitePatternRawMatch(
                 sequenceIdentifier,
                 model,

@@ -3,6 +3,7 @@ package uk.ac.ebi.interpro.scan.business.postprocessing.prosite;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
@@ -26,12 +27,12 @@ public class ProfilePostProcessing<T extends ProfileScanRawMatch> implements Ser
 
     private static final Logger LOGGER = LogManager.getLogger(ProfilePostProcessing.class.getName());
 
-    private List<ProfileScanRawMatch.Level> passLevels;
+    private List<ProfileScanMatch.ProfileScanLocation.Level> passLevels;
 
     private String accessionsToSkipFile = "";
 
     @Required
-    public void setPassLevels(List<ProfileScanRawMatch.Level> passLevels) {
+    public void setPassLevels(List<ProfileScanMatch.ProfileScanLocation.Level> passLevels) {
         this.passLevels = passLevels;
     }
 

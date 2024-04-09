@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.model.PatternScanMatch;
+import uk.ac.ebi.interpro.scan.model.ProfileScanMatch;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
@@ -89,8 +90,8 @@ public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanR
                 Integer.parseInt(splitLine[4].trim()),
                 cigarEncoder.encode(gffAttributes.get("Sequence")),
                 score,
-                ProfileScanRawMatch.Level.byLevelString(gffAttributes.get("Level")),
-                PatternScanMatch.PatternScanLocation.Level.getLevelByTag(gffAttributes.get("LevelTag"))
+                ProfileScanMatch.ProfileScanLocation.Level.byLevelString(gffAttributes.get("Level")),
+                ProfileScanMatch.ProfileScanLocation.LevelType.getLevelByTag(gffAttributes.get("LevelTag"))
         );
     }
 
@@ -115,8 +116,8 @@ public abstract class PrositeMatchParser extends AbstractLineMatchParser<PfScanR
                                                        int seqEnd,
                                                        String cigarAlign,
                                                        Double score,
-                                                       ProfileScanRawMatch.Level profileLevel,
-                                                       PatternScanMatch.PatternScanLocation.Level patternLevel);
+                                                       ProfileScanMatch.ProfileScanLocation.Level profileLevel,
+                                                       ProfileScanMatch.ProfileScanLocation.LevelType patternLevel);
 
     /**
      * Helper method to grab the attributes from the end of the gff line.

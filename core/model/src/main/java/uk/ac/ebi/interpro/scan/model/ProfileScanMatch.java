@@ -24,13 +24,11 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.AlignmentEncoder;
 import uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -73,8 +71,12 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         @Column(nullable = false)
         private double score;
 
-        @Column(nullable = false, length = 4000)//, name = "cigar_align")
+        @Column(nullable = false, length = 4000, name = "cigar_align")
         private String cigarAlignment;
+
+        @Enumerated(EnumType.ORDINAL)
+        @Column(nullable = false, name = "location_level")
+        private ProfileScanMatch.ProfileScanLocation.Level level;
 
         /**
          * protected no-arg constructor required by JPA - DO NOT USE DIRECTLY.
@@ -82,10 +84,11 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         protected ProfileScanLocation() {
         }
 
-        public ProfileScanLocation(int start, int end, double score, String cigarAlignment) {
+        public ProfileScanLocation(int start, int end, double score, String cigarAlignment, Level level) {
             super(new ProfileScanLocationFragment(start, end));
             setScore(score);
             setCigarAlignment(cigarAlignment);
+            setLevel(level);
         }
 
         @XmlAttribute(required = true)
@@ -127,6 +130,15 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             this.cigarAlignment = cigarAlignment;
         }
 
+        @XmlAttribute(required = true)
+        public ProfileScanMatch.ProfileScanLocation.Level getLevel() {
+            return level;
+        }
+
+        private void setLevel(ProfileScanMatch.ProfileScanLocation.Level level) {
+            this.level = level;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o)
@@ -151,7 +163,88 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
         }
 
         public Object clone() throws CloneNotSupportedException {
-            return new ProfileScanLocation(this.getStart(), this.getEnd(), this.getScore(), this.getCigarAlignment());
+            return new ProfileScanLocation(this.getStart(), this.getEnd(), this.getScore(), this.getCigarAlignment(), this.getLevel());
+        }
+
+        public enum Level {
+            MINUS_ONE("-1"),
+            ZERO("0"),
+            ONE("1");
+
+            private static final Map<String, Level> STRING_TO_LEVEL = new HashMap<>(Level.values().length);
+
+            static {
+                for (Level level : Level.values()) {
+                    STRING_TO_LEVEL.put(level.levelValue, level);
+                }
+            }
+
+            String levelValue;
+
+            Level(String levelValue) {
+                this.levelValue = levelValue;
+            }
+
+            public static Level byLevelString(String levelString) {
+                return STRING_TO_LEVEL.get(levelString);
+            }
+        }
+
+        @XmlType(name = "LevelType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
+        @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
+        public enum LevelType {
+
+            STRONG("(0)", "!"),
+            WEAK("(-1)", "?"),
+            NONE(null, "?");
+
+            private static final Map<String, LevelType> TAG_TO_LEVEL = new HashMap<>(Level.values().length);
+
+            static {
+                for (LevelType level : LevelType.values()) {
+                    // Note that HashMap DOES support null keys, as required for the NONE Level.
+                    TAG_TO_LEVEL.put(level.tag, level);
+                }
+            }
+
+            private final String tag;
+            private final String symbol;
+
+            LevelType(String tag, String symbol) {
+                this.tag = tag;
+                this.symbol = symbol;
+            }
+
+            public String getTag() {
+                return tag;
+            }
+
+            public String getTagNumber(){
+                if (tag.equals("(0)")){
+                    return "0";
+                }else if (tag.equals("(-1)")){
+                    return "-1";
+                }
+                return null;
+            }
+            public String getSymbol() {
+                return symbol;
+            }
+
+            @Override
+            public String toString() {
+                return symbol;
+            }
+
+            /**
+             * Returns enum corresponding to tag.
+             *
+             * @param tag Tag, for example null, (0) or (-1).
+             * @return Enum corresponding to tag
+             */
+            public static LevelType getLevelByTag(String tag) {
+                return TAG_TO_LEVEL.get(tag);
+            }
         }
 
         /**

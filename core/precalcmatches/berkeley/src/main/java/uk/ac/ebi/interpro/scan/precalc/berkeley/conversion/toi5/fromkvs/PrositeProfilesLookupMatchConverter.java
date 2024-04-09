@@ -17,7 +17,9 @@ public class PrositeProfilesLookupMatchConverter extends LookupMatchConverter<Pr
         int locationEnd = valueOrZero(match.getSequenceEnd());
         Double score = valueOrZero(match.getSequenceScore());
         String alignment = valueOrNotAvailable(match.getSeqFeature());
-        locations.add(new ProfileScanMatch.ProfileScanLocation(locationStart, locationEnd, score, alignment));
+        // TODO: Persist level in KVS
+        ProfileScanMatch.ProfileScanLocation.Level level = ProfileScanMatch.ProfileScanLocation.Level.ZERO;
+        locations.add(new ProfileScanMatch.ProfileScanLocation(locationStart, locationEnd, score, alignment, level));
         return new ProfileScanMatch(signature, match.getModelAccession(), locations);
     }
 
