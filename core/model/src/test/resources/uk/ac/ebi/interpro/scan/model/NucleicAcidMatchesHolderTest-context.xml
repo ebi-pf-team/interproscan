@@ -521,11 +521,11 @@
                 Set<ProfileScanMatch.ProfileScanLocation> locations;
 
                 locations = new HashSet<ProfileScanMatch.ProfileScanLocation>();
-                locations.add(new ProfileScanMatch.ProfileScanLocation(1, 33, 24.202, "30M3D"));
+                locations.add(new ProfileScanMatch.ProfileScanLocation(1, 33, 24.202, "30M3D", ProfileScanMatch.ProfileScanLocation.Level.ONE));
                 p.addMatch(new ProfileScanMatch(new Signature("PS50042", "CNMP_BINDING_3"), "PS50042", locations));
 
                 locations = new HashSet<ProfileScanMatch.ProfileScanLocation>();
-                locations.add(new ProfileScanMatch.ProfileScanLocation(35, 53, 15.158, "6D10I3D"));
+                locations.add(new ProfileScanMatch.ProfileScanLocation(35, 53, 15.158, "6D10I3D", ProfileScanMatch.ProfileScanLocation.Level.ONE));
                 p.addMatch(new ProfileScanMatch(new Signature("PS50206", "RHODANESE_3"), "PS50206", locations));
 
                 // Create release

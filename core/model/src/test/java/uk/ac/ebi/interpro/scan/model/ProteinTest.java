@@ -150,7 +150,7 @@ public class ProteinTest extends AbstractTest<Protein> {
 
         Set<ProfileScanMatch.ProfileScanLocation> l = new HashSet<>();
         // Sequence is 60 chars, so make up a CIGAR string that adds up to 60 (10+10+30):
-        l.add(new ProfileScanMatch.ProfileScanLocation(1, 60, 15.158, "10M10D10I30M"));
+        l.add(new ProfileScanMatch.ProfileScanLocation(1, 60, 15.158, "10M10D10I30M", ProfileScanMatch.ProfileScanLocation.Level.ZERO));
         original.addMatch(new ProfileScanMatch(new Signature("PS50206"), "PS50206", l));
 
         byte[] data = SerializationUtils.serialize(original);
