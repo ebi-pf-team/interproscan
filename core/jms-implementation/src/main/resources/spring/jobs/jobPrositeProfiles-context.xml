@@ -36,26 +36,18 @@
 
     <!-- STEP 2 -->
     <bean id="stepPrositeProfilesRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPrositeProfilesBinaryStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunPsScanStep"
           parent="abstractPrositeProfileStep">
-        <!-- In example command line below, replace _ with -
-          Prosite Profiles:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.113/prosite.dat _-pfscan /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -s -m -o gff
-          Prosite Patterns:
-          /ebi/sp/pro1/interpro/binaries/scripts/ps_scan.pl -d /ebi/sp/pro1/interpro/data/members/prosite/20.113/prosite.dat _-pfscan  /ebi/sp/pro1/interpro/binaries/64_bit_Linux/pfscan -r -b /ebi/sp/pro1/interpro/data/members/prosite/20.113/evaluator.dat -s -o ipro -->
         <property name="dependsUpon" ref="stepPrositeProfilesWriteFastaFile"/>
-        <property name="stepDescription" value="Run ps_scan.pl and pfscan Binary for selected proteins"/>
-        <property name="binarySwitches" value="${pfsearchv3.binary.switches.prosite.profiles} ${pfsearchv3.cpu.switch.prosite.profiles}"/>
+        <property name="stepDescription" value="Run ps_scan.pl"/>
+        <property name="perlCommand" value="${perl.command}"/>
+        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
+        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
+        <property name="binarySwitches" value="${psscan.prosite.profiles.binary.switches}"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
-        <property name="fullPathToPsScanPerlScript" value="${binary.prosite.psscan.pl.path}"/>
-        <property name="modelsDir" value="${prosite.profiles.models.dir}"/>
-        <property name="fullPathToPython" value="${python3.command}"/>
-        <property name="fullPathToPfscanBinary" value="${binary.prosite.pfscanv3.path}"/>
-        <property name="fullPathToPfsearchBinary" value="${binary.prosite.pfsearchv3.path}"/>
-        <property name="fullPathToRunPrositeBinary" value="${binary.prosite.runprosite.path}"/>
-        <property name="usePfsearch" value="${psscan.prosite.profiles.usepfsearch}"/>
+        <property name="modelFile" value="${prosite.profiles.models.path}"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
@@ -66,31 +58,6 @@
         <property name="stepDescription" value="Delete the fasta file following successful run of Prosite Profiles."/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
-
-    <!--
-    <bean id="stepHamapHMMParsePfSearchRawOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParseHamapPfsearchOutputStep"
-          parent="abstractHamapHMMStep">
-        <property name="dependsUpon" >
-            <list>
-                <ref bean="stepHamapHMMRunPFSearch"/>
-            </list>
-        </property>
-        <property name="stepDescription" value="Parse the output from the ProSite binary"/>
-        <property name="serialGroup" value="PARSE_HAMAP"/>
-        <property name="retries" value="3"/>
-        <property name="outputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-        <property name="rawMatchDAO" ref="hamapRawMatchDAO"/>
-        <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.match.prosite.HamapPfsearchMatchParser">
-                <constructor-arg ref="latestHamapSignatureLibraryRelease"/>
-                <property name="cigarEncoder">
-                    <bean class="uk.ac.ebi.interpro.scan.model.raw.alignment.CigarAlignmentEncoder"/>
-                </property>
-            </bean>
-        </property>
-    </bean>
-    -->
 
     <!-- STEP 3 -->
     <bean id="stepPrositeProfilesParseRawOutput"
