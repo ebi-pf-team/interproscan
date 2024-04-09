@@ -13,7 +13,7 @@ import uk.ac.ebi.interpro.scan.model.raw.ProfileScanRawMatch;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class PrositeProfileMatchParser extends PrositePfsearchMatchParser {
+public class PrositeProfileMatchParser extends PrositeMatchParser {
 
     public PrositeProfileMatchParser(String signatureLibraryRelease) {
         super(SignatureLibrary.PROSITE_PROFILES, signatureLibraryRelease);
