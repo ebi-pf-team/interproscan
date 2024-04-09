@@ -65,7 +65,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
     @Entity
     @Table(name = "profile_scan_location")
     @XmlType(name = "ProfileScanLocationType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
-    @JsonIgnoreProperties({"id", "cigarAlignment"}) // cigarAlignment is not output i the json
+    @JsonIgnoreProperties({"id", "cigarAlignment", "level"})
     public static class ProfileScanLocation extends Location {
 
         @Column(nullable = false)
@@ -130,7 +130,7 @@ public class ProfileScanMatch extends Match<ProfileScanMatch.ProfileScanLocation
             this.cigarAlignment = cigarAlignment;
         }
 
-        @XmlAttribute(required = true)
+        @XmlTransient
         public ProfileScanMatch.ProfileScanLocation.Level getLevel() {
             return level;
         }
