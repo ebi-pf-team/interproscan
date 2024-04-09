@@ -462,7 +462,7 @@
                 p.addCrossReference(new ProteinXref("UniParc", "UPI0001AFC88D", "UPI0001AFC88D"));
                 Signature signature = new Signature("PS00675", "SIGMA54_INTERACT_1");
                 Set<PatternScanMatch.PatternScanLocation> locations = new HashSet<PatternScanMatch.PatternScanLocation>();
-                locations.add(new PatternScanMatch.PatternScanLocation(8, 43, PatternScanMatch.PatternScanLocation.Level.STRONG, "23M10D3I"));
+                locations.add(new PatternScanMatch.PatternScanLocation(8, 43, ProfileScanMatch.ProfileScanLocation.LevelType.STRONG, "23M10D3I"));
                 p.addMatch(new PatternScanMatch(signature, "PS00675", locations));
 
                 // Create release
