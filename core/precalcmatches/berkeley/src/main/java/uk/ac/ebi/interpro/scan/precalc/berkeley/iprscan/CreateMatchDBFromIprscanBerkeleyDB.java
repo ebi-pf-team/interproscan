@@ -4,6 +4,8 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentMutableConfig;
 
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
@@ -38,24 +40,11 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
     private static String QUERY_ENABLE_DML = "alter session enable parallel dml";
     
     private static String QUERY_TEMPORARY_TABLE =
-            "select  /*+ PARALLEL (8) */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
-                    "SIGNATURE_ACCESSION, MODEL_ACCESSION,  SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
-                    "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH,  ENVELOPE_START, ENVELOPE_END,  SCORE,  EVALUE," +
-                    "SEQ_FEATURE" +
-                    "       from  lookup_tmp_tab  partition (partitionName) " +
-                    "       order by  upi_range, PROTEIN_MD5";
-                    //"       where upi_range = ? " +
-                    //"       order by  PROTEIN_MD5";
-
-                    //"       from  lookup_tmp_tab " +
-//                    "       where upi_range = ? " +
-//                    "       order by  upi_range, PROTEIN_MD5";
-    /*
-    "       from  lookup_tmp_tab  partition (partitionName) " +
-            "       where upi_range = ? " +
-            "       order by  PROTEIN_MD5";
-    */
-
+            "SELECT /*+ PARALLEL (8) */ PROTEIN_MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, " +
+            "SIGNATURE_ACCESSION, MODEL_ACCESSION, SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
+            "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH, ENVELOPE_START, ENVELOPE_END, SCORE, EVALUE, SEQ_FEATURE " +
+            "FROM lookup_tmp_tab PARTITION (partitionName) " +
+            "ORDER BY PROTEIN_MD5";
 
     public static void main(String[] args) {
         if (args.length < 4) {
@@ -124,6 +113,15 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
             System.out.println("Create the Berkeley DB Store and populate ... ");
             try (BerkeleyDBStore lookupMatchDB = new BerkeleyDBStore()){
                 lookupMatchDB.create(dbStoreName, lookupMatchDBDirectory);
+
+                Environment env = lookupMatchDB.getEnvironment();
+                EnvironmentMutableConfig mutableConfig = env.getMutableConfig();
+
+                mutableConfig.setTxnNoSync(true);
+ //               mutableConfig.setTxnWriteNoSync(true);
+
+                env.setMutableConfig(mutableConfig);
+
                 if (primIDX == null) {
                     primIDX = lookupMatchDB.getEntityStore().getPrimaryIndex(Long.class, KVSequenceEntry.class);
                 }
@@ -147,15 +145,10 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                     System.out.println(Utilities.getTimeNow() + " sql for this partition: " + partitionQueryLookupTable);
                     try (PreparedStatement ps = connection.prepareStatement(partitionQueryLookupTable)) {
                         //should we play witht eh featch array size
-                        System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
+                        //System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
                         ps.setFetchSize(fetchSize);
-                        System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
-                        //ps.setString(1, partitionName);
+                        //System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
 
-                        //ps.setString(1, partitionName);
-                        //ps.setString(1, partitionName);
-
-                        //ps.setString(2, partitionName);
                         //System.out.println(Utilities.getTimeNow() + "sql:" + ps.toString());
                         try (ResultSet rs = ps.executeQuery()) {
                             long endExecuteQueryMillis = System.currentTimeMillis();
@@ -265,7 +258,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                                 String kvMatch = kvMatchJoiner.toString();
 
                                 if (matchCount == 0) {
-                                    System.out.println(Utilities.getTimeNow() + " match 0:  " + kvMatch.toString());
+                                    //System.out.println(Utilities.getTimeNow() + " match 0:  " + kvMatch.toString());
                                 }
                                 if (match == null) {
                                     match = new KVSequenceEntry();
@@ -285,7 +278,7 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                                 matchCount++;
                                 partitionMatchCount++;
                                 if (partitionMatchCount == 1) {
-                                    System.out.println(Utilities.getTimeNow() + " match 1:  " + match.toString());
+                                    //System.out.println(Utilities.getTimeNow() + " match 1:  " + match.toString());
                                 }
                                 if (matchCount % 2000000 == 0) {
                                     if (matchCount % 6000000 == 0) {
