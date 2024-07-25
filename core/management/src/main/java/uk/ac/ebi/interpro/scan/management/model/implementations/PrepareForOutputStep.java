@@ -48,8 +48,9 @@ public class PrepareForOutputStep extends Step {
     private Map<String, Collection<GoXref>> entry2GoXrefsMap;
     private Map<String, Collection<PathwayXref>> entry2PathwayXrefsMap;
 
-    private ConcurrentHashMap<String,  List<String>> gotermsMap;
-    private ConcurrentHashMap<String,  List<String>> entry2GoTermsMap;
+    private ConcurrentHashMap<String, List<String>> gotermsMap;
+    private String goVersion;
+    private ConcurrentHashMap<String, List<String>> entry2GoTermsMap;
     private ConcurrentHashMap<String, List<String>> entry2PathwayMap;
     private ConcurrentHashMap<String, List<String>> pathwayMap;
     private ConcurrentHashMap<String, Integer> domainsMap;
@@ -152,8 +153,8 @@ public class PrepareForOutputStep extends Step {
             }
 
             if (mapToGO) {
-                getGoTermsMap();
-                getEntry2GoTermsMap();
+                loadGoTerms();
+                loadInterPro2Go();
             }
 
             getDomainsMap();
@@ -835,7 +836,7 @@ public class PrepareForOutputStep extends Step {
 
     }
 
-    public  void getGoTermsMap() {
+    public void loadGoTerms() {
         if (gotermsMap != null){
             return;
         }
@@ -844,9 +845,10 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, List<String>> jsonMap;
-            jsonMap = mapper.readValue(is, new TypeReference<>() {});
-            gotermsMap = new ConcurrentHashMap<> (jsonMap);
+            Map<String, Object> jsonMap = mapper.readValue(is, new TypeReference<>() {});
+            goVersion = (String) jsonMap.get("version");
+            Map<String, List<String>> terms = (Map<String, List<String>>) jsonMap.get("terms");
+            gotermsMap = new ConcurrentHashMap<>(terms);
 
             for (String key : gotermsMap.keySet()) {
                 List<String> gotermLine = gotermsMap.get(key);
@@ -858,7 +860,7 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
-    public  void getEntry2GoTermsMap(){
+    public void loadInterPro2Go(){
         if (entry2GoTermsMap != null){
             return;
         }

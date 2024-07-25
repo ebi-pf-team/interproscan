@@ -21,7 +21,6 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
 
     private static final Logger LOGGER = LogManager.getLogger(RunPrositeProfilesBinaryStep.class.getName());
 
-    private String fullPathToPsScanPerlScript;
     private String fullPathToPython;
 
     private String fullPathToPfscanBinary;
@@ -36,15 +35,6 @@ public class RunPrositeProfilesBinaryStep extends RunBinaryStep {
 
    private String modelsDir;
 
-    public String getFullPathToPsScanPerlScript() {
-        return fullPathToPsScanPerlScript;
-    }
-
-    @Required
-    public void setFullPathToPsScanPerlScript(String fullPathToPsScanPerlScript) {
-        this.fullPathToPsScanPerlScript = fullPathToPsScanPerlScript;
-    }
-    
     public String getFullPathToPython() {
 	return fullPathToPython;
     }

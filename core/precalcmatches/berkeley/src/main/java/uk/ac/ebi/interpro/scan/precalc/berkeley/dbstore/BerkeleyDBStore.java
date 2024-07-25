@@ -45,7 +45,10 @@ public class BerkeleyDBStore implements AutoCloseable{
         // Split *.jdb log files into subdirectories in the env home dir
         // test not to
         //myEnvConfig.setConfigParam("je.log.nDataDirectories", Integer.toString(numSubDirs));
+
         myEnvConfig.setConfigParam("je.log.fileMax", Integer.toString(210000000)); //204M
+        // worth increasing file size?
+	// myEnvConfig.setConfigParam("je.log.fileMax", Integer.toString(512000000)); //512M
 
         myEnvConfig.setConfigParam("je.env.runCleaner", Boolean.toString(false));
         myEnvConfig.setConfigParam("je.env.runCheckpointer", Boolean.toString(false));
@@ -53,6 +56,11 @@ public class BerkeleyDBStore implements AutoCloseable{
         myEnvConfig.setConfigParam("je.checkpointer.bytesInterval", Long.toString(400000000000l)); // 370GB 10000000000l
         myEnvConfig.setConfigParam("je.cleaner.minAge", Integer.toString(1000)); // time between cleaning
         myEnvConfig.setConfigParam("je.log.useODSYNC", Boolean.toString(true));
+
+        myEnvConfig.setConfigParam("je.maxMemory", Long.toString(25769803776l)); // 24GB
+        myEnvConfig.setConfigParam("je.tree.minMemory", Integer.toString(512000000));
+        myEnvConfig.setConfigParam("je.env.verifyBtreeBatchSize", Integer.toString(10000));
+
         storeConfig.setAllowCreate(true);
         storeConfig.setTransactional(false);
         storeConfig.setDeferredWrite(true);   //but remember to write to disk every so often
@@ -85,5 +93,10 @@ public class BerkeleyDBStore implements AutoCloseable{
     public EntityStore getEntityStore() {
         return entityStore;
     }
+
+    public Environment getEnvironment() {
+        return myEnv;
+    }
+
 }
 
