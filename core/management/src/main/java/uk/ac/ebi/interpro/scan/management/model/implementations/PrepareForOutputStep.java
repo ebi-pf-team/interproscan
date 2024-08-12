@@ -890,17 +890,28 @@ public class PrepareForOutputStep extends Step {
         }
 
         try {
-            File file = new File(this.getEntryKVPath() + "/domains.json");
+            File file = new File(this.getEntryKVPath() + "/entries.json");
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, Integer> jsonMap;
-            jsonMap = mapper.readValue(is, new TypeReference<>() {});
-            domainsMap = new ConcurrentHashMap<> (jsonMap);
+            Map<String, Map<String, Object>> jsonMap = mapper.readValue(is, new TypeReference<>() {});
+            domainsMap = new ConcurrentHashMap<>();
+
+            for (Map.Entry<String, Map<String, Object>> entry : jsonMap.entrySet()) {
+                String accession = entry.getKey();
+                Map<String, Object> value = entry.getValue();
+
+                Map<String, Object> representative = (Map<String, Object>) value.get("representative");
+                String type = (String) representative.get("type");
+                Integer index = (Integer) representative.get("index");
+
+                if (type != null && type.equals("domain")) {
+                    domainsMap.put(accession, index);
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     public Entry updateEntryXrefs(Entry entry) {
