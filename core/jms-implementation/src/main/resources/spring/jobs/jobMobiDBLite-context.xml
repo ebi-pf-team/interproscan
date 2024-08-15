@@ -55,13 +55,11 @@
     <bean id="stepMobiDBRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.mobidb.RunMobiDBBinaryStep"
           parent="abstractMobiDBStep">
-        <!-- /ebi/sp/pro1/interpro/binaries/32_bit_Linux/nMobiDB -c -m /ebi/sp/pro1/interpro/data/members/MobiDB/2.2/new_coil.mat <  -->
         <property name="dependsUpon" ref="stepMobiDBWriteFastaFile"/>
         <property name="stepDescription" value="Run mobi-db Binary for selected proteins"/>
         <property name="fullPathToPython" value="${python3.command}"/>
         <property name="fullPathToBinary" value="${binary.mobidb.path}"/>
-        <property name="fullPathToBinDirectory" value="${binary.mobidb.binx.path}"/>
-        <property name="binarySwitches" value="${mobidb.binary.switches} ${mobidb.binary.cpu.switches}"/>
+        <property name="binarySwitches" value="${mobidb.binary.cpu.switches}"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
