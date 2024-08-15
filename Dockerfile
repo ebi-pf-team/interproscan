@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ubuntu:20.04
+FROM ubuntu:20.04
 
 LABEL authors="Laise Florentino (lcf@ebi.ac.uk), Matthias Blum (mblum@ebi.ac.uk)"
 
@@ -17,7 +17,7 @@ RUN wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/${VERSION}/alt/interpro
     wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/${VERSION}/alt/interproscan-core-${VERSION}.tar.gz.md5 && \
     md5sum -c interproscan-core-${VERSION}.tar.gz.md5 && \
     tar -zxf interproscan-core-${VERSION}.tar.gz && \
-    rm interproscan-core-${VERSION}.tar.gz && \
+    rm interproscan-core-${VERSION}.tar.gz* && \
     mv /opt/interproscan-${VERSION} /opt/interproscan
 
 WORKDIR /opt/interproscan
