@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM --platform=linux/amd64 ubuntu:20.04
 
 LABEL authors="Laise Florentino (lcf@ebi.ac.uk), Matthias Blum (mblum@ebi.ac.uk)"
 
@@ -21,4 +21,11 @@ RUN wget ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/${VERSION}/alt/interpro
     mv /opt/interproscan-${VERSION} /opt/interproscan
 
 WORKDIR /opt/interproscan
+
+RUN echo "binary.phobius.pl.path=/opt/phobius/phobius.pl" >> interproscan.properties && \
+    echo "binary.signalp.path=/opt/signalp/signalp" >> interproscan.properties && \
+    echo "signalp.perl.library.dir=/opt/signalp/lib" >> interproscan.properties && \
+    echo "binary.tmhmm.path=/opt/tmhmm/decodeanhmm" >> interproscan.properties && \
+    echo "tmhmm.model.path=/opt/tmhmm/TMHMM2.0c.model" >> interproscan.properties
+
 ENTRYPOINT ["bash", "./interproscan.sh"]
