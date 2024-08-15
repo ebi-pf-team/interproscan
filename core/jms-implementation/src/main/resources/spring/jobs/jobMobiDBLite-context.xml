@@ -70,7 +70,7 @@
     <!-- STEP 3 -->
 
     <bean id="stepMobiDBStoreFilteredMatches"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.mobidb.ParseMobiDBOutputStepV2"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.mobidb.ParseMobiDBOutputStep"
           parent="abstractMobiDBStep">
         <property name="dependsUpon" ref="stepMobiDBRunBinary"/>
         <property name="stepDescription" value="Parse the MobiDB binary output and store as Filtered matches."/>
