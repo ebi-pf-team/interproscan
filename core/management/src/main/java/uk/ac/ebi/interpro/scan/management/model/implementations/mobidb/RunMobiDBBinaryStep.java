@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class RunMobiDBBinaryStep extends RunBinaryStep {
     protected List<String> createCommand(StepInstance stepInstance, String temporaryFileDirectory) {
         final List<String> command = new ArrayList<String>();
         final String fastaFilePath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getFastaFileNameTemplate());
+        final String tempDirectoryPath = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, "tmp");
+        File tempDirectory = new File(tempDirectoryPath);
+        boolean created = tempDirectory.mkdirs();
 
         if(this.getFullPathToPython().trim().isEmpty()){
             command.add("python3");
@@ -58,6 +62,8 @@ public class RunMobiDBBinaryStep extends RunBinaryStep {
 
         command.add(fullPathToBinary);
         command.addAll(getBinarySwitchesAsList());
+        command.add("--tempdir");
+        command.add(tempDirectoryPath);
         command.add(fastaFilePath);
         return command;
     }
