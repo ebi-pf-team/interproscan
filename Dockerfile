@@ -26,6 +26,6 @@ RUN echo "binary.phobius.pl.path=/opt/phobius/phobius.pl" >> interproscan.proper
     echo "binary.signalp.path=/opt/signalp/signalp" >> interproscan.properties && \
     echo "signalp.perl.library.dir=/opt/signalp/lib" >> interproscan.properties && \
     echo "binary.tmhmm.path=/opt/tmhmm/decodeanhmm" >> interproscan.properties && \
-    echo "tmhmm.model.path=/opt/tmhmm/TMHMM2.0c.model" >> interproscan.properties
+    echo "tmhmm.model.path=/opt/tmhmm/TMHMM2.0.model" >> interproscan.properties
 
 ENTRYPOINT ["bash", "./interproscan.sh"]
