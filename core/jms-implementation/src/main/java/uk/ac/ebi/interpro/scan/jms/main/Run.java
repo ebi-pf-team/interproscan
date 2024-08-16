@@ -167,7 +167,7 @@ public class Run extends AbstractI5Runner {
 
             // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
             String[] analysesToRun = null;
-            String[] depreactedAnalysesToRun = null;
+            String[] deprecatedAnalysesToRun = null;
             String[] excludedAnalyses = null;
 
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
@@ -253,9 +253,9 @@ public class Run extends AbstractI5Runner {
                 }
 
                 try {
-                    //System.out.println("Deal with depreactedAnalysesToRun and excludedAnalyses");
-                    depreactedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
-                    //System.out.println("depreacted Analyses To Run :" + Arrays.asList(depreactedAnalysesToRun).toString());
+                    //System.out.println("Deal with deprecatedAnalysesToRun and excludedAnalyses");
+                    deprecatedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
+                    //System.out.println("deprecated Analyses To Run :" + Arrays.asList(deprecatedAnalysesToRun).toString());
 
                     excludedAnalyses = getExcludedApplications(parsedCommandLine, jobs);
 
