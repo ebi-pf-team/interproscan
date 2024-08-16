@@ -29,14 +29,10 @@ public class AbstractI5Runner {
     static {
         HELP_FORMATTER.setWidth(120);
     }
-    private static final String HELP_MESSAGE_TITLE =
-            "java -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AggressiveOpts " +
-                    "-XX:+UseFastAccessorMethods -Xms128M -Xmx2048M -jar interproscan-5.jar";
-    private static final String HEADER =
-            "\n\nPlease give us your feedback by sending an email to\n\ninterhelp@ebi.ac.uk\n\n";
-    private static final String FOOTER = "Copyright \u00a9 EMBL European Bioinformatics Institute, Hinxton, Cambridge, UK. (http://www.ebi.ac.uk) " +
-            "The InterProScan software itself is " +
-            "provided under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html). " +
+    private static final String HELP_MESSAGE_TITLE = "InterProScan: genome-scale protein function classification.";
+    private static final String HEADER = "\n\nDOCUMENTATION\n\tSee https://interproscan-docs.readthedocs.io for full documentation.\n";
+    private static final String FOOTER = "Copyright \u00a9 EMBL-EBI, Wellcome Genome Campus, Hinxton, Cambridgeshire, UK (https://www.ebi.ac.uk).\n" +
+            "The InterProScan software itself is provided under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html). " +
             "Third party components (e.g. member database binaries and models) are subject to separate licensing - " +
             "please see the individual member database websites for details.\n\n";
 
