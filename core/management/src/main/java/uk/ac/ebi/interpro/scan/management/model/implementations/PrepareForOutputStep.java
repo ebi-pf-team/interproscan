@@ -894,10 +894,11 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, Map<String, Object>> jsonMap = mapper.readValue(is, new TypeReference<>() {});
+            Map<String, Object> jsonMap = mapper.readValue(is, new TypeReference<>() {});
+            Map<String, Map<String, Object>> entries = (Map<String, Map<String, Object>>) jsonMap.get("entries");
             domainsMap = new ConcurrentHashMap<>();
 
-            for (Map.Entry<String, Map<String, Object>> entry : jsonMap.entrySet()) {
+            for (Map.Entry<String, Map<String, Object>> entry : entries.entrySet()) {
                 String accession = entry.getKey();
                 Map<String, Object> value = entry.getValue();
 
