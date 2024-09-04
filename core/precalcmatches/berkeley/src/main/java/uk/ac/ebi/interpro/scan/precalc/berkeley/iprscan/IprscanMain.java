@@ -45,50 +45,42 @@ public class IprscanMain {
 
         //md5
 
-        
+
         if ( buildsteps.contains("1")) {
-        CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
-        md5Builder.buildDatabase(
-                md5DBPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI,
-                fetchSize
-        );
-
-	}
-       
-	if ( buildsteps.contains("2")) {
-
-	    //matches
-        CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();
-        matchBuilder.buildDatabase(
-                matchDBPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI,
-                fetchSize
-        );
-
+            CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
+            md5Builder.buildDatabase(
+                    md5DBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword,
+                    maxUPI,
+                    fetchSize
+            );
         }
 
-	if ( buildsteps.contains("3")) {
+        if ( buildsteps.contains("2")) {
+            //matches
+            CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();
+            matchBuilder.buildDatabase(
+                    matchDBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword,
+                    maxUPI,
+                    fetchSize
+            );
+        }
 
-        //sites
-
-        CreateSiteDBFromIprscanBerkeleyDB siteMatchBuilder = new CreateSiteDBFromIprscanBerkeleyDB();
-        siteMatchBuilder.buildDatabase(
-                siteDBPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI,
-                fetchSize
-        );
-
-	}
-
+        if ( buildsteps.contains("3")) {
+            //sites
+            CreateSiteDBFromIprscanBerkeleyDB siteMatchBuilder = new CreateSiteDBFromIprscanBerkeleyDB();
+            siteMatchBuilder.buildDatabase(
+                    siteDBPath,
+                    databaseUrl,
+                    databaseUsername,
+                    databasePassword,
+                    fetchSize
+            );
+        }
     }
 }
