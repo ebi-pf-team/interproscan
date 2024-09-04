@@ -1,19 +1,11 @@
 package uk.ac.ebi.interpro.scan.io.match.mobidb;
 
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.ParseException;
-
-import uk.ac.ebi.interpro.scan.io.match.AbstractLineMatchParser;
 import uk.ac.ebi.interpro.scan.io.match.MatchParser;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.model.raw.MobiDBRawMatch;
-
-import uk.ac.ebi.interpro.scan.model.raw.PfScanRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
@@ -21,48 +13,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Parser for the MobiDB output format:
- * <p>
- * >UNIPARC:UPI00000000FC status=active
- * 165 186
- * //
- * >UNIPARC:UPI0000000107 status=active
- * //
- * >UNIPARC:UPI0000000108 status=active
- * 73 94
- * 123 158
- * //
- * >UNIPARC:UPI0000000109 status=active
- * //
+ * Parser for the IDRPred output format:
+ * PROTEIN_A	16	47	-
+ * PROTEIN_A	115	142	-
+ * PROTEIN_A	117	130	Polyampholyte
+ * PROTEIN_B	609	705	-
+ * PROTEIN_B	622	632	Proline-rich
+ * PROTEIN_B	655	675	Polar
+ * PROTEIN_B	696	705	Polyampholyte
+ * PROTEIN_B	792	820	-
+ * PROTEIN_B	808	820	Polar
+ * PROTEIN_B	874	893	-
+ * PROTEIN_B	948	1566	-
+ * PROTEIN_B	963	974	Polyampholyte
  *
- * @author Gift Nuka
- * @version $Id: MobiDBMatchParser.java,v 5.20 2016/10/21 14:01:17 nuka Exp $
- * @since 1.0-SNAPSHOT
+ * @author Gift Nuka, Matthias Blum
  */
 public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
-
-    private static final Logger LOGGER = LogManager.getLogger(MobiDBMatchParser.class.getName());
-
-    private static final String END_OF_RECORD_MARKER = "//";
-
-    private static final char PROTEIN_ID_LINE_START = '>';
-
     private  SignatureLibrary signatureLibrary;
     private  String signatureLibraryRelease;
 
-    private static final Pattern QUERY_LINE_PATTERN
-            = Pattern.compile("^QUERY\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(.*)$");
-    private static final Pattern DOMAIN_LINE_PATTERN
-            = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)(.*)$");
-            //s+(.*)$");
-
-    /**
-     * Matches the line with the start and stop coordinates of the disordered region.
-     * Group 1: Start
-     * Group 2: Stop.
-     */
-    private static final Pattern START_STOP_PATTERN = Pattern.compile("^(\\d+)\\s+(\\d+).*$");
-
+    private static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)(.*)$");
 
     public MobiDBMatchParser() {
         super();
@@ -72,7 +43,6 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
         this.signatureLibrary = signatureLibrary;
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
-
 
     public SignatureLibrary getSignatureLibrary() {
         return signatureLibrary;
@@ -90,7 +60,6 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
     public void setSignatureLibraryRelease(String signatureLibraryRelease) {
         this.signatureLibraryRelease = signatureLibraryRelease;
     }
-
 
     public Set<RawProtein<MobiDBRawMatch>> parse(InputStream is) throws IOException, ParseException {
 
@@ -115,54 +84,29 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
 
     public Set<MobiDBRawMatch> parseFileInput(InputStream is) throws IOException, ParseException {
         Set<MobiDBRawMatch> matches = new HashSet<>();
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            String proteinIdentifier;
-            int lineNumber = 0;
-            String definitionLine = "";
-            String sequenceIdentifier = "";
+
             while ((line = reader.readLine()) != null) {
-                lineNumber++;
-                LOGGER.debug("Line: " + line);
-                //id 80	99
-//                Utilities.verboseLog(1100, "Domain line: " + line);
                 Matcher matcher = DOMAIN_LINE_PATTERN.matcher(line.trim());
 
                 if (matcher.matches()) {
-//                    Utilities.verboseLog(1100, "number of groups: " + matcher.groupCount());
-                    sequenceIdentifier = matcher.group(1);
+                    String sequenceIdentifier = matcher.group(1);
                     int locationStart = Integer.parseInt(matcher.group(2));
                     int locationEnd = Integer.parseInt(matcher.group(3));
                     String feature = matcher.group(4).trim();
-                    if (! (feature.isEmpty() || feature == null)) {
-                        String feature2 = feature;
-//                        Utilities.verboseLog(1100, "We have a feature  : " + feature2 + " " +
-//                                sequenceIdentifier + " region: " + locationStart + "-" +  locationEnd);
-                    }else{
+                    if (feature.equals("-")) {
                         feature = "";
                     }
 
-                    //TODO hardcoded accession should be removed
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
                             SignatureLibrary.MOBIDB_LITE, signatureLibraryRelease,
                             locationStart, locationEnd, feature));
-//                    Utilities.verboseLog(110, "Match  : " + getLastElement(matches));
                 }
             }
         }
-        Utilities.verboseLog(1100, "MobiDB matches size : " + matches.size());
+
         return matches;
     }
-
-    //get  the last item in the set
-    public Object getLastElement(final Collection c) {
-        final Iterator itr = c.iterator();
-        Object lastElement = itr.next();
-        while (itr.hasNext()) {
-            lastElement = itr.next();
-        }
-        return lastElement;
-    }
-
-
 }
