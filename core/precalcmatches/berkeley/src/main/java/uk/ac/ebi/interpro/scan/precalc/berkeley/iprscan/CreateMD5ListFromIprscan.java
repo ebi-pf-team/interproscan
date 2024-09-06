@@ -22,7 +22,7 @@ import java.sql.*;
  */
 public class CreateMD5ListFromIprscan {
     private static final String USER = "IPRSCAN";
-    private static final String QUERY = "SELECT MD5 FROM LOOKUP_MD5 ORDER BY MD5";
+    private static final String QUERY = "SELECT MD5 FROM " + USER + ".LOOKUP_MD5 ORDER BY MD5";
 
     void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
         Environment env = null;
