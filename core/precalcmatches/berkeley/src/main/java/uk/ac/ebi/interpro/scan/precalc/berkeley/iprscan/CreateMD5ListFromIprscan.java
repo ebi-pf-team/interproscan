@@ -8,7 +8,6 @@ import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
-
 import java.io.File;
 import java.sql.*;
 
@@ -17,136 +16,70 @@ import java.sql.*;
  *
  * @author Phil Jones
  * @author Maxim Scheremetjew
+ * @author Matthias Blum
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
 public class CreateMD5ListFromIprscan {
+    private static final String USER = "IPRSCAN";
+    private static final String QUERY = "SELECT MD5 FROM LOOKUP_MD5 ORDER BY MD5";
 
-    private static final int COL_IDX_MD5 = 1;
-
-    private static final String databaseName = "IPRSCAN";
-
-    private static final String MD5_QUERY = "select /*+ PARALLEL */ md5 as protein_md5 from lookup_tmp_upi_md5 order by protein_md5";
-
-    public static void main(String[] args) {
-
-        if (args.length < 5) {
-            throw new IllegalArgumentException("Please provide the following arguments:\n\npath to berkeleyDB directory\n" + databaseName + " DB URL (jdbc:oracle:thin:@host:port:SID)\n" + databaseName + " DB username\n" + databaseName + " DB password\nMaximum UPI");
-        }
-        String directoryPath = args[0];
-        String databaseUrl = args[1];
-        String databaseUsername = args[2];
-        String databasePassword = args[3];
-        String maxUPI = args[4];
-        int fetchSize = 100000;
-        if (args.length >= 6) {
-            fetchSize =  Integer.parseInt(args[5]);
-        }
-        CreateMD5ListFromIprscan instance = new CreateMD5ListFromIprscan();
-
-        instance.buildDatabase(directoryPath,
-                databaseUrl,
-                databaseUsername,
-                databasePassword,
-                maxUPI,
-                fetchSize
-        );
-
-
-    }
-
-    void buildDatabase(String directoryPath, String databaseUrl, String databaseUsername, String databasePassword, String maxUPI, int fetchSize) {
-        Environment myEnv = null;
+    void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
+        Environment env = null;
         EntityStore store = null;
-        Connection connection = null;
 
-        try {
-            // Start off making sure that the berkeley database directory is present and writable.
-            File berkeleyDBDirectory = new File(directoryPath);
-            if (berkeleyDBDirectory.exists()) {
-                if (!berkeleyDBDirectory.isDirectory()) {
-                    throw new IllegalStateException("The path " + directoryPath + " already exists and is not a directory, as required for a Berkeley Database.");
-                }
-                File[] directoryContents = berkeleyDBDirectory.listFiles();
-                if (directoryContents != null && directoryContents.length > 0) {
-                    throw new IllegalStateException("The directory " + directoryPath + " already has some contents.  The " + CreateMD5ListFromIprscan.class.getSimpleName() + " class is expecting an empty directory path name as argument.");
-                }
-                if (!berkeleyDBDirectory.canWrite()) {
-                    throw new IllegalStateException("The directory " + directoryPath + " is not writable.");
-                }
-            } else if (!(berkeleyDBDirectory.mkdirs())) {
-                throw new IllegalStateException("Unable to create Berkeley database directory " + directoryPath);
-            }
+        try (Connection connection = DriverManager.getConnection(url, USER, password)) {
+            // Set up the environment
+            EnvironmentConfig envConfig = new EnvironmentConfig();
+            envConfig.setAllowCreate(true);
+            envConfig.setTransactional(false);
+            env = new Environment(outputDirectory, envConfig);
 
-            // Open up the Berkeley Database
-            EnvironmentConfig myEnvConfig = new EnvironmentConfig();
+            // Set up the entity store
             StoreConfig storeConfig = new StoreConfig();
-
-            myEnvConfig.setAllowCreate(true);
             storeConfig.setAllowCreate(true);
             storeConfig.setTransactional(false);
-            // Open the environment and entity store
-            myEnv = new Environment(berkeleyDBDirectory, myEnvConfig);
-            store = new EntityStore(myEnv, "EntityStore", storeConfig);
+            store = new EntityStore(env, "EntityStore", storeConfig);
 
-            PrimaryIndex<String, BerkeleyConsideredProtein> primIDX = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
+            // Get a PrimaryIndex for the User class
+            PrimaryIndex<String, BerkeleyConsideredProtein> index = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
 
-            // Connect to the database.
-            Class.forName("oracle.jdbc.OracleDriver");
-            connection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword);
-
-            PreparedStatement ps = connection.prepareStatement(MD5_QUERY);
-            System.out.println(Utilities.getTimeNow() + " old FetchSize: " + ps.getFetchSize());
+            PreparedStatement ps = connection.prepareStatement(QUERY);
             ps.setFetchSize(fetchSize);
-            System.out.println(Utilities.getTimeNow() + "  new FetchSize: " + ps.getFetchSize());
-//            ps.setString(1, maxUPI);
             ResultSet rs = ps.executeQuery();
 
             int proteinCount = 0;
-
             while (rs.next()) {
-                final String proteinMD5 = rs.getString(COL_IDX_MD5);
+                final String proteinMD5 = rs.getString(0);
                 if (proteinMD5 == null || proteinMD5.length() == 0) continue;
-                ///TODO:?? arrgggh!  The IPRSCAN table stores PRINTS Graphscan values in the hmmBounds column...
-                BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
 
-                // Store last protein
-                primIDX.put(protein);
+                BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
+                index.put(protein);
+
                 proteinCount++;
-                if (proteinCount % 5000000 == 0) {
-                    System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
+                if (proteinCount % 10000000 == 0) {
+                    System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
                 }
             }
-            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " considered proteins.");
+            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Unable to load the oracle.jdbc.OracleDriver class", e);
         } catch (SQLException e) {
             throw new IllegalStateException("Unable to connect to the database", e);
         } finally {
             if (store != null) {
                 try {
                     store.close();
-                } catch (DatabaseException dbe) {
-                    System.out.println("Unable to close the BerkeleyDB connection.");
+                } catch (DatabaseException e) {
+                    e.printStackTrace();
                 }
             }
 
-            if (myEnv != null) {
+            if (env != null) {
                 try {
-                    // Finally, close environment.
-                    myEnv.close();
-                } catch (DatabaseException dbe) {
-                    System.out.println("Unable to close the BerkeleyDB environment.");
-                }
-            }
-
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    System.out.println("Unable to close the database connection.");
+                    env.close();
+                } catch (DatabaseException e) {
+                    e.printStackTrace();
                 }
             }
         }
