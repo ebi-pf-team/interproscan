@@ -1,86 +1,54 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
+import java.io.File;
 
-import uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan.CreateMatchDBFromIprscanBerkeleyDB;
-
-import java.util.Arrays;
-
-/**
- * @author Phil Jones
- *         Date: 20/05/11
- *         Time: 11:59
- *         Hacky bit of code that runs the BekerleyDB building
- *         mechanism from the command line.
- */
 public class IprscanMain {
-
-    private static final String databaseName="Iprscan";
-
     public static void main(String[] args) {
-        if (args.length < 6) {
-            throw new IllegalArgumentException("Please provide the following arguments:\n\npath to match berkeleyDB directory\npath to MD5 check berkeleyDB directory\n"
-                    + databaseName + "DB URL (jdbc:oracle:thin:@host:port:SID)\n"
-                    + databaseName + " DB username\n"
-                    + databaseName + " DB password\nMaximum UPI");
+        if (args.length != 3) {
+            throw new IllegalArgumentException(
+                    "Usage: java -jar berkeley-db-builder.jar TYPE DIR URL\n\n" +
+                            "TYPE: md5|matches|sites\n" +
+                            "DIR:  output directory of the BerkleyDB database\n" +
+                            "URL:  Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>\n");
         }
-        String matchDBPath = args[0];
-        String md5DBPath = args[1];
-        String siteDBPath = args[2];
-        String databaseUrl = args[3];
-        String databaseUsername = args[4];
-        String databasePassword = args[5];
-        String maxUPI = args[6];
-        String buildsteps = args[7];
+        String databaseType = args[0].toLowerCase();
+        String databasePath = args[1];
+        String databaseUrl = args[2];
+        String databasePassword = System.getenv("ORACLE_PASSWORD");
 
-        System.out.println("args  #" + args.length + " : " + Arrays.toString(args));
+        File outputDir = new File(databasePath);
+        if (outputDir.exists()) {
+            if (outputDir.isDirectory()) {
+                throw new IllegalStateException("Not a directory: " + databasePath);
+            }
+            File[] files = outputDir.listFiles();
+            if (files != null && files.length > 0) {
+                throw new IllegalStateException("Not empty: " + databasePath);
+            } else if (!outputDir.canWrite()) {
+                throw new IllegalStateException("Not writeable: " + databasePath);
+            }
+        } else if (!outputDir.mkdirs()) {
+            throw new IllegalStateException("Cannot create " + databasePath);
+        }
+
         int fetchSize = 100000;
-        if (args.length >= 9) {
-            fetchSize = Integer.parseInt(args[7]);
-        }
-
-        // TODO Allow user to kick of ALL (both MD5 and MATCH) or just one
-
-
-
-        // we have now this built
-
-        //md5
-
-
-        if ( buildsteps.contains("1")) {
-            CreateMD5ListFromIprscan md5Builder = new CreateMD5ListFromIprscan();
-            md5Builder.buildDatabase(
-                    md5DBPath,
-                    databaseUrl,
-                    databaseUsername,
-                    databasePassword,
-                    maxUPI,
-                    fetchSize
-            );
-        }
-
-        if ( buildsteps.contains("2")) {
-            //matches
-            CreateMatchDBFromIprscanBerkeleyDB matchBuilder = new CreateMatchDBFromIprscanBerkeleyDB();
-            matchBuilder.buildDatabase(
-                    matchDBPath,
-                    databaseUrl,
-                    databaseUsername,
-                    databasePassword,
-                    maxUPI,
-                    fetchSize
-            );
-        }
-
-        if ( buildsteps.contains("3")) {
-            //sites
-            CreateSiteDBFromIprscanBerkeleyDB siteMatchBuilder = new CreateSiteDBFromIprscanBerkeleyDB();
-            siteMatchBuilder.buildDatabase(
-                    siteDBPath,
-                    databaseUrl,
-                    databaseUsername,
-                    databasePassword,
-                    fetchSize
-            );
+        switch (databaseType) {
+            case "md5": {
+                CreateMD5ListFromIprscan builder = new CreateMD5ListFromIprscan();
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
+                break;
+            }
+            case "matches": {
+                CreateMatchDBFromIprscanBerkeleyDB builder = new CreateMatchDBFromIprscanBerkeleyDB();
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
+                break;
+            }
+            case "sites": {
+                CreateSiteDBFromIprscanBerkeleyDB builder = new CreateSiteDBFromIprscanBerkeleyDB();
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid mode: " + args[0] + "\n");
         }
     }
 }
