@@ -53,118 +53,121 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
             storeConfig.setDeferredWrite(true);
             store = new EntityStore(env, "EntityStore", storeConfig);
 
-            // Get a PrimaryIndex for the User class
             PrimaryIndex<String, KVSequenceEntry> index = store.getPrimaryIndex(String.class, KVSequenceEntry.class);
 
-            PreparedStatement ps = connection.prepareStatement(QUERY);
-            ps.setFetchSize(fetchSize);
-            ResultSet rs = ps.executeQuery();
-
             KVSequenceEntry match = null;
-            long matchCount = 0;
-            while (rs.next()) {
-                final String signatureLibraryName = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_NAME);
-                if (rs.wasNull() || signatureLibraryName == null) continue;
+            try (PreparedStatement ps = connection.prepareStatement(QUERY)) {
+                ps.setFetchSize(fetchSize);
 
-                SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
-                if (signatureLibrary == null) continue;
+                try (ResultSet rs = ps.executeQuery()) {
+                    long matchCount = 0;
+                    while (rs.next()) {
+                        final String signatureLibraryName = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_NAME);
+                        if (rs.wasNull() || signatureLibraryName == null) continue;
 
-                final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
-                if (rs.wasNull()) continue;
+                        SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
+                        if (signatureLibrary == null) continue;
 
-                final int sequenceEnd = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_END);
-                if (rs.wasNull()) continue;
+                        final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
+                        if (rs.wasNull()) continue;
 
-                final String proteinMD5 = rs.getString(SimpleLookupMatch.COL_IDX_MD5);
-                if (proteinMD5 == null || proteinMD5.length() == 0) continue;
+                        final int sequenceEnd = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_END);
+                        if (rs.wasNull()) continue;
 
-                final String sigLibRelease = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_RELEASE);
-                if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
+                        final String proteinMD5 = rs.getString(SimpleLookupMatch.COL_IDX_MD5);
+                        if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                final String signatureAccession = rs.getString(SimpleLookupMatch.COL_IDX_SIG_ACCESSION);
-                if (signatureAccession == null || signatureAccession.length() == 0) continue;
+                        final String sigLibRelease = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_RELEASE);
+                        if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
 
-                final String modelAccession = rs.getString(SimpleLookupMatch.COL_IDX_MODEL_ACCESSION);
-                if (modelAccession == null || modelAccession.length() == 0) continue;
+                        final String signatureAccession = rs.getString(SimpleLookupMatch.COL_IDX_SIG_ACCESSION);
+                        if (signatureAccession == null || signatureAccession.length() == 0) continue;
 
-                Integer hmmStart = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_START);
-                if (rs.wasNull()) hmmStart = null;
+                        final String modelAccession = rs.getString(SimpleLookupMatch.COL_IDX_MODEL_ACCESSION);
+                        if (modelAccession == null || modelAccession.length() == 0) continue;
 
-                Integer hmmEnd = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_END);
-                if (rs.wasNull()) hmmEnd = null;
+                        Integer hmmStart = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_START);
+                        if (rs.wasNull()) hmmStart = null;
 
-                Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
-                if (rs.wasNull()) hmmLength = null;
+                        Integer hmmEnd = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_END);
+                        if (rs.wasNull()) hmmEnd = null;
 
-                // Holds the Graphscan value for PRINTS
-                String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
+                        Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
+                        if (rs.wasNull()) hmmLength = null;
 
-                Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
-                if (rs.wasNull()) sequenceScore = null;
+                        // Holds the Graphscan value for PRINTS
+                        String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
 
-                Double sequenceEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_EVALUE);
-                if (rs.wasNull()) sequenceEValue = null;
+                        Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
+                        if (rs.wasNull()) sequenceScore = null;
 
-                Double locationScore = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_SCORE);
-                if (rs.wasNull()) locationScore = null;
+                        Double sequenceEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_EVALUE);
+                        if (rs.wasNull()) sequenceEValue = null;
 
-                Double locationEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_EVALUE);
-                if (rs.wasNull()) locationEValue = null;
+                        Double locationScore = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_SCORE);
+                        if (rs.wasNull()) locationScore = null;
 
-                Integer envelopeStart = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_START);
-                if (rs.wasNull()) envelopeStart = null;
+                        Double locationEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_EVALUE);
+                        if (rs.wasNull()) locationEValue = null;
 
-                Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
-                if (rs.wasNull()) envelopeEnd = null;
+                        Integer envelopeStart = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_START);
+                        if (rs.wasNull()) envelopeStart = null;
 
-                // Holds the CIGAR alignment from HAMAP and PROSITE
-                String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
+                        Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
+                        if (rs.wasNull()) envelopeEnd = null;
 
-                String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
-                fragments = fragments.replace(",", ";");
+                        // Holds the CIGAR alignment from HAMAP and PROSITE
+                        String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
 
-                String columnDelimiter = ",";
-                StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);
-                kvMatchJoiner.add(signatureLibraryName);
-                kvMatchJoiner.add(sigLibRelease);
-                kvMatchJoiner.add(signatureAccession);
-                kvMatchJoiner.add(modelAccession);
-                kvMatchJoiner.add(kvValueOf(sequenceStart));
-                kvMatchJoiner.add(kvValueOf(sequenceEnd));
-                kvMatchJoiner.add(fragments);
-                kvMatchJoiner.add(kvValueOf(sequenceScore));
-                kvMatchJoiner.add(kvValueOf(sequenceEValue));
-                kvMatchJoiner.add(kvValueOf(hmmBounds));
-                kvMatchJoiner.add(kvValueOf(hmmStart));
-                kvMatchJoiner.add(kvValueOf(hmmEnd));
-                kvMatchJoiner.add(kvValueOf(hmmLength));
-                kvMatchJoiner.add(kvValueOf(envelopeStart));
-                kvMatchJoiner.add(kvValueOf(envelopeEnd));
-                kvMatchJoiner.add(kvValueOf(locationScore));
-                kvMatchJoiner.add(kvValueOf(locationEValue));
-                kvMatchJoiner.add(kvValueOf(seqFeature));
-                String kvMatch = kvMatchJoiner.toString();
+                        String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
+                        fragments = fragments.replace(",", ";");
 
-                if (match == null) {
-                    match = new KVSequenceEntry();
-                    match.setProteinMD5(proteinMD5);
-                    match.addMatch(kvMatch);
-                } else if (proteinMD5.equals(match.getProteinMD5())) {
-                    match.addMatch(kvMatch);
-                } else {
-                    index.put(match);
-                    match = new KVSequenceEntry();
-                    match.setProteinMD5(proteinMD5);
-                    match.addMatch(kvMatch);
-                }
+                        String columnDelimiter = ",";
+                        StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);
+                        kvMatchJoiner.add(signatureLibraryName);
+                        kvMatchJoiner.add(sigLibRelease);
+                        kvMatchJoiner.add(signatureAccession);
+                        kvMatchJoiner.add(modelAccession);
+                        kvMatchJoiner.add(kvValueOf(sequenceStart));
+                        kvMatchJoiner.add(kvValueOf(sequenceEnd));
+                        kvMatchJoiner.add(fragments);
+                        kvMatchJoiner.add(kvValueOf(sequenceScore));
+                        kvMatchJoiner.add(kvValueOf(sequenceEValue));
+                        kvMatchJoiner.add(kvValueOf(hmmBounds));
+                        kvMatchJoiner.add(kvValueOf(hmmStart));
+                        kvMatchJoiner.add(kvValueOf(hmmEnd));
+                        kvMatchJoiner.add(kvValueOf(hmmLength));
+                        kvMatchJoiner.add(kvValueOf(envelopeStart));
+                        kvMatchJoiner.add(kvValueOf(envelopeEnd));
+                        kvMatchJoiner.add(kvValueOf(locationScore));
+                        kvMatchJoiner.add(kvValueOf(locationEValue));
+                        kvMatchJoiner.add(kvValueOf(seqFeature));
+                        String kvMatch = kvMatchJoiner.toString();
 
-                matchCount++;
-                if (matchCount % 1000000 == 0) {
-                    store.sync();
+                        if (match == null) {
+                            match = new KVSequenceEntry();
+                            match.setProteinMD5(proteinMD5);
+                            match.addMatch(kvMatch);
+                        } else if (proteinMD5.equals(match.getProteinMD5())) {
+                            match.addMatch(kvMatch);
+                        } else {
+                            index.put(match);
+                            match = new KVSequenceEntry();
+                            match.setProteinMD5(proteinMD5);
+                            match.addMatch(kvMatch);
+                        }
 
-                    if (matchCount % 10000000 == 0) {
-                        System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " items.");
+                        matchCount++;
+                        if (matchCount % 1000000 == 0) {
+                            store.sync();
+
+                            if (matchCount % 10000000 == 0) {
+                                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " items.");
+                            }
+                        }
                     }
+
+                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " items.");
                 }
             }
 

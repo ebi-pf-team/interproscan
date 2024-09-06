@@ -41,27 +41,29 @@ public class CreateMD5ListFromIprscan {
             storeConfig.setTransactional(false);
             store = new EntityStore(env, "EntityStore", storeConfig);
 
-            // Get a PrimaryIndex for the User class
             PrimaryIndex<String, BerkeleyConsideredProtein> index = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
 
-            PreparedStatement ps = connection.prepareStatement(QUERY);
-            ps.setFetchSize(fetchSize);
-            ResultSet rs = ps.executeQuery();
+            try (PreparedStatement ps = connection.prepareStatement(QUERY)) {
+                ps.setFetchSize(fetchSize);
 
-            int proteinCount = 0;
-            while (rs.next()) {
-                final String proteinMD5 = rs.getString(0);
-                if (proteinMD5 == null || proteinMD5.length() == 0) continue;
+                try (ResultSet rs = ps.executeQuery()) {
+                    int proteinCount = 0;
+                    while (rs.next()) {
+                        final String proteinMD5 = rs.getString(0);
+                        if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
-                index.put(protein);
+                        BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
+                        index.put(protein);
 
-                proteinCount++;
-                if (proteinCount % 10000000 == 0) {
+                        proteinCount++;
+                        if (proteinCount % 10000000 == 0) {
+                            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
+                        }
+                    }
+
                     System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
                 }
             }
-            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
         } catch (SQLException e) {
