@@ -39,6 +39,8 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
         Environment env = null;
         EntityStore store = null;
 
+        System.out.println(Utilities.getTimeAlt() + ": starting");
+
         try (Connection connection = DriverManager.getConnection(url, USER, password)) {
             // Set up the environment
             EnvironmentConfig envConfig = new EnvironmentConfig();
@@ -59,7 +61,7 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                 ps.setFetchSize(fetchSize);
 
                 try (ResultSet rs = ps.executeQuery()) {
-                    long matchCount = 0;
+                    int proteinCount = 0;
                     while (rs.next()) {
                         final String signatureLibraryName = rs.getString(SimpleLookupSite.COL_IDX_SIG_LIB_NAME);
                         if (rs.wasNull() || signatureLibraryName == null) continue;
@@ -123,18 +125,19 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                             match = new KVSequenceEntry();
                             match.setProteinMD5(proteinMD5);
                             match.addMatch(kvMatch);
-                        }
-                        matchCount++;
-                        if (matchCount % 1000000 == 0) {
-                            store.sync();
 
-                            if (matchCount % 10000000 == 0) {
-                                System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " items.");
+                            proteinCount++;
+                            if (proteinCount % 100000 == 0) {
+                                store.sync();
+
+                                if (proteinCount % 10000000 == 0) {
+                                    System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", proteinCount) + " sequences processed");
+                                }
                             }
                         }
                     }
 
-                    System.out.println(Utilities.getTimeNow() + " Stored " + matchCount + " items.");
+                    System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", proteinCount) + " sequences processed");
                 }
             }
 
@@ -164,6 +167,8 @@ public class CreateSiteDBFromIprscanBerkeleyDB {
                 }
             }
         }
+
+        System.out.println(Utilities.getTimeAlt() + ": done");
     }
 
     public static String kvValueOf(Object obj) {
