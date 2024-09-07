@@ -28,6 +28,8 @@ public class CreateMD5ListFromIprscan {
         Environment env = null;
         EntityStore store = null;
 
+        System.out.println(Utilities.getTimeAlt() + ": starting");
+
         try (Connection connection = DriverManager.getConnection(url, USER, password)) {
             // Set up the environment
             EnvironmentConfig envConfig = new EnvironmentConfig();
@@ -57,11 +59,11 @@ public class CreateMD5ListFromIprscan {
 
                         proteinCount++;
                         if (proteinCount % 10000000 == 0) {
-                            System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
+                            System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", proteinCount) + " sequences processed");
                         }
                     }
 
-                    System.out.println(Utilities.getTimeNow() + " Stored " + proteinCount + " items.");
+                    System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", proteinCount) + " sequences processed");
                 }
             }
         } catch (DatabaseException dbe) {
@@ -85,5 +87,7 @@ public class CreateMD5ListFromIprscan {
                 }
             }
         }
+
+        System.out.println(Utilities.getTimeAlt() + ": done");
     }
 }
