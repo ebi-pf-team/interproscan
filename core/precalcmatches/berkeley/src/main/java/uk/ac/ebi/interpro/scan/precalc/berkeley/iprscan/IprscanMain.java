@@ -22,7 +22,7 @@ public class IprscanMain {
 
         File outputDir = new File(databasePath);
         if (outputDir.exists()) {
-            if (outputDir.isDirectory()) {
+            if (!outputDir.isDirectory()) {
                 System.err.println("Not a directory: " + databasePath);
                 System.exit(1);
             }
