@@ -4,11 +4,11 @@ import java.io.File;
 public class IprscanMain {
     public static void main(String[] args) {
         if (args.length != 3) {
-            throw new IllegalArgumentException(
-                    "Usage: java -jar berkeley-db-builder.jar TYPE DIR URL\n\n" +
-                            "TYPE: md5|matches|sites\n" +
-                            "DIR:  output directory of the BerkleyDB database\n" +
-                            "URL:  Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>\n");
+            System.err.println("Usage: java -jar berkeley-db-builder.jar TYPE DIR URL\n\n" +
+                    "TYPE: md5|matches|sites\n" +
+                    "DIR:  output directory of the BerkleyDB database\n" +
+                    "URL:  Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>");
+            System.exit(1);
         }
         String databaseType = args[0].toLowerCase();
         String databasePath = args[1];
@@ -18,16 +18,20 @@ public class IprscanMain {
         File outputDir = new File(databasePath);
         if (outputDir.exists()) {
             if (outputDir.isDirectory()) {
-                throw new IllegalStateException("Not a directory: " + databasePath);
+                System.err.println("Not a directory: " + databasePath);
+                System.exit(1);
             }
             File[] files = outputDir.listFiles();
             if (files != null && files.length > 0) {
-                throw new IllegalStateException("Not empty: " + databasePath);
+                System.err.println("Not empty: " + databasePath);
+                System.exit(1);
             } else if (!outputDir.canWrite()) {
-                throw new IllegalStateException("Not writeable: " + databasePath);
+                System.err.println("Not writeable: " + databasePath);
+                System.exit(1);
             }
         } else if (!outputDir.mkdirs()) {
-            throw new IllegalStateException("Cannot create " + databasePath);
+            System.err.println("Cannot create " + databasePath);
+            System.exit(1);
         }
 
         int fetchSize = 100000;
@@ -47,8 +51,10 @@ public class IprscanMain {
                 builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
                 break;
             }
-            default:
-                throw new IllegalStateException("Invalid mode: " + args[0] + "\n");
+            default: {
+                System.err.println("Invalid mode: " + args[0]);
+                System.exit(1);
+            }
         }
     }
 }
