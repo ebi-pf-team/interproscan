@@ -5,17 +5,17 @@ import uk.ac.ebi.interpro.scan.util.Utilities;
 public class SimpleLookupSite {
     //These indices go hand by hand with the 'LOOKUP_SITE' table
 
-    public static final int COL_IDX_MD5 = 0;
-    public static final int COL_IDX_SIG_LIB_NAME = 1;
-    public static final int COL_IDX_SIG_LIB_RELEASE = 2;
-    public static final int COL_IDX_SIG_ACCESSION = 3;
-    public static final int COL_IDX_LOC_START = 4;
-    public static final int COL_IDX_LOC_END = 5;
-    public static final int COL_IDX_NUM_SITES = 6;
-    public static final int COL_IDX_RESIDUE = 7;
-    public static final int COL_IDX_RESIDUE_START = 8;
-    public static final int COL_IDX_RESIDUE_END = 9;
-    public static final int COL_IDX_DESCRIPTION = 10;
+    public static final int COL_IDX_MD5 = 1;
+    public static final int COL_IDX_SIG_LIB_NAME = 2;
+    public static final int COL_IDX_SIG_LIB_RELEASE = 3;
+    public static final int COL_IDX_SIG_ACCESSION = 4;
+    public static final int COL_IDX_LOC_START = 5;
+    public static final int COL_IDX_LOC_END = 6;
+    public static final int COL_IDX_NUM_SITES = 7;
+    public static final int COL_IDX_RESIDUE = 8;
+    public static final int COL_IDX_RESIDUE_START = 9;
+    public static final int COL_IDX_RESIDUE_END = 10;
+    public static final int COL_IDX_DESCRIPTION = 11;
 
 
     String proteinMD5;

@@ -1,28 +1,25 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.model;
 
 public class SimpleLookupMatch {
-    //These indices go hand by hand with the 'lookup_tmp_tab' table
-
-    public static final int COL_IDX_MD5 = 0;
-    public static final int COL_IDX_SIG_LIB_NAME = 1;
-    public static final int COL_IDX_SIG_LIB_RELEASE = 2;
-    public static final int COL_IDX_SIG_ACCESSION = 3;
-    public static final int COL_IDX_MODEL_ACCESSION = 4;
-    public static final int COL_IDX_SEQ_START = 5;
-    public static final int COL_IDX_SEQ_END = 6;
-    public static final int COL_IDX_FRAGMENTS = 7;
-    public static final int COL_IDX_SEQ_SCORE = 8;
-    public static final int COL_IDX_SEQ_EVALUE = 9;
-    public static final int COL_IDX_HMM_BOUNDS = 10;
-    public static final int COL_IDX_HMM_START = 11;
-    public static final int COL_IDX_HMM_END = 12;
-    public static final int COL_IDX_HMM_LENGTH = 13;
-    public static final int COL_IDX_ENV_START = 14;
-    public static final int COL_IDX_ENV_END = 15;
-    public static final int COL_IDX_LOC_SCORE = 16;
-    public static final int COL_IDX_LOC_EVALUE = 17;
-    public static final int COL_IDX_SEQ_FEATURE = 18;
-
+    public static final int COL_IDX_MD5 = 1;
+    public static final int COL_IDX_SIG_LIB_NAME = 2;
+    public static final int COL_IDX_SIG_LIB_RELEASE = 3;
+    public static final int COL_IDX_SIG_ACCESSION = 4;
+    public static final int COL_IDX_MODEL_ACCESSION = 5;
+    public static final int COL_IDX_SEQ_START = 6;
+    public static final int COL_IDX_SEQ_END = 7;
+    public static final int COL_IDX_FRAGMENTS = 8;
+    public static final int COL_IDX_SEQ_SCORE = 9;
+    public static final int COL_IDX_SEQ_EVALUE = 10;
+    public static final int COL_IDX_HMM_BOUNDS = 11;
+    public static final int COL_IDX_HMM_START = 12;
+    public static final int COL_IDX_HMM_END = 13;
+    public static final int COL_IDX_HMM_LENGTH = 14;
+    public static final int COL_IDX_ENV_START = 15;
+    public static final int COL_IDX_ENV_END = 16;
+    public static final int COL_IDX_LOC_SCORE = 17;
+    public static final int COL_IDX_LOC_EVALUE = 18;
+    public static final int COL_IDX_SEQ_FEATURE = 19;
 
     String proteinMD5;
     String signatureLibraryName;

@@ -49,7 +49,7 @@ public class CreateMD5ListFromIprscan {
                 try (ResultSet rs = ps.executeQuery()) {
                     int proteinCount = 0;
                     while (rs.next()) {
-                        final String proteinMD5 = rs.getString(0);
+                        final String proteinMD5 = rs.getString(1);
                         if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
                         BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
