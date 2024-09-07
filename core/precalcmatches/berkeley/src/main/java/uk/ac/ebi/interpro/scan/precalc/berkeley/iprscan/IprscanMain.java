@@ -15,6 +15,11 @@ public class IprscanMain {
         String databaseUrl = args[2];
         String databasePassword = System.getenv("ORACLE_PASSWORD");
 
+        if (databasePassword == null || databasePassword.length() == 0) {
+            System.err.println("ORACLE_PASSWORD environment variable not set");
+            System.exit(1);
+        }
+
         File outputDir = new File(databasePath);
         if (outputDir.exists()) {
             if (outputDir.isDirectory()) {
