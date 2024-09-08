@@ -97,7 +97,7 @@ def main():
                                    keep_non_idr_features=False,
                                    tempdir=args.tempdir):
             if regions is None:
-                sys.stderr.write(f"error in {seq_id}\n")
+                print(f"error in {seq_id}", file=sys.stderr)
                 continue
 
             for start, end, feature in regions:

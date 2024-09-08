@@ -66,7 +66,7 @@ def predict(sequence_id: str, sequence: str, bindir: str, **kwargs):
 
     for pred_name, pred_scores in scores.items():
         if pred_scores is None or len(pred_scores) != seq_length:
-            sys.stderr.write(f"{sequence_id}: {pred_name} excluded\n")
+            print(f"{sequence_id}: {pred_name} failed", file=sys.stderr)
             continue
 
         num_indicators += 1
