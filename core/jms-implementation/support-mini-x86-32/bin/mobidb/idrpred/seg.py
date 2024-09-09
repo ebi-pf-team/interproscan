@@ -4,9 +4,10 @@
 
 import os
 from subprocess import DEVNULL, PIPE, Popen
+from typing import List, Optional
 
 
-def run(bindir: str, file: str) -> list[int] | None:
+def run(bindir: str, file: str) -> Optional[List[int]]:
     cmd = [
         os.path.join(bindir, "seg"),
         file,

@@ -12,8 +12,15 @@ def _run(bindir: str, sequence: str, mode: str):
         sequence,
         mode
     ]
-    proc = Popen(cmd, stdout=PIPE, stderr=DEVNULL, env={"IUPred_PATH": bindir},
-                 encoding="utf-8")
+    try:
+        proc = Popen(cmd, stdout=PIPE, stderr=DEVNULL,
+                     env={"IUPred_PATH": bindir},
+                    encoding="utf-8")
+    except OSError:
+        # Following error can occur for sequences that are too long:
+        # OSError: [Errno 7] Argument list too long:
+        return None
+
     out, err = proc.communicate()
 
     if proc.returncode == 0:
