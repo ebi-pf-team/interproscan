@@ -49,7 +49,7 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractNCBIfamAMRStep">
         <property name="dependsUpon" ref="stepNCBIfamAMRRunHmmer3"/>
-        <property name="stepDescription" value="Delete the fasta file following successful run of FPS"/>
+        <property name="stepDescription" value="Delete the fasta file following successful run of hmmsearch"/>
         <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
     </bean>
 
@@ -57,15 +57,16 @@
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.NCBIfamParseStep"
           parent="abstractNCBIfamAMRStep">
         <property name="dependsUpon" ref="stepNCBIfamAMRRunHmmer3"/>
-        <property name="stepDescription" value="Parse the NCBIfam binary output and store as Filtered matches."/>
-        <property name="serialGroup" value="PARSE_NCBIFAM"/>
+        <property name="stepDescription" value="Parse the NCBIfam-AMR binary output and store as Filtered matches."/>
+        <property name="serialGroup" value="PARSE_NCBIFAM_AMR"/>
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
                 <property name="useHmmsearch" value="true"/>
                 <property name="parserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.NCBIfamParserSupport">
-                        <property name="signatureLibraryRelease" ref="ncbifamSignatureLibraryReleaseVersion"/>
+                        <property name="signatureLibraryRelease" ref="ncbifamAMRSignatureLibraryReleaseVersion"/>
                         <property name="hmmKey" value="ACCESSION"/>
+                        <property name="isAMR" value="true"/>
                     </bean>
                 </property>
             </bean>
@@ -97,7 +98,7 @@
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="rawMatchDAO" ref="ncbifamAMRRawMatchDAO"/>
-        <property name="signatureLibrary" value="NCBIFAM"/>
+        <property name="signatureLibrary" value="NCBIFAM_AMR"/>
         <property name="filter">
             <bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>
         </property>
@@ -109,7 +110,11 @@
     </bean>
 
     <bean id="signatureLibraryReleaseNcbifamAMR" class="uk.ac.ebi.interpro.scan.model.SignatureLibraryRelease">
-        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="NCBIFAM"/>
+        <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="NCBIFAM_AMR"/>
         <constructor-arg type="java.lang.String" value="${ncbifam-amr.signature.library.release}"/>
+    </bean>
+
+    <bean id="ncbifamAMRSignatureLibraryReleaseVersion" class="java.lang.String">
+        <constructor-arg value="${ncbifam-amr.signature.library.release}"/>
     </bean>
 </beans>

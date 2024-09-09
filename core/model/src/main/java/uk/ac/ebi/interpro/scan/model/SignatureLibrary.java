@@ -35,7 +35,7 @@ public enum SignatureLibrary {
     HAMAP("Hamap", "Description to be added", true),
     MOBIDB_LITE("MobiDBLite", "Predicts disordered protein regions", false),
     NCBIFAM("NCBIfam", "NCBIfam is a collection of protein families based on Hidden Markov Models (HMMs)", true),
-    NCBIFAM_AMR("NCBIfam", "NCBIfam-AMR is a collection of Hidden Markov Models (HMMs) used for the detection of antimicrobial resistance genes", true),
+    NCBIFAM_AMR("NCBIfam-AMR", "NCBIfam-AMR is a collection of Hidden Markov Models (HMMs) used for the detection of antimicrobial resistance genes", true),
     PANTHER("PANTHER", "The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System is a unique resource that classifies genes by their functions, using published scientific experimental evidence and evolutionary relationships to predict function even in the absence of direct experimental evidence.", true),
     PFAM("Pfam", "Description to be added", true),
     PHOBIUS("Phobius", "Prediction of signal peptides and trans-membrane regions", false),
