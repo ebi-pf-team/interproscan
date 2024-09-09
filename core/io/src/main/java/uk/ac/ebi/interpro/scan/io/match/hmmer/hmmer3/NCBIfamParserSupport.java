@@ -20,6 +20,8 @@ public class NCBIfamParserSupport extends AbstractHmmer3ParserSupport<NCBIfamRaw
     private static final Pattern MODEL_ACCESSION_LINE_PATTERN
             = Pattern.compile("^Accession:\\s+((TIGR|NF)\\d+)\\.\\d+$");
 
+    private boolean isAMR = false;
+
     /**
      * Returns Pattern object to parse the accession line.
      * As the regular expressions required to parse the 'ID' or 'Accession' lines appear
@@ -51,7 +53,7 @@ public class NCBIfamParserSupport extends AbstractHmmer3ParserSupport<NCBIfamRaw
         return new NCBIfamRawMatch(
                 sequenceMatch.getSequenceIdentifier(),
                 hmmSearchRecord.getModelAccession(),
-                SignatureLibrary.NCBIFAM,
+                isAMR ? SignatureLibrary.NCBIFAM_AMR : SignatureLibrary.NCBIFAM,
                 signatureLibraryRelease,
                 domainMatch.getAliFrom(),
                 domainMatch.getAliTo(),
@@ -79,4 +81,11 @@ public class NCBIfamParserSupport extends AbstractHmmer3ParserSupport<NCBIfamRaw
         return false;
     }
 
+    public boolean isAMR() {
+        return isAMR;
+    }
+
+    public void setIsAMR(boolean AMR) {
+        isAMR = AMR;
+    }
 }
