@@ -206,7 +206,7 @@ public final class PantherBinaryStep extends RunBinaryStep {
         command.add(this.getHmmerPath());
         //if sequences less than 10 use hmmerscan
 
-        if (forceHmmsearch && Utilities.getSequenceCount() > 10) {
+        if (forceHmmsearch) {
             command.add("-s");
         }
         // FASTA file

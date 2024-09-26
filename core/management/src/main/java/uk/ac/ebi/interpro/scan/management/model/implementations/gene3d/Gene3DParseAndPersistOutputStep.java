@@ -165,7 +165,7 @@ public class Gene3DParseAndPersistOutputStep extends Step {
                 int domtblMatchCount = 0;
                 String line;
                 String mode = "hmmsearch";
-                if (forceHmmsearch || Utilities.getSequenceCount() > 10){
+                if (forceHmmsearch){
                     //use hmmsearch domtblout
                     mode = "hmmsearch";
                 }else{

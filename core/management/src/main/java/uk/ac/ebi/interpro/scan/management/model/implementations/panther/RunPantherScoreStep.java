@@ -87,7 +87,7 @@ public class RunPantherScoreStep extends RunBinaryStep {
         command.add("-d");
         command.add(inputFileNameDomTblout);
         command.add("-m");
-        if (forceHmmsearch || Utilities.getSequenceCount() > 10) {
+        if (forceHmmsearch) {
             command.add("hmmsearch");
         }else{
             command.add("hmmscan");

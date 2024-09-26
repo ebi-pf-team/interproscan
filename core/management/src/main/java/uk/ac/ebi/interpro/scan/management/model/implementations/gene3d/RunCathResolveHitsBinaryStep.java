@@ -82,7 +82,7 @@ public class RunCathResolveHitsBinaryStep extends RunBinaryStep {
 //        command.add("--input-format=hmmer_domtmblout");
 //        command.add("--worst-permissible-evalue 0.001");
 
-        if (forceHmmsearch || Utilities.getSequenceCount() > 10){
+        if (forceHmmsearch){
             //use hmmsearch output
             Utilities.verboseLog(1100, "Use Hmmsearch  ");
             command.add("--input-format=hmmsearch_out");

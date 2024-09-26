@@ -148,19 +148,7 @@ public class RunHmmerBinaryStep extends RunBinaryStep {
         final String outputFilePathName = stepInstance.buildFullyQualifiedFilePath(temporaryFileDirectory, this.getOutputFileNameTemplate());
 
         List<String> command = new ArrayList<String>();
-         
-        /*
-//        if (isSingleSeqMode()){
-        forceHmmsearch = true;  // we will use hmmsearch until parsing for hmmscan output is implemenetd
-        if (Utilities.isRunningInSingleSeqMode() && ! forceHmmsearch){
-            Utilities.verboseLog(1100, "SINGLE_SEQUENCE_MODE: use  " + getFullPathToHmmScanBinary());
-            command.add(this.getFullPathToHmmScanBinary());
-        }else{
-            command.add(this.getFullPathToBinary());
-        }
-        */
-        //for panther only in the first place
-        if (forceHmmsearch || Utilities.getSequenceCount() > 10){
+        if (forceHmmsearch){
             Utilities.setUseHmmsearch(true);
             Utilities.verboseLog(110, "Use Hmmsearch  " + getFullPathToHmmsearchBinary());
             command.add(this.getFullPathToHmmsearchBinary());

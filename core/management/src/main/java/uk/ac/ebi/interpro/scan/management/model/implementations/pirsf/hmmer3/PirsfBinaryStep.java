@@ -138,7 +138,7 @@ public class PirsfBinaryStep extends RunBinaryStep {
         command.add(tempdir);
         Utilities.verboseLog(1100, "tempdir for PIRSF : " + tempdir);
         command.add("--mode");
-        if (forceHmmsearch || Utilities.getSequenceCount() > 10 ) {
+        if (forceHmmsearch) {
             command.add("hmmsearch");
             Utilities.verboseLog(1100, "PIRSF postprocess use hmmsearch output");
         }else{
