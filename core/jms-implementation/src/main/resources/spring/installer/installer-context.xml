@@ -72,6 +72,13 @@
                     <property name="storeAbstract" value="${signature.store.abstracts}"/>
                     <property name="analysisJobId" value="jobNCBIFAM"/>
                 </bean>
+                <bean class="uk.ac.ebi.interpro.scan.io.model.HmmerModelParser">
+                    <property name="signatureLibrary" value="NCBIFAM_AMR"/>
+                    <property name="releaseVersionNumber" value="${ncbifam-amr.signature.library.release}"/>
+                    <property name="modelFiles" value="file:${ncbifam-amr.hmm.path}"/>
+                    <property name="storeAbstract" value="${signature.store.abstracts}"/>
+                    <property name="analysisJobId" value="jobNCBIFAM_AMR"/>
+                </bean>
                 <bean class="uk.ac.ebi.interpro.scan.io.panther.PantherModelDirectoryParser">
                     <property name="signatureLibrary" value="PANTHER"/>
                     <property name="analysisJobId" value="jobPanther"/>
