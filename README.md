@@ -1,7 +1,7 @@
 [![Build](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml/badge.svg)](https://github.com/ebi-pf-team/interproscan/actions/workflows/build-test.yml)
-[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/interpro/interproscan?label=Docker)](https://hub.docker.com/r/interpro/interproscan)
+[![Docker Image Version (tag)](https://img.shields.io/docker/v/interpro/interproscan/5.70-102.0)](https://hub.docker.com/r/interpro/interproscan)
 
-# interproscan
+# InterProScan
 
 ## What is InterProScan?
 [InterPro](http://www.ebi.ac.uk/interpro/) is a database which integrates together predictive information about proteins' function from a number of partner resources, giving an overview of the families that a protein belongs to and the domains and sites it contains.
