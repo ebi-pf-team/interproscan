@@ -25,7 +25,7 @@ import java.util.StringJoiner;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class CreateMatchDBFromIprscanBerkeleyDB {
+public class CreateMatchDBFromOracle {
     private static final String USER = "IPRSCAN";
     private static final String QUERY =
             "SELECT MD5, SIGNATURE_LIBRARY_NAME, SIGNATURE_LIBRARY_RELEASE, SIGNATURE_ACCESSION, " +
@@ -95,7 +95,6 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
                         if (rs.wasNull()) hmmLength = null;
 
-                        // Holds the Graphscan value for PRINTS
                         String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
 
                         Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
@@ -116,7 +115,11 @@ public class CreateMatchDBFromIprscanBerkeleyDB {
                         Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
                         if (rs.wasNull()) envelopeEnd = null;
 
-                        // Holds the CIGAR alignment from HAMAP and PROSITE
+                        /*
+                            Holds the CIGAR alignment from HAMAP and PROSITE
+                            Holds the Graphscan value for PRINTS
+                            Holds the ancestral node ID for PANTHER
+                         */
                         String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
 
                         String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);

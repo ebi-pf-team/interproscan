@@ -20,7 +20,7 @@ import java.sql.*;
  * @version $Id$
  * @since 1.0-SNAPSHOT
  */
-public class CreateMD5ListFromIprscan {
+public class CreateMD5DBFromOracle {
     private static final String USER = "IPRSCAN";
     private static final String QUERY = "SELECT MD5 FROM " + USER + ".LOOKUP_MD5 ORDER BY MD5";
 

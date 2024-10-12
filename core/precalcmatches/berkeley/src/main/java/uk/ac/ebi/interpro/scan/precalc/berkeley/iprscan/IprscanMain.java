@@ -42,12 +42,12 @@ public class IprscanMain {
         int fetchSize = 100000;
         switch (databaseType) {
             case "md5": {
-                CreateMD5ListFromIprscan builder = new CreateMD5ListFromIprscan();
+                CreateMD5DBFromOracle builder = new CreateMD5DBFromOracle();
                 builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
                 break;
             }
             case "matches": {
-                CreateMatchDBFromIprscanBerkeleyDB builder = new CreateMatchDBFromIprscanBerkeleyDB();
+                CreateMatchDBFromOracle builder = new CreateMatchDBFromOracle();
                 builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
                 break;
             }
