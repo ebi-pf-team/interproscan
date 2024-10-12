@@ -47,12 +47,12 @@ public class IprscanMain {
                 break;
             }
             case "matches": {
-                CreateMatchDBFromOracle builder = new CreateMatchDBFromOracle();
+                CreateMatchesDBFromOracle builder = new CreateMatchesDBFromOracle();
                 builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
                 break;
             }
             case "sites": {
-                CreateSiteDBFromIprscanBerkeleyDB builder = new CreateSiteDBFromIprscanBerkeleyDB();
+                CreateSitesDBFromOracle builder = new CreateSitesDBFromOracle();
                 builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
                 break;
             }
