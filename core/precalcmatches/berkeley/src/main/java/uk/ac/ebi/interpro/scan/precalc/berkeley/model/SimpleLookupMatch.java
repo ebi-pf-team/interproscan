@@ -43,18 +43,6 @@ public class SimpleLookupMatch {
 
     public SimpleLookupMatch(String proteinMD5, String lookupMatch) {
         String [] lookupMatchTokens =  lookupMatch.split(",");
-
-
-//        System.out.println("lookupMatchTokens: " + lookupMatchTokens);
-//        for (String token: lookupMatchTokens){
-//            System.out.println(token);
-//        }
-
-//        String proteinMD5 = "00006F313F29B29DA473B6DDF28AF744";
-//        String csvmatch = "SMART,7.1,SM00929,SM00929,92,132,92-132-S,85.9,4.9E-21,[],1,43,43,0,0,4.9E-21,85.9,";
-//        System.out.println("csvmatch length: " + lookupMatchTokens.length) ;
-
-//        System.out.println("hit: (" + lookupMatchTokens.length + ") " + Arrays.toString(lookupMatchTokens));
         int columnOffSet = 2; // -1 as zero indexed and -1 as no proteinMD5 in sequence hit tokens
         this.proteinMD5 = proteinMD5;
         signatureLibraryName = lookupMatchTokens[COL_IDX_SIG_LIB_NAME - columnOffSet];
@@ -63,15 +51,8 @@ public class SimpleLookupMatch {
         modelAccession = lookupMatchTokens[COL_IDX_MODEL_ACCESSION - columnOffSet];
         sequenceStart = Integer.parseInt(lookupMatchTokens[COL_IDX_SEQ_START - columnOffSet]);
         sequenceEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_SEQ_END - columnOffSet]);
-//        System.out.println("toString(): (after sequenceEnd)" + toString());
         fragments = lookupMatchTokens[COL_IDX_FRAGMENTS - columnOffSet];
-//        fragments.replace(";", ",");  // we change fragments back to comma separated string, or maybe not
-
-//        System.out.println("toString(): (after frag) " + toString());
         sequenceScore = Double.parseDouble(lookupMatchTokens[COL_IDX_SEQ_SCORE - columnOffSet]);
-//        System.out.println("toString(): (after sequenceScore )" + toString());
-//        System.out.println("sequenceEValue b4: (pos " + COL_IDX_SEQ_EVALUE + ") " + lookupMatchTokens[COL_IDX_SEQ_EVALUE - columnOffSet]);
-
         sequenceEValue = Double.parseDouble(lookupMatchTokens[COL_IDX_SEQ_EVALUE - columnOffSet]);
         hmmBounds = lookupMatchTokens[COL_IDX_HMM_BOUNDS - columnOffSet];
         hmmStart = Integer.parseInt(lookupMatchTokens[COL_IDX_HMM_START - columnOffSet]);
@@ -86,12 +67,6 @@ public class SimpleLookupMatch {
         }else{
             seqFeature = "";
         }
-//        System.out.println("fragments: " + fragments);
-//        System.out.println(toString());
-    }
-
-    public static String kvValueOf(Object obj) {
-        return (obj == null) ? "" : obj.toString();
     }
 
     public String getProteinMD5() {
