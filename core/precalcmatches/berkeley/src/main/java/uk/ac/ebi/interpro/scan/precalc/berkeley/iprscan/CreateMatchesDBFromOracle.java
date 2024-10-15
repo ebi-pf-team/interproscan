@@ -186,10 +186,10 @@ public class CreateMatchesDBFromOracle {
                 if (match != null) {
                     index.put(match);
                 }
-
-                store.sync();
-                System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", matchCount) + " matches processed");
             }
+
+            store.sync();
+            System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", matchCount) + " matches processed");
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
         } catch (SQLException e) {
