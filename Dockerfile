@@ -2,13 +2,13 @@ FROM ubuntu:20.04
 
 LABEL authors="Laise Florentino (lcf@ebi.ac.uk), Matthias Blum (mblum@ebi.ac.uk)"
 
-ARG VERSION=5.70-102.0
+ARG VERSION
 ENV TZ=Europe/London
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     apt-get update -y && \
-    apt-get install -y wget python3.8 python2.7 openjdk-11-jre-headless libpcre2-dev libgomp1 perl-doc libc6-i386 && \
+    apt-get install -y wget python3.8 openjdk-11-jre-headless libpcre2-dev libgomp1 perl-doc libc6-i386 && \
     ln -s /usr/bin/python3.8 /usr/bin/python3 && ln -s /usr/bin/python3.8 /usr/bin/python
 
 WORKDIR /opt
