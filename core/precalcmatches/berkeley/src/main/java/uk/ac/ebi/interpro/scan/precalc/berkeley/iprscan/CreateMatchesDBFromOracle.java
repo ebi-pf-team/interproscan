@@ -8,15 +8,12 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.conversion.toi5.SignatureLibraryLookup;
-import uk.ac.ebi.interpro.scan.precalc.berkeley.model.Batch;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.KVSequenceEntry;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.SimpleLookupMatch;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.File;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 
 /**
@@ -35,7 +32,7 @@ public class CreateMatchesDBFromOracle {
                     "MODEL_ACCESSION, SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH, ENVELOPE_START, ENVELOPE_END, SCORE, " +
                     "EVALUE, SEQ_FEATURE " +
-                    "FROM " + USER + ".LOOKUP_MATCH " +
+                    "FROM " + USER + ".LOOKUP_MATCH PARTITION (?) " +
                     "ORDER BY MD5";
 
     void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
@@ -45,6 +42,8 @@ public class CreateMatchesDBFromOracle {
         EntityStore store = null;
 
         try (Connection connection = DriverManager.getConnection(url, USER, password)) {
+            Set<String> partitions = getPartitions(connection);
+
             // Set up the environment
             EnvironmentConfig envConfig = new EnvironmentConfig();
             envConfig.setAllowCreate(true);
@@ -62,115 +61,119 @@ public class CreateMatchesDBFromOracle {
 
             long matchCount = 0;
             KVSequenceEntry match = null;
-            try (PreparedStatement ps = connection.prepareStatement(QUERY)) {
-                ps.setFetchSize(fetchSize);
+            for (String partition: partitions) {
+                String query = QUERY.replace("?", partition);
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        final String signatureLibraryName = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_NAME);
-                        if (rs.wasNull() || signatureLibraryName == null) continue;
+                try (PreparedStatement ps = connection.prepareStatement(query)) {
+                    ps.setFetchSize(fetchSize);
 
-                        SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
-                        if (signatureLibrary == null) continue;
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            final String signatureLibraryName = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_NAME);
+                            if (rs.wasNull() || signatureLibraryName == null) continue;
 
-                        final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
-                        if (rs.wasNull()) continue;
+                            SignatureLibrary signatureLibrary = SignatureLibraryLookup.lookupSignatureLibrary(signatureLibraryName);
+                            if (signatureLibrary == null) continue;
 
-                        final int sequenceEnd = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_END);
-                        if (rs.wasNull()) continue;
+                            final int sequenceStart = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_START);
+                            if (rs.wasNull()) continue;
 
-                        final String proteinMD5 = rs.getString(SimpleLookupMatch.COL_IDX_MD5);
-                        if (proteinMD5 == null || proteinMD5.length() == 0) continue;
+                            final int sequenceEnd = rs.getInt(SimpleLookupMatch.COL_IDX_SEQ_END);
+                            if (rs.wasNull()) continue;
 
-                        final String sigLibRelease = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_RELEASE);
-                        if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
+                            final String proteinMD5 = rs.getString(SimpleLookupMatch.COL_IDX_MD5);
+                            if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                        final String signatureAccession = rs.getString(SimpleLookupMatch.COL_IDX_SIG_ACCESSION);
-                        if (signatureAccession == null || signatureAccession.length() == 0) continue;
+                            final String sigLibRelease = rs.getString(SimpleLookupMatch.COL_IDX_SIG_LIB_RELEASE);
+                            if (sigLibRelease == null || sigLibRelease.length() == 0) continue;
 
-                        final String modelAccession = rs.getString(SimpleLookupMatch.COL_IDX_MODEL_ACCESSION);
-                        if (modelAccession == null || modelAccession.length() == 0) continue;
+                            final String signatureAccession = rs.getString(SimpleLookupMatch.COL_IDX_SIG_ACCESSION);
+                            if (signatureAccession == null || signatureAccession.length() == 0) continue;
 
-                        Integer hmmStart = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_START);
-                        if (rs.wasNull()) hmmStart = null;
+                            final String modelAccession = rs.getString(SimpleLookupMatch.COL_IDX_MODEL_ACCESSION);
+                            if (modelAccession == null || modelAccession.length() == 0) continue;
 
-                        Integer hmmEnd = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_END);
-                        if (rs.wasNull()) hmmEnd = null;
+                            Integer hmmStart = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_START);
+                            if (rs.wasNull()) hmmStart = null;
 
-                        Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
-                        if (rs.wasNull()) hmmLength = null;
+                            Integer hmmEnd = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_END);
+                            if (rs.wasNull()) hmmEnd = null;
 
-                        String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
+                            Integer hmmLength = rs.getInt(SimpleLookupMatch.COL_IDX_HMM_LENGTH);
+                            if (rs.wasNull()) hmmLength = null;
 
-                        Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
-                        if (rs.wasNull()) sequenceScore = null;
+                            String hmmBounds = rs.getString(SimpleLookupMatch.COL_IDX_HMM_BOUNDS);
 
-                        Double sequenceEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_EVALUE);
-                        if (rs.wasNull()) sequenceEValue = null;
+                            Double sequenceScore = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_SCORE);
+                            if (rs.wasNull()) sequenceScore = null;
 
-                        Double locationScore = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_SCORE);
-                        if (rs.wasNull()) locationScore = null;
+                            Double sequenceEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_SEQ_EVALUE);
+                            if (rs.wasNull()) sequenceEValue = null;
 
-                        Double locationEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_EVALUE);
-                        if (rs.wasNull()) locationEValue = null;
+                            Double locationScore = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_SCORE);
+                            if (rs.wasNull()) locationScore = null;
 
-                        Integer envelopeStart = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_START);
-                        if (rs.wasNull()) envelopeStart = null;
+                            Double locationEValue = rs.getDouble(SimpleLookupMatch.COL_IDX_LOC_EVALUE);
+                            if (rs.wasNull()) locationEValue = null;
 
-                        Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
-                        if (rs.wasNull()) envelopeEnd = null;
+                            Integer envelopeStart = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_START);
+                            if (rs.wasNull()) envelopeStart = null;
+
+                            Integer envelopeEnd = rs.getInt(SimpleLookupMatch.COL_IDX_ENV_END);
+                            if (rs.wasNull()) envelopeEnd = null;
 
                             /*
                                 Holds the CIGAR alignment from HAMAP and PROSITE
                                 Holds the Graphscan value for PRINTS
                                 Holds the ancestral node ID for PANTHER
                              */
-                        String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
+                            String seqFeature = rs.getString(SimpleLookupMatch.COL_IDX_SEQ_FEATURE);
 
-                        String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
-                        fragments = fragments.replace(",", ";");
+                            String fragments = rs.getString(SimpleLookupMatch.COL_IDX_FRAGMENTS);
+                            fragments = fragments.replace(",", ";");
 
-                        String columnDelimiter = ",";
-                        StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);
-                        kvMatchJoiner.add(signatureLibraryName);
-                        kvMatchJoiner.add(sigLibRelease);
-                        kvMatchJoiner.add(signatureAccession);
-                        kvMatchJoiner.add(modelAccession);
-                        kvMatchJoiner.add(kvValueOf(sequenceStart));
-                        kvMatchJoiner.add(kvValueOf(sequenceEnd));
-                        kvMatchJoiner.add(fragments);
-                        kvMatchJoiner.add(kvValueOf(sequenceScore));
-                        kvMatchJoiner.add(kvValueOf(sequenceEValue));
-                        kvMatchJoiner.add(kvValueOf(hmmBounds));
-                        kvMatchJoiner.add(kvValueOf(hmmStart));
-                        kvMatchJoiner.add(kvValueOf(hmmEnd));
-                        kvMatchJoiner.add(kvValueOf(hmmLength));
-                        kvMatchJoiner.add(kvValueOf(envelopeStart));
-                        kvMatchJoiner.add(kvValueOf(envelopeEnd));
-                        kvMatchJoiner.add(kvValueOf(locationScore));
-                        kvMatchJoiner.add(kvValueOf(locationEValue));
-                        kvMatchJoiner.add(kvValueOf(seqFeature));
-                        String kvMatch = kvMatchJoiner.toString();
+                            String columnDelimiter = ",";
+                            StringJoiner kvMatchJoiner = new StringJoiner(columnDelimiter);
+                            kvMatchJoiner.add(signatureLibraryName);
+                            kvMatchJoiner.add(sigLibRelease);
+                            kvMatchJoiner.add(signatureAccession);
+                            kvMatchJoiner.add(modelAccession);
+                            kvMatchJoiner.add(kvValueOf(sequenceStart));
+                            kvMatchJoiner.add(kvValueOf(sequenceEnd));
+                            kvMatchJoiner.add(fragments);
+                            kvMatchJoiner.add(kvValueOf(sequenceScore));
+                            kvMatchJoiner.add(kvValueOf(sequenceEValue));
+                            kvMatchJoiner.add(kvValueOf(hmmBounds));
+                            kvMatchJoiner.add(kvValueOf(hmmStart));
+                            kvMatchJoiner.add(kvValueOf(hmmEnd));
+                            kvMatchJoiner.add(kvValueOf(hmmLength));
+                            kvMatchJoiner.add(kvValueOf(envelopeStart));
+                            kvMatchJoiner.add(kvValueOf(envelopeEnd));
+                            kvMatchJoiner.add(kvValueOf(locationScore));
+                            kvMatchJoiner.add(kvValueOf(locationEValue));
+                            kvMatchJoiner.add(kvValueOf(seqFeature));
+                            String kvMatch = kvMatchJoiner.toString();
 
-                        if (match == null) {
-                            match = new KVSequenceEntry();
-                            match.setProteinMD5(proteinMD5);
-                            match.addMatch(kvMatch);
-                        } else if (proteinMD5.equals(match.getProteinMD5())) {
-                            match.addMatch(kvMatch);
-                        } else {
-                            index.put(match);
-                            match = new KVSequenceEntry();
-                            match.setProteinMD5(proteinMD5);
-                            match.addMatch(kvMatch);
-                        }
+                            if (match == null) {
+                                match = new KVSequenceEntry();
+                                match.setProteinMD5(proteinMD5);
+                                match.addMatch(kvMatch);
+                            } else if (proteinMD5.equals(match.getProteinMD5())) {
+                                match.addMatch(kvMatch);
+                            } else {
+                                index.put(match);
+                                match = new KVSequenceEntry();
+                                match.setProteinMD5(proteinMD5);
+                                match.addMatch(kvMatch);
+                            }
 
-                        matchCount++;
-                        if (matchCount % 1000000 == 0) {
-                            store.sync();
+                            matchCount++;
+                            if (matchCount % 1000000 == 0) {
+                                store.sync();
 
-                            if (matchCount % 10000000 == 0) {
-                                System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", matchCount) + " matches processed");
+                                if (matchCount % 10000000 == 0) {
+                                    System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", matchCount) + " matches processed");
+                                }
                             }
                         }
                     }
@@ -208,5 +211,19 @@ public class CreateMatchesDBFromOracle {
 
     private static String kvValueOf(Object obj) {
         return (obj == null) ? "" : obj.toString();
+    }
+
+    private static Set<String> getPartitions(Connection connection) throws SQLException {
+        Set<String> partitions = new HashSet<>();
+        String query = "SELECT PARTITION_NAME FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME = 'LOOKUP_MATCH'";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String partition = rs.getString(1);
+                    partitions.add(partition);
+                }
+            }
+        }
+        return partitions;
     }
 }
