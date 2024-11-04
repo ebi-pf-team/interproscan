@@ -164,8 +164,10 @@ public class CreateMatchesDBFromOracle {
                     }
                 }
 
-                for (KVSequenceEntry entry: matches.values()) {
-                    index.put(entry);
+                List<String> keys = new ArrayList<>(matches.keySet());
+                Collections.sort(keys);
+                for (String key: keys) {
+                    index.put(matches.get(key));
                     proteinCount++;
                 }
 
