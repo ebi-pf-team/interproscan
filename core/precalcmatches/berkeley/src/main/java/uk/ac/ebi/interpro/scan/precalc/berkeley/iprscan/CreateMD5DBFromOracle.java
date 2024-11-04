@@ -1,11 +1,7 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.StoreConfig;
 import uk.ac.ebi.interpro.scan.precalc.berkeley.model.BerkeleyConsideredProtein;
 import uk.ac.ebi.interpro.scan.util.Utilities;
 import java.io.File;
@@ -25,69 +21,40 @@ public class CreateMD5DBFromOracle {
     private static final String QUERY = "SELECT MD5 FROM " + USER + ".LOOKUP_MD5 ORDER BY MD5";
 
     void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
-        Environment env = null;
-        EntityStore store = null;
-
         System.out.println(Utilities.getTimeAlt() + ": starting");
-
-        try (Connection connection = DriverManager.getConnection(url, USER, password)) {
-            // Set up the environment
-            EnvironmentConfig envConfig = new EnvironmentConfig();
-            envConfig.setAllowCreate(true);
-            envConfig.setTransactional(false);
-            env = new Environment(outputDirectory, envConfig);
-
-            // Set up the entity store
-            StoreConfig storeConfig = new StoreConfig();
-            storeConfig.setAllowCreate(true);
-            storeConfig.setTransactional(false);
-            store = new EntityStore(env, "EntityStore", storeConfig);
-
+        int proteinCount = 0;
+        try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
+            EntityStore store = bdbje.getStore();
             PrimaryIndex<String, BerkeleyConsideredProtein> index = store.getPrimaryIndex(String.class, BerkeleyConsideredProtein.class);
 
-            try (PreparedStatement ps = connection.prepareStatement(QUERY)) {
-                ps.setFetchSize(fetchSize);
+            try (Connection connection = DriverManager.getConnection(url, USER, password)) {
+                try (PreparedStatement ps = connection.prepareStatement(QUERY)) {
+                    ps.setFetchSize(fetchSize);
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    int proteinCount = 0;
-                    while (rs.next()) {
-                        final String proteinMD5 = rs.getString(1);
-                        if (proteinMD5 == null || proteinMD5.length() == 0) continue;
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            final String proteinMD5 = rs.getString(1);
+                            if (proteinMD5 == null || proteinMD5.length() == 0) continue;
 
-                        BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
-                        index.put(protein);
+                            BerkeleyConsideredProtein protein = new BerkeleyConsideredProtein(proteinMD5);
+                            index.put(protein);
 
-                        proteinCount++;
-                        if (proteinCount % 10000000 == 0) {
-                            System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", proteinCount) + " sequences processed");
+                            proteinCount++;
+                            if (proteinCount % 10000000 == 0) {
+                                store.sync();
+
+                                String msg = String.format("%s: %,d proteins processed", Utilities.getTimeAlt(), proteinCount);
+                                System.out.println(msg);
+                            }
                         }
                     }
-
-                    System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", proteinCount) + " sequences processed");
                 }
-            }
-        } catch (DatabaseException dbe) {
-            throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Unable to connect to the database", e);
-        } finally {
-            if (store != null) {
-                try {
-                    store.close();
-                } catch (DatabaseException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (env != null) {
-                try {
-                    env.close();
-                } catch (DatabaseException e) {
-                    e.printStackTrace();
-                }
+            } catch (SQLException e) {
+                throw new IllegalStateException("Unable to connect to the database", e);
             }
         }
 
-        System.out.println(Utilities.getTimeAlt() + ": done");
+        String msg = String.format("%s: %,d proteins processed", Utilities.getTimeAlt(), proteinCount);
+        System.out.println(msg);
     }
 }
