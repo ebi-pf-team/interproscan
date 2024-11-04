@@ -32,8 +32,7 @@ public class CreateMatchesDBFromOracle {
                     "MODEL_ACCESSION, SEQ_START, SEQ_END, FRAGMENTS, SEQUENCE_SCORE, SEQUENCE_EVALUE, " +
                     "HMM_BOUNDS, HMM_START, HMM_END, HMM_LENGTH, ENVELOPE_START, ENVELOPE_END, SCORE, " +
                     "EVALUE, SEQ_FEATURE " +
-                    "FROM " + USER + ".LOOKUP_MATCH PARTITION (?) " +
-                    "ORDER BY MD5";
+                    "FROM " + USER + ".LOOKUP_MATCH PARTITION (?)";
 
     void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
         System.out.println(Utilities.getTimeAlt() + ": starting");
@@ -42,7 +41,7 @@ public class CreateMatchesDBFromOracle {
         EntityStore store = null;
 
         try (Connection connection = DriverManager.getConnection(url, USER, password)) {
-            Set<String> partitions = getPartitions(connection);
+            List<String> partitions = getPartitions(connection);
 
             // Set up the environment
             EnvironmentConfig envConfig = new EnvironmentConfig();
@@ -59,8 +58,9 @@ public class CreateMatchesDBFromOracle {
 
             PrimaryIndex<String, KVSequenceEntry> index = store.getPrimaryIndex(String.class, KVSequenceEntry.class);
 
-            long matchCount = 0;
-            KVSequenceEntry match = null;
+            long proteinCount = 0;
+            int partitionDone = 0;
+            Map<String, KVSequenceEntry> matches = new HashMap<>();
             for (String partition: partitions) {
                 String query = QUERY.replace("?", partition);
 
@@ -154,38 +154,32 @@ public class CreateMatchesDBFromOracle {
                             kvMatchJoiner.add(kvValueOf(seqFeature));
                             String kvMatch = kvMatchJoiner.toString();
 
-                            if (match == null) {
-                                match = new KVSequenceEntry();
-                                match.setProteinMD5(proteinMD5);
-                                match.addMatch(kvMatch);
-                            } else if (proteinMD5.equals(match.getProteinMD5())) {
-                                match.addMatch(kvMatch);
-                            } else {
-                                index.put(match);
-                                match = new KVSequenceEntry();
-                                match.setProteinMD5(proteinMD5);
-                                match.addMatch(kvMatch);
-                            }
-
-                            matchCount++;
-                            if (matchCount % 1000000 == 0) {
-                                store.sync();
-
-                                if (matchCount % 10000000 == 0) {
-                                    System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", matchCount) + " matches processed");
-                                }
-                            }
+                            KVSequenceEntry entry = matches.computeIfAbsent(proteinMD5, k -> {
+                                KVSequenceEntry newEntry = new KVSequenceEntry();
+                                newEntry.setProteinMD5(k);
+                                return newEntry;
+                            });
+                            entry.addMatch(kvMatch);
                         }
                     }
                 }
-            }
 
-            if (match != null) {
-                index.put(match);
-            }
+                for (KVSequenceEntry entry: matches.values()) {
+                    index.put(entry);
+                    proteinCount++;
+                }
 
-            store.sync();
-            System.out.println(Utilities.getTimeAlt() + ": " + String.format("%,d", matchCount) + " matches processed");
+                store.sync();
+                matches.clear();
+                partitionDone++;
+
+                String msg = String.format("%s: %,d proteins processed (%d/%d)",
+                        Utilities.getTimeAlt(),
+                        proteinCount,
+                        partitionDone,
+                        partitions.size());
+                System.out.println(msg);
+            }
         } catch (DatabaseException dbe) {
             throw new IllegalStateException("Error opening the BerkeleyDB environment", dbe);
         } catch (SQLException e) {
@@ -213,9 +207,9 @@ public class CreateMatchesDBFromOracle {
         return (obj == null) ? "" : obj.toString();
     }
 
-    private static Set<String> getPartitions(Connection connection) throws SQLException {
-        Set<String> partitions = new HashSet<>();
-        String query = "SELECT PARTITION_NAME FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME = 'LOOKUP_MATCH'";
+    private static List<String> getPartitions(Connection connection) throws SQLException {
+        List<String> partitions = new ArrayList<>();
+        String query = "SELECT PARTITION_NAME FROM ALL_TAB_PARTITIONS WHERE TABLE_NAME = 'LOOKUP_MATCH' ORDER BY PARTITION_NAME";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
