@@ -5,7 +5,7 @@ public class IprscanMain {
     private static String databaseType = null;
     private static String databasePath = null;
     private static String databaseUrl = null;
-    private static boolean debug = false;
+    private static boolean verbose = false;
 
     public static void main(String[] args) {
         parseArgs(args);
@@ -48,7 +48,7 @@ public class IprscanMain {
             }
             case "matches": {
                 CreateMatchesDBFromOracle builder = new CreateMatchesDBFromOracle();
-                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, debug);
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, verbose);
                 break;
             }
             case "sites": {
@@ -76,8 +76,8 @@ public class IprscanMain {
                     case "url":
                         databaseUrl = args[++i];
                         break;
-                    case "debug":
-                        debug = true;
+                    case "verbose":
+                        verbose = true;
                         break;
                     default:
                         usage();
@@ -93,7 +93,7 @@ public class IprscanMain {
         System.out.println("  -type TYPE: type of database to build (md5, matches, sites)");
         System.out.println("  -dir PATH : output directory of the Berkeley DB");
         System.out.println("  -url URL  : Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>");
-        System.out.println("  -debug    : show stats");
+        System.out.println("  -verbose  : increase frequency of progress messages");
         System.exit(1);
     }
 }

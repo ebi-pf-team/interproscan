@@ -30,7 +30,7 @@ public class CreateMatchesDBFromOracle {
                     "EVALUE, SEQ_FEATURE " +
                     "FROM " + USER + ".LOOKUP_MATCH PARTITION (?)";
 
-    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean debug) {
+    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean verbose) {
         System.err.println(Utilities.getTimeAlt() + ": starting");
 
         try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
@@ -40,10 +40,13 @@ public class CreateMatchesDBFromOracle {
             try (Connection connection = DriverManager.getConnection(url, USER, password)) {
                 List<String> partitions = getPartitions(connection);
 
-                long proteinCount = 0;
+                int proteinCount = 0;
+                int milestone = 1_000_000;
+                int step = 1_000_000;
                 int partitionDone = 0;
                 Map<String, KVSequenceEntry> matches = new HashMap<>();
-                for (String partition: partitions) {
+                for (int i = 0; i < partitions.size(); i++) {
+                    String partition = partitions.get(i);
                     String query = QUERY.replace("?", partition);
 
                     try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -157,14 +160,14 @@ public class CreateMatchesDBFromOracle {
                     matches.clear();
                     partitionDone++;
 
-                    String msg = String.format("%s: %,d proteins processed (%d/%d)",
-                            Utilities.getTimeAlt(),
-                            proteinCount,
-                            partitionDone,
-                            partitions.size());
-                    System.err.println(msg);
-                    if (debug) {
-                        System.err.println(bdbje.getStats());
+                    if (verbose || i + 1 == partitions.size() || proteinCount >= milestone) {
+                        String msg = String.format("%s: %,d proteins processed (%d/%d)",
+                                Utilities.getTimeAlt(),
+                                proteinCount,
+                                partitionDone,
+                                partitions.size());
+                        System.err.println(msg);
+                        milestone += step;
                     }
                 }
             } catch (SQLException e) {
