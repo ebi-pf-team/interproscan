@@ -2,13 +2,9 @@
     <id>dist</id>
     <formats>
         <format>dir</format>
-        <!--<format>zip</format>-->
-        <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
-
-
         <fileSet>
             <directory>target</directory>
             <outputDirectory></outputDirectory>
@@ -17,26 +13,14 @@
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>
-
-
         <fileSet>
-            <directory>target</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-
-
-        <fileSet>
-            <directory></directory>
-            <outputDirectory></outputDirectory>
+            <directory>${basedir}</directory>
+            <outputDirectory>/</outputDirectory>
             <includes>
                 <include>*.sh</include>
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>
-
     </fileSets>
     <dependencySets>
         <dependencySet>
