@@ -2,20 +2,20 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 import java.io.File;
 
 public class IprscanMain {
-    public static void main(String[] args) {
-        if (args.length != 3) {
-            System.err.println("Usage: java -jar berkeley-db-builder.jar TYPE DIR URL\n\n" +
-                    "TYPE: md5|matches|sites\n" +
-                    "DIR:  output directory of the BerkleyDB database\n" +
-                    "URL:  Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>");
-            System.exit(1);
-        }
-        String databaseType = args[0].toLowerCase();
-        String databasePath = args[1];
-        String databaseUrl = args[2];
-        String databasePassword = System.getenv("ORACLE_PASSWORD");
+    private static String databaseType = null;
+    private static String databasePath = null;
+    private static String databaseUrl = null;
+    private static boolean debug = false;
 
-        if (databasePassword == null || databasePassword.length() == 0) {
+    public static void main(String[] args) {
+        parseArgs(args);
+
+        if (databaseType == null || databasePath == null || databaseUrl == null) {
+            usage();
+        }
+
+        String databasePassword = System.getenv("ORACLE_PASSWORD");
+        if (databasePassword == null || databasePassword.isEmpty()) {
             System.err.println("ORACLE_PASSWORD environment variable not set");
             System.exit(1);
         }
@@ -48,7 +48,7 @@ public class IprscanMain {
             }
             case "matches": {
                 CreateMatchesDBFromOracle builder = new CreateMatchesDBFromOracle();
-                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, debug);
                 break;
             }
             case "sites": {
@@ -61,5 +61,39 @@ public class IprscanMain {
                 System.exit(1);
             }
         }
+    }
+
+    private static void parseArgs(String[] args) {
+        for(int i = 0; i < args.length; ++i) {
+            if (args[i].startsWith("-")) {
+                switch(args[i].substring(1)) {
+                    case "type":
+                        databaseType = args[++i];
+                        break;
+                    case "dir":
+                        databasePath = args[++i];
+                        break;
+                    case "url":
+                        databaseUrl = args[++i];
+                        break;
+                    case "debug":
+                        debug = true;
+                        break;
+                    default:
+                        usage();
+                }
+            } else {
+                usage();
+            }
+        }
+    }
+
+    private static void usage() {
+        System.out.println("Usage: java -jar berkeley-db-builder.jar -type TYPE -dir PATH -url URL");
+        System.out.println("  -type TYPE: type of database to build (md5, matches, sites)");
+        System.out.println("  -dir PATH : output directory of the Berkeley DB");
+        System.out.println("  -url URL  : Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>");
+        System.out.println("  -debug    : show stats");
+        System.exit(1);
     }
 }
