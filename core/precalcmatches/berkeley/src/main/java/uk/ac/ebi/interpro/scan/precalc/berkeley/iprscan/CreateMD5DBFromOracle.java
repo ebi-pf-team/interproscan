@@ -21,7 +21,7 @@ public class CreateMD5DBFromOracle {
     private static final String QUERY = "SELECT MD5 FROM " + USER + ".LOOKUP_MD5 ORDER BY MD5";
 
     void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
-        System.out.println(Utilities.getTimeAlt() + ": starting");
+        System.err.println(Utilities.getTimeAlt() + ": starting");
         int proteinCount = 0;
         try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
             EntityStore store = bdbje.getStore();
@@ -44,7 +44,7 @@ public class CreateMD5DBFromOracle {
                                 store.sync();
 
                                 String msg = String.format("%s: %,d proteins processed", Utilities.getTimeAlt(), proteinCount);
-                                System.out.println(msg);
+                                System.err.println(msg);
                             }
                         }
                     }
@@ -55,6 +55,6 @@ public class CreateMD5DBFromOracle {
         }
 
         String msg = String.format("%s: %,d proteins processed", Utilities.getTimeAlt(), proteinCount);
-        System.out.println(msg);
+        System.err.println(msg);
     }
 }
