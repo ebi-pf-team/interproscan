@@ -16,7 +16,7 @@ public class BerkeleyDBJE implements AutoCloseable{
         // Set up the environment
         EnvironmentConfig envConfig = new EnvironmentConfig();
         envConfig.setAllowCreate(true);
-        // envConfig.setCacheSize(24L * 1024 * 1024 * 1024);  // do not hard-code max memory
+        envConfig.setCacheSize(24L * 1024 * 1024 * 1024);
         envConfig.setTransactional(false);
 
         // *.jdb files target size (200M)
