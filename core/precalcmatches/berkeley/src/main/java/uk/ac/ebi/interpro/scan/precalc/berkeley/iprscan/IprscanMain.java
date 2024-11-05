@@ -53,7 +53,7 @@ public class IprscanMain {
             }
             case "sites": {
                 CreateSitesDBFromOracle builder = new CreateSitesDBFromOracle();
-                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, verbose);
                 break;
             }
             default: {
