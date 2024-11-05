@@ -1,16 +1,15 @@
 package uk.ac.ebi.interpro.scan.precalc.berkeley.iprscan;
 
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.*;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.StoreConfig;
 import java.io.File;
 
 
 public class BerkeleyDBJE implements AutoCloseable{
-    Environment env = null;
-    EntityStore store = null;
+    private Environment env = null;
+    private EntityStore store = null;
+    private StatsConfig config = null;
 
     public BerkeleyDBJE(File directory) {
         // Set up the environment
@@ -37,6 +36,9 @@ public class BerkeleyDBJE implements AutoCloseable{
         storeConfig.setTransactional(false);
         storeConfig.setDeferredWrite(true);
         this.store = new EntityStore(this.env, "EntityStore", storeConfig);
+
+        config = new StatsConfig();
+        config.setClear(true);
     }
 
     public void close(){
@@ -60,5 +62,8 @@ public class BerkeleyDBJE implements AutoCloseable{
     protected EntityStore getStore() {
         return this.store;
     }
-}
 
+    protected EnvironmentStats getStats() {
+        return this.env.getStats(config);
+    }
+}

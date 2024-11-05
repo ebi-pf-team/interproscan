@@ -30,8 +30,8 @@ public class CreateMatchesDBFromOracle {
                     "EVALUE, SEQ_FEATURE " +
                     "FROM " + USER + ".LOOKUP_MATCH PARTITION (?)";
 
-    void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
-        System.out.println(Utilities.getTimeAlt() + ": starting");
+    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean debug) {
+        System.err.println(Utilities.getTimeAlt() + ": starting");
 
         try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
             EntityStore store = bdbje.getStore();
@@ -162,7 +162,10 @@ public class CreateMatchesDBFromOracle {
                             proteinCount,
                             partitionDone,
                             partitions.size());
-                    System.out.println(msg);
+                    System.err.println(msg);
+                    if (debug) {
+                        System.err.println(bdbje.getStats());
+                    }
                 }
             } catch (SQLException e) {
                 throw new IllegalStateException("Unable to connect to the database", e);
