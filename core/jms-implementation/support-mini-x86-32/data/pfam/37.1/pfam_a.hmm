@@ -1,6 +1,6 @@
 HMMER3/f [3.3 | Nov 2019]
 NAME  AAA
-ACC   PF00004.34
+ACC   PF00004.35
 DESC  ATPase family associated with various cellular activities (AAA)
 LENG  131
 ALPH  amino
@@ -9,7 +9,7 @@ MM    no
 CONS  yes
 CS    yes
 MAP   yes
-DATE  Mon Feb 19 02:05:51 2024
+DATE  Mon Sep 30 00:25:04 2024
 NSEQ  207
 EFFN  5.138992
 CKSUM 707422973
@@ -1317,7 +1317,7 @@ HMM          A        C        D        E        F        G        H        I   
 //
 HMMER3/f [3.3 | Nov 2019]
 NAME  12TM_1
-ACC   PF09847.14
+ACC   PF09847.15
 DESC  Membrane protein of 12 TMs
 LENG  448
 ALPH  amino
@@ -1326,7 +1326,7 @@ MM    no
 CONS  yes
 CS    no
 MAP   yes
-DATE  Wed Dec 27 19:48:39 2023
+DATE  Wed Sep 25 21:48:39 2024
 NSEQ  6
 EFFN  1.995117
 CKSUM 2721927896

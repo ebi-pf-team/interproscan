@@ -1,6 +1,6 @@
 # STOCKHOLM 1.0
 #=GF ID   AAA
-#=GF AC   PF00004.34
+#=GF AC   PF00004.35
 #=GF DE   ATPase family associated with various cellular activities (AAA)
 #=GF GA   21.2; 21.2;
 #=GF TP   Domain
@@ -25,7 +25,7 @@
 //
 # STOCKHOLM 1.0
 #=GF ID   12TM_1
-#=GF AC   PF09847.14
+#=GF AC   PF09847.15
 #=GF DE   Membrane protein of 12 TMs
 #=GF GA   33.2; 33.2;
 #=GF TP   Family
