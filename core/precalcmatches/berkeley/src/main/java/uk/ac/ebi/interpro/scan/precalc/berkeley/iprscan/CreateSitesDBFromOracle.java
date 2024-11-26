@@ -40,8 +40,8 @@ public class CreateSitesDBFromOracle {
                 List<String> partitions = getPartitions(connection);
 
                 int proteinCount = 0;
-                int milestone = 1_000_000;
-                int step = 1_000_000;
+                int milestone = 10_000_000;
+                int step = 10_000_000;
                 int partitionDone = 0;
                 Map<String, KVSequenceEntry> entries = new HashMap<>();
 
