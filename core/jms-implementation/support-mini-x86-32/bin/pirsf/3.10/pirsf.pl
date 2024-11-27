@@ -64,7 +64,7 @@ if ($output ne 'pirsf' && $output ne 'i5') {
 # Main body
 
 # Check that the hmm files have been properly pressed
-PIRSF::checkHmmFiles($sf_hmm, $hmmer_path);
+# PIRSF::checkHmmFiles($sf_hmm, $hmmer_path);
 
 # Read the PIRSF data file.
 my ($pirsf_data, $children) = PIRSF::read_pirsf_dat($pirsf_dat);
