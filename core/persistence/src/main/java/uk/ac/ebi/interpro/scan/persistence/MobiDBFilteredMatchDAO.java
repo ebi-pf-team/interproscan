@@ -4,16 +4,10 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.interpro.scan.model.*;
 import uk.ac.ebi.interpro.scan.model.raw.MobiDBRawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.model.helper.SignatureModelHolder;
 
 import javax.persistence.Query;
 import java.util.*;
 
-/**
- * @author Phil Jones, EMBL-EBI
- * @version $Id$
- * @since 1.0
- */
 
 class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDBMatch> {
 
@@ -50,34 +44,40 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
     @Override
     @Transactional
     public void persist(Collection<RawProtein<MobiDBRawMatch>> filteredProteins) {
-//        public void persist(Collection<RawProtein<MobiDBRawMatch>> filteredProteins, Map<String, SignatureModelHolder> modelAccessionToSignatureMap, Map<String, Protein> proteinIdToProteinMap) {
-
         Map<String, Protein> proteinIdToProteinMap = getProteinIdToProteinMap(filteredProteins);
-        String signatureLibraryKey = null;
+
+        String modelId = null;  // All MobiDB-lite matches have the same model ID (set in MobiDBMatchParser)
         for (RawProtein<MobiDBRawMatch> rawProtein : filteredProteins) {
             final Protein protein = proteinIdToProteinMap.get(rawProtein.getProteinIdentifier());
-            Set<Match> proteinMatches = new HashSet();
 
+            Set<MobiDBMatch.MobiDBLocation> locations = new HashSet<>();
             for (MobiDBRawMatch rawMatch : rawProtein.getMatches()) {
-                Signature signature = loadPersistedSignature();
-//                Utilities.verboseLog(rawMatch.toString());
-                MobiDBMatch match = buildMatch(signature, rawMatch);
-//                Utilities.verboseLog(1100, "MobiDb match:" + match.toString());
-                proteinMatches.add(match);
-                //entityManager.persist(match);
-                if(signatureLibraryKey == null) {
-                    signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+                if (modelId == null) {
+                    modelId = rawMatch.getModelId();
                 }
+
+                locations.add(buildLocation(rawMatch));
             }
-            if(! proteinMatches.isEmpty()) {
+
+            if (!locations.isEmpty()) {
+                Signature signature = loadPersistedSignature();
+
+                MobiDBMatch match = new MobiDBMatch(signature, modelId, locations);
+                String signatureLibraryKey = match.getSignature().getSignatureLibraryRelease().getLibrary().getName();
+
+                updateMatch(match);
+
                 final String dbKey = Long.toString(protein.getId()) + signatureLibraryKey;
-                for(Match i5Match: proteinMatches){
-                    //try update with cross refs etc
-                    updateMatch(i5Match);
-                }
-                matchDAO.persist(dbKey, proteinMatches);
+
+                Set<Match> matches = new HashSet<>();
+                matches.add(match);
+                matchDAO.persist(dbKey, matches);
             }
         }
+    }
+
+    private MobiDBMatch.MobiDBLocation buildLocation(MobiDBRawMatch rawMatch) {
+        return new MobiDBMatch.MobiDBLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd(), rawMatch.getDescription());
     }
 
     private MobiDBMatch buildMatch(Signature signature, MobiDBRawMatch rawMatch) {
@@ -100,18 +100,9 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
 
         final Signature.Builder mobiSignatureBuilder = new Signature.Builder("mobidb-lite");
         final Signature signature = mobiSignatureBuilder.name("mobidb-lite").signatureLibraryRelease(release).build();
-
-//        if (release != null) {
-//            return signature;
-//        }
-
-        // Check first to see if the SignatureLibraryRelease exists.  If not, create it.
-
-        // Now try to retrieve the Signatures for Phobius.  If they do not exist, create them.
         final Query query = entityManager.createQuery("select s from Signature s where s.signatureLibraryRelease = :release");
         query.setParameter("release", release);
         @SuppressWarnings("unchecked") List<Signature> retrievedSignatures = query.getResultList();
-//        Utilities.verboseLog(1100, "retrievedSignatures size: " + retrievedSignatures.size());
 
         if (retrievedSignatures.size() == 0) {
             // The Signature record does not exist yet, so create it.
@@ -119,8 +110,7 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
             entityManager.persist(signature);
             return signature;
         } else if (retrievedSignatures.size() > 1) {
-            // Error detected - more than one Signature record for this release of Coils
-            throw new IllegalStateException("There is more than one Signature record for version " + mobidbReleaseVersion + " of Coils in the database.");
+            throw new IllegalStateException("There is more than one Signature record for version " + mobidbReleaseVersion + " of MobiDB-lite in the database.");
         } else {
             // return the previously persisted Signature.
             return retrievedSignatures.get(0);
@@ -136,9 +126,9 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
      */
     private SignatureLibraryRelease loadMobiDBRelease() {
         final SignatureLibraryRelease release;
-        final Query releaseQuery = entityManager.createQuery("select r from SignatureLibraryRelease r where r.version = :coilsVersion and r.library = :coilsSignatureLibrary");
-        releaseQuery.setParameter("coilsVersion", mobidbReleaseVersion);
-        releaseQuery.setParameter("coilsSignatureLibrary", SignatureLibrary.MOBIDB_LITE);
+        final Query releaseQuery = entityManager.createQuery("select r from SignatureLibraryRelease r where r.version = :mobidbliteVersion and r.library = :mobidbliteSignatureLibrary");
+        releaseQuery.setParameter("mobidbliteVersion", mobidbReleaseVersion);
+        releaseQuery.setParameter("mobidbliteSignatureLibrary", SignatureLibrary.MOBIDB_LITE);
         @SuppressWarnings("unchecked") List<SignatureLibraryRelease> releaseList = releaseQuery.getResultList();
         if (releaseList.size() == 1 && releaseList.get(0) != null) {
             release = releaseList.get(0);
@@ -150,7 +140,4 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
         }
         return release;
     }
-
-
-
 }

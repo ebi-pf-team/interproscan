@@ -141,7 +141,7 @@ public class Run extends AbstractI5Runner {
 
             ArrayList<String> analysesHelpInformation = new ArrayList<>();
 
-            String i5Version = "5.69-101.0";
+            String i5Version = "5.72-103.0";
             String i5BuildType = "64-Bit";
 
             if (parsedCommandLine.hasOption(I5Option.VERSION.getLongOpt())) {
@@ -167,7 +167,7 @@ public class Run extends AbstractI5Runner {
 
             // Def. analysesToRun: List of analyses jobs which will be performed/submitted by I5
             String[] analysesToRun = null;
-            String[] depreactedAnalysesToRun = null;
+            String[] deprecatedAnalysesToRun = null;
             String[] excludedAnalyses = null;
 
             if (!mode.equals(Mode.INSTALLER) && !mode.equals(Mode.EMPTY_INSTALLER) && !mode.equals(Mode.CONVERT) && !mode.equals(Mode.MONITOR)) {
@@ -184,33 +184,63 @@ public class Run extends AbstractI5Runner {
 
                 if (isInvalid(mode, parsedCommandLine)) {
                     printHelp(COMMAND_LINE_OPTIONS_FOR_HELP);
-                    analysesHelpInformation.add("Available analyses:\n");    // LEAVE as System.out
-                    for (Job job : jobs.getActiveAnalysisJobs().getJobList()) {
-                        // Print out available jobs
+                    analysesHelpInformation.add("Available analyses:\n");
+
+                    List<Job> jobList = jobs.getActiveAnalysisJobs().getJobList();
+                    jobList.sort(new Comparator<Job>() {
+                        @Override
+                        public int compare(Job j1, Job j2) {
+                            String name1 = j1.getLibraryRelease().getLibrary().getName();
+                            String name2 = j2.getLibraryRelease().getLibrary().getName();
+                            return name1.compareToIgnoreCase(name2);
+                        }
+                    });
+
+                    for (Job job : jobList) {
                         SignatureLibraryRelease slr = job.getLibraryRelease();
                         if (!job.isDeprecated()) {
-                            analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription())); // LEAVE as System.out
+                            analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), job.getDescription()));
                         }
                     }
                     if (deactivatedJobs.size() > 0) {
                         analysesHelpInformation.add("\nDeactivated analyses:\n");
+
+                        jobList = new ArrayList<>(deactivatedJobs.keySet());
+                        jobList.sort(new Comparator<Job>() {
+                            @Override
+                            public int compare(Job j1, Job j2) {
+                                String name1 = j1.getLibraryRelease().getLibrary().getName();
+                                String name2 = j2.getLibraryRelease().getLibrary().getName();
+                                return name1.compareToIgnoreCase(name2);
+                            }
+                        });
+
+                        for (Job deactivatedJob : jobList) {
+                            JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
+                            SignatureLibraryRelease slr = deactivatedJob.getLibraryRelease();
+                            analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), jobStatusWrapper.getWarning()));
+                        }
                     }
-                    for (Job deactivatedJob : deactivatedJobs.keySet()) {
-                        JobStatusWrapper jobStatusWrapper = deactivatedJobs.get(deactivatedJob);
-                        // Print out deactivated jobs
-                        SignatureLibraryRelease slr = deactivatedJob.getLibraryRelease();
-                        analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), jobStatusWrapper.getWarning()));
-                    }
+
                     if (deprecatedJobs.size() > 0) {
                         analysesHelpInformation.add("\nDeprecated analyses:\n");
-                    }
-                    for (Job deprecatedJob : deprecatedJobs.keySet()) {
-                        JobStatusWrapper jobStatusWrapper = deprecatedJobs.get(deprecatedJob);
-                        // Print out deactivated jobs
-                        SignatureLibraryRelease slr = deprecatedJob.getLibraryRelease();
-                        analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), deprecatedJob.getDescription())); // LEAVE as System.out
+                        jobList = new ArrayList<>(deprecatedJobs.keySet());
 
+                        jobList.sort(new Comparator<Job>() {
+                            @Override
+                            public int compare(Job j1, Job j2) {
+                                String name1 = j1.getLibraryRelease().getLibrary().getName();
+                                String name2 = j2.getLibraryRelease().getLibrary().getName();
+                                return name1.compareToIgnoreCase(name2);
+                            }
+                        });
+
+                        for (Job deprecatedJob : jobList) {
+                            SignatureLibraryRelease slr = deprecatedJob.getLibraryRelease();
+                            analysesHelpInformation.add(String.format("    %25s (%s) : %s\n", slr.getLibrary().getName(), slr.getVersion(), deprecatedJob.getDescription()));
+                        }
                     }
+
                     printStringList(analysesHelpInformation);
                     System.exit(1);
                 }
@@ -223,9 +253,9 @@ public class Run extends AbstractI5Runner {
                 }
 
                 try {
-                    //System.out.println("Deal with depreactedAnalysesToRun and excludedAnalyses");
-                    depreactedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
-                    //System.out.println("depreacted Analyses To Run :" + Arrays.asList(depreactedAnalysesToRun).toString());
+                    //System.out.println("Deal with deprecatedAnalysesToRun and excludedAnalyses");
+                    deprecatedAnalysesToRun = getDeprecatedApplications(parsedCommandLine, jobs);
+                    //System.out.println("deprecated Analyses To Run :" + Arrays.asList(deprecatedAnalysesToRun).toString());
 
                     excludedAnalyses = getExcludedApplications(parsedCommandLine, jobs);
 
