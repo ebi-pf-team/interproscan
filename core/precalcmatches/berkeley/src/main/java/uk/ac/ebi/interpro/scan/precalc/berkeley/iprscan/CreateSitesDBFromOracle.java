@@ -141,6 +141,9 @@ public class CreateSitesDBFromOracle {
                         milestone += step;
                     }
                 }
+
+                String msg = String.format("%s: %,d proteins processed", Utilities.getTimeAlt(), proteinCount);
+                System.err.println(msg);
             } catch (SQLException e) {
                 throw new IllegalStateException("Unable to connect to the database", e);
             }
