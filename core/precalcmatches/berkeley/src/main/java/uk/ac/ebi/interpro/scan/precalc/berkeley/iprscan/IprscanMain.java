@@ -6,7 +6,7 @@ public class IprscanMain {
     private static String databasePath = null;
     private static String databaseUrl = null;
     private static boolean verbose = false;
-    private static maxProteins = 0;
+    private static int maxProteins = 0;
 
     public static void main(String[] args) {
         parseArgs(args);
