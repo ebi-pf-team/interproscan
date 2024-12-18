@@ -6,6 +6,7 @@ public class IprscanMain {
     private static String databasePath = null;
     private static String databaseUrl = null;
     private static boolean verbose = false;
+    private static maxProteins = 0;
 
     public static void main(String[] args) {
         parseArgs(args);
@@ -43,17 +44,17 @@ public class IprscanMain {
         switch (databaseType) {
             case "md5": {
                 CreateMD5DBFromOracle builder = new CreateMD5DBFromOracle();
-                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir);
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, maxProteins);
                 break;
             }
             case "matches": {
                 CreateMatchesDBFromOracle builder = new CreateMatchesDBFromOracle();
-                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, verbose);
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, verbose, maxProteins);
                 break;
             }
             case "sites": {
                 CreateSitesDBFromOracle builder = new CreateSitesDBFromOracle();
-                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, verbose);
+                builder.buildDatabase(databaseUrl, databasePassword, fetchSize, outputDir, verbose, maxProteins);
                 break;
             }
             default: {
@@ -66,21 +67,28 @@ public class IprscanMain {
     private static void parseArgs(String[] args) {
         for(int i = 0; i < args.length; ++i) {
             if (args[i].startsWith("-")) {
-                switch(args[i].substring(1)) {
-                    case "type":
-                        databaseType = args[++i];
-                        break;
-                    case "dir":
-                        databasePath = args[++i];
-                        break;
-                    case "url":
-                        databaseUrl = args[++i];
-                        break;
-                    case "verbose":
-                        verbose = true;
-                        break;
-                    default:
-                        usage();
+                try {                
+                    switch(args[i].substring(1)) {
+                        case "type":
+                            databaseType = args[++i];
+                            break;
+                        case "dir":
+                            databasePath = args[++i];
+                            break;
+                        case "url":
+                            databaseUrl = args[++i];
+                            break;
+                        case "limit":
+                            maxProteins = Integer.parseInt(args[++i]);
+                            break;
+                        case "verbose":
+                            verbose = true;
+                            break;
+                        default:
+                            usage();
+                    }
+                } catch (NumberFormatException e) {
+                    usage();
                 }
             } else {
                 usage();
@@ -89,11 +97,12 @@ public class IprscanMain {
     }
 
     private static void usage() {
-        System.out.println("Usage: java -jar berkeley-db-builder.jar -type TYPE -dir PATH -url URL");
-        System.out.println("  -type TYPE: type of database to build (md5, matches, sites)");
-        System.out.println("  -dir PATH : output directory of the Berkeley DB");
-        System.out.println("  -url URL  : Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>");
-        System.out.println("  -verbose  : increase frequency of progress messages");
+        System.out.println("Usage: java -jar berkeley-db-builder.jar -type TYPE -dir PATH -url URL [-limit INT] [-verbose]");
+        System.out.println("  -type TYPE : type of database to build (md5, matches, sites)");
+        System.out.println("  -dir PATH  : output directory of the Berkeley DB");
+        System.out.println("  -url URL   : Oracle connection URL, i.e. jdbc:oracle:thin:@//<host>:<port>/<service>");
+        System.out.println("  -limit INT : process INT proteins and exit");
+        System.out.println("  -verbose   : increase frequency of progress messages");
         System.exit(1);
     }
 }
