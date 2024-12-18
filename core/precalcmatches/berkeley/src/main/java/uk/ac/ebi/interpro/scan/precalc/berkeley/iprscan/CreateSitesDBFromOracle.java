@@ -29,7 +29,7 @@ public class CreateSitesDBFromOracle {
                     "LOC_START, LOC_END, NUM_SITES, RESIDUE, RESIDUE_START, RESIDUE_END, DESCRIPTION " +
                     "FROM " + USER + ".LOOKUP_SITE PARTITION (?)";
 
-    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean verbose) {
+    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean verbose, int maxProteins) {
         System.err.println(Utilities.getTimeAlt() + ": starting");
 
         try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
@@ -120,13 +120,18 @@ public class CreateSitesDBFromOracle {
                     for (String key: keys) {
                         index.put(entries.get(key));
                         proteinCount++;
+                        if (proteinCount == maxProteins) {
+                            break;
+                        }
                     }
 
                     store.sync();
                     entries.clear();
                     partitionDone++;
 
-                    if (verbose || i + 1 == partitions.size() || proteinCount >= milestone) {
+                    if (proteinCount == maxProteins) {
+                        break;
+                    } else if (verbose || i + 1 == partitions.size() || proteinCount >= milestone) {
                         String msg = String.format("%s: %,d proteins processed (%d/%d)",
                                 Utilities.getTimeAlt(),
                                 proteinCount,
