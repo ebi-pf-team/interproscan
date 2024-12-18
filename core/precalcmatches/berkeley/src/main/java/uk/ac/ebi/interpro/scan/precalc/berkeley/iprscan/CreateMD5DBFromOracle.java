@@ -41,7 +41,7 @@ public class CreateMD5DBFromOracle {
 
                             proteinCount++;
                             if (proteinCount == maxProteins) {
-                                break
+                                break;
                             } else if (proteinCount % 10000000 == 0) {
                                 store.sync();
 
