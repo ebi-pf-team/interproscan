@@ -20,7 +20,7 @@ public class CreateMD5DBFromOracle {
     private static final String USER = "IPRSCAN";
     private static final String QUERY = "SELECT MD5 FROM " + USER + ".LOOKUP_MD5 ORDER BY MD5";
 
-    void buildDatabase(String url, String password, int fetchSize, File outputDirectory) {
+    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, int maxProteins) {
         System.err.println(Utilities.getTimeAlt() + ": starting");
         int proteinCount = 0;
         try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
@@ -40,7 +40,9 @@ public class CreateMD5DBFromOracle {
                             index.put(protein);
 
                             proteinCount++;
-                            if (proteinCount % 10000000 == 0) {
+                            if (proteinCount == maxProteins) {
+                                break
+                            } else if (proteinCount % 10000000 == 0) {
                                 store.sync();
 
                                 String msg = String.format("%s: %,d proteins processed", Utilities.getTimeAlt(), proteinCount);
