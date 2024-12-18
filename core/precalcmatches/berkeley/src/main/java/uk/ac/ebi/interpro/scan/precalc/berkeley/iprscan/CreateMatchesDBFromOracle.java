@@ -30,7 +30,7 @@ public class CreateMatchesDBFromOracle {
                     "EVALUE, SEQ_FEATURE " +
                     "FROM " + USER + ".LOOKUP_MATCH PARTITION (?)";
 
-    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean verbose) {
+    void buildDatabase(String url, String password, int fetchSize, File outputDirectory, boolean verbose, int maxProteins) {
         System.err.println(Utilities.getTimeAlt() + ": starting");
 
         try (BerkeleyDBJE bdbje = new BerkeleyDBJE(outputDirectory)) {
@@ -154,13 +154,18 @@ public class CreateMatchesDBFromOracle {
                     for (String key: keys) {
                         index.put(matches.get(key));
                         proteinCount++;
+                        if (proteinCount == maxProteins) {
+                            break;
+                        }
                     }
 
                     store.sync();
                     matches.clear();
                     partitionDone++;
 
-                    if (verbose || i + 1 == partitions.size() || proteinCount >= milestone) {
+                    if (proteinCount == maxProteins) {
+                        break;
+                    } else if (verbose || i + 1 == partitions.size() || proteinCount >= milestone) {
                         String msg = String.format("%s: %,d proteins processed (%d/%d)",
                                 Utilities.getTimeAlt(),
                                 proteinCount,
