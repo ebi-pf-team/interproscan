@@ -6,7 +6,6 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.StatsConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
