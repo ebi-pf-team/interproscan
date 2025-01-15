@@ -29,6 +29,109 @@
   "DC": "Domain",
   "AC": "PIRSR016496-2"
 }
+, "PIRSR000114-3" : 
+{
+  "Related": "None",
+  "Scope": [
+    "Archaea",
+    "Eukaryota",
+    "Bacteria"
+  ],
+  "DC": "Domain",
+  "Groups": {
+    "5": [
+      {
+        "label": "BINDING",
+        "condition": "R",
+        "group": "5",
+        "hmmEnd": 266,
+        "hmmStart": 266,
+        "start": 269,
+        "end": 269,
+        "desc": "NAD."
+      }
+    ],
+    "7": [
+      {
+        "hmmStart": 293,
+        "start": 298,
+        "end": 298,
+        "desc": "NAD.",
+        "condition": "Q",
+        "label": "BINDING",
+        "group": "7",
+        "hmmEnd": 293
+      }
+    ],
+    "3": [
+      {
+        "group": "3",
+        "label": "BINDING",
+        "condition": "F",
+        "hmmEnd": 87,
+        "start": 97,
+        "hmmStart": 87,
+        "desc": "NAD.",
+        "end": 97
+      }
+    ],
+    "6": [
+      {
+        "group": "6",
+        "label": "BINDING",
+        "condition": "K",
+        "hmmEnd": 291,
+        "hmmStart": 291,
+        "start": 296,
+        "end": 296,
+        "desc": "NAD; via amide nitrogen."
+      }
+    ],
+    "1": [
+      {
+        "hmmEnd": 15,
+        "label": "NP_BIND",
+        "condition": "G-x-G-x(2)-G",
+        "group": "1",
+        "end": 15,
+        "desc": "NAD.",
+        "hmmStart": 10,
+        "start": 10
+      }
+    ],
+    "4": [
+      {
+        "desc": "NAD; via amide nitrogen.",
+        "end": 153,
+        "start": 153,
+        "hmmStart": 148,
+        "hmmEnd": 148,
+        "label": "BINDING",
+        "condition": "A",
+        "group": "4"
+      }
+    ],
+    "2": [
+      {
+        "hmmStart": 36,
+        "start": 41,
+        "end": 41,
+        "desc": "NAD.",
+        "group": "2",
+        "label": "BINDING",
+        "condition": "F",
+        "hmmEnd": 36
+      }
+    ]
+  },
+  "AC": "PIRSR000114-3",
+  "TR": "PIRSF; PIRSF000114; -; 1",
+  "Feature": {
+    "from": "P21695",
+    "model": "SRHMM000114-3"
+  },
+  "Size": "unlimited"
+}
 , "PIRSR000726-1" : 
 {
   "DC": "Domain",
@@ -439,6 +542,107 @@
     ]
   },
   "DC": "Domain"
+}
+, "PIRSR001174-2" : 
+{
+  "Size": "unlimited",
+  "Feature": {
+    "model": "SRHMM001174-2",
+    "from": "P0A9M0"
+  },
+  "TR": "PIRSF; PIRSF001174; -; 1",
+  "AC": "PIRSR001174-2",
+  "Groups": {
+    "1": [
+      {
+        "hmmEnd": 353,
+        "condition": "G-x(6)-[TS]",
+        "label": "NP_BIND",
+        "group": "1",
+        "end": 363,
+        "desc": "ATP.",
+        "start": 356,
+        "hmmStart": 346
+      }
+    ]
+  },
+  "DC": "Domain",
+  "Scope": [
+    "Eukaryota",
+    "Bacteria",
+    "Archaea"
+  ],
+  "Related": "None"
+}
+, "PIRSR001220-1" : 
+{
+  "Size": "unlimited",
+  "Feature": {
+    "model": "SRHMM001220-1",
+    "from": "P00805"
+  },
+  "TR": "PIRSF; PIRSF001220; -; 1",
+  "AC": "PIRSR001220-1",
+  "DC": "Domain",
+  "Groups": {
+    "1": [
+      {
+        "hmmEnd": 12,
+        "group": "1",
+        "label": "ACT_SITE",
+        "condition": "T",
+        "desc": "O-isoaspartyl threonine intermediate.",
+        "end": 34,
+        "hmmStart": 12,
+        "start": 34
+      }
+    ]
+  },
+  "Related": "None",
+  "Scope": [
+    "Eukaryota",
+    "Bacteria"
+  ]
+}
+, "PIRSR001220-2" : 
+{
+  "Size": "unlimited",
+  "Feature": {
+    "model": "SRHMM001220-2",
+    "from": "P06608"
+  },
+  "TR": "PIRSF; PIRSF001220; -; 1",
+  "AC": "PIRSR001220-2",
+  "DC": "Domain",
+  "Groups": {
+    "1": [
+      {
+        "hmmStart": 56,
+        "start": 83,
+        "desc": "Substrate.",
+        "end": 83,
+        "group": "1",
+        "condition": "S",
+        "label": "BINDING",
+        "hmmEnd": 56
+      },
+      {
+        "hmmEnd": 77,
+        "group": "1",
+        "label": "REGION",
+        "condition": "T-D",
+        "desc": "Substrate binding.",
+        "end": 117,
+        "hmmStart": 76,
+        "start": 116
+      }
+    ]
+  },
+  "Related": "None",
+  "Scope": [
+    "Eukaryota",
+    "Bacteria"
+  ]
 }
 , "PIRSR002855-2" : 
 {
