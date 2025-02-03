@@ -49,11 +49,6 @@ then
     exit 1
 fi
 
-if ! python3 setup.py "$PROPERTIES"
-then
-    exit 1
-fi
-
 "$JAVA" \
  -XX:ParallelGCThreads=8 \
  -Xms2028M -Xmx9216M \
