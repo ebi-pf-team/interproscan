@@ -345,11 +345,9 @@
          so needs to be handled in some way.-->
         <property name="outputFileNameTemplate" ref="getOrfResultFile"/>
         <!--More specific parameter-->
-        <property name="fullPathToGetorfBinary" value="${binary.getorf.path}"/>
         <property name="fullPathToTranslateBinary" value="${binary.esltranslate.path}"/>
 
         <property name="fastaFilePath" ref="getOrfResultFile"/>
-        <property name="minSize" value="${getorf.minsize}"/>
     </bean>
 
 
