@@ -53,7 +53,9 @@ public class PrepareForOutputStep extends Step {
     private ConcurrentHashMap<String, List<String>> entry2GoTermsMap;
     private ConcurrentHashMap<String, List<String>> entry2PathwayMap;
     private ConcurrentHashMap<String, List<String>> pathwayMap;
+    private ConcurrentHashMap<String, String> typesMap;
     private ConcurrentHashMap<String, Integer> domainsMap;
+    private ConcurrentHashMap<String, Integer> familiesMap;
 
     Random random = new Random();
 
@@ -157,7 +159,7 @@ public class PrepareForOutputStep extends Step {
                 loadInterPro2Go();
             }
 
-            getDomainsMap();
+            getEntriesMaps();
 
             //proceed to rest of functionality
             Utilities.verboseLog(1100, "Pre-marshall the proteins ...");
@@ -404,6 +406,7 @@ public class PrepareForOutputStep extends Step {
 
             totalWaitTime = 0;
             ArrayList<Domain> domains = new ArrayList<>();
+            ArrayList<Domain> families = new ArrayList<>();
             for (String signatureLibraryName : signatureLibraryNames) {
                 final String dbKey = proteinKey + signatureLibraryName;
 
@@ -457,12 +460,27 @@ public class PrepareForOutputStep extends Step {
                             pantherMatch.setGoXRefs(goXrefs);
                         }
 
+                        if (this.typesMap.containsKey(match.getSignature().getAccession())) {
+                            String type = (String) this.typesMap.get(match.getSignature().getAccession());
+                            match.getSignature().setType(type);
+                        }
+
                         if (this.domainsMap.containsKey(match.getSignature().getAccession())) {
                             int databaseRank = this.domainsMap.get(match.getSignature().getAccession());
                             Set<Location> locations = match.getLocations();
                             if (locations != null) {
                                 for (Location location: locations) {
                                     domains.add(new Domain(location, databaseRank));
+                                }
+                            }
+                        }
+
+                        if (this.familiesMap.containsKey(match.getSignature().getAccession())) {
+                            int databaseRank = this.familiesMap.get(match.getSignature().getAccession());
+                            Set<Location> locations = match.getLocations();
+                            if (locations != null) {
+                                for (Location location: locations) {
+                                    families.add(new Domain(location, databaseRank));
                                 }
                             }
                         }
@@ -491,7 +509,11 @@ public class PrepareForOutputStep extends Step {
             }
 
             if (domains.size() > 0) {
-                selectRepresentativeDomains(domains);
+                selectRepresentative(domains);
+            }
+
+            if (families.size() > 0) {
+                selectRepresentative(families);
             }
 
             //TODO Temp check what breaks if you dont do pre-marshalling
@@ -884,8 +906,8 @@ public class PrepareForOutputStep extends Step {
         }
     }
 
-    public void getDomainsMap() {
-        if (domainsMap != null){
+    public void getEntriesMaps() {
+        if (typesMap != null){
             return;
         }
 
@@ -896,18 +918,28 @@ public class PrepareForOutputStep extends Step {
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             Map<String, Object> jsonMap = mapper.readValue(is, new TypeReference<>() {});
             Map<String, Map<String, Object>> entries = (Map<String, Map<String, Object>>) jsonMap.get("entries");
+            typesMap = new ConcurrentHashMap<>();
             domainsMap = new ConcurrentHashMap<>();
+            familiesMap = new ConcurrentHashMap<>();
 
             for (Map.Entry<String, Map<String, Object>> entry : entries.entrySet()) {
                 String accession = entry.getKey();
                 Map<String, Object> value = entry.getValue();
+                String type = (String) value.get("type");
+
+                if (type != null) {
+                    typesMap.put(accession, type);
+                }
 
                 Map<String, Object> representative = (Map<String, Object>) value.get("representative");
-                String type = (String) representative.get("type");
+                String rep_type = (String) representative.get("type");
                 Integer index = (Integer) representative.get("index");
 
-                if (type != null && type.equals("domain")) {
+                if (rep_type != null && rep_type.equals("domain")) {
                     domainsMap.put(accession, index);
+                }
+                if (rep_type != null && rep_type.equals("family")) {
+                    familiesMap.put(accession, index);
                 }
             }
         } catch (Exception ex) {
@@ -1104,7 +1136,7 @@ public class PrepareForOutputStep extends Step {
         return " tryCounts:" + tryCount + " maxTryCount:" + maxTryCount + " maxtotalWaitTime: " + maxtotalWaitTime;
     }
 
-    private void selectRepresentativeDomains(ArrayList<Domain> domains) {
+    private void selectRepresentative(ArrayList<Domain> domains) {
         domains.sort(new Comparator<Domain>() {
             @Override
             public int compare(Domain d1, Domain d2) {
