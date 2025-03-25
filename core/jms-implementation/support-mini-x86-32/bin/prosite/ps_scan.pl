@@ -2,7 +2,7 @@
 
 # ps_scan - a PROSITE scanning program
 #
-# Revision: 1.90
+# Revision: 1.91
 #
 # Copyright (C) 2001-2020 SIB Swiss Institute of Bioinformatics
 # Authors:
@@ -34,6 +34,7 @@ use IO::File;
 use Carp qw(confess cluck);
 use vars qw(@ISA $VERSION $errpos $errstr);
 use strict;
+use Data::Dumper;
 
 
 ################################################################################
@@ -1472,6 +1473,9 @@ sub scanSeqFile {
                     # FIXME: should be done at the do_profile_scan level
                     # fix seqid (do_profile_scan sometimes
                     # returns ac|id instead of id)
+                    
+                    # EXPGE-313
+                    next if $opt_filterheader && $hit->[10] !~ /$opt_filterheader/o;
                     $hit->[3] = $psid;
                     push @{$all_hits_bypsac_byseqid->{$seq_id}->{$psac}},
                         $hit;

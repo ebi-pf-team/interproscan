@@ -14,24 +14,24 @@ FASTA format. It requires two compiled external programs from the PFTOOLS
 package : "pfscan" used to scan a sequence against a profile library and
 "psa2msa" which is necessary for the "-o msa" output format only.
 
-Authors:
+Authors: 
  Alexandre Gattiker
- Edouard de Castro; E-mail: ecastro@isb-sib.ch
+ Edouard de Castro; E-mail: ecastro@sib.swiss
  Elisabeth Gasteiger
 
 Installation
 ------------
 
-Download a binary package for your platform from
+Download a binary package for your platform from 
 
-ftp://ftp.expasy.org/databases/prosite/ps_scan/ps_scan_<platform>.tar.gz
+https://ftp.expasy.org/databases/prosite/ps_scan/ps_scan_<platform>.tar.gz
 
 or the source packages from
 
-ftp://ftp.lausanne.isb-sib.ch/pub/software/unix/pftools/
+https://ftp.vital-it.ch/pub/software/unix/pftools/ or https://github.com/sib-swiss/pftools3
 
 in which case you will need gcc or a compatible fortran compiler to compile the
-pftools sources.
+pftools sources, see https://ftp.expasy.org/databases/prosite/README.pftools.
 
 You may need to edit the ps_scan.pl to provide absolute paths to the directory
 where you have installed the pfscan and psa2msa executables, unless you have
@@ -40,7 +40,7 @@ stored them in a directory in your PATH.
 A local copy of the PROSITE database is also needed. You may download it
 in a single file from
 
-ftp://ftp.expasy.org/databases/prosite/prosite.dat
+https://ftp.expasy.org/databases/prosite/prosite.dat
 
 Usage
 -----
@@ -53,8 +53,8 @@ Input/Output:
   -o : specify an output format : $formats_string
   -d : specify a prosite.dat file
   -p : specify a pattern or the AC of a prosite motif
-  -f : specify a motif AC to scan against together with all its
-       releated post-processing motifs (but show only specified
+  -f : specify a motif AC to scan against together with all its 
+       releated post-processing motifs (but show only specified 
        motif hits)
 Selection:
   -r : do not scan profiles
@@ -210,7 +210,7 @@ Pattern match mode:
   position to match X (unless that pattern position is an X itself, in which
   case we can accept more). The maximum number of X characters which are
   allowed to match a non-X position in a pattern can be specified with the -x
-  option. The default value is 1.
+  option. The default value is 0.
 
 Examples
 --------
