@@ -47,7 +47,7 @@ import java.util.*;
         @Index(name = "SIGNATURE_TYPE_IDX", columnList = "TYPE"),
         @Index(name = "SIGNATURE_MD5_IDX", columnList = "MD5")
 })
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "updated", "created", "id", "crossReferences", "abstract", "comment", "md5", "deprecatedAccessions", "type"}) // IBU-4703: "abstract", "comment", "md5" and "type" are never populated
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "updated", "created", "id", "crossReferences", "abstract", "comment", "md5", "deprecatedAccessions"})
 public class Signature implements Serializable {
 
     @Transient
@@ -371,7 +371,7 @@ public class Signature implements Serializable {
         return type;
     }
 
-    private void setType(String type) {
+    public void setType(String type) {
         this.type = type;
     }
 
