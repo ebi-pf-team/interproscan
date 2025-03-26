@@ -2,37 +2,14 @@ package uk.ac.ebi.interpro.scan.precalc.berkeley.model;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
-import com.sleepycat.persist.model.SecondaryKey;
-
 import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.sleepycat.persist.model.Relationship.MANY_TO_ONE;
-
-/**
- * Very simple Match implementation for data transfer &
- * storage in a KV store.
- * <p/>
- * Holds all of the fields that may appear in any Location
- * implementation (from the main InterProScan 5 data model).
- * <p/>
- * Note that the MD5 of the protein sequence is the key used to
- * access this data from BerkeleyDB,so does not appear in the class.
- *
- * @author Gift Nuka
- * @version $Id$
- * @since 1.0-SNAPSHOT
- */
-
 @Entity
 public class KVSequenceEntry implements Serializable{
-
-    @PrimaryKey(sequence = "match_unique_index_sequence")
-    private Long matchId;
-
-    @SecondaryKey(relate = MANY_TO_ONE)
+    @PrimaryKey
     private String proteinMD5;
 
     Set<String> sequenceHits = new HashSet<>();
@@ -42,14 +19,6 @@ public class KVSequenceEntry implements Serializable{
      */
     public KVSequenceEntry() {
 
-    }
-
-    public long getMatchId() {
-        return matchId;
-    }
-
-    public void setMatchId(long matchId) {
-        this.matchId = matchId;
     }
 
     public String getProteinMD5() {

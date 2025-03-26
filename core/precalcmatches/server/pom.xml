@@ -376,7 +376,13 @@
                             <execution>
                                 <goals>
                                     <goal>createconsole</goal>
-                                </goals>                                <!--<configuration>-->
+                                </goals>
+                                <configuration>
+                                    <backgroundImage>
+                                        ${basedir}/src/main/resources/i5_match_lookup_splash_screen.jpg
+                                    </backgroundImage>
+                                </configuration>
+                                <!--<configuration>-->
                                     <!--<additionalDependencies>-->
                                         <!--<additionalDependency>-->
                                             <!--<artifactId>jetty-console-jsp-plugin</artifactId>-->

@@ -115,6 +115,12 @@ public class Utilities {
         return currentDate;
     }
 
+    public static String getTimeAlt(){
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(cal.getTime());
+    }
+
     public static String getSequenceType() {
         return sequenceType;
     }
