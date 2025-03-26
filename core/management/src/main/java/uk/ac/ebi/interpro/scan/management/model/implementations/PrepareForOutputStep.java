@@ -916,8 +916,7 @@ public class PrepareForOutputStep extends Step {
             FileInputStream is = new FileInputStream(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            Map<String, Object> jsonMap = mapper.readValue(is, new TypeReference<>() {});
-            Map<String, Map<String, Object>> entries = (Map<String, Map<String, Object>>) jsonMap.get("entries");
+            Map<String, Map<String, Object>> entries = mapper.readValue(is, new TypeReference<>() {});
             typesMap = new ConcurrentHashMap<>();
             domainsMap = new ConcurrentHashMap<>();
             familiesMap = new ConcurrentHashMap<>();
