@@ -928,7 +928,7 @@ public class PrepareForOutputStep extends Step {
                 String type = (String) value.get("type");
 
                 if (type != null) {
-                    typesMap.put(accession, type);
+                    typesMap.put(accession, type.toUpperCase());
                 }
 
                 Map<String, Object> representative = (Map<String, Object>) value.get("representative");
