@@ -26,7 +26,7 @@
         match data from other sources, e.g. the legacy Onion system.
     </description>
 
-    <url>http://www.ebi.ac.uk/interpro/</url>
+    <url>https://www.ebi.ac.uk/interpro/</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -36,7 +36,7 @@
     </licenses>
     <organization>
         <name>European Bioinformatics Institute</name>
-        <url>http://www.ebi.ac.uk/</url>
+        <url>https://www.ebi.ac.uk/</url>
     </organization>
 
     <dependencies>
@@ -52,8 +52,7 @@
             <version>18.3.12</version>
         </dependency>
 
-
-	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -61,16 +60,12 @@
         </dependency>
 
         <!-- oracle dependency should be commented out for public release -->
-
         <!-- start  
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>com.springsource.oracle.jdbc</artifactId>
             <version>${oracle.jdbc.version}</version>
         </dependency>
-          end -->
-        <!--  end -->
-
+        end -->
     </dependencies>
-
 </project>

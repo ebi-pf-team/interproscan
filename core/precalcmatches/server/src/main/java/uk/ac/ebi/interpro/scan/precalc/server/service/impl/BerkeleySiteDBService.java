@@ -6,7 +6,6 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.StatsConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.SecondaryIndex;
 import com.sleepycat.persist.StoreConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +29,7 @@ public class BerkeleySiteDBService extends AbstractDBService {
 
     private String databasePath;
 
-    private SecondaryIndex<String, Long, KVSequenceEntry> secIDX = null;
+    private PrimaryIndex<String, KVSequenceEntry> index = null;
 
     private int cacheSizeInBytes;
 
@@ -66,8 +65,8 @@ public class BerkeleySiteDBService extends AbstractDBService {
         shutdown();
     }
 
-    SecondaryIndex<String, Long, KVSequenceEntry> getMD5Index() {
-        return secIDX;
+    PrimaryIndex<String, KVSequenceEntry> getMD5Index() {
+        return index;
     }
 
     private void initializeMD5Index() {
@@ -90,9 +89,7 @@ public class BerkeleySiteDBService extends AbstractDBService {
         myEnv = new Environment(file, myEnvConfig);
         store = new EntityStore(myEnv, "EntityStore", storeConfig);
 
-
-        PrimaryIndex<Long, KVSequenceEntry> primIDX = store.getPrimaryIndex(Long.class, KVSequenceEntry.class);
-        secIDX = store.getSecondaryIndex(primIDX, String.class, "proteinMD5");
+        index = store.getPrimaryIndex(String.class, KVSequenceEntry.class);
     }
 
     public void displayServerStats(){
