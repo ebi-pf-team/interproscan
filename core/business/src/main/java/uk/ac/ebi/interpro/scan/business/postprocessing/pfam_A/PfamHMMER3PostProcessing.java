@@ -214,7 +214,7 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 int nestedFragments = 0;
                 for (PfamHmmer3RawMatch rawMatch : filteredMatches.getMatches()) {
                     if (nestedModels.contains(rawMatch.getModelId()) &&
-                            (matchesOverlap(rawMatch, pfamHmmer3RawMatch))) {
+                            (matchesAreNested(rawMatch, pfamHmmer3RawMatch))) {
                         locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
                                 rawMatch.getLocationStart(), rawMatch.getLocationEnd()));
                         nestedFragments ++;
@@ -335,7 +335,14 @@ public class PfamHMMER3PostProcessing implements Serializable {
         PfamModel oneModel = clanData.getModelByModelAccession(one.getModelId());
         PfamModel twoModel = clanData.getModelByModelAccession(two.getModelId());
 
-        return !(oneModel == null || twoModel == null) &&
+        // is one location fully enclosed in the other?
+        boolean nestedLocation = false;
+        if ( (one.getLocationStart() <= two.getLocationStart() && one.getLocationEnd() >= two.getLocationEnd() ) ||
+             (two.getLocationStart() <= one.getLocationStart() && two.getLocationEnd() >= one.getLocationEnd() ) ) {
+            nestedLocation = true;
+        }
+
+        return !(oneModel == null || twoModel == null) && nestedLocation &&
                 (oneModel.isNestedIn(twoModel, null) || twoModel.isNestedIn(oneModel, null));
 
     }
