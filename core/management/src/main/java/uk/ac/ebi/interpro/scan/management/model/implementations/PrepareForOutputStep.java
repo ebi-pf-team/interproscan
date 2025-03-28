@@ -931,14 +931,16 @@ public class PrepareForOutputStep extends Step {
                 }
 
                 Map<String, Object> representative = (Map<String, Object>) value.get("representative");
-                String rep_type = (String) representative.get("type");
-                Integer index = (Integer) representative.get("index");
+                if (representative != null) {
+                    String rep_type = (String) representative.get("type");
+                    Integer index = (Integer) representative.get("index");
 
-                if (rep_type != null && rep_type.equals("domain")) {
-                    domainsMap.put(accession, index);
-                }
-                if (rep_type != null && rep_type.equals("family")) {
-                    familiesMap.put(accession, index);
+                    if (rep_type != null && rep_type.equals("domain")) {
+                        domainsMap.put(accession, index);
+                    }
+                    if (rep_type != null && rep_type.equals("family")) {
+                        familiesMap.put(accession, index);
+                    }
                 }
             }
         } catch (Exception ex) {
