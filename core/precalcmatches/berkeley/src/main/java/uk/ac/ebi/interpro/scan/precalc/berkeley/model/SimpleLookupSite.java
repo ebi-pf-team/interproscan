@@ -34,7 +34,7 @@ public class SimpleLookupSite {
         //SFLD,4,SFLDS00029,5,347,3,C,105,105
         String [] lookupMatchTokens =  lookupMatch.split(",");
 
-        int columnOffSet = 1; // -1 as no proteinMD5 in sequence hit tokens
+        int columnOffSet = 2; // -1 as no proteinMD5 in sequence hit tokens
         this.proteinMD5 = proteinMD5;
         signatureLibraryName = lookupMatchTokens[COL_IDX_SIG_LIB_NAME - columnOffSet];
         sigLibRelease = lookupMatchTokens[COL_IDX_SIG_LIB_RELEASE - columnOffSet];
