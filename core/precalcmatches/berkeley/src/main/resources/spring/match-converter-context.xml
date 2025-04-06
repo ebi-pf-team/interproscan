@@ -21,6 +21,7 @@
                 <entry key="PHOBIUS" value-ref="phobiusLookupMatchConverter"/>
                 <entry key="PFAM" value-ref="hmmer3LookupMatchConverter"/>
                 <entry key="PIRSF" value-ref="hmmer3LookupMatchConverter"/>
+                <entry key="PIRSR" value-ref="hmmer3WithSitesLookupMatchConverter"/>
                 <entry key="PRINTS" value-ref="printsLookupMatchConverter"/>
                 <entry key="PRODOM" value-ref="prodomLookupMatchConverter"/>
                 <entry key="PROSITE_PATTERNS" value-ref="prositePatternsLookupMatchConverter"/>
