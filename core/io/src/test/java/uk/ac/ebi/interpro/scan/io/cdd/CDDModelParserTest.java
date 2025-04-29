@@ -74,7 +74,7 @@ public class CDDModelParserTest {
             if (!(name.equals("Sortase") || name.equals("BAR_Arfaptin_like") || name.equals("Kelch"))) {
                 fail("Unexpected name: " + name);
             }
-            if (!(description.equals(name))) {
+            if (!(description.equals("Sortase domain") || description.equals("The Bin/Amphiphysin/Rvs (BAR) domain of Arfaptin-like proteins, a dimerization module that binds and bends membranes") || description.equals("Kelch repeat"))) {
                 fail("Unexpected description: " + description);
             }
         }
