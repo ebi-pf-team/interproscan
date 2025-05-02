@@ -43,7 +43,7 @@ public class SimpleLookupSite {
         locationEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_LOC_END - columnOffSet]);
         numSites = Integer.parseInt(lookupMatchTokens[COL_IDX_NUM_SITES - columnOffSet]);
         residue = lookupMatchTokens[COL_IDX_RESIDUE - columnOffSet];
-        if (residue.length() > 0) {
+        if (residue.length() > 4000) {
             Utilities.verboseLog("Residue of length " + residue.length() + " found, will be truncated at 4000 to fit in database.");
             residue = residue.substring(0, 4000);
         }
