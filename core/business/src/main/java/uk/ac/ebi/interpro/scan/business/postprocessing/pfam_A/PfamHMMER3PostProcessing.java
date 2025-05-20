@@ -190,6 +190,15 @@ public class PfamHMMER3PostProcessing implements Serializable {
                                             + " other match:- " + match);
                                 }
                             }
+                        } else {
+                            Utilities.verboseLog(localVerboseLevel,"NOT on same Clan: passedMatchClan: " + passedMatchClan);
+                            if (matchesOverlap(candidateMatch, match)) {
+                                if (!matchesAreNested(candidateMatch, match)) {
+                                    Utilities.verboseLog(localVerboseLevel,"MATCHES OVERLAP and are not nested, do not store ");
+                                    passes = false;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
