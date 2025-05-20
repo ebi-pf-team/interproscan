@@ -293,7 +293,11 @@ sub post_process {
       # Ignore sub-families
       next if($pirsf_acc =~ /^PIRSF5/);
 
-      $bestMatch->{$seq}->{sf} = $matches->{$seq}->{$pirsf_acc}->{data};
+      my $hits = $matches->{$seq}->{$pirsf_acc}->{data};
+      # Sort in ascending order of E-value (lower is better)
+      my @sorted_hits = sort { $b->[13] <=> $a->[13] } @$hits;
+      # Select only the best
+      $bestMatch->{$seq}->{sf} = [ $sorted_hits[0] ];
 
       # Now see if this entry has sub-families
       if (defined($pirsf_data->{$pirsf_acc}->{children})) {
