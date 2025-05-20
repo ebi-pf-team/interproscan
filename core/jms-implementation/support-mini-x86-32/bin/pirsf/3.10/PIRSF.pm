@@ -214,7 +214,9 @@ sub process_hit {
     $hmm_start //= $row->[15];
     $hmm_end   //= $row->[16];
 
-    $score += $row->[13];
+    if ($row->[13] > $score) {
+      $score = $row->[13];
+    }
 
     # Code to match georgetown 2015 script
     # $seq_start = ($row->[17] < $seq_start ? $row->[17] : $seq_start);
