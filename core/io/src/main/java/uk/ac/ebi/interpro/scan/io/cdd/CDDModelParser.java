@@ -93,17 +93,17 @@ public class CDDModelParser extends AbstractModelFileParser {
                     // Parse model name and description
                     String name = null;
                     String description = null;
+
                     if (values[2] == null) {
                         LOGGER.warn("CDD model parser could not extract the name from NULL text "
                                 + "on line number " + lineNumber + " - so this can't be added to the database");
                     }
                     else {
                         name = values[2].trim(); // Example: BAR_Arfaptin_like
-                        // Name will also be used for description
-                        description = name;
-                        if (description.length() > 50) {
-                            description = description.substring(0, 46) + "...";
-                        }
+
+                        // extract the text up to the first dot for description (short description)
+                        description = values[3].trim();
+                        description = description.contains(".") ? description.substring(0, description.indexOf(".")) : description;
                     }
 
                     // CDD abstract text
