@@ -34,7 +34,7 @@ public class SimpleLookupSite {
         //SFLD,4,SFLDS00029,5,347,3,C,105,105
         String [] lookupMatchTokens =  lookupMatch.split(",");
 
-        int columnOffSet = 1; // -1 as no proteinMD5 in sequence hit tokens
+        int columnOffSet = 2; // -1 as no proteinMD5 in sequence hit tokens
         this.proteinMD5 = proteinMD5;
         signatureLibraryName = lookupMatchTokens[COL_IDX_SIG_LIB_NAME - columnOffSet];
         sigLibRelease = lookupMatchTokens[COL_IDX_SIG_LIB_RELEASE - columnOffSet];
@@ -43,6 +43,10 @@ public class SimpleLookupSite {
         locationEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_LOC_END - columnOffSet]);
         numSites = Integer.parseInt(lookupMatchTokens[COL_IDX_NUM_SITES - columnOffSet]);
         residue = lookupMatchTokens[COL_IDX_RESIDUE - columnOffSet];
+        if (residue.length() > 4000) {
+            Utilities.verboseLog("Residue of length " + residue.length() + " found, will be truncated at 4000 to fit in database.");
+            residue = residue.substring(0, 4000);
+        }
         residueStart = Integer.parseInt(lookupMatchTokens[COL_IDX_RESIDUE_START - columnOffSet]);
         residueEnd = Integer.parseInt(lookupMatchTokens[COL_IDX_RESIDUE_END - columnOffSet]);
 
