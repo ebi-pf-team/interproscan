@@ -84,7 +84,7 @@ public class DomainMatch implements Serializable {
     }
 
     public DomainMatch(SequenceDomainMatch sequenceDomainMatch) {
-        this.significant = sequenceDomainMatch.is
+        this.significant = true;
         this.score = sequenceDomainMatch.getScore();
         this.bias = sequenceDomainMatch.getBias();
         this.cEvalue = sequenceDomainMatch.getCEvalue();
