@@ -83,7 +83,6 @@
         
         <property name="fullPathToBinary" value="${pirsr.binary.path}"/>
         <property name="pathToRulesJson" value="${pirsr.rules.path}"/>
-<!--        <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>-->
         <property name="pathToInputTsv" ref="rawAnalysisOutputFileTemplate"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
         <property name="requiresDatabaseAccess" value="false"/>
