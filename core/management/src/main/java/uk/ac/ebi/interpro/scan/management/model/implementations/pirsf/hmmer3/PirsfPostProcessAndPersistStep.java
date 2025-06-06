@@ -1,8 +1,5 @@
 package uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3.PirsfPostProcessor;
 import uk.ac.ebi.interpro.scan.management.model.Step;
@@ -12,18 +9,11 @@ import uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 import uk.ac.ebi.interpro.scan.persistence.FilteredMatchDAO;
 import uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAO;
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * Currently this step just takes PIRSF Hmmer3 raw matches and persists the relevant matches to the database. However
- * in the future some post processing may also be required. TODO Review this!
- */
 public class PirsfPostProcessAndPersistStep extends Step {
-
-    private static final Logger LOGGER = LogManager.getLogger(PirsfPostProcessAndPersistStep.class.getName());
 
     private PirsfPostProcessor postProcessor;
 
@@ -69,8 +59,6 @@ public class PirsfPostProcessAndPersistStep extends Step {
     public void execute(StepInstance stepInstance, String temporaryFileDirectory) {
 
         if (checkIfDoSkipRun(stepInstance.getBottomProtein(), stepInstance.getTopProtein())) {
-            String key = getKey(stepInstance.getBottomProtein(), stepInstance.getTopProtein());
-            Utilities.verboseLog(110, "doSkipRun - step: "  + this.getId() + " - " +  key);
             return;
         }
 
