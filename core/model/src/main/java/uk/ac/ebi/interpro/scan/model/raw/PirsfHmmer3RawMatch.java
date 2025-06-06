@@ -28,11 +28,16 @@ public class PirsfHmmer3RawMatch extends Hmmer3RawMatch {
 
     }
 
-    public PirsfHmmer3RawMatch(int locationEnd, int locationStart, String model, String sequenceIdentifier, double evalue,
-                               String hmmBounds, int hmmStart, int hmmEnd, double locationScore, double score,
-                               double domainBias, double domainCeValue, double domainIeValue, int envelopeStart,
-                               int envelopeEnd, double expectedAccuracy, double fullSequenceBias,
-                               SignatureLibrary signatureLibrary, String signatureLibraryRelease, boolean significant) {
+    public PirsfHmmer3RawMatch(String sequenceIdentifier, String model,
+                               SignatureLibrary signatureLibrary, String signatureLibraryRelease,
+                               int locationStart, int locationEnd,
+                               double evalue, double score,
+                               int hmmStart, int hmmEnd, String hmmBounds,
+                               double locationScore,
+                               int envelopeStart, int envelopeEnd,
+                               double expectedAccuracy, double fullSequenceBias,
+                               double domainCeValue, double domainIeValue, double domainBias,
+                               boolean significant) {
         super(sequenceIdentifier, model, signatureLibrary, signatureLibraryRelease, locationStart, locationEnd,
                 evalue, score, hmmStart, hmmEnd, hmmBounds, locationScore, envelopeStart, envelopeEnd, expectedAccuracy,
                 fullSequenceBias, domainCeValue, domainIeValue, domainBias);
