@@ -6,7 +6,6 @@ import uk.ac.ebi.interpro.scan.management.model.Step;
 import uk.ac.ebi.interpro.scan.management.model.StepInstance;
 import uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-import uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAOImpl;
 import uk.ac.ebi.interpro.scan.persistence.raw.RawMatchDAO;
 
 import java.io.*;
@@ -21,7 +20,7 @@ public class PIRSFHmmer3ParseStep extends Step {
     private String domtblOutputFileTemplate;
     private RawMatchDAO<PirsfHmmer3RawMatch> rawMatchDAO;
 
-    public void setRawMatchDAO(PirsfHmmer3RawMatchDAOImpl rawMatchDAO) {
+    public void setRawMatchDAO(RawMatchDAO<PirsfHmmer3RawMatch> rawMatchDAO) {
         this.rawMatchDAO = rawMatchDAO;
     }
 
@@ -59,13 +58,9 @@ public class PIRSFHmmer3ParseStep extends Step {
                             + match.getEnvelopeStart()
                             + "-"
                             + match.getEnvelopeEnd();
-                    if (domains.containsKey(key)) {
-                        DomTblDomainMatch domTblDomainMatch = domains.get(key);
-                        match.setSequenceLength(domTblDomainMatch.getTargetLength());
-                        System.out.println(key + "  -> " + match.getSequenceLength());
-                    } else {
-                        System.out.println(key + " ???????");
-                    }
+
+                    DomTblDomainMatch domTblDomainMatch = domains.get(key);
+                    match.setSequenceLength(domTblDomainMatch.getTargetLength());
                 }
             }
 
