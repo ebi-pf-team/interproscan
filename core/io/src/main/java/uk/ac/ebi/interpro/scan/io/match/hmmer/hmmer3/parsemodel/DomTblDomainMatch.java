@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
  * @since 1.0-SNAPSHOT
  */
 public class DomTblDomainMatch implements Serializable {
-    public static final Pattern HMMSEARCH_DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+) \\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
-    public static final Pattern HMMSCAN_DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+) \\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)(\\s+).*$");
+    public static final Pattern HMMSEARCH_DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(.*)$");
+    public static final Pattern HMMSCAN_DOMAIN_LINE_PATTERN = Pattern.compile("^(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(.*)$");
 
     private String queryName;
     private String queryAccession;
@@ -57,13 +57,17 @@ public class DomTblDomainMatch implements Serializable {
     public DomTblDomainMatch(Matcher domainLineMatcher, String mode) {
         if (mode.equals("hmmsearch")) {
             targetIdentifier = domainLineMatcher.group(1);
+            targetAccession = domainLineMatcher.group(2);
             targetLength = Integer.parseInt(domainLineMatcher.group(3));
             queryName = domainLineMatcher.group(4);
+            queryAccession = domainLineMatcher.group(5);
             queryLength = Integer.parseInt(domainLineMatcher.group(6));
         }else{
             targetIdentifier = domainLineMatcher.group(4);
+            targetAccession = domainLineMatcher.group(5);
             targetLength = Integer.parseInt(domainLineMatcher.group(6));
             queryName = domainLineMatcher.group(1);
+            queryAccession = domainLineMatcher.group(2);
             queryLength = Integer.parseInt(domainLineMatcher.group(3));
         }
 
