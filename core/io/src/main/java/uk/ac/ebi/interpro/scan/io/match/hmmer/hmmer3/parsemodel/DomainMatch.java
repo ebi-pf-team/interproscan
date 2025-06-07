@@ -14,19 +14,20 @@ import java.util.regex.Pattern;
 public class DomainMatch implements Serializable {
 
     /**
-     * Group[1] weak (?) or strong (!) match (string)
-     * Group[2] Score (float)
-     * Group[3] Bias (float)
-     * Group[4] c-Evalue (float)
-     * Group[5] i-Evalue (float)
-     * Group[6] hmm from (int)
-     * Group[7] hmm to (int)
-     * Group[8] hmmbounds, e.g. "[]"
-     * Group[9] aliFrom  (int)
-     * Group[10] aliTo  (int)
-     * Group[11] envFrom  (int)
-     * Group[12] envTo   (int)
-     * Group[13] acc (float)
+     * Group[1] domain #
+     * Group[2] weak (?) or strong (!) match (string)
+     * Group[3] Score (float)
+     * Group[4] Bias (float)
+     * Group[5] c-Evalue (float)
+     * Group[6] i-Evalue (float)
+     * Group[7] hmm from (int)
+     * Group[8] hmm to (int)
+     * Group[9] hmmbounds, e.g. "[]"
+     * Group[10] aliFrom  (int)
+     * Group[11] aliTo  (int)
+     * Group[12] envFrom  (int)
+     * Group[13] envTo   (int)
+     * Group[14] acc (float)
      */
     public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+([!?])\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
     //entered by Manjula
@@ -36,8 +37,6 @@ public class DomainMatch implements Serializable {
     // TODO: and letters only, but UniProt FASTA ID lines contain "|", for example "tr|Q9U4N3|Q9U4N3_TOXGO"
     public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\S+)\\s+([-a-zA-Z]+)\\s+(\\S+)\\s*$");
 
-    //entered by Manjula for Gene3D parser
-    //private final int domainNumber;
     private final boolean significant;
 
     private final double score;
@@ -67,7 +66,7 @@ public class DomainMatch implements Serializable {
     private String alignment;
 
     public DomainMatch(Matcher domainLineMatcher) {
-        this.significant = domainLineMatcher.group(1).equals("!");
+        this.significant = domainLineMatcher.group(2).equals("!");
         this.score = Double.parseDouble(domainLineMatcher.group(3));
         this.bias = Double.parseDouble(domainLineMatcher.group(4));
         this.cEvalue = Double.parseDouble(domainLineMatcher.group(5));
