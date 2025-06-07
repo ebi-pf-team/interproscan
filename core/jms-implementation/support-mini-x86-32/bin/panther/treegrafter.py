@@ -426,7 +426,7 @@ def filter_best_domain(matches):
         for query in matches[panther]:
 
             while len(matches[panther][query]['domscore']) > 1:
-                if matches[panther][query]['domscore'][0] > matches[panther][query]['domscore'][1]:
+                if float(matches[panther][query]['domscore'][0]) > float(matches[panther][query]['domscore'][1]):
                     for key in matches[panther][query]:
                         del matches[panther][query][key][1]
                 else:
