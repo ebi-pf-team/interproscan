@@ -22,6 +22,9 @@ public class PirsfHmmer3RawMatch extends Hmmer3RawMatch {
     private boolean significant;
 
     @Column(nullable = false)
+    private int modelLength;
+
+    @Column(nullable = false)
     private int sequenceLength;
 
     protected PirsfHmmer3RawMatch() {
@@ -54,5 +57,13 @@ public class PirsfHmmer3RawMatch extends Hmmer3RawMatch {
 
     public void setSequenceLength(int sequenceLength) {
         this.sequenceLength = sequenceLength;
+    }
+
+    public int getModelLength() {
+        return modelLength;
+    }
+
+    public void setModelLength(int modelLength) {
+        this.modelLength = modelLength;
     }
 }
