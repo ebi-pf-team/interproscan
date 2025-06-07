@@ -60,8 +60,8 @@ public class PIRSFHmmer3ParseStep extends Step {
                             + match.getEnvelopeEnd();
 
                     DomTblDomainMatch domTblDomainMatch = domains.get(key);
-                    match.setSequenceLength(domTblDomainMatch.getTargetLength());
-                }
+                    match.setModelLength(domTblDomainMatch.getQueryLength());
+                    match.setSequenceLength(domTblDomainMatch.getTargetLength());}
             }
 
             rawMatchDAO.insertProteinMatches(results);
