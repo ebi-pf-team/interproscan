@@ -39,7 +39,7 @@ public class PirsfDatFileParser implements Serializable {
     * mean(S), std(S) and min(S) are for the HMM score of the family]
     */
 
-    private static final Pattern PIRSF_DAT_PATTERN_FAM = Pattern.compile("^>PIRSF\\d{6}");
+    private static final Pattern PIRSF_DAT_PATTERN_FAM = Pattern.compile("^>(PIRSF\\d{6})");
     private static final Pattern PIRSF_DAT_PATTERN_CHILD = Pattern.compile("child:\\s*(.+)$");
     private static final Pattern PIRSF_DAT_PATTERN_VALUES = Pattern.compile("^(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)$");
     private static final Object PIRSF_DAT_LOCK = new Object();
@@ -62,7 +62,7 @@ public class PirsfDatFileParser implements Serializable {
     }
 
     private void loadRecords() throws IOException {
-        records = new HashMap<String, PirsfDatRecord>();
+        records = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(datFile))) {
             String line;
             PirsfDatRecord pirsfDatRecord = null;
@@ -73,7 +73,7 @@ public class PirsfDatFileParser implements Serializable {
                         records.put(pirsfDatRecord.getModelAccession(), pirsfDatRecord);
                     }
 
-                    final String modelAccession = line.substring(1);
+                    final String modelAccession = matcher.group(1);
                     pirsfDatRecord = new PirsfDatRecord(modelAccession);
 
                     matcher = PIRSF_DAT_PATTERN_CHILD.matcher(line);
