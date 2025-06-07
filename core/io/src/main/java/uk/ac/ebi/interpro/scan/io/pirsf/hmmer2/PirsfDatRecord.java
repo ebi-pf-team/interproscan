@@ -6,14 +6,15 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 public class PirsfDatRecord implements Serializable {
 
-    private static final int INDEX_MEAN_SEQ_LEN = 0;
-    private static final int INDEX_STD_DEV_SEQ_LEN = 1;
-    private static final int INDEX_MIN_SCORE = 2;
-    private static final int INDEX_MEAN_SCORE = 3;
-    private static final int INDEX_STD_DEV_SCORE = 4;
+    private static final int INDEX_MEAN_SEQ_LEN = 1;
+    private static final int INDEX_STD_DEV_SEQ_LEN = 2;
+    private static final int INDEX_MIN_SCORE = 3;
+    private static final int INDEX_MEAN_SCORE = 4;
+    private static final int INDEX_STD_DEV_SCORE = 5;
 
     private String modelAccession;
     private String modelName;
@@ -22,31 +23,18 @@ public class PirsfDatRecord implements Serializable {
     private double minScore;
     private double meanScore;
     private double stdDevScore;
-    private boolean blastRequired = false; // Default to Blast not required for this model
-    private Set<String> subFamilies = new HashSet<String>();
+    private final Set<String> subfamilies = new HashSet<String>();
 
     public PirsfDatRecord(String modelAccession) {
         this.modelAccession = modelAccession;
     }
 
-    public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired) {
-        this(modelAccession, modelName, values, blastRequired, new HashSet<String>());
-    }
-
-    public PirsfDatRecord(String modelAccession, String modelName, String[] values, boolean blastRequired, Set<String> subFamilies) {
-        this.modelAccession = modelAccession;
-        this.modelName = modelName;
-        setValues(values);
-        this.blastRequired = blastRequired;
-        addSubFamilies(subFamilies);
-    }
-
-    public void setValues(String[] values) {
-        this.meanSeqLen = Double.parseDouble(values[INDEX_MEAN_SEQ_LEN].trim());
-        this.stdDevSeqLen = Double.parseDouble(values[INDEX_STD_DEV_SEQ_LEN].trim());
-        this.minScore = Double.parseDouble(values[INDEX_MIN_SCORE].trim());
-        this.meanScore = Double.parseDouble(values[INDEX_MEAN_SCORE].trim());
-        this.stdDevScore = Double.parseDouble(values[INDEX_STD_DEV_SCORE].trim());
+    public void setValues(Matcher matcher) {
+        this.meanSeqLen = Double.parseDouble(matcher.group(INDEX_MEAN_SEQ_LEN));
+        this.stdDevSeqLen = Double.parseDouble(matcher.group(INDEX_STD_DEV_SEQ_LEN));
+        this.minScore = Double.parseDouble(matcher.group(INDEX_MIN_SCORE));
+        this.meanScore = Double.parseDouble(matcher.group(INDEX_MEAN_SCORE));
+        this.stdDevScore = Double.parseDouble(matcher.group(INDEX_STD_DEV_SCORE));
     }
 
     public String getModelAccession() {
@@ -77,22 +65,12 @@ public class PirsfDatRecord implements Serializable {
         return stdDevScore;
     }
 
-    public boolean isBlastRequired() {
-        return blastRequired;
-    }
-
-    public Set<String> getSubFamilies() {
-        return subFamilies;
-    }
-
-    private void addSubFamilies(Set<String> subFamilies) {
-        for (String subfamily : subFamilies) {
-            addSubFamily(subfamily);
-        }
+    public Set<String> getSubfamilies() {
+        return subfamilies;
     }
 
     public void addSubFamily(String subfamily) {
-        this.subFamilies.add(subfamily);
+        this.subfamilies.add(subfamily);
     }
 
     public void setModelAccession(String modelAccession) {
@@ -103,47 +81,20 @@ public class PirsfDatRecord implements Serializable {
         this.modelName = modelName;
     }
 
-    public void setMeanSeqLen(double meanSeqLen) {
-        this.meanSeqLen = meanSeqLen;
-    }
-
-    public void setStdDevSeqLen(double stdDevSeqLen) {
-        this.stdDevSeqLen = stdDevSeqLen;
-    }
-
-    public void setMinScore(double minScore) {
-        this.minScore = minScore;
-    }
-
-    public void setMeanScore(double meanScore) {
-        this.meanScore = meanScore;
-    }
-
-    public void setStdDevScore(double stdDevScore) {
-        this.stdDevScore = stdDevScore;
-    }
-
-    public void setBlastRequired(boolean blastRequired) {
-        this.blastRequired = blastRequired;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o instanceof PirsfDatRecord) {
             final PirsfDatRecord castedObj = (PirsfDatRecord) o;
-            if (castedObj.getMeanScore() == getMeanScore() &&
+            return castedObj.getMeanScore() == getMeanScore() &&
                     castedObj.getMeanSeqLen() == getMeanSeqLen() &&
                     castedObj.getMinScore() == getMinScore() &&
                     castedObj.getModelAccession().equals(getModelAccession()) &&
                     castedObj.getModelName().equals(getModelName()) &&
                     castedObj.getStdDevScore() == getStdDevScore() &&
                     castedObj.getStdDevSeqLen() == getStdDevSeqLen() &&
-                    castedObj.getSubFamilies().equals(getSubFamilies()) &&
-                    castedObj.isBlastRequired() == isBlastRequired()) {
-                return true;
-            }
+                    castedObj.getSubfamilies().equals(getSubfamilies());
         }
         return false;
     }
@@ -158,8 +109,7 @@ public class PirsfDatRecord implements Serializable {
                 .append(minScore)
                 .append(meanScore)
                 .append(stdDevScore)
-                .append(blastRequired)
-                .append(subFamilies)
+                .append(subfamilies)
                 .toHashCode();
     }
 

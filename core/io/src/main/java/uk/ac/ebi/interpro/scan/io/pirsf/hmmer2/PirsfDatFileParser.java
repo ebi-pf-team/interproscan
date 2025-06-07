@@ -1,14 +1,8 @@
 package uk.ac.ebi.interpro.scan.io.pirsf.hmmer2;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.springframework.beans.factory.annotation.Required;
 
-import org.springframework.core.io.Resource;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -45,103 +39,63 @@ public class PirsfDatFileParser implements Serializable {
     * mean(S), std(S) and min(S) are for the HMM score of the family]
     */
 
-    private static final Logger LOGGER = LogManager.getLogger(PirsfDatFileParser.class.getName());
+    private static final Pattern PIRSF_DAT_PATTERN_FAM = Pattern.compile("^>PIRSF\\d{6}");
+    private static final Pattern PIRSF_DAT_PATTERN_CHILD = Pattern.compile("child:\\s*(.+)$");
+    private static final Pattern PIRSF_DAT_PATTERN_VALUES = Pattern.compile("^(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)$");
+    private static final Object PIRSF_DAT_LOCK = new Object();
+    private Map<String, PirsfDatRecord> records;
+    private String datFile;
 
-    //Pattern for superfamily accessions only (PIRSF037506)
-    private static final Pattern PIRSF_DAT_PATTERN_SUPERFAM = Pattern.compile("^>PIRSF[0-9]{6}$");
-    //Pattern for superfamily and subfamilies (PIRSF016158 child: PIRSF500165 PIRSF500166)
-    private static final Pattern PIRSF_DAT_PATTERN_SUBFAM = Pattern.compile("^>PIRSF[0-9]{6}[a-zA-Z0-9 :]+$");
-
-
-    public static Map<String, PirsfDatRecord> parse(final Resource pirsfDatFileResource) throws IOException {
-        LOGGER.debug("Running PIRSF data file parser...");
-        if (pirsfDatFileResource == null) {
-            throw new NullPointerException("Resource to the PIRSF dat file is null");
-        }
-        if (!pirsfDatFileResource.exists()) {
-            throw new IllegalStateException(pirsfDatFileResource.getFilename() + " does not exist");
-        }
-        if (!pirsfDatFileResource.isReadable()) {
-            throw new IllegalStateException(pirsfDatFileResource.getFilename() + " is not readable");
-        }
-        //Result map
-        final Map<String, PirsfDatRecord> data = new HashMap<String, PirsfDatRecord>();
-        BufferedReader reader = null;
-        try {
-            //Read input file line by line
-            reader = new BufferedReader(new InputStreamReader(pirsfDatFileResource.getInputStream()));
-            String line;
-            PirsfDatRecord pirsfDatRecord = null;
-            int row = 1;
-            while ((line = reader.readLine()) != null) {
-                Matcher modelStart = PIRSF_DAT_PATTERN_SUPERFAM.matcher(line);
-                if (modelStart.find()) {
-                    //New accession without sub families
-                    final String modelAccession = line.substring(1);
-                    pirsfDatRecord = new PirsfDatRecord(modelAccession);
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Found a new model accession without sub families: " + modelAccession);
-                    }
-                    //Reset row attributes
-                    row = 1;
-                } else if (row == 2) {
-                    // Model name
-                    final String modelName = line;
-                    pirsfDatRecord.setModelName(modelName);
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Set model name to " + modelName);
-                    }
-                } else if (row == 3) {
-                    final String[] values = line.split("\\s+");
-                    pirsfDatRecord.setValues(values);
-                } else if (row == 4 && line.startsWith("BLAST: ")) {
-                    int index = line.indexOf(":");
-                    if (index > -1 && line.length() >= index + 1) {
-                        line = line.substring(index + 1).trim();
-                    }
-                    final boolean isBlastRequired = line.equalsIgnoreCase("YES");
-                    pirsfDatRecord.setBlastRequired(isBlastRequired);
-                    data.put(pirsfDatRecord.getModelAccession(), pirsfDatRecord);
-                } else {
-                    modelStart = PIRSF_DAT_PATTERN_SUBFAM.matcher(line);
-                    if (modelStart.find()) {
-                        // New accession with sub families
-                        row = 1;
-                        pirsfDatRecord = parseSubFamilyLine(line);
-                    } else {
-                        LOGGER.warn("Unexpected line in pirsf.dat: " + line);
-                    }
-                }
-                row++;
-            }
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-        return data;
+    @Required
+    public void setDatFile(String datFile) {
+        this.datFile = datFile;
     }
 
-    private static PirsfDatRecord parseSubFamilyLine(String line) {
-        PirsfDatRecord instance = null;
-        String[] chunks = line.split(" ");
-        for (int i = 0; i < chunks.length; i++) {
-            if (i == 0) {
-                if (chunks[i].length() > 1) {
-                    final String modelAccession = chunks[i].substring(1);
-                    instance = new PirsfDatRecord(modelAccession);
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Found a new model accession with sub families: " + modelAccession);
-                    }
-                }
-            } else if (i > 1) {
-                final String subfamily = chunks[i];
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Found a new subfamily named " + subfamily + " for model accession: " + instance.getModelAccession());
-                }
-                instance.addSubFamily(subfamily);
+    public Map<String, PirsfDatRecord> getRecords() throws IOException {
+        if (records == null) {
+            synchronized (PIRSF_DAT_LOCK) {
+                this.loadRecords();
             }
         }
-        return instance;
+
+        return records;
+    }
+
+    private void loadRecords() throws IOException {
+        records = new HashMap<String, PirsfDatRecord>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(datFile))) {
+            String line;
+            PirsfDatRecord pirsfDatRecord = null;
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = PIRSF_DAT_PATTERN_FAM.matcher(line);
+                if (matcher.find()) {
+                    if (pirsfDatRecord != null) {
+                        records.put(pirsfDatRecord.getModelAccession(), pirsfDatRecord);
+                    }
+
+                    final String modelAccession = line.substring(1);
+                    pirsfDatRecord = new PirsfDatRecord(modelAccession);
+
+                    matcher = PIRSF_DAT_PATTERN_CHILD.matcher(line);
+                    if (matcher.find()) {
+                        String[] chunks  = matcher.group(1).split("\\s+");
+                        for (String chunk : chunks) {
+                            pirsfDatRecord.addSubFamily(chunk);
+                        }
+                    }
+
+                    continue;
+                }
+
+                matcher = PIRSF_DAT_PATTERN_VALUES.matcher(line);
+                if (matcher.find()) {
+                    pirsfDatRecord.setValues(matcher);
+                }
+            }
+
+            if (pirsfDatRecord != null) {
+                records.put(pirsfDatRecord.getModelAccession(), pirsfDatRecord);
+            }
+        }
     }
 }
