@@ -22,7 +22,6 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP 1: Writes target protein sequences to a FASTA file with new sequence IDs-->
     <bean id="stepPIRSFWriteFasta"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPIRSFStep">
@@ -32,12 +31,9 @@
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2 -->
     <bean id="stepPIRSFRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPIRSFStep">
-        <!-- In example command line below, replace _ with -
-        /bin/hmmsearch -Z 4023 _-cut_tc  HMM.LIB  -->
         <property name="dependsUpon" ref="stepPIRSFWriteFasta"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
@@ -55,46 +51,27 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP 3: Runs pirsf.pl perl script and writes the raw result to the specified output file-->
-    <bean id="stepPIRSFRunBinary"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfBinaryStep"
-          parent="abstractPIRSFStep">
-        <!-- In example command line below, replace _ with -
-        -->
-        <!--General step properties-->
-        <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
-        <property name="stepDescription" value="Run pirsf.pl binary for selected proteins"/>
-        <property name="forceHmmsearch" value="${pirsf.hmmsearch.force}"/>
-        <property name="retries" value="3"/>
-        <!--More specific properties-->
-        <property name="perlCommand" value="${perl.command}"/>
-        <property name="scriptPath" value="${binary.pirsf.pl.path}"/>
-        <property name="hmmerPath" value="${binary.hmmer3.path}"/>
-        <property name="sfHmmAllPath" value="${pirsf.sfhmm.path}"/>
-        <property name="pirsfDatPath" value="${pirsf.dat.path}"/>
-        <property name="binarySwitches" value="${pirsf.pl.binary.switches} ${pirsf.pl.binary.cpu.switch}"/>
-        <property name="inputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
-        <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="requiresDatabaseAccess" value="false"/>
-    </bean>
-
     <bean id="stepPirsfStoreRawMatches"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.ParsePirsfOutputStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.PIRSFHmmer3ParseStep"
           parent="abstractPIRSFStep">
-        <property name="dependsUpon" ref="stepPIRSFRunBinary"/>
-        <property name="stepDescription" value="Parse the PIRSF binary output and store as raw matches."/>
+        <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
+        <property name="stepDescription" value="Parse the PIRSF output and store as raw matches."/>
         <property name="serialGroup" value="PARSE_PIRSF"/>
         <property name="retries" value="3"/>
-        <property name="pirsfBinaryOutputFileName" ref="rawAnalysisOutputOneFileTemplate"/>
-        <property name="parser">
-            <bean class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer3.PirsfHmmer3RawMatchParser">
-                <constructor-arg ref="latestPIRSFSignatureLibraryRelease"/>
+        <property name="outputFileTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="domtblOutputFileTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
+        <property name="outputParser">
+            <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3MatchParser">
+                <property name="useHmmsearch" value="true"/>
+                <property name="parserSupport">
+                    <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.PIRSFHmmer3ParserSupport">
+                        <property name="signatureLibraryRelease" ref="latestPIRSFSignatureLibraryRelease"/>
+                        <property name="hmmKey" value="ACCESSION"/>
+                    </bean>
+                </property>
             </bean>
         </property>
-        <property name="rawMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.raw.PirsfHmmer3RawMatchDAOImpl"/>
-        </property>
+        <property name="rawMatchDAO" ref="pirsfRawMatchDAO"/>
     </bean>
 
     <bean id="stepPirsfDeleteFiles"
@@ -107,13 +84,9 @@
             <list>
                 <ref bean="fastaFileNameTemplate"/>
                 <ref bean="rawAnalysisOutputFileTemplate"/>
-                <ref bean="rawAnalysisOutputDomTbloutFileTemplate"/>
-                <ref bean="rawAnalysisOutputOneFileTemplate"/>
             </list>
         </property>
-
     </bean>
-
 
     <bean id="stepPirsfPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfPostProcessAndPersistStep"
@@ -121,7 +94,13 @@
         <property name="dependsUpon" ref="stepPirsfStoreRawMatches"/>
         <property name="stepDescription" value="Performs post processing and match persistence on PIRSF data"/>
         <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3.PirsfPostProcessor"/>
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3.PirsfPostProcessor">
+                <property name="datFileParser">
+                    <bean class="uk.ac.ebi.interpro.scan.io.pirsf.hmmer2.PirsfDatFileParser">
+                        <property name="datFile" value="${pirsf.dat.path}"/>
+                    </bean>
+                </property>
+            </bean>
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="signatureLibraryRelease" ref="latestPIRSFSignatureLibraryRelease"/>
