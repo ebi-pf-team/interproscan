@@ -493,9 +493,9 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                     Utilities.verboseLog(10, "Failed to convert precalculated Protein Matches:  "  + precalculatedProteins.size() +
                             " , they will be calculated manually");
                     Utilities.verboseLog(e.getMessage());
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     Utilities.printMemoryUsage("After exception in lookup " +  proteinRange);
-                    Utilities.sleep(10 * 1000); //
+                    // Utilities.sleep(10 * 1000); //
                     return null;
                 }
             } else {
