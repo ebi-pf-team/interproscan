@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.ebi.interpro.scan</groupId>
     <artifactId>interproscan</artifactId>
-    <version>5.74-105.0</version>
+    <version>5.75-106.0</version>
 
     <packaging>pom</packaging>
     <name>InterProScan</name>

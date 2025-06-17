@@ -193,14 +193,8 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
 
                 //Utilities.verboseLog(110, "simpleMatch:  " + simpleMatch.toString() );
                 final SignatureLibrary sigLib = SignatureLibraryLookup.lookupSignatureLibrary(simpleMatch.getSignatureLibraryName());
-                //Quick Hack: deal with CDD and SFLD for now as they need to be calculated locally (since sites are not in Berkeley DB yet)
-                if (sigLib.getName().equals(SignatureLibrary.CDD.getName())
-                        || sigLib.getName().equals(SignatureLibrary.SFLD.getName())) {
-                    Utilities.verboseLog(140, "SFLD or CDD match found: " + simpleMatch.toString());
-                    ;
-                }
-                SignatureLibrary signatureLibraryKey = sigLib;
-                if (LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())) {
+
+		if (LOGGER.isDebugEnabled() && analysisJobMap.containsKey(sigLib.getName().toUpperCase())) {
                     LOGGER.debug("Found Library : sigLib: " + sigLib + " version: " + signatureLibraryReleaseVersion);
                 }
                 debugString = "sigLib: " + sigLib + "vversion: " + signatureLibraryReleaseVersion;
@@ -285,7 +279,7 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
                         // Lookup up the right protein using the MD5
                         //Utilities.verboseLog(110, "matchConverter: is not null " );
                         final Protein prot = md5ToProteinMap.get(proteinMD5);
-                        final String dbKey = Long.toString(prot.getId()) + signatureLibraryKey.getName();
+                        final String dbKey = Long.toString(prot.getId()) + sigLib.getName();
                         exampleKey = dbKey;
 //                        Utilities.verboseLog(1100, "dbKey: " + dbKey);
                         if (prot != null) {
