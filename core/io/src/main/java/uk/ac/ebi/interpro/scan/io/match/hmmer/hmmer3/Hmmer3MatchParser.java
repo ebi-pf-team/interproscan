@@ -100,6 +100,10 @@ public class Hmmer3MatchParser<T extends RawMatch> implements MatchParser {
         this.useHmmsearch = useHmmsearch;
     }
 
+    public boolean getUseHmmsearch() {
+        return useHmmsearch;
+    }
+
     public SignatureLibrary getSignatureLibrary() {
         return signatureLibrary;
     }
