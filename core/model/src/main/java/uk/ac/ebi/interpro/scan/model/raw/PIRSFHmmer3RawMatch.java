@@ -7,14 +7,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = PirsfHmmer3RawMatch.TABLE_NAME, indexes = {
+@Table(name = PIRSFHmmer3RawMatch.TABLE_NAME, indexes = {
         @Index(name = "PIRSF3_RW_SEQ_IDX", columnList = RawMatch.COL_NAME_SEQUENCE_IDENTIFIER),
         @Index(name = "PIRSF3_RW_NUM_SEQ_IDX", columnList = RawMatch.COL_NAME_NUMERIC_SEQUENCE_ID),
         @Index(name = "PIRSF3_RW_MODEL_IDX", columnList = RawMatch.COL_NAME_MODEL_ID),
         @Index(name = "PIRSF3_RW_SIGLIB_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY),
         @Index(name = "PIRSF3_RW_SIGLIB_REL_IDX", columnList = RawMatch.COL_NAME_SIGNATURE_LIBRARY_RELEASE)
 })
-public class PirsfHmmer3RawMatch extends Hmmer3RawMatch {
+public class PIRSFHmmer3RawMatch extends Hmmer3RawMatch {
 
     public static final String TABLE_NAME = "PIRSF_HMMER3_RAW_MATCH";
 
@@ -27,11 +27,11 @@ public class PirsfHmmer3RawMatch extends Hmmer3RawMatch {
     @Transient
     private int sequenceLength;
 
-    protected PirsfHmmer3RawMatch() {
+    protected PIRSFHmmer3RawMatch() {
 
     }
 
-    public PirsfHmmer3RawMatch(String sequenceIdentifier, String model,
+    public PIRSFHmmer3RawMatch(String sequenceIdentifier, String model,
                                SignatureLibrary signatureLibrary, String signatureLibraryRelease,
                                int locationStart, int locationEnd,
                                double evalue, double score,

@@ -1,6 +1,5 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import org.hibernate.Hibernate;
 import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -256,7 +255,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
     private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength) {
         boolean postProcessed = false;
-        if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch || m instanceof PirsfHmmer3RawMatch) {
+        if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch || m instanceof PIRSFHmmer3RawMatch) {
             postProcessed = true;
         }
 

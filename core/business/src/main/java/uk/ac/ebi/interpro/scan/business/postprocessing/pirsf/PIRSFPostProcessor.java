@@ -1,9 +1,9 @@
-package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3;
+package uk.ac.ebi.interpro.scan.business.postprocessing.pirsf;
 
 import org.springframework.beans.factory.annotation.Required;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser;
 import uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatRecord;
-import uk.ac.ebi.interpro.scan.model.raw.PirsfHmmer3RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer3RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Read in PIRSF raw matches, perform post-processing and persist filtered matches.
  */
-public class PirsfPostProcessor implements Serializable {
+public class PIRSFPostProcessor implements Serializable {
 
     private PirsfDatFileParser datFileParser;
     private Map<String, PirsfDatRecord> datRecords;
@@ -28,7 +28,7 @@ public class PirsfPostProcessor implements Serializable {
         this.datFileParser = datFileParser;
     }
 
-    public Set<RawProtein<PirsfHmmer3RawMatch>> process(Set<RawProtein<PirsfHmmer3RawMatch>> proteins) throws IOException {
+    public Set<RawProtein<PIRSFHmmer3RawMatch>> process(Set<RawProtein<PIRSFHmmer3RawMatch>> proteins) throws IOException {
         if (datRecords == null) {
             datRecords = datFileParser.getRecords();
         }
@@ -41,23 +41,23 @@ public class PirsfPostProcessor implements Serializable {
             }
         }
 
-        final Set<RawProtein<PirsfHmmer3RawMatch>> filteredProteins = new HashSet<>();
+        final Set<RawProtein<PIRSFHmmer3RawMatch>> filteredProteins = new HashSet<>();
         if (proteins == null) {
             return filteredProteins;
         }
 
-        for (RawProtein<PirsfHmmer3RawMatch> protein : proteins) {
-            RawProtein<PirsfHmmer3RawMatch> filteredProtein = processProtein(protein, subfamilies);
+        for (RawProtein<PIRSFHmmer3RawMatch> protein : proteins) {
+            RawProtein<PIRSFHmmer3RawMatch> filteredProtein = processProtein(protein, subfamilies);
             filteredProteins.add(filteredProtein);
         }
 
         return filteredProteins;
     }
 
-    private RawProtein<PirsfHmmer3RawMatch> processProtein(final RawProtein<PirsfHmmer3RawMatch> rawProtein, final Map<String, String> subfamilies) {
+    private RawProtein<PIRSFHmmer3RawMatch> processProtein(final RawProtein<PIRSFHmmer3RawMatch> rawProtein, final Map<String, String> subfamilies) {
         // Group matches by model
-        Map<String, List<PirsfHmmer3RawMatch>> models = new HashMap<>();
-        for (PirsfHmmer3RawMatch match : rawProtein.getMatches()) {
+        Map<String, List<PIRSFHmmer3RawMatch>> models = new HashMap<>();
+        for (PIRSFHmmer3RawMatch match : rawProtein.getMatches()) {
             System.out.printf("post-processor\tprocessing\t%s\t%s\t%d-%d\t%s\n",
                     rawProtein.getProteinIdentifier(), match.getModelId(),
                     match.getLocationStart(), match.getLocationEnd(), match.isSignificant() ? "yes" : "no");
@@ -69,8 +69,8 @@ public class PirsfPostProcessor implements Serializable {
             models.get(match.getModelId()).add(match);
         }
 
-        Set<PirsfHmmer3RawMatch> familyMatches = new HashSet<>();
-        Set<PirsfHmmer3RawMatch> subfamilyMatches = new HashSet<>();
+        Set<PIRSFHmmer3RawMatch> familyMatches = new HashSet<>();
+        Set<PIRSFHmmer3RawMatch> subfamilyMatches = new HashSet<>();
 
         // Merge multiple domains into one
         for (String modelId : models.keySet()) {
@@ -81,9 +81,9 @@ public class PirsfPostProcessor implements Serializable {
             int envStart = 0;
             int envEnd = 0;
             double score = 0;
-            List<PirsfHmmer3RawMatch> matches = models.get(modelId);
-            matches.sort(Comparator.comparingInt(PirsfHmmer3RawMatch::getLocationStart));
-            for (PirsfHmmer3RawMatch match : matches) {
+            List<PIRSFHmmer3RawMatch> matches = models.get(modelId);
+            matches.sort(Comparator.comparingInt(PIRSFHmmer3RawMatch::getLocationStart));
+            for (PIRSFHmmer3RawMatch match : matches) {
                 score += match.getLocationScore();
                 if (match.getLocationStart() < aliStart && match.getHmmStart() < hmmStart) {
                     aliStart = match.getLocationStart();
@@ -102,7 +102,7 @@ public class PirsfPostProcessor implements Serializable {
                 continue;
             }
 
-            PirsfHmmer3RawMatch match = createMatch(matches.get(0), aliStart, aliEnd, hmmStart, hmmEnd, envStart, envEnd, score);
+            PIRSFHmmer3RawMatch match = createMatch(matches.get(0), aliStart, aliEnd, hmmStart, hmmEnd, envStart, envEnd, score);
             if (subfamilies.containsKey(match.getModelId())) {
                 subfamilyMatches.add(match);
             } else {
@@ -111,8 +111,8 @@ public class PirsfPostProcessor implements Serializable {
         }
 
         // Filter family matches
-        Set<PirsfHmmer3RawMatch> filteredMatches = new HashSet<>();
-        for (PirsfHmmer3RawMatch match : familyMatches) {
+        Set<PIRSFHmmer3RawMatch> filteredMatches = new HashSet<>();
+        for (PIRSFHmmer3RawMatch match : familyMatches) {
             PirsfDatRecord datRecord = datRecords.get(match.getModelId());
 
             double ovl = (double) (match.getLocationEnd() - match.getLocationStart() + 1) / match.getSequenceLength();
@@ -140,8 +140,8 @@ public class PirsfPostProcessor implements Serializable {
         }
 
         // Select best family match
-        PirsfHmmer3RawMatch familyMatch = null;
-        for (PirsfHmmer3RawMatch match : filteredMatches) {
+        PIRSFHmmer3RawMatch familyMatch = null;
+        for (PIRSFHmmer3RawMatch match : filteredMatches) {
             if (familyMatch == null || match.getScore() > familyMatch.getScore()) {
                 familyMatch = match;
             } else {
@@ -152,7 +152,7 @@ public class PirsfPostProcessor implements Serializable {
 
         // Filter subfamily matches and select the best
         filteredMatches.clear();
-        for (PirsfHmmer3RawMatch match : subfamilyMatches) {
+        for (PIRSFHmmer3RawMatch match : subfamilyMatches) {
             PirsfDatRecord datRecord = datRecords.get(match.getModelId());
             String parent = subfamilies.get(match.getModelId());
 
@@ -163,8 +163,8 @@ public class PirsfPostProcessor implements Serializable {
                 continue;
             }
 
-            PirsfHmmer3RawMatch parentMatch = null;
-            for (PirsfHmmer3RawMatch match2 : familyMatches) {
+            PIRSFHmmer3RawMatch parentMatch = null;
+            for (PIRSFHmmer3RawMatch match2 : familyMatches) {
                 if (match2.getModelId().equals(parent)) {
                     parentMatch = match2;
                     break;
@@ -194,8 +194,8 @@ public class PirsfPostProcessor implements Serializable {
         }
 
         // Select best subfamily match
-        PirsfHmmer3RawMatch subfamilyMatch = null;
-        for (PirsfHmmer3RawMatch match : filteredMatches) {
+        PIRSFHmmer3RawMatch subfamilyMatch = null;
+        for (PIRSFHmmer3RawMatch match : filteredMatches) {
             if (subfamilyMatch == null || match.getScore() > subfamilyMatch.getScore()) {
                 subfamilyMatch = match;
             } else {
@@ -207,7 +207,7 @@ public class PirsfPostProcessor implements Serializable {
         if (familyMatch == null && subfamilyMatch != null) {
             // Promote parent
             String parent = subfamilies.get(subfamilyMatch.getModelId());
-            for (PirsfHmmer3RawMatch match : familyMatches) {
+            for (PIRSFHmmer3RawMatch match : familyMatches) {
                 if (match.getModelId().equals(parent)) {
                     familyMatch = match;
                     break;
@@ -215,7 +215,7 @@ public class PirsfPostProcessor implements Serializable {
             }
         }
 
-        RawProtein<PirsfHmmer3RawMatch> filteredProtein = new RawProtein<PirsfHmmer3RawMatch>(rawProtein.getProteinIdentifier());
+        RawProtein<PIRSFHmmer3RawMatch> filteredProtein = new RawProtein<PIRSFHmmer3RawMatch>(rawProtein.getProteinIdentifier());
 
         if (familyMatch != null) {
             System.out.printf("post-processor\tsaved\t%s\t%s\n", rawProtein.getProteinIdentifier(), familyMatch.getModelId());
@@ -232,14 +232,14 @@ public class PirsfPostProcessor implements Serializable {
         return filteredProtein;
     }
 
-    private PirsfHmmer3RawMatch createMatch(PirsfHmmer3RawMatch rawMatch,
+    private PIRSFHmmer3RawMatch createMatch(PIRSFHmmer3RawMatch rawMatch,
                                             int aliStart, int aliEnd,
                                             int hmmStart, int hmmEnd,
                                             int envStart, int envEnd,
                                             double score) {
         String hmmBoundStart = hmmStart == 1 ? "[" : ".";
         String hmmBoundEnd= hmmEnd == rawMatch.getModelLength() ? "]" : ".";
-        PirsfHmmer3RawMatch match = new PirsfHmmer3RawMatch(
+        PIRSFHmmer3RawMatch match = new PIRSFHmmer3RawMatch(
                 rawMatch.getSequenceIdentifier(),
                 rawMatch.getModelId(),
                 rawMatch.getSignatureLibrary(),

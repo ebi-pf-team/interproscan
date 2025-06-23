@@ -54,7 +54,7 @@
     </bean>
 
     <bean id="stepPirsfPostProcessing"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PirsfPostProcessAndPersistStep"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.pirsf.hmmer3.PIRSFPostProcessAndPersistStep"
           parent="abstractPIRSFStep">
         <property name="dependsUpon" ref="stepPIRSFRunHmmer3"/>
         <property name="stepDescription" value="Performs post processing and match persistence on PIRSF data"/>
@@ -72,7 +72,7 @@
             </bean>
         </property>
         <property name="postProcessor">
-            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.hmmer3.PirsfPostProcessor">
+            <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pirsf.PIRSFPostProcessor">
                 <property name="datFileParser">
                     <bean class="uk.ac.ebi.interpro.scan.io.pirsf.PirsfDatFileParser">
                         <property name="datFile" value="${pirsf.dat.path}"/>
@@ -82,7 +82,7 @@
         </property>
         <property name="serialGroup" value="HMMER3_POST_PROCESSING"/>
         <property name="filteredMatchDAO">
-            <bean class="uk.ac.ebi.interpro.scan.persistence.PirsfHmmer3FilteredMatchDAOImpl">
+            <bean class="uk.ac.ebi.interpro.scan.persistence.PIRSFHmmer3FilteredMatchDAOImpl">
                 <property name="dbStore" ref="kvStoreMatches"/>
                 <property name="matchDAO" ref="matchDAO"/>
             </bean>
