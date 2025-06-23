@@ -173,31 +173,30 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
                 boolean passes = true;   // Optimistic algorithm!
                 Utilities.verboseLog(localVerboseLevel,"candidateMatchClan: " + candidateMatchClan);
-                if (candidateMatchClan != null) {
-                    // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
-                    for (final PfamHmmer3RawMatch match : filteredMatches.getMatches()) {
-                        final PfamClan passedMatchClan = clanData.getClanByModelAccession(match.getModelId());
-                        // Are both the candidate and the passedMatch in the same clan?
-                        if (candidateMatchClan.equals(passedMatchClan)) {
-                            // Both in the same clan, so check for overlap.  If they overlap
-                            // and are NOT nested, then set passes to false and break out of the inner for loop.
-                            if (matchesOverlap(candidateMatch, match)) {
-                                if (!matchesAreNested(candidateMatch, match)) {
-                                    passes = false;
-                                    break;  // out of loop over filtered rawProteinUnfiltered.
-                                } else {
-                                    Utilities.verboseLog(localVerboseLevel,"nested match: candidateMatch - " + candidateMatch
-                                            + " other match:- " + match);
-                                }
+
+                // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
+                for (final PfamHmmer3RawMatch match : filteredMatches.getMatches()) {
+                    final PfamClan passedMatchClan = clanData.getClanByModelAccession(match.getModelId());
+                    // Are both the candidate and the passedMatch in the same clan?
+                    if (candidateMatchClan != null && candidateMatchClan.equals(passedMatchClan)) {
+                        // Both in the same clan, so check for overlap.  If they overlap
+                        // and are NOT nested, then set passes to false and break out of the inner for loop.
+                        if (matchesOverlap(candidateMatch, match)) {
+                            if (!matchesAreNested(candidateMatch, match)) {
+                                passes = false;
+                                break;  // out of loop over filtered rawProteinUnfiltered.
+                            } else {
+                                Utilities.verboseLog(localVerboseLevel,"nested match: candidateMatch - " + candidateMatch
+                                        + " other match:- " + match);
                             }
-                        } else {
-                            Utilities.verboseLog(localVerboseLevel,"NOT on same Clan: passedMatchClan: " + passedMatchClan);
-                            if (matchesOverlap(candidateMatch, match)) {
-                                if (!matchesAreNested(candidateMatch, match)) {
-                                    Utilities.verboseLog(localVerboseLevel,"MATCHES OVERLAP and are not nested, do not store ");
-                                    passes = false;
-                                    break;
-                                }
+                        }
+                    } else {
+                        Utilities.verboseLog(localVerboseLevel,"NOT on same Clan: passedMatchClan: " + passedMatchClan);
+                        if (matchesOverlap(candidateMatch, match)) {
+                            if (!matchesAreNested(candidateMatch, match)) {
+                                Utilities.verboseLog(localVerboseLevel,"MATCHES OVERLAP and are not nested, do not store ");
+                                passes = false;
+                                break;
                             }
                         }
                     }
