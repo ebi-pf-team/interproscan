@@ -256,7 +256,7 @@ public abstract class Hmmer3RawMatch extends HmmerRawMatch {
 
     private static Hmmer3Match.Hmmer3Location getLocation(Hmmer3RawMatch m, int hmmLength) {
         boolean postProcessed = false;
-        if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch) {
+        if (m instanceof PfamHmmer3RawMatch || m instanceof Gene3dHmmer3RawMatch || m instanceof PirsfHmmer3RawMatch) {
             postProcessed = true;
         }
 

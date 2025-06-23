@@ -31,7 +31,7 @@ public class Hmmer3LookupMatchConverter extends LookupMatchConverter<Hmmer3Match
 
         final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;
-        if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM")) {
+        if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM") || sln.equalsIgnoreCase("PIRSF")) {
             postProcessed = true;
         }
 
