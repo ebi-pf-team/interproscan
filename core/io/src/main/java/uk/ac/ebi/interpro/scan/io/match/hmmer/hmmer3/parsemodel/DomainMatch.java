@@ -14,29 +14,30 @@ import java.util.regex.Pattern;
 public class DomainMatch implements Serializable {
 
     /**
-     * Group[1] Score (float)
-     * Group[2] Bias (float)
-     * Group[3] c-Evalue (float)
-     * Group[4] i-Evalue (float)
-     * Group[5] hmm from (int)
-     * Group[6] hmm to (int)
-     * Group[7] hmmbounds, e.g. "[]"
-     * Group[8] aliFrom  (int)
-     * Group[9] aliTo  (int)
-     * Group[10] envFrom  (int)
-     * Group[11] envTo   (int)
-     * Group[12] acc (float)
+     * Group[1] domain #
+     * Group[2] weak (?) or strong (!) match (string)
+     * Group[3] Score (float)
+     * Group[4] Bias (float)
+     * Group[5] c-Evalue (float)
+     * Group[6] i-Evalue (float)
+     * Group[7] hmm from (int)
+     * Group[8] hmm to (int)
+     * Group[9] hmmbounds, e.g. "[]"
+     * Group[10] aliFrom  (int)
+     * Group[11] aliTo  (int)
+     * Group[12] envFrom  (int)
+     * Group[13] envTo   (int)
+     * Group[14] acc (float)
      */
-    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+[!?]\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
+    public static final Pattern DOMAIN_LINE_PATTERN = Pattern.compile("^\\s+(\\d+)\\s+([!?])\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\S+\\s+(\\S+).*$");
     //entered by Manjula
     public static final Pattern DOMAIN_ALIGNMENT_LINE_PATTERN = Pattern.compile("^\\s+==\\s+domain\\s+(\\d+)\\s+.*$");
 
-    // TODO: This pattern won't work for UniProt FASTA files because assumes sequence ID contains numbers 
+    // TODO: This pattern won't work for UniProt FASTA files because assumes sequence ID contains numbers
     // TODO: and letters only, but UniProt FASTA ID lines contain "|", for example "tr|Q9U4N3|Q9U4N3_TOXGO"
     public static final Pattern ALIGNMENT_SEQUENCE_PATTERN = Pattern.compile("^\\s+(\\w+)\\s+(\\S+)\\s+([-a-zA-Z]+)\\s+(\\S+)\\s*$");
 
-    //entered by Manjula for Gene3D parser
-    //private final int domainNumber;
+    private final boolean significant;
 
     private final double score;
 
@@ -65,22 +66,24 @@ public class DomainMatch implements Serializable {
     private String alignment;
 
     public DomainMatch(Matcher domainLineMatcher) {
-        this.score = Double.parseDouble(domainLineMatcher.group(2));
-        this.bias = Double.parseDouble(domainLineMatcher.group(3));
-        this.cEvalue = Double.parseDouble(domainLineMatcher.group(4));
-        this.iEvalue = Double.parseDouble(domainLineMatcher.group(5));
-        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(6));
-        this.hmmto = Integer.parseInt(domainLineMatcher.group(7));
-        this.hmmBounds = domainLineMatcher.group(8);
-        this.aliFrom = Integer.parseInt(domainLineMatcher.group(9));
-        this.aliTo = Integer.parseInt(domainLineMatcher.group(10));
-        this.envFrom = Integer.parseInt(domainLineMatcher.group(11));
-        this.envTo = Integer.parseInt(domainLineMatcher.group(12));
-        this.acc = Double.parseDouble(domainLineMatcher.group(13));
+        this.significant = domainLineMatcher.group(2).equals("!");
+        this.score = Double.parseDouble(domainLineMatcher.group(3));
+        this.bias = Double.parseDouble(domainLineMatcher.group(4));
+        this.cEvalue = Double.parseDouble(domainLineMatcher.group(5));
+        this.iEvalue = Double.parseDouble(domainLineMatcher.group(6));
+        this.hmmfrom = Integer.parseInt(domainLineMatcher.group(7));
+        this.hmmto = Integer.parseInt(domainLineMatcher.group(8));
+        this.hmmBounds = domainLineMatcher.group(9);
+        this.aliFrom = Integer.parseInt(domainLineMatcher.group(10));
+        this.aliTo = Integer.parseInt(domainLineMatcher.group(11));
+        this.envFrom = Integer.parseInt(domainLineMatcher.group(12));
+        this.envTo = Integer.parseInt(domainLineMatcher.group(13));
+        this.acc = Double.parseDouble(domainLineMatcher.group(14));
 
     }
 
     public DomainMatch(SequenceDomainMatch sequenceDomainMatch) {
+        this.significant = true;
         this.score = sequenceDomainMatch.getScore();
         this.bias = sequenceDomainMatch.getBias();
         this.cEvalue = sequenceDomainMatch.getCEvalue();
@@ -95,7 +98,9 @@ public class DomainMatch implements Serializable {
         this.acc = sequenceDomainMatch.getAcc();
     }
 
-
+    public boolean isSignificant() {
+        return significant;
+    }
 
     public String getAlignment() {
         return alignment;
@@ -156,6 +161,7 @@ public class DomainMatch implements Serializable {
     @Override
     public String toString() {
         return "DomainMatch{" +
+                (significant ? "!" : "?") +
                 "score=" + score +
                 ", bias=" + bias +
                 ", cEvalue=" + cEvalue +
