@@ -118,8 +118,9 @@ public class ProteinMatchesTSVProResultWriter extends ProteinMatchesResultWriter
                             mappingFields.add(Integer.toString(pantherLocation.getEnvelopeEnd()));
                         } else if (location instanceof SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) {
                             mappingFields.add(Integer.toString(((SuperFamilyHmmer3Match.SuperFamilyHmmer3Location) location).getHmmLength()));
-                        } else if (location instanceof MobiDBMatch.MobiDBLocation){
-                            mappingFields.add(((MobiDBMatch.MobiDBLocation) location).getSequenceFeature());
+                        } else if (location instanceof MobiDBMatch.MobiDBLocation) {
+                            MobiDBMatch.MobiDBLocation mobiDBLocation = (MobiDBMatch.MobiDBLocation) location;
+                            mappingFields.add(Objects.requireNonNullElse(mobiDBLocation.getSequenceFeature(), "-"));
                         }
 
                         if (location instanceof Hmmer3Match.Hmmer3Location) {
