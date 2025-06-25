@@ -80,13 +80,6 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
         return new MobiDBMatch.MobiDBLocation(rawMatch.getLocationStart(), rawMatch.getLocationEnd(), rawMatch.getDescription());
     }
 
-    private MobiDBMatch buildMatch(Signature signature, MobiDBRawMatch rawMatch) {
-        MobiDBMatch.MobiDBLocation location = new MobiDBMatch.MobiDBLocation(
-                rawMatch.getLocationStart(),
-                rawMatch.getLocationEnd(), rawMatch.getDescription());
-        return new MobiDBMatch(signature, rawMatch.getModelId(), Collections.singleton(location));
-    }
-
     /**
      * This method retrieves the persisted Signatures for all of the
      * Disordered featues.  If any of them they do not exist in the database, this
@@ -104,9 +97,8 @@ class MobiDBFilteredMatchDAO extends FilteredMatchDAOImpl<MobiDBRawMatch, MobiDB
         query.setParameter("release", release);
         @SuppressWarnings("unchecked") List<Signature> retrievedSignatures = query.getResultList();
 
-        if (retrievedSignatures.size() == 0) {
+        if (retrievedSignatures.isEmpty()) {
             // The Signature record does not exist yet, so create it.
-
             entityManager.persist(signature);
             return signature;
         } else if (retrievedSignatures.size() > 1) {
