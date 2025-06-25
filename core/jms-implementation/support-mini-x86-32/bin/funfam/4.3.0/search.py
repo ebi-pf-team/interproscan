@@ -78,7 +78,7 @@ Filter and search FunFams with hmmsearch.
     cath_resolve_cmd += ["--input-format=hmmsearch_out", hmmsearch_output]
     
     with open(cath_hits_output, "wt") as fh:
-        exit_code = sp.call(cmd, stderr=sp.DEVNULL, stdout=fh)
+        exit_code = sp.call(cath_resolve_cmd, stderr=sp.DEVNULL, stdout=fh)
         if exit_code != 0:
             raise RuntimeError("error while running cath-resolve-hits: "
                                 "{}".format(' '.join(cath_resolve_cmd)))
