@@ -140,9 +140,6 @@ public class RunFunFamBinaryStep extends RunBinaryStep {
             command.add('"' + binarySwitches + '"');
         }
 
-        command.add("-T");
-        command.add(temporaryFileDirectory);
-
         command.add(fastaFilePath);
         command.add(inputFilePath);
         command.add(this.getFullPathToModelsDirectory());
