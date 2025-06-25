@@ -374,112 +374,64 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
     }
 
     public Set<SFLDHmmer3RawMatch> resolveOverlappingMatches(Collection<SFLDHmmer3RawMatch> rawMatches, Map<String, Set<String>> hierarchyInformation) {
-        // hmm_hit = [hmm_id, description, float(eVal), float(score), location]
-        Set<SFLDHmmer3RawMatch> overlapFreeRawMatches = new HashSet<>();
+        Set<SFLDHmmer3RawMatch> filtered = new HashSet<>();
+        Set<SFLDHmmer3RawMatch> ignored = new HashSet<>();
+        List<SFLDHmmer3RawMatch> matches = new ArrayList<>(rawMatches);
 
-        Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
-        Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
-        //Utilities.verboseLog(1100, "matchesPerModel: " + matchesPerModel.toString());
-        if (matchesPerModel.keySet().size() == 1) {
-            overlapFreeRawMatches.addAll(rawMatches);
-            return overlapFreeRawMatches;
-        }
-        for (String key : matchesPerModel.keySet()) {
-            Set<SFLDHmmer3RawMatch> modelMatches = matchesPerModel.get(key);
-            //SFLDF models are more specific
-            if (key.contains("SFLDF")) {
-                overlapFreeRawMatches.addAll(modelMatches);
+        for (SFLDHmmer3RawMatch match : matches) {
+            if (ignored.contains(match)) continue;
+            if (match.getModelId().startsWith("SFLDF")) {
+                filtered.add(match);
                 continue;
             }
 
-            //Utilities.verboseLog(1100, " modelMatches count: " + modelMatches.size());
-            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
-                boolean overlaps = false;
-                SFLDHmmer3RawMatch baseMatch = modelMatch;
-                Set<String> parents = hierarchyInformation.get(modelMatch.getModelId());
-                for (SFLDHmmer3RawMatch otherMatch : allRawMatches) {
-                    Set<String> otherParents = hierarchyInformation.get(otherMatch.getModelId());
-                    if (modelMatch.equals(otherMatch)) {
-                        continue;
-                    }
-                    if (modelMatch.getModelId().equals(otherMatch.getModelId())) {
-                        continue;
-                    }
-                    String otherParentsStr = "";
-                    if (modelMatch.overlapsWith(otherMatch)) {
-                        if (otherParents != null) {
-                            otherParentsStr = otherParents.toString();
-                        }
-                        //Utilities.verboseLog(1100, "modelMatch.overlapsWith otherMatch)  --- check if parents of otherMatch " + otherMatch.getModelId() + " [ " + otherParentsStr + "] contain modelMatch " + modelMatch.getModelId());
-                        if (otherParents != null && otherParents.contains(modelMatch.getModelId())) {
-//                            Utilities.verboseLog(1100, "modelMatch does overlapsWith(otherMatch) - modelMatch: " + modelMatch.getModelId()
-//                                    + " otherMatch: " + otherMatch.getModelId());
-                            overlaps = true;
-                            break;
-                        }
-                    }
+            boolean ignore = false;
+            for (SFLDHmmer3RawMatch other : matches) {
+                if (match == other || match.getModelId().equals(other.getModelId()) || ignored.contains(other)) continue;
+                if (!match.overlapsWith(other)) continue;
+
+                Set<String> otherParents = hierarchyInformation.getOrDefault(other.getModelId(), Collections.emptySet());
+                if (otherParents.contains(match.getModelId())) {
+                    ignore = true;
+                    break;
                 }
-                if (overlaps) {
-                    allRawMatches.remove(modelMatch);
-                } else {
-                    overlapFreeRawMatches.add(modelMatch);
-                }
+            }
+
+            if (!ignore) {
+                filtered.add(match);
+            } else {
+                ignored.add(match);
             }
         }
 
-        return overlapFreeRawMatches;
+        return filtered;
     }
 
-    public Set<SFLDHmmer3RawMatch> resolveDuplicateMatches(Set<SFLDHmmer3RawMatch> rawMatches){
-        Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = new HashSet<>();
-        Collection<SFLDHmmer3RawMatch> allRawMatches = rawMatches;
-        Map<String, Set<SFLDHmmer3RawMatch>> matchesPerModel = getMatchGroups(rawMatches);
-        //Utilities.verboseLog(1100, "matchesPerModel: " + matchesPerModel.toString());
-        /*if (matchesPerModel.keySet().size() == 1) {
-            duplicateFreeRawMatches.addAll(rawMatches);
-            return overlapFreeRawMatches;
-        }
-        */
-        for (String key : matchesPerModel.keySet()) {
-            Set<SFLDHmmer3RawMatch> modelMatches = matchesPerModel.get(key);
-
-            /* debug
-            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
-
-                //Utilities.verboseLog(1100, "raw unfilt match : " + getMatchDetails(modelMatch));
-
-            }
-            */
-
-            for (SFLDHmmer3RawMatch modelMatch : modelMatches) {
-                boolean duplicate = false;
-                SFLDHmmer3RawMatch baseMatch = modelMatch;
-                //Utilities.verboseLog(1100, "Consider  match: " + getMatchDetails(modelMatch));
-                for (SFLDHmmer3RawMatch otherMatch : allRawMatches) {
-                    //Utilities.verboseLog(120,"Consider against match: " + getMatchDetails(otherMatch));
-                    if (modelMatch.equals(otherMatch) || ! modelMatch.getModelId().equals(otherMatch.getModelId())) {
-                        continue;
-                    }
-
-                    if (modelMatch.getLocationStart() == otherMatch.getLocationStart() && modelMatch.getLocationEnd() == otherMatch.getLocationEnd()) {
-                        if (modelMatch.getScore() <= modelMatch.getScore() ) {
-                           // Utilities.verboseLog(getMatchDetails(modelMatch) + " -- is duplicate .... of ..  -- " + getMatchDetails(otherMatch) );
-                            duplicate = true;
-                            break;
-                            //check hmmstarts and envstarts;
-                        }
-
-                    }
-                }
-                if (duplicate) {
-                    allRawMatches.remove(modelMatch);
-                } else {
-                    duplicateFreeRawMatches.add(modelMatch);
-                }
-            }
+    public Set<SFLDHmmer3RawMatch> resolveDuplicateMatches(Set<SFLDHmmer3RawMatch> rawMatches) {
+        Map<String, List<SFLDHmmer3RawMatch>> grouped = new HashMap<>();
+        for (SFLDHmmer3RawMatch match : rawMatches) {
+            grouped.computeIfAbsent(match.getModelId(), k -> new ArrayList<>()).add(match);
         }
 
-        return duplicateFreeRawMatches;
+        Set<SFLDHmmer3RawMatch> result = new HashSet<>();
+        for (List<SFLDHmmer3RawMatch> group : grouped.values()) {
+            group.sort(Comparator.comparingInt(SFLDHmmer3RawMatch::getLocationStart)
+                .thenComparing(Comparator.comparingInt(SFLDHmmer3RawMatch::getLocationEnd).reversed()));
+            List<SFLDHmmer3RawMatch> nonNested = new ArrayList<>();
+
+            for (SFLDHmmer3RawMatch match : group) {
+                boolean isContained = nonNested.stream().anyMatch(existing ->
+                    existing.getLocationStart() <= match.getLocationStart() &&
+                    existing.getLocationEnd() >= match.getLocationEnd()
+                );
+                if (!isContained) {
+                    nonNested.add(match);
+                }
+            }
+            result.addAll(nonNested);
+        }
+
+        return result;
     }
 
     /**
@@ -541,12 +493,17 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 //    }
 
     private Set<SFLDHmmer3RawMatch> getPromotedRawMatches(SFLDHmmer3RawMatch rawMatch, Set<String> parents) {
-        Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet();
-        String childModelId = rawMatch.getModelId();
-        //Utilities.verboseLog(1100, "Promoted match for " + childModelId + " with parents: " + parents);
-        for (String modelAc : parents) {
-            if (!childModelId.equals(modelAc)) {
-                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
+        Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet<>();
+        if (parents == null || parents.isEmpty()) {
+            return promotedRawMatches;
+        }
+
+        for (String parentModelId : parents) {
+            if (!parentModelId.equals(rawMatch.getModelId())) {
+                SFLDHmmer3RawMatch promoted = rawMatch.getNewRawMatch(parentModelId);
+                if (promoted != null) {
+                    promotedRawMatches.add(promoted);
+                }
             }
         }
         return promotedRawMatches;
@@ -757,30 +714,25 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
      */
     public Map<String, Set<String>> getHierarchyInformation() {
         Map<String, Set<String>> sfldHierarchyInformation = new HashMap<>();
-        try (FileInputStream is = new FileInputStream(sfldHierarchyFilePath)) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-                int lineNumber = 0;
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] modelWithParents = line.trim().split(":");
-
-                    if (modelWithParents.length >= 2) {
-                        String modelAc = modelWithParents[0];
-                        String[] allParents = modelWithParents[1].split("\\s+");
-                        Set<String> parents = new HashSet<>();
-                        for (String parent : allParents) {
-                            if (!(parent.trim().isEmpty() || parent.trim().equals(modelAc))) {
-                                parents.add(parent.trim());
-                            }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(sfldHierarchyFilePath)))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+                String[] nodes = line.split("\t");
+                for (int i = 1; i < nodes.length; i++) {
+                    String child = nodes[i];
+                    Set<String> parents = sfldHierarchyInformation.computeIfAbsent(child, k -> new HashSet<>());
+                    for (int j = 0; j < i; j++) {
+                        String ancestor = nodes[j];
+                        if (!ancestor.equals(child)) {
+                            parents.add(ancestor);
                         }
-                        sfldHierarchyInformation.put(modelAc, parents);
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to parse hierarchy file: " + sfldHierarchyFilePath, e);
         }
         return sfldHierarchyInformation;
     }
