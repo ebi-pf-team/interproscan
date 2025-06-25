@@ -97,7 +97,7 @@ public class MobiDBMatchParser implements MatchParser<MobiDBRawMatch> {
                     int locationEnd = Integer.parseInt(matcher.group(3));
                     String feature = matcher.group(4).trim();
                     if (feature.equals("-")) {
-                        feature = "";
+                        feature = null;
                     }
 
                     matches.add(new MobiDBRawMatch(sequenceIdentifier, "mobidb-lite",
