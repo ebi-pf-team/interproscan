@@ -1,9 +1,9 @@
 package uk.ac.ebi.interpro.scan.model.raw;
 
-import uk.ac.ebi.interpro.scan.model.SignalPOrganismType;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import uk.ac.ebi.interpro.scan.model.SignatureLibrary;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -57,5 +57,26 @@ public class MobiDBRawMatch extends RawMatch implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof MobiDBRawMatch))
+            return false;
+        final MobiDBRawMatch m = (MobiDBRawMatch) o;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(this.description, m.description)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(53, 51)
+                .appendSuper(super.hashCode())
+                .append(this.getDescription())
+                .toHashCode();
     }
 }
