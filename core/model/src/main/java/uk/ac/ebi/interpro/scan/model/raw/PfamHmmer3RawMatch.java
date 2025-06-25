@@ -61,8 +61,8 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch implements Comparable<Pfa
         if (this == that) return 0;
         if (this.getDomainIeValue() < that.getDomainIeValue()) return -1;     // First, sort by ievalue ASC
         if (this.getDomainIeValue() > that.getDomainIeValue()) return 1;
-        if (this.getScore() > that.getScore()) return -1;                     // then by score ASC
-        if (this.getScore() < that.getScore()) return 1;
+        if (this.getLocationScore() > that.getLocationScore()) return -1;     // then by score ASC
+        if (this.getLocationScore() < that.getLocationScore()) return 1;
         if (this.hashCode() > that.hashCode())
             return -1;                     // then by hashcode to be consistent with equals.
         if (this.hashCode() < that.hashCode()) return 1;
