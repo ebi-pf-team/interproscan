@@ -4,15 +4,9 @@ import uk.ac.ebi.interpro.scan.model.DCStatus;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Required;
-import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClan;
-import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamClanData;
-import uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.model.PfamModel;
 import uk.ac.ebi.interpro.scan.model.Hmmer3Match;
 import uk.ac.ebi.interpro.scan.model.raw.PfamHmmer3RawMatch;
-import uk.ac.ebi.interpro.scan.model.raw.RawMatch;
 import uk.ac.ebi.interpro.scan.model.raw.RawProtein;
-
-import uk.ac.ebi.interpro.scan.util.Utilities;
 
 import java.io.*;
 import java.util.*;
@@ -30,34 +24,15 @@ public class PfamHMMER3PostProcessing implements Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger(PfamHMMER3PostProcessing.class.getName());
 
-    private PfamClanData clanData;
+    private Map<String, Set<String>> nestedModels;
 
-    private ClanFileParser clanFileParser;
-
-    private SeedAlignmentDataRetriever seedAlignmentDataRetriever;
-
-    private String pfamHmmDataPath;
+    private String pfamDatPath;
 
     private int minMatchLength;
 
     @Required
-    public void setClanFileParser(ClanFileParser clanFileParser) {
-        this.clanFileParser = clanFileParser;
-    }
-
-    /**
-     * TODO: Will eventually be 'required', but not till after milestone one.
-     *
-     * @param seedAlignmentDataRetriever to retrieve seed alignment data for
-     *                                   a range of proteins.
-     */
-    public void setSeedAlignmentDataRetriever(SeedAlignmentDataRetriever seedAlignmentDataRetriever) {
-        this.seedAlignmentDataRetriever = seedAlignmentDataRetriever;
-    }
-
-    @Required
-    public void setPfamHmmDataPath(String pfamHmmDataPath) {
-        this.pfamHmmDataPath = pfamHmmDataPath;
+    public void setPfamDatPath(String pfamDatPath) {
+        this.pfamDatPath = pfamDatPath;
     }
 
     public int getMinMatchLength() {
@@ -75,45 +50,16 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return a Map of proteinIds to a List of filtered matches.
      */
     public Map<String, RawProtein<PfamHmmer3RawMatch>> process(Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawMatchMap) throws IOException {
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Pfam A Post Processing: Number of proteins being considered: " + ((proteinIdToRawMatchMap == null) ? 0 : proteinIdToRawMatchMap.size()));
-        }
-        if (clanData == null) {
-            clanData = clanFileParser.getClanData();
+        if (nestedModels == null) {
+            nestedModels = getNestedModels();
         }
         final Map<String, RawProtein<PfamHmmer3RawMatch>> proteinIdToRawProteinMap = new HashMap<String, RawProtein<PfamHmmer3RawMatch>>();
         if (proteinIdToRawMatchMap == null) {
             return proteinIdToRawProteinMap;
         }
-        long startNanos = System.nanoTime();
-        // Iterate over UniParc IDs in range and processBatch them
-        SeedAlignmentDataRetriever.SeedAlignmentData seedAlignmentData = null;
-        if (seedAlignmentDataRetriever != null) {
-            seedAlignmentData = seedAlignmentDataRetriever.retrieveSeedAlignmentData(proteinIdToRawMatchMap.keySet());
-        }
-        Map<String, Set<String>> nestedModelsMap = new HashMap<>();
-
-        try {
-            nestedModelsMap = getPfamHmmData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         for (String proteinId : proteinIdToRawMatchMap.keySet()) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Pfam A post processing: processing protein " + proteinId);
-            }
-            List<SeedAlignment> seedAlignments = null;
-            if (seedAlignmentData != null) {
-                seedAlignments = seedAlignmentData.getSeedAlignments(proteinId);
-            }
-
-            Utilities.verboseLog(120,"Pfam A post processing: processing protein " + proteinId);
-            proteinIdToRawProteinMap.put(proteinId, processProtein(proteinIdToRawMatchMap.get(proteinId), nestedModelsMap, seedAlignments));
-        }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(new StringBuilder().append("Batch containing").append(proteinIdToRawMatchMap.size()).append(" proteins took ").append(((double) (System.nanoTime() - startNanos)) / 1.0e9d).append(" s to run.").toString());
+            proteinIdToRawProteinMap.put(proteinId, processProtein(proteinIdToRawMatchMap.get(proteinId)));
         }
         return proteinIdToRawProteinMap;
     }
@@ -124,189 +70,87 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * Also includes additional code to ensure seed alignments are included as matches, regardless of
      * score.
      *
-     * @param rawProteinUnfiltered being a List of the raw matches to filter
-     * @param seedAlignments       being a Collection of SeedAlignment objects, to check for matches to
-     *                             methods where this protein was part of the seed alignment.
+     * @param rawProtein being a List of the raw matches to filter
      * @return a List of filtered matches.
      */
-    private RawProtein processProtein(final RawProtein<PfamHmmer3RawMatch> rawProteinUnfiltered, final Map<String, Set<String>> nestedModelsMap, final List<SeedAlignment> seedAlignments) {
-        int localVerboseLevel = 120;
-        Utilities.verboseLog(localVerboseLevel,"Start processProtein ---oo--");
-        RawProtein<PfamHmmer3RawMatch> filteredMatches = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
-        RawProtein<PfamHmmer3RawMatch> filteredRawProtein = new RawProtein<PfamHmmer3RawMatch>(rawProteinUnfiltered.getProteinIdentifier());
-
-        // First of all, place any rawProteinUnfiltered to methods for which this protein was a seed
-        // into the filteredMatches collection.
-        final Set<PfamHmmer3RawMatch> seedMatches = new HashSet<PfamHmmer3RawMatch>();
-
-        // seedAlignments is ALWAYS null
-        if (seedAlignments != null) {        // TODO This check can be removed, once the seed alignment stuff has been sorted.
-            Utilities.verboseLog(localVerboseLevel,"seedAlignments count:" + seedAlignments.size());
-            for (final SeedAlignment seedAlignment : seedAlignments) {
-                for (final PfamHmmer3RawMatch candidateMatch : rawProteinUnfiltered.getMatches()) {
-
-                    if (!seedMatches.contains(candidateMatch)) {
-                        if (seedAlignment.getModelAccession().equals(candidateMatch.getModelId()) &&
-                                seedAlignment.getAlignmentStart() <= candidateMatch.getLocationStart() &&
-                                seedAlignment.getAlignmentEnd() >= candidateMatch.getLocationEnd()) {
-                            // Found a match to a seed, where the coordinates fall within the seed alignment.
-                            // Add it directly to the filtered rawProteinUnfiltered...
-                            Utilities.verboseLog(localVerboseLevel,"found match to a seed - candidateMatch and seedMatch: " + candidateMatch);
-                            filteredMatches.addMatch(candidateMatch);
-                            seedMatches.add(candidateMatch);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Then iterate over the non-seed raw rawProteinUnfiltered, sorted in order ievalue ASC score DESC
-        final Set<PfamHmmer3RawMatch> unfilteredByEvalue = new TreeSet<PfamHmmer3RawMatch>(rawProteinUnfiltered.getMatches());
-
-        Utilities.verboseLog(localVerboseLevel,"unfilteredByEvalue count: " + unfilteredByEvalue.size());
-        Utilities.verboseLog(localVerboseLevel,"unfilteredByEvalue: " + unfilteredByEvalue);
-        for (final RawMatch rawMatch : unfilteredByEvalue) {
-            if ((rawMatch.getLocationEnd() - rawMatch.getLocationStart() + 1) < this.getMinMatchLength()) {
+    private RawProtein<PfamHmmer3RawMatch> processProtein(final RawProtein<PfamHmmer3RawMatch> rawProtein) {
+        // Sort matches
+        final Set<PfamHmmer3RawMatch> rawMatches = new TreeSet<PfamHmmer3RawMatch>(rawProtein.getMatches());
+        Set<PfamHmmer3RawMatch> filteredMatches = new HashSet<>();
+        for (PfamHmmer3RawMatch candidateMatch : rawMatches) {
+            if ((candidateMatch.getLocationEnd() - candidateMatch.getLocationStart() + 1) < this.getMinMatchLength()) {
                 continue;
             }
 
-            final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
-            Utilities.verboseLog(localVerboseLevel,"consider match - candidateMatch: " + candidateMatch);
-            if (!seedMatches.contains(candidateMatch)) {
-                final PfamClan candidateMatchClan = clanData.getClanByModelAccession(candidateMatch.getModelId());
+            boolean passes = true;
 
-                boolean passes = true;   // Optimistic algorithm!
-                Utilities.verboseLog(localVerboseLevel,"candidateMatchClan: " + candidateMatchClan);
+            // Compare the candidate match with matches already selected
+            for (PfamHmmer3RawMatch filteredMatch : filteredMatches) {
+                if (matchesOverlap(candidateMatch, filteredMatch)) {
+                    // Matches are overlapping
 
-                // Iterate over the filtered rawProteinUnfiltered (so far) to check for passes
-                for (final PfamHmmer3RawMatch match : filteredMatches.getMatches()) {
-                    final PfamClan passedMatchClan = clanData.getClanByModelAccession(match.getModelId());
-                    // Are both the candidate and the passedMatch in the same clan?
-                    if (candidateMatchClan != null && candidateMatchClan.equals(passedMatchClan)) {
-                        // Both in the same clan, so check for overlap.  If they overlap
-                        // and are NOT nested, then set passes to false and break out of the inner for loop.
-                        if (matchesOverlap(candidateMatch, match)) {
-                            if (!matchesAreNested(candidateMatch, match)) {
-                                passes = false;
-                                break;  // out of loop over filtered rawProteinUnfiltered.
-                            } else {
-                                Utilities.verboseLog(localVerboseLevel,"nested match: candidateMatch - " + candidateMatch
-                                        + " other match:- " + match);
-                            }
-                        }
-                    } else {
-                        Utilities.verboseLog(localVerboseLevel,"NOT on same Clan: passedMatchClan: " + passedMatchClan);
-                        if (matchesOverlap(candidateMatch, match)) {
-                            if (!matchesAreNested(candidateMatch, match)) {
-                                Utilities.verboseLog(localVerboseLevel,"MATCHES OVERLAP and are not nested, do not store ");
-                                passes = false;
-                                break;
-                            }
-                        }
+                    if (!matchesAreEnclosed(candidateMatch, filteredMatch)
+                            || !matchesAreNested(candidateMatch, filteredMatch)) {
+                        passes = false;
+                        break;
                     }
                 }
+            }
 
-                if (passes) {
-                    // Add filtered match to collection
-                    filteredMatches.addMatch(candidateMatch);
-                }
+            if (passes) {
+                filteredMatches.add(candidateMatch);
             }
         }
 
-        for (PfamHmmer3RawMatch pfamHmmer3RawMatch : filteredMatches.getMatches()) {
-            String modelId = pfamHmmer3RawMatch.getModelId();
+        RawProtein<PfamHmmer3RawMatch> filteredProtein = new RawProtein<>(rawProtein.getProteinIdentifier());
+        for (PfamHmmer3RawMatch match : filteredMatches) {
+            Set<String> nestedInMatch = nestedModels.get(match.getModelId());
+            if (nestedInMatch != null && !nestedInMatch.isEmpty()) {
+                // Find all matches that are nested in the current match
 
-            Set<String> nestedModels = nestedModelsMap.get(modelId);
-            Utilities.verboseLog(localVerboseLevel,"nestedModels: " + nestedModels);
-            if (nestedModels != null && ! nestedModels.isEmpty()) {
-                final UUID splitGroup = UUID.randomUUID();
-                pfamHmmer3RawMatch.setSplitGroup(splitGroup);
-                //get new regions
-                List<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> locationFragments = new ArrayList<>();
-                int nestedFragments = 0;
-                for (PfamHmmer3RawMatch rawMatch : filteredMatches.getMatches()) {
-                    if (nestedModels.contains(rawMatch.getModelId()) &&
-                            (matchesAreNested(rawMatch, pfamHmmer3RawMatch))) {
-                        locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
-                                rawMatch.getLocationStart(), rawMatch.getLocationEnd()));
-                        nestedFragments ++;
+                List<Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment> fragments = new ArrayList<>();
+                for (PfamHmmer3RawMatch otherMatch: filteredMatches) {
+                    if (nestedInMatch.contains(otherMatch.getModelId())
+                            && matchesAreEnclosed(match, otherMatch)) {
+                        fragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
+                                otherMatch.getLocationStart(), otherMatch.getLocationEnd()));
                     }
                 }
-                Utilities.verboseLog(localVerboseLevel,"locationFragments to consider:  (# " + nestedFragments + ")" + locationFragments.toString());
-                //the following is for testing only should be removed in the main code later
-//                locationFragments.add(new Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment(
-//                        380, 395));
-                //sort these according to the start and stop positions
-                Collections.sort(locationFragments);
 
-                DCStatus fragmentDCStatus = DCStatus.CONTINUOUS;
+                Collections.sort(fragments);
 
-                List<PfamHmmer3RawMatch> rawDiscontinuousMatches  = new ArrayList<>();
-                rawDiscontinuousMatches.add(pfamHmmer3RawMatch);
-                if (nestedFragments > 1){
-                    Utilities.verboseLog(localVerboseLevel,"nestedFragments > 1 require special investigation ");
-                }
-                for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : locationFragments) {
-                    List<PfamHmmer3RawMatch> newMatchesFromFragment  = new ArrayList<>();
-                    for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
-                        Utilities.verboseLog(localVerboseLevel,"rawDiscontinuousMatch to consider: " + rawDiscontinuousMatch.toString());
-                        int newLocationStart = rawDiscontinuousMatch.getLocationStart();
-                        int newLocationEnd = rawDiscontinuousMatch.getLocationEnd();
-                        int finalLocationEnd = rawDiscontinuousMatch.getLocationEnd();
-                        if (! regionsOverlap(newLocationStart,newLocationEnd, fragment.getStart(), fragment.getEnd())){
-                            newMatchesFromFragment.add(rawDiscontinuousMatch);  // we add this match as previously processed
-                            continue;
-                        }
-                        if (fragment.getStart() <= newLocationStart && fragment.getEnd() >= newLocationEnd){
-                            fragmentDCStatus = DCStatus.NC_TERMINAL_DISC;
-                            rawDiscontinuousMatch.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
-                            newMatchesFromFragment.add(rawDiscontinuousMatch);
-                            continue;
-                        }
+                int start = match.getLocationStart();
+                List<PfamHmmer3RawMatch> tmpMatches = new ArrayList<>();
 
-                        if(fragmentDCStatus ==  DCStatus.CONTINUOUS){
-                            fragmentDCStatus = null;
-                        }
-                        boolean twoAtualRegions = false;
-                        Utilities.verboseLog(localVerboseLevel,"region to consider: " + fragment.toString());
-                        if (fragment.getStart() <= newLocationStart) {
-                            newLocationStart = fragment.getEnd() + 1;
-                            fragmentDCStatus = DCStatus.N_TERMINAL_DISC;
-                        } else if (fragment.getEnd() >= newLocationEnd) {
-                            newLocationEnd = fragment.getStart() - 1;
-                            fragmentDCStatus = DCStatus.getNewDCStatus(fragmentDCStatus, DCStatus.C_TERMINAL_DISC);
-                        } else if (fragment.getStart() > newLocationStart && fragment.getEnd() < newLocationEnd) {
-                            //we have two new fragments
-                            newLocationEnd = fragment.getStart() - 1;
-                            twoAtualRegions = true;
-                            fragmentDCStatus = DCStatus.getNewDCStatus(fragmentDCStatus,  DCStatus.C_TERMINAL_DISC);
-                        }
-                        Utilities.verboseLog(localVerboseLevel,"New Region: " + newLocationStart + "-" + newLocationEnd);
-                        PfamHmmer3RawMatch pfMatchRegionOne = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, newLocationEnd, fragmentDCStatus);
-                        pfMatchRegionOne.setSplitGroup(splitGroup);
-                        pfMatchRegionOne.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
-                        newMatchesFromFragment.add(pfMatchRegionOne);
-                        newLocationStart = fragment.getEnd() + 1;
-                        Utilities.verboseLog(localVerboseLevel," New Match for Region One  :" + pfMatchRegionOne.toString());
-                        if (twoAtualRegions) {
-                            //deal with final region
-                            fragmentDCStatus = DCStatus.N_TERMINAL_DISC;
-                            Utilities.verboseLog(localVerboseLevel,"The Last new Region: " + newLocationStart + "-" + finalLocationEnd);
-                            PfamHmmer3RawMatch pfMatchRegionTwo = getTempPfamHmmer3RawMatch(pfamHmmer3RawMatch, newLocationStart, finalLocationEnd, fragmentDCStatus);
-                            pfMatchRegionTwo.setSplitGroup(splitGroup);
-                            pfMatchRegionTwo.setLocFragmentDCStatus(fragmentDCStatus.getSymbol());
-                            newMatchesFromFragment.add(pfMatchRegionTwo);
-                            Utilities.verboseLog(localVerboseLevel," New Match for Region Two :" + pfMatchRegionTwo.toString());
-                        }
+                UUID splitGroup = UUID.randomUUID();
+
+                for (Hmmer3Match.Hmmer3Location.Hmmer3LocationFragment fragment : fragments) {
+                    if (fragment.getStart() > start &&  fragment.getEnd() < match.getLocationEnd()) {
+                        DCStatus status = tmpMatches.isEmpty() ? DCStatus.C_TERMINAL_DISC : DCStatus.NC_TERMINAL_DISC;
+                        PfamHmmer3RawMatch tmpMatch = createNewMatch(match, start, fragment.getStart() - 1, status);
+                        tmpMatch.setSplitGroup(splitGroup);
+                        tmpMatches.add(tmpMatch);
+                        start = fragment.getEnd() + 1;
                     }
-                    rawDiscontinuousMatches = newMatchesFromFragment;
+                }
+
+                if (tmpMatches.isEmpty()) {
+                    tmpMatches.add(match);
+                } else {
+                    PfamHmmer3RawMatch tmpMatch = createNewMatch(match, start, match.getLocationEnd(), DCStatus.N_TERMINAL_DISC);
+                    tmpMatch.setSplitGroup(splitGroup);
+                    tmpMatches.add(tmpMatch);
+                }
+
+                for (PfamHmmer3RawMatch tmpMatch: tmpMatches) {
+                    filteredProtein.addMatch(tmpMatch);
                 }
             } else {
-                filteredRawProtein.addMatch(pfamHmmer3RawMatch);
+                filteredProtein.addMatch(match);
             }
         }
 
-        return filteredRawProtein;
+        return filteredProtein;
     }
 
     /**
@@ -317,16 +161,11 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return true if the two domain matches overlap.
      */
     boolean matchesOverlap(PfamHmmer3RawMatch one, PfamHmmer3RawMatch two) {
-        return Math.max(one.getLocationStart(),two.getLocationStart()) <= Math.min(one.getLocationEnd(),two.getLocationEnd());
-//        return !
-//                ((one.getLocationStart() > two.getLocationEnd()) ||
-//                        (two.getLocationStart() > one.getLocationEnd()));
+        return regionsOverlap(one.getLocationStart(), one.getLocationEnd(), two.getLocationStart(), two.getLocationEnd());
     }
 
     boolean regionsOverlap(int startRegionOne, int endRegionOne, int startRegionTwo, int endRegionTwo) {
-        boolean regionsOverlap = false;
-        return Math.max(startRegionOne,startRegionTwo) <= Math.min(endRegionOne,endRegionTwo);
-
+        return Math.max(startRegionOne, startRegionTwo) <= Math.min(endRegionOne,endRegionTwo);
     }
 
     /**
@@ -337,22 +176,21 @@ public class PfamHMMER3PostProcessing implements Serializable {
      * @return true if the two domain matches are nested.
      */
     boolean matchesAreNested(PfamHmmer3RawMatch one, PfamHmmer3RawMatch two) {
-        PfamModel oneModel = clanData.getModelByModelAccession(one.getModelId());
-        PfamModel twoModel = clanData.getModelByModelAccession(two.getModelId());
+        Set<String> nestedInOne = nestedModels.get(one.getModelId());
+        Set<String> nestedInTwo = nestedModels.get(two.getModelId());
 
-        // is one location fully enclosed in the other?
-        boolean nestedLocation = false;
-        if ( (one.getLocationStart() <= two.getLocationStart() && one.getLocationEnd() >= two.getLocationEnd() ) ||
-             (two.getLocationStart() <= one.getLocationStart() && two.getLocationEnd() >= one.getLocationEnd() ) ) {
-            nestedLocation = true;
-        }
-
-        return !(oneModel == null || twoModel == null) && nestedLocation &&
-                (oneModel.isNestedIn(twoModel, null) || twoModel.isNestedIn(oneModel, null));
-
+        return ((nestedInOne != null &&nestedInOne.contains(two.getModelId()))
+                || (nestedInTwo != null && nestedInTwo.contains(one.getModelId())));
     }
 
-    private PfamHmmer3RawMatch getTempPfamHmmer3RawMatch(PfamHmmer3RawMatch rawMatch, int start, int end, DCStatus dcStatus) {
+    boolean matchesAreEnclosed(PfamHmmer3RawMatch one, PfamHmmer3RawMatch two) {
+        return ((one.getLocationStart() <= two.getLocationStart()
+                && one.getLocationEnd() >= two.getLocationEnd())
+                || (two.getLocationStart() <= one.getLocationStart()
+                && two.getLocationEnd() >= one.getLocationEnd()));
+    }
+
+    private PfamHmmer3RawMatch createNewMatch(PfamHmmer3RawMatch rawMatch, int start, int end, DCStatus dcStatus) {
         final PfamHmmer3RawMatch match = new PfamHmmer3RawMatch(
                 rawMatch.getSequenceIdentifier(),
                 rawMatch.getModelId(),
@@ -375,128 +213,53 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 rawMatch.getDomainBias()
         );
         match.setLocFragmentDCStatus(dcStatus.getSymbol());
-
         return match;
     }
 
-
-    public Map<String, Set<String>> getPfamHmmData() throws IOException {
-        LOGGER.debug("Starting to parse hmm data file.");
-        Utilities.verboseLog(1100, "Starting to parse hmm data file -- " + pfamHmmDataPath);
-        Map<String, String> domainNameToAccesstion = new HashMap<>();
-        Map<String, Set<String>> pfamHmmData = new HashMap<>();
+    public Map<String, Set<String>> getNestedModels() throws IOException {
+        Map<String, String> nameToAccession = new HashMap<>();
+        Map<String, Set<String>> modelToNested = new HashMap<>();
         BufferedReader reader = null;
+
+        /*
+        # STOCKHOLM 1.0
+        #=GF ID   ZZ
+        #=GF AC   PF00569.23
+        #=GF DE   Zinc finger, ZZ type
+        #=GF GA   21.4; 21.4;
+        #=GF TP   Domain
+        #=GF ML   45
+        #=GF CL   CL0229
+        //
+         */
+
         try {
-            String accession = null, identifier = null, name = null, clan = null, description = null;
+            String accession = null, name = null;
             Set<String> nestedDomains = new HashSet<>();
-            Integer length = null;
-            StringBuffer modelBuf = new StringBuffer();
-            //reader = new BufferedReader(new InputStreamReader(new FileInputStream(domTblOutputFileName)));
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(pfamHmmDataPath)));
-            int lineNumber = 0;
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(pfamDatPath)));
             String line;
-            //
-//            # STOCKHOLM 1.0
-//            #=GF ID   7tm_1
-//            #=GF AC   PF00001.20
-//            #=GF DE   7 transmembrane receptor (rhodopsin family)
-//            #=GF GA   23.80; 23.80;
-//            #=GF TP   Family
-//            #=GF ML   268
-//            #=GF NE   HTH_Tnp_Tc3_2
-//            #=GF NE   DDE_Tnp_4
-//            #=GF CL   CL0192
-
-
-            String[] gfLineCases = {"#=GF ID", "#=GF AC", "#=GF NE", "#=GF CL", "//"};
 
             while ((line = reader.readLine()) != null) {
-                if (lineNumber++ % 10000 == 0) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Parsed " + lineNumber + " lines of the HMM file.");
-                        LOGGER.debug("Parsed " + " domething here ????" + " signatures.");
-                    }
-                    Utilities.verboseLog(1100, "Parsed " + lineNumber + " lines .. at line :" + line);
-                }
-
                 line = line.trim();
-                // Load the model line by line into a temporary buffer.
-                // TODO - won't break anything, but needs some work.  Need to grab the hmm file header first!
-                modelBuf.append(line);
-                modelBuf.append('\n');
-                // Speed things up a LOT - there are lots of lines we are not
-                // interested in parsing, so just check the first char of each line
 
-                if (line.length() > 0) {
-                    int i;
-                    for (i = 0; i < gfLineCases.length; i++) {
-                        if (line.startsWith(gfLineCases[i])) {
-                            break;
+                if (!line.isEmpty()) {
+                    if (line.startsWith("#=GF ID")) {
+                        name = line.split("\\s+")[2];
+                    } else if (line.startsWith("#=GF AC")) {
+                        // Pfam accession has the version, e.g. PF00569.23
+                        accession = line.split("\\s+")[2].split("\\.")[0];
+                    } else if (line.startsWith("#=GF NE")) {
+                        String nestedDomain = line.split("\\s+")[2];
+                        nestedDomains.add(nestedDomain);
+                    } else if (line.startsWith("//")) {
+                        if (accession != null) {
+                            nameToAccession.put(name, accession);
+                            modelToNested.put(accession, nestedDomains);
                         }
-                    }
-
-                    if (line.split("\\s+").length >= 3) {
-                        String value = line.split("\\s+")[2];
-
-//                        Utilities.verboseLog(1100, "accession: " + accession + " id:" +  name + " nestedDomains: "
-//                                + nestedDomains +  " case: " + i + " lineL " + line);
-
-                        switch (i) {
-                            case 0: //"#=GF ID"
-                                if (name == null) {
-                                    name = value;
-                                }
-                                break;
-                            case 1: //""#=GF AC"
-                                if (accession == null) {
-                                    accession = value.split("[ .]")[0];
-                                }
-                                break;
-                            case 2: //"#=GF NE"
-                                String domainName = value;
-                                nestedDomains.add(domainName);
-                                break;
-                            case 3: //"#=GF CL"
-                                if (clan == null) {
-                                    clan = value;
-                                }
-                                break;
-                            case 4: //"//"
-                                //we shouldnt get here
-                                // Looks like an end of record marker - just to check:
-                                if (accession != null) {
-                                    domainNameToAccesstion.put(name, accession);
-                                    pfamHmmData.put(accession, nestedDomains);
-
-                                }
-                                accession = null;
-                                name = null;
-                                description = null;
-                                length = null;
-                                nestedDomains = new HashSet<>();
-                                if (accession.contains("PF01193")) {
-                                    Utilities.verboseLog(1100, "accession (PF01193): " + accession + " ne domains : " + nestedDomains);
-                                }
-                                break;
-                        }
-                    } else {
-                        //this is a special line like end of record marker
-                        if (line.startsWith("//")) {
-                            // Looks like an end of record marker - just to check:
-                            if (accession != null) {
-                                domainNameToAccesstion.put(name, accession);
-                                pfamHmmData.put(accession, nestedDomains);
-                                if (accession.contains("PF01193")) {
-                                    Utilities.verboseLog(1100, "accession (PF01193): " + accession + " ne domains : " + nestedDomains);
-                                }
-                            }
-                            accession = null;
-                            name = null;
-                            description = null;
-                            length = null;
-                            nestedDomains = new HashSet<>();
-                        }
-                    }
+                        accession = null;
+                        name = null;
+                        nestedDomains = new HashSet<>();
+                    };
                 }
             }
         } finally {
@@ -504,20 +267,16 @@ public class PfamHMMER3PostProcessing implements Serializable {
                 reader.close();
             }
         }
-        Utilities.verboseLog(1100, "pfamHmmData #: " + pfamHmmData.keySet().size());
-        Map<String, Set<String>> altPfamHmmData = new HashMap<>();
-        Iterator it = pfamHmmData.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            String accession = (String) pair.getKey();
-            Set<String> domainAccessions = new HashSet<>();
-            Set<String> nestedDomains = (Set<String>) pair.getValue();
-            for (String domainName : nestedDomains) {
-                String acc = domainNameToAccesstion.get(domainName);
-                domainAccessions.add(acc);
+        Map<String, Set<String>> pfamData = new HashMap<>();
+        for (String accession: modelToNested.keySet()) {
+            Set<String> nestedDomainNames = modelToNested.get(accession);
+            Set<String> nestedDomainAccessions = new HashSet<>();
+            for (String nestedDomainName: nestedDomainNames) {
+                String nestedDomainAccession = nameToAccession.get(nestedDomainName);
+                nestedDomainAccessions.add(nestedDomainAccession);
             }
-            altPfamHmmData.put(accession, domainAccessions);
+            pfamData.put(accession, nestedDomainAccessions);
         }
-        return altPfamHmmData;
+        return pfamData;
     }
 }
