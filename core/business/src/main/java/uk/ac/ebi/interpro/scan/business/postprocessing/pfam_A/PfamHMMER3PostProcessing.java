@@ -166,10 +166,6 @@ public class PfamHMMER3PostProcessing implements Serializable {
         Utilities.verboseLog(localVerboseLevel,"unfilteredByEvalue count: " + unfilteredByEvalue.size());
         Utilities.verboseLog(localVerboseLevel,"unfilteredByEvalue: " + unfilteredByEvalue);
         for (final RawMatch rawMatch : unfilteredByEvalue) {
-            if ((rawMatch.getLocationEnd() - rawMatch.getLocationStart() + 1) < this.getMinMatchLength()) {
-                continue;
-            }
-
             final PfamHmmer3RawMatch candidateMatch = (PfamHmmer3RawMatch) rawMatch;
             Utilities.verboseLog(localVerboseLevel,"consider match - candidateMatch: " + candidateMatch);
             if (!seedMatches.contains(candidateMatch)) {
@@ -301,7 +297,14 @@ public class PfamHMMER3PostProcessing implements Serializable {
                     }
                     rawDiscontinuousMatches = newMatchesFromFragment;
                 }
-            } else {
+                //now add the processed discontinuous matches for further post processing or filtering into actual matches
+                for (PfamHmmer3RawMatch rawDiscontinuousMatch: rawDiscontinuousMatches) {
+                    int matchLength = rawDiscontinuousMatch.getLocationEnd() - rawDiscontinuousMatch.getLocationStart() + 1;
+                    if (matchLength >= this.getMinMatchLength()) {
+                        filteredRawProtein.addMatch(rawDiscontinuousMatch);
+                    }
+                }
+            } else if ((pfamHmmer3RawMatch.getLocationEnd() - pfamHmmer3RawMatch.getLocationStart() + 1) >= this.getMinMatchLength()) {
                 filteredRawProtein.addMatch(pfamHmmer3RawMatch);
             }
         }
