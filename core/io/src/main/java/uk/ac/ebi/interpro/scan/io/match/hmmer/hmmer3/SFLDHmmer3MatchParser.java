@@ -140,7 +140,8 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
     public MatchSiteData parseMatchesAndSites(InputStream is) throws IOException {
 
         Map<String, RawProtein<SFLDHmmer3RawMatch>> rawProteinMap = new HashMap<>();
-        Map<String, RawProtein<SFLDHmmer3RawMatch>> filtertedRawProteinMap = new HashMap<>();
+        Map<String, RawProtein<SFLDHmmer3RawMatch>> filteredRawProteinMap = new HashMap<>();
+        Set<SFLDHmmer3RawMatch> resolvedOverlappingMatches = new HashSet<>();
         MatchData matchData = parseFileInput(is);
         Set<SFLDHmmer3RawMatch> rawMatches = matchData.getMatches();
 
@@ -150,6 +151,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 
         for (SFLDHmmer3RawMatch rawMatch : rawMatches) {
             String sequenceId = rawMatch.getSequenceIdentifier();
+            Utilities.verboseLog(1100, "GOT MATCH: " + rawMatch );
             if (rawProteinMap.containsKey(sequenceId)) {
                 RawProtein<SFLDHmmer3RawMatch> rawProtein = rawProteinMap.get(sequenceId);
                 rawProtein.addMatch(rawMatch);
@@ -159,8 +161,6 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 rawProteinMap.put(sequenceId, rawProtein);
             }
         }
-
-        int promotedTentativeCount = 0;
         //deal with overlaps
         Set<String> seqIds = rawProteinMap.keySet();
         int nonOverlapCount = 0;
@@ -173,11 +173,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             } else {
                 //continue;
                 int originalProteinRawMatchesCount = proteinRawMatches.size();
-                Set<SFLDHmmer3RawMatch> resolvedOverlappingMatches = resolveOverlappingMatches(proteinRawMatches, hierarchyInformation);
-                //rawProtein.setMatches(resolvedOverlappingMatches);
-                promotedTentativeCount = resolvedOverlappingMatches.size() - proteinRawMatches.size();
-//                Utilities.verboseLog(1100, "Match count: " + promotedTentativeCount + " resolvedOverlappingMatches: " + resolvedOverlappingMatches.size() +
-//                        " proteinRawMatches : " + originalProteinRawMatchesCount);
+                resolvedOverlappingMatches = resolveOverlappingMatches(proteinRawMatches, hierarchyInformation);
                 rawProtein.setMatches(resolvedOverlappingMatches);
                 nonOverlapCount += resolvedOverlappingMatches.size();
 
@@ -195,78 +191,70 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             idxCount++;
             RawProtein<SFLDHmmer3RawMatch> originalRawProtein = rawProteinMap.get(key);
             RawProtein<SFLDHmmer3RawMatch> filteredRawProtein = new RawProtein<>(key);
-            Set<SFLDHmmer3RawMatch> initialRawMatches = (HashSet<SFLDHmmer3RawMatch>) originalRawProtein.getMatches();
+            Set<SFLDHmmer3RawMatch> filteredMatchesForSequence = (HashSet<SFLDHmmer3RawMatch>) originalRawProtein.getMatches();
 
-            //check for overlaps and remove
-            int originalMatchCount = initialRawMatches.size();
+            int originalMatchCount = filteredMatchesForSequence.size();
             totalOriginalMatchCount += originalMatchCount;
-            int promotedRawMatchesCount = 0;
-            // start problematic code
-            if (initialRawMatches == null) {
-                LOGGER.error("initialRawMatches == null!! ");
-            }
-            Utilities.verboseLog(15, "idxCount : " + idxCount + " of " + seqIdsCount + " with " + originalMatchCount + " raw matches originalMatchCount");
-            Set<SFLDHmmer3RawMatch> seqPromotedRawMatches = new HashSet<>();
-            for (SFLDHmmer3RawMatch rawMatch : initialRawMatches) {
-                Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
 
-                Set<SFLDHmmer3RawMatch> promotedRawMatches = null;
-                if (parents != null && parents.size() > 0) {
-                    promotedRawMatches = getPromotedRawMatches(rawMatch, parents);
-                    promotedRawMatchesCount = promotedRawMatches.size();
-                    totalPromotedRawMatchesCount += promotedRawMatchesCount;
-                    //Utilities.verboseLog( "promotedRawMatches count: " + promotedRawMatches.size());
-                    //filteredRawProtein.addAllMatches(promotedRawMatches);
-                    boolean promotedContainsMatch = false;
-                    boolean matchContainsPromted = false;
-                    SFLDHmmer3RawMatch matchToRemove = null;
-                    for (SFLDHmmer3RawMatch promotedMatch: promotedRawMatches){
-                        for (SFLDHmmer3RawMatch seqPromotedMatch: seqPromotedRawMatches){
-                           if (promotedMatch.getLocationStart() <= seqPromotedMatch.getLocationStart() &&
-                                   promotedMatch.getLocationEnd() >= seqPromotedMatch.getLocationEnd() ){
-                               promotedContainsMatch = true;
-                               matchToRemove = seqPromotedMatch;
-                           }else if (seqPromotedMatch.getLocationStart() <= promotedMatch.getLocationStart() &&
-                                   seqPromotedMatch.getLocationEnd() >= promotedMatch.getLocationEnd() ){
-                               matchContainsPromted = true;
-                               break;
-                               // no need to add the new promoted match
-                           }
+            Utilities.verboseLog(15, "idxCount : " + idxCount + " of " + seqIdsCount + " with " + originalMatchCount + " raw matches");
+
+            Set<SFLDHmmer3RawMatch> seqPromotedRawMatches = new HashSet<>();
+
+            for (SFLDHmmer3RawMatch rawMatch : filteredMatchesForSequence) {
+                Utilities.verboseLog(1100, "GOT filteredMatch: " + rawMatch);
+
+                Set<String> parents = hierarchyInformation.get(rawMatch.getModelId());
+                if (parents != null && !parents.isEmpty()) {
+                    Set<SFLDHmmer3RawMatch> promotedMatches = getPromotedRawMatches(rawMatch, parents);
+                    Utilities.verboseLog(15, "Got " + promotedMatches.size() + " promoted matches");
+
+                    for (SFLDHmmer3RawMatch promotedMatch : promotedMatches) {
+                        boolean overlapHandled = false;
+                        Iterator<SFLDHmmer3RawMatch> existingIter = seqPromotedRawMatches.iterator();
+                        while (existingIter.hasNext()) {
+                            SFLDHmmer3RawMatch existing = existingIter.next();
+                            // Remove existing if new promoted completely covers it
+                            if (promotedMatch.getLocationStart() <= existing.getLocationStart() &&
+                                promotedMatch.getLocationEnd() >= existing.getLocationEnd()) {
+                                existingIter.remove();
+                            // Skip adding promoted if existing already covers it
+                            } else if (existing.getLocationStart() <= promotedMatch.getLocationStart() &&
+                                       existing.getLocationEnd() >= promotedMatch.getLocationEnd()) {
+                                overlapHandled = true;
+                                break;
+                            }
                         }
-                        if (promotedContainsMatch){
-                            seqPromotedRawMatches.remove(matchToRemove);
-                        }
-                        if (matchContainsPromted){
-                            //do nothing
-                            continue;
-                        }else {
+                        if (!overlapHandled) {
                             seqPromotedRawMatches.add(promotedMatch);
                         }
                     }
 
-                    //Utilities.verboseLog(1100, "promotedRawMatches:" + promotedRawMatches);
+                    totalPromotedRawMatchesCount += promotedMatches.size();
                 }
-                matchCount = originalMatchCount + promotedRawMatchesCount;
             }
-            if (seqPromotedRawMatches.size() > 0){
-                //Utilities.verboseLog(25, "seqPromotedRawMatches:" + seqPromotedRawMatches);
-                Set<SFLDHmmer3RawMatch> duplicateFreeRawMatches = resolveDuplicateMatches(seqPromotedRawMatches);
-                //Utilities.verboseLog(25,"duplicateFreeRawMatches:" + duplicateFreeRawMatches);
-                filteredRawProtein.addAllMatches(duplicateFreeRawMatches);
 
-            }
-            filteredRawProtein.addAllMatches(initialRawMatches);
-            filtertedRawProteinMap.put(key, filteredRawProtein);
-            // end problematic code
+            // Deduplicate promoted matches
+            Set<SFLDHmmer3RawMatch> duplicateFreePromoted = resolveDuplicateMatches(seqPromotedRawMatches);
+            Utilities.verboseLog(25, "Deduplicated promoted matches: " + duplicateFreePromoted.size());
+
+            // Add promoted matches to filtered protein
+            filteredRawProtein.addAllMatches(duplicateFreePromoted);
+
+            // Also add the original resolved matches
+            filteredRawProtein.addAllMatches(resolvedOverlappingMatches);
+
+            filteredRawProteinMap.put(key, filteredRawProtein);
         }
+
         Utilities.verboseLog(1100, "Original Parsed match count: " + totalOriginalMatchCount);
         Utilities.verboseLog(1100, "Promotted match count: " + totalPromotedRawMatchesCount);
 
         Map<String, Set<SFLDHmmer3RawMatch>> rawMatchGroups = new HashMap<>();
-        for (RawProtein<SFLDHmmer3RawMatch> rawProtein: filtertedRawProteinMap.values()){
+        for (RawProtein<SFLDHmmer3RawMatch> rawProtein: filteredRawProteinMap.values()){
             String sequenceIdentifier = rawProtein.getProteinIdentifier();
             Collection <SFLDHmmer3RawMatch> filteredRawMatches =  rawProtein.getMatches();
             for (SFLDHmmer3RawMatch rawMatch : filteredRawMatches) {
+                Utilities.verboseLog(1100, "GOT MATCH: " + rawMatch );
                 String modelAc = rawMatch.getModelId();
                 String key = sequenceIdentifier + "_" + modelAc;
                 if (rawMatchGroups.keySet().contains(key)) {
@@ -340,7 +328,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
         //print the matches with sites
         Utilities.verboseLog(25,"Matches and sites --- ooo ---");
         if (Utilities.verboseLogLevel >= 25) {
-            for (RawProtein<SFLDHmmer3RawMatch> rawProtein : filtertedRawProteinMap.values()) {
+            for (RawProtein<SFLDHmmer3RawMatch> rawProtein : filteredRawProteinMap.values()) {
                 String sequenceIdentifier = rawProtein.getProteinIdentifier();
                 Collection<SFLDHmmer3RawMatch> allRawMatches = rawProtein.getMatches();
                 for (SFLDHmmer3RawMatch rawMatch : allRawMatches) {
@@ -353,7 +341,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                     for (RawProteinSite<SFLDHmmer3RawSite> rawProteinSite : rawProteinSiteMap.values()) {
                         if (rawProteinSite.getProteinIdentifier().equals(sequenceIdentifier)) {
                             Set<SFLDHmmer3RawSite> allRawSites = (HashSet<SFLDHmmer3RawSite>) rawProteinSite.getSites();
-                            for (SFLDHmmer3RawSite rawSite : rawSites) {
+                            for (SFLDHmmer3RawSite rawSite : allRawSites) {
                                 if (rawSite.getModelId().equals(rawMatch.getModelId())) {
                                     StringBuffer outSite = new StringBuffer("site: ")
                                             .append(rawSite.getSequenceIdentifier()).append(" ")
@@ -370,10 +358,11 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 }
             }
         }
-        return new MatchSiteData<>(new HashSet<>(filtertedRawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
+        return new MatchSiteData<>(new HashSet<>(filteredRawProteinMap.values()), new HashSet<>(rawProteinSiteMap.values()));
     }
 
     public Set<SFLDHmmer3RawMatch> resolveOverlappingMatches(Collection<SFLDHmmer3RawMatch> rawMatches, Map<String, Set<String>> hierarchyInformation) {
+        // Utilities.verboseLog(1100, "Starting resolveOverlappingMatches");
         Set<SFLDHmmer3RawMatch> filtered = new HashSet<>();
         Set<SFLDHmmer3RawMatch> ignored = new HashSet<>();
         List<SFLDHmmer3RawMatch> matches = new ArrayList<>(rawMatches);
@@ -403,11 +392,12 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                 ignored.add(match);
             }
         }
-
+        // Utilities.verboseLog(1100, "resolveOverlappingMatches result: " + filtered);
         return filtered;
     }
 
     public Set<SFLDHmmer3RawMatch> resolveDuplicateMatches(Set<SFLDHmmer3RawMatch> rawMatches) {
+        // Utilities.verboseLog(1100, "Starting resolveDuplicateMatches");
         Map<String, List<SFLDHmmer3RawMatch>> grouped = new HashMap<>();
         for (SFLDHmmer3RawMatch match : rawMatches) {
             grouped.computeIfAbsent(match.getModelId(), k -> new ArrayList<>()).add(match);
@@ -430,7 +420,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
             }
             result.addAll(nonNested);
         }
-
+        // Utilities.verboseLog(1100, "resolveDuplicateMatches result: " + result);
         return result;
     }
 
@@ -491,21 +481,16 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
 //        }
 //        return matchGroups;
 //    }
-
     private Set<SFLDHmmer3RawMatch> getPromotedRawMatches(SFLDHmmer3RawMatch rawMatch, Set<String> parents) {
-        Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet<>();
-        if (parents == null || parents.isEmpty()) {
-            return promotedRawMatches;
-        }
-
-        for (String parentModelId : parents) {
-            if (!parentModelId.equals(rawMatch.getModelId())) {
-                SFLDHmmer3RawMatch promoted = rawMatch.getNewRawMatch(parentModelId);
-                if (promoted != null) {
-                    promotedRawMatches.add(promoted);
-                }
+        Set<SFLDHmmer3RawMatch> promotedRawMatches = new HashSet();
+        String childModelId = rawMatch.getModelId();
+        // Utilities.verboseLog(1100, "Promoted match for " + childModelId + " with parents: " + parents);
+        for (String modelAc : parents) {
+            if (!childModelId.equals(modelAc)) {
+                promotedRawMatches.add(rawMatch.getNewRawMatch(modelAc));
             }
         }
+        // Utilities.verboseLog(1100, "getPromotedRawMatches result: " + promotedRawMatches);
         return promotedRawMatches;
     }
 
