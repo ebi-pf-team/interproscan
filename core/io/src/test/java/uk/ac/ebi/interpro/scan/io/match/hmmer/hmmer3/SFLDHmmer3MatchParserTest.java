@@ -79,12 +79,12 @@ public class SFLDHmmer3MatchParserTest {
             assertTrue(rawMatches.size() > 0);
             assertNotNull(modelId);
         }
-        assertEquals(9, matchCount);
+        assertEquals(18, matchCount);
 
         // Check sites for raw proteins
         Set<RawProteinSite> rawProteinSites = result.getRawProteinSites();
         assertNotNull(rawProteinSites);
-        assertEquals(0, rawProteinSites.size());
+        assertEquals(2, rawProteinSites.size());
         for (RawProteinSite rawProteinSite : rawProteinSites) {
             Collection<SFLDHmmer3RawSite> s = rawProteinSite.getSites();
             assertNotNull(s);
