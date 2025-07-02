@@ -221,27 +221,7 @@ public class SFLDHmmer3MatchParser<T extends RawMatch> implements MatchAndSitePa
                     boolean matchContainsPromted = false;
                     SFLDHmmer3RawMatch matchToRemove = null;
                     for (SFLDHmmer3RawMatch promotedMatch: promotedRawMatches){
-                        for (SFLDHmmer3RawMatch seqPromotedMatch: seqPromotedRawMatches){
-                           if (promotedMatch.getLocationStart() <= seqPromotedMatch.getLocationStart() &&
-                                   promotedMatch.getLocationEnd() >= seqPromotedMatch.getLocationEnd() ){
-                               promotedContainsMatch = true;
-                               matchToRemove = seqPromotedMatch;
-                           }else if (seqPromotedMatch.getLocationStart() <= promotedMatch.getLocationStart() &&
-                                   seqPromotedMatch.getLocationEnd() >= promotedMatch.getLocationEnd() ){
-                               matchContainsPromted = true;
-                               break;
-                               // no need to add the new promoted match
-                           }
-                        }
-                        if (promotedContainsMatch){
-                            seqPromotedRawMatches.remove(matchToRemove);
-                        }
-                        if (matchContainsPromted){
-                            //do nothing
-                            continue;
-                        }else {
-                            seqPromotedRawMatches.add(promotedMatch);
-                        }
+                        seqPromotedRawMatches.add(promotedMatch);
                     }
 
                     Utilities.verboseLog(1100, "promotedRawMatches:" + promotedRawMatches);
