@@ -77,7 +77,22 @@ public class DomainMatch implements Serializable {
         this.envFrom = Integer.parseInt(domainLineMatcher.group(11));
         this.envTo = Integer.parseInt(domainLineMatcher.group(12));
         this.acc = Double.parseDouble(domainLineMatcher.group(13));
+    }
 
+    public DomainMatch(double score, double bias, double cEvalue, double iEvalue, int hmmFrom, int hmmTo,
+                       String hmmBounds, int aliFrom, int aliTo, int envFrom, int envTo, double acc) {
+        this.score = score;
+        this.bias = bias;
+        this.cEvalue = cEvalue;
+        this.iEvalue = iEvalue;
+        this.hmmfrom = hmmFrom;
+        this.hmmto = hmmTo;
+        this.hmmBounds = hmmBounds;
+        this.aliFrom = aliFrom;
+        this.aliTo = aliTo;
+        this.envFrom = envFrom;
+        this.envTo = envTo;
+        this.acc = acc;
     }
 
     public DomainMatch(SequenceDomainMatch sequenceDomainMatch) {
@@ -94,8 +109,6 @@ public class DomainMatch implements Serializable {
         this.envTo = sequenceDomainMatch.getEnvTo();
         this.acc = sequenceDomainMatch.getAcc();
     }
-
-
 
     public String getAlignment() {
         return alignment;
