@@ -74,8 +74,11 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch implements Comparable<Pfa
         result = Integer.compare(thatLength, thisLength);
         if (result != 0) return result;
 
-        // Compare model accession (ascending)
-        result = this.getModelId().compareTo(that.getModelId());
+        // Compare start and end positions (ascending)
+        result = Integer.compare(this.getLocationStart(), that.getLocationStart());
+        if (result != 0) return result;
+
+        result = Integer.compare(this.getLocationEnd(), that.getLocationEnd());
         if (result != 0) return result;
 
         // Final fallback to ensure consistency with equals

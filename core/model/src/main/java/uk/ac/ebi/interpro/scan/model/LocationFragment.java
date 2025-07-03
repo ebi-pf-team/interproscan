@@ -470,13 +470,9 @@ public abstract class LocationFragment implements Serializable, Cloneable, Compa
             return 0;
         }
         final LocationFragment h = (LocationFragment) o;
-        if (this.start < h.start) {
-            return -10;
-        }
-        if (this.start > h.start) {
-            return 10;
-        }
-        return -1;
+        int cmp = Integer.compare(this.start, h.start);
+        if (cmp != 0) return cmp;
+        return Integer.compare(this.end, h.end);
     }
 
     @Override

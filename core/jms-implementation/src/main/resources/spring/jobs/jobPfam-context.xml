@@ -67,9 +67,6 @@
           parent="abstractPfamStep">
         <property name="dependsUpon" ref="stepPfamRunHmmer3"/>
         <property name="stepDescription" value="Parse the output from HMMER3"/>
-
-        <!-- TODO - Apparently not being used for anything ... ?  Need to test. -->
-        <!--<property name="fullPathToHmmFile" value="${Pfam-A.hmm.path}"/>-->
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.Hmmer3SearchMatchParser">
                 <property name="parserSupport">
@@ -109,13 +106,7 @@
         <property name="stepDescription" value="Performs post processing on Pfam data (Hmmer 3 based)"/>
         <property name="postProcessor">
             <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.PfamHMMER3PostProcessing">
-                <property name="clanFileParser">
-                    <bean class="uk.ac.ebi.interpro.scan.business.postprocessing.pfam_A.ClanFileParser">
-                        <property name="pfamASeedFile" value="${pfam-a.seed.path}"/>
-                        <property name="pfamCFile" value="${pfam-clans.path}"/>
-                    </bean>
-                </property>
-                <property name="pfamHmmDataPath" value="${pfam-a.dat.path}"/>
+                <property name="pfamDatPath" value="${pfam-a.dat.path}"/>
                 <property name="minMatchLength" value="${pfam.min.length}"/>
             </bean>
         </property>
