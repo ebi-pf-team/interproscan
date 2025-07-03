@@ -10,7 +10,6 @@
     <bean id="jobSFLD" class="uk.ac.ebi.interpro.scan.management.model.Job">
         <property name="description" value="SFLD is a database of protein families based on hidden Markov models (HMMs)."/>
         <property name="analysis" value="true"/>
-        <!--<property name="doRunLocally" value="true"/>-->
         <property name="libraryRelease" ref="signatureLibraryReleaseSFLD"/>
     </bean>
 
@@ -19,32 +18,20 @@
         <property name="maxProteins" value="${analysis.max.sequence.count.SFLD}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
         <property name="retries" value="0"/>
-        <!--<property name="doRunLocally" value="true"/>-->
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP 1 -->
     <bean id="stepSFLDWriteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractSFLDStep">
-        <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-
-    <!--TODO - The run binary step for HMMER should choose between search or scan, depending
-        TODO - upon the number of proteins being searched.  True for both HMMER2 & 3.
-        TODO - PROBLEM - HMMER2 hmmsearch ONLY ACCEPTS ONE MODEL AT A TIME. -->
-
-    <!-- STEP 2 -->
     <bean id="stepSFLDRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractSFLDStep">
-        <!-- In example command line below, replace _ with -
-        
-        /ebi/production/interpro/binaries/64_bit_Linux/HMMER3.1b1/hmmsearch -Z 4023 _-cut_tc  /ebi/production/interpro/data/members/SFLD/15.0/SFLDs_15.0_HMM.LIB  -->
         <property name="dependsUpon" ref="stepSFLDWriteFastaFile"/>
         <property name="stepDescription" value="Run hmmer3 Binary for selected proteins"/>
         <property name="forceHmmsearch" value="${sfld.hmmsearch.force}"/>
@@ -53,10 +40,8 @@
         <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.sfld} ${hmmer3.hmmsearch.cpu.switch.sfld}"/>
         <property name="fullPathToHmmFile" value="${sfld.hmm.path}"/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
-
         <property name="useTbloutFormat" value="false"/>
         <property name="useDomTbloutFormat" value="true"/>
         <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
@@ -66,7 +51,6 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP 3 -->
     <bean id="stepSFLDPostProcessorBinaryRun"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.sfld.RunSFLDBinaryStep"
           parent="abstractSFLDStep">
@@ -74,7 +58,6 @@
         <property name="stepDescription" value="Run sfld postprocessing binary for selected proteins"/>
         <property name="requiresDatabaseAccess" value="false"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-
         <property name="fullPathToBinary" value="${sfld.postprocess.command}"/>
         <property name="usesFileOutputSwitch" value="true" />
         <property name="inputFileNameRawOutTemplate" ref="rawAnalysisOutputFileTemplate"/>
@@ -83,19 +66,16 @@
         <property name="sitesAnnotationFileName" value="${sfld.sites.annotation.file.path}"/>
     </bean>
 
-
     <bean id="stepSFLDStoreRawMatches"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3ParseStep"
           parent="abstractSFLDStep">
         <property name="dependsUpon" ref="stepSFLDPostProcessorBinaryRun"/>
         <property name="stepDescription" value="Parse the SFLD binary output and store as Filtered matches."/>
         <property name="serialGroup" value="PARSE_SFLD"/>
-        
         <property name="parser">
             <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3MatchParser">
                 <constructor-arg type="uk.ac.ebi.interpro.scan.model.SignatureLibrary" value="SFLD"/>
                 <constructor-arg type="java.lang.String" ref="sfldSignatureLibraryReleaseVersion"/>
-
                 <property name="parserSupport">
                     <bean class="uk.ac.ebi.interpro.scan.io.match.hmmer.hmmer3.SFLDHmmer3ParserSupport">
                         <property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>
@@ -116,16 +96,18 @@
           parent="abstractSFLDStep">
         <property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>
         <property name="stepDescription"
-                  value="Delete the fasta file and the raw output file following successful parsing and persistence"/>
+                  value="Delete the fasta file and the raw output files following successful parsing and persistence"/>
         <property name="fileNameTemplate">
             <list>
                 <ref bean="fastaFileNameTemplate"/>
                 <ref bean="rawAnalysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputDomTbloutFileTemplate"/>
+                <ref bean="rawAnalysisOutputAlignmentsFileTemplate"/>
+                <ref bean="rawAnalysisOutputOneFileTemplate"/>
             </list>
         </property>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
-
 
     <bean id="stepSFLDPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"
@@ -145,24 +127,6 @@
         <property name="rawMatchDAO" ref="sfldRawMatchDAO"/>
         <property name="rawSiteDAO" ref="sfldRawSiteDAO"/>
     </bean>
-
-    <!--&lt;!&ndash; TODO - Check for changes - presumably now using different objects to store the results? &ndash;&gt;-->
-    <!--<bean id="stepSFLDPostProcessing"-->
-          <!--class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer3.SFLDHmmer3FilterStep"-->
-          <!--parent="abstractSFLDStep">-->
-        <!--<property name="dependsUpon" ref="stepSFLDStoreRawMatches"/>-->
-        <!--<property name="signatureLibraryRelease" ref="sfldSignatureLibraryReleaseVersion"/>-->
-        <!--<property name="stepDescription" value="Stores raw matches as filtered matches."/>-->
-        <!--<property name="filteredMatchDAO">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.persistence.SFLDHmmer3FilteredMatchDAOImpl"/>-->
-        <!--</property>-->
-        <!--<property name="serialGroup" value="HMMER3_POST_PROCESSING"/>-->
-        <!--<property name="rawMatchDAO" ref="sfldRawMatchDAO"/>-->
-        <!--<property name="signatureLibrary" value="SFLD"/>-->
-        <!--<property name="filter">-->
-            <!--<bean class="uk.ac.ebi.interpro.scan.business.filter.AllPassRawMatchFilter"/>-->
-        <!--</property>-->
-    <!--</bean>-->
 
     <!-- !!!!!!!!!!!!!!!!!!!!! JOB-END: SFLD !!!!!!!!!!!!!!!!!!!!!!!!!!!!  -->
 
