@@ -144,6 +144,11 @@ public class DummyProteinDAOImpl implements uk.ac.ebi.interpro.scan.persistence.
     }
 
     @Override
+    public int getProteinsNotInLookupCount() throws Exception{
+        return 0;
+    }
+
+    @Override
     public List<Protein> getProteins() throws Exception{
         return null;
     }
