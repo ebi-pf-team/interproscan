@@ -195,12 +195,12 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
         }
 
         // testing only, can be removed
-        try {
-            int notInLookupCount = proteinDAO.getProteinsNotInLookupCount();
-            Utilities.verboseLog(110, "Proteins not in lookup: " + notInLookupCount);
-        } catch (Exception e) {
-            LOGGER.warn("Failed to fetch count of proteinsNotInLookup", e);
-        }
+	//try {
+        //    int notInLookupCount = proteinDAO.getProteinsNotInLookupCount();
+        //    Utilities.verboseLog(110, "Proteins not in lookup: " + notInLookupCount);
+        //} catch (Exception e) {
+        //    LOGGER.warn("Failed to fetch count of proteinsNotInLookup", e);
+        //}
 
         if (proteinRanges.get("bottom") == 1L) {
             Utilities.printMemoryUsage("End of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
