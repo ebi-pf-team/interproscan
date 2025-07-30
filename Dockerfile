@@ -9,7 +9,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     apt-get update -y && \
     apt-get install -y wget python3.8 openjdk-11-jre-headless libpcre2-dev libgomp1 perl-doc libc6-i386 && \
-    ln -s /usr/bin/python3.8 /usr/bin/python3 && ln -s /usr/bin/python3.8 /usr/bin/python
+    ln -s /usr/bin/python3.8 /usr/bin/python3 && ln -s /usr/bin/python3.8 /usr/bin/python && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt
 
@@ -28,4 +29,4 @@ RUN echo "binary.phobius.pl.path=/opt/interproscan/licensed/phobius/phobius.pl" 
     echo "binary.tmhmm.path=/opt/interproscan/licensed/tmhmm/decodeanhmm.Linux_x86_64" >> interproscan.properties && \
     echo "tmhmm.model.path=/opt/interproscan/licensed/tmhmm/TMHMM2.0.model" >> interproscan.properties
 
-ENTRYPOINT ["bash", "./interproscan.sh"]
+ENTRYPOINT ["bash", "/opt/interproscan/interproscan.sh"]
