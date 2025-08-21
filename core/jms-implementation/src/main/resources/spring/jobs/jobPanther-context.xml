@@ -43,18 +43,15 @@
         <property name="nfsDelayMilliseconds" value="${nfs.delay.milliseconds}"/>
     </bean>
 
-    <!-- STEP 1: Write FASTA file -->
     <bean id="stepPantherWriteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
           parent="abstractPantherStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create FASTA file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <!--<property name="serialGroup"        value="WRITE_FASTA_FILE"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
-    <!-- STEP 2 -->
     <bean id="stepPantherRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
           parent="abstractPantherStep">
@@ -70,13 +67,10 @@
         <property name="usesFileOutputSwitch" value="true"/>
         <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
         <property name="useTbloutFormat" value="false"/>
-        <property name="useDomTbloutFormat" value="true"/>
-        <property name="outputFileNameDomTbloutTemplate" ref="rawAnalysisOutputDomTbloutFileTemplate"/>
+        <property name="useDomTbloutFormat" value="false"/>
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-
-    <!-- STEP 2: Run Panther binary -->
     <bean id="stepPantherRunBinary"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.RunPantherTreeGrafterStep"
           parent="abstractPantherStep">
@@ -100,15 +94,6 @@
         <property name="serialGroup" value="PANTHER_BINARY"/>
     </bean>
 
-    <bean id="stepPantherDeleteFastaFile"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep" parent="abstractPantherStep">
-        <property name="dependsUpon" ref="stepPantherRunBinary"/>
-        <property name="stepDescription" value="Delete the FASTA file following successful run"/>
-        <property name="fileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
-    </bean>
-
-    <!-- STEP 3: Parse and persist raw results -->
     <bean id="stepPantherParseOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherParseStep"
           parent="abstractPantherStep">
@@ -126,16 +111,20 @@
         <property name="retries" value="3"/>
     </bean>
 
-    <bean id="stepPantherDeleteRawOutput"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractPantherStep">
+    <bean id="stepPantherDeleteFastaFile"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep" parent="abstractPantherStep">
         <property name="dependsUpon" ref="stepPantherParseOutput"/>
-        <property name="stepDescription" value="Delete the analysis output file following successful parsing"/>
-        <property name="fileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
+        <property name="stepDescription" value="Delete the analysis temporary files"/>
+        <property name="fileNameTemplate">
+            <list>
+                <ref bean="fastaFileNameTemplate"/>
+                <ref bean="rawAnalysisOutputFileTemplate"/>
+                <ref bean="rawAnalysisOutputOneFileTemplate"/>
+            </list>
+        </property>
         <property name="deleteWorkingDirectoryOnCompletion" value="${delete.temporary.directory.on.completion}"/>
     </bean>
 
-    <!-- STEP 4: Filter and persist filtered results -->
     <bean id="stepPantherPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.panther.PantherPostProcessingStep"
           parent="abstractPantherStep">
