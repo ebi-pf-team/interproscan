@@ -113,33 +113,33 @@ def parsehmmsearch(hmmer_out):
                         logger.debug(domain_info)
                         quit()
 
-                    domain_id = domain_info[0]
-
                     if not domain_info[1] == '!':
                         print('this is a weak match')
                     else:
+                        domain_id = domain_info[0]
                         print('process this domain hit: ' + str(domain_id))
 
-                    print(domain_info)
-                    #domain_hit = {}
-                    domain_hits[query_id][hmm_id][domain_id] = {}
-                    print(domain_hits[query_id][hmm_id][domain_id])
-                    domain_hits[query_id][hmm_id][domain_id]['score'] = domain_info[2]
-                    domain_hits[query_id][hmm_id][domain_id]['bias'] = domain_info[3]
-                    domain_hits[query_id][hmm_id][domain_id]['cEvalue'] = domain_info[4]
-                    domain_hits[query_id][hmm_id][domain_id]['iEvalue'] = domain_info[5]
-                    domain_hits[query_id][hmm_id][domain_id]['hmmstart'] = domain_info[6]
-                    domain_hits[query_id][hmm_id][domain_id]['hmmend'] = domain_info[7]
-                    domain_hits[query_id][hmm_id][domain_id]['alifrom'] = domain_info[9]
-                    domain_hits[query_id][hmm_id][domain_id]['alito'] = domain_info[10]
-                    domain_hits[query_id][hmm_id][domain_id]['envfrom'] = domain_info[12]
-                    domain_hits[query_id][hmm_id][domain_id]['envto'] = domain_info[13]
-                    domain_hits[query_id][hmm_id][domain_id]['acc'] = domain_info[15]
-                    domain_hits[query_id][hmm_id][domain_id]['hmmalign'] = ''
-                    domain_hits[query_id][hmm_id][domain_id]['matchalign'] = ''
-                    if domain_hits[query_id][hmm_id][domain_id]:
-                        print("Print the hits for this domain: " + str(domain_id))
+                        print(domain_info)
+                        #domain_hit = {}
+                        domain_hits[query_id][hmm_id][domain_id] = {}
                         print(domain_hits[query_id][hmm_id][domain_id])
+                        domain_hits[query_id][hmm_id][domain_id]['score'] = domain_info[2]
+                        domain_hits[query_id][hmm_id][domain_id]['bias'] = domain_info[3]
+                        domain_hits[query_id][hmm_id][domain_id]['cEvalue'] = domain_info[4]
+                        domain_hits[query_id][hmm_id][domain_id]['iEvalue'] = domain_info[5]
+                        domain_hits[query_id][hmm_id][domain_id]['hmmstart'] = domain_info[6]
+                        domain_hits[query_id][hmm_id][domain_id]['hmmend'] = domain_info[7]
+                        domain_hits[query_id][hmm_id][domain_id]['alifrom'] = domain_info[9]
+                        domain_hits[query_id][hmm_id][domain_id]['alito'] = domain_info[10]
+                        domain_hits[query_id][hmm_id][domain_id]['envfrom'] = domain_info[12]
+                        domain_hits[query_id][hmm_id][domain_id]['envto'] = domain_info[13]
+                        domain_hits[query_id][hmm_id][domain_id]['acc'] = domain_info[15]
+                        domain_hits[query_id][hmm_id][domain_id]['hmmalign'] = ''
+                        domain_hits[query_id][hmm_id][domain_id]['matchalign'] = ''
+
+                        if domain_hits[query_id][hmm_id][domain_id]:
+                            print("Print the hits for this domain: " + str(domain_id))
+                            print(domain_hits[query_id][hmm_id][domain_id])
                     # print(json.dumps(match_store[query_id], indent=4))
 
                     line = fp.readline()
@@ -181,21 +181,21 @@ def parsehmmsearch(hmmer_out):
                             if line.strip().startswith(hmm_id):
                                 #print("the alignme spans more than two lines ")
                                 store_alignment = False
-                                dummy = 1
                                 exit_condition = 0
                             elif line.strip().startswith('=='):
                                 print('process different domain ...')
                                 store_alignment = True
                                 if not domain_hit_id in domain_hits[query_id][hmm_id]:
-                                    print("1. ERRO with " + str(domain_hit_id))
+                                   store_alignment = False
+                                   print("1. ERRO with " + str(domain_hit_id))
                                 same_domain = False
                                 m = re_matcher(line)
                                 exit_condition = 1
                             elif line.strip().startswith('>>'):
                                 store_alignment = True
                                 if not domain_hit_id in  domain_hits[query_id][hmm_id]:
+                                    store_alignment = False
                                     print("2. ERRO with " + str(domain_hit_id))
-                                    #print(domain_hit_id)
                                 m = re_matcher(line)
                                 same_domain = False
                                 process_align = False
@@ -203,13 +203,15 @@ def parsehmmsearch(hmmer_out):
                             else:
                                 store_alignment = True
                                 if not domain_hit_id in domain_hits[query_id][hmm_id]:
+                                    store_alignment = False
                                     print("3. ERRO with " + str(domain_hit_id))
                                 exit_condition = 3
                         else:
+                            store_alignment = True
                             if not domain_hit_id in domain_hits[query_id][hmm_id]:
+                                store_alignment = False
                                 print("4. ERRO with " + str(domain_hit_id))
                                 #print(domain_hit_id)
-                            store_alignment = True
                             same_domain = False
                             process_align = False
                             exit_condition = 4
