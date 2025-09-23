@@ -25,11 +25,11 @@
 //
 # STOCKHOLM 1.0
 #=GF ID   12TM_1
-#=GF AC   PF09847.16
+#=GF AC   PF09847.17
 #=GF DE   Membrane protein of 12 TMs
-#=GF GA   33.2; 33.2;
+#=GF GA   29; 29;
 #=GF TP   Family
-#=GF ML   448
+#=GF ML   474
 #=GF CL   CL0181
 //
 # STOCKHOLM 1.0
