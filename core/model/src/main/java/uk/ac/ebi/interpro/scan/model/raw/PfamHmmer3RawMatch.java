@@ -59,13 +59,29 @@ public class PfamHmmer3RawMatch extends Hmmer3RawMatch implements Comparable<Pfa
     @Override
     public int compareTo(PfamHmmer3RawMatch that) {
         if (this == that) return 0;
-        if (this.getDomainIeValue() < that.getDomainIeValue()) return -1;     // First, sort by ievalue ASC
-        if (this.getDomainIeValue() > that.getDomainIeValue()) return 1;
-        if (this.getScore() > that.getScore()) return -1;                     // then by score ASC
-        if (this.getScore() < that.getScore()) return 1;
-        if (this.hashCode() > that.hashCode())
-            return -1;                     // then by hashcode to be consistent with equals.
-        if (this.hashCode() < that.hashCode()) return 1;
-        return 0;
+
+        // Compare ievalue (ascending)
+        int result = Double.compare(this.getDomainIeValue(), that.getDomainIeValue());
+        if (result != 0) return result;
+
+        // Compare score (descending)
+        result = Double.compare(that.getLocationScore(), this.getLocationScore());
+        if (result != 0) return result;
+
+        // Compare length (descending)
+        int thisLength = this.getLocationEnd() - this.getLocationStart();
+        int thatLength = that.getLocationEnd() - that.getLocationStart();
+        result = Integer.compare(thatLength, thisLength);
+        if (result != 0) return result;
+
+        // Compare start and end positions (ascending)
+        result = Integer.compare(this.getLocationStart(), that.getLocationStart());
+        if (result != 0) return result;
+
+        result = Integer.compare(this.getLocationEnd(), that.getLocationEnd());
+        if (result != 0) return result;
+
+        // Final fallback to ensure consistency with equals
+        return Integer.compare(this.hashCode(), that.hashCode());
     }
 }
