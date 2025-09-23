@@ -26,7 +26,7 @@ import uk.ac.ebi.interpro.scan.model.Protein;
 import uk.ac.ebi.interpro.scan.model.ProteinXref;
 
 import org.iq80.leveldb.DB;
-
+import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.WriteBatch;
 import org.iq80.leveldb.DBException;
 import uk.ac.ebi.interpro.scan.persistence.kvstore.KVDB;
@@ -185,6 +185,20 @@ public class ProteinDAOImpl extends GenericKVDAOImpl<Protein> implements Protein
             proteins.add(protein);
         }
         return proteins;
+    }
+
+    @Transactional(readOnly = true)
+    public int getProteinsNotInLookupCount() throws Exception {
+        int count = 0;
+        try (DBIterator iterator = proteinsNotInLookupDB.getLevelDBStore().iterator()) {
+            while (iterator.hasNext()) {
+                iterator.next();
+                count++;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error while counting proteins not in lookup", e);
+        }
+        return count;
     }
 
     @Transactional(readOnly = true)

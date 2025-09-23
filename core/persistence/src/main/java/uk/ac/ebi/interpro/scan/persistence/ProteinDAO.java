@@ -64,6 +64,9 @@ public interface ProteinDAO extends GenericKVDAO<Protein> {
     List<Protein> getProteinsNotInLookup() throws Exception;
 
     @Transactional(readOnly = true)
+    int getProteinsNotInLookupCount() throws Exception;
+
+    @Transactional(readOnly = true)
     List<Protein> getProteins(long bottom, long top);
 
     @Transactional(readOnly = true)
