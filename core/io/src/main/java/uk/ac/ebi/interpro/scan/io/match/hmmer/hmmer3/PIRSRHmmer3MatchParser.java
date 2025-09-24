@@ -370,7 +370,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                                         "",
                                         ""
                                 );
-                        rawMatches.add(pirsrHmmer3RawMatch);
+                        // rawMatches.add(pirsrHmmer3RawMatch);
                         List<RuleSite> ruleSites = simpleDomainMatch.getRuleSites();
                         String seqAlignment = simpleDomainMatch.getSeqAlign();
                         String hmmAlign = simpleDomainMatch.getHmmAlign();
@@ -385,6 +385,7 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                         Utilities.verboseLog(50,  "hmmAlignmentPositionMap: " + simpleDomainMatch.getHmmFrom() + " - " + simpleDomainMatch.getHmmTo());
                         Map<Integer, Integer> hmmAlignmentPositionMap = getPositionMap(hmmAlign, simpleDomainMatch.getHmmFrom());
 
+                        int site_count = 0;
                         for (RuleSite ruleSite : ruleSites) {
                             Utilities.verboseLog(50,  "Consider --> " + ruleSite.toString());
                             int residueStart = 0;
@@ -457,11 +458,16 @@ public class PIRSRHmmer3MatchParser<T extends RawMatch> implements MatchAndSiteP
                             );
                             if (siteInMatchLocation(pirsrHmmer3RawSite, pirsrHmmer3RawMatch)) {
                                 rawSites.add(pirsrHmmer3RawSite);
+                                site_count++;
                             } else {
                                 LOGGER.warn("Site not in Location" + pirsrHmmer3RawSite.toString() + " \n"
                                         + pirsrHmmer3RawMatch.toString());
                             }
                             Utilities.verboseLog(50,  "pirsrHmmer3RawSite:" + pirsrHmmer3RawSite.toString());
+                        }
+                        // only add match if we have sites
+                        if (site_count > 0) {
+                            rawMatches.add(pirsrHmmer3RawMatch);
                         }
                     }
 

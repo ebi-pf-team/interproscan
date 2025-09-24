@@ -68,8 +68,8 @@ def process_row(row, rule):
             condition = pos['condition']
 
             condition = re.sub('-', '', condition)
-            condition = re.sub('\(', '{', condition)
-            condition = re.sub('\)', '}', condition)
+            condition = re.sub(r'\(', '{', condition)
+            condition = re.sub(r'\)', '}', condition)
             condition = re.sub('x', '.', condition)
 
             query_seq = re.sub('-', '', seq_align)
@@ -82,7 +82,7 @@ def process_row(row, rule):
                 print(str('hmmfrom: ' +str(hmm_from) + ', hmmStart: ' + str(pos['hmmStart'])) +', hmmEnd: ' + str(pos['hmmEnd']) + ', len map:' + str(len(map)) );
                 target_seq = ''
 
-            if re.search('\A' + condition + '\Z', target_seq):
+            if re.search(r'\A' + condition + r'\Z', target_seq):
                 # we have a pass
                 pass_count += 1
 
