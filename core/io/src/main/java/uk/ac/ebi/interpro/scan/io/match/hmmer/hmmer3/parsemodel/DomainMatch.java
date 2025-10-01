@@ -83,6 +83,7 @@ public class DomainMatch implements Serializable {
 
     public DomainMatch(double score, double bias, double cEvalue, double iEvalue, int hmmFrom, int hmmTo,
                        String hmmBounds, int aliFrom, int aliTo, int envFrom, int envTo, double acc) {
+        this.significant = true;
         this.score = score;
         this.bias = bias;
         this.cEvalue = cEvalue;
