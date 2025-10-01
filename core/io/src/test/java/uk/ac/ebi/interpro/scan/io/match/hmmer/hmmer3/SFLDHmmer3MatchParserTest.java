@@ -44,7 +44,7 @@ public class SFLDHmmer3MatchParserTest {
     @Resource
     private SFLDHmmer3MatchParser<SFLDHmmer3RawMatch> sfldParser;
 
-    private static final String SFLD_HIERARCHY_FILE_PATH = "data/sfld/sfld_hierarchy_flat.txt";
+    private static final String SFLD_HIERARCHY_FILE_PATH = "data/sfld/sfld_hierarchy.tsv";
 
     @Resource
     private org.springframework.core.io.Resource sfldFile;
@@ -79,7 +79,7 @@ public class SFLDHmmer3MatchParserTest {
             assertTrue(rawMatches.size() > 0);
             assertNotNull(modelId);
         }
-        assertEquals(16, matchCount);
+        assertEquals(18, matchCount);
 
         // Check sites for raw proteins
         Set<RawProteinSite> rawProteinSites = result.getRawProteinSites();
