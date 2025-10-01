@@ -30,7 +30,7 @@ public class Hmmer3BerkeleyMatchConverter extends BerkeleyMatchConverter<Hmmer3M
 
         final String sln = match.getSignatureLibraryName();
         boolean postProcessed = false;
-        if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM")) {
+        if (sln.equalsIgnoreCase("GENE3D") || sln.equalsIgnoreCase("PFAM") || sln.equalsIgnoreCase("PIRSF")) {
             postProcessed = true;
         }
 

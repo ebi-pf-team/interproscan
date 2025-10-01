@@ -1,6 +1,6 @@
 package uk.ac.ebi.interpro.scan.persistence;
 
-import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
+import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer3RawMatch;
 
 /**
  * PIRSF (Hmmer 2) filtered match DAO.
@@ -10,6 +10,6 @@ import uk.ac.ebi.interpro.scan.model.raw.PIRSFHmmer2RawMatch;
  * @since 1.0-SNAPSHOT
  */
 
-public class PirsfHmmer2FilteredMatchDAOImpl extends Hmmer2FilteredMatchDAO<PIRSFHmmer2RawMatch> {
+public class PIRSFHmmer3FilteredMatchDAOImpl extends Hmmer3FilteredMatchDAO<PIRSFHmmer3RawMatch> {
 
 }
