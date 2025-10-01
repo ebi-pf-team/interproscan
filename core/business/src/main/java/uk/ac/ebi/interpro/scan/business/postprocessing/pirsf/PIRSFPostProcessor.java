@@ -58,9 +58,9 @@ public class PIRSFPostProcessor implements Serializable {
         // Group matches by model
         Map<String, List<PIRSFHmmer3RawMatch>> models = new HashMap<>();
         for (PIRSFHmmer3RawMatch match : rawProtein.getMatches()) {
-            System.out.printf("post-processor\tprocessing\t%s\t%s\t%d-%d\t%s\n",
-                    rawProtein.getProteinIdentifier(), match.getModelId(),
-                    match.getLocationStart(), match.getLocationEnd(), match.isSignificant() ? "yes" : "no");
+            // System.out.printf("post-processor\tprocessing\t%s\t%s\t%d-%d\t%s\n",
+            //         rawProtein.getProteinIdentifier(), match.getModelId(),
+            //         match.getLocationStart(), match.getLocationEnd(), match.isSignificant() ? "yes" : "no");
             if (!match.isSignificant())
                 continue;
             else if (!models.containsKey(match.getModelId())) {
@@ -98,7 +98,7 @@ public class PIRSFPostProcessor implements Serializable {
             }
 
             if (aliStart == Integer.MAX_VALUE) {
-                System.out.printf("post-processor\tskipped\t%s\t%s\talistart max\n", rawProtein.getProteinIdentifier(), modelId);
+                // System.out.printf("post-processor\tskipped\t%s\t%s\talistart max\n", rawProtein.getProteinIdentifier(), modelId);
                 continue;
             }
 
@@ -128,15 +128,15 @@ public class PIRSFPostProcessor implements Serializable {
                 ok = true;
             }
 
-            System.out.printf("post-processor\tfamily\t%s\t%s\t%d-%d (%d-%d)\tl=%d\tr=%f, ovl=%f, %f>=%f, %f, %f\t%s\n",
-                    rawProtein.getProteinIdentifier(), match.getModelId(),
-                    match.getLocationStart(), match.getLocationEnd(),
-                    match.getHmmStart(), match.getHmmEnd(),
-                    match.getSequenceLength(),
-                    r, ovl, match.getScore(), datRecord.getMinScore(),
-                    ld, datRecord.getStdDevSeqLen(),
-                    ok ? "yes" : "no"
-            );
+            // System.out.printf("post-processor\tfamily\t%s\t%s\t%d-%d (%d-%d)\tl=%d\tr=%f, ovl=%f, %f>=%f, %f, %f\t%s\n",
+            //         rawProtein.getProteinIdentifier(), match.getModelId(),
+            //         match.getLocationStart(), match.getLocationEnd(),
+            //         match.getHmmStart(), match.getHmmEnd(),
+            //         match.getSequenceLength(),
+            //         r, ovl, match.getScore(), datRecord.getMinScore(),
+            //         ld, datRecord.getStdDevSeqLen(),
+            //         ok ? "yes" : "no"
+            // );
         }
 
         // Select best family match
@@ -145,8 +145,8 @@ public class PIRSFPostProcessor implements Serializable {
             if (familyMatch == null || match.getScore() > familyMatch.getScore()) {
                 familyMatch = match;
             } else {
-                System.out.printf("post-processor\tskipped\t%s\t%s\tlower score\t%f < %f\n",
-                        rawProtein.getProteinIdentifier(), match.getModelId(), match.getScore(), familyMatch.getScore());
+                // System.out.printf("post-processor\tskipped\t%s\t%s\tlower score\t%f < %f\n",
+                //         rawProtein.getProteinIdentifier(), match.getModelId(), match.getScore(), familyMatch.getScore());
             }
         }
 
@@ -158,8 +158,8 @@ public class PIRSFPostProcessor implements Serializable {
 
             if (familyMatch != null && !familyMatch.getModelId().equals(parent)) {
                 // Only accept matches from subfamilies that belong to the best family
-                System.out.printf("post-processor\tskipped\t%s\t%s\tnot in family\t%s\n",
-                        rawProtein.getProteinIdentifier(), match.getModelId(), familyMatch.getModelId());
+                // System.out.printf("post-processor\tskipped\t%s\t%s\tnot in family\t%s\n",
+                //         rawProtein.getProteinIdentifier(), match.getModelId(), familyMatch.getModelId());
                 continue;
             }
 
@@ -173,20 +173,20 @@ public class PIRSFPostProcessor implements Serializable {
 
             if (parentMatch == null) {
                 // Ignore matches from subfamilies whose parent family doesn't match the sequence
-                System.out.printf("post-processor\tskipped\t%s\t%s\tparent without hit\t%s\n",
-                        rawProtein.getProteinIdentifier(), match.getModelId(), parent);
+                // System.out.printf("post-processor\tskipped\t%s\t%s\tparent without hit\t%s\n",
+                //         rawProtein.getProteinIdentifier(), match.getModelId(), parent);
                 continue;
             }
 
             double r = (double) (match.getHmmEnd() - match.getHmmStart() + 1) / (match.getLocationEnd() - match.getLocationStart() + 1);
 
-            System.out.printf("post-processor\tsubfamily\t%s\t%s\t%d-%d (%d-%d)\tl=%d\tr=%f, %f>=%f\n",
-                    rawProtein.getProteinIdentifier(), match.getModelId(),
-                    match.getLocationStart(), match.getLocationEnd(),
-                    match.getHmmStart(), match.getHmmEnd(),
-                    match.getSequenceLength(),
-                    r, match.getScore(), datRecord.getMinScore()
-            );
+            // System.out.printf("post-processor\tsubfamily\t%s\t%s\t%d-%d (%d-%d)\tl=%d\tr=%f, %f>=%f\n",
+            //         rawProtein.getProteinIdentifier(), match.getModelId(),
+            //         match.getLocationStart(), match.getLocationEnd(),
+            //         match.getHmmStart(), match.getHmmEnd(),
+            //         match.getSequenceLength(),
+            //         r, match.getScore(), datRecord.getMinScore()
+            // );
 
             if (r > MIN_LENGTH_RATIO && match.getScore() >= datRecord.getMinScore()) {
                 filteredMatches.add(match);
@@ -199,8 +199,8 @@ public class PIRSFPostProcessor implements Serializable {
             if (subfamilyMatch == null || match.getScore() > subfamilyMatch.getScore()) {
                 subfamilyMatch = match;
             } else {
-                System.out.printf("post-processor\tskipped\t%s\t%s\tlower score\t%f < %f\n",
-                        rawProtein.getProteinIdentifier(), match.getModelId(), match.getScore(), subfamilyMatch.getScore());
+                // System.out.printf("post-processor\tskipped\t%s\t%s\tlower score\t%f < %f\n",
+                //         rawProtein.getProteinIdentifier(), match.getModelId(), match.getScore(), subfamilyMatch.getScore());
             }
         }
 
@@ -218,15 +218,15 @@ public class PIRSFPostProcessor implements Serializable {
         RawProtein<PIRSFHmmer3RawMatch> filteredProtein = new RawProtein<PIRSFHmmer3RawMatch>(rawProtein.getProteinIdentifier());
 
         if (familyMatch != null) {
-            System.out.printf("post-processor\tsaved\t%s\t%s\n", rawProtein.getProteinIdentifier(), familyMatch.getModelId());
+            // System.out.printf("post-processor\tsaved\t%s\t%s\n", rawProtein.getProteinIdentifier(), familyMatch.getModelId());
             filteredProtein.addMatch(familyMatch);
 
             if (subfamilyMatch != null) {
-                System.out.printf("post-processor\tsaved\t%s\t%s\n", rawProtein.getProteinIdentifier(), subfamilyMatch.getModelId());
+                // System.out.printf("post-processor\tsaved\t%s\t%s\n", rawProtein.getProteinIdentifier(), subfamilyMatch.getModelId());
                 filteredProtein.addMatch(subfamilyMatch);
             }
         } else {
-            System.out.printf("post-processor\tunannotated\t%s\n", rawProtein.getProteinIdentifier());
+            // System.out.printf("post-processor\tunannotated\t%s\n", rawProtein.getProteinIdentifier());
         }
 
         return filteredProtein;
