@@ -53,7 +53,7 @@ public class SiteLocation implements Serializable, Cloneable {
     // 'end' is reserved word in SQL.
     private int end;
 
-    @Column(name = "residue", nullable = false)
+    @Column(name = "residue", nullable = false, length = 4000)
     private String residue;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
