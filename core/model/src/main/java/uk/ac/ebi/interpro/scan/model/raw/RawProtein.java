@@ -52,7 +52,7 @@ public final class RawProtein<T extends RawMatch> implements Serializable {
     }
 
     public void setMatches(Set<T> matches) {
-        //this.matches.clear();
+        this.matches.clear();
         this.addAllMatches(matches);
     }
 
