@@ -22,9 +22,6 @@ import java.util.Set;
 @Table(name = "mobidb_match")
 @XmlType(name = "MobiDBMatchType")
 public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
-
-
-
     protected MobiDBMatch() {
     }
 
@@ -85,6 +82,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
             final MobiDBLocation f = (MobiDBLocation) o;
             return new EqualsBuilder()
                     .appendSuper(super.equals(o))
+                    .append(getSequenceFeature(), f.getSequenceFeature())
                     .isEquals();
         }
 
@@ -92,6 +90,7 @@ public class MobiDBMatch extends Match<MobiDBMatch.MobiDBLocation> {
         public int hashCode() {
             return new HashCodeBuilder(43, 79)
                     .appendSuper(super.hashCode())
+                    .append(getSequenceFeature())
                     .toHashCode();
         }
 
