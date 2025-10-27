@@ -392,6 +392,7 @@ public class MatchHttpClient {
         return response;
     }
 
+
     public String getServerVersion() throws IOException {
 
         LOG.debug("Call to MatchHttpClient.getServerVersion:");
@@ -401,68 +402,91 @@ public class MatchHttpClient {
         }
 
         String serverVersion = "";
-        /**
-         * for testing the lookup only
 
-        String serverVersion = "5.33-72.0"; //TODO this is for TEM and testing only as the server with the correct versionis not yet ready;
+        int maxRetries = 3;
+        int attempt = 0;
 
-        if (! url.isEmpty()){
-            return serverVersion;
-        }
-        */
+        while (attempt < maxRetries) {
+            attempt++;
+            CloseableHttpClient httpclient = null;
 
-        CloseableHttpClient httpclient = getClient();
+            try {
+                httpclient = getClient();
 
-        // Use HttpGet as the URL will be very short
-        HttpGet get = new HttpGet(url + VERSION_PATH);
-
-
-        ResponseHandler<String> handler = new ResponseHandler<String>() {
-            public String handleResponse(
-                    HttpResponse response) throws IOException {
-                String  serverVersion = "";
-                HttpEntity responseEntity = response.getEntity();
-                if (responseEntity != null) {
-
-                    // Stream in the response
-                    BufferedReader reader = null;
-                    try {
-                        reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
-                        String line;
-                        line = reader.readLine().trim();
-                        if (!line.isEmpty()) {
-                            serverVersion = line;
-                        }
-
-                    } finally {
-                        if (reader != null) {
-                            reader.close();
-                        }
-                    }
-
-                    if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
-                        serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
-                    } else {
-                        throw new IOException("Could not determine server version");
-                    }
+                //set the proxy if needed
+                if (isProxyEnabled()) {
+                    LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost + ":" + proxyPort);
+                    HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+                    httpclient = getClient(proxy);
                 }
-                return serverVersion;
-            }
-        };
 
-        //set the proxy if needed
-        if (isProxyEnabled()) {
-            LOG.debug("Using a Proxy server in getServerVersion: " + proxyHost + ":" + proxyPort);
-            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
-            httpclient = getClient(proxy);
+                // Use HttpGet as the URL will be very short
+                HttpGet get = new HttpGet(url + VERSION_PATH);
+
+                ResponseHandler<String> handler = new ResponseHandler<String>() {
+                    public String handleResponse(HttpResponse response) throws IOException {
+                        String serverVersion = "";
+                        HttpEntity responseEntity = response.getEntity();
+                        if (responseEntity != null) {
+
+                            BufferedReader reader = null;
+                            try {
+                                reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
+                                String line = reader.readLine();
+                                if (line != null) {
+                                    line = line.trim();
+                                    if (!line.isEmpty()) {
+                                        serverVersion = line;
+                                    }
+                                }
+
+                            } finally {
+                                if (reader != null) {
+                                    reader.close();
+                                }
+                            }
+
+                            if (serverVersion.startsWith(SERVER_VERSION_PREFIX)) {
+                                serverVersion = serverVersion.replace(SERVER_VERSION_PREFIX, "");
+                            } else {
+                                throw new IOException("Could not determine server version");
+                            }
+                        }
+                        return serverVersion;
+                    }
+                };
+
+                serverVersion = httpclient.execute(get, handler);
+                // Success, return immediately
+                return serverVersion;
+
+            } catch (IOException e) {
+                LOG.warn("Attempt " + attempt + " to get server version failed: " + e.getMessage());
+                if (attempt >= maxRetries) {
+                    // All retries failed, rethrow the last exception
+                    throw e;
+                }
+                try {
+                    // wait 100 ms before retry
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted while retrying getServerVersion", ie);
+                }
+            } finally {
+                if (httpclient != null) {
+                    try {
+                        // always close connection
+                        httpclient.close();
+                    } catch (IOException ignore) {}
+                }
+            }
         }
 
-        serverVersion = httpclient.execute(get, handler);
-        httpclient.close();
-        //httpclient.getConnectionManager().shutdown();
-        return serverVersion;
-
+        // Failure after retrying
+        throw new IOException("Failed to get server version after " + maxRetries + " attempts");
     }
+
 
     /**
      * Method to quickly indicate if the service is not configured.
