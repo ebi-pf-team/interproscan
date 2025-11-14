@@ -36,7 +36,7 @@ public class LevelDBStore extends KVDBImpl implements AutoCloseable {
         dbType = "leveldb";
         Options options = new Options();
         options.createIfMissing(true);
-        options.writeBufferSize(2 * 1024 * 1024); // reduce memory usage
+        options.writeBufferSize(8 * 1024 * 1024); // reduce memory usage
         options.blockSize(2 * 1024);              // smaller block size
         options.maxOpenFiles(100);                // limit open files
         options.compressionType(org.iq80.leveldb.CompressionType.SNAPPY);
