@@ -13,7 +13,7 @@
         <property name="libraryRelease" ref="signatureLibraryReleaseHAMAP"/>
     </bean>
 
-    <bean id="abstractHamapHMMStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
+    <bean id="abstractHamapStep" abstract="true" class="uk.ac.ebi.interpro.scan.management.model.Step">
         <property name="job" ref="jobHAMAP"/>
         <property name="maxProteins" value="${analysis.max.sequence.count.HAMAP}"/>
         <property name="createStepInstancesForNewProteins" value="true"/>
@@ -22,9 +22,9 @@
     </bean>
 
     <!-- STEP 1 -->
-    <bean id="stepHamapHMMWriteFastaFile"
+    <bean id="stepHamapWriteFastaFile"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.WriteFastaFileStep"
-          parent="abstractHamapHMMStep">
+          parent="abstractHamapStep">
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
@@ -33,11 +33,11 @@
     </bean>
 
     <!-- STEP 2 -->
-
+<!-- 
     <bean id="stepHamapHMMRunHmmer3"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
-          parent="abstractHamapHMMStep">
-        <property name="dependsUpon" ref="stepHamapHMMWriteFastaFile"/>
+          parent="abstractHamapStep">
+        <property name="dependsUpon" ref="stepHamapWriteFastaFile"/>
         <property name="stepDescription" value="Run HMMER3"/>
         <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
         <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
@@ -51,21 +51,21 @@
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="retries" value="3"/>
         <property name="requiresDatabaseAccess" value="false"/>
-    </bean>
+    </bean> -->
 
     <!-- STEP 3 -->
-    <bean id="stepHamapHMMRunPFSearch"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.RunHmmPfsearchStep"
-          parent="abstractHamapHMMStep">
-        <property name="dependsUpon" ref="stepHamapHMMRunHmmer3"/>
-        <property name="stepDescription" value="Run pfsearch for selected proteins"/>
+    <bean id="stepHamapRunPFSearch"
+          class="uk.ac.ebi.interpro.scan.management.model.implementations.hamap.RunPFSearchStep"
+          parent="abstractHamapStep">
+        <property name="dependsUpon" ref="stepHamapWriteFastaFile"/>
+        <property name="stepDescription" value="Run pfsearch for all proteins"/>
 
         <!--<property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>-->
         <!--<property name="fastaFileNameTemplate" ref="filteredFastaInputFileNameTemplate"/>-->
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="outputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-        <property name="outputFileNameTbloutTemplate" ref="rawAnalysisOutputTbloutFileTemplate"/>
-        <property name="fastaFileNameFilteredTemplate" ref="fastaFileNameFilteredTemplate"/>
+        <!-- <property name="outputFileNameTbloutTemplate" ref="rawAnalysisOutputTbloutFileTemplate"/> -->
+        <!-- <property name="fastaFileNameFilteredTemplate" ref="fastaFileNameFilteredTemplate"/> -->
         <property name="retries" value="3"/>
         <property name="fullPathToPFsearch" value="${binary.prosite.pfsearchv3.path}"/>
         <property name="binarySwitches" value="${pfsearchv3.hamap.binary.switches}"/>
@@ -77,14 +77,14 @@
 
     <!-- STEP 4 -->
 
-    <bean id="stepHamapHMMParsePfSearchRawOutput"
+    <bean id="stepHamapParsePfSearchRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParseHamapPfsearchOutputStep"
-          parent="abstractHamapHMMStep">
+          parent="abstractHamapStep">
         <property name="dependsUpon" >
             <list>
 <!--                <ref bean="stepHamapRunPFScan"/>-->
 <!--                <ref bean="stepHamapHMMRunWithFilterPFScan"/>-->
-                <ref bean="stepHamapHMMRunPFSearch"/>
+                <ref bean="stepHamapRunPFSearch"/>
             </list>
         </property>
         <property name="stepDescription" value="Parse the output from the ProSite binary"/>
@@ -104,15 +104,15 @@
 
     <!-- STEP 5 -->
 
-    <bean id="stepHamapHMMDeleteJobFiles"
+    <bean id="stepHamapDeleteJobFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
-          parent="abstractHamapHMMStep">
+          parent="abstractHamapStep">
         <property name="dependsUpon" >
                 <list>
-                    <ref bean="stepHamapHMMParsePfSearchRawOutput"/>
+                    <ref bean="stepHamapParsePfSearchRawOutput"/>
 <!--                    <ref bean="stepHamapRunPFScan"/>-->
 <!--                    <ref bean="stepHamapHMMRunWithFilterPFScan"/>-->
-                    <ref bean="stepHamapHMMPostProcessing"/>
+                    <ref bean="stepHamapPostProcessing"/>
                 </list>
         </property>
         <property name="stepDescription" value="Delete the filtered fasta file following successful run of PFSearch and ParseHamapPfsearchOutputStep"/>
@@ -131,11 +131,11 @@
 
     <!-- STEP 6 -->
 
-    <bean id="stepHamapHMMPostProcessing"
+    <bean id="stepHamapPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hamap.HamapHmmPostProcessingStep"
-          parent="abstractHamapHMMStep">
+          parent="abstractHamapStep">
 
-        <property name="dependsUpon" ref="stepHamapHMMParsePfSearchRawOutput"/>
+        <property name="dependsUpon" ref="stepHamapParsePfSearchRawOutput"/>
         <property name="serialGroup" value="PROFILE_SCAN_POST_PROCESSING"/>
         <property name="stepDescription" value="Filter HAMAP matches and persist filtered results"/>
         <property name="signatureLibraryRelease" ref="latestHamapSignatureLibraryRelease"/>
