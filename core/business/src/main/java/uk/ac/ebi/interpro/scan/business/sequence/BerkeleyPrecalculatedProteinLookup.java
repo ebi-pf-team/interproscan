@@ -127,120 +127,83 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
 
     @Override
     public void run() {
-
         String proteinRange = "[" + proteinRanges.get("bottom") + "-" + proteinRanges.get("top") + "]";
+        Utilities.verboseLog(1100, "LookupV2 Processing " + proteins.size() + " range: " + proteinRange);
 
-        Utilities.verboseLog(1100, "LookupV2 Processing  " + proteins.size() + " range: " + proteinRange);
         int count = 0;
         int batchCount = 0;
-        if (proteinRanges.get("bottom") == 1l) {
+        if (proteinRanges.get("bottom") == 1L) {
             Utilities.printMemoryUsage("Start of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
         }
 
         final Set<Protein> proteinsAwaitingPrecalcLookup = new HashSet<>();
-        final Set<Protein> precalculatedProteins = new HashSet<>();
         int proteinsCount = proteins.size();
 
-        int proteinNotInLookupCount = 0;
         //check the kv stores in proteinDAO
         proteinDAO.checkKVDBStores();
 
         int oldProgressMeter = 0;
         for (Protein protein : proteins) {
             count++;
-            if (proteinsAwaitingPrecalcLookup == null) {
-                Utilities.verboseLog(30, proteinRange + "proteinsAwaitingPrecalcLookup is null -- " + proteinsAwaitingPrecalcLookup);
-            }
             proteinsAwaitingPrecalcLookup.add(protein);
+
             if ((proteinsAwaitingPrecalcLookup.size() >= proteinPrecalcLookupBatchSize) || (count >= proteinsCount)) {
                 batchCount++;
                 Utilities.verboseLog(30, proteinRange + " lookup up protein batch no. " + batchCount);
+
+                // get precalculated proteins for current batch
                 final Set<Protein> localPrecalculatedProteins = getPrecalculated(proteinsAwaitingPrecalcLookup, analysisJobMap);
-                boolean printedProteinKeyRep = false;
-                if (localPrecalculatedProteins != null) {
+
+                if (localPrecalculatedProteins != null && !localPrecalculatedProteins.isEmpty()) {
                     Utilities.verboseLog(30, proteinRange + " We have precalculated proteins: " + localPrecalculatedProteins.size());
+
                     final Map<String, Protein> md5ToPrecalcProtein = new HashMap<>(localPrecalculatedProteins.size());
                     for (Protein precalc : localPrecalculatedProteins) {
                         md5ToPrecalcProtein.put(precalc.getMd5(), precalc);
                     }
 
-                    for (Protein proteinAwaitingPrecalcLookup : proteinsAwaitingPrecalcLookup) {
-                        if (md5ToPrecalcProtein.keySet().contains(proteinAwaitingPrecalcLookup.getMd5())) {
-                            precalculatedProteins.add(md5ToPrecalcProtein.get(proteinAwaitingPrecalcLookup.getMd5()));
-                        } else {
-                            //addProteinToBatch(proteinAwaitingPrecalcLookup);
-                            String proteinKey = String.valueOf(proteinAwaitingPrecalcLookup.getId());
-                            if (!printedProteinKeyRep) {
-                                Utilities.verboseLog(100, "md5ToPrecalcProtein does NOT contain proteinKey Rep: " + proteinKey);
-                                printedProteinKeyRep = true;
-                            }
-                            if (proteinDAO.getLevelDBStore() == null) {
-                                LOGGER.error("Something wrong witht the kv store: proteinsNotInLookupDB");
-                            }
-                            proteinDAO.insertProteinNotInLookup(proteinKey, proteinAwaitingPrecalcLookup);
+                    for (Protein proteinAwaiting : proteinsAwaitingPrecalcLookup) {
+                        if (!md5ToPrecalcProtein.containsKey(proteinAwaiting.getMd5())) {
+                            String proteinKey = String.valueOf(proteinAwaiting.getId());
+                            proteinDAO.insertProteinNotInLookup(proteinKey, proteinAwaiting);
                         }
                     }
+
+                    // cleanup
+                    md5ToPrecalcProtein.clear();
                 } else {
-                    //there are no matches or we are not using the lookup match service
                     Utilities.verboseLog(30, proteinRange + " There are NO matches for these proteins: " + proteinsAwaitingPrecalcLookup.size());
-                    for (Protein proteinAwaitingPrecalcLookup : proteinsAwaitingPrecalcLookup) {
-                        String proteinKey = String.valueOf(proteinAwaitingPrecalcLookup.getId());
-                        proteinDAO.insertProteinNotInLookup(proteinKey, proteinAwaitingPrecalcLookup);
-                        proteinNotInLookupCount++;
-                        //addProteinToBatch(proteinAwaitingPrecalcLookup);
+                    for (Protein p : proteinsAwaitingPrecalcLookup) {
+                        String proteinKey = String.valueOf(p.getId());
+                        proteinDAO.insertProteinNotInLookup(proteinKey, p);
                     }
                 }
-                precalculatedProteins.addAll(proteinsAwaitingPrecalcLookup);
 
-                // All dealt with, so clear.
+                // cleanup
                 proteinsAwaitingPrecalcLookup.clear();
-            }
-            int progressMeter = count * 100 / proteinsCount;
-            if (progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
-                if (proteinRanges.get("bottom") == 1l && progressMeter % 5 == 0) {
-                    if (proteinsCount >= 2000 && progressMeter % 25 == 0) {
+
+                // print memory usage every 25%
+                int progressMeter = count * 100 / proteinsCount;
+                if (progressMeter % 5 == 0 && progressMeter != oldProgressMeter) {
+                    if (proteinRanges.get("bottom") == 1L && progressMeter % 25 == 0) {
                         Utilities.verboseLog(30, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
+                        Utilities.printMemoryUsage("in lookup " + progressMeter + "% of " + proteinRange);
                     }
-                    if (progressMeter % 20 == 0) {
-                        Utilities.printMemoryUsage("in lookup " + progressMeter + " % of " + proteinRange);
-                    }
+                    oldProgressMeter = progressMeter;
                 }
-                if (progressMeter % 40 == 0) {
-                    Utilities.verboseLog(20, " LookupProgress " + proteinRange + " : " + progressMeter + "%");
-                } else {
-                    Utilities.verboseLog(50, "LookupProgress " + proteinRange + " : " + progressMeter + "%");
-                }
-                oldProgressMeter = progressMeter;
             }
-
         }
 
-        //add all the proteins not in the lookup to the concurrent set
-        //proteinsWithoutLookupHit.addAll(proteinsNotInLookup);
-        //TODO the following lines until end of the method is for testing only, afterwards remove
-        List<Protein> proteinsNotInLookup = null;
-        try {
-            proteinsNotInLookup = proteinDAO.getProteinsNotInLookup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // testing only, can be removed
+	//try {
+        //    int notInLookupCount = proteinDAO.getProteinsNotInLookupCount();
+        //    Utilities.verboseLog(110, "Proteins not in lookup: " + notInLookupCount);
+        //} catch (Exception e) {
+        //    LOGGER.warn("Failed to fetch count of proteinsNotInLookup", e);
+        //}
 
-
-        int proteinsNotInLookupCount = proteinsNotInLookup.size();
-        Utilities.verboseLog(110, "1. proteinsNotInLookupCount :  " + proteinsNotInLookupCount);
-
-
-        Utilities.verboseLog(110, "2. Precalculated Proteins " + proteinRange + "  size: " + precalculatedProteins.size());
-        Utilities.verboseLog(110, "2. Proteing not in LookUp Service (proteinDAO.proteinsNotInLookupCount) " + proteinRange + "  size: " + proteinsNotInLookupCount);
-
-        //Get all the proteins without a lookup hit
-
-
-        Utilities.verboseLog(110, " 2. total proteinsNotInLookup   " + proteinRange + " size: " + proteinsNotInLookup.size());
-        Utilities.verboseLog(110, "2. LookupV2 Processing range: " + proteinRange + " completed");
-
-        if (proteinRanges.get("bottom") == 1l) {
-            Utilities.printMemoryUsage("End of  of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
+        if (proteinRanges.get("bottom") == 1L) {
+            Utilities.printMemoryUsage("End of Match lookup Processing " + proteins.size() + " range: " + proteinRange);
         }
     }
 
