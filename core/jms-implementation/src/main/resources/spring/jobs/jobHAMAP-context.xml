@@ -28,44 +28,17 @@
         <!-- This step has no dependencies, so will be scheduled first for its associated job. -->
         <property name="stepDescription" value="Create fasta file."/>
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <!--<property name="serialGroup"                        value="WRITE_FASTA_FILE"/>-->
         <property name="proteinDAO" ref="proteinDAO"/>
     </bean>
 
     <!-- STEP 2 -->
-<!-- 
-    <bean id="stepHamapHMMRunHmmer3"
-          class="uk.ac.ebi.interpro.scan.management.model.implementations.hmmer.RunHmmerBinaryStep"
-          parent="abstractHamapStep">
-        <property name="dependsUpon" ref="stepHamapWriteFastaFile"/>
-        <property name="stepDescription" value="Run HMMER3"/>
-        <property name="fullPathToHmmsearchBinary" value="${binary.hmmer3.hmmsearch.path}"/>
-        <property name="fullPathToHmmScanBinary" value="${binary.hmmer3.hmmscan.path}"/>
-        <property name="singleSeqMode" value="false"/>
-        <property name="binarySwitches" value="${hmmer3.hmmsearch.switches.hmmfilter} ${hmmer3.hmmsearch.cpu.switch.hmmfilter}"/>
-        <property name="fullPathToHmmFile" value="${hamap.hmm.path}"/>
-        <property name="usesFileOutputSwitch" value="true"/>
-        <property name="useTbloutFormat" value="true"/>
-        <property name="outputFileNameTemplate" ref="rawAnalysisOutputFileTemplate"/>
-        <property name="outputFileNameTbloutTemplate" ref="rawAnalysisOutputTbloutFileTemplate"/>
-        <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
-        <property name="retries" value="3"/>
-        <property name="requiresDatabaseAccess" value="false"/>
-    </bean> -->
-
-    <!-- STEP 3 -->
     <bean id="stepHamapRunPFSearch"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hamap.RunPFSearchStep"
           parent="abstractHamapStep">
         <property name="dependsUpon" ref="stepHamapWriteFastaFile"/>
         <property name="stepDescription" value="Run pfsearch for all proteins"/>
-
-        <!--<property name="outputFileNameTemplate" ref="rawAnalysisOutputOneFileTemplate"/>-->
-        <!--<property name="fastaFileNameTemplate" ref="filteredFastaInputFileNameTemplate"/>-->
         <property name="fastaFileNameTemplate" ref="fastaFileNameTemplate"/>
         <property name="outputFileTemplate" ref="rawAnalysisOutputOneFileTemplate"/>
-        <!-- <property name="outputFileNameTbloutTemplate" ref="rawAnalysisOutputTbloutFileTemplate"/> -->
-        <!-- <property name="fastaFileNameFilteredTemplate" ref="fastaFileNameFilteredTemplate"/> -->
         <property name="retries" value="3"/>
         <property name="fullPathToPFsearch" value="${binary.prosite.pfsearchv3.path}"/>
         <property name="binarySwitches" value="${pfsearchv3.hamap.binary.switches}"/>
@@ -75,15 +48,12 @@
         <property name="requiresDatabaseAccess" value="false"/>
     </bean>
 
-    <!-- STEP 4 -->
-
+    <!-- STEP 3 -->
     <bean id="stepHamapParsePfSearchRawOutput"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.prosite.ParseHamapPfsearchOutputStep"
           parent="abstractHamapStep">
         <property name="dependsUpon" >
             <list>
-<!--                <ref bean="stepHamapRunPFScan"/>-->
-<!--                <ref bean="stepHamapHMMRunWithFilterPFScan"/>-->
                 <ref bean="stepHamapRunPFSearch"/>
             </list>
         </property>
@@ -102,16 +72,13 @@
         </property>
     </bean>
 
-    <!-- STEP 5 -->
-
+    <!-- STEP 4 -->
     <bean id="stepHamapDeleteJobFiles"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.DeleteFileStep"
           parent="abstractHamapStep">
         <property name="dependsUpon" >
                 <list>
                     <ref bean="stepHamapParsePfSearchRawOutput"/>
-<!--                    <ref bean="stepHamapRunPFScan"/>-->
-<!--                    <ref bean="stepHamapHMMRunWithFilterPFScan"/>-->
                     <ref bean="stepHamapPostProcessing"/>
                 </list>
         </property>
@@ -129,8 +96,7 @@
     </bean>
 
 
-    <!-- STEP 6 -->
-
+    <!-- STEP 5 -->
     <bean id="stepHamapPostProcessing"
           class="uk.ac.ebi.interpro.scan.management.model.implementations.hamap.HamapHmmPostProcessingStep"
           parent="abstractHamapStep">
