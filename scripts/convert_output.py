@@ -29,7 +29,12 @@ MATCH_TAG_MAP = {
     "PROSITE profiles": "profilescan-match",
     "SFLD": "hmmer3-match",
     "COILS": "coils-match",
-    "MobiDB-lite": "mobidblite-match"
+    "MobiDB-lite": "mobidblite-match",
+    "PHOBIUS": "phobius-match",
+    "TMHMM": "tmhmm-match",
+    "SIGNALP_EUK": "signalp-match",
+    "SIGNALP_GRAM_NEGATIVE": "signalp-match",
+    "SIGNALP_GRAM_POSITIVE": "signalp-match"
 }
 
 
