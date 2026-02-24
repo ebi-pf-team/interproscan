@@ -201,7 +201,6 @@ def convert_file_json(input_json, output_json):
         data = json.load(f)
 
     version = data.get("interproscan-version", '') + '-' + data.get("interpro-version", '')
-    print(version)
 
     new_data = {
         "interproscan-version": version,
