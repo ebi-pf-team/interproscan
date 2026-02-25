@@ -284,15 +284,15 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
             if (kvSequenceEntryXML != null) {
-                boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
+                boolean includeSites = includeSites(analysisJobMap);
                 KVSequenceEntryXML kvSitesSequenceEntryXML = null;
-                if (includeCDDorSFLD) {
+                if (includeSites) {
                     Utilities.verboseLog(130, "lookup Sites ... ");
                     kvSitesSequenceEntryXML = getSitesFromLookup(upperMD5);
                     //Utilities.verboseLog(1100, "lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
                     Utilities.verboseLog(130, "lookup Sites XML:" + kvSitesSequenceEntryXML.getMatches().size() + " -- " + kvSitesSequenceEntryXML.getMatches().toString());
                 }
-                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
+                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeSites);
             }
 
             return protein;
@@ -419,13 +419,13 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
             int precalculatedProteinsCount = precalculatedProteins.size();
             Utilities.verboseLog(110, "Now check the version consistency : for " + precalculatedProteinsCount + " precalculatedProteins");
             //should we get CDD or SFLD sites
-            boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
-            Utilities.verboseLog(110, "include CDD or SFLD:  ... " + includeCDDorSFLD);
+            boolean includeSites = includeSites(analysisJobMap);
+            Utilities.verboseLog(110, "include CDD or SFLD:  ... " + includeSites);
             KVSequenceEntryXML kvSitesSequenceEntryXML = null;
 
             //Avoid null lists and go for empty lists
             List<KVSequenceEntry> kvSequenceEntrySites = new ArrayList<>();
-            if (includeCDDorSFLD) {
+            if (includeSites) {
                 Utilities.verboseLog(130, "Now lookup Sites ... ");
                 kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
                 if (kvSitesSequenceEntryXML != null) {
@@ -448,7 +448,7 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
                 }
                 //deal with failures to convert the lookup matches to i5 matches
                 try {
-                    lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeCDDorSFLD);
+                    lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryMatches, kvSequenceEntrySites, analysisJobMap, includeSites);
                     Utilities.verboseLog(110, "Completed Populate precalculated Protein Matches:  " + precalculatedProteins.size());
                 } catch (Exception e) {
                     //deal with the exceptions coming from the convert process
@@ -648,10 +648,11 @@ public class BerkeleyPrecalculatedProteinLookup implements PrecalculatedProteinL
      * @param analysisJobMap
      * @return
      */
-    private boolean includeCDDorSFLD(Map<String, SignatureLibraryRelease> analysisJobMap) {
+    private boolean includeSites(Map<String, SignatureLibraryRelease> analysisJobMap) {
         for (SignatureLibraryRelease sigLibrelease : analysisJobMap.values()) {
             if (sigLibrelease.getLibrary().getName().startsWith("CDD") ||
-                    sigLibrelease.getLibrary().getName().startsWith("SFLD")) {
+                sigLibrelease.getLibrary().getName().startsWith("SFLD") ||
+                sigLibrelease.getLibrary().getName().startsWith("PIRSR")) {
                 return true;
             }
         }

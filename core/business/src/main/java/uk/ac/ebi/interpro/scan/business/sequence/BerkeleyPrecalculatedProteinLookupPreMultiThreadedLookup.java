@@ -141,14 +141,14 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
                 LOGGER.debug("Time to lookup " + kvSequenceEntryXML.getMatches().size() + " matches for one protein: " + timetaken + "ns");
             }
             if (kvSequenceEntryXML != null) {
-                boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
+                boolean includeSites = includeSites(analysisJobMap);
                 KVSequenceEntryXML kvSitesSequenceEntryXML = null;
-                if(includeCDDorSFLD){
+                if(includeSites){
                     Utilities.verboseLog(1100, "lookup Sites ... ");
                     kvSitesSequenceEntryXML = getSitesFromLookup(upperMD5);
                     Utilities.verboseLog(1100, "lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
                 }
-                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
+                lookupStoreToI5ModelDAO.populateProteinMatches(protein, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeSites);
             }
 
             return protein;
@@ -232,16 +232,16 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
             }
             startTime = System.nanoTime();
             // Check if the analysis versions are consistent and then proceed
-            boolean includeCDDorSFLD = includeCDDorSFLD(analysisJobMap);
+            boolean includeSites = includeSites(analysisJobMap);
             KVSequenceEntryXML kvSitesSequenceEntryXML = null;
-            if(includeCDDorSFLD){
+            if(includeSites){
                 Utilities.verboseLog(1100, "lookup Sites ... ");
                 kvSitesSequenceEntryXML = getSitesFromLookup(md5s);
                 Utilities.verboseLog(1100, "lookup Sites XML:" + kvSitesSequenceEntryXML.toString());
             }
             if (isAnalysisVersionConsistent(precalculatedProteins, kvSequenceEntryXML.getMatches(), analysisJobMap)) {
 //                Utilities.verboseLog(110, "Analysis versions ARE Consistent" );
-                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeCDDorSFLD);
+                lookupStoreToI5ModelDAO.populateProteinMatches(precalculatedProteins, kvSequenceEntryXML.getMatches(), kvSitesSequenceEntryXML.getMatches(), analysisJobMap, includeSites);
             } else {
                 // If the member database version at lookupmatch service is different  from the analysis version in
                 // interproscan, then disable the lookup match service for this batch (return null precalculatedProteins )
@@ -419,7 +419,7 @@ public class BerkeleyPrecalculatedProteinLookupPreMultiThreadedLookup implements
      * @param analysisJobMap
      * @return
      */
-    private boolean includeCDDorSFLD(Map<String, SignatureLibraryRelease> analysisJobMap){
+    private boolean includeSites(Map<String, SignatureLibraryRelease> analysisJobMap){
         for (SignatureLibraryRelease sigLibrelease : analysisJobMap.values()) {
             if (sigLibrelease.getLibrary().getName().startsWith("CDD") ||
                     sigLibrelease.getLibrary().getName().startsWith("SFLD")){
