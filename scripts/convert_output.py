@@ -239,19 +239,12 @@ def convert_match_xml(match_elem):
                     loc_attrib.pop("evalue", None)
                     loc_attrib.pop("score", None)
                 if source == "PIRSR":
-                    loc_attrib.setdefault("score", "0")
-                    loc_attrib.setdefault("evalue", "0")
-                    loc_attrib.setdefault("env-end", "0")
-                    loc_attrib.setdefault("env-start", "0")
-                    loc_attrib.setdefault("hmm-start", "0")
-                    loc_attrib.setdefault("hmm-end", "0")
-                    loc_attrib.setdefault("hmm-length", "0")
                     loc_attrib.setdefault("hmm-bounds", "COMPLETE")
                 if match_tag in ["hmmer3-match", "funfamhmmer3-match"]:
-                    loc_attrib.setdefault("post-processed", "true")
-                if match_tag == "hmmer3-match":
-                    loc_attrib.setdefault("env-end", "0")
-                    loc_attrib.setdefault("env-start", "0")
+                    if source == "NCBIFAM":
+                        loc_attrib.setdefault("post-processed", "false")
+                    else:
+                        loc_attrib.setdefault("post-processed", "true")
                 if source == "SFLD":
                     loc_attrib.setdefault("hmm-bounds", "INCOMPLETE")
 
@@ -298,8 +291,8 @@ def convert_match_xml(match_elem):
                             if site_locations is not None:
                                 new_site.append(site_locations)
 
-                            # hmmer site types require additional fields
-                            if new_site.tag in ["hmmer3-site", "hmmer2-site"]:
+                            # sites require additional fields
+                            if new_site.tag == "hmmer3-site":
 
                                 if group_elem is None:
                                     group_elem = ET.Element("group")
