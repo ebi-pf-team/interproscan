@@ -85,20 +85,20 @@ public abstract class HmmerLocationWithSites<T extends LocationFragment> extends
     }
 
     @XmlAttribute(name = "hmm-start", required = true)
-    public int getHmmStart() {
+    public Integer getHmmStart() {
         return hmmStart;
     }
 
-    private void setHmmStart(int hmmStart) {
+    private void setHmmStart(Integer hmmStart) {
         this.hmmStart = hmmStart;
     }
 
     @XmlAttribute(name = "hmm-end", required = true)
-    public int getHmmEnd() {
+    public Integer getHmmEnd() {
         return hmmEnd;
     }
 
-    private void setHmmEnd(int hmmEnd) {
+    private void setHmmEnd(Integer hmmEnd) {
         this.hmmEnd = hmmEnd;
     }
 

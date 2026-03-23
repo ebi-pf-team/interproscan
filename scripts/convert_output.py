@@ -13,6 +13,7 @@ ET.register_namespace("", SCHEMAS)
 
 # interproscan 5 xml match tags 
 MATCH_TAG_MAP = {
+    "AntiFam": "hmmer3-match",
     "Pfam": "hmmer3-match",
     "SMART": "hmmer2-match",
     "SUPERFAMILY": "superfamilyhmmer3-match",
@@ -57,6 +58,7 @@ MATCH_ORDER = [
 ]
 
 LIBRARY_NAME_MAP = {
+    "AntiFam": "ANTIFAM",
     "Pfam": "PFAM",
     "SMART": "SMART",
     "SUPERFAMILY": "SUPERFAMILY",
@@ -232,9 +234,6 @@ def convert_match_xml(match_elem):
                     loc_attrib.pop("evalue")
                 if match_tag == "patternscan-match":
                     loc_attrib.setdefault("level", "NONE")
-                if match_tag == "rpsblast-match":
-                    loc_attrib.setdefault("score", "0")
-                    loc_attrib.setdefault("evalue", "0")
                 if match_tag == "panther-match":
                     loc_attrib.pop("evalue", None)
                     loc_attrib.pop("score", None)
@@ -290,24 +289,6 @@ def convert_match_xml(match_elem):
 
                             if site_locations is not None:
                                 new_site.append(site_locations)
-
-                            # sites require additional fields
-                            if new_site.tag == "hmmer3-site":
-
-                                if group_elem is None:
-                                    group_elem = ET.Element("group")
-                                    group_elem.text = "0"
-                                new_site.append(group_elem)
-
-                                if hmm_end is None:
-                                    hmm_end = ET.Element("hmmEnd")
-                                    hmm_end.text = "0"
-                                new_site.append(hmm_end)
-
-                                if hmm_start is None:
-                                    hmm_start = ET.Element("hmmStart")
-                                    hmm_start.text = "0"
-                                new_site.append(hmm_start)
 
                             site_container.append(new_site)
 
