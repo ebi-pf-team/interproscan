@@ -273,19 +273,9 @@ def convert_match_xml(match_elem):
                             )
 
                             site_locations = None
-                            group_elem = None
-                            hmm_start = None
-                            hmm_end = None
-
                             for site_child in site:
                                 if site_child.tag == "site-locations":
                                     site_locations = copy_element(site_child)
-                                elif site_child.tag == "group":
-                                    group_elem = copy_element(site_child)
-                                elif site_child.tag == "hmmStart":
-                                    hmm_start = copy_element(site_child)
-                                elif site_child.tag == "hmmEnd":
-                                    hmm_end = copy_element(site_child)
 
                             if site_locations is not None:
                                 new_site.append(site_locations)
