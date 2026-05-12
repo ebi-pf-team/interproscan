@@ -66,12 +66,12 @@ public class LookupStoreToI5ModelDAOImpl implements LookupStoreToI5ModelDAO {
      *                            the Berkeley Match web service.
      */
     @Transactional(readOnly = true)
-    public void populateProteinMatches(Protein nonPersistedProtein, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeCDDorSFLD) {
-        populateProteinMatches(Collections.singleton(nonPersistedProtein), kvSequenceEntries, kvSiteSequenceEntries, analysisJobMap, includeCDDorSFLD);
+    public void populateProteinMatches(Protein nonPersistedProtein, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeSites) {
+        populateProteinMatches(Collections.singleton(nonPersistedProtein), kvSequenceEntries, kvSiteSequenceEntries, analysisJobMap, includeSites);
     }
 
     @Transactional(readOnly = true)
-    public void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeCDDorSFLD) {
+    public void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeSites) {
         String debugString = "";
         String lookup2IdRunID = String.valueOf(preCalculatedProteins.hashCode());
         Utilities.verboseLog(30, lookup2IdRunID + " Start  populateProteinMatches:  preCalculatedProteins: " + preCalculatedProteins.size()); // +  " kvSequenceEntries: "  + kvSequenceEntries.size() );

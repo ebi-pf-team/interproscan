@@ -17,9 +17,9 @@ import java.util.Set;
  */
 public interface LookupStoreToI5ModelDAO {
 
-    void populateProteinMatches(Protein nonPersistedProtein, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeCDDorSFLD);
+    void populateProteinMatches(Protein nonPersistedProtein, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeSites);
 
-    void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeCDDorSFLD);
+    void populateProteinMatches(Set<Protein> preCalculatedProteins, List<KVSequenceEntry> kvSequenceEntries, List<KVSequenceEntry> kvSiteSequenceEntries, Map<String, SignatureLibraryRelease> analysisJobMap, boolean includeSites);
 
     void checkMatchDAO();
 }
