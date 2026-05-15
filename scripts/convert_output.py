@@ -83,6 +83,8 @@ LIBRARY_NAME_MAP = {
     "SIGNALP_GRAM_POSITIVE": "SIGNALP_GRAM_POSITIVE"
 }
 
+UNSUPPORTED_LIBRARIES = set()
+
 # XML conversion functions
 def make_location_tag(match_tag):
 
@@ -127,6 +129,13 @@ def copy_element(elem):
         lib = new_elem.attrib.get("library")
         if lib in LIBRARY_NAME_MAP:
             new_elem.attrib["library"] = LIBRARY_NAME_MAP[lib]
+        elif lib and lib not in UNSUPPORTED_LIBRARIES:
+            print(
+                f"Warning: Skipping library \"{lib}\" as unsupported by InterProScan 5",
+                file=sys.stderr,
+            )
+            UNSUPPORTED_LIBRARIES.add(lib)
+            return None
 
     for child in elem:
         copied = copy_element(child)
@@ -363,6 +372,19 @@ def convert_match_json(match):
     signature = new_match.get("signature")
     if isinstance(signature, dict):
 
+        release = signature.get("signatureLibraryRelease")
+        if isinstance(signature, dict):
+            lib = release.get("library")
+            if lib in LIBRARY_NAME_MAP:
+                release["library"] = LIBRARY_NAME_MAP[lib]
+            elif lib and lib not in UNSUPPORTED_LIBRARIES:
+                print(
+                    f"Warning: Skipping library \"{lib}\" as unsupported by InterProScan 5",
+                    file=sys.stderr,
+                )
+                UNSUPPORTED_LIBRARIES.add(lib)
+                return None
+
         if "type" in signature and signature["type"]:
             signature["type"] = signature["type"].upper()
 
@@ -398,7 +420,9 @@ def convert_file_json(input_json, output_json):
         new_protein["matches"] = []
 
         for match in protein.get("matches", []):
-            new_protein["matches"].append(convert_match_json(match))
+            converted_match = convert_match_json(match)
+            if converted_match is not None:
+                new_protein["matches"].append(converted_match)
 
         new_data["results"].append(new_protein)
 
