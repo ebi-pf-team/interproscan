@@ -4,7 +4,7 @@ CC        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland
 CC   -------------------------------------------------------------------------
 CC   Description: miniprofiles
 CC   Name:        evaluator.dat
-CC   Release:     2025_01 of 05-Feb-2025
+CC   Release:     2026_01 of 28-Jan-2026
 CC   -------------------------------------------------------------------------
 CC
 CC   This file contains the miniprofiles used by ps_scan.pl to evaluate
