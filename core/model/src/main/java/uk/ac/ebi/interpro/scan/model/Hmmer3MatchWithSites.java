@@ -25,6 +25,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -213,20 +216,24 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
         @Entity
         @Table(name = "hmmer3_site")
         @XmlType(name = "Hmmer3SiteType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
+        @XmlAccessorType(XmlAccessType.FIELD)
         public static class Hmmer3Site extends HmmerSite {
 
-
+            @XmlElement(required = false)
             @Column (name = "SITE_LABEL")
             private String label;
 
+            @XmlElement(required = false)
             @Column (name = "SITE_GROUP")
-            private int group;
+            private Integer group;
 
+            @XmlElement(required = false)
             @Column //(name = "HMMSTART")
-            private int hmmStart;
+            private Integer hmmStart;
 
+            @XmlElement(required = false)
             @Column //(name = "HMMEND")
-            private int hmmEnd;
+            private Integer hmmEnd;
 
             public String getLabel() {
                 return label;
@@ -236,27 +243,27 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
                 this.label = label;
             }
 
-            public int getGroup() {
+            public Integer getGroup() {
                 return group;
             }
 
-            public void setGroup(int group) {
+            public void setGroup(Integer group) {
                 this.group = group;
             }
 
-            public int getHmmStart() {
+            public Integer getHmmStart() {
                 return hmmStart;
             }
 
-            public void setHmmStart(int hmmStart) {
+            public void setHmmStart(Integer hmmStart) {
                 this.hmmStart = hmmStart;
             }
 
-            public int getHmmEnd() {
+            public Integer getHmmEnd() {
                 return hmmEnd;
             }
 
-            public void setHmmEnd(int hmmEnd) {
+            public void setHmmEnd(Integer hmmEnd) {
                 this.hmmEnd = hmmEnd;
             }
 
@@ -266,9 +273,9 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
             public Hmmer3Site(String description, Set<SiteLocation> siteLocations) {
                 super(description, siteLocations);
                 this.label = null;
-                this.hmmStart = 0;
-                this.hmmEnd = 0;
-                this.group = 0;
+                this.hmmStart = null;
+                this.hmmEnd = null;
+                this.group = null;
             }
 
             public Hmmer3Site(String description,   String label, int hmmStart,
