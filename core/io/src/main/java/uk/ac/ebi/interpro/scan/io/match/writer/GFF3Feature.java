@@ -17,6 +17,8 @@ public class GFF3Feature {
 
     final static String ID_ATTR = "ID";
 
+    final static String DBXREF_ATTR = "Dbxref";
+
     final static String MD5_ATTR = "md5";
 
     final static String TARGET_ATTR = "Target";
@@ -116,7 +118,9 @@ public class GFF3Feature {
             if (key.equals(ID_ATTR)) {
                 value = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(value);
             }
-            value = ProteinMatchesGFFResultWriter.getValidGFF3AttributeName(value);
+            if (!key.equals(ID_ATTR) && !key.equals(DBXREF_ATTR)) {
+                value = ProteinMatchesGFFResultWriter.getValidGFF3AttributeName(value);
+            }
             if (sb.length() > 0) {
                 sb.append(";");
             }
