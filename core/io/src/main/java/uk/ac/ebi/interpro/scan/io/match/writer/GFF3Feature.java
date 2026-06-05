@@ -115,9 +115,8 @@ public class GFF3Feature {
             String value = attributes.get(key);
             if (key.equals(ID_ATTR)) {
                 value = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(value);
-            } else if (key.equals(NAME_ATTR)) {
-                value = ProteinMatchesGFFResultWriter.getValidGFF3AttributeName(value);
             }
+            value = ProteinMatchesGFFResultWriter.getValidGFF3AttributeName(value);
             if (sb.length() > 0) {
                 sb.append(";");
             }
