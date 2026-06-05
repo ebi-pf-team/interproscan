@@ -215,7 +215,7 @@ public class Hmmer3MatchWithSites extends HmmerMatchWithSites<Hmmer3MatchWithSit
 
         @Entity
         @Table(name = "hmmer3_site")
-        @XmlType(name = "Hmmer3SiteType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas")
+        @XmlType(name = "Hmmer3SiteType", namespace = "https://ftp.ebi.ac.uk/pub/software/unix/iprscan/5/schemas", propOrder = {"group", "hmmEnd", "hmmStart", "label"})
         @XmlAccessorType(XmlAccessType.FIELD)
         public static class Hmmer3Site extends HmmerSite {
 

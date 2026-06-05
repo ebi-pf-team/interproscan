@@ -315,10 +315,10 @@
     <xs:complexContent>
       <xs:extension base="tns:HmmerSiteType">
         <xs:sequence>
-          <xs:element name="label" type="xs:string" minOccurs="0"/>
           <xs:element name="group" type="xs:int" minOccurs="0"/>
-          <xs:element name="hmmStart" type="xs:int" minOccurs="0"/>
           <xs:element name="hmmEnd" type="xs:int" minOccurs="0"/>
+          <xs:element name="hmmStart" type="xs:int" minOccurs="0"/>
+          <xs:element name="label" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
