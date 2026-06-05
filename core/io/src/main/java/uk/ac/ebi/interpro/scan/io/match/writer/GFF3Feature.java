@@ -17,6 +17,8 @@ public class GFF3Feature {
 
     final static String ID_ATTR = "ID";
 
+    final static String SIGNATURE_DESC_ATTR = "signature_desc";
+
     final static String MD5_ATTR = "md5";
 
     final static String TARGET_ATTR = "Target";
@@ -115,7 +117,7 @@ public class GFF3Feature {
             String value = attributes.get(key);
             if (key.equals(ID_ATTR)) {
                 value = ProteinMatchesGFFResultWriter.getValidGFF3SeqId(value);
-            } else if (key.equals(NAME_ATTR)) {
+            } else if (key.equals(NAME_ATTR) || key.equals(SIGNATURE_DESC_ATTR)) {
                 value = ProteinMatchesGFFResultWriter.getValidGFF3AttributeName(value);
             }
             if (sb.length() > 0) {
