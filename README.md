@@ -3,6 +3,10 @@
 
 # InterProScan
 
+> **Notice:** InterProScan 5 is no longer supported. From InterPro release
+> 110.0, users should migrate to
+> [InterProScan 6](https://github.com/ebi-pf-team/interproscan6).
+
 ## What is InterProScan?
 [InterPro](http://www.ebi.ac.uk/interpro/) is a database which integrates together predictive information about proteins' function from a number of partner resources, giving an overview of the families that a protein belongs to and the domains and sites it contains.
 
