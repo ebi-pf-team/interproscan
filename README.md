@@ -3,8 +3,8 @@
 
 # InterProScan
 
-> **Notice:** InterProScan 5 is no longer supported. From InterPro release
-> 110.0, users should migrate to
+> **Notice:** InterProScan 5.78-109.0 is the final release of InterProScan 5.
+> To annotate sequences with future InterPro releases, please upgrade to 
 > [InterProScan 6](https://github.com/ebi-pf-team/interproscan6).
 
 ## What is InterProScan?
